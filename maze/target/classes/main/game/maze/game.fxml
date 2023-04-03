@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.animation.Timeline?>
+<?import javafx.util.Duration?>
+<?import javafx.scene.image.Image?>
+
+
+<AnchorPane fx:id="root" fx:controller="main.game.maze.GameController" xmlns:fx="http://javafx.com/fxml">
+    <ImageView fx:id="player" layoutX="50" layoutY="50" preserveRatio="true" fitHeight="50" onMouseClicked="#handlePlayerClicked">
+        <image>
+            <Image url="@./you2.png"/>
+        </image>
+    </ImageView>
+
+    <Pane fx:id="gameBoard" onKeyPressed="#handleKeyPressed" prefHeight="600" prefWidth="800">
+        <!-- game board content here -->
+    </Pane>
+
+    <Button fx:id="startButton" text="Start" onAction="#startAnimation" />
+
+    <AnchorPane AnchorPane.bottomAnchor="10" AnchorPane.rightAnchor="10" prefWidth="150" prefHeight="1">
+        <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />
+    </AnchorPane>
+</AnchorPane>
