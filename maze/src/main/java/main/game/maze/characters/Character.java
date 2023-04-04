@@ -7,7 +7,7 @@ import main.game.maze.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.constants.StageConstants;
 
-public class Character {
+public class Character  {
     protected int characterXYSizeFromPoint = StageConstants.TouchDistance;
 
     private Point2D characterPosition;
