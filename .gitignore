@@ -5,3 +5,7 @@ maze/target/classes/main/game/maze/characters/PlayerCharacter$HappyAction.class
 *.class
 *.class
 maze/target/classes/main/game/maze/App.class
+maze/target/classes/main/game/maze/App.class
+maze/target/classes/main/game/maze/characters/Character.class
+maze/target/classes/main/game/maze/characters/PlayerCharacter.class
+maze/target/classes/main/game/maze/MazeWorld.class
