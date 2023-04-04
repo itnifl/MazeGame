@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import main.game.maze.MazeWorld;
 import main.game.maze.Vector2D;
+import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.constants.StageConstants;
 
 public class Character {
@@ -62,7 +63,7 @@ public class Character {
     */
     private boolean isTouchingVector() {
         // Loop through all the vectors in the maze and check the distance 
-        for (Vector2D vector : maze.getVectors()) {
+        for (Vector2D vector : maze.getMazeVectors()) {
             if (characterDirection.doIntersect(vector, characterXYSizeFromPoint)) {
                 return true;
             }
@@ -157,6 +158,10 @@ public class Character {
             return true;
         }
         return false;
+    }
+
+    public void doCharacterAnimation(ICharacterAction animation) {
+        animation.doAction(characterGraphics);
     }
 }
 

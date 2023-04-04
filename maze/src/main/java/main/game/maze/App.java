@@ -24,7 +24,7 @@ public class App extends Application {
             AnchorPane root = loader.load();
             GameController controller = loader.getController();
             MazeWorld maze = MazeWorld.GetWorld();
-            var vectors = maze.getVectors();
+            var vectors = maze.getMazeVectors();
     
             // Create a canvas
             Canvas canvas = new Canvas(BoardMaxX, BoardMaxY);

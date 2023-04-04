@@ -1,0 +1,7 @@
+
+maze/target/classes/main/game/maze/characters/PlayerCharacter$DieAction.class
+maze/target/classes/main/game/maze/characters/PlayerCharacter$HappyAction.class
+*.class
+*.class
+*.class
+maze/target/classes/main/game/maze/App.class
