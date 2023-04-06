@@ -8,9 +8,13 @@
 <?import javafx.animation.Timeline?>
 <?import javafx.util.Duration?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SkinBase?>
 
 
 <AnchorPane fx:id="root" fx:controller="main.game.maze.GameController" xmlns:fx="http://javafx.com/fxml">
+    <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1" prefWidth="360" prefHeight="20" style="-fx-accent: #c0392b;" />
+   
     <ImageView fx:id="player" layoutX="50" layoutY="50" preserveRatio="true" fitHeight="50" onMouseClicked="#handlePlayerClicked">
         <image>
             <Image url="@./you2.png"/>
@@ -32,7 +36,7 @@
         <!-- game board content here -->
     </Pane>
 
-    <Button fx:id="startButton" text="Start" onAction="#startNewMaze" />
+    <Button fx:id="startButton" text="Start" onAction="#startNewMaze" layoutX="1" layoutY="20" />
 
     <AnchorPane AnchorPane.bottomAnchor="10" AnchorPane.rightAnchor="10" prefWidth="150" prefHeight="1">
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />

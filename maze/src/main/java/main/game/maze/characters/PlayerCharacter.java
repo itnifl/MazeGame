@@ -5,6 +5,7 @@ import java.util.List;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressBar;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -15,15 +16,17 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class PlayerCharacter extends Character implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
-    private int hitPoints = 30;
+    private int hitPoints = 1800;
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<ICanSubscribeAndNotifyPosition>();
+    private ProgressBar hpBar;
 
-    public PlayerCharacter(Node characterGraphics, double x, double y) {
+    public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar) {
         super(characterGraphics, x, y);
         this.characterXYSizeFromPoint =  StageConstants.PlayerCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+        this.hpBar = hpBar;
     }
 
     @Override
@@ -57,11 +60,13 @@ public class PlayerCharacter extends Character implements ICharacterAnimations, 
     @Override
     public void setHitPoints(int hp) {
         hitPoints = hp;
+        hpBar.setProgress(hitPoints / 100.0);
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints -= hp;
+        hpBar.setProgress(hitPoints / 100.0);
 
         if(hitPoints <= 0) {
             PlayDieAnimation();
@@ -74,6 +79,7 @@ public class PlayerCharacter extends Character implements ICharacterAnimations, 
     @Override
     public void addHitPoints(int hp) {
         hitPoints += hp;
+        hpBar.setProgress(hitPoints / 100.0);
     }
 
     @Override

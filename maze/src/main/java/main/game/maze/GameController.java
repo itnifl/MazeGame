@@ -14,7 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
@@ -32,6 +34,7 @@ public class GameController implements Initializable {
     @FXML private Node player;
     @FXML private Pane gameBoard;
     @FXML private Label coordinatesLabel;
+    @FXML private ProgressBar hpBar;
     
     
     private PlayerCharacter playerCharacter;
@@ -67,6 +70,7 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
         gameOverAction = new GameOverAction();
 
@@ -84,7 +88,8 @@ public class GameController implements Initializable {
         playerCharacter = new PlayerCharacter(
             player, 
             player.getLayoutX(), 
-            player.getLayoutY());
+            player.getLayoutY(),
+            hpBar);
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
@@ -104,7 +109,6 @@ public class GameController implements Initializable {
 
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();
-
     }
 
     @FXML

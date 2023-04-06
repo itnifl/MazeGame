@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -22,6 +23,10 @@ public class App extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
             AnchorPane root = loader.load();
+            ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
+    
+            progressBar.prefWidthProperty().bind(root.widthProperty());
+
             GameController controller = loader.getController();
             MazeWorld maze = MazeWorld.GetWorld();
             var vectors = maze.getMazeVectors();
