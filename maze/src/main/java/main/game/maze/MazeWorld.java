@@ -8,8 +8,7 @@ import javafx.geometry.Point2D;
 public class MazeWorld {
     private static MazeWorld world;
     private List<Vector2D> mazeVectors;
-    private int cellSize = 50;
-    private int minimumWalls = 20;
+
     /*
      * Factory method that creates a new world, or returns an existing one if one already exists:
      */

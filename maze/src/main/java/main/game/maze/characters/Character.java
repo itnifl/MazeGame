@@ -6,8 +6,10 @@ import main.game.maze.MazeWorld;
 import main.game.maze.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.interfaces.INotifyMovement;
 
 public class Character  {
+    public INotifyMovement notifyMovement = null;
     protected int characterXYSizeFromPoint = StageConstants.TouchDistance;
 
     private Point2D characterPosition;
@@ -34,10 +36,10 @@ public class Character  {
             this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(StageConstants.PlayerCharacterSpeed);
 
         maze = MazeWorld.GetWorld();
-        CalculateMaxPositions();
+        calculateMaxPositions();
     }
 
-    protected void CalculateMaxPositions() {
+    protected void calculateMaxPositions() {
         maxX = StageConstants.BoardMaxX-characterXYSizeFromPoint;
         maxY = StageConstants.BoardMaxY-characterXYSizeFromPoint;
     }
@@ -58,10 +60,24 @@ public class Character  {
         return this.characterDirection;
     }
 
+    public void setCharacterDirection(double x, double y, int speed) {
+        directionX = x;
+        directionY = y;
+        updateDirection(speed);
+    }
+
+    public double getDirectionX() {
+        return directionX;
+    }
+
+    public double getDirectionY() {
+        return directionY;
+    }
+
     /*
     * Is character touching any vector?
     */
-    private boolean isTouchingVector() {
+    protected boolean isTouchingVector() {
         // Loop through all the vectors in the maze and check the distance 
         for (Vector2D vector : maze.getMazeVectors()) {
             if (characterDirection.doIntersect(vector, characterXYSizeFromPoint)) {
@@ -115,12 +131,12 @@ public class Character  {
         return false;
     }
 
-    private void updateDirection(int factor) {
+    protected void updateDirection(int factor) {
         characterDirection = new Vector2D(this.characterPosition.getX(), this.characterPosition.getY(), 
         this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(factor);
     }
 
-    private void updatePosition() {
+    protected void updatePosition() {
         characterPosition = characterPosition.add(directionX, directionY);
     }
 
@@ -128,6 +144,7 @@ public class Character  {
         double newX = characterGraphics.getLayoutX() + speed;
         if (newX < maxX && !isTouchingVector()) {
             characterGraphics.setLayoutX(newX);
+            doNotifyMovement();
             return true;
         }
         return false;
@@ -137,6 +154,7 @@ public class Character  {
         double newX = characterGraphics.getLayoutX() - speed;
         if (newX >= 0 && !isTouchingVector()) {
             characterGraphics.setLayoutX(newX);
+            doNotifyMovement();
             return true;
         }
         return false;
@@ -146,6 +164,7 @@ public class Character  {
         double newY = characterGraphics.getLayoutY() + speed;
         if (newY < maxY && !isTouchingVector()) {
             characterGraphics.setLayoutY(newY);
+            doNotifyMovement();
             return true;
         }
         return false;
@@ -155,6 +174,7 @@ public class Character  {
         double newY = characterGraphics.getLayoutY() - speed;
         if (newY >= 0 && !isTouchingVector()) {
             characterGraphics.setLayoutY(newY);
+            doNotifyMovement();
             return true;
         }
         return false;
@@ -162,6 +182,12 @@ public class Character  {
 
     public void doCharacterAnimation(ICharacterAction animation) {
         animation.doAction(characterGraphics);
+    }
+
+    private void doNotifyMovement() {
+        if(notifyMovement != null) {
+            notifyMovement.doNotifyCharacterMovement();
+        }
     }
 }
 

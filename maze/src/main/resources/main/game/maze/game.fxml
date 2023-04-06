@@ -17,11 +17,22 @@
         </image>
     </ImageView>
 
+    <ImageView fx:id="ghost1" layoutX="250" layoutY="250" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost.png"/>
+        </image>
+    </ImageView>
+    <ImageView fx:id="ghost2" layoutX="250" layoutY="250" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost.png"/>
+        </image>
+    </ImageView>
+
     <Pane fx:id="gameBoard" onKeyPressed="#handleKeyPressed" prefHeight="600" prefWidth="800">
         <!-- game board content here -->
     </Pane>
 
-    <Button fx:id="startButton" text="Start" onAction="#startAnimation" />
+    <Button fx:id="startButton" text="Start" onAction="#startNewMaze" />
 
     <AnchorPane AnchorPane.bottomAnchor="10" AnchorPane.rightAnchor="10" prefWidth="150" prefHeight="1">
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />
