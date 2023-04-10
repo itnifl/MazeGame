@@ -13,15 +13,16 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.constants.StageConstants;
 
-public class GhostCharacter extends ComputerCharacter implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition {
+public class GhostCharacter extends ComputerCharacter
+        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition {
     private static int ghostSpeedFactor = 2;
-    private static int damageByTouch = 10;
+    private static int damageByTouch = 1;
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<ICanSubscribeAndNotifyPosition>();
 
     public GhostCharacter(Node characterGraphics, double positionX, double positionY) {
         super(characterGraphics, positionX, positionX, ghostSpeedFactor);
-        this.characterXYSizeFromPoint =  StageConstants.GhostCharacterXYSize;
+        this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
     }
@@ -38,21 +39,22 @@ public class GhostCharacter extends ComputerCharacter implements ICanKill, IChar
 
     private class HappyAction implements ICharacterAction {
         public void doAction(Node characterGraphics) {
-            //Animate the character and do stuff
+            // Animate the character and do stuff
         }
     }
 
     private class DieAction implements ICharacterAction {
         public void doAction(Node characterGraphics) {
-            //Animate the character and do stuff
+            // Animate the character and do stuff
         }
     }
 
     @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
-        if(nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
-            if(entity instanceof ICanDie) {
-                var canDieEntity = (ICanDie)entity;
+        if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
+            if (entity instanceof ICanDie) {
+                var canDieEntity = (ICanDie) entity;
+                System.out.println("Ghost is intersecting with " + canDieEntity);
                 canDieEntity.subtractHitPoints(damageByTouch);
             }
         }

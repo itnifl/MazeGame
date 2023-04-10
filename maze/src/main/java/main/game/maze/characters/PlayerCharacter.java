@@ -2,6 +2,7 @@ package main.game.maze.characters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -18,7 +19,8 @@ import main.game.maze.interfaces.IDeathSubscriber;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
-    private int hitPoints = 1800;
+    private AtomicInteger hitPoints = new AtomicInteger(100);
+    private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<ICanSubscribeAndNotifyPosition>();
     private ProgressBar hpBar;
@@ -55,21 +57,25 @@ public class PlayerCharacter extends Character
 
     @Override
     public int getHitPoints() {
-        return hitPoints;
+        return hitPoints.get();
     }
 
     @Override
     public void setHitPoints(int hp) {
-        hitPoints = hp;
-        hpBar.setProgress(hitPoints / 100.0);
+        hitPoints = new AtomicInteger(hp);
+        synchronized (lockObjectForHpbar) {
+            hpBar.setProgress(hitPoints.get() / 100.0);
+        }
     }
 
     @Override
     public void subtractHitPoints(int hp) {
-        hitPoints -= hp;
-        hpBar.setProgress(hitPoints / 100.0);
+        hitPoints.addAndGet(-hp);
+        synchronized (lockObjectForHpbar) {
+            hpBar.setProgress(hitPoints.get() / 100.0);
+        }
 
-        if (hitPoints <= 0) {
+        if (hitPoints.get() <= 0) {
             PlayDieAnimation();
             for (var subscribers : deathSubscribers) {
                 subscribers.AddDeathNotification(this);
@@ -79,8 +85,10 @@ public class PlayerCharacter extends Character
 
     @Override
     public void addHitPoints(int hp) {
-        hitPoints += hp;
-        hpBar.setProgress(hitPoints / 100.0);
+        hitPoints.addAndGet(hp);
+        synchronized (lockObjectForHpbar) {
+            hpBar.setProgress(hitPoints.get() / 100.0);
+        }
     }
 
     @Override
@@ -98,6 +106,7 @@ public class PlayerCharacter extends Character
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanKill) {
                 var canKillEntity = (ICanKill) entity;
+                System.out.println("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
             }
 
