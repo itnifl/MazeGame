@@ -9,6 +9,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,32 +21,43 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
+import main.game.maze.actions.WinGameAction;
+import main.game.maze.areas.WinArea;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.constants.StageConstants;
 
 public class GameController implements Initializable {
-    @FXML private Button startButton;
     private Timeline timeline;
 
-    @FXML private Node ghost1;
-    @FXML private Node ghost2;
-    @FXML private Node player;
-    @FXML private Pane gameBoard;
-    @FXML private Label coordinatesLabel;
-    @FXML private ProgressBar hpBar;
-    
-    
+    @FXML
+    private AnchorPane root;
+    @FXML
+    private Node ghost1;
+    @FXML
+    private Node ghost2;
+    @FXML
+    private Node player;
+    @FXML
+    private Pane gameBoard;
+    @FXML
+    private Label coordinatesLabel;
+    @FXML
+    private ProgressBar hpBar;
+    @FXML
+    private Node heart;
+
     private PlayerCharacter playerCharacter;
     private GhostCharacter ghostCharacter1;
     private GhostCharacter ghostCharacter2;
     private MazeWorld maze;
     private GameOverAction gameOverAction;
+    private WinGameAction winGameAction;
+    private WinArea winarea;
 
     private Thread runComputerCharactersThread;
     private static List<IMovingComputerCharacter> allComputerCharacters;
-
 
     private static Task runComputerCharacters = new Task() {
 
@@ -53,9 +65,9 @@ public class GameController implements Initializable {
         protected Boolean call() throws Exception {
             try {
                 do {
-                    for(var computerCharacter : allComputerCharacters) {
+                    for (var computerCharacter : allComputerCharacters) {
                         var successfulMove = computerCharacter.move();
-                        if(!successfulMove) {
+                        if (!successfulMove) {
                             computerCharacter.changeDirection();
                         }
                     }
@@ -65,31 +77,37 @@ public class GameController implements Initializable {
                 throw ex;
             }
         }
-        
+
     };
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
-        gameOverAction = new GameOverAction();
+
+        gameOverAction = new GameOverAction(root, () -> {
+            runComputerCharacters.cancel();
+        });
+
+        winGameAction = new WinGameAction(root, () -> {
+            runComputerCharacters.cancel();
+        });
 
         // create a timeline with two key frames
         timeline = new Timeline(
-            new KeyFrame(Duration.ZERO, new KeyValue(startButton.opacityProperty(), 1.0)),
-            new KeyFrame(Duration.seconds(1), new KeyValue(startButton.opacityProperty(), 0.0))
-        );
+                new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
+                new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
         // set the cycle count to indefinite
         timeline.setCycleCount(Timeline.INDEFINITE);
-        // pause the timeline initially
-        timeline.pause();
 
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
-            player, 
-            player.getLayoutX(), 
-            player.getLayoutY(),
-            hpBar);
+                player,
+                player.getLayoutX(),
+                player.getLayoutY(),
+                hpBar);
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
@@ -104,6 +122,12 @@ public class GameController implements Initializable {
         ghostCharacter1.addPositionSubscriber(playerCharacter);
         ghostCharacter2.addPositionSubscriber(playerCharacter);
 
+        winarea = new WinArea(heart);
+        winarea.addPositionSubscriber(playerCharacter);
+        winarea.AddWinGameAction(winGameAction);
+
+        playerCharacter.addPositionSubscriber(winarea);
+
         player.requestFocus();
         gameBoard.requestFocus();
 
@@ -112,8 +136,13 @@ public class GameController implements Initializable {
     }
 
     @FXML
+    private void handleRestart(ActionEvent event) {
+        System.out.println("Button clicked!");
+    }
+
+    @FXML
     private void handlePlayerClicked(KeyEvent event) {
-    
+
     }
 
     @FXML
@@ -135,49 +164,46 @@ public class GameController implements Initializable {
                 break;
         }
 
-        var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: " + playerCharacter.getCharacterPosition().getY();
+        var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
+                + playerCharacter.getCharacterPosition().getY();
         var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
-        
+
         coordinatesLabel.setText(coordinatesText + " - " + directionsText);
     }
 
     private void movePlayerRight() {
-        for(int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if(playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x *  StageConstants.SpeedReducer))) {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            };
-        } 
+            }
+            ;
+        }
     }
 
     private void movePlayerLeft() {
-        for(int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if(playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x *  StageConstants.SpeedReducer))) {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            };
-        } 
+            }
+            ;
+        }
     }
 
     private void movePlayerDown() {
-        for(int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if(playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x *  StageConstants.SpeedReducer))) {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            };
-        } 
+            }
+            ;
+        }
     }
 
     private void movePlayerUp() {
-        for(int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if(playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x *  StageConstants.SpeedReducer))) {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            };
-        } 
-    }
-    
-
-    @FXML
-    private void startNewMaze() {
-        timeline.play();
-        maze.GenerateMaze();
-        //TODO: Wipe all vectors from board and draw again
+            }
+            ;
+        }
     }
 }
