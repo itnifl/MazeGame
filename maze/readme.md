@@ -10,3 +10,4 @@
 - Different characters
 - Read a maze from SVG
 - Automatically create a maze by random hitting a button.
+- Implement a ghost factory that outputs a n numer of ghosts

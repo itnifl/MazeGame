@@ -14,7 +14,7 @@
 <AnchorPane fx:id="root" fx:controller="main.game.maze.GameController" xmlns:fx="http://javafx.com/fxml">
     <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1" prefWidth="360" prefHeight="20" style="-fx-accent: #c0392b;" />
    
-    <ImageView fx:id="player" layoutX="50" layoutY="50" preserveRatio="true" fitHeight="50" onMouseClicked="#handlePlayerClicked">
+    <ImageView fx:id="player" layoutX="0" layoutY="22" preserveRatio="true" fitHeight="50" >
         <image>
             <Image url="@./you2.png"/>
         </image>
@@ -26,6 +26,28 @@
         </image>
     </ImageView>
     <ImageView fx:id="ghost2" layoutX="150" layoutY="250" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost2.png"/>
+        </image>
+    </ImageView>
+
+    <ImageView fx:id="ghost3" layoutX="550" layoutY="150" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost2.png"/>
+        </image>
+    </ImageView>
+    <ImageView fx:id="ghost4" layoutX="50" layoutY="50" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost2.png"/>
+        </image>
+    </ImageView>
+
+    <ImageView fx:id="ghost5" layoutX="550" layoutY="550" preserveRatio="true" fitHeight="50">
+        <image>
+            <Image url="@./ghost2.png"/>
+        </image>
+    </ImageView>
+    <ImageView fx:id="ghost6" layoutX="50" layoutY="550" preserveRatio="true" fitHeight="50">
         <image>
             <Image url="@./ghost2.png"/>
         </image>
