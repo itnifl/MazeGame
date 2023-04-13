@@ -36,7 +36,8 @@ public class App extends Application {
             controller.setupGame();;
 
             // Start playing the music
-            // this.mediaPlayer.play();
+            MediaView view = addMusic();
+            this.mediaPlayer.play();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,7 +49,7 @@ public class App extends Application {
 
     private MediaView addMusic() {
 
-        var resource = getClass().getResource("backgroundMusic.mp3");
+        var resource = getClass().getResource("/main/game/maze/backgroundMusic.mp3");
         Media media = new Media(resource.toString());
         this.mediaPlayer = new MediaPlayer(media);
         this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);

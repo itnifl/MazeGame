@@ -7,6 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -25,6 +28,7 @@ public class PlayerCharacter extends Character
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<ICanSubscribeAndNotifyPosition>();
     private ProgressBar hpBar;
+    private MediaPlayer screamMediaPlayer;
 
     public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar) {
         super(characterGraphics, x, y);
@@ -32,6 +36,21 @@ public class PlayerCharacter extends Character
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
         this.hpBar = hpBar;
+        //addScreamSound();
+    }
+
+    private MediaView addScreamSound() {
+
+        var resource = getClass().getResource("/main/game/maze/playerScream.mp3");
+        Media media = new Media(resource.toString());
+        this.screamMediaPlayer = new MediaPlayer(media);
+        this.screamMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+        // Create a MediaView and add it to the root node
+        MediaView mediaView = new MediaView(screamMediaPlayer);
+
+        return mediaView;
+
     }
 
     @Override
@@ -109,6 +128,7 @@ public class PlayerCharacter extends Character
                 var canKillEntity = (ICanKill) entity;
                 System.out.println("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
+                //screamMediaPlayer.play();
             }
 
             if (entity instanceof ICanLetYouWin) {

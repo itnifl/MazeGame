@@ -17,7 +17,8 @@
 - Highscore screen, Win screen and game over screens need better design.
 
 # Sources:
-- Background music, Sky Walker - Epic Wild Western Music: https://www.youtube.com/watch?v=XnGCmZkh7n4
+- Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E
+- Player Scream: https://www.youtube.com/watch?v=3rlV-whFgXQ
 - Vector math: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
 # How to install prerequisites and run this game.
