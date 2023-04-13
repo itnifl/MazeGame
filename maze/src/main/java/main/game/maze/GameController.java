@@ -18,16 +18,23 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
+import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.constants.StageConstants;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 public class GameController implements Initializable {
+    private static int BoardMaxX = StageConstants.BoardMaxX;
+    private static int BoardMaxY = StageConstants.BoardMaxY;
+
     private Timeline timeline;
 
     @FXML
@@ -64,40 +71,101 @@ public class GameController implements Initializable {
     private GhostCharacter ghostCharacter4;
     private GhostCharacter ghostCharacter5;
     private GhostCharacter ghostCharacter6;
-
     private MazeWorld maze;
     private GameOverAction gameOverAction;
     private WinGameAction winGameAction;
     private WinArea winarea;
-
     private Thread runComputerCharactersThread;
     private static List<IMovingComputerCharacter> allComputerCharacters;
-
     private static AtomicInteger playerMoveCount = new AtomicInteger(0);
 
-    private static Task runComputerCharacters = new Task() {
-
-        @Override
-        protected Boolean call() throws Exception {
-            try {
-                do {
-                    for (var computerCharacter : allComputerCharacters) {
-                        var successfulMove = computerCharacter.move();
-                        if (!successfulMove) {
-                            computerCharacter.changeDirection();
-                        }
-                    }
-                    Thread.sleep(60);
-                } while (true);
-            } catch (Exception ex) {
-                throw ex;
-            }
-        }
-
-    };
+    private static Task runComputerCharacters;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupGame();
+    }
+
+    @FXML
+    private void handleKeyPressed(KeyEvent event) {
+        switch (event.getCode()) {
+            case UP:
+                movePlayerUp();
+                break;
+            case DOWN:
+                movePlayerDown();
+                break;
+            case LEFT:
+                movePlayerLeft();
+                break;
+            case RIGHT:
+                movePlayerRight();
+                break;
+            case H:
+                showHighScore();
+                break;
+            default:
+                break;
+        }
+
+        var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
+                + playerCharacter.getCharacterPosition().getY();
+        var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
+
+        coordinatesLabel.setText(coordinatesText + " - " + directionsText);
+
+        playerMoveCount.getAndIncrement();
+        
+        
+        gameOverAction.updateScore();
+        var score = winGameAction.updateScore();
+
+        scoreLabel.setText("Score: " + String.valueOf(score));
+    }
+
+    @FXML
+    private void showHighScore() {
+        runComputerCharacters.cancel();
+        HighscoreAction action = new HighscoreAction(root);
+        action.Load();
+    }
+
+    private void movePlayerRight() {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+                return;
+            }
+        }
+    }
+
+    private void movePlayerLeft() {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+                return;
+            }
+            ;
+        }
+    }
+
+    private void movePlayerDown() {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+                return;
+            }
+            ;
+        }
+    }
+
+    private void movePlayerUp() {
+        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
+            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+                return;
+            }
+            ;
+        }
+    }
+
+    public void setupGame() {
         hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
@@ -117,6 +185,13 @@ public class GameController implements Initializable {
                 player.getLayoutX(),
                 player.getLayoutY(),
                 hpBar);
+
+                
+        var vectors = maze.getMazeVectors();
+
+        // Create a canvas
+        var canvas = this.drawCanvas(vectors);
+        root.getChildren().add(canvas);
 
         gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {
             runComputerCharacters.cancel();
@@ -169,76 +244,55 @@ public class GameController implements Initializable {
         player.requestFocus();
         gameBoard.requestFocus();
 
+        runComputerCharacters();
+    }
+
+    public Canvas drawCanvas(List<Vector2D> vectors) {
+        Canvas canvas = new Canvas(BoardMaxX, BoardMaxY);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // Set the stroke color and width
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(3);
+
+        // Draw the maze vectors
+        for (Vector2D vector : vectors) {
+            double startX = vector.getStart().getX();
+            double startY = vector.getStart().getY();
+            double endX = vector.getEnd().getX();
+            double endY = vector.getEnd().getY();
+
+            gc.strokeLine(startX, startY, endX, endY);
+        }
+
+        return canvas;
+    }
+
+    public void runComputerCharacters() {
+        if(runComputerCharactersThread != null) {
+            runComputerCharacters.cancel();
+        }
+        runComputerCharacters = new Task() {
+
+            @Override
+            protected Boolean call() throws Exception {
+                try {
+                    do {
+                        for (var computerCharacter : allComputerCharacters) {
+                            var successfulMove = computerCharacter.move();
+                            if (!successfulMove) {
+                                computerCharacter.changeDirection();
+                            }
+                        }
+                        Thread.sleep(60);
+                    } while (true);
+                } catch (Exception ex) {
+                    throw ex;
+                }
+            }
+    
+        };
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();
-    }
-
-    @FXML
-    private void handleKeyPressed(KeyEvent event) {
-        switch (event.getCode()) {
-            case UP:
-                movePlayerUp();
-                break;
-            case DOWN:
-                movePlayerDown();
-                break;
-            case LEFT:
-                movePlayerLeft();
-                break;
-            case RIGHT:
-                movePlayerRight();
-                break;
-            default:
-                break;
-        }
-
-        var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
-                + playerCharacter.getCharacterPosition().getY();
-        var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
-
-        coordinatesLabel.setText(coordinatesText + " - " + directionsText);
-
-        playerMoveCount.getAndIncrement();
-        
-        
-        gameOverAction.updateScore();
-        var score = winGameAction.updateScore();
-
-        scoreLabel.setText("Score: " + String.valueOf(score));
-    }
-
-    private void movePlayerRight() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerLeft() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
-                return;
-            }
-            ;
-        }
-    }
-
-    private void movePlayerDown() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
-                return;
-            }
-            ;
-        }
-    }
-
-    private void movePlayerUp() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
-                return;
-            }
-            ;
-        }
     }
 }

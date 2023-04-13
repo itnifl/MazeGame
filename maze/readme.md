@@ -1,11 +1,14 @@
+# Instructions
+- Reach the heart with the lowest possible moves and highest possible character life left.
+- Hit the H key to show high scores.
+
 # Bugs
-- Win and game over screens are not centered
+- Highscore screen, Win screen and game over screens are not centered.
 - It happens that you can trick walls
 - Ghosts are supposed to pulsate in opacity, but this seems to not work.
 - Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
 
 # Missing implementations
-- Restart button, or ability to restart the game.
 - Music and game sounds
 - Animations must be created (HappyAction / HappyAction)
 - A score system
@@ -21,7 +24,7 @@
 # How to install prerequisites and run this game.
 This game is developed in Visual Studio Code with the following extensions:
 - "Extension Pack for Java" 
-- "Maven for Java." 
+- "Maven for Java" 
 - "Debugger for java"
 - "Test runner for Java"
 
@@ -39,3 +42,5 @@ Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
 JAVA_HOME=C:\Program Files\Java\jdk-20
 PATH_TO_FX=C:\Program Files\Java\javafx-sdk-20
 PATH+=C:\Program Files\Java\jdk-20\bin
+
+In Visual Studio Code select the App.java file and run it.

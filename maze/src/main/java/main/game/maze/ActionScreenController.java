@@ -7,8 +7,13 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.AnchorPane;
+import main.game.maze.actions.RestartGameAction;
 
 public class ActionScreenController {
+    @FXML
+    protected AnchorPane screenRoot;
+
     @FXML
     protected Label scoreLabel;
 
@@ -45,5 +50,11 @@ public class ActionScreenController {
 
     public void showDamagePenaltyLabel() {
         damagePenaltyNoticeLabel.setVisible(true);
+    }
+
+    @FXML
+    protected void restartGame() {
+        RestartGameAction action = new RestartGameAction(screenRoot);
+        action.Load();
     }
 }

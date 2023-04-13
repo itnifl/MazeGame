@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.animation.Timeline?>
+<?import javafx.util.Duration?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SkinBase?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="highScoreRoot" fx:controller="main.game.maze.HighScoreController" xmlns:fx="http://javafx.com/fxml">
+    <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" >
+        <Label text="High Scores:" style="-fx-font-size: 24px; -fx-text-fill: black; -fx-font-weight: bold;" />
+        <VBox fx:id="highScoresVBox" spacing="3" alignment="CENTER">
+            <!-- high scores will be added here -->
+        </VBox>
+        <AnchorPane AnchorPane.bottomAnchor="20" prefWidth="50" prefHeight="1">
+            <Button fx:id="restartButton" text="Restart" onAction="#restartGame"/>
+        </AnchorPane>    
+    </VBox>
+</AnchorPane>

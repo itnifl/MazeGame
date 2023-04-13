@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import main.game.maze.WinGameController;
+import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
 
-public class WinGameAction extends ActionScreens implements ICanLetYouWin {
+public class WinGameAction extends CharacterActionScreens implements ICanLetYouWin {
     private AnchorPane root;
     private Runnable runnableOnWin;
 
@@ -24,15 +23,13 @@ public class WinGameAction extends ActionScreens implements ICanLetYouWin {
 
     @Override
     public void WinGame() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("winScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/winScreen.fxml"));
 
         runnableOnWin.run();
 
         try {
-            VBox winScreen = fxmlLoader.load();
+            AnchorPane winScreen = fxmlLoader.load();
             WinGameController controller = fxmlLoader.getController();
-
-            winScreen.setAlignment(Pos.CENTER);
 
             AnchorPane.setTopAnchor(winScreen, 0.0);
             AnchorPane.setRightAnchor(winScreen, 0.0);

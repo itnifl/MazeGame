@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import main.game.maze.GameOverController;
+import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.interfaces.IDeathSubscriber;
 
-public class GameOverAction extends ActionScreens implements IDeathSubscriber {
+public class GameOverAction extends CharacterActionScreens implements IDeathSubscriber {
     private AnchorPane root;
     private Runnable runnableOnGameOver;
 
@@ -26,15 +25,14 @@ public class GameOverAction extends ActionScreens implements IDeathSubscriber {
 
     @Override
     public void AddDeathNotification(ICanDie mortalEntity) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("gameOverScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/gameOverScreen.fxml"));
 
         runnableOnGameOver.run();
 
         try {
-            VBox gameOverScreen = fxmlLoader.load();
+            AnchorPane gameOverScreen = fxmlLoader.load();
             GameOverController controller = fxmlLoader.getController();
 
-            gameOverScreen.setAlignment(Pos.CENTER);
 
             AnchorPane.setTopAnchor(gameOverScreen, 0.0);
             AnchorPane.setRightAnchor(gameOverScreen, 0.0);

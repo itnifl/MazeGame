@@ -13,12 +13,9 @@ import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import main.game.maze.constants.StageConstants;
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
-import javafx.scene.Parent;
+
 
 public class App extends Application {
 
@@ -35,36 +32,11 @@ public class App extends Application {
             progressBar.prefWidthProperty().bind(root.widthProperty());
 
             GameController controller = loader.getController();
-            MazeWorld maze = MazeWorld.GetWorld();
-            var vectors = maze.getMazeVectors();
-
-            // Create a canvas
-            Canvas canvas = new Canvas(BoardMaxX, BoardMaxY);
-            GraphicsContext gc = canvas.getGraphicsContext2D();
-
-            // Set the stroke color and width
-            gc.setStroke(Color.BLACK);
-            gc.setLineWidth(3);
-
-            // Draw the maze vectors
-            for (Vector2D vector : vectors) {
-                double startX = vector.getStart().getX();
-                double startY = vector.getStart().getY();
-                double endX = vector.getEnd().getX();
-                double endY = vector.getEnd().getY();
-
-                gc.strokeLine(startX, startY, endX, endY);
-            }
-
-            // var mediaView = addMusic();
-            // Add the canvas to the root pane
-            root.getChildren().add(canvas);
-            // root.getChildren().add(mediaView);
-
+            
             primaryStage.setTitle("Maze Game");
             primaryStage.setScene(new Scene(root, BoardMaxX, BoardMaxY));
             primaryStage.show();
-            controller.initialize(null, null);
+            controller.setupGame();;
 
             // Start playing the music
             // this.mediaPlayer.play();

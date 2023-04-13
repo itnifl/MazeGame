@@ -11,4 +11,5 @@ public class StageConstants {
     public final static int StandardCharacterSpeed = 8;
     public final static int MaxScore = 10000;
     public final static int ScoreSubtractFactor = 10;
+    public final static int ScoreDeathPenalty = 4000;
 }

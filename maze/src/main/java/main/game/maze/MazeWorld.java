@@ -79,7 +79,7 @@ public class MazeWorld {
         // One can be created in Adobe Illustrator, Inkscape, Sketch, or Figma.
     }
 
-    public void GenerateMaze() {
+    public void GenerateMaze() throws Exception {
         int addingCounter = 0;
         List<Vector2D> unconnectedMazeVectors;
         do {
