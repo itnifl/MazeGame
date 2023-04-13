@@ -66,4 +66,8 @@
     <AnchorPane AnchorPane.bottomAnchor="10" AnchorPane.rightAnchor="10" prefWidth="150" prefHeight="1">
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />
     </AnchorPane>
+
+    <AnchorPane AnchorPane.topAnchor="20" AnchorPane.rightAnchor="1" prefWidth="50" prefHeight="1">
+        <Label fx:id="scoreLabel" text="Score: 10 000" />
+    </AnchorPane>
 </AnchorPane>

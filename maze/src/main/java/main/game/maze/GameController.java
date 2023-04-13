@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -53,6 +54,8 @@ public class GameController implements Initializable {
     private ProgressBar hpBar;
     @FXML
     private Node heart;
+    @FXML
+    private Label scoreLabel;
 
     private PlayerCharacter playerCharacter;
     private GhostCharacter ghostCharacter1;
@@ -69,6 +72,8 @@ public class GameController implements Initializable {
 
     private Thread runComputerCharactersThread;
     private static List<IMovingComputerCharacter> allComputerCharacters;
+
+    private static AtomicInteger playerMoveCount = new AtomicInteger(0);
 
     private static Task runComputerCharacters = new Task() {
 
@@ -96,20 +101,13 @@ public class GameController implements Initializable {
         hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
-        gameOverAction = new GameOverAction(root, () -> {
-            runComputerCharacters.cancel();
-        });
-
-        winGameAction = new WinGameAction(root, () -> {
-            runComputerCharacters.cancel();
-        });
-
         // create a timeline with two key frames
         timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
+
         // set the cycle count to indefinite
         timeline.setCycleCount(Timeline.INDEFINITE);
 
@@ -119,6 +117,14 @@ public class GameController implements Initializable {
                 player.getLayoutX(),
                 player.getLayoutY(),
                 hpBar);
+
+        gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {
+            runComputerCharacters.cancel();
+        });
+
+        winGameAction = new WinGameAction(playerCharacter, playerMoveCount, root, () -> {
+            runComputerCharacters.cancel();
+        });
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
@@ -191,6 +197,14 @@ public class GameController implements Initializable {
         var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
 
         coordinatesLabel.setText(coordinatesText + " - " + directionsText);
+
+        playerMoveCount.getAndIncrement();
+        
+        
+        gameOverAction.updateScore();
+        var score = winGameAction.updateScore();
+
+        scoreLabel.setText("Score: " + String.valueOf(score));
     }
 
     private void movePlayerRight() {
@@ -198,7 +212,6 @@ public class GameController implements Initializable {
             if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
             }
-            ;
         }
     }
 

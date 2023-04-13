@@ -19,6 +19,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
+            
     private AtomicInteger hitPoints = new AtomicInteger(100);
     private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();

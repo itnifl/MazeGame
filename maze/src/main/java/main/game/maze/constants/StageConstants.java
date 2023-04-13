@@ -8,5 +8,7 @@ public class StageConstants {
     public final static int SpeedReducer = 1;
     public final static int PlayerCharacterXYSize = 40;
     public final static int GhostCharacterXYSize = 40;
-    public static final int StandardCharacterSpeed = 8;
+    public final static int StandardCharacterSpeed = 8;
+    public final static int MaxScore = 10000;
+    public final static int ScoreSubtractFactor = 10;
 }
