@@ -9,19 +9,20 @@
 - If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
 
 # Missing implementations
-- Music and game sounds
-- Animations must be created (HappyAction / HappyAction)
-- Different characters
+- More music and game sounds
+- Animations must be created (DieAction / HappyAction)
+- More Different characters and more levels
 - Read a maze from SVG for player to play on
 - Automatically create a maze by random hitting a button.
 - Implement a ghost factory that outputs a n numer of ghosts depending of level hardness
 - Highscore screen, Win screen and game over screens need better design.
+- Generally more design
 
 # Sources:
 - Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E
-- Player Scream: https://www.youtube.com/watch?v=3rlV-whFgXQ
-- Game over: https://www.youtube.com/watch?v=bug1b0fQS8Y
-- Win game: https://www.youtube.com/watch?v=tEFU-oqSNjE
+- Player Scream sounds: https://www.youtube.com/watch?v=3rlV-whFgXQ
+- Game over sounds: https://www.youtube.com/watch?v=bug1b0fQS8Y
+- Win game music: https://www.youtube.com/watch?v=tEFU-oqSNjE
 - Vector math: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
 # How to install prerequisites and run this game.
