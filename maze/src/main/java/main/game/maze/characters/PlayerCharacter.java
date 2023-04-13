@@ -36,7 +36,6 @@ public class PlayerCharacter extends Character
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
         this.hpBar = hpBar;
-        //addScreamSound();
     }
 
     private MediaView addScreamSound() {
@@ -44,7 +43,6 @@ public class PlayerCharacter extends Character
         var resource = getClass().getResource("/main/game/maze/playerScream.mp3");
         Media media = new Media(resource.toString());
         this.screamMediaPlayer = new MediaPlayer(media);
-        this.screamMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
         // Create a MediaView and add it to the root node
         MediaView mediaView = new MediaView(screamMediaPlayer);
@@ -94,6 +92,9 @@ public class PlayerCharacter extends Character
         synchronized (lockObjectForHpbar) {
             hpBar.setProgress(hitPoints.get() / 100.0);
         }
+        
+        addScreamSound();
+        screamMediaPlayer.play();
 
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
@@ -128,7 +129,7 @@ public class PlayerCharacter extends Character
                 var canKillEntity = (ICanKill) entity;
                 System.out.println("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
-                //screamMediaPlayer.play();
+
             }
 
             if (entity instanceof ICanLetYouWin) {

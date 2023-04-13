@@ -18,7 +18,7 @@ public class App extends Application {
 
     private static int BoardMaxX = StageConstants.BoardMaxX;
     private static int BoardMaxY = StageConstants.BoardMaxY;
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer inGameMediaPlayer;
 
     @Override
     public void start(Stage primaryStage) {
@@ -37,7 +37,8 @@ public class App extends Application {
 
             // Start playing the music
             MediaView view = addMusic();
-            this.mediaPlayer.play();
+            root.getChildren().add(view);
+            inGameMediaPlayer.play();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,11 +52,11 @@ public class App extends Application {
 
         var resource = getClass().getResource("/main/game/maze/backgroundMusic.mp3");
         Media media = new Media(resource.toString());
-        this.mediaPlayer = new MediaPlayer(media);
-        this.mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        inGameMediaPlayer = new MediaPlayer(media);
+        inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
         // Create a MediaView and add it to the root node
-        MediaView mediaView = new MediaView(mediaPlayer);
+        MediaView mediaView = new MediaView(inGameMediaPlayer);
 
         return mediaView;
 

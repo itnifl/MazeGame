@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import main.game.maze.App;
 import main.game.maze.WinGameController;
 import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
@@ -26,6 +27,8 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/winScreen.fxml"));
 
         runnableOnWin.run();
+
+        App.inGameMediaPlayer.stop();
 
         try {
             AnchorPane winScreen = fxmlLoader.load();

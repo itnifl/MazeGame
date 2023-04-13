@@ -3,7 +3,9 @@ package main.game.maze.actions;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import main.game.maze.App;
 import main.game.maze.GameController;
+import main.game.maze.WinGameController;
 import main.game.maze.actions.base.ActionScreens;
 
 public class RestartGameAction extends ActionScreens {
@@ -16,6 +18,10 @@ public class RestartGameAction extends ActionScreens {
     public void Load() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/game.fxml"));
 
+        if(WinGameController.winGameMediaPlayer != null) {
+            WinGameController.winGameMediaPlayer.stop();
+        }
+        App.inGameMediaPlayer.play();
 
         try {
             AnchorPane screen = fxmlLoader.load();

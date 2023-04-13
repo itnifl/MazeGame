@@ -6,6 +6,7 @@
 - It happens that you can trick walls
 - Ghosts are supposed to pulsate in opacity, but this seems to not work.
 - Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
+- If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
 
 # Missing implementations
 - Music and game sounds
@@ -19,6 +20,8 @@
 # Sources:
 - Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E
 - Player Scream: https://www.youtube.com/watch?v=3rlV-whFgXQ
+- Game over: https://www.youtube.com/watch?v=bug1b0fQS8Y
+- Win game: https://www.youtube.com/watch?v=tEFU-oqSNjE
 - Vector math: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
 # How to install prerequisites and run this game.
