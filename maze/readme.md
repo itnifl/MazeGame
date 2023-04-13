@@ -3,7 +3,6 @@
 - Hit the H key to show high scores.
 
 # Bugs
-- Highscore screen, Win screen and game over screens are not centered.
 - It happens that you can trick walls
 - Ghosts are supposed to pulsate in opacity, but this seems to not work.
 - Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
@@ -11,11 +10,11 @@
 # Missing implementations
 - Music and game sounds
 - Animations must be created (HappyAction / HappyAction)
-- A score system
 - Different characters
 - Read a maze from SVG for player to play on
 - Automatically create a maze by random hitting a button.
 - Implement a ghost factory that outputs a n numer of ghosts depending of level hardness
+- Highscore screen, Win screen and game over screens need better design.
 
 # Sources:
 - Background music, Sky Walker - Epic Wild Western Music: https://www.youtube.com/watch?v=XnGCmZkh7n4
