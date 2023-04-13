@@ -10,6 +10,7 @@
             <Label text="Your score: " style="-fx-font-size: 18px; -fx-text-fill: black;" />
             <Label fx:id="scoreLabel" text="0" style="-fx-font-size: 24px; -fx-text-fill: black; -fx-font-weight: bold;" />
             <Label fx:id="damagePenaltyNoticeLabel" text="- Including damage penalty" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" />
+            <Button text="Save Score" onAction="#saveScore"/>
         </VBox>
     </AnchorPane>
 </VBox>

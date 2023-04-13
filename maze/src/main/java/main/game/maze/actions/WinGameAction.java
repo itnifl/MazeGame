@@ -10,7 +10,6 @@ import javafx.scene.layout.VBox;
 import main.game.maze.WinGameController;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
-import main.game.maze.constants.StageConstants;
 
 public class WinGameAction extends ActionScreens implements ICanLetYouWin {
     private AnchorPane root;
