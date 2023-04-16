@@ -20,7 +20,6 @@ public class ActionScreenController {
     @FXML
     protected Label damagePenaltyNoticeLabel;
 
-
     @FXML
     protected void saveScore() {
         TextInputDialog dialog = new TextInputDialog();
@@ -33,20 +32,23 @@ public class ActionScreenController {
             String playerName = result.get();
             int score = Integer.parseInt(scoreLabel.getText());
 
-            try {
-                FileWriter writer = new FileWriter("scores.txt", true);
-                writer.write(playerName + ": " + score + "\n");
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            writeScore(playerName, score, "scores.txt");
+        }
+    }
+
+    public void writeScore(String playerName, int score, String filename) {
+        try {
+            FileWriter writer = new FileWriter(filename, true);
+            writer.write(playerName + ": " + score + "\n");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void setScoreLabel(int score) {
         scoreLabel.setText(String.valueOf(score));
     }
-
 
     public void showDamagePenaltyLabel() {
         damagePenaltyNoticeLabel.setVisible(true);
