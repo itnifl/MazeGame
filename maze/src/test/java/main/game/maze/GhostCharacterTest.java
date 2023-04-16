@@ -1,6 +1,7 @@
 package main.game.maze;
 
 import javafx.geometry.Bounds;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
@@ -15,7 +16,7 @@ class GhostCharacterTest {
         Rectangle gCharacterGraphics = new Rectangle();
         GhostCharacter ghost = new GhostCharacter(gCharacterGraphics, 0, 0);
 
-        Rectangle pCharacterGraphics = new Rectangle();
+        ImageView pCharacterGraphics = new ImageView();
         PlayerCharacter entity = new PlayerCharacter(pCharacterGraphics, 0, 0, null);
 
         Bounds nodeBounds = new Rectangle(0, 0, 10, 10).getBoundsInParent();

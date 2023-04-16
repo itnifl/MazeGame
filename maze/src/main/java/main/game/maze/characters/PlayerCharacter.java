@@ -99,7 +99,7 @@ public class PlayerCharacter extends Character
         hitPoints.addAndGet(-hp);
 
         var characterGraphics = this.getCharacterGraphics();
-        if (characterGraphics != null) {
+        if (characterGraphics != null && hpBar != null) {
             flashRed((ImageView) characterGraphics);
         }
 
