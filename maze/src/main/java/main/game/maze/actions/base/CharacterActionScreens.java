@@ -12,7 +12,18 @@ public class CharacterActionScreens extends ActionScreens {
     public int updateScore() {
         var hpReduction = 100 - playerCharacter.getHitPoints();
         var scoreDeathPenalty = hpReduction >= 100 ? StageConstants.ScoreDeathPenalty : 0;
-        this.score = StageConstants.MaxScore -  (playerMoveCount.get() * StageConstants.ScoreSubtractFactor) - (hpReduction * StageConstants.ScoreSubtractFactor) - scoreDeathPenalty;
+
+        this.score = StageConstants.MaxScore - (playerMoveCount.get() * StageConstants.ScoreSubtractFactor)
+                - (hpReduction * StageConstants.ScoreSubtractFactor) - scoreDeathPenalty;
+
+        if (playerCharacter.isWinning) {
+            this.score += StageConstants.ScoreWinBonus;
+        }
         return score;
+    }
+
+    public int resetScore() {
+        this.score = StageConstants.MaxScore;
+        return StageConstants.MaxScore;
     }
 }

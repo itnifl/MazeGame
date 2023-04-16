@@ -16,6 +16,7 @@
               <Label style="-fx-font-size: 18px; -fx-text-fill: black;" text="Your score: " />
               <Label fx:id="scoreLabel" style="-fx-font-size: 24px; -fx-text-fill: black; -fx-font-weight: bold;" text="0" />
               <Label fx:id="damagePenaltyNoticeLabel" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" text="- Including damage penalty" />
+              <Label fx:id="winBonusNoticeLabel" style="-fx-font-size: 16px; -fx-text-fill: green; -fx-font-weight: bold;" text="- Including win bonus" />
               <Button onAction="#saveScore" style="-fx-padding: 5px; -fx-spacing: 10px;" text="Save Score" />
               <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 16px; -fx-spacing: 10px;" text="Restart" />
           </children>     

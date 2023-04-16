@@ -34,6 +34,10 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
         try {
             AnchorPane winScreen = fxmlLoader.load();
             WinGameController controller = fxmlLoader.getController();
+            playerCharacter.isWinning = true;
+            updateScore();
+
+            controller.setScoreLabel(this.score);
 
             AnchorPane.setTopAnchor(winScreen, 0.0);
             AnchorPane.setRightAnchor(winScreen, 0.0);

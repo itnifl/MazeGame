@@ -1,12 +1,18 @@
 package main.game.maze.characters;
 
+import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -29,6 +35,7 @@ public class PlayerCharacter extends Character
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<ICanSubscribeAndNotifyPosition>();
     private ProgressBar hpBar;
     private MediaPlayer screamMediaPlayer;
+    public boolean isWinning = false;
 
     public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar) {
         super(characterGraphics, x, y);
@@ -90,6 +97,12 @@ public class PlayerCharacter extends Character
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
+
+        var characterGraphics = this.getCharacterGraphics();
+        if (characterGraphics != null) {
+            flashRed((ImageView) characterGraphics);
+        }
+
         synchronized (lockObjectForHpbar) {
             if (hpBar != null)
                 hpBar.setProgress(hitPoints.get() / 100.0);
@@ -139,6 +152,7 @@ public class PlayerCharacter extends Character
 
             if (entity instanceof ICanLetYouWin) {
                 try {
+                    this.isWinning = true;
                     ((ICanLetYouWin) entity).WinGame();
                 } catch (Exception ex) {
 
@@ -152,7 +166,23 @@ public class PlayerCharacter extends Character
         return touchKillers;
     }
 
-    public List<IDeathSubscriber> getDeathSubscribers() {
-        return null;
+    private void flashRed(ImageView imageView) {
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(0.2);
+        colorAdjust.setSaturation(1.0);
+        colorAdjust.setContrast(1.0);
+        colorAdjust.setHue(-1.0);
+
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(colorAdjust.hueProperty(), -1.0)),
+                new KeyFrame(Duration.seconds(0.5), new KeyValue(colorAdjust.hueProperty(), 0.5)),
+                new KeyFrame(Duration.seconds(1.0), new KeyValue(colorAdjust.hueProperty(), -1.0)));
+
+        timeline.setOnFinished(event -> {
+            imageView.setEffect(null);
+        });
+
+        imageView.setEffect(colorAdjust);
+        timeline.play();
     }
 }

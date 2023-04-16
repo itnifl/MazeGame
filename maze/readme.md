@@ -1,8 +1,11 @@
 # Instructions
 - Reach the heart with the lowest possible moves and highest possible character life left.
 - Your score will lower for each move you make and the more life you loose.
+- You will get extra 4 000 in score for reaching the heart.
+- You will loose 4 000 in score for dying.
 - Hit the H key to show high scores.
 - You will get the chance to save your scores when you die or win.
+- try the game a few times to get to know it.
 
 # Bugs
 - It happens that you can trick walls
@@ -10,6 +13,7 @@
 - Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
 - If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
 - Application system is not very testable, unit tests should have been written first
+- The Action Screens (Win and Game Over) some times bug up or don't show after I added the flash effect on the player when the player gets hurt. This is rare.
 
 # Missing implementations
 - More music and game sounds
@@ -22,6 +26,7 @@
 - Generally more design
 - A Menu with instructions and setup
 - GameLogic must be separated in GameController
+- Score is kept in base class CharacterActionScreens, this should be refactored. 
 
 # Sources:
 - Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E

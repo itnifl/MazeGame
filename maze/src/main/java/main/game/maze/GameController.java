@@ -243,6 +243,9 @@ public class GameController implements Initializable {
         gameBoard.requestFocus();
 
         runComputerCharacters();
+        playerCharacter.setHitPoints(100);
+        var score = winGameAction.resetScore();
+        scoreLabel.setText("Score: " + String.valueOf(score));
     }
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
