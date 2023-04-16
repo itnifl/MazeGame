@@ -12,12 +12,10 @@ import javafx.stage.Stage;
 import main.game.maze.constants.StageConstants;
 import java.io.IOException;
 
-
-
 public class App extends Application {
-
     private static int BoardMaxX = StageConstants.BoardMaxX;
     private static int BoardMaxY = StageConstants.BoardMaxY;
+
     public static MediaPlayer inGameMediaPlayer;
 
     @Override
@@ -29,11 +27,12 @@ public class App extends Application {
             progressBar.prefWidthProperty().bind(root.widthProperty());
 
             GameController controller = loader.getController();
-            
+
             primaryStage.setTitle("Maze Game");
             primaryStage.setScene(new Scene(root, BoardMaxX, BoardMaxY));
             primaryStage.show();
-            controller.setupGame();;
+            controller.setupGame();
+            ;
 
             // Start playing the music
             MediaView view = addMusic();

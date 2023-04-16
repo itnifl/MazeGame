@@ -115,8 +115,7 @@ public class GameController implements Initializable {
         coordinatesLabel.setText(coordinatesText + " - " + directionsText);
 
         playerMoveCount.getAndIncrement();
-        
-        
+
         gameOverAction.updateScore();
         var score = winGameAction.updateScore();
 
@@ -186,7 +185,6 @@ public class GameController implements Initializable {
                 player.getLayoutY(),
                 hpBar);
 
-                
         var vectors = maze.getMazeVectors();
 
         // Create a canvas
@@ -269,7 +267,7 @@ public class GameController implements Initializable {
     }
 
     public void runComputerCharacters() {
-        if(runComputerCharactersThread != null) {
+        if (runComputerCharactersThread != null) {
             runComputerCharacters.cancel();
         }
         runComputerCharacters = new Task() {
@@ -290,7 +288,7 @@ public class GameController implements Initializable {
                     throw ex;
                 }
             }
-    
+
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();

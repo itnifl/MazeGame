@@ -15,8 +15,8 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
     private AnchorPane root;
     private Runnable runnableOnGameOver;
 
-
-    public GameOverAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root, Runnable runnableOnGameOver) {
+    public GameOverAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root,
+            Runnable runnableOnGameOver) {
         this.root = root;
         this.runnableOnGameOver = runnableOnGameOver;
         this.playerMoveCount = playerMoveCount;
@@ -33,34 +33,21 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
             AnchorPane gameOverScreen = fxmlLoader.load();
             GameOverController controller = fxmlLoader.getController();
 
-
-            AnchorPane.setTopAnchor(gameOverScreen, 0.0);
-            AnchorPane.setRightAnchor(gameOverScreen, 0.0);
-            AnchorPane.setBottomAnchor(gameOverScreen, 0.0);
-            AnchorPane.setLeftAnchor(gameOverScreen, 0.0);
-
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(gameOverScreen);
 
-            AnchorPane.setTopAnchor(newRoot, 0.0);
-            AnchorPane.setRightAnchor(newRoot, 0.0);
-            AnchorPane.setBottomAnchor(newRoot, 0.0);
-            AnchorPane.setLeftAnchor(newRoot, 0.0);
-
-            
             updateScore();
             controller.setScoreLabel(this.score);
 
             var hitPoints = playerCharacter.getHitPoints();
-            if(hitPoints < 100) {
+            if (hitPoints < 100) {
                 controller.showDamagePenaltyLabel();
             }
-            if(hitPoints <= 0) {
+            if (hitPoints <= 0) {
                 controller.showDeathPenaltyLabel();
             }
 
             this.replaceRoot(root, newRoot);
-
 
         } catch (IOException e) {
             e.printStackTrace();

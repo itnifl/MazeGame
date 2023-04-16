@@ -18,7 +18,7 @@
               <Label fx:id="deathPenaltyNoticeLabel" prefHeight="25.0" prefWidth="206.0" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" text="- Including death penalty" />
               <Label fx:id="damagePenaltyNoticeLabel" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" text="- Including damage penalty" />
               <Button onAction="#saveScore" style="-fx-padding: 5px; -fx-spacing: 10px;" text="Save Score" />            
-              <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 20px; -fx-spacing: 10px;" text="Restart" />
+              <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 16px; -fx-spacing: 10px;" text="Restart" />
           </children>
        </VBox>
    </children>

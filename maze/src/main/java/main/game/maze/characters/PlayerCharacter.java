@@ -22,7 +22,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
-            
+
     private AtomicInteger hitPoints = new AtomicInteger(100);
     private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();
@@ -82,7 +82,8 @@ public class PlayerCharacter extends Character
     public void setHitPoints(int hp) {
         hitPoints = new AtomicInteger(hp);
         synchronized (lockObjectForHpbar) {
-            hpBar.setProgress(hitPoints.get() / 100.0);
+            if (hpBar != null)
+                hpBar.setProgress(hitPoints.get() / 100.0);
         }
     }
 
@@ -90,11 +91,14 @@ public class PlayerCharacter extends Character
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
         synchronized (lockObjectForHpbar) {
-            hpBar.setProgress(hitPoints.get() / 100.0);
+            if (hpBar != null)
+                hpBar.setProgress(hitPoints.get() / 100.0);
         }
-        
-        addScreamSound();
-        screamMediaPlayer.play();
+
+        if (hpBar != null) {
+            addScreamSound();
+            screamMediaPlayer.play();
+        }
 
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
@@ -108,7 +112,8 @@ public class PlayerCharacter extends Character
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
         synchronized (lockObjectForHpbar) {
-            hpBar.setProgress(hitPoints.get() / 100.0);
+            if (hpBar != null)
+                hpBar.setProgress(hitPoints.get() / 100.0);
         }
     }
 
@@ -145,5 +150,9 @@ public class PlayerCharacter extends Character
     @Override
     public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() {
         return touchKillers;
+    }
+
+    public List<IDeathSubscriber> getDeathSubscribers() {
+        return null;
     }
 }

@@ -25,23 +25,31 @@ public class HighScoreController implements Initializable {
     @FXML
     private VBox highScoresVBox;
 
+    private List<Score> scores = new ArrayList<>();
+
     @Override
-    public void initialize(URL location, ResourceBundle resources) {        
+    public void initialize(URL location, ResourceBundle resources) {
         List<Score> scores = loadScoresFromFile();
 
         // sort scores in descending order
         scores.sort(Collections.reverseOrder());
 
         // add score labels to the VBox
-        for (Score score : scores) {
-            Label scoreLabel = new Label(score.toString());
-            scoreLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: black;");
-            highScoresVBox.getChildren().add(scoreLabel);
+        if (highScoresVBox != null) {
+            for (Score score : scores) {
+                Label scoreLabel = new Label(score.toString());
+                scoreLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: black;");
+                highScoresVBox.getChildren().add(scoreLabel);
+            }
         }
     }
 
+    public List<Score> getScores() {
+        return scores;
+    }
+
     private List<Score> loadScoresFromFile() {
-        List<Score> scores = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new FileReader("scores.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {

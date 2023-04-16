@@ -15,7 +15,8 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
     private AnchorPane root;
     private Runnable runnableOnWin;
 
-    public WinGameAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root, Runnable runnableOnWin) {
+    public WinGameAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root,
+            Runnable runnableOnWin) {
         this.root = root;
         this.runnableOnWin = runnableOnWin;
         this.playerMoveCount = playerMoveCount;
@@ -52,7 +53,7 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
             controller.setScoreLabel(this.score);
 
             var hitPoints = playerCharacter.getHitPoints();
-            if(hitPoints < 100) {
+            if (hitPoints < 100) {
                 controller.showDamagePenaltyLabel();
             }
 

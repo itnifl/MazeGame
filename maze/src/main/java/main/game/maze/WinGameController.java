@@ -18,7 +18,7 @@ public class WinGameController extends ActionScreenController implements Initial
         winGameMediaPlayer.play();
     }
 
-    private MediaView addWinGameSound() {
+    MediaView addWinGameSound() {
 
         var resource = getClass().getResource("/main/game/maze/winGame.mp3");
         Media media = new Media(resource.toString());

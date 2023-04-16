@@ -20,6 +20,9 @@ public class MazeWorld {
         return world;
     }
 
+    /*
+     * Gives us a predefined standard map
+     */
     public MazeWorld() {
         mazeVectors = new ArrayList<>();
         mazeVectors.add(new Vector2D(400, 22, 400, 100)); // vertical vector

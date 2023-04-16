@@ -18,7 +18,7 @@ public class RestartGameAction extends ActionScreens {
     public void Load() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/game.fxml"));
 
-        if(WinGameController.winGameMediaPlayer != null) {
+        if (WinGameController.winGameMediaPlayer != null) {
             WinGameController.winGameMediaPlayer.stop();
         }
         App.inGameMediaPlayer.play();
@@ -27,24 +27,13 @@ public class RestartGameAction extends ActionScreens {
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
 
-            AnchorPane.setTopAnchor(screen, 0.0);
-            AnchorPane.setRightAnchor(screen, 0.0);
-            AnchorPane.setBottomAnchor(screen, 0.0);
-            AnchorPane.setLeftAnchor(screen, 0.0);
-
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(screen);
-
-            AnchorPane.setTopAnchor(newRoot, 0.0);
-            AnchorPane.setRightAnchor(newRoot, 0.0);
-            AnchorPane.setBottomAnchor(newRoot, 0.0);
-
 
             this.replaceRoot(root, newRoot);
 
             controller.initialize(null, null);
 
-            
             controller.setupGame();
         } catch (IOException e) {
             e.printStackTrace();

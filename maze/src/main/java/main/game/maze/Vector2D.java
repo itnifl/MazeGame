@@ -110,8 +110,11 @@ public class Vector2D {
      * 
      * The dot product of two vectors is a scalar (single number) that represents
      * the projection of one vector onto the other.
-     * Geometrically, it is the product of the magnitudes of the two vectors and the
-     * cosine of the angle between them.
+     * Geometrically, the dot product is a scalar value that indicates how "aligned"
+     * two vectors are with each other: if the dot product is positive,
+     * the vectors are pointing in roughly the same direction, if it is negative,
+     * they are pointing in roughly opposite directions, and if it is zero, they are
+     * perpendicular to each other.
      * Mathematically, if two vectors are represented as A = (A1, A2) and B = (B1,
      * B2),
      * then their dot product is given by the formula A1 * B1 + A2 * B2.
