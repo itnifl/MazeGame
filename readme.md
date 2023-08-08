@@ -27,6 +27,7 @@
 - A Menu with instructions and setup
 - GameLogic must be separated in GameController
 - Score is kept in base class CharacterActionScreens, this should be refactored. 
+- Implement proper algorithms for gameplay and movement.
 
 # Sources:
 - Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E
