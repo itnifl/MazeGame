@@ -1,3 +1,4 @@
 KingKong: 5090
 YesMan: 2990
 Neddis: 1520
+Winner: 4580

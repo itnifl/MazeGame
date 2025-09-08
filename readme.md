@@ -47,16 +47,16 @@ This game is developed in Visual Studio Code with the following extensions:
 Visual Studio Code is free and can be found here: https://code.visualstudio.com/download
 Extensions are found and installed in the "Extensions" submenu.
 
-Java 20 SDK was used during the development of this game and is needed to run it:
-- https://www.oracle.com/java/technologies/downloads/#java20
+Java 24 SDK was used during the development of this game and is needed to run it:
+- https://www.oracle.com/java/technologies/downloads/#java23
 
 
-Java FX 20 SDK was used during the development of this game and it is needed to run it:
+Java FX 21 SDK was used during the development of this game and it is needed to run it:
 - https://gluonhq.com/products/javafx/
 
 Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
-JAVA_HOME=C:\Program Files\Java\jdk-20
-PATH_TO_FX=C:\Program Files\Java\javafx-sdk-20
-PATH+=C:\Program Files\Java\jdk-20\bin
+- JAVA_HOME=C:\Program Files\Java\jdk-24
+- PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
+- PATH+=C:\Program Files\Java\jdk-24\bin
 
 In Visual Studio Code select the App.java file and run it.
