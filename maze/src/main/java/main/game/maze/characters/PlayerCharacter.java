@@ -52,10 +52,7 @@ public class PlayerCharacter extends Character
         this.screamMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
-        MediaView mediaView = new MediaView(screamMediaPlayer);
-
-        return mediaView;
-
+        return new MediaView(screamMediaPlayer);
     }
 
     @Override

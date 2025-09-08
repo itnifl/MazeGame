@@ -31,10 +31,7 @@ public class GameOverController extends ActionScreenController implements Initia
         this.gameOverMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
-        MediaView mediaView = new MediaView(gameOverMediaPlayer);
-
-        return mediaView;
-
+        return new MediaView(gameOverMediaPlayer);
     }
 
     public void showDeathPenaltyLabel() {

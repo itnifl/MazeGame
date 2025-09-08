@@ -25,9 +25,6 @@ public class WinGameController extends ActionScreenController implements Initial
         winGameMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
-        MediaView mediaView = new MediaView(winGameMediaPlayer);
-
-        return mediaView;
-
+        return new MediaView(winGameMediaPlayer);
     }
 }

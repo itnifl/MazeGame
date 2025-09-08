@@ -13,8 +13,8 @@ import main.game.maze.constants.StageConstants;
 import java.io.IOException;
 
 public class App extends Application {
-    private static int BoardMaxX = StageConstants.BoardMaxX;
-    private static int BoardMaxY = StageConstants.BoardMaxY;
+    private static int boardMaxX = StageConstants.BoardMaxX;
+    private static int boardMaxY = StageConstants.BoardMaxY;
 
     public static MediaPlayer inGameMediaPlayer;
 
@@ -29,7 +29,7 @@ public class App extends Application {
             GameController controller = loader.getController();
 
             primaryStage.setTitle("Maze Game");
-            primaryStage.setScene(new Scene(root, BoardMaxX, BoardMaxY));
+            primaryStage.setScene(new Scene(root, boardMaxX, boardMaxY));
             primaryStage.show();
             controller.setupGame();
             ;
@@ -55,9 +55,6 @@ public class App extends Application {
         inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
 
         // Create a MediaView and add it to the root node
-        MediaView mediaView = new MediaView(inGameMediaPlayer);
-
-        return mediaView;
-
+        return new MediaView(inGameMediaPlayer);
     }
 }

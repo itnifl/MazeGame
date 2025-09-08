@@ -29,7 +29,7 @@ public class HighScoreController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        List<Score> scores = loadScoresFromFile();
+        scores = loadScoresFromFile();
 
         // sort scores in descending order
         scores.sort(Collections.reverseOrder());
