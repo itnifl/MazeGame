@@ -1,4 +1,18 @@
+# Maven build
+maze/target
 
+# IDEs
+.classpath
+.project
+.settings/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+#General:
+maze/target/classes/main/game/maze
 maze/target/classes/main/game/maze/characters/PlayerCharacter$DieAction.class
 maze/target/classes/main/game/maze/characters/PlayerCharacter$HappyAction.class
 *.class
