@@ -38,25 +38,28 @@
 - Images used in game: https://opengameart.org/
 
 # How to install prerequisites and run this game.
-This game is developed in Visual Studio Code with the following extensions:
-- "Extension Pack for Java" 
-- "Maven for Java" 
-- "Debugger for java"
-- "Test runner for Java"
+The code is only tested for running from Visual Studio Code. Download it!
 
 Visual Studio Code is free and can be found here: https://code.visualstudio.com/download
-Extensions are found and installed in the "Extensions" submenu.
+Extensions are found and installed in the "Extensions" submenu, download and imstall the ones mentioned below.
 
-Java 24 SDK was used during the development of this game and is needed to run it:
-- https://www.oracle.com/java/technologies/downloads/#java23
+This game is developed in Visual Studio Code with the following extensions:
+- ⬇️ "Extension Pack for Java" 
+- ⬇️ "Maven for Java" 
+- ⬇️ "Debugger for java"
+- ⬇️ "Test runner for Java"
+
+Download Java 24 SDK to run the game:
+- ⬇️ https://www.oracle.com/java/technologies/downloads/#java24
 
 
-Java FX 21 SDK was used during the development of this game and it is needed to run it:
-- https://gluonhq.com/products/javafx/
+Download Java FX 21 SDK was used during the development of this game and it is needed to run it:
+- ⬇️ https://gluonhq.com/products/javafx/
 
 Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
-- JAVA_HOME=C:\Program Files\Java\jdk-24
-- PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
-- PATH+=C:\Program Files\Java\jdk-24\bin
+- 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-24
+- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
+- 🛠️ PATH+=C:\Program Files\Java\jdk-24\bin
 
-In Visual Studio Code select the App.java file and run it.
+``Then:
+***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``
