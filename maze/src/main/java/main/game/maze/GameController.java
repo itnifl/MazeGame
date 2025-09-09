@@ -288,6 +288,7 @@ public class GameController implements Initializable {
                         Thread.sleep(60);
                     } while (true);
                 } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
                     throw ex;
                 }
             }
