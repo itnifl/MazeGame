@@ -31,8 +31,8 @@ public class PlayerCharacter extends Character
 
     private AtomicInteger hitPoints = new AtomicInteger(100);
     private static final Object lockObjectForHpbar = new Object();
-    private List<IDeathSubscriber> deathSubscribers = new ArrayList<IDeathSubscriber>();
-    private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<ICanSubscribeAndNotifyPosition>();
+    private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
+    private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
     private ProgressBar hpBar;
     private MediaPlayer screamMediaPlayer;
     public boolean isWinning = false;
@@ -151,8 +151,8 @@ public class PlayerCharacter extends Character
                 try {
                     this.isWinning = true;
                     ((ICanLetYouWin) entity).WinGame();
-                } catch (Exception ex) {
-
+                } catch (Exception _) {
+                    //Swallow exception
                 }
             }
         }

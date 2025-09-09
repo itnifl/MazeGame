@@ -18,7 +18,7 @@ public class GhostCharacter extends ComputerCharacter
     private static int ghostSpeedFactor = 2;
     private static int damageByTouch = 1;
 
-    private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<ICanSubscribeAndNotifyPosition>();
+    private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
     public GhostCharacter(Node characterGraphics, double positionX, double positionY) {
         super(characterGraphics, positionX, positionX, ghostSpeedFactor);
