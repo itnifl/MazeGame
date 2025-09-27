@@ -3,10 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>main.game.maze</groupId>
-  <artifactId>maze</artifactId>
-  <version>1</version>
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1</version>
+  </parent>
 
+  <groupId>main.game.maze</groupId>
+  <artifactId>maze-base</artifactId>
+  <version>1</version>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -46,6 +52,12 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.jupiter.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>opponents-module</artifactId>
+      <version>1</version>
     </dependency>
   </dependencies>
 
