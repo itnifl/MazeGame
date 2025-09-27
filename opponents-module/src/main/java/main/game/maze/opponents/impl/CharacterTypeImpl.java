@@ -1,0 +1,389 @@
+/**
+ */
+package main.game.maze.opponents.impl;
+
+import main.game.maze.opponents.CharacterType;
+import main.game.maze.opponents.OpponentsPackage;
+
+import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.ecore.EClass;
+
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model object '<em><b>Character Type</b></em>'.
+ * <!-- end-user-doc -->
+ * <p>
+ * The following features are implemented:
+ * </p>
+ * <ul>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getId <em>Id</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getDisplayName <em>Display Name</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#isEnabled <em>Enabled</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getHealth <em>Health</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getSpeed <em>Speed</em>}</li>
+ * </ul>
+ *
+ * @generated
+ */
+public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container implements CharacterType {
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDisplayName() <em>Display Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDisplayName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DISPLAY_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDisplayName() <em>Display Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDisplayName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String displayName = DISPLAY_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ENABLED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean enabled = ENABLED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getHealth() <em>Health</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHealth()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int HEALTH_EDEFAULT = 100;
+
+	/**
+	 * The cached value of the '{@link #getHealth() <em>Health</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHealth()
+	 * @generated
+	 * @ordered
+	 */
+	protected int health = HEALTH_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSpeed() <em>Speed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpeed()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final double SPEED_EDEFAULT = 1.0;
+
+	/**
+	 * The cached value of the '{@link #getSpeed() <em>Speed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpeed()
+	 * @generated
+	 * @ordered
+	 */
+	protected double speed = SPEED_EDEFAULT;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected CharacterTypeImpl() {
+		super();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected EClass eStaticClass() {
+		return OpponentsPackage.Literals.CHARACTER_TYPE;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setId(String newId) {
+		String oldId = id;
+		id = newId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setDisplayName(String newDisplayName) {
+		String oldDisplayName = displayName;
+		displayName = newDisplayName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__DISPLAY_NAME, oldDisplayName, displayName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setEnabled(boolean newEnabled) {
+		boolean oldEnabled = enabled;
+		enabled = newEnabled;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__ENABLED, oldEnabled, enabled));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int getHealth() {
+		return health;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setHealth(int newHealth) {
+		int oldHealth = health;
+		health = newHealth;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__HEALTH, oldHealth, health));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public double getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSpeed(double newSpeed) {
+		double oldSpeed = speed;
+		speed = newSpeed;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__SPEED, oldSpeed, speed));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eGet(int featureID, boolean resolve, boolean coreType) {
+		switch (featureID) {
+			case OpponentsPackage.CHARACTER_TYPE__ID:
+				return getId();
+			case OpponentsPackage.CHARACTER_TYPE__DISPLAY_NAME:
+				return getDisplayName();
+			case OpponentsPackage.CHARACTER_TYPE__ENABLED:
+				return isEnabled();
+			case OpponentsPackage.CHARACTER_TYPE__HEALTH:
+				return getHealth();
+			case OpponentsPackage.CHARACTER_TYPE__SPEED:
+				return getSpeed();
+		}
+		return super.eGet(featureID, resolve, coreType);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void eSet(int featureID, Object newValue) {
+		switch (featureID) {
+			case OpponentsPackage.CHARACTER_TYPE__ID:
+				setId((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__DISPLAY_NAME:
+				setDisplayName((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__ENABLED:
+				setEnabled((Boolean)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__HEALTH:
+				setHealth((Integer)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__SPEED:
+				setSpeed((Double)newValue);
+				return;
+		}
+		super.eSet(featureID, newValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void eUnset(int featureID) {
+		switch (featureID) {
+			case OpponentsPackage.CHARACTER_TYPE__ID:
+				setId(ID_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__DISPLAY_NAME:
+				setDisplayName(DISPLAY_NAME_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__ENABLED:
+				setEnabled(ENABLED_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__HEALTH:
+				setHealth(HEALTH_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__SPEED:
+				setSpeed(SPEED_EDEFAULT);
+				return;
+		}
+		super.eUnset(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean eIsSet(int featureID) {
+		switch (featureID) {
+			case OpponentsPackage.CHARACTER_TYPE__ID:
+				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case OpponentsPackage.CHARACTER_TYPE__DISPLAY_NAME:
+				return DISPLAY_NAME_EDEFAULT == null ? displayName != null : !DISPLAY_NAME_EDEFAULT.equals(displayName);
+			case OpponentsPackage.CHARACTER_TYPE__ENABLED:
+				return enabled != ENABLED_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__HEALTH:
+				return health != HEALTH_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__SPEED:
+				return speed != SPEED_EDEFAULT;
+		}
+		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuilder result = new StringBuilder(super.toString());
+		result.append(" (id: ");
+		result.append(id);
+		result.append(", displayName: ");
+		result.append(displayName);
+		result.append(", enabled: ");
+		result.append(enabled);
+		result.append(", health: ");
+		result.append(health);
+		result.append(", speed: ");
+		result.append(speed);
+		result.append(')');
+		return result.toString();
+	}
+
+} //CharacterTypeImpl
