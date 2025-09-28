@@ -148,6 +148,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getOpponentModel_MaxThreat() {
+		return (EAttribute)opponentModelEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getCharacterType() {
 		return characterTypeEClass;
 	}
@@ -200,6 +210,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	@Override
 	public EAttribute getCharacterType_Speed() {
 		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCharacterType_ThreatLevel() {
+		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -274,6 +294,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		opponentModelEClass = createEClass(OPPONENT_MODEL);
 		createEAttribute(opponentModelEClass, OPPONENT_MODEL__NAME);
 		createEReference(opponentModelEClass, OPPONENT_MODEL__CHARACTER_TYPES);
+		createEAttribute(opponentModelEClass, OPPONENT_MODEL__MAX_THREAT);
 
 		characterTypeEClass = createEClass(CHARACTER_TYPE);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ID);
@@ -281,6 +302,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ENABLED);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__HEALTH);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__SPEED);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__THREAT_LEVEL);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
@@ -324,6 +346,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getOpponentModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOpponentModel_CharacterTypes(), this.getCharacterType(), null, "characterTypes", null, 1, -1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEDouble(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(characterTypeEClass, CharacterType.class, "CharacterType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCharacterType_Id(), ecorePackage.getEString(), "id", null, 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -331,6 +354,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Health(), ecorePackage.getEInt(), "health", "100", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Speed(), ecorePackage.getEDouble(), "speed", "1.0", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", null, 0, 1, CharacterType.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

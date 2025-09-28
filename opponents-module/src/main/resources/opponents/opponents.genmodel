@@ -14,6 +14,7 @@
     <genClasses ecoreClass="opponents.ecore#//OpponentModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/maxThreat"/>
     </genClasses>
     <genClasses image="false" ecoreClass="opponents.ecore#//CharacterType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/id"/>
@@ -21,6 +22,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/enabled"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/health"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/speed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/threatLevel"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>

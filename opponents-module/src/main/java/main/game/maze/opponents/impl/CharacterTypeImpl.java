@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getSpeed <em>Speed</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getThreatLevel <em>Threat Level</em>}</li>
  * </ul>
  *
  * @generated
@@ -129,6 +130,26 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected double speed = SPEED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getThreatLevel() <em>Threat Level</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getThreatLevel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final double THREAT_LEVEL_EDEFAULT = 0.0;
+
+	/**
+	 * The cached value of the '{@link #getThreatLevel() <em>Threat Level</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getThreatLevel()
+	 * @generated
+	 * @ordered
+	 */
+	protected double threatLevel = THREAT_LEVEL_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -270,6 +291,29 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public double getThreatLevel() {
+		return threatLevel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setThreatLevel(double newThreatLevel) {
+		double oldThreatLevel = threatLevel;
+		threatLevel = newThreatLevel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL, oldThreatLevel, threatLevel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -282,6 +326,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getHealth();
 			case OpponentsPackage.CHARACTER_TYPE__SPEED:
 				return getSpeed();
+			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
+				return getThreatLevel();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -308,6 +354,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__SPEED:
 				setSpeed((Double)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
+				setThreatLevel((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -336,6 +385,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__SPEED:
 				setSpeed(SPEED_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
+				setThreatLevel(THREAT_LEVEL_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -358,6 +410,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return health != HEALTH_EDEFAULT;
 			case OpponentsPackage.CHARACTER_TYPE__SPEED:
 				return speed != SPEED_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
+				return threatLevel != THREAT_LEVEL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -382,6 +436,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(health);
 		result.append(", speed: ");
 		result.append(speed);
+		result.append(", threatLevel: ");
+		result.append(threatLevel);
 		result.append(')');
 		return result.toString();
 	}
