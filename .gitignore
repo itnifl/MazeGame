@@ -1,17 +1,8 @@
-# Maven build
-maze/target
-
-# IDEs
-.classpath
-.project
-.settings/
-.idea/
 **/.settings/
 **/.project
 **/.classpath
 
 # OS
-.DS_Store
 Thumbs.db
 
 #General:
@@ -23,3 +14,27 @@ scores.txt
 **/target/
 /opponents-module/target
 maze/testScores.txt
+
+
+# Eclipse IDE files (per-project metadata)
+**/.settings/
+**/.project
+**/.classpath
+**/.factorypath
+**/.metadata/
+
+# Eclipse/IDE caches / temp
+**/.cache/
+**/.log
+
+# OS / IDE
+.DS_Store
+*.log
+/.idea/
+*.iml
+
+# Generated EMF / plugin build artefacts you don't want in VCS
+**/META-INF/
+**/build.properties
+**/plugin.properties
+**/plugin.xml
