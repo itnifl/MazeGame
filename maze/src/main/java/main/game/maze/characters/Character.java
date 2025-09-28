@@ -2,14 +2,18 @@ package main.game.maze.characters;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import main.game.maze.MazeWorld;
 import main.game.maze.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
+import main.game.maze.characters.interfaces.ISubscribeOnDirection;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
 
 public class Character  {
     public INotifyMovement notifyMovement = null;
+    public ISubscribeOnDirection directionSubscriber = null;
     protected int characterXYSizeFromPoint = StageConstants.TouchDistance;
 
     private Point2D characterPosition;
@@ -51,6 +55,13 @@ public class Character  {
     public void setCharacterGraphics(Node newGraphics) {
         this.characterGraphics = newGraphics;
     }
+
+    protected void setCharacterImage(Image image) {
+        Node node = this.getCharacterGraphics();
+        var i = (ImageView)node;
+        i.setImage(image);
+    }
+
 
     public Point2D getCharacterPosition() {
         return this.characterPosition;
@@ -187,6 +198,9 @@ public class Character  {
     private void doNotifyMovement() {
         if(notifyMovement != null) {
             notifyMovement.doNotifyCharacterMovement();
+        }
+        if(directionSubscriber != null) {
+            directionSubscriber.notifyCurrentDirection(characterDirection.getFacingFromVector());
         }
     }
 }

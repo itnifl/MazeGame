@@ -102,4 +102,5 @@ Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
 ## Build commands (exact)
 - Build everything and install locally - also runs existing unit tests:
 ```bash
+mvn -U -pl :maze-base -am clean package
 mvn -U clean install
