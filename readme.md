@@ -64,3 +64,42 @@ Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
 
 ``Then:
 ***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``
+
+
+
+# MazeGame — Miscellaneous documentation
+
+## Project Maven Pom Structure
+- **Root pom.xml** (project root)
+  - Type: *aggregator* (packaging `pom`)
+  - Lists modules:
+    ```xml
+    <modules>
+      <module>opponents-module</module>
+      <module>maze</module>
+    </modules>
+    ```
+  - Purpose: orchestrates multi-module build and common properties (Java version, plugin management). Each module represents a folder with each their own pom.xml.
+
+- **opponents-module/pom.xml**
+  - Type: `jar` (module)
+  - Purpose: holds the **EMF opponents metamodel**, generated Java model code and `.xmi` resources. Exports the domain API (`main.game.maze.opponents`) used by the app.
+  - Key parts:
+    - groupId/artifactId/version (coordinates used by other modules), and dependencies.
+
+- **maze/pom.xml**
+  - Type: `jar` (application module)
+  - Purpose: actual game/application code. Depends on `opponents-module` to read/load opponent models and use the domain API.
+  - Declares dependency on opponents-module coordinates:
+    ```xml
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>opponents-module</artifactId>
+      <version>1</version>
+    </dependency>
+    ```
+
+## Build commands (exact)
+- Build everything and install locally - also runs existing unit tests:
+```bash
+mvn -U clean install
