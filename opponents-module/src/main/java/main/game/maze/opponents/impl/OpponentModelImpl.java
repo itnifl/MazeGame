@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getCharacterTypes <em>Character Types</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getMaxThreat <em>Max Threat</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,6 +67,26 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @ordered
 	 */
 	protected EList<CharacterType> characterTypes;
+
+	/**
+	 * The default value of the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMaxThreat()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final double MAX_THREAT_EDEFAULT = 0.0;
+
+	/**
+	 * The cached value of the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMaxThreat()
+	 * @generated
+	 * @ordered
+	 */
+	protected double maxThreat = MAX_THREAT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -128,6 +149,29 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 */
 	@Override
+	public double getMaxThreat() {
+		return maxThreat;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMaxThreat(double newMaxThreat) {
+		double oldMaxThreat = maxThreat;
+		maxThreat = newMaxThreat;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.OPPONENT_MODEL__MAX_THREAT, oldMaxThreat, maxThreat));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
@@ -148,6 +192,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				return getName();
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				return getCharacterTypes();
+			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
+				return getMaxThreat();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -168,6 +214,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				getCharacterTypes().clear();
 				getCharacterTypes().addAll((Collection<? extends CharacterType>)newValue);
 				return;
+			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
+				setMaxThreat((Double)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -186,6 +235,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				getCharacterTypes().clear();
 				return;
+			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
+				setMaxThreat(MAX_THREAT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -202,6 +254,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				return characterTypes != null && !characterTypes.isEmpty();
+			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
+				return maxThreat != MAX_THREAT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -218,6 +272,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", maxThreat: ");
+		result.append(maxThreat);
 		result.append(')');
 		return result.toString();
 	}

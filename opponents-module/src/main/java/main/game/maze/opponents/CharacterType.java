@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getSpeed <em>Speed</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getThreatLevel <em>Threat Level</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -137,5 +138,27 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	void setSpeed(double value);
+
+	/**
+	 * Returns the value of the '<em><b>Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Threat Level</em>' attribute.
+	 * @see #setThreatLevel(double)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ThreatLevel()
+	 * @model transient="true" derived="true"
+	 * @generated
+	 */
+	double getThreatLevel();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getThreatLevel <em>Threat Level</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Threat Level</em>' attribute.
+	 * @see #getThreatLevel()
+	 * @generated
+	 */
+	void setThreatLevel(double value);
 
 } // CharacterType

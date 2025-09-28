@@ -86,13 +86,22 @@ public interface OpponentsPackage extends EPackage {
 	int OPPONENT_MODEL__CHARACTER_TYPES = 1;
 
 	/**
+	 * The feature id for the '<em><b>Max Threat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPPONENT_MODEL__MAX_THREAT = 2;
+
+	/**
 	 * The number of structural features of the '<em>Opponent Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPPONENT_MODEL_FEATURE_COUNT = 2;
+	int OPPONENT_MODEL_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Opponent Model</em>' class.
@@ -159,13 +168,22 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__SPEED = 4;
 
 	/**
+	 * The feature id for the '<em><b>Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__THREAT_LEVEL = 5;
+
+	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE_FEATURE_COUNT = 5;
+	int CHARACTER_TYPE_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Character Type</em>' class.
@@ -230,6 +248,15 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZOMBIE__SPEED = CHARACTER_TYPE__SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__THREAT_LEVEL = CHARACTER_TYPE__THREAT_LEVEL;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -311,6 +338,17 @@ public interface OpponentsPackage extends EPackage {
 	EReference getOpponentModel_CharacterTypes();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.OpponentModel#getMaxThreat <em>Max Threat</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Max Threat</em>'.
+	 * @see main.game.maze.opponents.OpponentModel#getMaxThreat()
+	 * @see #getOpponentModel()
+	 * @generated
+	 */
+	EAttribute getOpponentModel_MaxThreat();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.CharacterType <em>Character Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -374,6 +412,17 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCharacterType_Speed();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getThreatLevel <em>Threat Level</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Threat Level</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getThreatLevel()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ThreatLevel();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
@@ -467,6 +516,14 @@ public interface OpponentsPackage extends EPackage {
 		EReference OPPONENT_MODEL__CHARACTER_TYPES = eINSTANCE.getOpponentModel_CharacterTypes();
 
 		/**
+		 * The meta object literal for the '<em><b>Max Threat</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPPONENT_MODEL__MAX_THREAT = eINSTANCE.getOpponentModel_MaxThreat();
+
+		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.CharacterTypeImpl <em>Character Type</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -515,6 +572,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHARACTER_TYPE__SPEED = eINSTANCE.getCharacterType_Speed();
+
+		/**
+		 * The meta object literal for the '<em><b>Threat Level</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__THREAT_LEVEL = eINSTANCE.getCharacterType_ThreatLevel();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.
