@@ -22,6 +22,8 @@ maze/testScores.txt
 **/.classpath
 **/.factorypath
 **/.metadata/
+opponents-module/icons/
+!opponents-module/src/main/resources/icons/
 
 # Eclipse/IDE caches / temp
 **/.cache/
