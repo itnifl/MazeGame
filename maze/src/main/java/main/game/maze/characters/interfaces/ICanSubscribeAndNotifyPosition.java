@@ -7,5 +7,6 @@ import javafx.geometry.Bounds;
 public interface ICanSubscribeAndNotifyPosition {
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition mortalEntity);
     public void addPositionSubscriber(ICanSubscribeAndNotifyPosition entity);
+    public void removePositionSubscriber(ICanSubscribeAndNotifyPosition entity);
     public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers();
 }

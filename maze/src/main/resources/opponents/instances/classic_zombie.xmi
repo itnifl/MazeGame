@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opponents:OpponentModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:opponents="http://main.game.maze/opponents">
+  <name>Classic Zombies</name>
+
+  <characterTypes xsi:type="opponents:Zombie">
+    <id>zombie_classic</id>
+    <displayName>Classic Zombie</displayName>
+    <enabled>true</enabled>
+    <health>120</health>
+    <speed>1.0</speed>
+    <attackDamage>12</attackDamage>
+    <behavior>WANDER</behavior>
+  </characterTypes>
+
+</opponents:OpponentModel>

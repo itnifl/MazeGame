@@ -6,6 +6,8 @@ module main.game.maze {
     requires transitive javafx.media;
     requires org.eclipse.emf.ecore;
     requires org.eclipse.emf.ecore.xmi;
+    requires org.eclipse.emf.common;
+    requires java.logging;
 
     opens main.game.maze to javafx.fxml;
     exports main.game.maze;
