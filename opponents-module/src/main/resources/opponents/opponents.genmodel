@@ -9,7 +9,9 @@
   <genPackages prefix="Opponents" basePackage="main.game.maze" disposableProviderFactory="true"
       ecorePackage="opponents.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//BehaviorType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/PASSIVE"/>
       <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/WANDER"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/AGGRESSIVE"/>
     </genEnums>
     <genClasses ecoreClass="opponents.ecore#//OpponentModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
@@ -23,6 +25,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/health"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/speed"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/threatLevel"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/effectiveThreat"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>

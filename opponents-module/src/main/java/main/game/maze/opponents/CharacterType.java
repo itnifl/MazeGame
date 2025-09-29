@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getThreatLevel <em>Threat Level</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getEffectiveThreat <em>Effective Threat</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -160,5 +161,17 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	void setThreatLevel(double value);
+
+	/**
+	 * Returns the value of the '<em><b>Effective Threat</b></em>' attribute.
+	 * The default value is <code>"1"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Effective Threat</em>' attribute.
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_EffectiveThreat()
+	 * @model default="1" transient="true" changeable="false" volatile="true" derived="true"
+	 * @generated
+	 */
+	int getEffectiveThreat();
 
 } // CharacterType

@@ -19,6 +19,9 @@
         defaultValueLiteral="1.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="threatLevel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         transient="true" derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="effectiveThreat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        changeable="false" volatile="true" transient="true" defaultValueLiteral="1"
+        derived="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Zombie" eSuperTypes="#//CharacterType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -27,6 +30,8 @@
         defaultValueLiteral="WANDER"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BehaviorType">
-    <eLiterals name="WANDER"/>
+    <eLiterals name="PASSIVE" literal="PASSIVE"/>
+    <eLiterals name="WANDER" value="1"/>
+    <eLiterals name="AGGRESSIVE" value="2"/>
   </eClassifiers>
 </ecore:EPackage>
