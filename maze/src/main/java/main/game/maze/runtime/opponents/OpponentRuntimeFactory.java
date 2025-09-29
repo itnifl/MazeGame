@@ -10,11 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import main.game.maze.constants.OpponentConstants;
@@ -22,14 +24,10 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.opponents.util.OpponentsValidator;
+import main.game.maze.util.Dialogs;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
-
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Factory that instantiates runtime character objects from EMF OpponentModel XMI files.
@@ -96,8 +94,9 @@ public final class OpponentRuntimeFactory {
             }
 
             OpponentModel opponentModel = (OpponentModel) rootObject;
-
-            for (var characterType : opponentModel.getCharacterTypes()) {
+            
+            var characterList = opponentModel.getCharacterTypes();
+            for (var characterType : characterList) {
                 if (characterType instanceof Zombie) {
                     Zombie zombieModel = (Zombie) characterType;
 
@@ -106,13 +105,14 @@ public final class OpponentRuntimeFactory {
                     final double spawnY = ThreadLocalRandom.current()
                             .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
 
-                    // Create graphics and register on JavaFX thread
+                    // Create graphics and register on JavaFX thread                    
                     Platform.runLater(() -> {
                         try {
-                            Node graphicsNode = createZombieGraphics(zombieModel);
+                            Zombie zCopy = EcoreUtil.copy(zombieModel);
+                            Node graphicsNode = createZombieGraphics(zCopy);
                             graphicsNode.setLayoutX(spawnX);
                             graphicsNode.setLayoutY(spawnY);
-                            ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, zombieModel);
+                            ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, zCopy);
                             gameController.registerComputerCharacter(zombieCharacter, graphicsNode);
                         } catch (Exception fxException) {
                             LOGGER.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
@@ -122,8 +122,16 @@ public final class OpponentRuntimeFactory {
                     LOGGER.log(Level.FINER, "Skipping unsupported character type: {0}", characterType.getClass().getName());
                 }
             }
+            validateOrFail(opponentModel);
         } catch (Exception loadException) {
             LOGGER.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath, loadException);
+             Dialogs.showError(
+                "Failed to load opponents",
+                "The opponent configuration could not be loaded.",
+                loadException.getMessage(),
+                loadException
+            );
+            throw loadException;
         }
     }
 
@@ -141,7 +149,7 @@ public final class OpponentRuntimeFactory {
      * @return a JavaFX Node representing the zombie sprite
      */
     private static Node createZombieGraphics(Zombie zombieModel) {
-        String imagePath = OpponentConstants.ZombieBaseGraphic; 
+        String imagePath = zombieModel.getImageBase(); 
         InputStream imageStream = OpponentRuntimeFactory.class.getResourceAsStream(imagePath);
 
         ImageView imageView;
@@ -149,7 +157,7 @@ public final class OpponentRuntimeFactory {
             Image image = new Image(imageStream);
             imageView = new ImageView(image);
         } else {
-            imageView = new ImageView(); // empty image view
+            imageView = new ImageView(); 
             imageView.setFitHeight(StageConstants.ZombieCharacterXYSize);
             imageView.setFitWidth(StageConstants.ZombieCharacterXYSize);
             imageView.setPreserveRatio(true);
@@ -164,5 +172,13 @@ public final class OpponentRuntimeFactory {
         imageView.setLayoutY(0);
 
         return imageView;
+    }
+
+    private static void validateOrFail(OpponentModel model) {
+        BasicDiagnostic diag = new BasicDiagnostic();
+        boolean ok = OpponentsValidator.INSTANCE.validate(model, diag, null);
+        if (!ok) {
+            throw new IllegalStateException("Invalid opponent model: " + diag.getMessage());
+        }
     }
 }
