@@ -18,7 +18,6 @@ import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.opponents.Zombie;                // generated EMF class
 import main.game.maze.opponents.BehaviorType;         // generated enum
 import main.game.maze.actions.MovementNotifierAction;
-import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
@@ -30,6 +29,8 @@ public class ZombieCharacter extends ComputerCharacter
 
     private final Image imageLeft;
     private final Image imageRight;
+    private final Image imageUp;
+    private final Image imageDown;
 
     private VectorFacing currentCharacterFacing = VectorFacing.IDLE;
 
@@ -39,8 +40,10 @@ public class ZombieCharacter extends ComputerCharacter
 
     public ZombieCharacter(Node characterGraphics, double x, double y, Zombie model) {
         super(characterGraphics, x, y, mapSpeed(model.getSpeed()));
-        this.imageLeft  = new Image(getClass().getResourceAsStream(OpponentConstants.ZombieBaseGraphicLeftTurn));
-        this.imageRight = new Image(getClass().getResourceAsStream(OpponentConstants.ZombieBaseGraphicRightTurn));
+        this.imageLeft  = new Image(getClass().getResourceAsStream(model.getImageTurnLeft()));
+        this.imageRight = new Image(getClass().getResourceAsStream(model.getImageTurnRight()));
+        this.imageUp = new Image(getClass().getResourceAsStream(model.getImageTurnUp()));
+        this.imageDown = new Image(getClass().getResourceAsStream(model.getImageTurnDown()));
         this.zombieModel = model;
         this.hitPoints = new AtomicInteger(Math.max(1, model.getHealth()));
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
@@ -62,10 +65,12 @@ public class ZombieCharacter extends ComputerCharacter
             } else if(direction == VectorFacing.UP) {
                 if(currentCharacterFacing != direction) {
                     currentCharacterFacing = VectorFacing.UP;
+                    this.setCharacterImage(imageUp);
                 } 
             } else if(direction == VectorFacing.DOWN) {
                 if(currentCharacterFacing != direction) {
                     currentCharacterFacing = VectorFacing.DOWN;
+                    this.setCharacterImage(imageDown);
                 } 
             }
         };
