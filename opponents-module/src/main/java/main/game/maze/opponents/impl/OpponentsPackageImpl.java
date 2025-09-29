@@ -9,12 +9,14 @@ import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 
+import main.game.maze.opponents.util.OpponentsValidator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -103,6 +105,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		// Initialize created meta-data
 		theOpponentsPackage.initializePackageContents();
+
+		// Register package validator
+		EValidator.Registry.INSTANCE.put
+			(theOpponentsPackage,
+			 new EValidator.Descriptor() {
+				 @Override
+				 public EValidator getEValidator() {
+					 return OpponentsValidator.INSTANCE;
+				 }
+			 });
 
 		// Mark meta-data to indicate it can't be changed
 		theOpponentsPackage.freeze();
@@ -380,6 +392,52 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2002/Ecore
+		createEcoreAnnotations();
+		// http://www.eclipse.org/emf/2002/Ecore/OCL
+		createOCLAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createEcoreAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "invocationDelegates", "",
+			   "settingDelegates", "",
+			   "validationDelegates", ""
+		   });
+		addAnnotation
+		  (opponentModelEClass,
+		   source,
+		   new String[] {
+			   "constraints", "validateMaxThreat"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore/OCL</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createOCLAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore/OCL";
+		addAnnotation
+		  (opponentModelEClass,
+		   source,
+		   new String[] {
+			   "validateMaxThreat", "self.characterTypes->collect(ct | ct.effectiveThreat)->sum() <= self.maxThreat"
+		   });
 	}
 
 } //OpponentsPackageImpl
