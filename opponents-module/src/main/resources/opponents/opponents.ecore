@@ -33,6 +33,16 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="effectiveThreat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         changeable="false" volatile="true" transient="true" defaultValueLiteral="1"
         derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageBase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/zombie.png"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnLeft" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/zombie-left.png"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnRight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/zombie-right.png"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnUp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/zombie-up.png"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnDown" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/zombie-up.png"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Zombie" eSuperTypes="#//CharacterType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
