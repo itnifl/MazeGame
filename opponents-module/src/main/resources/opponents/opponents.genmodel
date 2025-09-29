@@ -26,6 +26,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/speed"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/threatLevel"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/effectiveThreat"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageBase"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnLeft"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnRight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnUp"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnDown"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>
