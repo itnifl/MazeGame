@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getThreatLevel <em>Threat Level</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getEffectiveThreat <em>Effective Threat</em>}</li>
  * </ul>
  *
  * @generated
@@ -150,6 +151,16 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected double threatLevel = THREAT_LEVEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getEffectiveThreat() <em>Effective Threat</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEffectiveThreat()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int EFFECTIVE_THREAT_EDEFAULT = 1;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -311,6 +322,21 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public int getEffectiveThreat() {
+		// Defensive defaults
+		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
+		int healthPercent = Math.clamp(getHealth(), 0, 100);
+		double behaviorMultiplier = 1.0; //There is no implementation of behavior here.		
+		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
+		return Math.max(0, (int)Math.round(computed));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -328,6 +354,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getSpeed();
 			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
 				return getThreatLevel();
+			case OpponentsPackage.CHARACTER_TYPE__EFFECTIVE_THREAT:
+				return getEffectiveThreat();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -412,6 +440,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return speed != SPEED_EDEFAULT;
 			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
 				return threatLevel != THREAT_LEVEL_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__EFFECTIVE_THREAT:
+				return getEffectiveThreat() != EFFECTIVE_THREAT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}

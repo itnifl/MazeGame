@@ -135,6 +135,24 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public int getEffectiveThreat() {
+		// Defensive defaults
+		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
+		int healthPercent = Math.clamp(getHealth(), 0, 100);
+
+		int behaviorMultiplier = 1;
+		var currentBehavior = this.getBehavior();
+		behaviorMultiplier = currentBehavior.getValue();
+		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
+		return Math.max(0, (int)Math.round(computed));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override

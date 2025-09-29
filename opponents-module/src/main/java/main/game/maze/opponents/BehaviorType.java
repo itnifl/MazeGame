@@ -19,6 +19,14 @@ import org.eclipse.emf.common.util.Enumerator;
  */
 public enum BehaviorType implements Enumerator {
 	/**
+	 * The '<em><b>PASSIVE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PASSIVE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	PASSIVE(0, "PASSIVE", "PASSIVE"), /**
 	 * The '<em><b>WANDER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -26,7 +34,26 @@ public enum BehaviorType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	WANDER(0, "WANDER", "WANDER");
+	WANDER(1, "WANDER", "WANDER"), /**
+	 * The '<em><b>AGGRESSIVE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #AGGRESSIVE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	AGGRESSIVE(2, "AGGRESSIVE", "AGGRESSIVE");
+
+	/**
+	 * The '<em><b>PASSIVE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PASSIVE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PASSIVE_VALUE = 0;
 
 	/**
 	 * The '<em><b>WANDER</b></em>' literal value.
@@ -37,7 +64,18 @@ public enum BehaviorType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WANDER_VALUE = 0;
+	public static final int WANDER_VALUE = 1;
+
+	/**
+	 * The '<em><b>AGGRESSIVE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #AGGRESSIVE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AGGRESSIVE_VALUE = 2;
 
 	/**
 	 * An array of all the '<em><b>Behavior Type</b></em>' enumerators.
@@ -47,7 +85,9 @@ public enum BehaviorType implements Enumerator {
 	 */
 	private static final BehaviorType[] VALUES_ARRAY =
 		new BehaviorType[] {
+			PASSIVE,
 			WANDER,
+			AGGRESSIVE,
 		};
 
 	/**
@@ -104,7 +144,9 @@ public enum BehaviorType implements Enumerator {
 	 */
 	public static BehaviorType get(int value) {
 		switch (value) {
+			case PASSIVE_VALUE: return PASSIVE;
 			case WANDER_VALUE: return WANDER;
+			case AGGRESSIVE_VALUE: return AGGRESSIVE;
 		}
 		return null;
 	}

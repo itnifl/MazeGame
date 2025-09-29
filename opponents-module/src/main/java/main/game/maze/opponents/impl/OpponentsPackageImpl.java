@@ -228,6 +228,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getCharacterType_EffectiveThreat() {
+		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getZombie() {
 		return zombieEClass;
 	}
@@ -303,6 +313,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__HEALTH);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__SPEED);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__THREAT_LEVEL);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__EFFECTIVE_THREAT);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
@@ -355,6 +366,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_Health(), ecorePackage.getEInt(), "health", "100", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Speed(), ecorePackage.getEDouble(), "speed", "1.0", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", null, 0, 1, CharacterType.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_EffectiveThreat(), ecorePackage.getEInt(), "effectiveThreat", "1", 0, 1, CharacterType.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -362,7 +374,9 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		// Initialize enums and add enum literals
 		initEEnum(behaviorTypeEEnum, BehaviorType.class, "BehaviorType");
+		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.PASSIVE);
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.WANDER);
+		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.AGGRESSIVE);
 
 		// Create resource
 		createResource(eNS_URI);

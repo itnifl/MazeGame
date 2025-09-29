@@ -177,13 +177,22 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__THREAT_LEVEL = 5;
 
 	/**
+	 * The feature id for the '<em><b>Effective Threat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__EFFECTIVE_THREAT = 6;
+
+	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE_FEATURE_COUNT = 6;
+	int CHARACTER_TYPE_FEATURE_COUNT = 7;
 
 	/**
 	 * The number of operations of the '<em>Character Type</em>' class.
@@ -257,6 +266,15 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZOMBIE__THREAT_LEVEL = CHARACTER_TYPE__THREAT_LEVEL;
+
+	/**
+	 * The feature id for the '<em><b>Effective Threat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__EFFECTIVE_THREAT = CHARACTER_TYPE__EFFECTIVE_THREAT;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -425,6 +443,17 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getCharacterType_ThreatLevel();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getEffectiveThreat <em>Effective Threat</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Effective Threat</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getEffectiveThreat()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_EffectiveThreat();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -580,6 +609,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHARACTER_TYPE__THREAT_LEVEL = eINSTANCE.getCharacterType_ThreatLevel();
+
+		/**
+		 * The meta object literal for the '<em><b>Effective Threat</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__EFFECTIVE_THREAT = eINSTANCE.getCharacterType_EffectiveThreat();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.
