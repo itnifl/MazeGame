@@ -21,7 +21,8 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore/OCL validateMaxThreat='self.characterTypes-&gt;collect(ct | ct.effectiveThreat)-&gt;sum() &lt;= self.maxThreat'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore constraints='validateMaxThreat'"
  * @generated
  */
 public interface OpponentModel extends EObject {

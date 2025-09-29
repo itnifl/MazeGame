@@ -2,7 +2,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
- <parent>
+
+  <parent>
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
     <version>1</version>
@@ -20,11 +21,19 @@
     <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
   </properties>
   <repositories>
-    <repository>
-    <id>eclipse-releases</id>
-    <name>Eclipse Releases</name>
-    <url>https://repo.eclipse.org/content/repositories/releases/</url>
+     <repository>
+      <id>eclipse-releases</id>
+      <name>Eclipse Releases</name>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
+    <repository>
+      <id>eclipse-direct-releases</id>
+      <name>Eclipse Releases</name>
+      <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </repository>
+
   </repositories>
   <dependencies>
     <dependency>
@@ -42,5 +51,34 @@
       <artifactId>org.eclipse.emf.common</artifactId>
       <version>2.38.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.ecore</artifactId>
+      <version>3.3.100.v20140610-0641</version> 
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.common</artifactId>
+      <version>1.2.0.v20140610-0641</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <useModulePath>false</useModulePath> 
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

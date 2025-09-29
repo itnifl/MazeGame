@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see main.game.maze.opponents.OpponentsFactory
  * @model kind="package"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore invocationDelegates='' settingDelegates='' validationDelegates=''"
  * @generated
  */
 public interface OpponentsPackage extends EPackage {

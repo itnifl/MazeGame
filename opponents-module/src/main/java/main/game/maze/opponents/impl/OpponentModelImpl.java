@@ -3,14 +3,11 @@
 package main.game.maze.opponents.impl;
 
 import java.util.Collection;
-
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
