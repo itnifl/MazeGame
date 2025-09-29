@@ -187,13 +187,58 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__EFFECTIVE_THREAT = 6;
 
 	/**
+	 * The feature id for the '<em><b>Image Base</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__IMAGE_BASE = 7;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Left</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__IMAGE_TURN_LEFT = 8;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Right</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__IMAGE_TURN_RIGHT = 9;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Up</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__IMAGE_TURN_UP = 10;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Down</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__IMAGE_TURN_DOWN = 11;
+
+	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE_FEATURE_COUNT = 7;
+	int CHARACTER_TYPE_FEATURE_COUNT = 12;
 
 	/**
 	 * The number of operations of the '<em>Character Type</em>' class.
@@ -276,6 +321,51 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZOMBIE__EFFECTIVE_THREAT = CHARACTER_TYPE__EFFECTIVE_THREAT;
+
+	/**
+	 * The feature id for the '<em><b>Image Base</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__IMAGE_BASE = CHARACTER_TYPE__IMAGE_BASE;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Left</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__IMAGE_TURN_LEFT = CHARACTER_TYPE__IMAGE_TURN_LEFT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Right</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__IMAGE_TURN_RIGHT = CHARACTER_TYPE__IMAGE_TURN_RIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Up</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__IMAGE_TURN_UP = CHARACTER_TYPE__IMAGE_TURN_UP;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Down</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__IMAGE_TURN_DOWN = CHARACTER_TYPE__IMAGE_TURN_DOWN;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -455,6 +545,61 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getCharacterType_EffectiveThreat();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getImageBase <em>Image Base</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Image Base</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getImageBase()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ImageBase();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getImageTurnLeft <em>Image Turn Left</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Image Turn Left</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getImageTurnLeft()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ImageTurnLeft();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getImageTurnRight <em>Image Turn Right</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Image Turn Right</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getImageTurnRight()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ImageTurnRight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getImageTurnUp <em>Image Turn Up</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Image Turn Up</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getImageTurnUp()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ImageTurnUp();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getImageTurnDown <em>Image Turn Down</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Image Turn Down</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getImageTurnDown()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_ImageTurnDown();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -618,6 +763,46 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHARACTER_TYPE__EFFECTIVE_THREAT = eINSTANCE.getCharacterType_EffectiveThreat();
+
+		/**
+		 * The meta object literal for the '<em><b>Image Base</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__IMAGE_BASE = eINSTANCE.getCharacterType_ImageBase();
+
+		/**
+		 * The meta object literal for the '<em><b>Image Turn Left</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__IMAGE_TURN_LEFT = eINSTANCE.getCharacterType_ImageTurnLeft();
+
+		/**
+		 * The meta object literal for the '<em><b>Image Turn Right</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__IMAGE_TURN_RIGHT = eINSTANCE.getCharacterType_ImageTurnRight();
+
+		/**
+		 * The meta object literal for the '<em><b>Image Turn Up</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__IMAGE_TURN_UP = eINSTANCE.getCharacterType_ImageTurnUp();
+
+		/**
+		 * The meta object literal for the '<em><b>Image Turn Down</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__IMAGE_TURN_DOWN = eINSTANCE.getCharacterType_ImageTurnDown();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.

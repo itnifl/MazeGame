@@ -116,7 +116,6 @@ public class OpponentsValidator extends EObjectValidator {
 		if (result || diagnostics != null) result &= validate_EveryKeyUnique(opponentModel, diagnostics, context);
 		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(opponentModel, diagnostics, context);
 		if (result || diagnostics != null) result &= validateOpponentModel_validateMaxThreat(opponentModel, diagnostics, context);
-
 		return result;
 	}
 

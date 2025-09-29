@@ -20,6 +20,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getThreatLevel <em>Threat Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getEffectiveThreat <em>Effective Threat</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getImageBase <em>Image Base</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnLeft <em>Image Turn Left</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnRight <em>Image Turn Right</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnUp <em>Image Turn Up</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnDown <em>Image Turn Down</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -173,5 +178,120 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	int getEffectiveThreat();
+
+	/**
+	 * Returns the value of the '<em><b>Image Base</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombie.png"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Image Base</em>' attribute.
+	 * @see #setImageBase(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ImageBase()
+	 * @model default="/main/game/maze/zombie.png"
+	 * @generated
+	 */
+	String getImageBase();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getImageBase <em>Image Base</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Image Base</em>' attribute.
+	 * @see #getImageBase()
+	 * @generated
+	 */
+	void setImageBase(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Image Turn Left</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombie-left.png"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Image Turn Left</em>' attribute.
+	 * @see #setImageTurnLeft(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ImageTurnLeft()
+	 * @model default="/main/game/maze/zombie-left.png"
+	 * @generated
+	 */
+	String getImageTurnLeft();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getImageTurnLeft <em>Image Turn Left</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Image Turn Left</em>' attribute.
+	 * @see #getImageTurnLeft()
+	 * @generated
+	 */
+	void setImageTurnLeft(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Image Turn Right</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombie-right.png"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Image Turn Right</em>' attribute.
+	 * @see #setImageTurnRight(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ImageTurnRight()
+	 * @model default="/main/game/maze/zombie-right.png"
+	 * @generated
+	 */
+	String getImageTurnRight();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getImageTurnRight <em>Image Turn Right</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Image Turn Right</em>' attribute.
+	 * @see #getImageTurnRight()
+	 * @generated
+	 */
+	void setImageTurnRight(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Image Turn Up</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombie-up.png"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Image Turn Up</em>' attribute.
+	 * @see #setImageTurnUp(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ImageTurnUp()
+	 * @model default="/main/game/maze/zombie-up.png"
+	 * @generated
+	 */
+	String getImageTurnUp();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getImageTurnUp <em>Image Turn Up</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Image Turn Up</em>' attribute.
+	 * @see #getImageTurnUp()
+	 * @generated
+	 */
+	void setImageTurnUp(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Image Turn Down</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombie-up.png"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Image Turn Down</em>' attribute.
+	 * @see #setImageTurnDown(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ImageTurnDown()
+	 * @model default="/main/game/maze/zombie-up.png"
+	 * @generated
+	 */
+	String getImageTurnDown();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getImageTurnDown <em>Image Turn Down</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Image Turn Down</em>' attribute.
+	 * @see #getImageTurnDown()
+	 * @generated
+	 */
+	void setImageTurnDown(String value);
 
 } // CharacterType

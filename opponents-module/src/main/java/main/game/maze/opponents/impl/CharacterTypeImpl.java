@@ -27,6 +27,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getThreatLevel <em>Threat Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getEffectiveThreat <em>Effective Threat</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageBase <em>Image Base</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnLeft <em>Image Turn Left</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnRight <em>Image Turn Right</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnUp <em>Image Turn Up</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnDown <em>Image Turn Down</em>}</li>
  * </ul>
  *
  * @generated
@@ -161,6 +166,106 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected static final int EFFECTIVE_THREAT_EDEFAULT = 1;
+
+	/**
+	 * The default value of the '{@link #getImageBase() <em>Image Base</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageBase()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String IMAGE_BASE_EDEFAULT = "/main/game/maze/zombie.png";
+
+	/**
+	 * The cached value of the '{@link #getImageBase() <em>Image Base</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageBase()
+	 * @generated
+	 * @ordered
+	 */
+	protected String imageBase = IMAGE_BASE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getImageTurnLeft() <em>Image Turn Left</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnLeft()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String IMAGE_TURN_LEFT_EDEFAULT = "/main/game/maze/zombie-left.png";
+
+	/**
+	 * The cached value of the '{@link #getImageTurnLeft() <em>Image Turn Left</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnLeft()
+	 * @generated
+	 * @ordered
+	 */
+	protected String imageTurnLeft = IMAGE_TURN_LEFT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getImageTurnRight() <em>Image Turn Right</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnRight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String IMAGE_TURN_RIGHT_EDEFAULT = "/main/game/maze/zombie-right.png";
+
+	/**
+	 * The cached value of the '{@link #getImageTurnRight() <em>Image Turn Right</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnRight()
+	 * @generated
+	 * @ordered
+	 */
+	protected String imageTurnRight = IMAGE_TURN_RIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getImageTurnUp() <em>Image Turn Up</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnUp()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String IMAGE_TURN_UP_EDEFAULT = "/main/game/maze/zombie-up.png";
+
+	/**
+	 * The cached value of the '{@link #getImageTurnUp() <em>Image Turn Up</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnUp()
+	 * @generated
+	 * @ordered
+	 */
+	protected String imageTurnUp = IMAGE_TURN_UP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getImageTurnDown() <em>Image Turn Down</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnDown()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String IMAGE_TURN_DOWN_EDEFAULT = "/main/game/maze/zombie-up.png";
+
+	/**
+	 * The cached value of the '{@link #getImageTurnDown() <em>Image Turn Down</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getImageTurnDown()
+	 * @generated
+	 * @ordered
+	 */
+	protected String imageTurnDown = IMAGE_TURN_DOWN_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -340,6 +445,121 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public String getImageBase() {
+		return imageBase;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setImageBase(String newImageBase) {
+		String oldImageBase = imageBase;
+		imageBase = newImageBase;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IMAGE_BASE, oldImageBase, imageBase));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getImageTurnLeft() {
+		return imageTurnLeft;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setImageTurnLeft(String newImageTurnLeft) {
+		String oldImageTurnLeft = imageTurnLeft;
+		imageTurnLeft = newImageTurnLeft;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_LEFT, oldImageTurnLeft, imageTurnLeft));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getImageTurnRight() {
+		return imageTurnRight;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setImageTurnRight(String newImageTurnRight) {
+		String oldImageTurnRight = imageTurnRight;
+		imageTurnRight = newImageTurnRight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_RIGHT, oldImageTurnRight, imageTurnRight));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getImageTurnUp() {
+		return imageTurnUp;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setImageTurnUp(String newImageTurnUp) {
+		String oldImageTurnUp = imageTurnUp;
+		imageTurnUp = newImageTurnUp;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_UP, oldImageTurnUp, imageTurnUp));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getImageTurnDown() {
+		return imageTurnDown;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setImageTurnDown(String newImageTurnDown) {
+		String oldImageTurnDown = imageTurnDown;
+		imageTurnDown = newImageTurnDown;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN, oldImageTurnDown, imageTurnDown));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -356,6 +576,16 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getThreatLevel();
 			case OpponentsPackage.CHARACTER_TYPE__EFFECTIVE_THREAT:
 				return getEffectiveThreat();
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_BASE:
+				return getImageBase();
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_LEFT:
+				return getImageTurnLeft();
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_RIGHT:
+				return getImageTurnRight();
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_UP:
+				return getImageTurnUp();
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
+				return getImageTurnDown();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -385,6 +615,21 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
 				setThreatLevel((Double)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_BASE:
+				setImageBase((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_LEFT:
+				setImageTurnLeft((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_RIGHT:
+				setImageTurnRight((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_UP:
+				setImageTurnUp((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
+				setImageTurnDown((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -416,6 +661,21 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__THREAT_LEVEL:
 				setThreatLevel(THREAT_LEVEL_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_BASE:
+				setImageBase(IMAGE_BASE_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_LEFT:
+				setImageTurnLeft(IMAGE_TURN_LEFT_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_RIGHT:
+				setImageTurnRight(IMAGE_TURN_RIGHT_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_UP:
+				setImageTurnUp(IMAGE_TURN_UP_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
+				setImageTurnDown(IMAGE_TURN_DOWN_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -442,6 +702,16 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return threatLevel != THREAT_LEVEL_EDEFAULT;
 			case OpponentsPackage.CHARACTER_TYPE__EFFECTIVE_THREAT:
 				return getEffectiveThreat() != EFFECTIVE_THREAT_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_BASE:
+				return IMAGE_BASE_EDEFAULT == null ? imageBase != null : !IMAGE_BASE_EDEFAULT.equals(imageBase);
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_LEFT:
+				return IMAGE_TURN_LEFT_EDEFAULT == null ? imageTurnLeft != null : !IMAGE_TURN_LEFT_EDEFAULT.equals(imageTurnLeft);
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_RIGHT:
+				return IMAGE_TURN_RIGHT_EDEFAULT == null ? imageTurnRight != null : !IMAGE_TURN_RIGHT_EDEFAULT.equals(imageTurnRight);
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_UP:
+				return IMAGE_TURN_UP_EDEFAULT == null ? imageTurnUp != null : !IMAGE_TURN_UP_EDEFAULT.equals(imageTurnUp);
+			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
+				return IMAGE_TURN_DOWN_EDEFAULT == null ? imageTurnDown != null : !IMAGE_TURN_DOWN_EDEFAULT.equals(imageTurnDown);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -468,6 +738,16 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(speed);
 		result.append(", threatLevel: ");
 		result.append(threatLevel);
+		result.append(", ImageBase: ");
+		result.append(imageBase);
+		result.append(", ImageTurnLeft: ");
+		result.append(imageTurnLeft);
+		result.append(", ImageTurnRight: ");
+		result.append(imageTurnRight);
+		result.append(", ImageTurnUp: ");
+		result.append(imageTurnUp);
+		result.append(", ImageTurnDown: ");
+		result.append(imageTurnDown);
 		result.append(')');
 		return result.toString();
 	}
