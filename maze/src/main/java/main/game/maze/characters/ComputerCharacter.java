@@ -9,7 +9,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     private int speed;
 
     public ComputerCharacter(Node characterGraphics, double positionX, double positionY, int speed) {
-        super(characterGraphics, positionX, positionX);
+        super(characterGraphics, positionX, positionY);
         this.speed = speed;
         calculateMaxPositions();
     }
