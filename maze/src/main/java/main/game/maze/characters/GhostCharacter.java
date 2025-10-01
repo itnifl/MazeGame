@@ -21,7 +21,7 @@ public class GhostCharacter extends ComputerCharacter
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
     public GhostCharacter(Node characterGraphics, double positionX, double positionY) {
-        super(characterGraphics, positionX, positionX, ghostSpeedFactor);
+        super(characterGraphics, positionX, positionY, ghostSpeedFactor);
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
