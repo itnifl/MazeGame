@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,8 +27,10 @@ import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -83,7 +86,7 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setupGame();
+        //setupGame();
     }
 
     @FXML
@@ -141,8 +144,7 @@ public class GameController implements Initializable {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
             if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            }
-            ;
+            }            
         }
     }
 
@@ -150,8 +152,7 @@ public class GameController implements Initializable {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
             if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            }
-            ;
+            }            
         }
     }
 
@@ -159,8 +160,7 @@ public class GameController implements Initializable {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
             if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
-            }
-            ;
+            }        
         }
     }
 
@@ -241,6 +241,8 @@ public class GameController implements Initializable {
 
         player.requestFocus();
         gameBoard.requestFocus();
+        
+        OpponentRuntimeFactory.instantiateFromModel(this);
 
         runComputerCharacters();
         playerCharacter.setHitPoints(100);
@@ -296,5 +298,29 @@ public class GameController implements Initializable {
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();
+    }
+
+    public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
+        // must be called on JavaFX thread
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> registerComputerCharacter(character, node));
+            return;
+        }
+        gameBoard.getChildren().add(node);               // add sprite to board
+        allComputerCharacters.add(character);     
+        if(character instanceof ICanSubscribeAndNotifyPosition){
+            playerCharacter.addPositionSubscriber((ICanSubscribeAndNotifyPosition)character);
+            ((ICanSubscribeAndNotifyPosition)character).addPositionSubscriber(playerCharacter);
+        }
+    }
+
+    public void unregisterComputerCharacter(ICanSubscribeAndNotifyPosition character, Node node) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> unregisterComputerCharacter(character,node));
+            return;
+        }
+        allComputerCharacters.remove(character);
+        playerCharacter.removePositionSubscriber(character);
+        gameBoard.getChildren().remove(node);
     }
 }

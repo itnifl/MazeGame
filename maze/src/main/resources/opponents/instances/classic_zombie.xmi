@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opponents:OpponentModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:opponents="http://main.game.maze/opponents"
+    name="Balanced Mode"
+    maxThreat="10.0">
+    <name>Classic Zombies</name>
+
+    <characterTypes xsi:type="opponents:Zombie">
+      <id>zombie_classic</id>
+      <displayName>Classic Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>0.8</speed>
+      <threatLevel>3.0</threatLevel>
+      <attackDamage>12</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/zombie-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie-down.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie-down.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Zombie">            
+      <id>angry_zombie</id>
+      <displayName>Angry Zombie</displayName>
+      <enabled>true</enabled>
+      <health>60</health>
+      <speed>1.6</speed>
+      <threatLevel>6.0</threatLevel>
+      <attackDamage>7</attackDamage>
+      <behavior>AGGRESSIVE</behavior>
+      <ImageBase>/main/game/maze/zombie2-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie2-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie2-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie2-down.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie2-down.png</ImageTurnDown>
+    </characterTypes>
+</opponents:OpponentModel>
