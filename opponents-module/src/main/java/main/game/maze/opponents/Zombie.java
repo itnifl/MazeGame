@@ -104,7 +104,7 @@ public interface Zombie extends CharacterType {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Infection Level</em>' attribute list.
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_InfectionLevel()
-	 * @model default="1" required="true" upper="10"
+	 * @model default="1" upper="10"
 	 * @generated
 	 */
 	EList<Integer> getInfectionLevel();
@@ -116,7 +116,7 @@ public interface Zombie extends CharacterType {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Resurrection Time</em>' attribute list.
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ResurrectionTime()
-	 * @model default="-1" upper="180"
+	 * @model default="0" upper="180"
 	 * @generated
 	 */
 	EList<Integer> getResurrectionTime();
