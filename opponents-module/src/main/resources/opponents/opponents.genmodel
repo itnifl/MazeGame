@@ -37,11 +37,14 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnRight"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnUp"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnDown"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/isTangible"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/behavior"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//Zombie/zombieLootTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/infectionLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/resurrectionTime"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//LootTable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//LootTable/items"/>
@@ -53,6 +56,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/weight"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/graphicBase"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//Ghost">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/behavior"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/visibilityLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/nonTangibilityEnergy"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

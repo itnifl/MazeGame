@@ -55,9 +55,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="infectionLevel" lowerBound="1"
         upperBound="10" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         defaultValueLiteral="1"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="resurrectionTime" lowerBound="-1"
-        upperBound="180" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-        defaultValueLiteral="-1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="resurrectionTime" upperBound="180"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="-1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BehaviorType">
     <eLiterals name="PASSIVE" literal="PASSIVE"/>

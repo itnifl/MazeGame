@@ -97,6 +97,8 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateLootTable((LootTable)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM:
 				return validateLootItem((LootItem)value, diagnostics, context);
+			case OpponentsPackage.GHOST:
+				return validateGhost((Ghost)value, diagnostics, context);
 			case OpponentsPackage.BEHAVIOR_TYPE:
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
@@ -184,6 +186,15 @@ public class OpponentsValidator extends EObjectValidator {
 	 */
 	public boolean validateLootItem(LootItem lootItem, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint(lootItem, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateGhost(Ghost ghost, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(ghost, diagnostics, context);
 	}
 
 	/**
