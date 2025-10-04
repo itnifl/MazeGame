@@ -49,6 +49,7 @@
         defaultValueLiteral="10"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="#//BehaviorType"
         defaultValueLiteral="WANDER"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="zombieLootTable" eType="#//LootTable"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BehaviorType">
     <eLiterals name="PASSIVE" literal="PASSIVE"/>
