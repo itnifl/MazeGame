@@ -14,6 +14,7 @@ package main.game.maze.opponents;
  * <ul>
  *   <li>{@link main.game.maze.opponents.Zombie#getAttackDamage <em>Attack Damage</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getZombie()
@@ -69,5 +70,27 @@ public interface Zombie extends CharacterType {
 	 * @generated
 	 */
 	void setBehavior(BehaviorType value);
+
+	/**
+	 * Returns the value of the '<em><b>Zombie Loot Table</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Zombie Loot Table</em>' reference.
+	 * @see #setZombieLootTable(LootTable)
+	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ZombieLootTable()
+	 * @model
+	 * @generated
+	 */
+	LootTable getZombieLootTable();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Zombie Loot Table</em>' reference.
+	 * @see #getZombieLootTable()
+	 * @generated
+	 */
+	void setZombieLootTable(LootTable value);
 
 } // Zombie

@@ -85,6 +85,18 @@ public class OpponentsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OpponentsPackage.LOOT_TABLE: {
+				LootTable lootTable = (LootTable)theEObject;
+				T result = caseLootTable(lootTable);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OpponentsPackage.LOOT_ITEM: {
+				LootItem lootItem = (LootItem)theEObject;
+				T result = caseLootItem(lootItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -131,6 +143,36 @@ public class OpponentsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseZombie(Zombie object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Loot Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Loot Table</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLootTable(LootTable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Loot Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Loot Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLootItem(LootItem object) {
 		return null;
 	}
 

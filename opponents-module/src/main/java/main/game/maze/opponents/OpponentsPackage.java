@@ -386,13 +386,22 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__BEHAVIOR = CHARACTER_TYPE_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Zombie Loot Table</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__ZOMBIE_LOOT_TABLE = CHARACTER_TYPE_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Zombie</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 2;
+	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Zombie</em>' class.
@@ -404,6 +413,125 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE_OPERATION_COUNT = CHARACTER_TYPE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.impl.LootTableImpl <em>Loot Table</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.impl.LootTableImpl
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootTable()
+	 * @generated
+	 */
+	int LOOT_TABLE = 3;
+
+	/**
+	 * The feature id for the '<em><b>Items</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_TABLE__ITEMS = 0;
+
+	/**
+	 * The feature id for the '<em><b>Weight Capacity</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_TABLE__WEIGHT_CAPACITY = 1;
+
+	/**
+	 * The number of structural features of the '<em>Loot Table</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_TABLE_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Loot Table</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_TABLE_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.impl.LootItemImpl <em>Loot Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.impl.LootItemImpl
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootItem()
+	 * @generated
+	 */
+	int LOOT_ITEM = 4;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM__TYPE = 1;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM__VALUE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Weight</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM__WEIGHT = 3;
+
+	/**
+	 * The feature id for the '<em><b>Graphic Base</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM__GRAPHIC_BASE = 4;
+
+	/**
+	 * The number of structural features of the '<em>Loot Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM_FEATURE_COUNT = 5;
+
+	/**
+	 * The number of operations of the '<em>Loot Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOOT_ITEM_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -411,7 +539,18 @@ public interface OpponentsPackage extends EPackage {
 	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getBehaviorType()
 	 * @generated
 	 */
-	int BEHAVIOR_TYPE = 3;
+	int BEHAVIOR_TYPE = 5;
+
+
+	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.LootItemType <em>Loot Item Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.LootItemType
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootItemType()
+	 * @generated
+	 */
+	int LOOT_ITEM_TYPE = 6;
 
 
 	/**
@@ -632,6 +771,114 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getZombie_Behavior();
 
 	/**
+	 * Returns the meta object for the reference '{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Zombie Loot Table</em>'.
+	 * @see main.game.maze.opponents.Zombie#getZombieLootTable()
+	 * @see #getZombie()
+	 * @generated
+	 */
+	EReference getZombie_ZombieLootTable();
+
+	/**
+	 * Returns the meta object for class '{@link main.game.maze.opponents.LootTable <em>Loot Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Loot Table</em>'.
+	 * @see main.game.maze.opponents.LootTable
+	 * @generated
+	 */
+	EClass getLootTable();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link main.game.maze.opponents.LootTable#getItems <em>Items</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Items</em>'.
+	 * @see main.game.maze.opponents.LootTable#getItems()
+	 * @see #getLootTable()
+	 * @generated
+	 */
+	EReference getLootTable_Items();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.LootTable#getWeightCapacity <em>Weight Capacity</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Weight Capacity</em>'.
+	 * @see main.game.maze.opponents.LootTable#getWeightCapacity()
+	 * @see #getLootTable()
+	 * @generated
+	 */
+	EAttribute getLootTable_WeightCapacity();
+
+	/**
+	 * Returns the meta object for class '{@link main.game.maze.opponents.LootItem <em>Loot Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Loot Item</em>'.
+	 * @see main.game.maze.opponents.LootItem
+	 * @generated
+	 */
+	EClass getLootItem();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.LootItem#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see main.game.maze.opponents.LootItem#getName()
+	 * @see #getLootItem()
+	 * @generated
+	 */
+	EAttribute getLootItem_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.LootItem#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see main.game.maze.opponents.LootItem#getType()
+	 * @see #getLootItem()
+	 * @generated
+	 */
+	EAttribute getLootItem_Type();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.LootItem#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see main.game.maze.opponents.LootItem#getValue()
+	 * @see #getLootItem()
+	 * @generated
+	 */
+	EAttribute getLootItem_Value();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.LootItem#getWeight <em>Weight</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Weight</em>'.
+	 * @see main.game.maze.opponents.LootItem#getWeight()
+	 * @see #getLootItem()
+	 * @generated
+	 */
+	EAttribute getLootItem_Weight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.LootItem#getGraphicBase <em>Graphic Base</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Graphic Base</em>'.
+	 * @see main.game.maze.opponents.LootItem#getGraphicBase()
+	 * @see #getLootItem()
+	 * @generated
+	 */
+	EAttribute getLootItem_GraphicBase();
+
+	/**
 	 * Returns the meta object for enum '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -640,6 +887,16 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getBehaviorType();
+
+	/**
+	 * Returns the meta object for enum '{@link main.game.maze.opponents.LootItemType <em>Loot Item Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Loot Item Type</em>'.
+	 * @see main.game.maze.opponents.LootItemType
+	 * @generated
+	 */
+	EEnum getLootItemType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -831,6 +1088,90 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute ZOMBIE__BEHAVIOR = eINSTANCE.getZombie_Behavior();
 
 		/**
+		 * The meta object literal for the '<em><b>Zombie Loot Table</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ZOMBIE__ZOMBIE_LOOT_TABLE = eINSTANCE.getZombie_ZombieLootTable();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.impl.LootTableImpl <em>Loot Table</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.impl.LootTableImpl
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootTable()
+		 * @generated
+		 */
+		EClass LOOT_TABLE = eINSTANCE.getLootTable();
+
+		/**
+		 * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference LOOT_TABLE__ITEMS = eINSTANCE.getLootTable_Items();
+
+		/**
+		 * The meta object literal for the '<em><b>Weight Capacity</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_TABLE__WEIGHT_CAPACITY = eINSTANCE.getLootTable_WeightCapacity();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.impl.LootItemImpl <em>Loot Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.impl.LootItemImpl
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootItem()
+		 * @generated
+		 */
+		EClass LOOT_ITEM = eINSTANCE.getLootItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_ITEM__NAME = eINSTANCE.getLootItem_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_ITEM__TYPE = eINSTANCE.getLootItem_Type();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_ITEM__VALUE = eINSTANCE.getLootItem_Value();
+
+		/**
+		 * The meta object literal for the '<em><b>Weight</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_ITEM__WEIGHT = eINSTANCE.getLootItem_Weight();
+
+		/**
+		 * The meta object literal for the '<em><b>Graphic Base</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOOT_ITEM__GRAPHIC_BASE = eINSTANCE.getLootItem_GraphicBase();
+
+		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -839,6 +1180,16 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum BEHAVIOR_TYPE = eINSTANCE.getBehaviorType();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.LootItemType <em>Loot Item Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.LootItemType
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootItemType()
+		 * @generated
+		 */
+		EEnum LOOT_ITEM_TYPE = eINSTANCE.getLootItemType();
 
 	}
 
