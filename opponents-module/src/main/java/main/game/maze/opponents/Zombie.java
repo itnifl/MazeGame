@@ -15,7 +15,6 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.opponents.Zombie#getAttackDamage <em>Attack Damage</em>}</li>
- *   <li>{@link main.game.maze.opponents.Zombie#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}</li>
@@ -49,32 +48,6 @@ public interface Zombie extends CharacterType {
 	 * @generated
 	 */
 	void setAttackDamage(int value);
-
-	/**
-	 * Returns the value of the '<em><b>Behavior</b></em>' attribute.
-	 * The default value is <code>"WANDER"</code>.
-	 * The literals are from the enumeration {@link main.game.maze.opponents.BehaviorType}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Behavior</em>' attribute.
-	 * @see main.game.maze.opponents.BehaviorType
-	 * @see #setBehavior(BehaviorType)
-	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_Behavior()
-	 * @model default="WANDER"
-	 * @generated
-	 */
-	BehaviorType getBehavior();
-
-	/**
-	 * Sets the value of the '{@link main.game.maze.opponents.Zombie#getBehavior <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Behavior</em>' attribute.
-	 * @see main.game.maze.opponents.BehaviorType
-	 * @see #getBehavior()
-	 * @generated
-	 */
-	void setBehavior(BehaviorType value);
 
 	/**
 	 * Returns the value of the '<em><b>Zombie Loot Table</b></em>' reference.

@@ -2,21 +2,13 @@
  */
 package main.game.maze.opponents.impl;
 
-import java.util.Collection;
-
-import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentsPackage;
 
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,7 +19,6 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.opponents.impl.GhostImpl#getAttackDamage <em>Attack Damage</em>}</li>
- *   <li>{@link main.game.maze.opponents.impl.GhostImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.GhostImpl#getVisibilityLevel <em>Visibility Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.GhostImpl#getNonTangibilityEnergy <em>Non Tangibility Energy</em>}</li>
  * </ul>
@@ -56,44 +47,44 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 	protected int attackDamage = ATTACK_DAMAGE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBehavior()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final BehaviorType BEHAVIOR_EDEFAULT = BehaviorType.WANDER;
-
-	/**
-	 * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBehavior()
-	 * @generated
-	 * @ordered
-	 */
-	protected BehaviorType behavior = BEHAVIOR_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getVisibilityLevel() <em>Visibility Level</em>}' attribute list.
+	 * The default value of the '{@link #getVisibilityLevel() <em>Visibility Level</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getVisibilityLevel()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Integer> visibilityLevel;
+	protected static final int VISIBILITY_LEVEL_EDEFAULT = 100;
 
 	/**
-	 * The cached value of the '{@link #getNonTangibilityEnergy() <em>Non Tangibility Energy</em>}' attribute list.
+	 * The cached value of the '{@link #getVisibilityLevel() <em>Visibility Level</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getVisibilityLevel()
+	 * @generated
+	 * @ordered
+	 */
+	protected int visibilityLevel = VISIBILITY_LEVEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getNonTangibilityEnergy() <em>Non Tangibility Energy</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getNonTangibilityEnergy()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Integer> nonTangibilityEnergy;
+	protected static final double NON_TANGIBILITY_ENERGY_EDEFAULT = 100.0;
+
+	/**
+	 * The cached value of the '{@link #getNonTangibilityEnergy() <em>Non Tangibility Energy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getNonTangibilityEnergy()
+	 * @generated
+	 * @ordered
+	 */
+	protected double nonTangibilityEnergy = NON_TANGIBILITY_ENERGY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -143,33 +134,7 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 	 * @generated
 	 */
 	@Override
-	public BehaviorType getBehavior() {
-		return behavior;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setBehavior(BehaviorType newBehavior) {
-		BehaviorType oldBehavior = behavior;
-		behavior = newBehavior == null ? BEHAVIOR_EDEFAULT : newBehavior;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.GHOST__BEHAVIOR, oldBehavior, behavior));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EList<Integer> getVisibilityLevel() {
-		if (visibilityLevel == null) {
-			visibilityLevel = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.GHOST__VISIBILITY_LEVEL);
-		}
+	public int getVisibilityLevel() {
 		return visibilityLevel;
 	}
 
@@ -179,11 +144,34 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 	 * @generated
 	 */
 	@Override
-	public EList<Integer> getNonTangibilityEnergy() {
-		if (nonTangibilityEnergy == null) {
-			nonTangibilityEnergy = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY);
-		}
+	public void setVisibilityLevel(int newVisibilityLevel) {
+		int oldVisibilityLevel = visibilityLevel;
+		visibilityLevel = newVisibilityLevel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.GHOST__VISIBILITY_LEVEL, oldVisibilityLevel, visibilityLevel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public double getNonTangibilityEnergy() {
 		return nonTangibilityEnergy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setNonTangibilityEnergy(double newNonTangibilityEnergy) {
+		double oldNonTangibilityEnergy = nonTangibilityEnergy;
+		nonTangibilityEnergy = newNonTangibilityEnergy;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY, oldNonTangibilityEnergy, nonTangibilityEnergy));
 	}
 
 	/**
@@ -196,8 +184,6 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 		switch (featureID) {
 			case OpponentsPackage.GHOST__ATTACK_DAMAGE:
 				return getAttackDamage();
-			case OpponentsPackage.GHOST__BEHAVIOR:
-				return getBehavior();
 			case OpponentsPackage.GHOST__VISIBILITY_LEVEL:
 				return getVisibilityLevel();
 			case OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY:
@@ -218,16 +204,11 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 			case OpponentsPackage.GHOST__ATTACK_DAMAGE:
 				setAttackDamage((Integer)newValue);
 				return;
-			case OpponentsPackage.GHOST__BEHAVIOR:
-				setBehavior((BehaviorType)newValue);
-				return;
 			case OpponentsPackage.GHOST__VISIBILITY_LEVEL:
-				getVisibilityLevel().clear();
-				getVisibilityLevel().addAll((Collection<? extends Integer>)newValue);
+				setVisibilityLevel((Integer)newValue);
 				return;
 			case OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY:
-				getNonTangibilityEnergy().clear();
-				getNonTangibilityEnergy().addAll((Collection<? extends Integer>)newValue);
+				setNonTangibilityEnergy((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -244,14 +225,11 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 			case OpponentsPackage.GHOST__ATTACK_DAMAGE:
 				setAttackDamage(ATTACK_DAMAGE_EDEFAULT);
 				return;
-			case OpponentsPackage.GHOST__BEHAVIOR:
-				setBehavior(BEHAVIOR_EDEFAULT);
-				return;
 			case OpponentsPackage.GHOST__VISIBILITY_LEVEL:
-				getVisibilityLevel().clear();
+				setVisibilityLevel(VISIBILITY_LEVEL_EDEFAULT);
 				return;
 			case OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY:
-				getNonTangibilityEnergy().clear();
+				setNonTangibilityEnergy(NON_TANGIBILITY_ENERGY_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -267,12 +245,10 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 		switch (featureID) {
 			case OpponentsPackage.GHOST__ATTACK_DAMAGE:
 				return attackDamage != ATTACK_DAMAGE_EDEFAULT;
-			case OpponentsPackage.GHOST__BEHAVIOR:
-				return behavior != BEHAVIOR_EDEFAULT;
 			case OpponentsPackage.GHOST__VISIBILITY_LEVEL:
-				return visibilityLevel != null && !visibilityLevel.isEmpty();
+				return visibilityLevel != VISIBILITY_LEVEL_EDEFAULT;
 			case OpponentsPackage.GHOST__NON_TANGIBILITY_ENERGY:
-				return nonTangibilityEnergy != null && !nonTangibilityEnergy.isEmpty();
+				return nonTangibilityEnergy != NON_TANGIBILITY_ENERGY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -289,8 +265,6 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (attackDamage: ");
 		result.append(attackDamage);
-		result.append(", behavior: ");
-		result.append(behavior);
 		result.append(", visibilityLevel: ");
 		result.append(visibilityLevel);
 		result.append(", nonTangibilityEnergy: ");

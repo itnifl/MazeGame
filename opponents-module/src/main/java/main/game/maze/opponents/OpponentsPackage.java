@@ -232,13 +232,13 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__IMAGE_TURN_DOWN = 11;
 
 	/**
-	 * The feature id for the '<em><b>Is Tangible</b></em>' attribute.
+	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE__IS_TANGIBLE = 12;
+	int CHARACTER_TYPE__BEHAVIOR = 12;
 
 	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
@@ -377,13 +377,13 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__IMAGE_TURN_DOWN = CHARACTER_TYPE__IMAGE_TURN_DOWN;
 
 	/**
-	 * The feature id for the '<em><b>Is Tangible</b></em>' attribute.
+	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE__IS_TANGIBLE = CHARACTER_TYPE__IS_TANGIBLE;
+	int ZOMBIE__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -395,22 +395,13 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__ATTACK_DAMAGE = CHARACTER_TYPE_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ZOMBIE__BEHAVIOR = CHARACTER_TYPE_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Zombie Loot Table</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE__ZOMBIE_LOOT_TABLE = CHARACTER_TYPE_FEATURE_COUNT + 2;
+	int ZOMBIE__ZOMBIE_LOOT_TABLE = CHARACTER_TYPE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Infection Level</b></em>' attribute list.
@@ -419,7 +410,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE__INFECTION_LEVEL = CHARACTER_TYPE_FEATURE_COUNT + 3;
+	int ZOMBIE__INFECTION_LEVEL = CHARACTER_TYPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Resurrection Time</b></em>' attribute list.
@@ -428,7 +419,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE__RESURRECTION_TIME = CHARACTER_TYPE_FEATURE_COUNT + 4;
+	int ZOMBIE__RESURRECTION_TIME = CHARACTER_TYPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Touch Sound</b></em>' attribute.
@@ -437,7 +428,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE__TOUCH_SOUND = CHARACTER_TYPE_FEATURE_COUNT + 5;
+	int ZOMBIE__TOUCH_SOUND = CHARACTER_TYPE_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Zombie</em>' class.
@@ -446,7 +437,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 6;
+	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Zombie</em>' class.
@@ -695,13 +686,13 @@ public interface OpponentsPackage extends EPackage {
 	int GHOST__IMAGE_TURN_DOWN = CHARACTER_TYPE__IMAGE_TURN_DOWN;
 
 	/**
-	 * The feature id for the '<em><b>Is Tangible</b></em>' attribute.
+	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GHOST__IS_TANGIBLE = CHARACTER_TYPE__IS_TANGIBLE;
+	int GHOST__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -713,31 +704,22 @@ public interface OpponentsPackage extends EPackage {
 	int GHOST__ATTACK_DAMAGE = CHARACTER_TYPE_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
+	 * The feature id for the '<em><b>Visibility Level</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GHOST__BEHAVIOR = CHARACTER_TYPE_FEATURE_COUNT + 1;
+	int GHOST__VISIBILITY_LEVEL = CHARACTER_TYPE_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Visibility Level</b></em>' attribute list.
+	 * The feature id for the '<em><b>Non Tangibility Energy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GHOST__VISIBILITY_LEVEL = CHARACTER_TYPE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Non Tangibility Energy</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GHOST__NON_TANGIBILITY_ENERGY = CHARACTER_TYPE_FEATURE_COUNT + 3;
+	int GHOST__NON_TANGIBILITY_ENERGY = CHARACTER_TYPE_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Ghost</em>' class.
@@ -746,7 +728,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int GHOST_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 4;
+	int GHOST_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Ghost</em>' class.
@@ -965,15 +947,15 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getCharacterType_ImageTurnDown();
 
 	/**
-	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#isIsTangible <em>Is Tangible</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getBehavior <em>Behavior</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Tangible</em>'.
-	 * @see main.game.maze.opponents.CharacterType#isIsTangible()
+	 * @return the meta object for the attribute '<em>Behavior</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getBehavior()
 	 * @see #getCharacterType()
 	 * @generated
 	 */
-	EAttribute getCharacterType_IsTangible();
+	EAttribute getCharacterType_Behavior();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
@@ -995,17 +977,6 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getZombie_AttackDamage();
-
-	/**
-	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Zombie#getBehavior <em>Behavior</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Behavior</em>'.
-	 * @see main.game.maze.opponents.Zombie#getBehavior()
-	 * @see #getZombie()
-	 * @generated
-	 */
-	EAttribute getZombie_Behavior();
 
 	/**
 	 * Returns the meta object for the reference '{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}'.
@@ -1170,21 +1141,10 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getGhost_AttackDamage();
 
 	/**
-	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Ghost#getBehavior <em>Behavior</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Ghost#getVisibilityLevel <em>Visibility Level</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Behavior</em>'.
-	 * @see main.game.maze.opponents.Ghost#getBehavior()
-	 * @see #getGhost()
-	 * @generated
-	 */
-	EAttribute getGhost_Behavior();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.Ghost#getVisibilityLevel <em>Visibility Level</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Visibility Level</em>'.
+	 * @return the meta object for the attribute '<em>Visibility Level</em>'.
 	 * @see main.game.maze.opponents.Ghost#getVisibilityLevel()
 	 * @see #getGhost()
 	 * @generated
@@ -1192,10 +1152,10 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getGhost_VisibilityLevel();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.Ghost#getNonTangibilityEnergy <em>Non Tangibility Energy</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Ghost#getNonTangibilityEnergy <em>Non Tangibility Energy</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Non Tangibility Energy</em>'.
+	 * @return the meta object for the attribute '<em>Non Tangibility Energy</em>'.
 	 * @see main.game.maze.opponents.Ghost#getNonTangibilityEnergy()
 	 * @see #getGhost()
 	 * @generated
@@ -1386,12 +1346,12 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute CHARACTER_TYPE__IMAGE_TURN_DOWN = eINSTANCE.getCharacterType_ImageTurnDown();
 
 		/**
-		 * The meta object literal for the '<em><b>Is Tangible</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CHARACTER_TYPE__IS_TANGIBLE = eINSTANCE.getCharacterType_IsTangible();
+		EAttribute CHARACTER_TYPE__BEHAVIOR = eINSTANCE.getCharacterType_Behavior();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.
@@ -1410,14 +1370,6 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ZOMBIE__ATTACK_DAMAGE = eINSTANCE.getZombie_AttackDamage();
-
-		/**
-		 * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ZOMBIE__BEHAVIOR = eINSTANCE.getZombie_Behavior();
 
 		/**
 		 * The meta object literal for the '<em><b>Zombie Loot Table</b></em>' reference feature.
@@ -1546,15 +1498,7 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute GHOST__ATTACK_DAMAGE = eINSTANCE.getGhost_AttackDamage();
 
 		/**
-		 * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute GHOST__BEHAVIOR = eINSTANCE.getGhost_Behavior();
-
-		/**
-		 * The meta object literal for the '<em><b>Visibility Level</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Visibility Level</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1562,7 +1506,7 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute GHOST__VISIBILITY_LEVEL = eINSTANCE.getGhost_VisibilityLevel();
 
 		/**
-		 * The meta object literal for the '<em><b>Non Tangibility Energy</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Non Tangibility Energy</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

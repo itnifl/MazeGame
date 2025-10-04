@@ -24,7 +24,7 @@
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">
-      <id>ghost_classic_1</id>
+      <id>ghost_classic_2</id>
       <displayName>Ghost Zombie</displayName>
       <enabled>true</enabled>
       <health>120</health>
@@ -40,7 +40,7 @@
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">
-      <id>ghost_classic_1</id>
+      <id>ghost_classic_3</id>
       <displayName>Ghost Zombie</displayName>
       <enabled>true</enabled>
       <health>120</health>
@@ -56,7 +56,23 @@
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">
-      <id>ghost_classic_1</id>
+      <id>ghost_classic_4</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_5</id>
       <displayName>Ghost Zombie</displayName>
       <enabled>true</enabled>
       <health>120</health>

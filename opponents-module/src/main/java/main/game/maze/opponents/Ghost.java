@@ -2,8 +2,6 @@
  */
 package main.game.maze.opponents;
 
-import org.eclipse.emf.common.util.EList;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Ghost</b></em>'.
@@ -14,7 +12,6 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.opponents.Ghost#getAttackDamage <em>Attack Damage</em>}</li>
- *   <li>{@link main.game.maze.opponents.Ghost#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.Ghost#getVisibilityLevel <em>Visibility Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.Ghost#getNonTangibilityEnergy <em>Non Tangibility Energy</em>}</li>
  * </ul>
@@ -48,53 +45,49 @@ public interface Ghost extends CharacterType {
 	void setAttackDamage(int value);
 
 	/**
-	 * Returns the value of the '<em><b>Behavior</b></em>' attribute.
-	 * The default value is <code>"WANDER"</code>.
-	 * The literals are from the enumeration {@link main.game.maze.opponents.BehaviorType}.
+	 * Returns the value of the '<em><b>Visibility Level</b></em>' attribute.
+	 * The default value is <code>"100"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Behavior</em>' attribute.
-	 * @see main.game.maze.opponents.BehaviorType
-	 * @see #setBehavior(BehaviorType)
-	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_Behavior()
-	 * @model default="WANDER"
-	 * @generated
-	 */
-	BehaviorType getBehavior();
-
-	/**
-	 * Sets the value of the '{@link main.game.maze.opponents.Ghost#getBehavior <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Behavior</em>' attribute.
-	 * @see main.game.maze.opponents.BehaviorType
-	 * @see #getBehavior()
-	 * @generated
-	 */
-	void setBehavior(BehaviorType value);
-
-	/**
-	 * Returns the value of the '<em><b>Visibility Level</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Integer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Visibility Level</em>' attribute list.
+	 * @return the value of the '<em>Visibility Level</em>' attribute.
+	 * @see #setVisibilityLevel(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_VisibilityLevel()
-	 * @model default="100" upper="100"
+	 * @model default="100"
 	 * @generated
 	 */
-	EList<Integer> getVisibilityLevel();
+	int getVisibilityLevel();
 
 	/**
-	 * Returns the value of the '<em><b>Non Tangibility Energy</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Integer}.
+	 * Sets the value of the '{@link main.game.maze.opponents.Ghost#getVisibilityLevel <em>Visibility Level</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Non Tangibility Energy</em>' attribute list.
-	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_NonTangibilityEnergy()
-	 * @model default="100" upper="100"
+	 * @param value the new value of the '<em>Visibility Level</em>' attribute.
+	 * @see #getVisibilityLevel()
 	 * @generated
 	 */
-	EList<Integer> getNonTangibilityEnergy();
+	void setVisibilityLevel(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Non Tangibility Energy</b></em>' attribute.
+	 * The default value is <code>"100"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Non Tangibility Energy</em>' attribute.
+	 * @see #setNonTangibilityEnergy(double)
+	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_NonTangibilityEnergy()
+	 * @model default="100"
+	 * @generated
+	 */
+	double getNonTangibilityEnergy();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.Ghost#getNonTangibilityEnergy <em>Non Tangibility Energy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Non Tangibility Energy</em>' attribute.
+	 * @see #getNonTangibilityEnergy()
+	 * @generated
+	 */
+	void setNonTangibilityEnergy(double value);
 
 } // Ghost
