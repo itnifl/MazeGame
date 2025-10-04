@@ -43,6 +43,8 @@
         defaultValueLiteral="/main/game/maze/zombie-up.png"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnDown" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral="/main/game/maze/zombie-up.png"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isTangible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Zombie" eSuperTypes="#//CharacterType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -50,6 +52,12 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="#//BehaviorType"
         defaultValueLiteral="WANDER"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="zombieLootTable" eType="#//LootTable"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="infectionLevel" lowerBound="1"
+        upperBound="10" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="resurrectionTime" lowerBound="-1"
+        upperBound="180" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="-1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BehaviorType">
     <eLiterals name="PASSIVE" literal="PASSIVE"/>
@@ -77,5 +85,15 @@
     <eLiterals name="BOMB" value="1"/>
     <eLiterals name="TRAP" value="2"/>
     <eLiterals name="WEAPON" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ghost" eSuperTypes="#//CharacterType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="10"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="#//BehaviorType"
+        defaultValueLiteral="WANDER"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visibilityLevel" upperBound="100"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="100"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nonTangibilityEnergy" upperBound="100"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="100"/>
   </eClassifiers>
 </ecore:EPackage>
