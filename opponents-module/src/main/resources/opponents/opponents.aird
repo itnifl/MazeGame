@@ -17,7 +17,7 @@
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']"/>
         <target xmi:type="ecore:EPackage" href="opponents.ecore#/"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_ypWmwaExEfCat9sKCxZ3Qg" name="opponents class diagram" repPath="#_ypV_sKExEfCat9sKCxZ3Qg" changeId="1759589655478">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_ypWmwaExEfCat9sKCxZ3Qg" name="opponents class diagram" repPath="#_ypV_sKExEfCat9sKCxZ3Qg" changeId="1759590250238">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']"/>
         <target xmi:type="ecore:EPackage" href="opponents.ecore#/"/>
       </ownedRepresentationDescriptors>
@@ -2524,12 +2524,12 @@
       <ownedElements xmi:type="diagram:DNodeListElement" uid="_zIdko6ExEfCat9sKCxZ3Qg" name="infectionLevel : EInt = 1" tooltipText="">
         <target xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/infectionLevel"/>
         <semanticElements xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/infectionLevel"/>
-        <ownedStyle xmi:type="diagram:BundledImage" uid="_zIdkpaExEfCat9sKCxZ3Qg" labelAlignment="LEFT" description="_zIdkpKExEfCat9sKCxZ3Qg">
-          <labelFormat>bold</labelFormat>
+        <ownedStyle xmi:type="diagram:BundledImage" uid="_YacX86EzEfCat9sKCxZ3Qg" labelAlignment="LEFT">
+          <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
       </ownedElements>
-      <ownedElements xmi:type="diagram:DNodeListElement" uid="_zIdkpqExEfCat9sKCxZ3Qg" name="resurrectionTime : EInt = -1" tooltipText="">
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_zIdkpqExEfCat9sKCxZ3Qg" name="resurrectionTime : EInt = 0" tooltipText="">
         <target xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/resurrectionTime"/>
         <semanticElements xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/resurrectionTime"/>
         <ownedStyle xmi:type="diagram:BundledImage" uid="_zIdkp6ExEfCat9sKCxZ3Qg" labelAlignment="LEFT">
@@ -2718,7 +2718,9 @@
       <target xmi:type="ecore:EReference" href="opponents.ecore#//OpponentModel/characterTypes"/>
       <semanticElements xmi:type="ecore:EReference" href="opponents.ecore#//OpponentModel/characterTypes"/>
       <ownedStyle xmi:type="diagram:EdgeStyle" uid="_zIfZ1KExEfCat9sKCxZ3Qg" description="_zIfZ0aExEfCat9sKCxZ3Qg" sourceArrow="FillDiamond" routingStyle="manhattan" strokeColor="0,0,0">
-        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_zIfZ1qExEfCat9sKCxZ3Qg" showIcon="false"/>
+        <centerLabelStyle xmi:type="diagram:CenterLabelStyle" uid="_zIfZ1qExEfCat9sKCxZ3Qg" showIcon="false">
+          <labelFormat>bold</labelFormat>
+        </centerLabelStyle>
         <endLabelStyle xmi:type="diagram:EndLabelStyle" uid="_zIfZ1aExEfCat9sKCxZ3Qg" showIcon="false" labelColor="39,76,114">
           <customFeatures>labelSize</customFeatures>
         </endLabelStyle>

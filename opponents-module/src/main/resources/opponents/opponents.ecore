@@ -52,11 +52,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="#//BehaviorType"
         defaultValueLiteral="WANDER"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="zombieLootTable" eType="#//LootTable"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="infectionLevel" lowerBound="1"
-        upperBound="10" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
-        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="infectionLevel" upperBound="10"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="1"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="resurrectionTime" upperBound="180"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="-1"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BehaviorType">
     <eLiterals name="PASSIVE" literal="PASSIVE"/>
