@@ -26,13 +26,13 @@ import org.eclipse.emf.common.util.EList;
 public interface Ghost extends CharacterType {
 	/**
 	 * Returns the value of the '<em><b>Attack Damage</b></em>' attribute.
-	 * The default value is <code>"10"</code>.
+	 * The default value is <code>"1"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Attack Damage</em>' attribute.
 	 * @see #setAttackDamage(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_AttackDamage()
-	 * @model default="10"
+	 * @model default="1"
 	 * @generated
 	 */
 	int getAttackDamage();

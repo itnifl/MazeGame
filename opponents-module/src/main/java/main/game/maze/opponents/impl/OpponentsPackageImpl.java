@@ -402,6 +402,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getZombie_TouchSound() {
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getLootTable() {
 		return lootTableEClass;
 	}
@@ -611,6 +621,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEReference(zombieEClass, ZOMBIE__ZOMBIE_LOOT_TABLE);
 		createEAttribute(zombieEClass, ZOMBIE__INFECTION_LEVEL);
 		createEAttribute(zombieEClass, ZOMBIE__RESURRECTION_TIME);
+		createEAttribute(zombieEClass, ZOMBIE__TOUCH_SOUND);
 
 		lootTableEClass = createEClass(LOOT_TABLE);
 		createEReference(lootTableEClass, LOOT_TABLE__ITEMS);
@@ -692,6 +703,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEReference(getZombie_ZombieLootTable(), this.getLootTable(), null, "zombieLootTable", null, 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getZombie_InfectionLevel(), ecorePackage.getEInt(), "infectionLevel", "1", 0, 10, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getZombie_ResurrectionTime(), ecorePackage.getEInt(), "resurrectionTime", "0", 0, 180, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_TouchSound(), ecorePackage.getEString(), "touchSound", "/main/game/maze/zombieScream.mp3", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(lootTableEClass, LootTable.class, "LootTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getLootTable_Items(), this.getLootItem(), null, "items", null, 0, -1, LootTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -705,7 +717,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getLootItem_GraphicBase(), ecorePackage.getEString(), "graphicBase", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ghostEClass, Ghost.class, "Ghost", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGhost_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 100, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEInt(), "nonTangibilityEnergy", "100", 0, 100, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

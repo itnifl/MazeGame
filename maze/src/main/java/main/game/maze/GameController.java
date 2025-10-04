@@ -43,18 +43,6 @@ public class GameController implements Initializable {
     @FXML
     private AnchorPane root;
     @FXML
-    private Node ghost1;
-    @FXML
-    private Node ghost2;
-    @FXML
-    private Node ghost3;
-    @FXML
-    private Node ghost4;
-    @FXML
-    private Node ghost5;
-    @FXML
-    private Node ghost6;
-    @FXML
     private Node player;
     @FXML
     private Pane gameBoard;
@@ -68,12 +56,6 @@ public class GameController implements Initializable {
     private Label scoreLabel;
 
     private PlayerCharacter playerCharacter;
-    private GhostCharacter ghostCharacter1;
-    private GhostCharacter ghostCharacter2;
-    private GhostCharacter ghostCharacter3;
-    private GhostCharacter ghostCharacter4;
-    private GhostCharacter ghostCharacter5;
-    private GhostCharacter ghostCharacter6;
     private MazeWorld maze;
     private GameOverAction gameOverAction;
     private WinGameAction winGameAction;
@@ -169,14 +151,14 @@ public class GameController implements Initializable {
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
         // create a timeline with two key frames
-        timeline = new Timeline(
+        /*timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
 
         // set the cycle count to indefinite
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setCycleCount(Timeline.INDEFINITE);*/
 
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
@@ -201,37 +183,6 @@ public class GameController implements Initializable {
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
-        ghostCharacter1 = new GhostCharacter(ghost1, ghost1.getLayoutX(), ghost1.getLayoutY());
-        allComputerCharacters.add(ghostCharacter1);
-
-        ghostCharacter2 = new GhostCharacter(ghost2, ghost2.getLayoutX(), ghost2.getLayoutY());
-        allComputerCharacters.add(ghostCharacter2);
-
-        ghostCharacter3 = new GhostCharacter(ghost3, ghost3.getLayoutX(), ghost3.getLayoutY());
-        allComputerCharacters.add(ghostCharacter3);
-
-        ghostCharacter4 = new GhostCharacter(ghost4, ghost4.getLayoutX(), ghost4.getLayoutY());
-        allComputerCharacters.add(ghostCharacter4);
-
-        ghostCharacter5 = new GhostCharacter(ghost5, ghost5.getLayoutX(), ghost5.getLayoutY());
-        allComputerCharacters.add(ghostCharacter5);
-
-        ghostCharacter6 = new GhostCharacter(ghost6, ghost6.getLayoutX(), ghost6.getLayoutY());
-        allComputerCharacters.add(ghostCharacter6);
-
-        playerCharacter.addPositionSubscriber(ghostCharacter1);
-        playerCharacter.addPositionSubscriber(ghostCharacter2);
-        playerCharacter.addPositionSubscriber(ghostCharacter3);
-        playerCharacter.addPositionSubscriber(ghostCharacter4);
-        playerCharacter.addPositionSubscriber(ghostCharacter5);
-        playerCharacter.addPositionSubscriber(ghostCharacter6);
-
-        ghostCharacter1.addPositionSubscriber(playerCharacter);
-        ghostCharacter2.addPositionSubscriber(playerCharacter);
-        ghostCharacter3.addPositionSubscriber(playerCharacter);
-        ghostCharacter4.addPositionSubscriber(playerCharacter);
-        ghostCharacter5.addPositionSubscriber(playerCharacter);
-        ghostCharacter6.addPositionSubscriber(playerCharacter);
 
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);

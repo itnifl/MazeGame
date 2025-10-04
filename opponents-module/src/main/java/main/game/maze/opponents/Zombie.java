@@ -19,6 +19,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}</li>
+ *   <li>{@link main.game.maze.opponents.Zombie#getTouchSound <em>Touch Sound</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getZombie()
@@ -120,5 +121,28 @@ public interface Zombie extends CharacterType {
 	 * @generated
 	 */
 	EList<Integer> getResurrectionTime();
+
+	/**
+	 * Returns the value of the '<em><b>Touch Sound</b></em>' attribute.
+	 * The default value is <code>"/main/game/maze/zombieScream.mp3"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Touch Sound</em>' attribute.
+	 * @see #setTouchSound(String)
+	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_TouchSound()
+	 * @model default="/main/game/maze/zombieScream.mp3"
+	 * @generated
+	 */
+	String getTouchSound();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.Zombie#getTouchSound <em>Touch Sound</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Touch Sound</em>' attribute.
+	 * @see #getTouchSound()
+	 * @generated
+	 */
+	void setTouchSound(String value);
 
 } // Zombie

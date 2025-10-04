@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getInfectionLevel <em>Infection Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getResurrectionTime <em>Resurrection Time</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getTouchSound <em>Touch Sound</em>}</li>
  * </ul>
  *
  * @generated
@@ -104,6 +105,26 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @ordered
 	 */
 	protected EList<Integer> resurrectionTime;
+
+	/**
+	 * The default value of the '{@link #getTouchSound() <em>Touch Sound</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTouchSound()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TOUCH_SOUND_EDEFAULT = "/main/game/maze/zombieScream.mp3";
+
+	/**
+	 * The cached value of the '{@link #getTouchSound() <em>Touch Sound</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTouchSound()
+	 * @generated
+	 * @ordered
+	 */
+	protected String touchSound = TOUCH_SOUND_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -239,6 +260,29 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getTouchSound() {
+		return touchSound;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setTouchSound(String newTouchSound) {
+		String oldTouchSound = touchSound;
+		touchSound = newTouchSound;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__TOUCH_SOUND, oldTouchSound, touchSound));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
@@ -273,6 +317,8 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return getInfectionLevel();
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
 				return getResurrectionTime();
+			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
+				return getTouchSound();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -303,6 +349,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				getResurrectionTime().clear();
 				getResurrectionTime().addAll((Collection<? extends Integer>)newValue);
 				return;
+			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
+				setTouchSound((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -330,6 +379,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
 				getResurrectionTime().clear();
 				return;
+			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
+				setTouchSound(TOUCH_SOUND_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -352,6 +404,8 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return infectionLevel != null && !infectionLevel.isEmpty();
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
 				return resurrectionTime != null && !resurrectionTime.isEmpty();
+			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
+				return TOUCH_SOUND_EDEFAULT == null ? touchSound != null : !TOUCH_SOUND_EDEFAULT.equals(touchSound);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -374,6 +428,8 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		result.append(infectionLevel);
 		result.append(", resurrectionTime: ");
 		result.append(resurrectionTime);
+		result.append(", touchSound: ");
+		result.append(touchSound);
 		result.append(')');
 		return result.toString();
 	}

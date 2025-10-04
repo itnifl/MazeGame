@@ -7,7 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import main.game.maze.App;
 import main.game.maze.Vector2D.VectorFacing;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -26,6 +28,7 @@ public class ZombieCharacter extends ComputerCharacter
 
     private final Zombie zombieModel;
     private AtomicInteger hitPoints;
+    private MediaPlayer screamMediaPlayer;
 
     private final Image imageLeft;
     private final Image imageRight;
@@ -46,7 +49,7 @@ public class ZombieCharacter extends ComputerCharacter
         this.imageDown = new Image(getClass().getResourceAsStream(model.getImageTurnDown()));
         this.zombieModel = model;
         this.hitPoints = new AtomicInteger(Math.max(1, model.getHealth()));
-        this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
+        this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
 
         // movement notifier (same pattern as Ghost)
@@ -82,8 +85,7 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     private static int mapSpeed(double modelSpeed) {
-        // simple mapping; tune as needed
-        return Math.max(1, (int)Math.round(modelSpeed * 2.0));
+        return Math.max(1, (int)Math.round(modelSpeed));
     }
 
     private class HappyAction implements ICharacterAction {
@@ -133,9 +135,20 @@ public class ZombieCharacter extends ComputerCharacter
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
-                canDieEntity.subtractHitPoints(getDamage());
+                canDieEntity.subtractHitPoints(getDamage());                
+            }
+            if(screamMediaPlayer == null || screamMediaPlayer.getStatus() != Status.PLAYING) {
+                screamMediaPlayer = playScream();
+                screamMediaPlayer.play();
             }
         }        
+    }
+
+    private MediaPlayer playScream() {
+        var soundFile = zombieModel.getTouchSound();
+        var resource = getClass().getResource(soundFile);
+        Media media = new Media(resource.toString());
+        return new MediaPlayer(media);
     }
 
     @Override

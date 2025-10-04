@@ -43,7 +43,7 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int ATTACK_DAMAGE_EDEFAULT = 10;
+	protected static final int ATTACK_DAMAGE_EDEFAULT = 1;
 
 	/**
 	 * The cached value of the '{@link #getAttackDamage() <em>Attack Damage</em>}' attribute.
