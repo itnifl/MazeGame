@@ -8,9 +8,6 @@
 - try the game a few times to get to know it.
 
 # Bugs
-- It happens that you can trick walls
-- Ghosts are supposed to pulsate in opacity, but this seems to not work.
-- Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
 - If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
 - Application system is not very testable, unit tests should have been written first
 - The Action Screens (Win and Game Over) some times bug up or don't show after I added the flash effect on the player when the player gets hurt. This is rare.
