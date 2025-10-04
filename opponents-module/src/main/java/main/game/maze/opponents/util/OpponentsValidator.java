@@ -93,8 +93,14 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateCharacterType((CharacterType)value, diagnostics, context);
 			case OpponentsPackage.ZOMBIE:
 				return validateZombie((Zombie)value, diagnostics, context);
+			case OpponentsPackage.LOOT_TABLE:
+				return validateLootTable((LootTable)value, diagnostics, context);
+			case OpponentsPackage.LOOT_ITEM:
+				return validateLootItem((LootItem)value, diagnostics, context);
 			case OpponentsPackage.BEHAVIOR_TYPE:
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
+			case OpponentsPackage.LOOT_ITEM_TYPE:
+				return validateLootItemType((LootItemType)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -167,7 +173,34 @@ public class OpponentsValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateLootTable(LootTable lootTable, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(lootTable, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateLootItem(LootItem lootItem, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(lootItem, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateBehaviorType(BehaviorType behaviorType, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateLootItemType(LootItemType lootItemType, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

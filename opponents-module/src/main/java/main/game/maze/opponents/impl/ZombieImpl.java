@@ -3,6 +3,7 @@
 package main.game.maze.opponents.impl;
 
 import main.game.maze.opponents.BehaviorType;
+import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 
@@ -10,6 +11,7 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -22,6 +24,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getAttackDamage <em>Attack Damage</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,6 +69,16 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @ordered
 	 */
 	protected BehaviorType behavior = BEHAVIOR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getZombieLootTable() <em>Zombie Loot Table</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getZombieLootTable()
+	 * @generated
+	 * @ordered
+	 */
+	protected LootTable zombieLootTable;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -135,6 +148,46 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public LootTable getZombieLootTable() {
+		if (zombieLootTable != null && zombieLootTable.eIsProxy()) {
+			InternalEObject oldZombieLootTable = (InternalEObject)zombieLootTable;
+			zombieLootTable = (LootTable)eResolveProxy(oldZombieLootTable);
+			if (zombieLootTable != oldZombieLootTable) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE, oldZombieLootTable, zombieLootTable));
+			}
+		}
+		return zombieLootTable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LootTable basicGetZombieLootTable() {
+		return zombieLootTable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setZombieLootTable(LootTable newZombieLootTable) {
+		LootTable oldZombieLootTable = zombieLootTable;
+		zombieLootTable = newZombieLootTable;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE, oldZombieLootTable, zombieLootTable));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
@@ -162,6 +215,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return getAttackDamage();
 			case OpponentsPackage.ZOMBIE__BEHAVIOR:
 				return getBehavior();
+			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
+				if (resolve) return getZombieLootTable();
+				return basicGetZombieLootTable();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -179,6 +235,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return;
 			case OpponentsPackage.ZOMBIE__BEHAVIOR:
 				setBehavior((BehaviorType)newValue);
+				return;
+			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
+				setZombieLootTable((LootTable)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -198,6 +257,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__BEHAVIOR:
 				setBehavior(BEHAVIOR_EDEFAULT);
 				return;
+			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
+				setZombieLootTable((LootTable)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -214,6 +276,8 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return attackDamage != ATTACK_DAMAGE_EDEFAULT;
 			case OpponentsPackage.ZOMBIE__BEHAVIOR:
 				return behavior != BEHAVIOR_EDEFAULT;
+			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
+				return zombieLootTable != null;
 		}
 		return super.eIsSet(featureID);
 	}
