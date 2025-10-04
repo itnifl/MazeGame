@@ -14,7 +14,7 @@ Contents
         
     *   Resources (FXML, images, and **XMI instances** under src/main/resources/opponents/instances/).
         
-*   **Example XMI instances** – configurations of the SPL feature “Opponents” (e.g., **classic\_zombie.xmi**) NB! Please set maxThreat to less then the total threat of the characters in **classic\_zombie.xmi** to test that the game actually uses the constraints created in the opponents-module - for instance st it to 1. Then start the game in Visual Studio Code and observe that the game will not load. Then set maxThreat back to 10 in **classic\_zombie.xmi** and start the game in Visual Studio Code and observe that the game will load.
+*   **Example XMI instances** – configurations of the SPL feature “Opponents” (e.g., *opponentModel.xmi**) NB! Please set maxThreat to less then the total threat of the characters in **opponentModel.xmi** to test that the game actually uses the constraints created in the opponents-module - for instance st it to 1. Then start the game in Visual Studio Code and observe that the game will not load. Then set maxThreat back to 10 in **opponentModel.xmi** and start the game in Visual Studio Code and observe that the game will load.
 
 How to run the game is described in /readme.md at the base of this repo.
     
@@ -52,7 +52,9 @@ Domain description (ties back to Assignment 1)
     
 *   **Abstract type**: CharacterType (id, displayName, enabled, health, speed, threatLevel, **derived** effectiveThreat).
     
-*   **Concrete subtype**: Zombie (adds attackDamage, behavior : BehaviorType, and image attributes used by the runtime for graphics).
+*   **Concrete subtype**: Zombie (adds attackDamage, behavior : BehaviorType).
+
+*   **Concrete subtype**: Ghost (adds attackDamage, behavior : BehaviorTyp).
     
 <br>
 
@@ -84,16 +86,53 @@ Metamodel overview
     *   threatLevel : EDouble
         
     *   effectiveThreat : EDouble **(derived)**
+    
+    *   behavior : BehaviorType (enum: e.g., WANDER, AGGRESSIVE, runtime code is not using all of these properties yet). 
+
+    *   imageBase, imageTurnLeft, imageTurnRight, imageTurnUp, imageTurnDown : EString (resource paths used by the game)
         
 *   Zombie extends CharacterType
     
-    *   attackDamage : EInt
+    *   attackDamage : EInt            
         
-    *   behavior : BehaviorType (enum: e.g., WANDER, AGGRESSIVE, runtime code is not using these properties yet). 
-        
-    *   imageBase, imageTurnLeft, imageTurnRight, imageTurnUp, imageTurnDown : EString (resource paths used by the game)
+    *   zombieLootTable: LootTable
+
+    *   infectionLevel: EInt
+
+    *   resurrectionTime: EInt
+
+    *   touchSound: EString
+
+*   LootTable
+    *   items: LootTable
+
+    *   weightCapacity: EInt
+
+*   LootItem
+
+    *   name: EString
+
+    *   type: LootItemType (enum: e.g., FOOD, BOMB, runtime code is not using these properties yet). 
+
+    *   value: EInt
+
+    *   weight: EInt
+
+    *   graphicBase: EString
+
+*   Ghost extends CharacterType
+    
+    *   attackDamage : EInt      
+
+    *   visibilityLevel : EInt  
+
+    *   nonTangibilityEnergy : EInt  
+
+
         
 *   BehaviorType (enum)
+
+*   LootItemType (enum)
     
 
 **Derived property**
@@ -175,14 +214,14 @@ Using the model at runtime
 
 ### Where the XMI instances live
 
-Runtime looks up instances on the classpath at:/opponents/instances/*.xmi (e.g., classic\_zombie.xmi) in the maze-base module at /maze.
-They are placed them in the **game** module (so they are always available at runtime):maze/src/main/resources/opponents/instances/classic\_zombie.xmi
+Runtime looks up instances on the classpath at:/opponents/instances/*.xmi (e.g., opponentModel.xmi) in the maze-base module at /maze.
+They are placed them in the **game** module (so they are always available at runtime):maze/src/main/resources/opponents/instances/opponentModel.xmi
 
 ### Loading + validation (runtime)
 
 maze/src/main/java/main/game/maze/runtime/opponents/OpponentRuntimeFactory.java:
 
-*   Loads the XMI from classpath (/opponents/instances/classic\_zombie.xmi).
+*   Loads the XMI from classpath (/opponents/instances/opponentModel.xmi).
     
 *   **Validates** the model **before** spawning opponents (using OpponentsValidator or Diagnostician).
     
