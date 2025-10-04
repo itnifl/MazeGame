@@ -61,6 +61,7 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 			case OpponentsPackage.ZOMBIE: return createZombie();
 			case OpponentsPackage.LOOT_TABLE: return createLootTable();
 			case OpponentsPackage.LOOT_ITEM: return createLootItem();
+			case OpponentsPackage.GHOST: return createGhost();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -142,6 +143,17 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	public LootItem createLootItem() {
 		LootItemImpl lootItem = new LootItemImpl();
 		return lootItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Ghost createGhost() {
+		GhostImpl ghost = new GhostImpl();
+		return ghost;
 	}
 
 	/**

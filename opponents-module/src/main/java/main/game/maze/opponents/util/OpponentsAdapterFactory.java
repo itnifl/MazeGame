@@ -88,6 +88,10 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 				return createLootItemAdapter();
 			}
 			@Override
+			public Adapter caseGhost(Ghost object) {
+				return createGhostAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -174,6 +178,20 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLootItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.Ghost <em>Ghost</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.Ghost
+	 * @generated
+	 */
+	public Adapter createGhostAdapter() {
 		return null;
 	}
 

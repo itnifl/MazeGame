@@ -2,6 +2,7 @@
  */
 package main.game.maze.opponents.impl;
 
+import java.util.Collection;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentsPackage;
@@ -9,10 +10,12 @@ import main.game.maze.opponents.Zombie;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,6 +28,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getAttackDamage <em>Attack Damage</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getZombieLootTable <em>Zombie Loot Table</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getInfectionLevel <em>Infection Level</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getResurrectionTime <em>Resurrection Time</em>}</li>
  * </ul>
  *
  * @generated
@@ -79,6 +84,26 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @ordered
 	 */
 	protected LootTable zombieLootTable;
+
+	/**
+	 * The cached value of the '{@link #getInfectionLevel() <em>Infection Level</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInfectionLevel()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Integer> infectionLevel;
+
+	/**
+	 * The cached value of the '{@link #getResurrectionTime() <em>Resurrection Time</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getResurrectionTime()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Integer> resurrectionTime;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -188,6 +213,32 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<Integer> getInfectionLevel() {
+		if (infectionLevel == null) {
+			infectionLevel = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.ZOMBIE__INFECTION_LEVEL);
+		}
+		return infectionLevel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<Integer> getResurrectionTime() {
+		if (resurrectionTime == null) {
+			resurrectionTime = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.ZOMBIE__RESURRECTION_TIME);
+		}
+		return resurrectionTime;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
@@ -218,6 +269,10 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				if (resolve) return getZombieLootTable();
 				return basicGetZombieLootTable();
+			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
+				return getInfectionLevel();
+			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
+				return getResurrectionTime();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -227,6 +282,7 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -238,6 +294,14 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return;
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				setZombieLootTable((LootTable)newValue);
+				return;
+			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
+				getInfectionLevel().clear();
+				getInfectionLevel().addAll((Collection<? extends Integer>)newValue);
+				return;
+			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
+				getResurrectionTime().clear();
+				getResurrectionTime().addAll((Collection<? extends Integer>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -260,6 +324,12 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				setZombieLootTable((LootTable)null);
 				return;
+			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
+				getInfectionLevel().clear();
+				return;
+			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
+				getResurrectionTime().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -278,6 +348,10 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				return behavior != BEHAVIOR_EDEFAULT;
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				return zombieLootTable != null;
+			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
+				return infectionLevel != null && !infectionLevel.isEmpty();
+			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
+				return resurrectionTime != null && !resurrectionTime.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -296,6 +370,10 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		result.append(attackDamage);
 		result.append(", behavior: ");
 		result.append(behavior);
+		result.append(", infectionLevel: ");
+		result.append(infectionLevel);
+		result.append(", resurrectionTime: ");
+		result.append(resurrectionTime);
 		result.append(')');
 		return result.toString();
 	}

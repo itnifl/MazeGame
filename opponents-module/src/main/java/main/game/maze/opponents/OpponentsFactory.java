@@ -58,6 +58,15 @@ public interface OpponentsFactory extends EFactory {
 	LootItem createLootItem();
 
 	/**
+	 * Returns a new object of class '<em>Ghost</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ghost</em>'.
+	 * @generated
+	 */
+	Ghost createGhost();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

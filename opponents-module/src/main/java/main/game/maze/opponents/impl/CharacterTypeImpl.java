@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnRight <em>Image Turn Right</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnUp <em>Image Turn Up</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnDown <em>Image Turn Down</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#isIsTangible <em>Is Tangible</em>}</li>
  * </ul>
  *
  * @generated
@@ -266,6 +267,26 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected String imageTurnDown = IMAGE_TURN_DOWN_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isIsTangible() <em>Is Tangible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsTangible()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IS_TANGIBLE_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isIsTangible() <em>Is Tangible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIsTangible()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean isTangible = IS_TANGIBLE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -560,6 +581,29 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public boolean isIsTangible() {
+		return isTangible;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIsTangible(boolean newIsTangible) {
+		boolean oldIsTangible = isTangible;
+		isTangible = newIsTangible;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__IS_TANGIBLE, oldIsTangible, isTangible));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -586,6 +630,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getImageTurnUp();
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				return getImageTurnDown();
+			case OpponentsPackage.CHARACTER_TYPE__IS_TANGIBLE:
+				return isIsTangible();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -630,6 +676,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				setImageTurnDown((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__IS_TANGIBLE:
+				setIsTangible((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -676,6 +725,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				setImageTurnDown(IMAGE_TURN_DOWN_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__IS_TANGIBLE:
+				setIsTangible(IS_TANGIBLE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -712,6 +764,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return IMAGE_TURN_UP_EDEFAULT == null ? imageTurnUp != null : !IMAGE_TURN_UP_EDEFAULT.equals(imageTurnUp);
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				return IMAGE_TURN_DOWN_EDEFAULT == null ? imageTurnDown != null : !IMAGE_TURN_DOWN_EDEFAULT.equals(imageTurnDown);
+			case OpponentsPackage.CHARACTER_TYPE__IS_TANGIBLE:
+				return isTangible != IS_TANGIBLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -748,6 +802,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(imageTurnUp);
 		result.append(", ImageTurnDown: ");
 		result.append(imageTurnDown);
+		result.append(", isTangible: ");
+		result.append(isTangible);
 		result.append(')');
 		return result.toString();
 	}

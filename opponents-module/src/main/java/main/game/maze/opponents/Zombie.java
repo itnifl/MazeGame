@@ -2,6 +2,8 @@
  */
 package main.game.maze.opponents;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -15,6 +17,8 @@ package main.game.maze.opponents;
  *   <li>{@link main.game.maze.opponents.Zombie#getAttackDamage <em>Attack Damage</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.Zombie#getZombieLootTable <em>Zombie Loot Table</em>}</li>
+ *   <li>{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}</li>
+ *   <li>{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getZombie()
@@ -92,5 +96,29 @@ public interface Zombie extends CharacterType {
 	 * @generated
 	 */
 	void setZombieLootTable(LootTable value);
+
+	/**
+	 * Returns the value of the '<em><b>Infection Level</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Integer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Infection Level</em>' attribute list.
+	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_InfectionLevel()
+	 * @model default="1" required="true" upper="10"
+	 * @generated
+	 */
+	EList<Integer> getInfectionLevel();
+
+	/**
+	 * Returns the value of the '<em><b>Resurrection Time</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Integer}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Resurrection Time</em>' attribute list.
+	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ResurrectionTime()
+	 * @model default="-1" upper="180"
+	 * @generated
+	 */
+	EList<Integer> getResurrectionTime();
 
 } // Zombie
