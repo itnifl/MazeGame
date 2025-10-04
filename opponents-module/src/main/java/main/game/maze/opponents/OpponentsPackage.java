@@ -431,13 +431,22 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__RESURRECTION_TIME = CHARACTER_TYPE_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Touch Sound</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__TOUCH_SOUND = CHARACTER_TYPE_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>Zombie</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 5;
+	int ZOMBIE_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of operations of the '<em>Zombie</em>' class.
@@ -1032,6 +1041,17 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getZombie_ResurrectionTime();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Zombie#getTouchSound <em>Touch Sound</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Touch Sound</em>'.
+	 * @see main.game.maze.opponents.Zombie#getTouchSound()
+	 * @see #getZombie()
+	 * @generated
+	 */
+	EAttribute getZombie_TouchSound();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.LootTable <em>Loot Table</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1422,6 +1442,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ZOMBIE__RESURRECTION_TIME = eINSTANCE.getZombie_ResurrectionTime();
+
+		/**
+		 * The meta object literal for the '<em><b>Touch Sound</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ZOMBIE__TOUCH_SOUND = eINSTANCE.getZombie_TouchSound();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.LootTableImpl <em>Loot Table</em>}' class.

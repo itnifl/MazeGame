@@ -45,6 +45,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//Zombie/zombieLootTable"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/infectionLevel"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/resurrectionTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/touchSound"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//LootTable">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//LootTable/items"/>

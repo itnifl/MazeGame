@@ -17,7 +17,7 @@
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']"/>
         <target xmi:type="ecore:EPackage" href="opponents.ecore#/"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_ypWmwaExEfCat9sKCxZ3Qg" name="opponents class diagram" repPath="#_ypV_sKExEfCat9sKCxZ3Qg" changeId="1759590250238">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_ypWmwaExEfCat9sKCxZ3Qg" name="opponents class diagram" repPath="#_ypV_sKExEfCat9sKCxZ3Qg" changeId="1759595511504">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']"/>
         <target xmi:type="ecore:EPackage" href="opponents.ecore#/"/>
       </ownedRepresentationDescriptors>
@@ -2131,6 +2131,10 @@
               <styles xmi:type="notation:FontStyle" xmi:id="_zIidRaExEfCat9sKCxZ3Qg" fontName="Segoe UI" fontHeight="8"/>
               <layoutConstraint xmi:type="notation:Location" xmi:id="_zIidRqExEfCat9sKCxZ3Qg"/>
             </children>
+            <children xmi:type="notation:Node" xmi:id="_tBbbUKE5EfCat9sKCxZ3Qg" type="3010" element="_tBRDRKE5EfCat9sKCxZ3Qg">
+              <styles xmi:type="notation:FontStyle" xmi:id="_tBbbUaE5EfCat9sKCxZ3Qg" fontName="Segoe UI" fontHeight="8"/>
+              <layoutConstraint xmi:type="notation:Location" xmi:id="_tBbbUqE5EfCat9sKCxZ3Qg"/>
+            </children>
             <styles xmi:type="notation:SortingStyle" xmi:id="_zIgoA6ExEfCat9sKCxZ3Qg"/>
             <styles xmi:type="notation:FilteringStyle" xmi:id="_zIgoBKExEfCat9sKCxZ3Qg"/>
           </children>
@@ -2537,6 +2541,14 @@
         </ownedStyle>
         <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
       </ownedElements>
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_tBRDRKE5EfCat9sKCxZ3Qg" name="touchSound : EString = /main/game/maze/zombieScream.mp3" tooltipText="">
+        <target xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/touchSound"/>
+        <semanticElements xmi:type="ecore:EAttribute" href="opponents.ecore#//Zombie/touchSound"/>
+        <ownedStyle xmi:type="diagram:BundledImage" uid="_tBRqUKE5EfCat9sKCxZ3Qg" labelAlignment="LEFT">
+          <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']/@style"/>
+        </ownedStyle>
+        <actualMapping xmi:type="description_1:NodeMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@subNodeMappings[name='EC%20EAttribute']"/>
+      </ownedElements>
     </ownedDiagramElements>
     <ownedDiagramElements xmi:type="diagram:DNodeList" uid="_zIZTMKExEfCat9sKCxZ3Qg" name="BehaviorType" tooltipText="" width="12" height="10">
       <target xmi:type="ecore:EEnum" href="opponents.ecore#//BehaviorType"/>
@@ -2681,7 +2693,7 @@
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_1:ContainerMapping" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Entities']/@defaultLayer/@containerMappings[name='EC%20EClass']"/>
-      <ownedElements xmi:type="diagram:DNodeListElement" uid="_zIeLt6ExEfCat9sKCxZ3Qg" name="attackDamage : EInt = 10" tooltipText="">
+      <ownedElements xmi:type="diagram:DNodeListElement" uid="_zIeLt6ExEfCat9sKCxZ3Qg" name="attackDamage : EInt = 1" tooltipText="">
         <target xmi:type="ecore:EAttribute" href="opponents.ecore#//Ghost/attackDamage"/>
         <semanticElements xmi:type="ecore:EAttribute" href="opponents.ecore#//Ghost/attackDamage"/>
         <ownedStyle xmi:type="diagram:BundledImage" uid="_zIeLuKExEfCat9sKCxZ3Qg" labelAlignment="LEFT">
