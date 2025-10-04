@@ -25,11 +25,15 @@ import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
+import main.game.maze.characters.ComputerCharacter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
+import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.opponents.BehaviorType;
+import main.game.maze.opponents.INonTangientCharacter;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -68,7 +72,7 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //setupGame();
+        //Empty..
     }
 
     @FXML
@@ -116,7 +120,7 @@ public class GameController implements Initializable {
 
     private void movePlayerRight() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }
         }
@@ -124,7 +128,7 @@ public class GameController implements Initializable {
 
     private void movePlayerLeft() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }            
         }
@@ -132,7 +136,7 @@ public class GameController implements Initializable {
 
     private void movePlayerDown() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }            
         }
@@ -140,7 +144,7 @@ public class GameController implements Initializable {
 
     private void movePlayerUp() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }        
         }
@@ -227,16 +231,24 @@ public class GameController implements Initializable {
             runComputerCharacters.cancel();
         }
         runComputerCharacters = new Task() {
-
             @Override
             protected Boolean call() throws Exception {
                 try {
                     do {
                         for (var computerCharacter : allComputerCharacters) {
-                            var successfulMove = computerCharacter.move();
-                            if (!successfulMove) {
-                                computerCharacter.changeDirection();
-                            }
+                            if(computerCharacter instanceof ComputerCharacter cc) {
+                                BehaviorType characterBehavior = cc.getCharacterBehaviour();
+                                //TODO: Implement other behaviours
+                                switch (characterBehavior) {
+                                    case BehaviorType.WANDER:
+                                            doCharacterWanderMove(computerCharacter);
+                                        break;
+                                
+                                    default:
+                                        doCharacterWanderMove(computerCharacter);
+                                        break;
+                                }                                                            
+                            }                            
                         }
                         Thread.sleep(60);
                     } while (true);
@@ -245,10 +257,33 @@ public class GameController implements Initializable {
                     throw ex;
                 }
             }
-
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();
+    }
+
+    private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
+        var nonTangient = false;
+        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nontangientcc = (INonTangientMazeGameCharacter)computerCharacter;
+            var energy = nontangientcc.getNonTangientEnergy();
+            nonTangient = energy > 0;    
+            if(nonTangient) { 
+                //TODO: Magic numbers, must fix:
+                nontangientcc.setCharacterOpacity(1-(energy/100)+0.1);     
+                nontangientcc.setNonTangientEnergy(energy-0.14);   
+            } 
+            //TODO: Magic numbers, must fix:
+            //Make a random non tangient move
+            if((int)(Math.random() * 10) >= 7) {
+                nonTangient = false;
+            }                                                
+        }
+
+        var successfulMove = computerCharacter.move(nonTangient);
+        if (!successfulMove) {
+            computerCharacter.changeDirection();
+        }
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {

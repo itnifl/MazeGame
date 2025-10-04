@@ -332,7 +332,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getCharacterType_IsTangible() {
+	public EAttribute getCharacterType_Behavior() {
 		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(12);
 	}
 
@@ -362,18 +362,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getZombie_Behavior() {
-		return (EAttribute)zombieEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EReference getZombie_ZombieLootTable() {
-		return (EReference)zombieEClass.getEStructuralFeatures().get(2);
+		return (EReference)zombieEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -383,7 +373,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 */
 	@Override
 	public EAttribute getZombie_InfectionLevel() {
-		return (EAttribute)zombieEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -393,7 +383,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 */
 	@Override
 	public EAttribute getZombie_ResurrectionTime() {
-		return (EAttribute)zombieEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -403,7 +393,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 */
 	@Override
 	public EAttribute getZombie_TouchSound() {
-		return (EAttribute)zombieEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -522,7 +512,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getGhost_Behavior() {
+	public EAttribute getGhost_VisibilityLevel() {
 		return (EAttribute)ghostEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -532,18 +522,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getGhost_VisibilityLevel() {
-		return (EAttribute)ghostEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EAttribute getGhost_NonTangibilityEnergy() {
-		return (EAttribute)ghostEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)ghostEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -613,11 +593,10 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_RIGHT);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_UP);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_DOWN);
-		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IS_TANGIBLE);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__BEHAVIOR);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
-		createEAttribute(zombieEClass, ZOMBIE__BEHAVIOR);
 		createEReference(zombieEClass, ZOMBIE__ZOMBIE_LOOT_TABLE);
 		createEAttribute(zombieEClass, ZOMBIE__INFECTION_LEVEL);
 		createEAttribute(zombieEClass, ZOMBIE__RESURRECTION_TIME);
@@ -636,7 +615,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		ghostEClass = createEClass(GHOST);
 		createEAttribute(ghostEClass, GHOST__ATTACK_DAMAGE);
-		createEAttribute(ghostEClass, GHOST__BEHAVIOR);
 		createEAttribute(ghostEClass, GHOST__VISIBILITY_LEVEL);
 		createEAttribute(ghostEClass, GHOST__NON_TANGIBILITY_ENERGY);
 
@@ -695,11 +673,10 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_ImageTurnRight(), ecorePackage.getEString(), "ImageTurnRight", "/main/game/maze/zombie-right.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnUp(), ecorePackage.getEString(), "ImageTurnUp", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnDown(), ecorePackage.getEString(), "ImageTurnDown", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_IsTangible(), ecorePackage.getEBoolean(), "isTangible", "true", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getZombie_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getZombie_ZombieLootTable(), this.getLootTable(), null, "zombieLootTable", null, 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getZombie_InfectionLevel(), ecorePackage.getEInt(), "infectionLevel", "1", 0, 10, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getZombie_ResurrectionTime(), ecorePackage.getEInt(), "resurrectionTime", "0", 0, 180, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -718,9 +695,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		initEClass(ghostEClass, Ghost.class, "Ghost", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getGhost_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 100, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEInt(), "nonTangibilityEnergy", "100", 0, 100, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEDouble(), "nonTangibilityEnergy", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(behaviorTypeEEnum, BehaviorType.class, "BehaviorType");

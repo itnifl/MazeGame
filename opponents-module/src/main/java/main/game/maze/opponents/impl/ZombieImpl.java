@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getAttackDamage <em>Attack Damage</em>}</li>
- *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getZombieLootTable <em>Zombie Loot Table</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getInfectionLevel <em>Infection Level</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.ZombieImpl#getResurrectionTime <em>Resurrection Time</em>}</li>
@@ -55,26 +54,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @ordered
 	 */
 	protected int attackDamage = ATTACK_DAMAGE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBehavior()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final BehaviorType BEHAVIOR_EDEFAULT = BehaviorType.WANDER;
-
-	/**
-	 * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBehavior()
-	 * @generated
-	 * @ordered
-	 */
-	protected BehaviorType behavior = BEHAVIOR_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getZombieLootTable() <em>Zombie Loot Table</em>}' reference.
@@ -166,29 +145,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		attackDamage = newAttackDamage;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__ATTACK_DAMAGE, oldAttackDamage, attackDamage));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public BehaviorType getBehavior() {
-		return behavior;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setBehavior(BehaviorType newBehavior) {
-		BehaviorType oldBehavior = behavior;
-		behavior = newBehavior == null ? BEHAVIOR_EDEFAULT : newBehavior;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__BEHAVIOR, oldBehavior, behavior));
 	}
 
 	/**
@@ -308,8 +264,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		switch (featureID) {
 			case OpponentsPackage.ZOMBIE__ATTACK_DAMAGE:
 				return getAttackDamage();
-			case OpponentsPackage.ZOMBIE__BEHAVIOR:
-				return getBehavior();
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				if (resolve) return getZombieLootTable();
 				return basicGetZombieLootTable();
@@ -334,9 +288,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		switch (featureID) {
 			case OpponentsPackage.ZOMBIE__ATTACK_DAMAGE:
 				setAttackDamage((Integer)newValue);
-				return;
-			case OpponentsPackage.ZOMBIE__BEHAVIOR:
-				setBehavior((BehaviorType)newValue);
 				return;
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				setZombieLootTable((LootTable)newValue);
@@ -367,9 +318,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__ATTACK_DAMAGE:
 				setAttackDamage(ATTACK_DAMAGE_EDEFAULT);
 				return;
-			case OpponentsPackage.ZOMBIE__BEHAVIOR:
-				setBehavior(BEHAVIOR_EDEFAULT);
-				return;
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				setZombieLootTable((LootTable)null);
 				return;
@@ -396,8 +344,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		switch (featureID) {
 			case OpponentsPackage.ZOMBIE__ATTACK_DAMAGE:
 				return attackDamage != ATTACK_DAMAGE_EDEFAULT;
-			case OpponentsPackage.ZOMBIE__BEHAVIOR:
-				return behavior != BEHAVIOR_EDEFAULT;
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				return zombieLootTable != null;
 			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
@@ -422,8 +368,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (attackDamage: ");
 		result.append(attackDamage);
-		result.append(", behavior: ");
-		result.append(behavior);
 		result.append(", infectionLevel: ");
 		result.append(infectionLevel);
 		result.append(", resurrectionTime: ");

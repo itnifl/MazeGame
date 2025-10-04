@@ -42,7 +42,7 @@ public class ZombieCharacter extends ComputerCharacter
     
 
     public ZombieCharacter(Node characterGraphics, double x, double y, Zombie model) {
-        super(characterGraphics, x, y, mapSpeed(model.getSpeed()));
+        super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
         this.imageLeft  = new Image(getClass().getResourceAsStream(model.getImageTurnLeft()));
         this.imageRight = new Image(getClass().getResourceAsStream(model.getImageTurnRight()));
         this.imageUp = new Image(getClass().getResourceAsStream(model.getImageTurnUp()));
