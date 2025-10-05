@@ -80,6 +80,18 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 				return createZombieAdapter();
 			}
 			@Override
+			public Adapter caseLootTable(LootTable object) {
+				return createLootTableAdapter();
+			}
+			@Override
+			public Adapter caseLootItem(LootItem object) {
+				return createLootItemAdapter();
+			}
+			@Override
+			public Adapter caseGhost(Ghost object) {
+				return createGhostAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -138,6 +150,48 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createZombieAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.LootTable <em>Loot Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.LootTable
+	 * @generated
+	 */
+	public Adapter createLootTableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.LootItem <em>Loot Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.LootItem
+	 * @generated
+	 */
+	public Adapter createLootItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.Ghost <em>Ghost</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.Ghost
+	 * @generated
+	 */
+	public Adapter createGhostAdapter() {
 		return null;
 	}
 

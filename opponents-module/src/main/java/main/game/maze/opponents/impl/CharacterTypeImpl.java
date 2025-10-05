@@ -2,6 +2,7 @@
  */
 package main.game.maze.opponents.impl;
 
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentsPackage;
 
@@ -32,6 +33,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnRight <em>Image Turn Right</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnUp <em>Image Turn Up</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getImageTurnDown <em>Image Turn Down</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.CharacterTypeImpl#getBehavior <em>Behavior</em>}</li>
  * </ul>
  *
  * @generated
@@ -266,6 +268,26 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected String imageTurnDown = IMAGE_TURN_DOWN_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBehavior()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final BehaviorType BEHAVIOR_EDEFAULT = BehaviorType.WANDER;
+
+	/**
+	 * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBehavior()
+	 * @generated
+	 * @ordered
+	 */
+	protected BehaviorType behavior = BEHAVIOR_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -560,6 +582,29 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public BehaviorType getBehavior() {
+		return behavior;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setBehavior(BehaviorType newBehavior) {
+		BehaviorType oldBehavior = behavior;
+		behavior = newBehavior == null ? BEHAVIOR_EDEFAULT : newBehavior;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__BEHAVIOR, oldBehavior, behavior));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -586,6 +631,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getImageTurnUp();
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				return getImageTurnDown();
+			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
+				return getBehavior();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -630,6 +677,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				setImageTurnDown((String)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
+				setBehavior((BehaviorType)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -676,6 +726,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				setImageTurnDown(IMAGE_TURN_DOWN_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
+				setBehavior(BEHAVIOR_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -712,6 +765,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return IMAGE_TURN_UP_EDEFAULT == null ? imageTurnUp != null : !IMAGE_TURN_UP_EDEFAULT.equals(imageTurnUp);
 			case OpponentsPackage.CHARACTER_TYPE__IMAGE_TURN_DOWN:
 				return IMAGE_TURN_DOWN_EDEFAULT == null ? imageTurnDown != null : !IMAGE_TURN_DOWN_EDEFAULT.equals(imageTurnDown);
+			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
+				return behavior != BEHAVIOR_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -748,6 +803,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(imageTurnUp);
 		result.append(", ImageTurnDown: ");
 		result.append(imageTurnDown);
+		result.append(", behavior: ");
+		result.append(behavior);
 		result.append(')');
 		return result.toString();
 	}
