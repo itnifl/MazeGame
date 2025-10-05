@@ -138,6 +138,11 @@ public class PlayerCharacter extends Character
     }
 
     @Override
+    public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
+        touchKillers.remove(touchEntity);
+    }
+
+    @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanKill) {

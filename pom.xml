@@ -1,0 +1,11 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>main.game.maze</groupId>
+  <artifactId>MazeGame</artifactId>
+  <version>1</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>maze</module>
+    <module>opponents-module</module>
+  </modules>
+</project>

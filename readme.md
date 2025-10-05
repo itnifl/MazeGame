@@ -8,9 +8,6 @@
 - try the game a few times to get to know it.
 
 # Bugs
-- It happens that you can trick walls
-- Ghosts are supposed to pulsate in opacity, but this seems to not work.
-- Ghosts are not designed to walk through walls, but because they are ghosts I have let this bug become a feature.
 - If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
 - Application system is not very testable, unit tests should have been written first
 - The Action Screens (Win and Game Over) some times bug up or don't show after I added the flash effect on the player when the player gets hurt. This is rare.
@@ -64,3 +61,46 @@ Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
 
 ``Then:
 ***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``
+
+
+
+# MazeGame — Miscellaneous documentation
+
+## Project Maven Pom Structure
+- **Root pom.xml** (project root)
+  - Type: *aggregator* (packaging `pom`)
+  - Lists modules:
+    ```xml
+    <modules>
+      <module>opponents-module</module>
+      <module>maze</module>
+    </modules>
+    ```
+  - Purpose: orchestrates multi-module build and common properties (Java version, plugin management). Each module represents a folder with each their own pom.xml.
+
+- **opponents-module/pom.xml**
+  - Type: `jar` (module)
+  - Purpose: holds the **EMF opponents metamodel**, generated Java model code and `.xmi` resources. Exports the domain API (`main.game.maze.opponents`) used by the app.
+  - Key parts:
+    - groupId/artifactId/version (coordinates used by other modules), and dependencies.
+
+- **maze/pom.xml**
+  - Type: `jar` (application module)
+  - Purpose: actual game/application code. Depends on `opponents-module` to read/load opponent models and use the domain API.
+  - Declares dependency on opponents-module coordinates:
+    ```xml
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>opponents-module</artifactId>
+      <version>1</version>
+    </dependency>
+    ```
+
+## Build commands (exact)
+- Build everything and install locally - also runs existing unit tests:
+```bash
+mvn -U -pl :maze-base -am clean package #Run from root: For cleaning up packages in the base maze game installation
+mvn -U clean install #Run from root: To compile all projects and run all unit tests
+mvn test #Run from root: Run all unit tests
+mvn -pl opponents-module -am test #Run from root: Run all unit tests in the opponents-module
+```

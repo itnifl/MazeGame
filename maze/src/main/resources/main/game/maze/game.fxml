@@ -9,59 +9,41 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SkinBase?>
+<?import javafx.scene.layout.*?>
 
+<AnchorPane fx:id="root" fx:controller="main.game.maze.GameController" xmlns:fx="http://javafx.com/fxml">    
+    <Pane fx:id="gameBoard"
+          onKeyPressed="#handleKeyPressed"
+          focusTraversable="true"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        
+        <background>
+            <Background>
+                <images>
+                    <BackgroundImage>
+                        <image>
+                            <Image url="@gameBackGround2.png"/>
+                        </image>
+                        <repeatX>REPEAT</repeatX>
+                        <repeatY>REPEAT</repeatY>
+                    </BackgroundImage>
+                </images>
+            </Background>
+        </background>
 
-<AnchorPane fx:id="root" fx:controller="main.game.maze.GameController" xmlns:fx="http://javafx.com/fxml">
-    <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1" prefWidth="800" prefHeight="20" style="-fx-accent: #c0392b;" />
-   
-    <ImageView fx:id="player" layoutX="0" layoutY="52" preserveRatio="true" fitHeight="50" >
-        <image>
-            <Image url="@./you2.png"/>
-        </image>
-    </ImageView>
+        
+        <ImageView fx:id="player" layoutX="0" layoutY="52" preserveRatio="true" fitHeight="50">
+            <image><Image url="@you2.png"/></image>
+        </ImageView>
 
-    <ImageView fx:id="ghost1" layoutX="350" layoutY="250" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-    <ImageView fx:id="ghost2" layoutX="150" layoutY="250" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-
-    <ImageView fx:id="ghost3" layoutX="550" layoutY="150" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-    <ImageView fx:id="ghost4" layoutX="50" layoutY="50" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-
-    <ImageView fx:id="ghost5" layoutX="550" layoutY="550" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-    <ImageView fx:id="ghost6" layoutX="50" layoutY="550" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./ghost2.png"/>
-        </image>
-    </ImageView>
-
-    <ImageView fx:id="heart" layoutX="400" layoutY="300" preserveRatio="true" fitHeight="50">
-        <image>
-            <Image url="@./heart2.png"/>
-        </image>
-    </ImageView>
-
-    <Pane fx:id="gameBoard" onKeyPressed="#handleKeyPressed" prefHeight="600" prefWidth="800">
-        <!-- game board content here -->
-    </Pane>
+        <ImageView fx:id="heart" layoutX="400" layoutY="300" preserveRatio="true" fitHeight="50">
+            <image><Image url="@heart2.png"/></image>
+        </ImageView>        
+    </Pane>    
+    <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1"
+                 prefWidth="800" prefHeight="20"
+                 style="-fx-accent: #c0392b;" />
 
     <AnchorPane AnchorPane.bottomAnchor="1" AnchorPane.rightAnchor="10" prefWidth="150" prefHeight="1">
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />
@@ -69,5 +51,5 @@
 
     <AnchorPane AnchorPane.topAnchor="20" AnchorPane.rightAnchor="1" prefWidth="50" prefHeight="1">
         <Label fx:id="scoreLabel" text="Score: 10 000" />
-    </AnchorPane>    
+    </AnchorPane>
 </AnchorPane>

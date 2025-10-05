@@ -4,18 +4,23 @@ import java.util.Random;
 import javafx.scene.Node;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.opponents.BehaviorType;
+import main.game.maze.opponents.CharacterType;
 
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
     private int speed;
+    private final CharacterType characterModel;
 
-    public ComputerCharacter(Node characterGraphics, double positionX, double positionY, int speed) {
-        super(characterGraphics, positionX, positionX);
+    public ComputerCharacter(Node characterGraphics, CharacterType characterType, double positionX, double positionY, int speed) {
+        super(characterGraphics, positionX, positionY);
         this.speed = speed;
         calculateMaxPositions();
+        this.characterModel = characterType;
     }
 
-    public boolean move() {
-        if(!isTouchingVector()) {
+    @Override
+    public boolean move(boolean force) {
+        if(force || !isTouchingVector()) {
             boolean hasMoved = false;
 
             for(int x = 0; x < speed / StageConstants.SpeedReducer; x++) {
@@ -24,15 +29,15 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 var yDirection = this.getDirectionY();
 
                 if(xDirection < 0) {
-                    hasMoved = moveLeft(slowerSpeed);
+                    hasMoved = moveLeft(slowerSpeed, force);
                 } else if(xDirection > 0) {
-                    hasMoved = moveRight(slowerSpeed);
+                    hasMoved = moveRight(slowerSpeed, force);
                 }
     
                 if(yDirection > 0) {
-                    hasMoved = moveDown(slowerSpeed) || hasMoved;
+                    hasMoved = moveDown(slowerSpeed, force) || hasMoved;
                 } else if(yDirection < 0) {
-                    hasMoved = moveUp(slowerSpeed) || hasMoved;
+                    hasMoved = moveUp(slowerSpeed, force) || hasMoved;
                 }
 
                 if(hasMoved || (yDirection == 0 && xDirection == 0)) {
@@ -80,5 +85,9 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 setCharacterDirection(-1, 0, speed);
                 break;
         }
+    }
+
+    public BehaviorType getCharacterBehaviour() {
+        return characterModel.getBehavior();
     }
 }
