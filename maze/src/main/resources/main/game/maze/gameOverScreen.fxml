@@ -18,10 +18,10 @@
                 AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                 preserveRatio="false" pickOnBounds="true"
                 fitWidth="${screenRoot.width}" fitHeight="${screenRoot.height}">
-        <image>
-            <!-- put the image next to this FXML in an `images/` folder -->
-            <Image url="@zombieBackground.png"/>
-        </image>
+            <image>
+                <!-- put the image next to this FXML in an `images/` folder -->
+                <Image url="@zombieBackground.png"/>
+            </image>
         </ImageView>
             <VBox alignment="TOP_CENTER"
                 AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
