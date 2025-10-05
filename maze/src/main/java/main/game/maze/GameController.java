@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,10 +25,16 @@ import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
+import main.game.maze.characters.ComputerCharacter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
+import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.opponents.BehaviorType;
+import main.game.maze.opponents.INonTangientCharacter;
+import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -39,18 +46,6 @@ public class GameController implements Initializable {
 
     @FXML
     private AnchorPane root;
-    @FXML
-    private Node ghost1;
-    @FXML
-    private Node ghost2;
-    @FXML
-    private Node ghost3;
-    @FXML
-    private Node ghost4;
-    @FXML
-    private Node ghost5;
-    @FXML
-    private Node ghost6;
     @FXML
     private Node player;
     @FXML
@@ -65,12 +60,6 @@ public class GameController implements Initializable {
     private Label scoreLabel;
 
     private PlayerCharacter playerCharacter;
-    private GhostCharacter ghostCharacter1;
-    private GhostCharacter ghostCharacter2;
-    private GhostCharacter ghostCharacter3;
-    private GhostCharacter ghostCharacter4;
-    private GhostCharacter ghostCharacter5;
-    private GhostCharacter ghostCharacter6;
     private MazeWorld maze;
     private GameOverAction gameOverAction;
     private WinGameAction winGameAction;
@@ -83,7 +72,7 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setupGame();
+        //Empty..
     }
 
     @FXML
@@ -131,7 +120,7 @@ public class GameController implements Initializable {
 
     private void movePlayerRight() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }
         }
@@ -139,28 +128,25 @@ public class GameController implements Initializable {
 
     private void movePlayerLeft() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
-            }
-            ;
+            }            
         }
     }
 
     private void movePlayerDown() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
-            }
-            ;
+            }            
         }
     }
 
     private void movePlayerUp() {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer))) {
+            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
-            }
-            ;
+            }        
         }
     }
 
@@ -169,14 +155,14 @@ public class GameController implements Initializable {
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
         // create a timeline with two key frames
-        timeline = new Timeline(
+        /*timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
                 new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
 
         // set the cycle count to indefinite
-        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setCycleCount(Timeline.INDEFINITE);*/
 
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
@@ -201,37 +187,6 @@ public class GameController implements Initializable {
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
-        ghostCharacter1 = new GhostCharacter(ghost1, ghost1.getLayoutX(), ghost1.getLayoutY());
-        allComputerCharacters.add(ghostCharacter1);
-
-        ghostCharacter2 = new GhostCharacter(ghost2, ghost2.getLayoutX(), ghost2.getLayoutY());
-        allComputerCharacters.add(ghostCharacter2);
-
-        ghostCharacter3 = new GhostCharacter(ghost3, ghost3.getLayoutX(), ghost3.getLayoutY());
-        allComputerCharacters.add(ghostCharacter3);
-
-        ghostCharacter4 = new GhostCharacter(ghost4, ghost4.getLayoutX(), ghost4.getLayoutY());
-        allComputerCharacters.add(ghostCharacter4);
-
-        ghostCharacter5 = new GhostCharacter(ghost5, ghost5.getLayoutX(), ghost5.getLayoutY());
-        allComputerCharacters.add(ghostCharacter5);
-
-        ghostCharacter6 = new GhostCharacter(ghost6, ghost6.getLayoutX(), ghost6.getLayoutY());
-        allComputerCharacters.add(ghostCharacter6);
-
-        playerCharacter.addPositionSubscriber(ghostCharacter1);
-        playerCharacter.addPositionSubscriber(ghostCharacter2);
-        playerCharacter.addPositionSubscriber(ghostCharacter3);
-        playerCharacter.addPositionSubscriber(ghostCharacter4);
-        playerCharacter.addPositionSubscriber(ghostCharacter5);
-        playerCharacter.addPositionSubscriber(ghostCharacter6);
-
-        ghostCharacter1.addPositionSubscriber(playerCharacter);
-        ghostCharacter2.addPositionSubscriber(playerCharacter);
-        ghostCharacter3.addPositionSubscriber(playerCharacter);
-        ghostCharacter4.addPositionSubscriber(playerCharacter);
-        ghostCharacter5.addPositionSubscriber(playerCharacter);
-        ghostCharacter6.addPositionSubscriber(playerCharacter);
 
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);
@@ -241,6 +196,8 @@ public class GameController implements Initializable {
 
         player.requestFocus();
         gameBoard.requestFocus();
+        
+        OpponentRuntimeFactory.instantiateFromModel(this);
 
         runComputerCharacters();
         playerCharacter.setHitPoints(100);
@@ -274,16 +231,24 @@ public class GameController implements Initializable {
             runComputerCharacters.cancel();
         }
         runComputerCharacters = new Task() {
-
             @Override
             protected Boolean call() throws Exception {
                 try {
                     do {
                         for (var computerCharacter : allComputerCharacters) {
-                            var successfulMove = computerCharacter.move();
-                            if (!successfulMove) {
-                                computerCharacter.changeDirection();
-                            }
+                            if(computerCharacter instanceof ComputerCharacter cc) {
+                                BehaviorType characterBehavior = cc.getCharacterBehaviour();
+                                //TODO: Implement other behaviours
+                                switch (characterBehavior) {
+                                    case BehaviorType.WANDER:
+                                            doCharacterWanderMove(computerCharacter);
+                                        break;
+                                
+                                    default:
+                                        doCharacterWanderMove(computerCharacter);
+                                        break;
+                                }                                                            
+                            }                            
                         }
                         Thread.sleep(60);
                     } while (true);
@@ -292,9 +257,56 @@ public class GameController implements Initializable {
                     throw ex;
                 }
             }
-
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
         runComputerCharactersThread.start();
+    }
+
+    private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
+        var nonTangient = false;
+        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nontangientcc = (INonTangientMazeGameCharacter)computerCharacter;
+            var energy = nontangientcc.getNonTangientEnergy();
+            nonTangient = energy > 0;    
+            if(nonTangient) { 
+                //TODO: Magic numbers, must fix:
+                nontangientcc.setCharacterOpacity(1-(energy/100)+0.1);     
+                nontangientcc.setNonTangientEnergy(energy-0.14);   
+            } 
+            //TODO: Magic numbers, must fix:
+            //Make a random non tangient move
+            if((int)(Math.random() * 10) >= 7) {
+                nonTangient = false;
+            }                                                
+        }
+
+        var successfulMove = computerCharacter.move(nonTangient);
+        if (!successfulMove) {
+            computerCharacter.changeDirection();
+        }
+    }
+
+    public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
+        // must be called on JavaFX thread
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> registerComputerCharacter(character, node));
+            return;
+        }
+        gameBoard.getChildren().add(node);               // add sprite to board
+        allComputerCharacters.add(character);     
+        if(character instanceof ICanSubscribeAndNotifyPosition){
+            playerCharacter.addPositionSubscriber((ICanSubscribeAndNotifyPosition)character);
+            ((ICanSubscribeAndNotifyPosition)character).addPositionSubscriber(playerCharacter);
+        }
+    }
+
+    public void unregisterComputerCharacter(ICanSubscribeAndNotifyPosition character, Node node) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> unregisterComputerCharacter(character,node));
+            return;
+        }
+        allComputerCharacters.remove(character);
+        playerCharacter.removePositionSubscriber(character);
+        gameBoard.getChildren().remove(node);
     }
 }

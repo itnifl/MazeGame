@@ -11,17 +11,19 @@ import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
-        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition {
-    private static int ghostSpeedFactor = 2;
-    private static int damageByTouch = 1;
+        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, INonTangientMazeGameCharacter {
+    private final Ghost ghostModel;
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
-    public GhostCharacter(Node characterGraphics, double positionX, double positionY) {
-        super(characterGraphics, positionX, positionX, ghostSpeedFactor);
+    public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
+        super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));        
+        this.ghostModel = model;
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
@@ -55,13 +57,18 @@ public class GhostCharacter extends ComputerCharacter
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
                 System.out.println("Ghost is intersecting with " + canDieEntity);
-                canDieEntity.subtractHitPoints(damageByTouch);
+                canDieEntity.subtractHitPoints(getDamage());
             }
         }
     }
 
     @Override
     public void addPositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
+        touchTargets.add(touchEntity);
+    }
+
+        @Override
+    public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
         touchTargets.add(touchEntity);
     }
 
@@ -72,6 +79,27 @@ public class GhostCharacter extends ComputerCharacter
 
     @Override
     public int getDamage() {
-        return damageByTouch;
+        return Math.max(0, ghostModel.getAttackDamage());
+    }
+
+    private static int mapSpeed(double modelSpeed) {
+        return Math.max(1, (int)Math.round(modelSpeed));
+    }
+
+    @Override
+    public double getNonTangientEnergy() {
+        return ghostModel.getNonTangibilityEnergy();
+    }
+    
+    @Override
+    public void setNonTangientEnergy(double value) {
+        ghostModel.setNonTangibilityEnergy(value);
+    }
+
+    @Override
+    public void setCharacterOpacity(double value) {
+        var graphics = this.getCharacterGraphics();
+        graphics.setOpacity(value);
+        this.setCharacterGraphics(graphics);
     }
 }

@@ -17,6 +17,7 @@ public class App extends Application {
     private static int boardMaxY = StageConstants.BoardMaxY;
 
     public static MediaPlayer inGameMediaPlayer;
+    public static GameController gameController;
 
     @Override
     public void start(Stage primaryStage) {
@@ -26,7 +27,7 @@ public class App extends Application {
             ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
             progressBar.prefWidthProperty().bind(root.widthProperty());
 
-            GameController controller = loader.getController();
+            gameController = loader.getController();
 
             primaryStage.setTitle("Maze Game");
             primaryStage.setScene(new Scene(root, boardMaxX, boardMaxY));

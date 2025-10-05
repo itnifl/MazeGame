@@ -260,4 +260,19 @@ public class Vector2D {
                 + "]";
     }
 
+    public VectorFacing getFacingFromVector() {
+        double dx = this.getXVectorCoordinate(); 
+        double dy = this.getYVectorCoordinate(); 
+        
+        if (dx < 0) return VectorFacing.LEFT;
+        if (dx > 0) return VectorFacing.RIGHT;
+        if (dy < 0) return VectorFacing.UP;
+        if (dy > 0) return VectorFacing.DOWN;
+        return VectorFacing.IDLE;
+    }
+
+    public enum VectorFacing {
+        LEFT, RIGHT, UP, DOWN, IDLE
+    }
+
 }
