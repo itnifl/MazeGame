@@ -7,7 +7,7 @@
 - You will get the chance to save your scores when you die or win.
 - try the game a few times to get to know it.
 <br/><br/>
-<img src="./gameDemo1.png" alt="Game Demo Screenshot" width="25%" />
+<img src="./gameDemo1.png" alt="Game Demo Screenshot" width="45%" />
 <br/><br/>
 
 # Bugs
