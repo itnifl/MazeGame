@@ -32,7 +32,7 @@ public class App extends Application {
             primaryStage.setTitle("Maze Game");
             primaryStage.setScene(new Scene(root, boardMaxX, boardMaxY));
             primaryStage.show();
-            controller.setupGame();
+            gameController.setupGame();
 
             // Start playing the music
             MediaView view = addMusic();
