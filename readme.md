@@ -6,6 +6,9 @@
 - Hit the H key to show high scores.
 - You will get the chance to save your scores when you die or win.
 - try the game a few times to get to know it.
+<br/><br/>
+<img src="./gameDemo1.png" alt="Game Demo Screenshot" width="45%" />
+<br/><br/>
 
 # Bugs
 - If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
