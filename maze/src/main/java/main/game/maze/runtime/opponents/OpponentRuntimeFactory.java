@@ -21,11 +21,14 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.opponents.CharacterType;
+import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.util.Dialogs;
+import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
 
@@ -97,25 +100,38 @@ public final class OpponentRuntimeFactory {
             
             var characterList = opponentModel.getCharacterTypes();
             for (var characterType : characterList) {
-                if (characterType instanceof Zombie) {
-                    Zombie zombieModel = (Zombie) characterType;
-
-                    final double spawnX = ThreadLocalRandom.current()
-                            .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
-                    final double spawnY = ThreadLocalRandom.current()
-                            .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
-
-                    // Create graphics and register on JavaFX thread                    
+                if (characterType instanceof Zombie) {                                    
                     Platform.runLater(() -> {
                         try {
-                            Zombie zCopy = EcoreUtil.copy(zombieModel);
-                            Node graphicsNode = createZombieGraphics(zCopy);
+                            final double spawnX = ThreadLocalRandom.current()
+                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
+                            final double spawnY = ThreadLocalRandom.current()
+                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
+
+                            Node graphicsNode = createCharacterGraphics(characterType, StageConstants.ZombieCharacterXYSize);
                             graphicsNode.setLayoutX(spawnX);
                             graphicsNode.setLayoutY(spawnY);
-                            ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, zCopy);
+                            ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, (Zombie)characterType);
                             gameController.registerComputerCharacter(zombieCharacter, graphicsNode);
                         } catch (Exception fxException) {
                             LOGGER.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
+                        }
+                    });
+                } else if (characterType instanceof Ghost) {                                    
+                    Platform.runLater(() -> {
+                        try {
+                            final double spawnX = ThreadLocalRandom.current()
+                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
+                            final double spawnY = ThreadLocalRandom.current()
+                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
+
+                            Node graphicsNode = createCharacterGraphics(characterType, StageConstants.GhostCharacterXYSize);
+                            graphicsNode.setLayoutX(spawnX);
+                            graphicsNode.setLayoutY(spawnY);
+                            var character = new GhostCharacter(graphicsNode, spawnX, spawnY, (Ghost)characterType);
+                            gameController.registerComputerCharacter(character, graphicsNode);
+                        } catch (Exception fxException) {
+                            LOGGER.log(Level.SEVERE, "Failed to create or register a GhostCharacter.", fxException);
                         }
                     });
                 } else {
@@ -145,11 +161,11 @@ public final class OpponentRuntimeFactory {
     /**
      * Replace this with your real sprite/ImageView creation.
      *
-     * @param zombieModel the model describing the zombie
-     * @return a JavaFX Node representing the zombie sprite
+     * @param model the model describing the character
+     * @return a JavaFX Node representing the character sprite
      */
-    private static Node createZombieGraphics(Zombie zombieModel) {
-        String imagePath = zombieModel.getImageBase(); 
+    private static Node createCharacterGraphics(CharacterType model, int characterXySize) {
+        String imagePath = model.getImageBase(); 
         InputStream imageStream = OpponentRuntimeFactory.class.getResourceAsStream(imagePath);
 
         ImageView imageView;
@@ -158,16 +174,16 @@ public final class OpponentRuntimeFactory {
             imageView = new ImageView(image);
         } else {
             imageView = new ImageView(); 
-            imageView.setFitHeight(StageConstants.ZombieCharacterXYSize);
-            imageView.setFitWidth(StageConstants.ZombieCharacterXYSize);
+            imageView.setFitHeight(characterXySize);
+            imageView.setFitWidth(characterXySize);
             imageView.setPreserveRatio(true);
         }
 
         // Make it behave like the FXML 
         imageView.setPreserveRatio(true);
-        imageView.setFitHeight(StageConstants.ZombieCharacterXYSize); 
+        imageView.setFitHeight(characterXySize); 
         imageView.setSmooth(true);
-        imageView.setId("zombie-" + System.nanoTime());
+        imageView.setId("character-" + System.nanoTime());
         imageView.setLayoutX(0);
         imageView.setLayoutY(0);
 

@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnRight <em>Image Turn Right</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnUp <em>Image Turn Up</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnDown <em>Image Turn Down</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getBehavior <em>Behavior</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -293,5 +294,31 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	void setImageTurnDown(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Behavior</b></em>' attribute.
+	 * The default value is <code>"WANDER"</code>.
+	 * The literals are from the enumeration {@link main.game.maze.opponents.BehaviorType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Behavior</em>' attribute.
+	 * @see main.game.maze.opponents.BehaviorType
+	 * @see #setBehavior(BehaviorType)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_Behavior()
+	 * @model default="WANDER"
+	 * @generated
+	 */
+	BehaviorType getBehavior();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getBehavior <em>Behavior</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Behavior</em>' attribute.
+	 * @see main.game.maze.opponents.BehaviorType
+	 * @see #getBehavior()
+	 * @generated
+	 */
+	void setBehavior(BehaviorType value);
 
 } // CharacterType

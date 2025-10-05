@@ -14,8 +14,8 @@ class MaxThreatValidationTest {
     OpponentModel model = OpponentsFactory.eINSTANCE.createOpponentModel();
     model.setMaxThreat(10);
 
-    CharacterType ct1 = OpponentsFactory.eINSTANCE.createZombie();
-    ct1.setThreatLevel(3);     
+    Zombie ct1 = OpponentsFactory.eINSTANCE.createZombie();
+    ct1.setThreatLevel(3);    
     CharacterType ct2 = OpponentsFactory.eINSTANCE.createZombie();
     ct2.setThreatLevel(4);
 

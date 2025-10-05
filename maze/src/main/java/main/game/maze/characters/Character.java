@@ -98,44 +98,44 @@ public class Character  {
         return false;
     }
 
-    public boolean moveUp(double speed) {
+    public boolean moveUp(double speed, boolean force) {
         directionX = 0;
         directionY = -speed;
         updateDirection((int)speed);
-        if(moveCharacterUp(speed)) {
+        if(moveCharacterUp(speed, force)) {
             updatePosition();
             return true;
         }
         return false;
     }
 
-    public boolean moveDown(double speed) {
+    public boolean moveDown(double speed, boolean force) {
         directionX = 0;
         directionY = speed;
         updateDirection((int)speed);
-        if(moveCharacterDown(speed)) {
+        if(moveCharacterDown(speed, force)) {
             updatePosition();
             return true;
         }
         return false;
     }
 
-    public boolean moveLeft(double speed) {
+    public boolean moveLeft(double speed, boolean force) {
         directionX = -speed;
         directionY = 0;
         updateDirection((int)speed);
-        if(moveCharacterLeft(speed)) {
+        if(moveCharacterLeft(speed, force)) {
             updatePosition();
             return true;
         }
         return false;
     }
 
-    public boolean moveRight(double speed) {
+    public boolean moveRight(double speed, boolean force) {
         directionX = speed;
         directionY = 0;
         updateDirection((int)speed);
-        if(moveCharacterRight(speed)) {
+        if(moveCharacterRight(speed, force)) {
             updatePosition();
             return true;
         }
@@ -151,9 +151,9 @@ public class Character  {
         characterPosition = characterPosition.add(directionX, directionY);
     }
 
-    private boolean moveCharacterRight(double speed) {
+    private boolean moveCharacterRight(double speed, boolean force) {
         double newX = characterGraphics.getLayoutX() + speed;
-        if (newX < maxX && !isTouchingVector()) {
+        if (newX < maxX && (force || !isTouchingVector())) {
             characterGraphics.setLayoutX(newX);
             doNotifyMovement();
             return true;
@@ -161,9 +161,9 @@ public class Character  {
         return false;
     }
 
-    private boolean moveCharacterLeft(double speed) {
+    private boolean moveCharacterLeft(double speed, boolean force) {
         double newX = characterGraphics.getLayoutX() - speed;
-        if (newX >= 0 && !isTouchingVector()) {
+        if (newX >= 0 && (force || !isTouchingVector())) {
             characterGraphics.setLayoutX(newX);
             doNotifyMovement();
             return true;
@@ -171,9 +171,9 @@ public class Character  {
         return false;
     }
 
-    private boolean moveCharacterDown(double speed) {
+    private boolean moveCharacterDown(double speed, boolean force) {
         double newY = characterGraphics.getLayoutY() + speed;
-        if (newY < maxY && !isTouchingVector()) {
+        if (newY < maxY && (force || !isTouchingVector())) {
             characterGraphics.setLayoutY(newY);
             doNotifyMovement();
             return true;
@@ -181,9 +181,9 @@ public class Character  {
         return false;
     }
 
-    private boolean moveCharacterUp(double speed) {
+    private boolean moveCharacterUp(double speed, boolean force) {
         double newY = characterGraphics.getLayoutY() - speed;
-        if (newY >= 0 && !isTouchingVector()) {
+        if (newY >= 0 && (force || !isTouchingVector())) {
             characterGraphics.setLayoutY(newY);
             doNotifyMovement();
             return true;

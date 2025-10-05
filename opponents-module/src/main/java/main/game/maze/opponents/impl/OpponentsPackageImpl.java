@@ -4,6 +4,10 @@ package main.game.maze.opponents.impl;
 
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
+import main.game.maze.opponents.Ghost;
+import main.game.maze.opponents.LootItem;
+import main.game.maze.opponents.LootItemType;
+import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.OpponentsPackage;
@@ -52,7 +56,35 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass lootTableEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass lootItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass ghostEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum behaviorTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum lootItemTypeEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -300,6 +332,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getCharacterType_Behavior() {
+		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getZombie() {
 		return zombieEClass;
 	}
@@ -320,8 +362,168 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getZombie_Behavior() {
-		return (EAttribute)zombieEClass.getEStructuralFeatures().get(1);
+	public EReference getZombie_ZombieLootTable() {
+		return (EReference)zombieEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getZombie_InfectionLevel() {
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getZombie_ResurrectionTime() {
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getZombie_TouchSound() {
+		return (EAttribute)zombieEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getLootTable() {
+		return lootTableEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getLootTable_Items() {
+		return (EReference)lootTableEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootTable_WeightCapacity() {
+		return (EAttribute)lootTableEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getLootItem() {
+		return lootItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootItem_Name() {
+		return (EAttribute)lootItemEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootItem_Type() {
+		return (EAttribute)lootItemEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootItem_Value() {
+		return (EAttribute)lootItemEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootItem_Weight() {
+		return (EAttribute)lootItemEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getLootItem_GraphicBase() {
+		return (EAttribute)lootItemEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getGhost() {
+		return ghostEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getGhost_AttackDamage() {
+		return (EAttribute)ghostEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getGhost_VisibilityLevel() {
+		return (EAttribute)ghostEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getGhost_NonTangibilityEnergy() {
+		return (EAttribute)ghostEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -332,6 +534,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	@Override
 	public EEnum getBehaviorType() {
 		return behaviorTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getLootItemType() {
+		return lootItemTypeEEnum;
 	}
 
 	/**
@@ -381,13 +593,34 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_RIGHT);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_UP);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_DOWN);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__BEHAVIOR);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
-		createEAttribute(zombieEClass, ZOMBIE__BEHAVIOR);
+		createEReference(zombieEClass, ZOMBIE__ZOMBIE_LOOT_TABLE);
+		createEAttribute(zombieEClass, ZOMBIE__INFECTION_LEVEL);
+		createEAttribute(zombieEClass, ZOMBIE__RESURRECTION_TIME);
+		createEAttribute(zombieEClass, ZOMBIE__TOUCH_SOUND);
+
+		lootTableEClass = createEClass(LOOT_TABLE);
+		createEReference(lootTableEClass, LOOT_TABLE__ITEMS);
+		createEAttribute(lootTableEClass, LOOT_TABLE__WEIGHT_CAPACITY);
+
+		lootItemEClass = createEClass(LOOT_ITEM);
+		createEAttribute(lootItemEClass, LOOT_ITEM__NAME);
+		createEAttribute(lootItemEClass, LOOT_ITEM__TYPE);
+		createEAttribute(lootItemEClass, LOOT_ITEM__VALUE);
+		createEAttribute(lootItemEClass, LOOT_ITEM__WEIGHT);
+		createEAttribute(lootItemEClass, LOOT_ITEM__GRAPHIC_BASE);
+
+		ghostEClass = createEClass(GHOST);
+		createEAttribute(ghostEClass, GHOST__ATTACK_DAMAGE);
+		createEAttribute(ghostEClass, GHOST__VISIBILITY_LEVEL);
+		createEAttribute(ghostEClass, GHOST__NON_TANGIBILITY_ENERGY);
 
 		// Create enums
 		behaviorTypeEEnum = createEEnum(BEHAVIOR_TYPE);
+		lootItemTypeEEnum = createEEnum(LOOT_ITEM_TYPE);
 	}
 
 	/**
@@ -419,6 +652,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		// Add supertypes to classes
 		zombieEClass.getESuperTypes().add(this.getCharacterType());
+		ghostEClass.getESuperTypes().add(this.getCharacterType());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -439,16 +673,42 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_ImageTurnRight(), ecorePackage.getEString(), "ImageTurnRight", "/main/game/maze/zombie-right.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnUp(), ecorePackage.getEString(), "ImageTurnUp", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnDown(), ecorePackage.getEString(), "ImageTurnDown", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getZombie_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getZombie_ZombieLootTable(), this.getLootTable(), null, "zombieLootTable", null, 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_InfectionLevel(), ecorePackage.getEInt(), "infectionLevel", "1", 0, 10, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_ResurrectionTime(), ecorePackage.getEInt(), "resurrectionTime", "0", 0, 180, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_TouchSound(), ecorePackage.getEString(), "touchSound", "/main/game/maze/zombieScream.mp3", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(lootTableEClass, LootTable.class, "LootTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getLootTable_Items(), this.getLootItem(), null, "items", null, 0, -1, LootTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootTable_WeightCapacity(), ecorePackage.getEInt(), "weightCapacity", "1", 1, 100, LootTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(lootItemEClass, LootItem.class, "LootItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getLootItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootItem_Type(), this.getLootItemType(), "type", "FOOD", 1, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootItem_Value(), ecorePackage.getEInt(), "value", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootItem_Weight(), ecorePackage.getEInt(), "weight", null, 1, 10, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootItem_GraphicBase(), ecorePackage.getEString(), "graphicBase", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(ghostEClass, Ghost.class, "Ghost", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEDouble(), "nonTangibilityEnergy", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(behaviorTypeEEnum, BehaviorType.class, "BehaviorType");
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.PASSIVE);
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.WANDER);
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.AGGRESSIVE);
+
+		initEEnum(lootItemTypeEEnum, LootItemType.class, "LootItemType");
+		addEEnumLiteral(lootItemTypeEEnum, LootItemType.FOOD);
+		addEEnumLiteral(lootItemTypeEEnum, LootItemType.BOMB);
+		addEEnumLiteral(lootItemTypeEEnum, LootItemType.TRAP);
+		addEEnumLiteral(lootItemTypeEEnum, LootItemType.WEAPON);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -40,6 +40,33 @@ public interface OpponentsFactory extends EFactory {
 	Zombie createZombie();
 
 	/**
+	 * Returns a new object of class '<em>Loot Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Loot Table</em>'.
+	 * @generated
+	 */
+	LootTable createLootTable();
+
+	/**
+	 * Returns a new object of class '<em>Loot Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Loot Item</em>'.
+	 * @generated
+	 */
+	LootItem createLootItem();
+
+	/**
+	 * Returns a new object of class '<em>Ghost</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Ghost</em>'.
+	 * @generated
+	 */
+	Ghost createGhost();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

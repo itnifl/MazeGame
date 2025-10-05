@@ -13,6 +13,12 @@
       <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/WANDER"/>
       <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/AGGRESSIVE"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//LootItemType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/FOOD"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/BOMB"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/TRAP"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/WEAPON"/>
+    </genEnums>
     <genClasses ecoreClass="opponents.ecore#//OpponentModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
@@ -31,10 +37,30 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnRight"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnUp"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnDown"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/behavior"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/behavior"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//Zombie/zombieLootTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/infectionLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/resurrectionTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/touchSound"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//LootTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//LootTable/items"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootTable/weightCapacity"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//LootItem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/weight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/graphicBase"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//Ghost">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/visibilityLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/nonTangibilityEnergy"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
