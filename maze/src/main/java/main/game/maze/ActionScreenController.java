@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import main.game.maze.actions.RestartGameAction;
+import main.game.maze.constants.ResourceFileConstants;
 
 public class ActionScreenController {
     @FXML
@@ -32,7 +33,7 @@ public class ActionScreenController {
             String playerName = result.get();
             int score = Integer.parseInt(scoreLabel.getText());
 
-            writeScore(playerName, score, "scores.txt");
+            writeScore(playerName, score, ResourceFileConstants.HighscoreFilePath);
         }
     }
 
