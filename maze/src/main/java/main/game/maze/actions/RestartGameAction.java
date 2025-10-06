@@ -7,6 +7,7 @@ import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.WinGameController;
 import main.game.maze.actions.base.ActionScreens;
+import main.game.maze.constants.ScreenNameConstants;
 
 public class RestartGameAction extends ActionScreens {
     private AnchorPane root;
@@ -16,7 +17,7 @@ public class RestartGameAction extends ActionScreens {
     }
 
     public void Load() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/game.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
 
         if (WinGameController.winGameMediaPlayer != null) {
             WinGameController.winGameMediaPlayer.stop();

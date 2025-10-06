@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import main.game.maze.constants.ResourceFileConstants;
 
 public class WinGameController extends ActionScreenController implements Initializable {
 
@@ -23,7 +24,7 @@ public class WinGameController extends ActionScreenController implements Initial
 
     MediaView addWinGameSound() {
 
-        var resource = getClass().getResource("/main/game/maze/winGame.mp3");
+        var resource = getClass().getResource(ResourceFileConstants.WinGameSound);
         Media media = new Media(resource.toString());
         winGameMediaPlayer = new MediaPlayer(media);
 
@@ -32,7 +33,7 @@ public class WinGameController extends ActionScreenController implements Initial
     }
     MediaView addWinGameSoundComment() {
 
-        var resource = getClass().getResource("/main/game/maze/ass-kickin.mp3");
+        var resource = getClass().getResource(ResourceFileConstants.WinGameSoundComment);
         Media media = new Media(resource.toString());
         winGameMediaPlayerComment = new MediaPlayer(media);
 
