@@ -23,6 +23,7 @@ import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
@@ -47,7 +48,7 @@ public class PlayerCharacter extends Character
 
     private MediaView addScreamSound() {
 
-        var resource = getClass().getResource("/main/game/maze/playerScream.mp3");
+        var resource = getClass().getResource(ResourceFileConstants.PlayerScreamSound);
         Media media = new Media(resource.toString());
         this.screamMediaPlayer = new MediaPlayer(media);
 

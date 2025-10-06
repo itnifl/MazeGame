@@ -2,13 +2,13 @@ package main.game.maze.actions;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import main.game.maze.GameOverController;
 import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
+import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class GameOverAction extends CharacterActionScreens implements IDeathSubscriber {
@@ -25,7 +25,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
     @Override
     public void AddDeathNotification(ICanDie mortalEntity) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/gameOverScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));
 
         runnableOnGameOver.run();
 

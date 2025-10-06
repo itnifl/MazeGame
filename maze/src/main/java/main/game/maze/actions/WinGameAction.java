@@ -10,6 +10,7 @@ import main.game.maze.WinGameController;
 import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
+import main.game.maze.constants.ScreenNameConstants;
 
 public class WinGameAction extends CharacterActionScreens implements ICanLetYouWin {
     private AnchorPane root;
@@ -25,7 +26,7 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
 
     @Override
     public void WinGame() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/winScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.WinGameScreen));
 
         runnableOnWin.run();
 

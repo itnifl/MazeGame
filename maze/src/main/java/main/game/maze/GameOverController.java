@@ -2,13 +2,13 @@ package main.game.maze;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import main.game.maze.constants.ResourceFileConstants;
 
 public class GameOverController extends ActionScreenController implements Initializable {
     
@@ -26,7 +26,7 @@ public class GameOverController extends ActionScreenController implements Initia
 
     private MediaView addGameOverSound() {
 
-        var resource = getClass().getResource("/main/game/maze/gameOver.mp3");
+        var resource = getClass().getResource(ResourceFileConstants.GameOverSound);
         Media media = new Media(resource.toString());
         this.gameOverMediaPlayer = new MediaPlayer(media);
 
