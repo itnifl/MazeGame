@@ -265,25 +265,36 @@ public class GameController implements Initializable {
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nontangientcc = (INonTangientMazeGameCharacter)computerCharacter;
-            var energy = nontangientcc.getNonTangientEnergy();
-            nonTangient = energy > 0;    
-            if(nonTangient) { 
-                //TODO: Magic numbers, must fix:
-                nontangientcc.setCharacterOpacity(1-(energy/100)+0.1);     
-                nontangientcc.setNonTangientEnergy(energy-0.14);   
-            } 
-            //TODO: Magic numbers, must fix:
-            //Make a random non tangient move
-            if((int)(Math.random() * 10) >= 7) {
-                nonTangient = false;
-            }                                                
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);                                     
         }
 
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
         }
+    }
+
+    /* Non-Tangient Energy Calculation - returns true if there still is non-tangient energy left */
+    private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
+            var energy = nontangientcc.getNonTangientEnergy();
+            boolean nonTangient = energy > 0; 
+            
+            final int maxEnergy = 100;  
+            final double noneOpacityValue = 1; 
+            final double minOpacityValue = 0.1;
+            final double energyDecreaseValue = 0.14;
+            final int maxRandomValue = 10;
+            final double randomTangientMoveThreshold = 7;
+
+            if(nonTangient) { 
+                nontangientcc.setCharacterOpacity(noneOpacityValue-(energy/maxEnergy)+minOpacityValue);     
+                nontangientcc.setNonTangientEnergy(energy-energyDecreaseValue);   
+            } 
+
+            if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {
+                nonTangient = false;
+            }  
+            return nonTangient; 
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
