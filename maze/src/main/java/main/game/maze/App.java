@@ -9,8 +9,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.Media;
 import javafx.stage.Stage;
+import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.constants.StageConstants;
 import java.io.IOException;
+
 
 public class App extends Application {
     private static int boardMaxX = StageConstants.BoardMaxX;
@@ -22,7 +25,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
             AnchorPane root = loader.load();
             ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
             progressBar.prefWidthProperty().bind(root.widthProperty());
@@ -49,7 +52,7 @@ public class App extends Application {
 
     private MediaView addMusic() {
 
-        var resource = getClass().getResource("/main/game/maze/backgroundMusic.mp3");
+        var resource = getClass().getResource(ResourceFileConstants.BackgroundMusic);
         Media media = new Media(resource.toString());
         inGameMediaPlayer = new MediaPlayer(media);
         inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);

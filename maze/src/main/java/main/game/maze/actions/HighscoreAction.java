@@ -3,8 +3,9 @@ package main.game.maze.actions;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
-
+import javafx.stage.Screen;
 import main.game.maze.actions.base.ActionScreens;
+import main.game.maze.constants.ScreenNameConstants;
 
 public class HighscoreAction extends ActionScreens {
     private AnchorPane root;
@@ -14,7 +15,7 @@ public class HighscoreAction extends ActionScreens {
     }
 
     public void Load() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/game/maze/highscoreScreen.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.HighscoreScreen));
 
         try {
             AnchorPane screen = fxmlLoader.load();

@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -20,20 +17,17 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.ComputerCharacter;
-import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
-import main.game.maze.opponents.INonTangientCharacter;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -41,8 +35,6 @@ import javafx.scene.canvas.GraphicsContext;
 public class GameController implements Initializable {
     private static int BoardMaxX = StageConstants.BoardMaxX;
     private static int BoardMaxY = StageConstants.BoardMaxY;
-
-    private Timeline timeline;
 
     @FXML
     private AnchorPane root;
@@ -154,16 +146,6 @@ public class GameController implements Initializable {
         hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
-        // create a timeline with two key frames
-        /*timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
-                new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
-
-        // set the cycle count to indefinite
-        timeline.setCycleCount(Timeline.INDEFINITE);*/
-
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
                 player,
@@ -265,25 +247,36 @@ public class GameController implements Initializable {
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nontangientcc = (INonTangientMazeGameCharacter)computerCharacter;
-            var energy = nontangientcc.getNonTangientEnergy();
-            nonTangient = energy > 0;    
-            if(nonTangient) { 
-                //TODO: Magic numbers, must fix:
-                nontangientcc.setCharacterOpacity(1-(energy/100)+0.1);     
-                nontangientcc.setNonTangientEnergy(energy-0.14);   
-            } 
-            //TODO: Magic numbers, must fix:
-            //Make a random non tangient move
-            if((int)(Math.random() * 10) >= 7) {
-                nonTangient = false;
-            }                                                
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);                                     
         }
 
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
         }
+    }
+
+    /* Non-Tangient Energy Calculation - returns true if there still is non-tangient energy left */
+    private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
+            var energy = nontangientcc.getNonTangientEnergy();
+            boolean nonTangient = energy > 0; 
+            
+            final int maxEnergy = 100;  
+            final double noneOpacityValue = 1; 
+            final double minOpacityValue = 0.1;
+            final double energyDecreaseValue = 0.14;
+            final int maxRandomValue = 10;
+            final double randomTangientMoveThreshold = 7;
+
+            if(nonTangient) { 
+                nontangientcc.setCharacterOpacity(noneOpacityValue-(energy/maxEnergy)+minOpacityValue);     
+                nontangientcc.setNonTangientEnergy(energy-energyDecreaseValue);   
+            } 
+
+            if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {
+                nonTangient = false;
+            }  
+            return nonTangient; 
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
