@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.emf.ecore.resource.Resource;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

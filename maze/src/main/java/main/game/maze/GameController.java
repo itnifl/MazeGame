@@ -36,8 +36,6 @@ public class GameController implements Initializable {
     private static int BoardMaxX = StageConstants.BoardMaxX;
     private static int BoardMaxY = StageConstants.BoardMaxY;
 
-    private Timeline timeline;
-
     @FXML
     private AnchorPane root;
     @FXML
@@ -147,16 +145,6 @@ public class GameController implements Initializable {
     public void setupGame() {
         hpBar.setProgress(1.0);
         allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
-
-        // create a timeline with two key frames
-        /*timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(ghost1.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.seconds(1), new KeyValue(ghost1.opacityProperty(), 0.0)),
-                new KeyFrame(Duration.ZERO, new KeyValue(ghost2.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.seconds(1), new KeyValue(ghost2.opacityProperty(), 0.0)));
-
-        // set the cycle count to indefinite
-        timeline.setCycleCount(Timeline.INDEFINITE);*/
 
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
