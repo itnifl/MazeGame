@@ -10,6 +10,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.constants.StageConstants;
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("game.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
             AnchorPane root = loader.load();
             ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
             progressBar.prefWidthProperty().bind(root.widthProperty());
