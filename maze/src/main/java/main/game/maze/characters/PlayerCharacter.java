@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -225,6 +226,8 @@ public class PlayerCharacter extends Character
         final double infectionChance = Math.min(calculatedInfectionLevel + minimalInfectionChance, maxInfectionChance);
 
         if (rng.nextDouble() < infectionChance) {
+            App.gameController.showInfectionWarning();
+            
             double dps = 0.10 * z.getDamage() * calculatedInfectionLevel; // ticks each second for 6s
             final int totalTicks = 6;
             if(infectionTimeline == null || infectionTimeline.getStatus() != Timeline.Status.RUNNING) {
@@ -239,7 +242,6 @@ public class PlayerCharacter extends Character
         }
     }
 
-    // PlayerCharacter.java
     public void dispose() {
         // stop infection tick
         if (infectionTimeline != null) {
