@@ -404,7 +404,7 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__ZOMBIE_LOOT_TABLE = CHARACTER_TYPE_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Infection Level</b></em>' attribute list.
+	 * The feature id for the '<em><b>Infection Level</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -413,7 +413,7 @@ public interface OpponentsPackage extends EPackage {
 	int ZOMBIE__INFECTION_LEVEL = CHARACTER_TYPE_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Resurrection Time</b></em>' attribute list.
+	 * The feature id for the '<em><b>Resurrection Time</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -990,10 +990,10 @@ public interface OpponentsPackage extends EPackage {
 	EReference getZombie_ZombieLootTable();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Infection Level</em>'.
+	 * @return the meta object for the attribute '<em>Infection Level</em>'.
 	 * @see main.game.maze.opponents.Zombie#getInfectionLevel()
 	 * @see #getZombie()
 	 * @generated
@@ -1001,10 +1001,10 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getZombie_InfectionLevel();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Resurrection Time</em>'.
+	 * @return the meta object for the attribute '<em>Resurrection Time</em>'.
 	 * @see main.game.maze.opponents.Zombie#getResurrectionTime()
 	 * @see #getZombie()
 	 * @generated
@@ -1380,7 +1380,7 @@ public interface OpponentsPackage extends EPackage {
 		EReference ZOMBIE__ZOMBIE_LOOT_TABLE = eINSTANCE.getZombie_ZombieLootTable();
 
 		/**
-		 * The meta object literal for the '<em><b>Infection Level</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Infection Level</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1388,7 +1388,7 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute ZOMBIE__INFECTION_LEVEL = eINSTANCE.getZombie_InfectionLevel();
 
 		/**
-		 * The meta object literal for the '<em><b>Resurrection Time</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Resurrection Time</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

@@ -17,6 +17,7 @@ import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.opponents.Zombie;                // generated EMF class
 import main.game.maze.opponents.BehaviorType;         // generated enum
 import main.game.maze.actions.MovementNotifierAction;
@@ -24,7 +25,7 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class ZombieCharacter extends ComputerCharacter
-        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie {
+        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<Zombie> {
 
     private final Zombie zombieModel;
     private AtomicInteger hitPoints;
@@ -184,5 +185,9 @@ public class ZombieCharacter extends ComputerCharacter
     @Override
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) {
         deathSubscribers.add(subscriber);
+    }
+
+    public Zombie getModel() {
+        return this.zombieModel;
     }
 }

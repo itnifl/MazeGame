@@ -12,7 +12,7 @@ import main.game.maze.constants.ResourceFileConstants;
 
 public class GameOverController extends ActionScreenController implements Initializable {
     
-    private MediaPlayer gameOverMediaPlayer;
+    public static MediaPlayer gameOverMediaPlayer;
 
     @FXML
     private Label deathPenaltyNoticeLabel;
