@@ -2,20 +2,16 @@
  */
 package main.game.maze.opponents.impl;
 
-import java.util.Collection;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,24 +62,44 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	protected LootTable zombieLootTable;
 
 	/**
-	 * The cached value of the '{@link #getInfectionLevel() <em>Infection Level</em>}' attribute list.
+	 * The default value of the '{@link #getInfectionLevel() <em>Infection Level</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getInfectionLevel()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Integer> infectionLevel;
+	protected static final int INFECTION_LEVEL_EDEFAULT = 1;
 
 	/**
-	 * The cached value of the '{@link #getResurrectionTime() <em>Resurrection Time</em>}' attribute list.
+	 * The cached value of the '{@link #getInfectionLevel() <em>Infection Level</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInfectionLevel()
+	 * @generated
+	 * @ordered
+	 */
+	protected int infectionLevel = INFECTION_LEVEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getResurrectionTime() <em>Resurrection Time</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getResurrectionTime()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Integer> resurrectionTime;
+	protected static final int RESURRECTION_TIME_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getResurrectionTime() <em>Resurrection Time</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getResurrectionTime()
+	 * @generated
+	 * @ordered
+	 */
+	protected int resurrectionTime = RESURRECTION_TIME_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getTouchSound() <em>Touch Sound</em>}' attribute.
@@ -193,10 +209,7 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @generated
 	 */
 	@Override
-	public EList<Integer> getInfectionLevel() {
-		if (infectionLevel == null) {
-			infectionLevel = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.ZOMBIE__INFECTION_LEVEL);
-		}
+	public int getInfectionLevel() {
 		return infectionLevel;
 	}
 
@@ -206,11 +219,34 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * @generated
 	 */
 	@Override
-	public EList<Integer> getResurrectionTime() {
-		if (resurrectionTime == null) {
-			resurrectionTime = new EDataTypeUniqueEList<Integer>(Integer.class, this, OpponentsPackage.ZOMBIE__RESURRECTION_TIME);
-		}
+	public void setInfectionLevel(int newInfectionLevel) {
+		int oldInfectionLevel = infectionLevel;
+		infectionLevel = newInfectionLevel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__INFECTION_LEVEL, oldInfectionLevel, infectionLevel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int getResurrectionTime() {
 		return resurrectionTime;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setResurrectionTime(int newResurrectionTime) {
+		int oldResurrectionTime = resurrectionTime;
+		resurrectionTime = newResurrectionTime;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.ZOMBIE__RESURRECTION_TIME, oldResurrectionTime, resurrectionTime));
 	}
 
 	/**
@@ -293,12 +329,10 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				setZombieLootTable((LootTable)newValue);
 				return;
 			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
-				getInfectionLevel().clear();
-				getInfectionLevel().addAll((Collection<? extends Integer>)newValue);
+				setInfectionLevel((Integer)newValue);
 				return;
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
-				getResurrectionTime().clear();
-				getResurrectionTime().addAll((Collection<? extends Integer>)newValue);
+				setResurrectionTime((Integer)newValue);
 				return;
 			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
 				setTouchSound((String)newValue);
@@ -322,10 +356,10 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 				setZombieLootTable((LootTable)null);
 				return;
 			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
-				getInfectionLevel().clear();
+				setInfectionLevel(INFECTION_LEVEL_EDEFAULT);
 				return;
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
-				getResurrectionTime().clear();
+				setResurrectionTime(RESURRECTION_TIME_EDEFAULT);
 				return;
 			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
 				setTouchSound(TOUCH_SOUND_EDEFAULT);
@@ -347,9 +381,9 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 			case OpponentsPackage.ZOMBIE__ZOMBIE_LOOT_TABLE:
 				return zombieLootTable != null;
 			case OpponentsPackage.ZOMBIE__INFECTION_LEVEL:
-				return infectionLevel != null && !infectionLevel.isEmpty();
+				return infectionLevel != INFECTION_LEVEL_EDEFAULT;
 			case OpponentsPackage.ZOMBIE__RESURRECTION_TIME:
-				return resurrectionTime != null && !resurrectionTime.isEmpty();
+				return resurrectionTime != RESURRECTION_TIME_EDEFAULT;
 			case OpponentsPackage.ZOMBIE__TOUCH_SOUND:
 				return TOUCH_SOUND_EDEFAULT == null ? touchSound != null : !TOUCH_SOUND_EDEFAULT.equals(touchSound);
 		}

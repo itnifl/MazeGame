@@ -11,12 +11,13 @@ import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
-        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, INonTangientMazeGameCharacter {
+        implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, INonTangientMazeGameCharacter,  IHaveModel<Ghost> {
     private final Ghost ghostModel;
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
@@ -101,5 +102,10 @@ public class GhostCharacter extends ComputerCharacter
         var graphics = this.getCharacterGraphics();
         graphics.setOpacity(value);
         this.setCharacterGraphics(graphics);
+    }
+
+    @Override
+    public Ghost getModel() {
+        return this.ghostModel;
     }
 }

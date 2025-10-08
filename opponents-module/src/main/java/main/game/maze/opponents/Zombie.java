@@ -2,9 +2,6 @@
  */
 package main.game.maze.opponents;
 
-import org.eclipse.emf.common.util.EList;
-
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Zombie</b></em>'.
@@ -72,28 +69,50 @@ public interface Zombie extends CharacterType {
 	void setZombieLootTable(LootTable value);
 
 	/**
-	 * Returns the value of the '<em><b>Infection Level</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Integer}.
+	 * Returns the value of the '<em><b>Infection Level</b></em>' attribute.
+	 * The default value is <code>"1"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Infection Level</em>' attribute list.
+	 * @return the value of the '<em>Infection Level</em>' attribute.
+	 * @see #setInfectionLevel(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_InfectionLevel()
-	 * @model default="1" upper="10"
+	 * @model default="1"
 	 * @generated
 	 */
-	EList<Integer> getInfectionLevel();
+	int getInfectionLevel();
 
 	/**
-	 * Returns the value of the '<em><b>Resurrection Time</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.Integer}.
+	 * Sets the value of the '{@link main.game.maze.opponents.Zombie#getInfectionLevel <em>Infection Level</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Resurrection Time</em>' attribute list.
-	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ResurrectionTime()
-	 * @model default="0" upper="180"
+	 * @param value the new value of the '<em>Infection Level</em>' attribute.
+	 * @see #getInfectionLevel()
 	 * @generated
 	 */
-	EList<Integer> getResurrectionTime();
+	void setInfectionLevel(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Resurrection Time</b></em>' attribute.
+	 * The default value is <code>"0"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Resurrection Time</em>' attribute.
+	 * @see #setResurrectionTime(int)
+	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ResurrectionTime()
+	 * @model default="0"
+	 * @generated
+	 */
+	int getResurrectionTime();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.Zombie#getResurrectionTime <em>Resurrection Time</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Resurrection Time</em>' attribute.
+	 * @see #getResurrectionTime()
+	 * @generated
+	 */
+	void setResurrectionTime(int value);
 
 	/**
 	 * Returns the value of the '<em><b>Touch Sound</b></em>' attribute.

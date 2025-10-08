@@ -94,7 +94,7 @@
       <health>120</health>
       <speed>0.8</speed>
       <threatLevel>3.0</threatLevel>
-      <attackDamage>12</attackDamage>
+      <attackDamage>2</attackDamage>
       <behavior>WANDER</behavior>
       <ImageBase>/main/game/maze/zombie-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie-left.png</ImageTurnLeft>
@@ -110,7 +110,7 @@
       <health>60</health>
       <speed>3</speed>
       <threatLevel>4.0</threatLevel>
-      <attackDamage>7</attackDamage>
+      <attackDamage>4</attackDamage>
       <behavior>AGGRESSIVE</behavior>
       <ImageBase>/main/game/maze/zombie2-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie2-left.png</ImageTurnLeft>

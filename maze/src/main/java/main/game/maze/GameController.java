@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -57,8 +56,8 @@ public class GameController implements Initializable {
     private WinGameAction winGameAction;
     private WinArea winarea;
     private Thread runComputerCharactersThread;
-    private static List<IMovingComputerCharacter> allComputerCharacters;
-    private static AtomicInteger playerMoveCount = new AtomicInteger(0);
+    private final List<IMovingComputerCharacter> allComputerCharacters = new ArrayList<>();
+    private final AtomicInteger playerMoveCount = new AtomicInteger(0);
 
     private static Task runComputerCharacters;
 
@@ -144,7 +143,6 @@ public class GameController implements Initializable {
 
     public void setupGame() {
         hpBar.setProgress(1.0);
-        allComputerCharacters = new ArrayList<IMovingComputerCharacter>();
 
         maze = MazeWorld.GetWorld();
         playerCharacter = new PlayerCharacter(
@@ -212,6 +210,10 @@ public class GameController implements Initializable {
         if (runComputerCharactersThread != null) {
             runComputerCharacters.cancel();
         }
+        if (runComputerCharacters != null) {
+            runComputerCharacters.cancel();
+        }
+
         runComputerCharacters = new Task() {
             @Override
             protected Boolean call() throws Exception {
@@ -301,5 +303,23 @@ public class GameController implements Initializable {
         allComputerCharacters.remove(character);
         playerCharacter.removePositionSubscriber(character);
         gameBoard.getChildren().remove(node);
+    }
+
+    public void dispose() {
+        // stop background loop
+        if (runComputerCharacters != null) runComputerCharacters.cancel();
+        if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
+
+        // detach any cross-subscriptions
+        if (winarea != null && playerCharacter != null) {
+            playerCharacter.removePositionSubscriber(winarea);
+        }
+        if (playerCharacter != null) {
+            playerCharacter.dispose();
+        }
+    }
+
+    public void showInfectionWarning() {
+        //TODO: Player is now infected, make sure this is properly communicated to the player
     }
 }

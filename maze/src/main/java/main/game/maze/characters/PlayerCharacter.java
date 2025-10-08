@@ -3,6 +3,7 @@ package main.game.maze.characters;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.animation.KeyFrame;
@@ -16,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -23,6 +25,7 @@ import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
@@ -35,8 +38,10 @@ public class PlayerCharacter extends Character
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
     private ProgressBar hpBar;
-    private MediaPlayer screamMediaPlayer;
+    public static MediaPlayer screamMediaPlayer;
+    public static MediaPlayer infectedMediaPlayer;
     public boolean isWinning = false;
+    private Timeline infectionTimeline = null;
 
     public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar) {
         super(characterGraphics, x, y);
@@ -54,6 +59,15 @@ public class PlayerCharacter extends Character
 
         // Create a MediaView and add it to the root node
         return new MediaView(screamMediaPlayer);
+    }
+
+    private MediaView addInfectedSound() {
+        var resource = getClass().getResource(ResourceFileConstants.PlayerInfectedSound);
+        Media media = new Media(resource.toString());
+        this.infectedMediaPlayer = new MediaPlayer(media);
+
+        // Create a MediaView and add it to the root node
+        return new MediaView(infectedMediaPlayer);
     }
 
     @Override
@@ -96,19 +110,9 @@ public class PlayerCharacter extends Character
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        var characterGraphics = this.getCharacterGraphics();
-        if (characterGraphics != null && hpBar != null) {
-            flashRed((ImageView) characterGraphics);
-        }
-
         synchronized (lockObjectForHpbar) {
             if (hpBar != null)
                 hpBar.setProgress(hitPoints.get() / 100.0);
-        }
-
-        if (hpBar != null) {
-            addScreamSound();
-            screamMediaPlayer.play();
         }
 
         if (hitPoints.get() <= 0) {
@@ -150,7 +154,11 @@ public class PlayerCharacter extends Character
                 var canKillEntity = (ICanKill) entity;
                 System.out.println("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
-
+                this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
+                doStandardScreamSound();
+            }
+            if (entity instanceof ZombieCharacter zombieCharacter) {
+                calculateInfection(zombieCharacter);
             }
 
             if (entity instanceof ICanLetYouWin) {
@@ -169,12 +177,29 @@ public class PlayerCharacter extends Character
         return touchKillers;
     }
 
-    private void flashRed(ImageView imageView) {
+    private void doStandardScreamSound() {
+        if (hpBar != null) {
+            addScreamSound();
+            screamMediaPlayer.play();
+        }
+    }
+
+    private void doInfectedScreamSound() {
+        if (hpBar != null) {
+            addInfectedSound();
+            infectedMediaPlayer.play();
+        }
+    }
+
+    private void flashCharacterColor(ImageView imageView, double colorHue) {
+        if (imageView == null || hpBar == null) 
+            return;
+
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(0.2);
         colorAdjust.setSaturation(1.0);
         colorAdjust.setContrast(1.0);
-        colorAdjust.setHue(-1.0);
+        colorAdjust.setHue(colorHue); 
 
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(colorAdjust.hueProperty(), -1.0)),
@@ -188,4 +213,82 @@ public class PlayerCharacter extends Character
         imageView.setEffect(colorAdjust);
         timeline.play();
     }
+
+    private void calculateInfection(ZombieCharacter z) {
+        Random rng = new Random();
+        var model = z.getModel();
+
+        double calculatedInfectionLevel = model.getInfectionLevel() / 100.0;
+        if (calculatedInfectionLevel <= 0) return;
+
+        final double minimalInfectionChance = 0.5;
+        final double maxInfectionChance = 0.9;
+        final double infectionChance = Math.min(calculatedInfectionLevel + minimalInfectionChance, maxInfectionChance);
+
+        if (rng.nextDouble() < infectionChance) {
+            App.gameController.showInfectionWarning();
+            
+            double dps = 0.10 * z.getDamage() * calculatedInfectionLevel; // ticks each second for 6s
+            final int totalTicks = 6;
+            if(infectionTimeline == null || infectionTimeline.getStatus() != Timeline.Status.RUNNING) {
+                    infectionTimeline= new Timeline(new KeyFrame(Duration.seconds(totalTicks), event -> {
+                    this.subtractHitPoints((int)Math.round(dps));
+                    this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
+                    this.doInfectedScreamSound();
+                }));
+                infectionTimeline.play();
+            }
+
+        }
+    }
+
+    public void dispose() {
+        // stop infection tick
+        if (infectionTimeline != null) {
+            infectionTimeline.stop();
+            infectionTimeline = null;
+        }
+
+        // stop & release sounds
+        try {
+            if (screamMediaPlayer != null) {
+                screamMediaPlayer.stop();
+                screamMediaPlayer.dispose();
+                screamMediaPlayer = null;
+            }
+        } catch (Exception ignored) {}
+        try {
+            if (infectedMediaPlayer != null) {
+                infectedMediaPlayer.stop();
+                infectedMediaPlayer.dispose();
+                infectedMediaPlayer = null;
+            }
+        } catch (Exception ignored) {}
+
+        // clear any flash effect left on the sprite (defensive; base also clears)
+        Node gfx = getCharacterGraphics();
+        if (gfx != null) {
+            if (javafx.application.Platform.isFxApplicationThread()) {
+                gfx.setEffect(null);
+            } else {
+                javafx.application.Platform.runLater(() -> gfx.setEffect(null));
+            }
+        }
+
+        // detach subscribers
+        deathSubscribers.clear();
+        touchKillers.clear();
+
+        synchronized (lockObjectForHpbar) {
+            if (hpBar != null && hpBar.progressProperty().isBound()) {
+                hpBar.progressProperty().unbind();
+            }
+            hpBar = null;
+        }
+
+        // finally, let the base class clean up node + references
+        super.dispose();
+    }
+
+
 }

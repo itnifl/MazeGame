@@ -203,5 +203,34 @@ public class Character  {
             directionSubscriber.notifyCurrentDirection(characterDirection.getFacingFromVector());
         }
     }
+
+    public void dispose() {
+        // stop emitting notifications
+        notifyMovement = null;
+        directionSubscriber = null;
+
+        // remove graphics from scene graph and clear effects
+        Node gfx = characterGraphics;
+        if (gfx != null) {
+            Runnable remove = () -> {
+                try {
+                    gfx.setEffect(null);
+                    var parent = gfx.getParent();
+                    if (parent instanceof javafx.scene.layout.Pane p) {
+                        p.getChildren().remove(gfx);
+                    }
+                } catch (Exception ignored) {}
+            };
+            if (javafx.application.Platform.isFxApplicationThread()) {
+                remove.run();
+            } else {
+                javafx.application.Platform.runLater(remove);
+            }
+        }
+
+        // help GC
+        characterGraphics = null;
+        maze = null;
+    }
 }
 
