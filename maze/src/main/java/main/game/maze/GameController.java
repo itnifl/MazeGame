@@ -318,4 +318,8 @@ public class GameController implements Initializable {
             playerCharacter.dispose();
         }
     }
+
+    public void showInfectionWarning() {
+        //TODO: Player is now infected, make sure this is properly communicated to the player
+    }
 }
