@@ -7,4 +7,5 @@ public class ResourceFileConstants {
     public final static String WinGameSound = "/main/game/maze/winGame.mp3";
     public final static String WinGameSoundComment = "/main/game/maze/ass-kickin.mp3";
     public final static String PlayerScreamSound = "/main/game/maze/playerScream.mp3";
+    public static final String PlayerInfectedSound = "/main/game/maze/playerGrunt.mp3";
 }

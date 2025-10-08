@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import main.game.maze.App;
 import main.game.maze.GameOverController;
 import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
@@ -25,6 +26,8 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
     @Override
     public void AddDeathNotification(ICanDie mortalEntity) {
+        App.gameController.dispose();
+        App.gameController = null;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));
 
         runnableOnGameOver.run();

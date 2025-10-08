@@ -3,7 +3,6 @@ package main.game.maze.actions;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Screen;
 import main.game.maze.actions.base.ActionScreens;
 import main.game.maze.constants.ScreenNameConstants;
 

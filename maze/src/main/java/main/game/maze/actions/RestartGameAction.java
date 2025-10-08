@@ -5,8 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import main.game.maze.App;
 import main.game.maze.GameController;
+import main.game.maze.GameOverController;
 import main.game.maze.WinGameController;
 import main.game.maze.actions.base.ActionScreens;
+import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.constants.ScreenNameConstants;
 
 public class RestartGameAction extends ActionScreens {
@@ -17,16 +19,34 @@ public class RestartGameAction extends ActionScreens {
     }
 
     public void Load() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+        if(App.gameController != null   ) {
+            App.gameController.dispose();
+            App.gameController = null;
+        }
 
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+                    
         if (WinGameController.winGameMediaPlayer != null) {
             WinGameController.winGameMediaPlayer.stop();
+        }
+         if (WinGameController.winGameMediaPlayerComment != null) {
+            WinGameController.winGameMediaPlayerComment.stop();
+        }
+        if (GameOverController.gameOverMediaPlayer != null) {
+            GameOverController.gameOverMediaPlayer.stop();
+        }
+        if (PlayerCharacter.infectedMediaPlayer != null) {
+            PlayerCharacter.infectedMediaPlayer.stop();
+        }
+        if (PlayerCharacter.screamMediaPlayer != null) {
+            PlayerCharacter.screamMediaPlayer.stop();
         }
         App.inGameMediaPlayer.play();
 
         try {
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
+            App.gameController = controller;
 
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(screen);

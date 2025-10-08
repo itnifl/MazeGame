@@ -3,16 +3,31 @@ package main.game.maze.actions.base;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 
 public class ActionScreens {
 
-
     protected void replaceRoot(AnchorPane oldRoot, AnchorPane newRoot) {
-        Stage primaryStage = (Stage) oldRoot.getScene().getWindow();
-        Scene scene = primaryStage.getScene();
-        scene.setRoot(newRoot);
-        primaryStage.setScene(scene);
-        primaryStage.sizeToScene();
+        if (oldRoot == null || newRoot == null) return;
+
+        Runnable doSwap = () -> {
+            Scene scene = oldRoot.getScene();
+            if (scene == null) return; // node not attached → just skip
+
+            scene.setRoot(newRoot);    // no need to call setScene again
+
+            Window win = scene.getWindow();
+            if (win instanceof Stage stage) {
+                stage.sizeToScene();   // keep your resize behavior
+            }
+        };
+
+        if (javafx.application.Platform.isFxApplicationThread()) {
+            doSwap.run();
+        } else {
+            javafx.application.Platform.runLater(doSwap);
+        }
     }
 }
+
