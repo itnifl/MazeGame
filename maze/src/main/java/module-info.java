@@ -8,6 +8,7 @@ module main.game.maze {
     requires org.eclipse.emf.ecore.xmi;
     requires org.eclipse.emf.common;
     requires java.logging;
+    requires java.desktop;
 
     opens main.game.maze to javafx.fxml;
     exports main.game.maze;
