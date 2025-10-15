@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mazeIdea" nsURI="http://www.example.org/mazeIdea" nsPrefix="mazeIdea">
+  <eSubpackages name="main.game.maze.characters.movements">
+    <eClassifiers xsi:type="ecore:EClass" name="MovementBehavior" abstract="true"
+        interface="true">
+      <eOperations name="move" lowerBound="1">
+        <eParameters name="enemy" eType="#//main.game.maze.characters/EnemyCharacter"/>
+      </eOperations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RandomBehavior" eSuperTypes="#//main.game.maze.characters.movements/MovementBehavior">
+      <eOperations name="setRandomDirection"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//main.game.maze.characters.movements/MovementBehavior">
+      <eOperations name="setDirectionToPlayer">
+        <eParameters name="player" eType="#//main.game.maze.characters/PlayerCharacter"/>
+      </eOperations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PatrolBehavior" eSuperTypes="#//main.game.maze.characters.movements/MovementBehavior">
+      <eOperations name="getNextStep" eType="#//main.game.maze.characters.movements/PatrolPoint"/>
+      <eOperations name="setNextDirection"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="steps" lowerBound="2"
+          upperBound="-1" eType="#//main.game.maze.characters.movements/PatrolPoint"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PatrolPoint">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="main.game.maze.difficulties">
+    <eClassifiers xsi:type="ecore:EClass" name="GameDatas">
+      <eOperations name="getInstance" eType="#//main.game.maze.difficulties/GameDatas"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="EasyDifficulty" eSuperTypes="#//main.game.maze.difficulties/Difficulty"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Difficulty" abstract="true" interface="true">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="instantDeath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="enemymaxcount" ordered="false"
+          upperBound="-1" eType="#//main.game.maze.difficulties/EnemyMaxCount"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="monstersDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NormalDifficulty" eSuperTypes="#//main.game.maze.difficulties/Difficulty"/>
+    <eClassifiers xsi:type="ecore:EClass" name="HardDifficulty" eSuperTypes="#//main.game.maze.difficulties/Difficulty"/>
+    <eClassifiers xsi:type="ecore:EClass" name="EnemyMaxCount">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//main.game.maze.characters/EnemyTypes"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="main.game.maze.characters">
+    <eClassifiers xsi:type="ecore:EClass" name="Character" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="PlayerCharacter" eSuperTypes="#//main.game.maze.characters/Character"/>
+    <eClassifiers xsi:type="ecore:EClass" name="EnemyCharacter" abstract="true" eSuperTypes="#//main.game.maze.characters/Character">
+      <eOperations name="move" lowerBound="1"/>
+      <eOperations name="setMovementBehavior" lowerBound="1"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="movementBehavior" eType="#//main.game.maze.characters.movements/MovementBehavior"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="EnemyTypes">
+      <eLiterals name="ZOMBIE"/>
+      <eLiterals name="GHOST" value="1"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

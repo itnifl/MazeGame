@@ -7,5 +7,6 @@
   <modules>
     <module>maze</module>
     <module>opponents-module</module>
+    <module>MazeIdea</module>
   </modules>
 </project>
