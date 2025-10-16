@@ -8,7 +8,7 @@
     <artifactId>MazeGame</artifactId>
     <version>1</version>
   </parent>
-  <artifactId>MazeIdea</artifactId>
+  <artifactId>maze-idea</artifactId>
   <packaging>jar</packaging>
 
   <properties>
