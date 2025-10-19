@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin id="difficulty" name="difficulty" version="1">
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated opponents -->
+      <package
+            uri="http://main.game.maze/difficulty"
+            class="main.game.maze.opponents.DifficultyPackage"
+            genModel="src/main/resources/difficulty-module.genmodel"/>
+   </extension>
+
+
+</plugin>

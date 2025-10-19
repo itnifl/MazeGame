@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated opponents -->
+      <package
+            uri="http://main.game.maze/opponents"
+            class="main.game.maze.opponents.OpponentsPackage"
+            genModel="src/main/resources/opponents/opponents.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
+      <!-- @generated opponents -->
+      <factory
+            uri="http://main.game.maze/opponents"
+            class="main.game.maze.opponents.provider.OpponentsItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated opponents -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="main.game.maze.opponents.presentation.OpponentsModelWizardID"
+            name="%_UI_OpponentsModelWizard_label"
+            class="main.game.maze.opponents.presentation.OpponentsModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/OpponentsModelFile.gif">
+         <description>%_UI_OpponentsModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated opponents -->
+      <editor
+            id="main.game.maze.opponents.presentation.OpponentsEditorID"
+            name="%_UI_OpponentsEditor_label"
+            icon="icons/full/obj16/OpponentsModelFile.gif"
+            extensions="opponents"
+            class="main.game.maze.opponents.presentation.OpponentsEditor"
+            contributorClass="main.game.maze.opponents.presentation.OpponentsActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>
