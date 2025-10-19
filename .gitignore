@@ -34,6 +34,7 @@ opponents-module/icons/
 *.log
 /.idea/
 *.iml
+*.aird
 
 # Generated EMF / plugin build artefacts you don't want in VCS
 **/META-INF/
