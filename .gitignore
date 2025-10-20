@@ -35,4 +35,5 @@ opponents-module/icons/
 /.idea/
 *.iml
 *.aird
+*.genmodel
 
