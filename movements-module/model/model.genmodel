@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    modelDirectory="/model/src-gen" creationIcons="false" editDirectory="/model.edit/src-gen"
+    editorDirectory="/model.editor/src-gen" modelPluginID="model" modelName="Model"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="21.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>model.ecore</foreignModel>
+  <testsDirectory xsi:nil="true"/>
+  <genPackages prefix="Model" disposableProviderFactory="true" ecorePackage="model.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="model.ecore#//DistanceMethod">
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//DistanceMethod/MANHATTAN"/>
+      <genEnumLiterals ecoreEnumLiteral="model.ecore#//DistanceMethod/EUCLIDEAN"/>
+    </genEnums>
+    <genClasses ecoreClass="model.ecore#//RandomBehavior">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//RandomBehavior/regenPerSecond"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//PatrolBehavior">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PatrolBehavior/path"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PatrolBehavior/currentIndex"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PatrolBehavior/pathcalculator"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//ChaseBehavior">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ChaseBehavior/relativePositionTarget"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ChaseBehavior/pathcalculator"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//MovementBehavior">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//MovementBehavior/ignoreWalls"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//MovementBehavior/attackRadius"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//MovementBehavior/instantKillOnCollision"/>
+      <genOperations ecoreOperation="model.ecore#//MovementBehavior/next"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Position">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Position/posX"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Position/posY"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//PatrolPoint">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PatrolPoint/time"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PatrolPoint/point"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PatrolPoint/regenAmount"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="model.ecore#//PathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PathCalculator/distanceMethod"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//DijkstraPathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//DijkstraPathCalculator/maxIterations"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//AstarPathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//AstarPathCalculator/maxIterations"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//LocalPathCalculator"/>
+  </genPackages>
+  <genPackages prefix="Opponents" ecorePackage="../../opponents-module/src/main/resources/opponents/opponents.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="../../opponents-module/src/main/resources/opponents/opponents.ecore#//BehaviorType">
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//BehaviorType/PASSIVE"/>
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//BehaviorType/WANDER"/>
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//BehaviorType/AGGRESSIVE"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItemType">
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItemType/FOOD"/>
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItemType/BOMB"/>
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItemType/TRAP"/>
+      <genEnumLiterals ecoreEnumLiteral="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItemType/WEAPON"/>
+    </genEnums>
+    <genClasses ecoreClass="../../opponents-module/src/main/resources/opponents/opponents.ecore#//OpponentModel">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//OpponentModel/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//OpponentModel/maxThreat"/>
+    </genClasses>
+    <genClasses ecoreClass="../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie/attackDamage"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie/zombieLootTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie/infectionLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie/resurrectionTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Zombie/touchSound"/>
+    </genClasses>
+    <genClasses ecoreClass="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootTable/items"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootTable/weightCapacity"/>
+    </genClasses>
+    <genClasses ecoreClass="../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem/weight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//LootItem/graphicBase"/>
+    </genClasses>
+    <genClasses ecoreClass="../../opponents-module/src/main/resources/opponents/opponents.ecore#//Ghost">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Ghost/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Ghost/visibilityLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ../../opponents-module/src/main/resources/opponents/opponents.ecore#//Ghost/nonTangibilityEnergy"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
