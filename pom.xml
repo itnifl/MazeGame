@@ -7,7 +7,7 @@
   <modules>
     <module>maze</module>
     <module>opponents-module</module>
-    <module>model</module>
+    <module>movements-module</module>
     <module>difficulty-module</module>
     <module>maze-idea</module>
   </modules>
