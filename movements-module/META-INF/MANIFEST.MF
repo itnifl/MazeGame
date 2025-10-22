@@ -2,16 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: movements-module;singleton:=true
-Automatic-Module-Name: opponents-module
+Automatic-Module-Name: movements-module
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implementation
+Bundle-Activator: main.game.maze.movements.provider.OpponentsEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-24
-Export-Package: main.game.maze.opponents,
- main.game.maze.opponents.impl,
- main.game.maze.opponents.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,
