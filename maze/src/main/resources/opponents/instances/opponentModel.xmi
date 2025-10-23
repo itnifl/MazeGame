@@ -3,9 +3,9 @@
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:opponents="http://main.game.maze/opponents"
-    name="Balanced Mode"
-    maxThreat="20.0">
-    <name>Classic Zombies</name>
+    name="MazeGame">
+	<selectedDifficulty href="../difficulty/difficulties.xmi#/"/>
+    <name>Testing Game</name>
 
   <characterTypes xsi:type="opponents:Ghost">
       <id>ghost_classic_1</id>
