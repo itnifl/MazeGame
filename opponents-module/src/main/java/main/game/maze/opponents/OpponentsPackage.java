@@ -5,6 +5,7 @@ package main.game.maze.opponents;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -22,7 +23,7 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see main.game.maze.opponents.OpponentsFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore invocationDelegates='' settingDelegates='' validationDelegates=''"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore"
  * @generated
  */
 public interface OpponentsPackage extends EPackage {
@@ -96,13 +97,31 @@ public interface OpponentsPackage extends EPackage {
 	int OPPONENT_MODEL__MAX_THREAT = 2;
 
 	/**
+	 * The feature id for the '<em><b>Selected Difficulty</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPPONENT_MODEL__SELECTED_DIFFICULTY = 3;
+
+	/**
 	 * The number of structural features of the '<em>Opponent Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPPONENT_MODEL_FEATURE_COUNT = 3;
+	int OPPONENT_MODEL_FEATURE_COUNT = 4;
+
+	/**
+	 * The operation id for the '<em>Validate Max Threat</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPPONENT_MODEL___VALIDATE_MAX_THREAT__DIAGNOSTICCHAIN_MAP = 0;
 
 	/**
 	 * The number of operations of the '<em>Opponent Model</em>' class.
@@ -111,7 +130,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int OPPONENT_MODEL_OPERATION_COUNT = 0;
+	int OPPONENT_MODEL_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link main.game.maze.opponents.impl.CharacterTypeImpl <em>Character Type</em>}' class.
@@ -762,6 +781,17 @@ public interface OpponentsPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.EnemyTypes
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getEnemyTypes()
+	 * @generated
+	 */
+	int ENEMY_TYPES = 8;
+
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.OpponentModel <em>Opponent Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -803,6 +833,27 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getOpponentModel_MaxThreat();
+
+	/**
+	 * Returns the meta object for the reference '{@link main.game.maze.opponents.OpponentModel#getSelectedDifficulty <em>Selected Difficulty</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Selected Difficulty</em>'.
+	 * @see main.game.maze.opponents.OpponentModel#getSelectedDifficulty()
+	 * @see #getOpponentModel()
+	 * @generated
+	 */
+	EReference getOpponentModel_SelectedDifficulty();
+
+	/**
+	 * Returns the meta object for the '{@link main.game.maze.opponents.OpponentModel#validateMaxThreat(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map) <em>Validate Max Threat</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Validate Max Threat</em>' operation.
+	 * @see main.game.maze.opponents.OpponentModel#validateMaxThreat(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map)
+	 * @generated
+	 */
+	EOperation getOpponentModel__ValidateMaxThreat__DiagnosticChain_Map();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.CharacterType <em>Character Type</em>}'.
@@ -1183,6 +1234,16 @@ public interface OpponentsPackage extends EPackage {
 	EEnum getLootItemType();
 
 	/**
+	 * Returns the meta object for enum '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Enemy Types</em>'.
+	 * @see main.game.maze.opponents.EnemyTypes
+	 * @generated
+	 */
+	EEnum getEnemyTypes();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1238,6 +1299,22 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute OPPONENT_MODEL__MAX_THREAT = eINSTANCE.getOpponentModel_MaxThreat();
+
+		/**
+		 * The meta object literal for the '<em><b>Selected Difficulty</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference OPPONENT_MODEL__SELECTED_DIFFICULTY = eINSTANCE.getOpponentModel_SelectedDifficulty();
+
+		/**
+		 * The meta object literal for the '<em><b>Validate Max Threat</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation OPPONENT_MODEL___VALIDATE_MAX_THREAT__DIAGNOSTICCHAIN_MAP = eINSTANCE.getOpponentModel__ValidateMaxThreat__DiagnosticChain_Map();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.CharacterTypeImpl <em>Character Type</em>}' class.
@@ -1532,6 +1609,16 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum LOOT_ITEM_TYPE = eINSTANCE.getLootItemType();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.EnemyTypes
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getEnemyTypes()
+		 * @generated
+		 */
+		EEnum ENEMY_TYPES = eINSTANCE.getEnemyTypes();
 
 	}
 

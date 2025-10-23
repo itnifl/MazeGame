@@ -9,6 +9,9 @@ Bundle-Activator: main.game.maze.movements.provider.OpponentsEditPlugin$Implemen
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-24
+Export-Package: main.game.maze.behaviour,
+ main.game.maze.behaviour.impl,
+ main.game.maze.behaviour.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,

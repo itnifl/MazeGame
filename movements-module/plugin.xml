@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated movements -->
+      <package
+            uri="http://main.game.maze/behaviour"
+            class="main.game.maze.behaviour.BehaviourPackage"
+            genModel="src/main/resources/movements/movements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated movements -->
+      <parser
+            type="behaviour"
+            class="main.game.maze.behaviour.util.BehaviourResourceFactoryImpl"/>
+   </extension>
+</plugin>

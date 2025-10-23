@@ -1,5 +1,9 @@
 module main.game.maze {
     requires main.game.maze.opponents;
+    //requires main.game.maze.runtime.difficulty.DifficultyRuntime;
+    // EMF generated types from your difficulty-module
+    //requires main.game.maze.difficulty.Difficulty;
+    //requires main.game.maze.difficulty.DifficultyGameData;
     requires transitive javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;

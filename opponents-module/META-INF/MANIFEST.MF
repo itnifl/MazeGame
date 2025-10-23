@@ -9,12 +9,17 @@ Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implemen
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-24
-Export-Package: main.game.maze.opponents,
+Export-Package: main.game.maze.difficulties,
+ main.game.maze.difficulties.impl,
+ main.game.maze.difficulties.util,
+ main.game.maze.opponents,
  main.game.maze.opponents.impl,
  main.game.maze.opponents.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.ocl.pivot;visibility:=reexport,
+ org.eclipse.ocl.examples.codegen;visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.emf.edit.ui;visibility:=reexport,

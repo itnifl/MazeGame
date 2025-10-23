@@ -42,12 +42,20 @@ public class OpponentsValidator extends EObjectValidator {
 	public static final String DIAGNOSTIC_SOURCE = "main.game.maze.opponents";
 
 	/**
+	 * The {@link org.eclipse.emf.common.util.Diagnostic#getCode() code} for constraint 'Validate Max Threat' of 'Opponent Model'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final int OPPONENT_MODEL__VALIDATE_MAX_THREAT = 1;
+
+	/**
 	 * A constant with a fixed name that can be used as the base value for additional hand written constants.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 0;
+	private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 1;
 
 	/**
 	 * A constant with a fixed name that can be used as the base value for additional hand written constants in a derived class.
@@ -103,6 +111,8 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return validateLootItemType((LootItemType)value, diagnostics, context);
+			case OpponentsPackage.ENEMY_TYPES:
+				return validateEnemyTypes((EnemyTypes)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -212,6 +222,15 @@ public class OpponentsValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateLootItemType(LootItemType lootItemType, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateEnemyTypes(EnemyTypes enemyTypes, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 
