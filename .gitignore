@@ -17,7 +17,6 @@ maze/testScores.txt
 
 # Eclipse IDE files (per-project metadata)
 **/.settings/
-**/.project
 **/.classpath
 **/.factorypath
 **/.metadata/
