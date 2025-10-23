@@ -1,140 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-24"/>
-	<classpathentry kind="src" output="target/classes" path="target/generated-sources/annotations"/>
-	<classpathentry kind="src" output="target/classes" path="src/main/resources">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/classes" path="src/main/game"/>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore/2.38.0/org.eclipse.emf.ecore-2.38.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="org.eclipse.emf.ecore"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.scope" value="compile"/>
-			<attribute name="maven.version" value="2.38.0"/>
-			<attribute name="maven.groupId" value="org.eclipse.emf"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/eclipse/emf/org.eclipse.emf.common/2.43.0/org.eclipse.emf.common-2.43.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="org.eclipse.emf.common"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.scope" value="compile"/>
-			<attribute name="maven.version" value="2.43.0"/>
-			<attribute name="maven.groupId" value="org.eclipse.emf"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/eclipse/emf/org.eclipse.emf.ecore.xmi/2.38.0/org.eclipse.emf.ecore.xmi-2.38.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="org.eclipse.emf.ecore.xmi"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.scope" value="compile"/>
-			<attribute name="maven.version" value="2.38.0"/>
-			<attribute name="maven.groupId" value="org.eclipse.emf"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/eclipse/ocl/org.eclipse.ocl.ecore/3.3.100.v20140610-0641/org.eclipse.ocl.ecore-3.3.100.v20140610-0641.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="org.eclipse.ocl.ecore"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.scope" value="compile"/>
-			<attribute name="maven.version" value="3.3.100.v20140610-0641"/>
-			<attribute name="maven.groupId" value="org.eclipse.ocl"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/eclipse/ocl/org.eclipse.ocl.common/1.2.0.v20140610-0641/org.eclipse.ocl.common-1.2.0.v20140610-0641.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="org.eclipse.ocl.common"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.scope" value="compile"/>
-			<attribute name="maven.version" value="1.2.0.v20140610-0641"/>
-			<attribute name="maven.groupId" value="org.eclipse.ocl"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/jupiter/junit-jupiter/5.11.0/junit-jupiter-5.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-jupiter"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="5.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.jupiter"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-jupiter-api"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="5.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.jupiter"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="opentest4j"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="1.3.0"/>
-			<attribute name="maven.groupId" value="org.opentest4j"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-platform-commons"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="1.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.platform"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="apiguardian-api"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="1.1.2"/>
-			<attribute name="maven.groupId" value="org.apiguardian"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-jupiter-params"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="5.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.jupiter"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.0/junit-jupiter-engine-5.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-jupiter-engine"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="5.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.jupiter"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="c:/Users/choct/.m2/repository/org/junit/platform/junit-platform-engine/1.11.0/junit-platform-engine-1.11.0.jar">
-		<attributes>
-			<attribute name="maven.artifactId" value="junit-platform-engine"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-			<attribute name="maven.scope" value="test"/>
-			<attribute name="maven.version" value="1.11.0"/>
-			<attribute name="maven.groupId" value="org.junit.platform"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="src" output="bin" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

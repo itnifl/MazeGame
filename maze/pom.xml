@@ -6,147 +6,88 @@
   <parent>
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
-    <version>1</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
 
   <groupId>main.game.maze</groupId>
-  <artifactId>maze-base</artifactId>
-  <version>1</version>
-  
+  <artifactId>main.game.maze</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <!-- Target JDK 24 -->
-    <maven.compiler.release>24</maven.compiler.release>
-
-    <!-- Lib versions -->
-    <javafx.version>21.0.8</javafx.version>
-    <junit.jupiter.version>5.13.4</junit.jupiter.version>
-    <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
-    <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
-    <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
-    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <tycho.version>5.0.0</tycho.version>
   </properties>
 
+  <!-- p2 repos: SimRel + OCL + e(fx)clipse runtime -->
   <repositories>
     <repository>
-    <id>eclipse-releases</id>
-    <name>Eclipse Releases</name>
-    <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <id>eclipse-2025-09</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/releases/2025-09/</url>
+    </repository>
+    <repository>
+      <id>ocl-latest</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
+    </repository>
+    <repository>
+      <id>efxclipse-runtime</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/efxclipse/runtime-released/3.11.0/repository</url>
     </repository>
   </repositories>
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.common</artifactId>
-      <version>2.43.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore</artifactId>
-      <version>2.38.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>2.38.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.ecore</artifactId>
-      <version>3.3.100.v20140610-0641</version> 
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.common</artifactId>
-      <version>1.2.0.v20140610-0641</version>
-    </dependency>
-    <!-- JavaFX LTS 21.0.8 -->
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-fxml</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-media</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
 
-    <!-- JUnit 5 -->
+  <!-- Keep ONLY non-p2 Maven deps here (if any). Prefer OSGi/p2 for Tycho. -->
+  <dependencies>
+    <!-- (Optional) JUnit via Maven; or use p2 Orbit bundles instead -->
+    
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>main.game.maze</groupId>
-      <artifactId>opponents-module</artifactId>
-      <version>1</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- Compile with JDK 24 -->
+      <!-- Enable Tycho (OSGi-aware build) -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.compiler.plugin.version}</version>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <!-- Resolve from p2; allow Maven deps if you temporarily need them -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
         <configuration>
-          <release>${maven.compiler.release}</release>
+          <resolver>p2</resolver>
+          <pomDependencies>consider</pomDependencies>
         </configuration>
       </plugin>
 
-      <!-- Run JavaFX app via mvn javafx:run -->
+      <!-- Compile with ECJ via Tycho -->
       <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <version>${javafx.maven.plugin.version}</version>
-        <executions>
-          <execution>
-            <id>default-cli</id>
-            <configuration>
-              <mainClass>main.game.maze.App</mainClass>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- Unit tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.plugin.version}</version>
-        <configuration>          
-          <argLine>--enable-preview</argLine>
-          <useModulePath>true</useModulePath>
-        </configuration>
-      </plugin>
-
-      <!-- Integration tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven.failsafe.plugin.version}</version>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho.version}</version>
         <configuration>
-          <argLine>--enable-preview</argLine>
-          <useModulePath>true</useModulePath>
+          <source>21</source>
+          <target>21</target>
         </configuration>
+      </plugin>
+
+      <!-- Run tests inside OSGi (use p2 JUnit 5 bundles or keep the Maven dep above) -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
       </plugin>
     </plugins>
-
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
   </build>
 </project>

@@ -10,7 +10,6 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.EObjectValidator;
@@ -111,8 +110,6 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return validateLootItemType((LootItemType)value, diagnostics, context);
-			case OpponentsPackage.ENEMY_TYPES:
-				return validateEnemyTypes((EnemyTypes)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -222,15 +219,6 @@ public class OpponentsValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateLootItemType(LootItemType lootItemType, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		return true;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean validateEnemyTypes(EnemyTypes enemyTypes, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

@@ -24,7 +24,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="NormalDifficulty" eSuperTypes="#//Difficulty"/>
   <eClassifiers xsi:type="ecore:EClass" name="HardDifficulty" eSuperTypes="#//Difficulty"/>
   <eClassifiers xsi:type="ecore:EClass" name="EnemyMaxCount">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EEnum opponents.ecore#//EnemyTypes"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//EnemyTypes"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="EnemyTypes">
+    <eLiterals name="ZOMBIE"/>
+    <eLiterals name="GHOST" value="1"/>
   </eClassifiers>
 </ecore:EPackage>

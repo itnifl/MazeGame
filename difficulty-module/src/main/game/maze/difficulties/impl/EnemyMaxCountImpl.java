@@ -4,8 +4,7 @@ package main.game.maze.difficulties.impl;
 
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.EnemyMaxCount;
-
-import main.game.maze.opponents.EnemyTypes;
+import main.game.maze.difficulties.EnemyTypes;
 
 import org.eclipse.emf.common.notify.Notification;
 

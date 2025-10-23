@@ -12,7 +12,7 @@ class MaxThreatValidationTest {
   void sumEffectiveThreat_mustNotExceed_maxThreat() {
     // Build a small fixture from your generated EMF API
     OpponentModel model = OpponentsFactory.eINSTANCE.createOpponentModel();
-    model.setMaxThreat(10);
+    //model.setMaxThreat(10);
 
     Zombie ct1 = OpponentsFactory.eINSTANCE.createZombie();
     ct1.setThreatLevel(3);    

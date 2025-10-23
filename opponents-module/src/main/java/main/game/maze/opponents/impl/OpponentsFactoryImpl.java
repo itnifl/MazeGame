@@ -79,8 +79,6 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 				return createBehaviorTypeFromString(eDataType, initialValue);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return createLootItemTypeFromString(eDataType, initialValue);
-			case OpponentsPackage.ENEMY_TYPES:
-				return createEnemyTypesFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -98,8 +96,6 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 				return convertBehaviorTypeToString(eDataType, instanceValue);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return convertLootItemTypeToString(eDataType, instanceValue);
-			case OpponentsPackage.ENEMY_TYPES:
-				return convertEnemyTypesToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -197,26 +193,6 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	 * @generated
 	 */
 	public String convertLootItemTypeToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EnemyTypes createEnemyTypesFromString(EDataType eDataType, String initialValue) {
-		EnemyTypes result = EnemyTypes.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertEnemyTypesToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

@@ -4,6 +4,7 @@ package main.game.maze.difficulties;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -440,6 +441,16 @@ public interface DifficultiesPackage extends EPackage {
 	 */
 	int ENEMY_MAX_COUNT_OPERATION_COUNT = 0;
 
+	/**
+	 * The meta object id for the '{@link main.game.maze.difficulties.EnemyTypes <em>Enemy Types</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.difficulties.EnemyTypes
+	 * @see main.game.maze.difficulties.impl.DifficultiesPackageImpl#getEnemyTypes()
+	 * @generated
+	 */
+	int ENEMY_TYPES = 6;
+
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.difficulties.DifficultyGameData <em>Difficulty Game Data</em>}'.
@@ -601,6 +612,16 @@ public interface DifficultiesPackage extends EPackage {
 	EAttribute getEnemyMaxCount_MaxCount();
 
 	/**
+	 * Returns the meta object for enum '{@link main.game.maze.difficulties.EnemyTypes <em>Enemy Types</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Enemy Types</em>'.
+	 * @see main.game.maze.difficulties.EnemyTypes
+	 * @generated
+	 */
+	EEnum getEnemyTypes();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -754,6 +775,16 @@ public interface DifficultiesPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ENEMY_MAX_COUNT__MAX_COUNT = eINSTANCE.getEnemyMaxCount_MaxCount();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.difficulties.EnemyTypes <em>Enemy Types</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.difficulties.EnemyTypes
+		 * @see main.game.maze.difficulties.impl.DifficultiesPackageImpl#getEnemyTypes()
+		 * @generated
+		 */
+		EEnum ENEMY_TYPES = eINSTANCE.getEnemyTypes();
 
 	}
 

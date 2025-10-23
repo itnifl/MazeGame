@@ -6,7 +6,6 @@ import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.impl.DifficultiesPackageImpl;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
-import main.game.maze.opponents.EnemyTypes;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.LootItem;
 import main.game.maze.opponents.LootItemType;
@@ -90,13 +89,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	private EEnum lootItemTypeEEnum = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EEnum enemyTypesEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -590,16 +582,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
-	public EEnum getEnemyTypes() {
-		return enemyTypesEEnum;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public OpponentsFactory getOpponentsFactory() {
 		return (OpponentsFactory)getEFactoryInstance();
 	}
@@ -671,7 +653,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		// Create enums
 		behaviorTypeEEnum = createEEnum(BEHAVIOR_TYPE);
 		lootItemTypeEEnum = createEEnum(LOOT_ITEM_TYPE);
-		enemyTypesEEnum = createEEnum(ENEMY_TYPES);
 	}
 
 	/**
@@ -773,10 +754,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.BOMB);
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.TRAP);
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.WEAPON);
-
-		initEEnum(enemyTypesEEnum, EnemyTypes.class, "EnemyTypes");
-		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.ZOMBIE);
-		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.GHOST);
 
 		// Create resource
 		createResource(eNS_URI);

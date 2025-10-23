@@ -116,7 +116,6 @@ public class OpponentsTables extends AbstractTables
 
 		public static final EcoreExecutorEnumeration _BehaviorType = new EcoreExecutorEnumeration(OpponentsPackage.Literals.BEHAVIOR_TYPE, PACKAGE, 0);
 		public static final EcoreExecutorType _CharacterType = new EcoreExecutorType(OpponentsPackage.Literals.CHARACTER_TYPE, PACKAGE, 0 | ExecutorType.ABSTRACT);
-		public static final EcoreExecutorEnumeration _EnemyTypes = new EcoreExecutorEnumeration(OpponentsPackage.Literals.ENEMY_TYPES, PACKAGE, 0);
 		public static final EcoreExecutorType _Ghost = new EcoreExecutorType(OpponentsPackage.Literals.GHOST, PACKAGE, 0);
 		public static final EcoreExecutorType _LootItem = new EcoreExecutorType(OpponentsPackage.Literals.LOOT_ITEM, PACKAGE, 0);
 		public static final EcoreExecutorEnumeration _LootItemType = new EcoreExecutorEnumeration(OpponentsPackage.Literals.LOOT_ITEM_TYPE, PACKAGE, 0);
@@ -127,7 +126,6 @@ public class OpponentsTables extends AbstractTables
 		private static final EcoreExecutorType /*@NonNull*/ [] types = {
 			_BehaviorType,
 			_CharacterType,
-			_EnemyTypes,
 			_Ghost,
 			_LootItem,
 			_LootItemType,
@@ -168,12 +166,6 @@ public class OpponentsTables extends AbstractTables
 		private static final ExecutorFragment _CharacterType__CharacterType = new ExecutorFragment(Types._CharacterType, OpponentsTables.Types._CharacterType);
 		private static final ExecutorFragment _CharacterType__OclAny = new ExecutorFragment(Types._CharacterType, OCLstdlibTables.Types._OclAny);
 		private static final ExecutorFragment _CharacterType__OclElement = new ExecutorFragment(Types._CharacterType, OCLstdlibTables.Types._OclElement);
-
-		private static final ExecutorFragment _EnemyTypes__EnemyTypes = new ExecutorFragment(Types._EnemyTypes, OpponentsTables.Types._EnemyTypes);
-		private static final ExecutorFragment _EnemyTypes__OclAny = new ExecutorFragment(Types._EnemyTypes, OCLstdlibTables.Types._OclAny);
-		private static final ExecutorFragment _EnemyTypes__OclElement = new ExecutorFragment(Types._EnemyTypes, OCLstdlibTables.Types._OclElement);
-		private static final ExecutorFragment _EnemyTypes__OclEnumeration = new ExecutorFragment(Types._EnemyTypes, OCLstdlibTables.Types._OclEnumeration);
-		private static final ExecutorFragment _EnemyTypes__OclType = new ExecutorFragment(Types._EnemyTypes, OCLstdlibTables.Types._OclType);
 
 		private static final ExecutorFragment _Ghost__CharacterType = new ExecutorFragment(Types._Ghost, OpponentsTables.Types._CharacterType);
 		private static final ExecutorFragment _Ghost__Ghost = new ExecutorFragment(Types._Ghost, OpponentsTables.Types._Ghost);
@@ -350,16 +342,6 @@ public class OpponentsTables extends AbstractTables
 			};
 		private static final int /*@NonNull*/ [] __CharacterType = { 1,1,1 };
 
-		private static final ExecutorFragment /*@NonNull*/ [] _EnemyTypes =
-			{
-				Fragments._EnemyTypes__OclAny /* 0 */,
-				Fragments._EnemyTypes__OclElement /* 1 */,
-				Fragments._EnemyTypes__OclType /* 2 */,
-				Fragments._EnemyTypes__OclEnumeration /* 3 */,
-				Fragments._EnemyTypes__EnemyTypes /* 4 */
-			};
-		private static final int /*@NonNull*/ [] __EnemyTypes = { 1,1,1,1,1 };
-
 		private static final ExecutorFragment /*@NonNull*/ [] _Ghost =
 			{
 				Fragments._Ghost__OclAny /* 0 */,
@@ -418,7 +400,6 @@ public class OpponentsTables extends AbstractTables
 		static {
 			Types._BehaviorType.initFragments(_BehaviorType, __BehaviorType);
 			Types._CharacterType.initFragments(_CharacterType, __CharacterType);
-			Types._EnemyTypes.initFragments(_EnemyTypes, __EnemyTypes);
 			Types._Ghost.initFragments(_Ghost, __Ghost);
 			Types._LootItem.initFragments(_LootItem, __LootItem);
 			Types._LootItemType.initFragments(_LootItemType, __LootItemType);
@@ -514,45 +495,6 @@ public class OpponentsTables extends AbstractTables
 			OCLstdlibTables.Operations._OclElement__oclIsModelKindOf /* oclIsModelKindOf(OclType[1]) */,
 			OCLstdlibTables.Operations._OclElement__oclModelType /* oclModelType() */,
 			OCLstdlibTables.Operations._OclElement__oclModelTypes /* oclModelTypes() */
-		};
-
-		private static final ExecutorOperation /*@NonNull*/ [] _EnemyTypes__EnemyTypes = {};
-		private static final ExecutorOperation /*@NonNull*/ [] _EnemyTypes__OclAny = {
-			OCLstdlibTables.Operations._OclAny___lt__gt_ /* _'<>'(OclSelf[?]) */,
-			OCLstdlibTables.Operations._OclAny___eq_ /* _'='(OclSelf[?]) */,
-			OCLstdlibTables.Operations._OclAny__oclAsSet /* oclAsSet() */,
-			OCLstdlibTables.Operations._OclAny__oclAsType /* oclAsType(TT)(TT[1]) */,
-			OCLstdlibTables.Operations._OclAny__oclIsInState /* oclIsInState(OclState[?]) */,
-			OCLstdlibTables.Operations._OclAny__oclIsInvalid /* oclIsInvalid() */,
-			OCLstdlibTables.Operations._OclAny__oclIsKindOf /* oclIsKindOf(OclType[1]) */,
-			OCLstdlibTables.Operations._OclAny__oclIsNew /* oclIsNew() */,
-			OCLstdlibTables.Operations._OclAny__oclIsTypeOf /* oclIsTypeOf(OclType[1]) */,
-			OCLstdlibTables.Operations._OclAny__oclIsUndefined /* oclIsUndefined() */,
-			OCLstdlibTables.Operations._OclAny__0_oclLog /* oclLog() */,
-			OCLstdlibTables.Operations._OclAny__1_oclLog /* oclLog(String[1]) */,
-			OCLstdlibTables.Operations._OclAny__oclType /* oclType() */,
-			OCLstdlibTables.Operations._OclAny__oclTypes /* oclTypes() */,
-			OCLstdlibTables.Operations._OclAny__toString /* toString() */
-		};
-		private static final ExecutorOperation /*@NonNull*/ [] _EnemyTypes__OclElement = {
-			OCLstdlibTables.Operations._OclEnumeration__allInstances /* allInstances(Integer[1]) */,
-			OCLstdlibTables.Operations._OclElement__oclAsModelType /* oclAsModelType(TT)(TT[1]) */,
-			OCLstdlibTables.Operations._OclElement__0_oclBase /* oclBase() */,
-			OCLstdlibTables.Operations._OclElement__1_oclBase /* oclBase(OclType[1]) */,
-			OCLstdlibTables.Operations._OclElement__oclContainer /* oclContainer() */,
-			OCLstdlibTables.Operations._OclElement__oclContents /* oclContents() */,
-			OCLstdlibTables.Operations._OclElement__oclExtension /* oclExtension(OclStereotype[1]) */,
-			OCLstdlibTables.Operations._OclElement__0_oclExtensions /* oclExtensions() */,
-			OCLstdlibTables.Operations._OclElement__1_oclExtensions /* oclExtensions(OclStereotype[1]) */,
-			OCLstdlibTables.Operations._OclElement__oclIsModelKindOf /* oclIsModelKindOf(OclType[1]) */,
-			OCLstdlibTables.Operations._OclElement__oclModelType /* oclModelType() */,
-			OCLstdlibTables.Operations._OclElement__oclModelTypes /* oclModelTypes() */
-		};
-		private static final ExecutorOperation /*@NonNull*/ [] _EnemyTypes__OclEnumeration = {
-			OCLstdlibTables.Operations._OclEnumeration__allInstances /* allInstances(Integer[1]) */
-		};
-		private static final ExecutorOperation /*@NonNull*/ [] _EnemyTypes__OclType = {
-			OCLstdlibTables.Operations._OclType__conformsTo /* conformsTo(OclType[?]) */
 		};
 
 		private static final ExecutorOperation /*@NonNull*/ [] _Ghost__Ghost = {};
@@ -775,12 +717,6 @@ public class OpponentsTables extends AbstractTables
 			Fragments._CharacterType__OclAny.initOperations(_CharacterType__OclAny);
 			Fragments._CharacterType__OclElement.initOperations(_CharacterType__OclElement);
 
-			Fragments._EnemyTypes__EnemyTypes.initOperations(_EnemyTypes__EnemyTypes);
-			Fragments._EnemyTypes__OclAny.initOperations(_EnemyTypes__OclAny);
-			Fragments._EnemyTypes__OclElement.initOperations(_EnemyTypes__OclElement);
-			Fragments._EnemyTypes__OclEnumeration.initOperations(_EnemyTypes__OclEnumeration);
-			Fragments._EnemyTypes__OclType.initOperations(_EnemyTypes__OclType);
-
 			Fragments._Ghost__CharacterType.initOperations(_Ghost__CharacterType);
 			Fragments._Ghost__Ghost.initOperations(_Ghost__Ghost);
 			Fragments._Ghost__OclAny.initOperations(_Ghost__OclAny);
@@ -848,11 +784,6 @@ public class OpponentsTables extends AbstractTables
 			OCLstdlibTables.Properties._OclElement__oclContents,
 			OpponentsTables.Properties._CharacterType__speed,
 			OpponentsTables.Properties._CharacterType__threatLevel
-		};
-
-		private static final ExecutorProperty /*@NonNull*/ [] _EnemyTypes = {
-			OCLstdlibTables.Properties._OclElement__oclContainer,
-			OCLstdlibTables.Properties._OclElement__oclContents
 		};
 
 		private static final ExecutorProperty /*@NonNull*/ [] _Ghost = {
@@ -936,7 +867,6 @@ public class OpponentsTables extends AbstractTables
 		static {
 			Fragments._BehaviorType__BehaviorType.initProperties(_BehaviorType);
 			Fragments._CharacterType__CharacterType.initProperties(_CharacterType);
-			Fragments._EnemyTypes__EnemyTypes.initProperties(_EnemyTypes);
 			Fragments._Ghost__Ghost.initProperties(_Ghost);
 			Fragments._LootItem__LootItem.initProperties(_LootItem);
 			Fragments._LootItemType__LootItemType.initProperties(_LootItemType);
@@ -971,13 +901,6 @@ public class OpponentsTables extends AbstractTables
 			_BehaviorType__AGGRESSIVE
 		};
 
-		public static final EcoreExecutorEnumerationLiteral _EnemyTypes__ZOMBIE = new EcoreExecutorEnumerationLiteral(OpponentsPackage.Literals.ENEMY_TYPES.getEEnumLiteral("ZOMBIE"), Types._EnemyTypes, 0);
-		public static final EcoreExecutorEnumerationLiteral _EnemyTypes__GHOST = new EcoreExecutorEnumerationLiteral(OpponentsPackage.Literals.ENEMY_TYPES.getEEnumLiteral("GHOST"), Types._EnemyTypes, 1);
-		private static final EcoreExecutorEnumerationLiteral /*@NonNull*/ [] _EnemyTypes = {
-			_EnemyTypes__ZOMBIE,
-			_EnemyTypes__GHOST
-		};
-
 		public static final EcoreExecutorEnumerationLiteral _LootItemType__FOOD = new EcoreExecutorEnumerationLiteral(OpponentsPackage.Literals.LOOT_ITEM_TYPE.getEEnumLiteral("FOOD"), Types._LootItemType, 0);
 		public static final EcoreExecutorEnumerationLiteral _LootItemType__BOMB = new EcoreExecutorEnumerationLiteral(OpponentsPackage.Literals.LOOT_ITEM_TYPE.getEEnumLiteral("BOMB"), Types._LootItemType, 1);
 		public static final EcoreExecutorEnumerationLiteral _LootItemType__TRAP = new EcoreExecutorEnumerationLiteral(OpponentsPackage.Literals.LOOT_ITEM_TYPE.getEEnumLiteral("TRAP"), Types._LootItemType, 2);
@@ -994,7 +917,6 @@ public class OpponentsTables extends AbstractTables
 		 */
 		static {
 			Types._BehaviorType.initLiterals(_BehaviorType);
-			Types._EnemyTypes.initLiterals(_EnemyTypes);
 			Types._LootItemType.initLiterals(_LootItemType);
 
 			Init.initEnd();

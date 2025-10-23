@@ -781,17 +781,6 @@ public interface OpponentsPackage extends EPackage {
 
 
 	/**
-	 * The meta object id for the '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see main.game.maze.opponents.EnemyTypes
-	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getEnemyTypes()
-	 * @generated
-	 */
-	int ENEMY_TYPES = 8;
-
-
-	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.OpponentModel <em>Opponent Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1234,16 +1223,6 @@ public interface OpponentsPackage extends EPackage {
 	EEnum getLootItemType();
 
 	/**
-	 * Returns the meta object for enum '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Enemy Types</em>'.
-	 * @see main.game.maze.opponents.EnemyTypes
-	 * @generated
-	 */
-	EEnum getEnemyTypes();
-
-	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1609,16 +1588,6 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum LOOT_ITEM_TYPE = eINSTANCE.getLootItemType();
-
-		/**
-		 * The meta object literal for the '{@link main.game.maze.opponents.EnemyTypes <em>Enemy Types</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see main.game.maze.opponents.EnemyTypes
-		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getEnemyTypes()
-		 * @generated
-		 */
-		EEnum ENEMY_TYPES = eINSTANCE.getEnemyTypes();
 
 	}
 

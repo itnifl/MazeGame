@@ -2,7 +2,6 @@
  */
 package main.game.maze.opponents.impl;
 
-import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;

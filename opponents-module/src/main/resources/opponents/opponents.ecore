@@ -101,8 +101,4 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nonTangibilityEnergy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         defaultValueLiteral="100"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="EnemyTypes">
-    <eLiterals name="ZOMBIE"/>
-    <eLiterals name="GHOST" value="1"/>
-  </eClassifiers>
 </ecore:EPackage>
