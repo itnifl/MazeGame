@@ -23,6 +23,11 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
         eType="#//PathCalculator"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="patrolZone" eType="#//PatrolZone">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="List of 1 or 0 patrol zone&#xD;&#xA;It is optional"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//MovementBehavior">
     <eStructuralFeatures xsi:type="ecore:EReference" name="relativePositionTarget"
@@ -108,7 +113,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="topLeft" lowerBound="1"
         eType="#//Position">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Coords of the patrol step&#xD;&#xA;"/>
+        <details key="documentation" value="Top left corner of the rectangular patrol zone&#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
