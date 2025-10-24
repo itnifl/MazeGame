@@ -260,13 +260,22 @@ public interface BehaviourPackage extends EPackage {
 	int PATROL_BEHAVIOR__PATHCALCULATOR = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Patrol Zone</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_BEHAVIOR__PATROL_ZONE = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Patrol Behavior</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PATROL_BEHAVIOR_FEATURE_COUNT = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 3;
+	int PATROL_BEHAVIOR_FEATURE_COUNT = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 4;
 
 	/**
 	 * The operation id for the '<em>Next</em>' operation.
@@ -636,6 +645,61 @@ public interface BehaviourPackage extends EPackage {
 	int LOCAL_PATH_CALCULATOR_OPERATION_COUNT = PATH_CALCULATOR_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link main.game.maze.behaviour.impl.PatrolZoneImpl <em>Patrol Zone</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.behaviour.impl.PatrolZoneImpl
+	 * @see main.game.maze.behaviour.impl.BehaviourPackageImpl#getPatrolZone()
+	 * @generated
+	 */
+	int PATROL_ZONE = 10;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_ZONE__WIDTH = 0;
+
+	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_ZONE__HEIGHT = 1;
+
+	/**
+	 * The feature id for the '<em><b>Top Left</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_ZONE__TOP_LEFT = 2;
+
+	/**
+	 * The number of structural features of the '<em>Patrol Zone</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_ZONE_FEATURE_COUNT = 3;
+
+	/**
+	 * The number of operations of the '<em>Patrol Zone</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_ZONE_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link main.game.maze.behaviour.DistanceMethod <em>Distance Method</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -643,7 +707,7 @@ public interface BehaviourPackage extends EPackage {
 	 * @see main.game.maze.behaviour.impl.BehaviourPackageImpl#getDistanceMethod()
 	 * @generated
 	 */
-	int DISTANCE_METHOD = 10;
+	int DISTANCE_METHOD = 11;
 
 
 	/**
@@ -709,6 +773,17 @@ public interface BehaviourPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getPatrolBehavior_Pathcalculator();
+
+	/**
+	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.PatrolBehavior#getPatrolZone <em>Patrol Zone</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Patrol Zone</em>'.
+	 * @see main.game.maze.behaviour.PatrolBehavior#getPatrolZone()
+	 * @see #getPatrolBehavior()
+	 * @generated
+	 */
+	EReference getPatrolBehavior_PatrolZone();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.behaviour.ChaseBehavior <em>Chase Behavior</em>}'.
@@ -944,6 +1019,49 @@ public interface BehaviourPackage extends EPackage {
 	EClass getLocalPathCalculator();
 
 	/**
+	 * Returns the meta object for class '{@link main.game.maze.behaviour.PatrolZone <em>Patrol Zone</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Patrol Zone</em>'.
+	 * @see main.game.maze.behaviour.PatrolZone
+	 * @generated
+	 */
+	EClass getPatrolZone();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.PatrolZone#getWidth <em>Width</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Width</em>'.
+	 * @see main.game.maze.behaviour.PatrolZone#getWidth()
+	 * @see #getPatrolZone()
+	 * @generated
+	 */
+	EAttribute getPatrolZone_Width();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.PatrolZone#getHeight <em>Height</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Height</em>'.
+	 * @see main.game.maze.behaviour.PatrolZone#getHeight()
+	 * @see #getPatrolZone()
+	 * @generated
+	 */
+	EAttribute getPatrolZone_Height();
+
+	/**
+	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.PatrolZone#getTopLeft <em>Top Left</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Top Left</em>'.
+	 * @see main.game.maze.behaviour.PatrolZone#getTopLeft()
+	 * @see #getPatrolZone()
+	 * @generated
+	 */
+	EReference getPatrolZone_TopLeft();
+
+	/**
 	 * Returns the meta object for enum '{@link main.game.maze.behaviour.DistanceMethod <em>Distance Method</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1027,6 +1145,14 @@ public interface BehaviourPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PATROL_BEHAVIOR__PATHCALCULATOR = eINSTANCE.getPatrolBehavior_Pathcalculator();
+
+		/**
+		 * The meta object literal for the '<em><b>Patrol Zone</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PATROL_BEHAVIOR__PATROL_ZONE = eINSTANCE.getPatrolBehavior_PatrolZone();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.behaviour.impl.ChaseBehaviorImpl <em>Chase Behavior</em>}' class.
@@ -1219,6 +1345,40 @@ public interface BehaviourPackage extends EPackage {
 		 * @generated
 		 */
 		EClass LOCAL_PATH_CALCULATOR = eINSTANCE.getLocalPathCalculator();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.behaviour.impl.PatrolZoneImpl <em>Patrol Zone</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.behaviour.impl.PatrolZoneImpl
+		 * @see main.game.maze.behaviour.impl.BehaviourPackageImpl#getPatrolZone()
+		 * @generated
+		 */
+		EClass PATROL_ZONE = eINSTANCE.getPatrolZone();
+
+		/**
+		 * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PATROL_ZONE__WIDTH = eINSTANCE.getPatrolZone_Width();
+
+		/**
+		 * The meta object literal for the '<em><b>Height</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PATROL_ZONE__HEIGHT = eINSTANCE.getPatrolZone_Height();
+
+		/**
+		 * The meta object literal for the '<em><b>Top Left</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PATROL_ZONE__TOP_LEFT = eINSTANCE.getPatrolZone_TopLeft();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.behaviour.DistanceMethod <em>Distance Method</em>}' enum.

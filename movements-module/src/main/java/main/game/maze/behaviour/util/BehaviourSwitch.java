@@ -132,6 +132,12 @@ public class BehaviourSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case BehaviourPackage.PATROL_ZONE: {
+				PatrolZone patrolZone = (PatrolZone)theEObject;
+				T result = casePatrolZone(patrolZone);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -283,6 +289,21 @@ public class BehaviourSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseLocalPathCalculator(LocalPathCalculator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Patrol Zone</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Patrol Zone</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePatrolZone(PatrolZone object) {
 		return null;
 	}
 
