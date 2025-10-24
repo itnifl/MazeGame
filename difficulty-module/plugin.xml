@@ -4,7 +4,10 @@
 <!--
 -->
 
-<plugin id="difficulty" name="difficulty" version="1">
+<plugin id="main.game.maze.difficulty"
+    name="%pluginName"
+    version="1.0.0.qualifier"
+    provider-name="%providerName">
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated opponents -->
@@ -15,4 +18,19 @@
    </extension>
 
 
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated difficulty-module -->
+      <package
+            uri="http://main.game.maze/difficulty"
+            class="main.game.maze.difficulties.DifficultiesPackage"
+            genModel="src/main/resources/difficulty-module.genmodel"/>
+   </extension>
+
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated difficulty-module -->
+      <parser
+            type="difficulties"
+            class="main.game.maze.difficulties.util.DifficultiesResourceFactoryImpl"/>
+   </extension>
 </plugin>

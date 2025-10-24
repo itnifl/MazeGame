@@ -102,8 +102,9 @@ Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
 ## Build commands (exact)
 - Build everything and install locally - also runs existing unit tests:
 ```bash
-mvn -U -pl :maze-base -am clean package #Run from root: For cleaning up packages in the base maze game installation
+mvn -U -pl :main.game.maze -am clean package #Run from root: For cleaning up packages in the base maze game installation
 mvn -U clean install #Run from root: To compile all projects and run all unit tests
 mvn test #Run from root: Run all unit tests
-mvn -pl opponents-module -am test #Run from root: Run all unit tests in the opponents-module
+mvn -pl main.game.maze.opponent -am test #Run from root: Run all unit tests in the opponents-module
+mvn clean javafx:run -pl maze #Run the game
 ```

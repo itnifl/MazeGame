@@ -1,5 +1,4 @@
 **/.settings/
-**/.classpath
 
 # OS
 Thumbs.db
@@ -17,7 +16,6 @@ maze/testScores.txt
 
 # Eclipse IDE files (per-project metadata)
 **/.settings/
-**/.classpath
 **/.factorypath
 **/.metadata/
 opponents-module/icons/
@@ -33,5 +31,5 @@ opponents-module/icons/
 /.idea/
 *.iml
 *.aird
-*.genmodel
 
+/maze/.m2
