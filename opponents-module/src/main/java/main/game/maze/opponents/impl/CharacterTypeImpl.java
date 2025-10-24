@@ -449,13 +449,16 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public int getEffectiveThreat() {
-		// TODO: implement this method to return the 'Effective Threat' attribute
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		// Defensive defaults
+		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
+		int healthPercent = Math.clamp(getHealth(), 0, 100);
+		double behaviorMultiplier = 1.0; //There is no implementation of behavior here.		
+		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
+		return Math.max(0, (int)Math.round(computed));
 	}
 
 	/**
