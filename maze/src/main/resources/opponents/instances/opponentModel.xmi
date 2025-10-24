@@ -4,7 +4,6 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:opponents="http://main.game.maze/opponents"
     name="MazeGame">
-	<selectedDifficulty href="../difficulty/difficulties.xmi#/"/>
     <name>Testing Game</name>
 
   <characterTypes xsi:type="opponents:Ghost">

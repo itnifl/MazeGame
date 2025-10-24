@@ -5,6 +5,7 @@ package main.game.maze.difficulties.impl;
 import main.game.maze.difficulties.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -72,6 +73,36 @@ public class DifficultiesFactoryImpl extends EFactoryImpl implements Difficultie
 	 * @generated
 	 */
 	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case DifficultiesPackage.ENEMY_TYPES:
+				return createEnemyTypesFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case DifficultiesPackage.ENEMY_TYPES:
+				return convertEnemyTypesToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public DifficultyGameData createDifficultyGameData() {
 		DifficultyGameDataImpl difficultyGameData = new DifficultyGameDataImpl();
 		return difficultyGameData;
@@ -119,6 +150,26 @@ public class DifficultiesFactoryImpl extends EFactoryImpl implements Difficultie
 	public EnemyMaxCount createEnemyMaxCount() {
 		EnemyMaxCountImpl enemyMaxCount = new EnemyMaxCountImpl();
 		return enemyMaxCount;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EnemyTypes createEnemyTypesFromString(EDataType eDataType, String initialValue) {
+		EnemyTypes result = EnemyTypes.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertEnemyTypesToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

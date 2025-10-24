@@ -5,8 +5,8 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>difficulty-module</module>
     <module>opponents-module</module>
+    <module>difficulty-module</module>
     <module>movements-module</module>
     <module>maze</module>
   </modules>

@@ -106,4 +106,5 @@ mvn -U -pl :main.game.maze -am clean package #Run from root: For cleaning up pac
 mvn -U clean install #Run from root: To compile all projects and run all unit tests
 mvn test #Run from root: Run all unit tests
 mvn -pl main.game.maze.opponent -am test #Run from root: Run all unit tests in the opponents-module
+mvn clean javafx:run -pl maze #Run the game
 ```

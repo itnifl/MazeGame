@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: main.game.maze.difficulty;singleton:=true
+Bundle-SymbolicName: difficulty-module;singleton:=true
 Automatic-Module-Name: difficulty-module
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-24
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy

@@ -8,15 +8,13 @@ import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.DifficultyGameData;
 import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.EnemyMaxCount;
+import main.game.maze.difficulties.EnemyTypes;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
 
-import main.game.maze.opponents.OpponentsPackage;
-
-import main.game.maze.opponents.impl.OpponentsPackageImpl;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -72,6 +70,13 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 	private EClass enemyMaxCountEClass = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum enemyTypesEEnum = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -117,17 +122,11 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 
 		isInited = true;
 
-		// Obtain or create and register interdependencies
-		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(OpponentsPackage.eNS_URI);
-		OpponentsPackageImpl theOpponentsPackage = (OpponentsPackageImpl)(registeredPackage instanceof OpponentsPackageImpl ? registeredPackage : OpponentsPackage.eINSTANCE);
-
 		// Create package meta-data objects
 		theDifficultiesPackage.createPackageContents();
-		theOpponentsPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theDifficultiesPackage.initializePackageContents();
-		theOpponentsPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theDifficultiesPackage.freeze();
@@ -293,6 +292,16 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 	 * @generated
 	 */
 	@Override
+	public EEnum getEnemyTypes() {
+		return enemyTypesEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public DifficultiesFactory getDifficultiesFactory() {
 		return (DifficultiesFactory)getEFactoryInstance();
 	}
@@ -336,6 +345,9 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		enemyMaxCountEClass = createEClass(ENEMY_MAX_COUNT);
 		createEAttribute(enemyMaxCountEClass, ENEMY_MAX_COUNT__TYPE);
 		createEAttribute(enemyMaxCountEClass, ENEMY_MAX_COUNT__MAX_COUNT);
+
+		// Create enums
+		enemyTypesEEnum = createEEnum(ENEMY_TYPES);
 	}
 
 	/**
@@ -360,9 +372,6 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		setName(eNAME);
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
-
-		// Obtain other dependent packages
-		OpponentsPackage theOpponentsPackage = (OpponentsPackage)EPackage.Registry.INSTANCE.getEPackage(OpponentsPackage.eNS_URI);
 
 		// Create type parameters
 
@@ -392,8 +401,13 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		initEClass(hardDifficultyEClass, HardDifficulty.class, "HardDifficulty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(enemyMaxCountEClass, EnemyMaxCount.class, "EnemyMaxCount", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEnemyMaxCount_Type(), theOpponentsPackage.getEnemyTypes(), "type", null, 0, 1, EnemyMaxCount.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEnemyMaxCount_Type(), this.getEnemyTypes(), "type", null, 0, 1, EnemyMaxCount.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEnemyMaxCount_MaxCount(), ecorePackage.getEInt(), "maxCount", null, 0, 1, EnemyMaxCount.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(enemyTypesEEnum, EnemyTypes.class, "EnemyTypes");
+		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.ZOMBIE);
+		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.GHOST);
 
 		// Create resource
 		createResource(eNS_URI);

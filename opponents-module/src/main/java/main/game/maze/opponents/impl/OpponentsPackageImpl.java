@@ -2,8 +2,6 @@
  */
 package main.game.maze.opponents.impl;
 
-import main.game.maze.difficulties.DifficultiesPackage;
-import main.game.maze.difficulties.impl.DifficultiesPackageImpl;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
@@ -16,15 +14,14 @@ import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 
 import main.game.maze.opponents.util.OpponentsValidator;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EGenericType;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.EValidator;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -136,17 +133,11 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		isInited = true;
 
-		// Obtain or create and register interdependencies
-		Object registeredPackage = EPackage.Registry.INSTANCE.getEPackage(DifficultiesPackage.eNS_URI);
-		DifficultiesPackageImpl theDifficultiesPackage = (DifficultiesPackageImpl)(registeredPackage instanceof DifficultiesPackageImpl ? registeredPackage : DifficultiesPackage.eINSTANCE);
-
 		// Create package meta-data objects
 		theOpponentsPackage.createPackageContents();
-		theDifficultiesPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theOpponentsPackage.initializePackageContents();
-		theDifficultiesPackage.initializePackageContents();
 
 		// Register package validator
 		EValidator.Registry.INSTANCE.put
@@ -204,26 +195,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	@Override
 	public EAttribute getOpponentModel_MaxThreat() {
 		return (EAttribute)opponentModelEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getOpponentModel_SelectedDifficulty() {
-		return (EReference)opponentModelEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EOperation getOpponentModel__ValidateMaxThreat__DiagnosticChain_Map() {
-		return opponentModelEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -609,8 +580,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(opponentModelEClass, OPPONENT_MODEL__NAME);
 		createEReference(opponentModelEClass, OPPONENT_MODEL__CHARACTER_TYPES);
 		createEAttribute(opponentModelEClass, OPPONENT_MODEL__MAX_THREAT);
-		createEReference(opponentModelEClass, OPPONENT_MODEL__SELECTED_DIFFICULTY);
-		createEOperation(opponentModelEClass, OPPONENT_MODEL___VALIDATE_MAX_THREAT__DIAGNOSTICCHAIN_MAP);
 
 		characterTypeEClass = createEClass(CHARACTER_TYPE);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ID);
@@ -678,9 +647,6 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
 
-		// Obtain other dependent packages
-		DifficultiesPackage theDifficultiesPackage = (DifficultiesPackage)EPackage.Registry.INSTANCE.getEPackage(DifficultiesPackage.eNS_URI);
-
 		// Create type parameters
 
 		// Set bounds for type parameters
@@ -693,17 +659,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getOpponentModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOpponentModel_CharacterTypes(), this.getCharacterType(), null, "characterTypes", null, 1, -1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEReference(getOpponentModel_SelectedDifficulty(), theDifficultiesPackage.getDifficultyGameData(), null, "selectedDifficulty", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		EOperation op = initEOperation(getOpponentModel__ValidateMaxThreat__DiagnosticChain_Map(), ecorePackage.getEBoolean(), "validateMaxThreat", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEDiagnosticChain(), "diagnostics", 0, 1, IS_UNIQUE, IS_ORDERED);
-		EGenericType g1 = createEGenericType(ecorePackage.getEMap());
-		EGenericType g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(characterTypeEClass, CharacterType.class, "CharacterType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCharacterType_Id(), ecorePackage.getEString(), "id", null, 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -759,10 +715,26 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createResource(eNS_URI);
 
 		// Create annotations
+		// http://www.eclipse.org/emf/2002/Ecore/OCL
+		createOCLAnnotations();
 		// http://www.eclipse.org/emf/2002/Ecore
 		createEcoreAnnotations();
-		// http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot
-		createPivotAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore/OCL</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createOCLAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore/OCL";
+		addAnnotation
+		  (opponentModelEClass,
+		   source,
+		   new String[] {
+			   "validateMaxThreat", "self.characterTypes->collect(ct | ct.effectiveThreat)->sum() <= self.maxThreat"
+		   });
 	}
 
 	/**
@@ -774,30 +746,10 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	protected void createEcoreAnnotations() {
 		String source = "http://www.eclipse.org/emf/2002/Ecore";
 		addAnnotation
-		  (this,
-		   source,
-		   new String[] {
-		   });
-		addAnnotation
 		  (opponentModelEClass,
 		   source,
 		   new String[] {
-		   });
-	}
-
-	/**
-	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void createPivotAnnotations() {
-		String source = "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot";
-		addAnnotation
-		  (getOpponentModel__ValidateMaxThreat__DiagnosticChain_Map(),
-		   source,
-		   new String[] {
-			   "body", "self.characterTypes->collect(ct | ct.effectiveThreat)->sum() <= self.maxThreat"
+			   "constraints", "validateMaxThreat"
 		   });
 	}
 

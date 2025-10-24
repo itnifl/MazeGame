@@ -27,7 +27,7 @@
       <package
             uri="http://main.game.maze/opponents"
             class="main.game.maze.opponents.OpponentsPackage"
-            genModel="src/main/resources/opponents/opponents.genmodel"/>
+            genModel="src/test/java/opponents.genmodel"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.extension_parser">
@@ -37,18 +37,4 @@
             class="main.game.maze.opponents.util.OpponentsResourceFactoryImpl"/>
    </extension>
 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated opponents -->
-      <package
-            uri="http://main.game.maze/difficulty"
-            class="main.game.maze.difficulties.DifficultiesPackage"
-            genModel="src/main/resources/opponents/opponents.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.extension_parser">
-      <!-- @generated opponents -->
-      <parser
-            type="difficulties"
-            class="main.game.maze.difficulties.util.DifficultiesResourceFactoryImpl"/>
-   </extension>
 </plugin>

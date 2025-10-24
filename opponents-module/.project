@@ -3,6 +3,7 @@
 	<name>opponents-module</name>
 	<comment></comment>
 	<projects>
+		<project>difficulty-module</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

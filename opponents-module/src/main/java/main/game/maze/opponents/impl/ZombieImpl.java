@@ -7,9 +7,10 @@ import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.Zombie;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
@@ -274,24 +275,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	@Override
-	public int getEffectiveThreat() {
-		// Defensive defaults
-		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
-		int healthPercent = Math.clamp(getHealth(), 0, 100);
-
-		int behaviorMultiplier = 1;
-		var currentBehavior = this.getBehavior();
-		behaviorMultiplier = currentBehavior.getValue();
-		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
-		return Math.max(0, (int)Math.round(computed));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -317,7 +300,6 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {

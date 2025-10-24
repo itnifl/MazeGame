@@ -2,8 +2,6 @@
  */
 package main.game.maze.difficulties;
 
-import main.game.maze.opponents.EnemyTypes;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -26,11 +24,11 @@ import org.eclipse.emf.ecore.EObject;
 public interface EnemyMaxCount extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * The literals are from the enumeration {@link main.game.maze.opponents.EnemyTypes}.
+	 * The literals are from the enumeration {@link main.game.maze.difficulties.EnemyTypes}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.
-	 * @see main.game.maze.opponents.EnemyTypes
+	 * @see main.game.maze.difficulties.EnemyTypes
 	 * @see #setType(EnemyTypes)
 	 * @see main.game.maze.difficulties.DifficultiesPackage#getEnemyMaxCount_Type()
 	 * @model
@@ -43,7 +41,7 @@ public interface EnemyMaxCount extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Type</em>' attribute.
-	 * @see main.game.maze.opponents.EnemyTypes
+	 * @see main.game.maze.difficulties.EnemyTypes
 	 * @see #getType()
 	 * @generated
 	 */

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import main.game.maze.opponents.*;
 
-import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
+
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.EObjectValidator;
@@ -41,20 +41,12 @@ public class OpponentsValidator extends EObjectValidator {
 	public static final String DIAGNOSTIC_SOURCE = "main.game.maze.opponents";
 
 	/**
-	 * The {@link org.eclipse.emf.common.util.Diagnostic#getCode() code} for constraint 'Validate Max Threat' of 'Opponent Model'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static final int OPPONENT_MODEL__VALIDATE_MAX_THREAT = 1;
-
-	/**
 	 * A constant with a fixed name that can be used as the base value for additional hand written constants.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 1;
+	private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 0;
 
 	/**
 	 * A constant with a fixed name that can be used as the base value for additional hand written constants in a derived class.
@@ -134,30 +126,33 @@ public class OpponentsValidator extends EObjectValidator {
 		return result;
 	}
 
-	// @generated NOT
-	public boolean validateOpponentModel_validateMaxThreat(
-			OpponentModel self, DiagnosticChain diagnostics, Map<Object,Object> context) {
-
-		// choose int or double to match your Ecore types
-		double sum = 0.0;
-		for (CharacterType ct : self.getCharacterTypes()) {
-			sum += ct.getEffectiveThreat(); // must return the computed value
+	/**
+	 * Validates the validateMaxThreat constraint of '<em>Opponent Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateOpponentModel_validateMaxThreat(OpponentModel opponentModel, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		// TODO implement the constraint
+		// -> specify the condition that violates the constraint
+		// -> verify the diagnostic details, including severity, code, and message
+		// Ensure that you remove @generated or mark it @generated NOT
+		if (false) {
+			if (diagnostics != null) {
+				diagnostics.add
+					(createDiagnostic
+						(Diagnostic.ERROR,
+						 DIAGNOSTIC_SOURCE,
+						 0,
+						 "_UI_GenericConstraint_diagnostic",
+						 new Object[] { "validateMaxThreat", getObjectLabel(opponentModel, context) },
+						 new Object[] { opponentModel },
+						 context));
+			}
+			return false;
 		}
-
-		if (sum <= self.getMaxThreat()) return true;
-
-		if (diagnostics != null) {
-			diagnostics.add(new BasicDiagnostic(
-				Diagnostic.ERROR,
-				DIAGNOSTIC_SOURCE,
-				0,
-				"Sum of effectiveThreat (" + sum + ") exceeds maxThreat (" + self.getMaxThreat() + ")",
-				new Object[] { self }
-			));
-		}
-		return false;
+		return true;
 	}
-
 
 	/**
 	 * <!-- begin-user-doc -->

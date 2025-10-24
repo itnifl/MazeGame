@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: main.game.maze.opponents;singleton:=true
+Bundle-SymbolicName: opponents-module;singleton:=true
 Automatic-Module-Name: opponents-module
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
