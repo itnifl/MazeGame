@@ -32,3 +32,4 @@ opponents-module/icons/
 *.iml
 *.aird
 
+/maze/.m2

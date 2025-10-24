@@ -9,16 +9,10 @@ Bundle-Vendor: %providerName
 Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implementation
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Require-Bundle: main.game.maze.difficulty,
- main.game.maze.opponents,
- main.game.maze.difficulty,
- org.eclipse.emf.ecore,
- org.eclipse.emf.common,
- org.eclipse.emf.ecore.xmi,
- org.eclipse.ocl.pivot,
- org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.emf.edit,
- org.eclipse.emf.edit.ui,
- org.eclipse.ui.ide
-Export-Package: main.game.maze
+Export-Package: 
+ main.game.maze, 
+ main.game.maze.characters, 
+ main.game.maze.runtime, 
+ main.game.maze.util,
+ javafx.application;version="21.0.9",
+ javafx.scene;version="21.0.9"

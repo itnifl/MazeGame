@@ -38,7 +38,6 @@
   </repositories>
 
   <dependencies>
-    <!-- Keep ONLY non-p2 Maven deps here. Tycho will consider them. -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>

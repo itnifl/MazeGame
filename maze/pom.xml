@@ -7,9 +7,10 @@
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <!-- We recommend adding a <relativePath/> to the parent POM -->
+    <relativePath>../</relativePath>
   </parent>
 
-  <groupId>main.game.maze</groupId>
   <artifactId>main.game.maze</artifactId>
   <packaging>eclipse-plugin</packaging>
 
@@ -17,42 +18,136 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
     <tycho.version>5.0.0</tycho.version>
+    <javafx.version>21.0.9</javafx.version>
+    <junit.jupiter.version>5.13.4</junit.jupiter.version>
+    <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
+    <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
+    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
   </properties>
 
-  <!-- p2 repos: SimRel + OCL + e(fx)clipse runtime -->
+  <!-- These repositories are for Maven artifacts and Tycho plugins -->
   <repositories>
-    <repository>
-      <id>eclipse-2025-09</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/releases/2025-09/</url>
+     <repository>
+        <id>central</id>
+        <url>https://repo.maven.apache.org/maven2</url>
     </repository>
     <repository>
-      <id>ocl-latest</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
+      <id>efxclipse-releases</id>
+      <url>https://download.eclipse.org/efxclipse/releases/4.0.0</url>
     </repository>
     <repository>
-      <id>efxclipse-runtime</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/efxclipse/runtime-released/3.11.0/repository</url>
+        <id>eclipse-releases</id>
+        <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>openjfx</id>
+      <url>https://maven.openjfx.io</url>
     </repository>
   </repositories>
 
-  <!-- Keep ONLY non-p2 Maven deps here (if any). Prefer OSGi/p2 for Tycho. -->
+  <pluginRepositories>
+    <pluginRepository>
+        <id>eclipse-releases</id>
+        <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </pluginRepository>
+    <pluginRepository>
+        <id>openjfx-repo</id>
+        <url>https://maven.openjfx.io</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <!-- Non-p2/OSGi Maven dependencies -->
   <dependencies>
-    <!-- (Optional) JUnit via Maven; or use p2 Orbit bundles instead -->
-    
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>2.43.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+      <version>2.38.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+      <version>2.38.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.ecore</artifactId>
+      <version>3.3.100.v20140610-0641</version> 
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.common</artifactId>
+      <version>1.2.0.v20140610-0641</version>
+    </dependency>
+    <!-- JavaFX LTS 21.0.8 -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.opponents</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.difficulty</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.behaviour</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- Enable Tycho (OSGi-aware build) -->
+      <!-- JavaFX Maven plugin -->
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jlink</goal>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Enable Tycho for OSGi-aware builds -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
@@ -60,19 +155,30 @@
         <extensions>true</extensions>
       </plugin>
 
-      <!-- Resolve from p2; allow Maven deps if you temporarily need them -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <resolver>p2</resolver>
-          <pomDependencies>consider</pomDependencies>
+          <target>
+            <location>
+              <type>p2</type>
+              <url>http://download.eclipse.org/releases/2021-12</url>
+            </location>
+          </target>
+          <extraRequirements>
+            <requirement type="eclipse-plugin" id="org.openjfx.javafx.base"/>
+            <requirement type="eclipse-plugin" id="org.openjfx.javafx.controls"/>
+            <requirement type="eclipse-plugin" id="org.openjfx.javafx.graphics"/>
+            <requirement type="eclipse-plugin" id="org.openjfx.javafx.media"/>
+          </extraRequirements>
+          <!-- Enable wrapping of non-OSGi JavaFX dependencies -->
+          <pomDependencies>wrapAsBundle</pomDependencies>
         </configuration>
       </plugin>
 
-      <!-- Compile with ECJ via Tycho -->
-      <plugin>
+      <!-- Configure the compiler -->
+      <plugin>      
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-compiler-plugin</artifactId>
         <version>${tycho.version}</version>
@@ -82,7 +188,7 @@
         </configuration>
       </plugin>
 
-      <!-- Run tests inside OSGi (use p2 JUnit 5 bundles or keep the Maven dep above) -->
+      <!-- Configure testing -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
