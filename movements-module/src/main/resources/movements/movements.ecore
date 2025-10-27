@@ -33,7 +33,7 @@
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="RequiresOnePatrolPoint" value="self.path->size() > 0"/>
-      <details key="ValidStardIndex" value="self.startIndex > 0 and self.startIndex &lt; self.path->size()"/>
+      <details key="ValidStardIndex" value="self.startIndex >= 0 and self.startIndex &lt; self.path->size()"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="path" lowerBound="1" upperBound="-1"
         eType="#//PatrolPoint" containment="true">
@@ -98,7 +98,7 @@
       <details key="constraints" value="PositivePositions"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-      <details key="PositivePositions" value="self.posX > 0 and self.posY > 0"/>
+      <details key="PositivePositions" value="self.posX >= 0 and self.posY >= 0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="posX" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="posY" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>

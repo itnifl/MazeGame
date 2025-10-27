@@ -6,7 +6,8 @@
     xmlns:behaviour="http://main.game.maze/behaviour"
     xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
     attackRadius="2.0"
-    instantKillOnCollision="true">
+    instantKillOnCollision="true"
+    movementSpeed="3.0">
   <relativePositionTarget/>
   <pathcalculator
       xsi:type="behaviour:AstarPathCalculator"

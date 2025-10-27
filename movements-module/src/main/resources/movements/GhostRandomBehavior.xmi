@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<behaviour:ChaseBehavior
+<behaviour:RandomBehavior
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -7,9 +7,4 @@
     xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
     ignoreWalls="true"
     attackRadius="1.0"
-    movementSpeed="2.0">
-  <relativePositionTarget/>
-  <pathcalculator
-      xsi:type="behaviour:LocalPathCalculator"
-      distanceMethod="EUCLIDEAN"/>
-</behaviour:ChaseBehavior>
+    movementSpeed="1.0"/>

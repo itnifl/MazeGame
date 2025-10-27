@@ -6,4 +6,5 @@
     xmlns:behaviour="http://main.game.maze/behaviour"
     xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
     attackRadius="2.0"
-    regenPerSecond="1"/>
+    movementSpeed="3.0"
+    regenPerSecond="1.0"/>
