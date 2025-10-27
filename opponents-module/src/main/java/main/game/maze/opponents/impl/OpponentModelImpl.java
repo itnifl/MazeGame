@@ -6,8 +6,10 @@ import java.util.Collection;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -73,7 +75,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 * @ordered
 	 */
-	protected static final double MAX_THREAT_EDEFAULT = 0.0;
+	protected static final int MAX_THREAT_EDEFAULT = 0;
 
 	/**
 	 * The cached value of the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
@@ -83,7 +85,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 * @ordered
 	 */
-	protected double maxThreat = MAX_THREAT_EDEFAULT;
+	protected int maxThreat = MAX_THREAT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -146,21 +148,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 */
 	@Override
-	public double getMaxThreat() {
+	public int getMaxThreat() {
 		return maxThreat;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setMaxThreat(double newMaxThreat) {
-		double oldMaxThreat = maxThreat;
-		maxThreat = newMaxThreat;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.OPPONENT_MODEL__MAX_THREAT, oldMaxThreat, maxThreat));
 	}
 
 	/**
@@ -211,9 +200,6 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				getCharacterTypes().clear();
 				getCharacterTypes().addAll((Collection<? extends CharacterType>)newValue);
 				return;
-			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
-				setMaxThreat((Double)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -231,9 +217,6 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				return;
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				getCharacterTypes().clear();
-				return;
-			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
-				setMaxThreat(MAX_THREAT_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);

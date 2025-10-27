@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="http://www.example.org/model" nsPrefix="model">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="behaviour" nsURI="http://main.game.maze/behaviour" nsPrefix="behaviour">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="basePackage" value="main.game.maze"/>
+    <details key="resource" value="XMI"/>
+  </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="RandomBehavior" eSuperTypes="#//MovementBehavior">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenPerSecond" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

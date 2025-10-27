@@ -26,7 +26,9 @@ public enum BehaviorType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	PASSIVE(0, "PASSIVE", "PASSIVE"), /**
+	PASSIVE(0, "PASSIVE", "PASSIVE"),
+
+	/**
 	 * The '<em><b>WANDER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -34,7 +36,9 @@ public enum BehaviorType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	WANDER(1, "WANDER", "WANDER"), /**
+	WANDER(1, "WANDER", "WANDER"),
+
+	/**
 	 * The '<em><b>AGGRESSIVE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

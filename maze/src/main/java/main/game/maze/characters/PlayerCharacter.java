@@ -165,7 +165,7 @@ public class PlayerCharacter extends Character
                 try {
                     this.isWinning = true;
                     ((ICanLetYouWin) entity).WinGame();
-                } catch (Exception _) {
+                } catch (Exception ex) {
                     //Swallow exception
                 }
             }

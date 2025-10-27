@@ -6,21 +6,17 @@
   <parent>
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
-    <version>1</version>
+    <version>1.0.0-SNAPSHOT</version>
+    <!-- We recommend adding a <relativePath/> to the parent POM -->
+    <relativePath>../</relativePath>
   </parent>
 
-  <groupId>main.game.maze</groupId>
-  <artifactId>maze-base</artifactId>
-  <version>1</version>
-  
+  <artifactId>main.game.maze</artifactId>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <!-- Target JDK 24 -->
-    <maven.compiler.release>24</maven.compiler.release>
-
-    <!-- Lib versions -->
-    <javafx.version>21.0.8</javafx.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <javafx.version>21.0.9</javafx.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
     <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
@@ -29,13 +25,42 @@
   </properties>
 
   <repositories>
+     <repository>
+        <id>central</id>
+        <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
     <repository>
-    <id>eclipse-releases</id>
-    <name>Eclipse Releases</name>
-    <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <id>efxclipse-releases</id>
+      <url>https://download.eclipse.org/efxclipse/releases/4.0.0</url>
+    </repository>
+    <repository>
+        <id>eclipse-releases</id>
+        <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>openjfx</id>
+      <url>https://maven.openjfx.io</url>
     </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+        <id>eclipse-releases</id>
+        <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </pluginRepository>
+    <pluginRepository>
+        <id>openjfx-repo</id>
+        <url>https://maven.openjfx.io</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.common</artifactId>
@@ -64,6 +89,11 @@
     <!-- JavaFX LTS 21.0.8 -->
     <dependency>
       <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
     </dependency>
@@ -77,25 +107,28 @@
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
     </dependency>
-
-    <!-- JUnit 5 -->
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.opponents</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
     </dependency>
-
     <dependency>
-      <groupId>main.game.maze</groupId>
-      <artifactId>opponents-module</artifactId>
-      <version>1</version>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.difficulty</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.behaviour</artifactId>
+        <version>1.0.0-SNAPSHOT</version> 
+        <scope>compile</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <!-- Compile with JDK 24 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -118,32 +151,10 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- Unit tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven.surefire.plugin.version}</version>
-        <configuration>          
-          <argLine>--enable-preview</argLine>
-          <useModulePath>true</useModulePath>
-        </configuration>
-      </plugin>
-
-      <!-- Integration tests -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven.failsafe.plugin.version}</version>
-        <configuration>
-          <argLine>--enable-preview</argLine>
-          <useModulePath>true</useModulePath>
-        </configuration>
-      </plugin>
+      </plugin>      
     </plugins>
 
-    <resources>
+     <resources>
       <resource>
         <directory>src/main/resources</directory>
       </resource>

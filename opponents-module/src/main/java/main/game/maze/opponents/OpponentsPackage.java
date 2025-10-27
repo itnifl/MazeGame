@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see main.game.maze.opponents.OpponentsFactory
  * @model kind="package"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore invocationDelegates='' settingDelegates='' validationDelegates=''"
  * @generated
  */
 public interface OpponentsPackage extends EPackage {
@@ -748,7 +747,6 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	int BEHAVIOR_TYPE = 6;
-
 
 	/**
 	 * The meta object id for the '{@link main.game.maze.opponents.LootItemType <em>Loot Item Type</em>}' enum.

@@ -65,21 +65,10 @@ public interface OpponentModel extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Max Threat</em>' attribute.
-	 * @see #setMaxThreat(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_MaxThreat()
-	 * @model transient="true" derived="true"
+	 * @model transient="true" changeable="false"
 	 * @generated
 	 */
-	double getMaxThreat();
-
-	/**
-	 * Sets the value of the '{@link main.game.maze.opponents.OpponentModel#getMaxThreat <em>Max Threat</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Max Threat</em>' attribute.
-	 * @see #getMaxThreat()
-	 * @generated
-	 */
-	void setMaxThreat(double value);
+	int getMaxThreat();
 
 } // OpponentModel

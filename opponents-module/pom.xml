@@ -6,36 +6,42 @@
   <parent>
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
-    <version>1</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>opponents-module</artifactId>
   <packaging>jar</packaging>
+
+  <artifactId>main.game.maze.opponents</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>24</maven.compiler.release>
-
-    <!-- Lib versions -->
-    <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
-    <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
-    <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
+    <maven.compiler.release>21</maven.compiler.release>
   </properties>
+
+  <!-- p2 repos for Eclipse + OCL -->
   <repositories>
-     <repository>
-      <id>eclipse-releases</id>
-      <name>Eclipse Releases</name>
-      <url>https://repo.eclipse.org/content/groups/releases/</url>
-      <releases><enabled>true</enabled></releases>
-      <snapshots><enabled>false</enabled></snapshots>
+    <repository>
+      <id>eclipse-2025-09</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/releases/2025-09/</url>
     </repository>
     <repository>
-      <id>eclipse-direct-releases</id>
-      <name>Eclipse Releases</name>
-      <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <id>ocl-latest</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
     </repository>
-
+    <!-- (Optional) Nexus for any Maven artifacts you still consume -->
+    <repository>
+      <id>eclipse-releases</id>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+    </repository>
   </repositories>
+
   <dependencies>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>2.43.0</version>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore</artifactId>
@@ -44,11 +50,6 @@
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>2.38.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.common</artifactId>
       <version>2.38.0</version>
     </dependency>
     <dependency>
@@ -61,11 +62,10 @@
       <artifactId>org.eclipse.ocl.common</artifactId>
       <version>1.2.0.v20140610-0641</version>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.11.0</version>
+      <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -73,10 +73,11 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.3.0</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
         <configuration>
-          <useModulePath>false</useModulePath> 
+          <release>21</release>
         </configuration>
       </plugin>
     </plugins>
