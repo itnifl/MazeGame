@@ -14,7 +14,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PatrolBehavior" eSuperTypes="#//MovementBehavior">
     <eStructuralFeatures xsi:type="ecore:EReference" name="path" lowerBound="1" upperBound="-1"
-        eType="#//PatrolPoint">
+        eType="#//PatrolPoint" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="List of patrol steps.&#xD;&#xA;If only one is present, the character should stay at this step and not move at all."/>
       </eAnnotations>
@@ -22,17 +22,17 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="currentIndex" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
-        eType="#//PathCalculator"/>
+        eType="#//PathCalculator" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//MovementBehavior">
     <eStructuralFeatures xsi:type="ecore:EReference" name="relativePositionTarget"
-        lowerBound="1" eType="#//Position">
+        lowerBound="1" eType="#//Position" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Position relative to the player to chase.&#xD;&#xA;If set to Position{posX=x,posY=y}, then the character will target the target is Position(Player.x+x, Player.y+y). "/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
-        eType="#//PathCalculator"/>
+        eType="#//PathCalculator" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MovementBehavior" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -65,7 +65,8 @@
       <details key="documentation" value="Represents a patrol step&#xD;&#xA;"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position"
+        containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Coords of the patrol step&#xD;&#xA;"/>
       </eAnnotations>
