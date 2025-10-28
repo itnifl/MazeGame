@@ -54,6 +54,5 @@
   </difficulties>
 
   <!-- Pick which one is active (here: Normal) -->
-  <currentDifficulty href="#//@difficulties.1"/>
-
+  <currentDifficulty href="#//@difficulties[2]"/>
 </diff:DifficultyGameData>

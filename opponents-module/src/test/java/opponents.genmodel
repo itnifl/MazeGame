@@ -3,6 +3,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/opponents-module/src/main/java/" modelPluginID="opponents-module"
     modelName="Opponents" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="21.0" copyrightFields="false"
+    usedGenPackages="../../../../difficulty-module/src/main/resources/difficulty-module.genmodel#//difficulties"
     operationReflection="true" importOrganizing="true">
   <foreignModel>opponents.ecore</foreignModel>
   <genPackages prefix="Opponents" basePackage="main.game.maze" resource="XMI" disposableProviderFactory="true"
@@ -22,6 +23,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/maxThreat"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/selectedDifficulty"/>
     </genClasses>
     <genClasses image="false" ecoreClass="opponents.ecore#//CharacterType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/id"/>

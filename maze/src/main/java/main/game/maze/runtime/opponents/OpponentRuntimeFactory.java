@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import main.game.maze.constants.OpponentConstants;
@@ -90,13 +89,27 @@ public final class OpponentRuntimeFactory {
                 return;
             }
 
-            Object rootObject = resource.getContents().get(0);
+            Object rootObject;
+            try {
+                rootObject = resource.getContents().get(0);
+            } catch (Exception loadEx) {
+                LOGGER.log(Level.SEVERE, "Failed to load root content: " + resourcePath, loadEx);
+                throw loadEx;
+            }
+            
             if (!(rootObject instanceof OpponentModel)) {
                 LOGGER.log(Level.WARNING, "Root object is not an OpponentModel: {0}", resourcePath);
                 return;
             }
 
-            OpponentModel opponentModel = (OpponentModel) rootObject;
+            OpponentModel opponentModel;
+            try {
+                opponentModel = (OpponentModel) rootObject;
+            } catch (Exception loadEx) {
+                LOGGER.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
+                throw loadEx;
+            }
+            
             
             var characterList = opponentModel.getCharacterTypes();
             for (var characterType : characterList) {
@@ -140,7 +153,7 @@ public final class OpponentRuntimeFactory {
             }
             validateOrFail(opponentModel);
         } catch (Exception loadException) {
-            LOGGER.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath, loadException);
+            LOGGER.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
              Dialogs.showError(
                 "Failed to load opponents",
                 "The opponent configuration could not be loaded.",
