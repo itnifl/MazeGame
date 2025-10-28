@@ -7,6 +7,8 @@ Thumbs.db
 *.class
 scores.txt
 
+# vscode configuration files
+.vscode/
 
 # Maven build output:
 **/target/
@@ -33,3 +35,4 @@ opponents-module/icons/
 *.aird
 
 /maze/.m2
+.vscode\settings.json

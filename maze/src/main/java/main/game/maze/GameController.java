@@ -1,10 +1,12 @@
 package main.game.maze;
 
+import java.io.Console;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -13,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,6 +48,8 @@ public class GameController implements Initializable {
     private Label coordinatesLabel;
     @FXML
     private ProgressBar hpBar;
+    @FXML
+    private Label mouseCoordsLabel;
     @FXML
     private Node heart;
     @FXML
@@ -100,6 +105,12 @@ public class GameController implements Initializable {
         var score = winGameAction.updateScore();
 
         scoreLabel.setText("Score: " + String.valueOf(score));
+    }
+
+    @FXML
+    private void handleMouseClicked(MouseEvent event) {
+        System.out.println("Game has been clicked");
+        mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
     }
 
     @FXML

@@ -5,72 +5,125 @@
     <details key="basePackage" value="main.game.maze"/>
     <details key="resource" value="XMI"/>
   </eAnnotations>
+  <eAnnotations source="http://www.eclipse.org/OCL/Import">
+    <details key="ecore" value="http://www.eclipse.org/emf/2002/Ecore"/>
+  </eAnnotations>
+  <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+    <details key="invocationDelegates" value="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"/>
+    <details key="settingDelegates" value="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"/>
+    <details key="validationDelegates" value="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"/>
+  </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="RandomBehavior" eSuperTypes="#//MovementBehavior">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenPerSecond" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositiveRegenPerSecond"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositiveRegenPerSecond" value="self.regenPerSecond >= 0"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenPerSecond" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Amount of HP when regained per second.&#xD;&#xA;"/>
+        <details key="documentation" value="Amount of HP when regained per second.&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PatrolBehavior" eSuperTypes="#//MovementBehavior">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="RequiresOnePatrolPoint ValidStardIndex"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="RequiresOnePatrolPoint" value="self.path->size() > 0"/>
+      <details key="ValidStardIndex" value="self.startIndex >= 0 and self.startIndex &lt; self.path->size()"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="path" lowerBound="1" upperBound="-1"
-        eType="#//PatrolPoint">
+        eType="#//PatrolPoint" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="List of patrol steps.&#xD;&#xA;If only one is present, the character should stay at this step and not move at all."/>
+        <details key="documentation" value="List of patrol steps.&#xA;If only one is present, the character should stay at this step and not move at all."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="currentIndex" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startIndex" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
-        eType="#//PathCalculator"/>
+        eType="#//PathCalculator" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//MovementBehavior">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="NotTooLargeAttackRadius"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="NotTooLargeAttackRadius" value="self.relativePositionTarget->forAll(p | self.attackRadius > p.posX and self.attackRadius > p.posY)"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="relativePositionTarget"
-        lowerBound="1" eType="#//Position">
+        lowerBound="1" eType="#//Position" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Position relative to the player to chase.&#xD;&#xA;If set to Position{posX=x,posY=y}, then the character will target the target is Position(Player.x+x, Player.y+y). "/>
+        <details key="documentation" value="Position relative to the player to chase.&#xA;If set to Position{posX=x,posY=y}, then the character will target the target is Position(Player.x+x, Player.y+y). "/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
-        eType="#//PathCalculator"/>
+        eType="#//PathCalculator" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MovementBehavior" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="The MovementBehavior contains the positions of the character in the maze and methods to update the position."/>
     </eAnnotations>
-    <eOperations name="next"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreWalls" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositiveMovementSpeed"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositiveMovementSpeed" value="self.movementSpeed > 0"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreWalls" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Indicates if the movements should ignore walls&#xD;&#xA;"/>
+        <details key="documentation" value="Indicates if the movements should ignore walls&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackRadius" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Radius from which the character can attack (for long range distance enemies)."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="instantKillOnCollision"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Indicates if the player should be killed when it collides this character."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Position">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositivePositions"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositivePositions" value="self.posX >= 0 and self.posY >= 0"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="posX" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="posY" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PatrolPoint">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Represents a patrol step&#xD;&#xA;"/>
+      <details key="documentation" value="Represents a patrol step&#xA;"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositiveRegenAmount" value="self.regenAmount >= 0"/>
+      <details key="PositivePatrolPointTime" value="self.time >= 0"/>
+      <details key="PositivePatrolPointCoords" value="self.point->forAll(p | p.posX > 0 and p.posY > 0)"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position"
+        containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Coords of the patrol step&#xD;&#xA;"/>
+        <details key="documentation" value="Coords of the patrol step&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenAmount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenAmount" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Amount of HP the character will regain when reaching this step."/>
       </eAnnotations>
@@ -81,6 +134,12 @@
         eType="#//DistanceMethod"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DijkstraPathCalculator" eSuperTypes="#//PathCalculator">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidDijsktraIterationsCount"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="ValidDijsktraIterationsCount" value="self.maxIterations > 0 and self.maxIterations &lt; 50"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxIterations" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -89,6 +148,12 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AstarPathCalculator" eSuperTypes="#//PathCalculator">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidAstarIterationsCount"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="ValidAstarIterationsCount" value="self.maxIterations > 0 and self.maxIterations &lt; 50"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxIterations" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
