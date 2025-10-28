@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<behaviour:RandomBehavior
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:behaviour="http://main.game.maze/behaviour"
+    xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
+    attackRadius="2.0"
+    movementSpeed="3.0"
+    regenPerSecond="1.0"/>
