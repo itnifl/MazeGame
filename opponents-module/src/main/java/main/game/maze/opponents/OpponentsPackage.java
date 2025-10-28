@@ -95,13 +95,22 @@ public interface OpponentsPackage extends EPackage {
 	int OPPONENT_MODEL__MAX_THREAT = 2;
 
 	/**
+	 * The feature id for the '<em><b>Selected Difficulty</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPPONENT_MODEL__SELECTED_DIFFICULTY = 3;
+
+	/**
 	 * The number of structural features of the '<em>Opponent Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPPONENT_MODEL_FEATURE_COUNT = 3;
+	int OPPONENT_MODEL_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Opponent Model</em>' class.
@@ -803,6 +812,17 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getOpponentModel_MaxThreat();
 
 	/**
+	 * Returns the meta object for the reference '{@link main.game.maze.opponents.OpponentModel#getSelectedDifficulty <em>Selected Difficulty</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Selected Difficulty</em>'.
+	 * @see main.game.maze.opponents.OpponentModel#getSelectedDifficulty()
+	 * @see #getOpponentModel()
+	 * @generated
+	 */
+	EReference getOpponentModel_SelectedDifficulty();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.CharacterType <em>Character Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1236,6 +1256,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute OPPONENT_MODEL__MAX_THREAT = eINSTANCE.getOpponentModel_MaxThreat();
+
+		/**
+		 * The meta object literal for the '<em><b>Selected Difficulty</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference OPPONENT_MODEL__SELECTED_DIFFICULTY = eINSTANCE.getOpponentModel_SelectedDifficulty();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.CharacterTypeImpl <em>Character Type</em>}' class.
