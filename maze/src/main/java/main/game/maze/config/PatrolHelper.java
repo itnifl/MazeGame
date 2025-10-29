@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import main.game.maze.behaviour.BehaviourPackage;
+
+
 
 
 /**
@@ -53,6 +56,8 @@ public class PatrolHelper {
      * @throws Exception if loading fails or file not found
      */
     public static PatrolBehavior loadPatrolModel(String filePath) throws Exception {
+    	BehaviourPackage.eINSTANCE.eClass();
+    	
         Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
         reg.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 
