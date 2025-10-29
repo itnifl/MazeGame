@@ -1,12 +1,21 @@
 package main.game.maze.config;
 
-import movements.PatrolBehavior;
-import mazeidea.movements.PatrolPoint;
-import mazeidea.movements.PatrolZone;
-import mazeidea.movements.Position;
+import main.game.maze.behaviour.PatrolBehavior;
+import main.game.maze.behaviour.PatrolPoint;
+import main.game.maze.behaviour.PatrolZone;
+import main.game.maze.behaviour.Position;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.emf.ecore.resource.impl.*;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+
+import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+
 
 
 /**
@@ -34,6 +43,35 @@ public class PatrolHelper {
 
         public boolean hasPath() { return path != null && !path.isEmpty(); }
         public boolean hasZone() { return zone != null; }
+    }
+    
+    //Model loading
+    /**
+     * Loads a PatrolBehavior object from a .xmi file.
+     * @param filePath path to the .xmi model file
+     * @return PatrolBehavior instance loaded from disk
+     * @throws Exception if loading fails or file not found
+     */
+    public static PatrolBehavior loadPatrolModel(String filePath) throws Exception {
+        Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+        reg.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+
+        ResourceSet resSet = new ResourceSetImpl();
+        URI fileURI = URI.createFileURI(new File(filePath).getAbsolutePath());
+        Resource resource = resSet.getResource(fileURI, true);
+        resource.load(Collections.emptyMap());
+
+        if (resource.getContents().isEmpty()) {
+            throw new IllegalArgumentException("No contents found in patrol model: " + filePath);
+        }
+
+        Object root = resource.getContents().get(0);
+        if (!(root instanceof PatrolBehavior)) {
+            throw new IllegalArgumentException("Root object is not a PatrolBehavior: " + root.getClass().getName());
+        }
+
+        LOG.info(() -> "[PatrolHelper] Patrol model loaded from " + filePath);
+        return (PatrolBehavior) root;
     }
 
     // Validation + Loading
