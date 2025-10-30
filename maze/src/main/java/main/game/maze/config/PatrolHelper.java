@@ -49,12 +49,6 @@ public class PatrolHelper {
     }
     
     //Model loading
-    /**
-     * Loads a PatrolBehavior object from a .xmi file.
-     * @param filePath path to the .xmi model file
-     * @return PatrolBehavior instance loaded from disk
-     * @throws Exception if loading fails or file not found
-     */
     public static PatrolBehavior loadPatrolModel(String filePath) throws Exception {
     	BehaviourPackage.eINSTANCE.eClass();
     	

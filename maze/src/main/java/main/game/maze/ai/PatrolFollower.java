@@ -1,8 +1,8 @@
 package main.game.maze.ai;
 
 import main.game.maze.config.PatrolHelper.PatrolDefinition;
-import mazeidea.movements.PatrolPoint;
-import mazeidea.movements.Position;
+import main.game.maze.behaviour.Position;
+import main.game.maze.behaviour.PatrolPoint;
 import java.util.List;
 
 public class PatrolFollower {
