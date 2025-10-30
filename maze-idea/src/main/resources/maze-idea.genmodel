@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    modelDirectory="/maze-idea/src-gen" creationIcons="false" editDirectory="/maze-idea.edit/src-gen"
+    editorDirectory="/maze-idea.editor/src-gen" modelPluginID="maze-idea" modelName="maze-idea"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="21.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>maze-idea.ecore</foreignModel>
+  <testsDirectory xsi:nil="true"/>
+  <genPackages prefix="mazeidea" disposableProviderFactory="true" ecorePackage="maze-idea.ecore#/">
+    <nestedGenPackages prefix="Movements" basePackage="mazeidea" disposableProviderFactory="true"
+        ecorePackage="maze-idea.ecore#//movements">
+      <genClasses image="false" ecoreClass="maze-idea.ecore#//movements/MovementBehavior">
+        <genOperations ecoreOperation="maze-idea.ecore#//movements/MovementBehavior/move">
+          <genParameters ecoreParameter="maze-idea.ecore#//movements/MovementBehavior/move/enemy"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//movements/RandomBehavior">
+        <genOperations ecoreOperation="maze-idea.ecore#//movements/RandomBehavior/setRandomDirection"/>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//movements/ChaseBehavior">
+        <genOperations ecoreOperation="maze-idea.ecore#//movements/ChaseBehavior/setDirectionToPlayer">
+          <genParameters ecoreParameter="maze-idea.ecore#//movements/ChaseBehavior/setDirectionToPlayer/player"/>
+        </genOperations>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//movements/PatrolBehavior">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference maze-idea.ecore#//movements/PatrolBehavior/steps"/>
+        <genOperations ecoreOperation="maze-idea.ecore#//movements/PatrolBehavior/getNextStep"/>
+        <genOperations ecoreOperation="maze-idea.ecore#//movements/PatrolBehavior/setNextDirection"/>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//movements/PatrolPoint">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//movements/PatrolPoint/time"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//movements/PatrolPoint/x"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//movements/PatrolPoint/y"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Difficulties" basePackage="mazeidea" disposableProviderFactory="true"
+        ecorePackage="maze-idea.ecore#//difficulties">
+      <genClasses ecoreClass="maze-idea.ecore#//difficulties/GameDatas">
+        <genOperations ecoreOperation="maze-idea.ecore#//difficulties/GameDatas/getInstance"/>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//difficulties/EasyDifficulty"/>
+      <genClasses image="false" ecoreClass="maze-idea.ecore#//difficulties/Difficulty">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//difficulties/Difficulty/instantDeath"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference maze-idea.ecore#//difficulties/Difficulty/enemymaxcount"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//difficulties/Difficulty/movementSpeed"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//difficulties/Difficulty/monstersDamage"/>
+      </genClasses>
+      <genClasses ecoreClass="maze-idea.ecore#//difficulties/NormalDifficulty"/>
+      <genClasses ecoreClass="maze-idea.ecore#//difficulties/HardDifficulty"/>
+      <genClasses ecoreClass="maze-idea.ecore#//difficulties/EnemyMaxCount">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//difficulties/EnemyMaxCount/type"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute maze-idea.ecore#//difficulties/EnemyMaxCount/maxCount"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Characters" basePackage="mazeidea" disposableProviderFactory="true"
+        ecorePackage="maze-idea.ecore#//characters">
+      <genEnums typeSafeEnumCompatible="false" ecoreEnum="maze-idea.ecore#//characters/EnemyTypes">
+        <genEnumLiterals ecoreEnumLiteral="maze-idea.ecore#//characters/EnemyTypes/ZOMBIE"/>
+        <genEnumLiterals ecoreEnumLiteral="maze-idea.ecore#//characters/EnemyTypes/GHOST"/>
+      </genEnums>
+      <genClasses image="false" ecoreClass="maze-idea.ecore#//characters/Character"/>
+      <genClasses ecoreClass="maze-idea.ecore#//characters/PlayerCharacter"/>
+      <genClasses image="false" ecoreClass="maze-idea.ecore#//characters/EnemyCharacter">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference maze-idea.ecore#//characters/EnemyCharacter/movementBehavior"/>
+        <genOperations ecoreOperation="maze-idea.ecore#//characters/EnemyCharacter/move"/>
+        <genOperations ecoreOperation="maze-idea.ecore#//characters/EnemyCharacter/setMovementBehavior"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>
