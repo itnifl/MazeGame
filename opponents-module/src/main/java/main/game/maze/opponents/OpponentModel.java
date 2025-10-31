@@ -2,7 +2,7 @@
  */
 package main.game.maze.opponents;
 
-import main.game.maze.difficulties.DifficultyGameData;
+import main.game.maze.difficulties.Difficulty;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
@@ -79,12 +79,12 @@ public interface OpponentModel extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Selected Difficulty</em>' reference.
-	 * @see #setSelectedDifficulty(DifficultyGameData)
+	 * @see #setSelectedDifficulty(Difficulty)
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_SelectedDifficulty()
 	 * @model
 	 * @generated
 	 */
-	DifficultyGameData getSelectedDifficulty();
+	Difficulty getSelectedDifficulty();
 
 	/**
 	 * Sets the value of the '{@link main.game.maze.opponents.OpponentModel#getSelectedDifficulty <em>Selected Difficulty</em>}' reference.
@@ -94,6 +94,6 @@ public interface OpponentModel extends EObject {
 	 * @see #getSelectedDifficulty()
 	 * @generated
 	 */
-	void setSelectedDifficulty(DifficultyGameData value);
+	void setSelectedDifficulty(Difficulty value);
 
 } // OpponentModel

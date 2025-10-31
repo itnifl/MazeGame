@@ -10,7 +10,7 @@ module main.game.maze {
     requires org.eclipse.emf.ecore.xmi;
     requires java.logging;    
     requires main.game.maze.opponents;
-    requires main.game.maze.behaviour;
+    requires main.game.maze.behaviour;    
 
     exports main.game.maze; 
     exports main.game.maze.dto;

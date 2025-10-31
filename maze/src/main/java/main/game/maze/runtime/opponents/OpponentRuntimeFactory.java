@@ -30,6 +30,7 @@ import main.game.maze.util.Dialogs;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
+import main.game.maze.difficulties.DifficultiesPackage;
 
 /**
  * Factory that instantiates runtime character objects from EMF OpponentModel XMI files.
@@ -41,7 +42,7 @@ public final class OpponentRuntimeFactory {
     private static final int SPAWN_MARGIN = 20;
     private static volatile boolean xmiFactoryRegistered = false;
 
-    private OpponentRuntimeFactory() { /* utility class */ }
+    private OpponentRuntimeFactory() { /* utility class */  }
 
     /**
      * Instantiate characters from an XMI model and register them with the provided GameController.
@@ -64,13 +65,18 @@ public final class OpponentRuntimeFactory {
         try {
             ensureXmiFactoryRegistered();
 
-            ResourceSet resourceSet = new ResourceSetImpl();
+            ResourceSet resourceSet = new ResourceSetImpl();            
 
             Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
             OpponentsPackage.eINSTANCE.eClass(); 
+            DifficultiesPackage.eINSTANCE.eClass();
+            
             EPackage.Registry.INSTANCE.put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
-            resourceSet.getPackageRegistry().put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
+            EPackage.Registry.INSTANCE.put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
 
+            resourceSet.getPackageRegistry().put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
+            resourceSet.getPackageRegistry().put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
+                        
             var resourceUrlReference = main.game.maze.opponents.OpponentsPackage.class.getResource(resourcePath);
 
             if(resourceUrlReference == null) {
@@ -207,7 +213,7 @@ public final class OpponentRuntimeFactory {
         BasicDiagnostic diag = new BasicDiagnostic();
         boolean ok = OpponentsValidator.INSTANCE.validate(model, diag, null);
         if (!ok) {
-            throw new IllegalStateException("Invalid opponent model: " + diag.getMessage());
+            throw new IllegalStateException("Invalid opponent model: " + ", " + diag.getChildren() + ", " + diag.getMessage());
         }
     }
 }

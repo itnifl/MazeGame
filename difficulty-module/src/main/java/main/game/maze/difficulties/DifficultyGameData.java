@@ -25,13 +25,13 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface DifficultyGameData extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Difficulties</b></em>' reference list.
+	 * Returns the value of the '<em><b>Difficulties</b></em>' containment reference list.
 	 * The list contents are of type {@link main.game.maze.difficulties.Difficulty}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Difficulties</em>' reference list.
+	 * @return the value of the '<em>Difficulties</em>' containment reference list.
 	 * @see main.game.maze.difficulties.DifficultiesPackage#getDifficultyGameData_Difficulties()
-	 * @model required="true"
+	 * @model containment="true" required="true"
 	 * @generated
 	 */
 	EList<Difficulty> getDifficulties();

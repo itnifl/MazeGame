@@ -13,7 +13,7 @@ class MaxThreatValidationTest {
     // Build a small fixture from your generated EMF API
     OpponentModel model = OpponentsFactory.eINSTANCE.createOpponentModel();
     //model.setMaxThreat(10);
-    /* 
+     
     
     Zombie ct1 = OpponentsFactory.eINSTANCE.createZombie();
     ct1.setThreatLevel(3);    
@@ -33,9 +33,7 @@ class MaxThreatValidationTest {
 
     Diagnostic badDiag = Diagnostician.INSTANCE.validate(model);
     assertTrue(badDiag.getSeverity() >= Diagnostic.ERROR,
-        () -> "Expected a validation error when sum exceeds maxThreat, got: " + badDiag);
-
-        */
+        () -> "Expected a validation error when sum exceeds maxThreat, got: " + badDiag);        
   }
 }
 

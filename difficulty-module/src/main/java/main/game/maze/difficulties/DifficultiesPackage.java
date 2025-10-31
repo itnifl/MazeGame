@@ -47,7 +47,7 @@ public interface DifficultiesPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_PREFIX = "difficulties";
+	String eNS_PREFIX = "diff";
 
 	/**
 	 * The singleton instance of the package.
@@ -68,7 +68,7 @@ public interface DifficultiesPackage extends EPackage {
 	int DIFFICULTY_GAME_DATA = 0;
 
 	/**
-	 * The feature id for the '<em><b>Difficulties</b></em>' reference list.
+	 * The feature id for the '<em><b>Difficulties</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -104,10 +104,10 @@ public interface DifficultiesPackage extends EPackage {
 	int DIFFICULTY_GAME_DATA_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link main.game.maze.difficulties.Difficulty <em>Difficulty</em>}' class.
+	 * The meta object id for the '{@link main.game.maze.difficulties.impl.DifficultyImpl <em>Difficulty</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see main.game.maze.difficulties.Difficulty
+	 * @see main.game.maze.difficulties.impl.DifficultyImpl
 	 * @see main.game.maze.difficulties.impl.DifficultiesPackageImpl#getDifficulty()
 	 * @generated
 	 */
@@ -463,10 +463,10 @@ public interface DifficultiesPackage extends EPackage {
 	EClass getDifficultyGameData();
 
 	/**
-	 * Returns the meta object for the reference list '{@link main.game.maze.difficulties.DifficultyGameData#getDifficulties <em>Difficulties</em>}'.
+	 * Returns the meta object for the containment reference list '{@link main.game.maze.difficulties.DifficultyGameData#getDifficulties <em>Difficulties</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Difficulties</em>'.
+	 * @return the meta object for the containment reference list '<em>Difficulties</em>'.
 	 * @see main.game.maze.difficulties.DifficultyGameData#getDifficulties()
 	 * @see #getDifficultyGameData()
 	 * @generated
@@ -655,7 +655,7 @@ public interface DifficultiesPackage extends EPackage {
 		EClass DIFFICULTY_GAME_DATA = eINSTANCE.getDifficultyGameData();
 
 		/**
-		 * The meta object literal for the '<em><b>Difficulties</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Difficulties</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -681,10 +681,10 @@ public interface DifficultiesPackage extends EPackage {
 		EClass EASY_DIFFICULTY = eINSTANCE.getEasyDifficulty();
 
 		/**
-		 * The meta object literal for the '{@link main.game.maze.difficulties.Difficulty <em>Difficulty</em>}' class.
+		 * The meta object literal for the '{@link main.game.maze.difficulties.impl.DifficultyImpl <em>Difficulty</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see main.game.maze.difficulties.Difficulty
+		 * @see main.game.maze.difficulties.impl.DifficultyImpl
 		 * @see main.game.maze.difficulties.impl.DifficultiesPackageImpl#getDifficulty()
 		 * @generated
 		 */

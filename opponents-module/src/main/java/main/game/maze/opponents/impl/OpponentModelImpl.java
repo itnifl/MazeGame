@@ -3,7 +3,7 @@
 package main.game.maze.opponents.impl;
 
 import java.util.Collection;
-import main.game.maze.difficulties.DifficultyGameData;
+import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
@@ -87,7 +87,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 * @ordered
 	 */
-	protected DifficultyGameData selectedDifficulty;
+	protected Difficulty selectedDifficulty;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -151,8 +151,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 */
 	@Override
 	public int getMaxThreat() {
-		if (this.selectedDifficulty != null && this.selectedDifficulty.getCurrentDifficulty() != null) {
-			return this.selectedDifficulty.getCurrentDifficulty().getMaxThreat();
+		if (this.selectedDifficulty != null && this.getSelectedDifficulty() != null) {
+			return this.getSelectedDifficulty().getMaxThreat();
 		}
 		return 0;
 	}
@@ -163,10 +163,10 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 */
 	@Override
-	public DifficultyGameData getSelectedDifficulty() {
+	public Difficulty getSelectedDifficulty() {
 		if (selectedDifficulty != null && selectedDifficulty.eIsProxy()) {
 			InternalEObject oldSelectedDifficulty = (InternalEObject)selectedDifficulty;
-			selectedDifficulty = (DifficultyGameData)eResolveProxy(oldSelectedDifficulty);
+			selectedDifficulty = (Difficulty)eResolveProxy(oldSelectedDifficulty);
 			if (selectedDifficulty != oldSelectedDifficulty) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY, oldSelectedDifficulty, selectedDifficulty));
@@ -180,7 +180,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DifficultyGameData basicGetSelectedDifficulty() {
+	public Difficulty basicGetSelectedDifficulty() {
 		return selectedDifficulty;
 	}
 
@@ -190,8 +190,8 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 * @generated
 	 */
 	@Override
-	public void setSelectedDifficulty(DifficultyGameData newSelectedDifficulty) {
-		DifficultyGameData oldSelectedDifficulty = selectedDifficulty;
+	public void setSelectedDifficulty(Difficulty newSelectedDifficulty) {
+		Difficulty oldSelectedDifficulty = selectedDifficulty;
 		selectedDifficulty = newSelectedDifficulty;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY, oldSelectedDifficulty, selectedDifficulty));
@@ -249,7 +249,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				getCharacterTypes().addAll((Collection<? extends CharacterType>)newValue);
 				return;
 			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
-				setSelectedDifficulty((DifficultyGameData)newValue);
+				setSelectedDifficulty((Difficulty)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -270,7 +270,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				getCharacterTypes().clear();
 				return;
 			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
-				setSelectedDifficulty((DifficultyGameData)null);
+				setSelectedDifficulty((Difficulty)null);
 				return;
 		}
 		super.eUnset(featureID);

@@ -6,7 +6,7 @@
     xmlns:diff="http://main.game.maze/difficulty">
 
   <!-- EASY -->
-  <difficulties xsi:type="diff:EasyDifficulty"
+  <difficulties xmi:id="easy" xsi:type="diff:EasyDifficulty"
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.05"
                 monstersDamageMultiplier="0.70"
@@ -22,7 +22,7 @@
   </difficulties>
 
   <!-- NORMAL -->
-  <difficulties xsi:type="diff:NormalDifficulty"
+  <difficulties xmi:id="normal" xsi:type="diff:NormalDifficulty"
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.00"
                 monstersDamageMultiplier="1.00"
@@ -38,7 +38,7 @@
   </difficulties>
 
   <!-- HARD -->
-  <difficulties xsi:type="diff:HardDifficulty"
+  <difficulties xmi:id="hard" xsi:type="diff:HardDifficulty"
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.40"
                 monstersDamageMultiplier="1.60"
@@ -53,6 +53,5 @@
     </enemyMaxCount>
   </difficulties>
 
-  <!-- Pick which one is active (here: Normal) -->
-  <currentDifficulty href="#//@difficulties[2]"/>
+  <currentDifficulty href="#normal"/>
 </diff:DifficultyGameData>

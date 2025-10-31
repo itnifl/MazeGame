@@ -21,7 +21,7 @@
         <details key="derivation" value="self.selectedDifficulty.currentDifficulty.oclIsUndefined() ? 0 : self.selectedDifficulty.currentDifficulty.maxThreat"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="selectedDifficulty" eType="ecore:EClass ../../../../difficulty-module/src/main/resources/difficulty-module.ecore#//DifficultyGameData"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="selectedDifficulty" eType="ecore:EClass ../../../../difficulty-module/src/main/resources/difficulty-module.ecore#//Difficulty"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CharacterType" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
