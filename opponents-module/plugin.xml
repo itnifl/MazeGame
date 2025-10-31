@@ -27,7 +27,7 @@
       <package
             uri="http://main.game.maze/opponents"
             class="main.game.maze.opponents.OpponentsPackage"
-            genModel="src/test/java/opponents.genmodel"/>
+            genModel="src/main/resources/opponents.genmodel"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.extension_parser">

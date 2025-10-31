@@ -2,6 +2,7 @@
  */
 package main.game.maze.opponents.impl;
 
+import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
@@ -133,6 +134,9 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 
 		isInited = true;
 
+		// Initialize simple dependencies
+		DifficultiesPackage.eINSTANCE.eClass();
+
 		// Create package meta-data objects
 		theOpponentsPackage.createPackageContents();
 
@@ -195,6 +199,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	@Override
 	public EAttribute getOpponentModel_MaxThreat() {
 		return (EAttribute)opponentModelEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getOpponentModel_SelectedDifficulty() {
+		return (EReference)opponentModelEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -580,6 +594,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(opponentModelEClass, OPPONENT_MODEL__NAME);
 		createEReference(opponentModelEClass, OPPONENT_MODEL__CHARACTER_TYPES);
 		createEAttribute(opponentModelEClass, OPPONENT_MODEL__MAX_THREAT);
+		createEReference(opponentModelEClass, OPPONENT_MODEL__SELECTED_DIFFICULTY);
 
 		characterTypeEClass = createEClass(CHARACTER_TYPE);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ID);
@@ -647,6 +662,9 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
 
+		// Obtain other dependent packages
+		DifficultiesPackage theDifficultiesPackage = (DifficultiesPackage)EPackage.Registry.INSTANCE.getEPackage(DifficultiesPackage.eNS_URI);
+
 		// Create type parameters
 
 		// Set bounds for type parameters
@@ -659,7 +677,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getOpponentModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOpponentModel_CharacterTypes(), this.getCharacterType(), null, "characterTypes", null, 1, -1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getOpponentModel_SelectedDifficulty(), theDifficultiesPackage.getDifficulty(), null, "selectedDifficulty", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(characterTypeEClass, CharacterType.class, "CharacterType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCharacterType_Id(), ecorePackage.getEString(), "id", null, 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -734,6 +753,12 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		   source,
 		   new String[] {
 			   "validateMaxThreat", "self.characterTypes->collect(ct | ct.effectiveThreat)->sum() <= self.maxThreat"
+		   });
+		addAnnotation
+		  (getOpponentModel_MaxThreat(),
+		   source,
+		   new String[] {
+			   "derivation", "if self.selectedDifficulty.oclIsUndefined()\nthen 0\nelse self.selectedDifficulty.maxThreat\nendif"
 		   });
 	}
 

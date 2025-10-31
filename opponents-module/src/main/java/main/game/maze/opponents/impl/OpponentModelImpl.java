@@ -3,6 +3,7 @@
 package main.game.maze.opponents.impl;
 
 import java.util.Collection;
+import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
@@ -32,6 +33,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getName <em>Name</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getCharacterTypes <em>Character Types</em>}</li>
  *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getMaxThreat <em>Max Threat</em>}</li>
+ *   <li>{@link main.game.maze.opponents.impl.OpponentModelImpl#getSelectedDifficulty <em>Selected Difficulty</em>}</li>
  * </ul>
  *
  * @generated
@@ -78,14 +80,14 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	protected static final int MAX_THREAT_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
+	 * The cached value of the '{@link #getSelectedDifficulty() <em>Selected Difficulty</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMaxThreat()
+	 * @see #getSelectedDifficulty()
 	 * @generated
 	 * @ordered
 	 */
-	protected int maxThreat = MAX_THREAT_EDEFAULT;
+	protected Difficulty selectedDifficulty;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -145,11 +147,54 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public int getMaxThreat() {
-		return maxThreat;
+		if (this.selectedDifficulty != null && this.getSelectedDifficulty() != null) {
+			return this.getSelectedDifficulty().getMaxThreat();
+		}
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Difficulty getSelectedDifficulty() {
+		if (selectedDifficulty != null && selectedDifficulty.eIsProxy()) {
+			InternalEObject oldSelectedDifficulty = (InternalEObject)selectedDifficulty;
+			selectedDifficulty = (Difficulty)eResolveProxy(oldSelectedDifficulty);
+			if (selectedDifficulty != oldSelectedDifficulty) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY, oldSelectedDifficulty, selectedDifficulty));
+			}
+		}
+		return selectedDifficulty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Difficulty basicGetSelectedDifficulty() {
+		return selectedDifficulty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSelectedDifficulty(Difficulty newSelectedDifficulty) {
+		Difficulty oldSelectedDifficulty = selectedDifficulty;
+		selectedDifficulty = newSelectedDifficulty;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY, oldSelectedDifficulty, selectedDifficulty));
 	}
 
 	/**
@@ -180,6 +225,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				return getCharacterTypes();
 			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
 				return getMaxThreat();
+			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
+				if (resolve) return getSelectedDifficulty();
+				return basicGetSelectedDifficulty();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -200,6 +248,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				getCharacterTypes().clear();
 				getCharacterTypes().addAll((Collection<? extends CharacterType>)newValue);
 				return;
+			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
+				setSelectedDifficulty((Difficulty)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -218,6 +269,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				getCharacterTypes().clear();
 				return;
+			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
+				setSelectedDifficulty((Difficulty)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -235,7 +289,9 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				return characterTypes != null && !characterTypes.isEmpty();
 			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
-				return maxThreat != MAX_THREAT_EDEFAULT;
+				return getMaxThreat() != MAX_THREAT_EDEFAULT;
+			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
+				return selectedDifficulty != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -252,8 +308,6 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", maxThreat: ");
-		result.append(maxThreat);
 		result.append(')');
 		return result.toString();
 	}

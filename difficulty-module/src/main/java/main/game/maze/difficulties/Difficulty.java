@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see main.game.maze.difficulties.DifficultiesPackage#getDifficulty()
- * @model interface="true" abstract="true"
+ * @model abstract="true"
  * @generated
  */
 public interface Difficulty extends EObject {

@@ -215,6 +215,6 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	@Deprecated
 	public static OpponentsPackage getPackage() {
 		return OpponentsPackage.eINSTANCE;
-	}
+	}	
 
 } //OpponentsFactoryImpl
