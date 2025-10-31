@@ -758,7 +758,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		  (getOpponentModel_MaxThreat(),
 		   source,
 		   new String[] {
-			   "derivation", "self.selectedDifficulty.currentDifficulty.oclIsUndefined() ? 0 : self.selectedDifficulty.currentDifficulty.maxThreat"
+			   "derivation", "if self.selectedDifficulty.oclIsUndefined()\nthen 0\nelse self.selectedDifficulty.maxThreat\nendif"
 		   });
 	}
 

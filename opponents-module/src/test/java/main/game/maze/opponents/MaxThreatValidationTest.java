@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.junit.jupiter.api.Test;
+import main.game.maze.opponents.*;
+import main.game.maze.opponents.util.*; // if you have util
+import main.game.maze.difficulties.*;
+
 
 
 class MaxThreatValidationTest {
@@ -12,9 +16,13 @@ class MaxThreatValidationTest {
   void sumEffectiveThreat_mustNotExceed_maxThreat() {
     // Build a small fixture from your generated EMF API
     OpponentModel model = OpponentsFactory.eINSTANCE.createOpponentModel();
-    //model.setMaxThreat(10);
+    var normalDifficulty = DifficultiesFactory.eINSTANCE.createNormalDifficulty();
+    normalDifficulty.setMaxThreat(10);
+    model.setSelectedDifficulty(normalDifficulty);
      
-    
+    System.out.println("Using maxThreat on difficulty: " + normalDifficulty.getMaxThreat());
+    System.out.println("Using maxThreat on OpponentModel: " + model.getMaxThreat());
+
     Zombie ct1 = OpponentsFactory.eINSTANCE.createZombie();
     ct1.setThreatLevel(3);    
     CharacterType ct2 = OpponentsFactory.eINSTANCE.createZombie();

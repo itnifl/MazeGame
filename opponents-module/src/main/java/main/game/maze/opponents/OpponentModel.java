@@ -69,7 +69,7 @@ public interface OpponentModel extends EObject {
 	 * @return the value of the '<em>Max Threat</em>' attribute.
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_MaxThreat()
 	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='self.selectedDifficulty.currentDifficulty.oclIsUndefined() ? 0 : self.selectedDifficulty.currentDifficulty.maxThreat'"
+	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='if self.selectedDifficulty.oclIsUndefined()\nthen 0\nelse self.selectedDifficulty.maxThreat\nendif'"
 	 * @generated
 	 */
 	int getMaxThreat();
