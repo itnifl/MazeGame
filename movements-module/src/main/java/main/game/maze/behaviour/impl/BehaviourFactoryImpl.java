@@ -65,6 +65,7 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR: return createDijkstraPathCalculator();
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR: return createAstarPathCalculator();
 			case BehaviourPackage.LOCAL_PATH_CALCULATOR: return createLocalPathCalculator();
+			case BehaviourPackage.PATROL_ZONE: return createPatrolZone();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -186,6 +187,17 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 	public LocalPathCalculator createLocalPathCalculator() {
 		LocalPathCalculatorImpl localPathCalculator = new LocalPathCalculatorImpl();
 		return localPathCalculator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public PatrolZone createPatrolZone() {
+		PatrolZoneImpl patrolZone = new PatrolZoneImpl();
+		return patrolZone;
 	}
 
 	/**

@@ -9,6 +9,7 @@ import main.game.maze.behaviour.PathCalculator;
 import main.game.maze.behaviour.PatrolBehavior;
 import main.game.maze.behaviour.PatrolPoint;
 
+import main.game.maze.behaviour.PatrolZone;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.EList;
@@ -31,6 +32,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPath <em>Path</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getCurrentIndex <em>Current Index</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPathcalculator <em>Pathcalculator</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPatrolZone <em>Patrol Zone</em>}</li>
  * </ul>
  *
  * @generated
@@ -75,6 +77,16 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @ordered
 	 */
 	protected PathCalculator pathcalculator;
+
+	/**
+	 * The cached value of the '{@link #getPatrolZone() <em>Patrol Zone</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPatrolZone()
+	 * @generated
+	 * @ordered
+	 */
+	protected PatrolZone patrolZone;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -177,6 +189,46 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
+	public PatrolZone getPatrolZone() {
+		if (patrolZone != null && patrolZone.eIsProxy()) {
+			InternalEObject oldPatrolZone = (InternalEObject)patrolZone;
+			patrolZone = (PatrolZone)eResolveProxy(oldPatrolZone);
+			if (patrolZone != oldPatrolZone) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE, oldPatrolZone, patrolZone));
+			}
+		}
+		return patrolZone;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PatrolZone basicGetPatrolZone() {
+		return patrolZone;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setPatrolZone(PatrolZone newPatrolZone) {
+		PatrolZone oldPatrolZone = patrolZone;
+		patrolZone = newPatrolZone;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE, oldPatrolZone, patrolZone));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
@@ -186,6 +238,9 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				if (resolve) return getPathcalculator();
 				return basicGetPathcalculator();
+			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
+				if (resolve) return getPatrolZone();
+				return basicGetPatrolZone();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -209,6 +264,9 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)newValue);
 				return;
+			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
+				setPatrolZone((PatrolZone)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -230,6 +288,9 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)null);
 				return;
+			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
+				setPatrolZone((PatrolZone)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -248,6 +309,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				return currentIndex != CURRENT_INDEX_EDEFAULT;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				return pathcalculator != null;
+			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
+				return patrolZone != null;
 		}
 		return super.eIsSet(featureID);
 	}
