@@ -1,6 +1,8 @@
 package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
 import main.game.maze.difficulties.DifficultiesPackage;
+import main.game.maze.difficulties.EnemyTypes;
 
 /**
  * Factory that instantiates runtime character objects from EMF OpponentModel XMI files.
@@ -115,11 +118,62 @@ public final class OpponentRuntimeFactory {
                 LOGGER.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
                 throw loadEx;
             }
+
+            var diff = opponentModel.getSelectedDifficulty();
+            if (diff == null) {
+                LOGGER.warning("No selectedDifficulty set; spawning without caps/multipliers.");
+            } else {
+                LOGGER.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
+            }
+
+            Map<EnemyTypes, Integer> monsterTypecaps = new EnumMap<>(EnemyTypes.class);
+            int maxThreat = Integer.MAX_VALUE;
+            double speedMul = 1.0;
+            double dmgMul = 1.0;
+            boolean instantDeath = false;
+
+
+            if (diff != null) {
+                for (var e : diff.getEnemyMaxCount()) {
+                    monsterTypecaps.put(e.getType(), e.getMaxCount());
+                }
+                maxThreat = diff.getMaxThreat();
+                speedMul = diff.getMonstersMovementSpeedMultiplier();
+                dmgMul   = diff.getMonstersDamageMultiplier();
+                instantDeath = diff.isInstantDeath();
+            }
             
+            int ghosts = 0, zombies = 0;
+            double threatSum = 0.0;
             
             var characterList = opponentModel.getCharacterTypes();
             for (var characterType : characterList) {
-                if (characterType instanceof Zombie) {                                    
+                if (!characterType.isEnabled()) continue;
+
+                EnemyTypes et;
+                if (characterType instanceof Ghost)  et = EnemyTypes.GHOST;
+                else if (characterType instanceof Zombie) et = EnemyTypes.ZOMBIE;
+                else continue;
+
+                int cap = monsterTypecaps.getOrDefault(et, Integer.MAX_VALUE);
+
+                if (et == EnemyTypes.GHOST && ghosts >= cap)  continue;
+                if (et == EnemyTypes.ZOMBIE && zombies >= cap) continue;
+
+                double nextThreat = threatSum + characterType.getThreatLevel();                
+                if (nextThreat > maxThreat) continue;
+                threatSum += characterType.getEffectiveThreat();
+
+                characterType.setSpeed(characterType.getSpeed() * speedMul);
+                if (characterType instanceof Zombie z) {
+                    zombies++;
+                    
+                    if (instantDeath) {
+                        z.setAttackDamage(Integer.MAX_VALUE);
+                    } else {
+                        z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMul)));
+                    }
+
                     Platform.runLater(() -> {
                         try {
                             final double spawnX = ThreadLocalRandom.current()
@@ -136,7 +190,15 @@ public final class OpponentRuntimeFactory {
                             LOGGER.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
                         }
                     });
-                } else if (characterType instanceof Ghost) {                                    
+                } else if (characterType instanceof Ghost g) {                            
+                    ghosts++;
+                    
+                    if (instantDeath) {
+                        g.setAttackDamage(Integer.MAX_VALUE);
+                    } else {
+                        g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMul)));
+                    }
+
                     Platform.runLater(() -> {
                         try {
                             final double spawnX = ThreadLocalRandom.current()
