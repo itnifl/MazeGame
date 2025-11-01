@@ -9,8 +9,8 @@
     <name>Testing Game</name>
   
   <selectedDifficulty
-      xsi:type="diff:EasyDifficulty"
-      href="../difficulties/difficulties.xmi#easy"/>
+      xsi:type="diff:NormalDifficulty"
+      href="../difficulties/difficulties.xmi#normal"/>
     <characterTypes xsi:type="opponents:Ghost">
       <id>ghost_weak_1</id>
       <displayName>Ghost Zombie</displayName>
@@ -68,11 +68,11 @@
       <threatLevel>1.0</threatLevel>
       <attackDamage>2</attackDamage>
       <behavior>WANDER</behavior>
-      <ImageBase>/main/game/maze/zombie-down.png</ImageBase>
-      <ImageTurnLeft>/main/game/maze/zombie-left.png</ImageTurnLeft>
-      <ImageTurnRight>/main/game/maze/zombie-right.png</ImageTurnRight>
-      <ImageTurnUp>/main/game/maze/zombie-down.png</ImageTurnUp>
-      <ImageTurnDown>/main/game/maze/zombie-down.png</ImageTurnDown>
+      <ImageBase>/main/game/maze/zombie1-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie1-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie1-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie1-up.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie1-down.png</ImageTurnDown>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Zombie">            
@@ -90,4 +90,21 @@
       <ImageTurnUp>/main/game/maze/zombie2-down.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie2-down.png</ImageTurnDown>
     </characterTypes>
+
+    <characterTypes xsi:type="opponents:Zombie">
+      <id>zombie_weak_2</id>
+      <displayName>Classic Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>3</speed>
+      <threatLevel>2</threatLevel>
+      <attackDamage>1</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/zombie3-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie3-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie3-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie3-up.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie3-down.png</ImageTurnDown>
+    </characterTypes>
+
 </opponents:OpponentModel>

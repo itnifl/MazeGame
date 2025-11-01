@@ -8,16 +8,16 @@
   <!-- EASY -->
   <difficulties xmi:id="easy" xsi:type="diff:EasyDifficulty"
                 instantDeath="false"
-                monstersMovementSpeedMultiplier="1.05"
+                monstersMovementSpeedMultiplier="0.80"
                 monstersDamageMultiplier="0.70"
-                maxThreat="10">
+                maxThreat="12">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>2</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>4</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
   </difficulties>
 
@@ -29,29 +29,29 @@
                 maxThreat="20">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>4</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>6</maxCount>
+      <maxCount>4</maxCount>
     </enemyMaxCount>
   </difficulties>
 
   <!-- HARD -->
   <difficulties xmi:id="hard" xsi:type="diff:HardDifficulty"
                 instantDeath="false"
-                monstersMovementSpeedMultiplier="1.40"
+                monstersMovementSpeedMultiplier="1.20"
                 monstersDamageMultiplier="1.60"
-                maxThreat="30">
+                maxThreat="50">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>6</maxCount>
+      <maxCount>10</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>10</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
   </difficulties>
 
-  <currentDifficulty href="#easy"/>
+  <currentDifficulty href="#normal"/>
 </diff:DifficultyGameData>
