@@ -70,8 +70,8 @@ public final class OpponentRuntimeFactory {
             ensureXmiFactoryRegistered();
 
             ResourceSet resourceSet = new ResourceSetImpl();            
-
             Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+            
             OpponentsPackage.eINSTANCE.eClass(); 
             DifficultiesPackage.eINSTANCE.eClass();
             
@@ -175,30 +175,37 @@ public final class OpponentRuntimeFactory {
             }
             double sum = threatSum;  // working copy
 
+            // Sort once: highest effective threat first
+            var byThreatDesc = characterList.stream()
+                .filter(CharacterType::isEnabled)
+                .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat).reversed())
+                .toList();
+
             while (sum <= maxThreatByDifficulty) {
                 final double remaining = maxThreatByDifficulty - sum;
 
-                var next = characterList.stream()
-                    .filter(CharacterType::isEnabled)                 
+                var next = byThreatDesc.stream()
                     .filter(ct -> ct.getEffectiveThreat() > 0)
                     .filter(ct -> ct.getEffectiveThreat() <= remaining)
-                    // optional: respect per-type caps during fill (prevents overshooting caps)
                     .filter(ct -> !characterNrCapsIsExceeded(ct, noOfGhostsSpawned, noOfZombiesSpawned, monsterTypecaps))
-                    .min(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat)); // pick weakest
+                    .findFirst(); // highest that fits
 
-                if (next.isEmpty()) break; // nothing fits -> stop
+                if (next.isEmpty()) break;
 
                 var picked = next.get();
 
-                doCharacterRegistration(
-                    gameController, 
+                setCharacterAttributesByDifficulty(picked, 
+                    speedMultiplierByDifficulty, 
+                    dmgMultiplierByDifficulty, 
+                    instantDeath);
+                doCharacterRegistration(gameController, 
                     picked, 
                     noOfGhostsSpawned, 
                     noOfZombiesSpawned);
 
-                // If you actually spawn here, also bump the counters here.
                 sum += picked.getEffectiveThreat();
             }
+
             threatSum = sum;
             opponentModel.setGameSetCurrentThreatLevel(threatSum);
             validateOrFail(opponentModel);
