@@ -5,8 +5,6 @@ import java.util.List;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
-import main.game.maze.Vector2D.VectorFacing;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -23,50 +21,17 @@ public class GhostCharacter extends ComputerCharacter
     private final Ghost ghostModel;
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
-    private VectorFacing currentCharacterFacing = VectorFacing.IDLE;
 
-    private final Image imageLeft;
-    private final Image imageRight;
-    private final Image imageUp;
-    private final Image imageDown;
 
 
     public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
         super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));        
         this.ghostModel = model;
 
-        this.imageLeft  = new Image(getClass().getResourceAsStream(model.getImageTurnLeft()));
-        this.imageRight = new Image(getClass().getResourceAsStream(model.getImageTurnRight()));
-        this.imageUp = new Image(getClass().getResourceAsStream(model.getImageTurnUp()));
-        this.imageDown = new Image(getClass().getResourceAsStream(model.getImageTurnDown()));
-
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
 
-        this.directionSubscriber = (VectorFacing direction) -> {
-            if(direction == VectorFacing.LEFT) {
-                if(currentCharacterFacing != direction) {
-                    currentCharacterFacing = VectorFacing.LEFT;
-                    this.setCharacterImage(imageLeft);
-                }            
-            } else if(direction == VectorFacing.RIGHT) {
-                if(currentCharacterFacing != direction) {
-                    currentCharacterFacing = VectorFacing.RIGHT;
-                    this.setCharacterImage(imageRight);
-                }   
-            } else if(direction == VectorFacing.UP) {
-                if(currentCharacterFacing != direction) {
-                    currentCharacterFacing = VectorFacing.UP;
-                    this.setCharacterImage(imageUp);
-                } 
-            } else if(direction == VectorFacing.DOWN) {
-                if(currentCharacterFacing != direction) {
-                    currentCharacterFacing = VectorFacing.DOWN;
-                    this.setCharacterImage(imageDown);
-                } 
-            }
-        };
     }
 
     @Override
