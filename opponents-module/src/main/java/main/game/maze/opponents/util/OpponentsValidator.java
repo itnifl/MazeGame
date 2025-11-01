@@ -142,23 +142,27 @@ public class OpponentsValidator extends EObjectValidator {
 		}
 
 		// 2) Sum effective threat of all character types
-		int sum = 0;
-		for (CharacterType ct : opponentModel.getCharacterTypes()) {
-			// If you have ct.getEffectiveThreat(), use that; otherwise use threatLevel
-			int t;
-			try {
-				t = ct.getEffectiveThreat(); // comment this out if you do not have it
-			} catch (Throwable ignore) {
-				t = (int) ct.getThreatLevel();     // fallback
+		var currentThreatLevel = opponentModel.getGameSetCurrentThreatLevel();		
+		if(currentThreatLevel == 0) {
+			int sum = 0;
+			for (CharacterType ct : opponentModel.getCharacterTypes()) {
+				// If you have ct.getEffectiveThreat(), use that; otherwise use threatLevel
+				int t;
+				try {
+					t = ct.getEffectiveThreat(); // comment this out if you do not have it
+				} catch (Throwable ignore) {
+					t = (int) ct.getThreatLevel();     // fallback
+				}
+				if (t > 0) {
+					sum += t;
+					if (sum > maxThreat) break;
+				}
 			}
-			if (t > 0) {
-				sum += t;
-				if (sum > maxThreat) break;
-			}
+			opponentModel.setGameSetCurrentThreatLevel(sum);
 		}
-
+		
 		// 3) Pass or report a diagnostic
-		if (sum <= maxThreat) return true;
+		if (opponentModel.getGameSetCurrentThreatLevel() <= maxThreat) return true;
 
 		if (diagnostics != null) {
 			diagnostics.add(
@@ -170,11 +174,7 @@ public class OpponentsValidator extends EObjectValidator {
 					new Object[] { "validateMaxThreat", getObjectLabel(opponentModel, context) },
 					new Object[] { opponentModel },
 					context));
-			// Alternatively, a custom message:
-			// diagnostics.add(new BasicDiagnostic(
-			//     Diagnostic.ERROR, DIAGNOSTIC_SOURCE, 0,
-			//     "Sum of effectiveThreat (" + sum + ") exceeds maxThreat (" + maxThreat + ")",
-			//     new Object[] { opponentModel }));
+
 		}
 		return false;
 	}

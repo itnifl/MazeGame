@@ -104,13 +104,22 @@ public interface OpponentsPackage extends EPackage {
 	int OPPONENT_MODEL__SELECTED_DIFFICULTY = 3;
 
 	/**
+	 * The feature id for the '<em><b>Game Set Current Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL = 4;
+
+	/**
 	 * The number of structural features of the '<em>Opponent Model</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPPONENT_MODEL_FEATURE_COUNT = 4;
+	int OPPONENT_MODEL_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Opponent Model</em>' class.
@@ -823,6 +832,17 @@ public interface OpponentsPackage extends EPackage {
 	EReference getOpponentModel_SelectedDifficulty();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.OpponentModel#getGameSetCurrentThreatLevel <em>Game Set Current Threat Level</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Game Set Current Threat Level</em>'.
+	 * @see main.game.maze.opponents.OpponentModel#getGameSetCurrentThreatLevel()
+	 * @see #getOpponentModel()
+	 * @generated
+	 */
+	EAttribute getOpponentModel_GameSetCurrentThreatLevel();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.CharacterType <em>Character Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1264,6 +1284,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EReference OPPONENT_MODEL__SELECTED_DIFFICULTY = eINSTANCE.getOpponentModel_SelectedDifficulty();
+
+		/**
+		 * The meta object literal for the '<em><b>Game Set Current Threat Level</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL = eINSTANCE.getOpponentModel_GameSetCurrentThreatLevel();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.CharacterTypeImpl <em>Character Type</em>}' class.

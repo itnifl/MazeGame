@@ -24,6 +24,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/maxThreat"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/selectedDifficulty"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/GameSetCurrentThreatLevel"/>
     </genClasses>
     <genClasses image="false" ecoreClass="opponents.ecore#//CharacterType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/id"/>

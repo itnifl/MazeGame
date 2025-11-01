@@ -100,6 +100,7 @@ public class ZombieCharacter extends ComputerCharacter
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
+                System.out.println("Zombie is intersecting with " + canDieEntity);
                 canDieEntity.subtractHitPoints(getDamage());                
             }
             if(screamMediaPlayer == null || screamMediaPlayer.getStatus() != Status.PLAYING) {

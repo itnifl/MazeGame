@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +42,7 @@ import main.game.maze.difficulties.EnemyTypes;
  */
 public final class OpponentRuntimeFactory {
 
-    private static final Logger LOGGER = Logger.getLogger(OpponentRuntimeFactory.class.getName());
+    private static final Logger _logger = Logger.getLogger(OpponentRuntimeFactory.class.getName());
     private static final int SPAWN_MARGIN = 20;
     private static volatile boolean xmiFactoryRegistered = false;
 
@@ -57,11 +58,11 @@ public final class OpponentRuntimeFactory {
         String resourcePath = OpponentConstants.ZombieModelPath;
 
         if (resourcePath == null || resourcePath.isBlank()) {
-            LOGGER.warning("instantiateFromModel called with empty resourcePath");
+            _logger.warning("instantiateFromModel called with empty resourcePath");
             return;
         }
         if (gameController == null) {
-            LOGGER.warning("instantiateFromModel requires a non-null GameController");
+            _logger.warning("instantiateFromModel requires a non-null GameController");
             return;
         }
 
@@ -87,14 +88,14 @@ public final class OpponentRuntimeFactory {
             }
             
             if (resourceUrlReference == null) {
-                LOGGER.log(Level.WARNING, "Opponent model resource not found: {0}", resourcePath);
+                _logger.log(Level.WARNING, "Opponent model resource not found: {0}", resourcePath);
                 return;
             }
 
             URI modelUri = URI.createURI(resourceUrlReference.toString());
             Resource resource = resourceSet.getResource(modelUri, true);
             if (resource == null || resource.getContents().isEmpty()) {
-                LOGGER.log(Level.WARNING, "Loaded resource is empty or null: {0}", resourcePath);
+                _logger.log(Level.WARNING, "Loaded resource is empty or null: {0}", resourcePath);
                 return;
             }
 
@@ -102,12 +103,12 @@ public final class OpponentRuntimeFactory {
             try {
                 rootObject = resource.getContents().get(0);
             } catch (Exception loadEx) {
-                LOGGER.log(Level.SEVERE, "Failed to load root content: " + resourcePath, loadEx);
+                _logger.log(Level.SEVERE, "Failed to load root content: " + resourcePath, loadEx);
                 throw loadEx;
             }
             
             if (!(rootObject instanceof OpponentModel)) {
-                LOGGER.log(Level.WARNING, "Root object is not an OpponentModel: {0}", resourcePath);
+                _logger.log(Level.WARNING, "Root object is not an OpponentModel: {0}", resourcePath);
                 return;
             }
 
@@ -115,21 +116,21 @@ public final class OpponentRuntimeFactory {
             try {
                 opponentModel = (OpponentModel) rootObject;
             } catch (Exception loadEx) {
-                LOGGER.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
+                _logger.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
                 throw loadEx;
             }
 
             var diff = opponentModel.getSelectedDifficulty();
             if (diff == null) {
-                LOGGER.warning("No selectedDifficulty set; spawning without caps/multipliers.");
+                _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
             } else {
-                LOGGER.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
+                _logger.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
             }
 
             Map<EnemyTypes, Integer> monsterTypecaps = new EnumMap<>(EnemyTypes.class);
-            int maxThreat = Integer.MAX_VALUE;
-            double speedMul = 1.0;
-            double dmgMul = 1.0;
+            int maxThreatByDifficulty = Integer.MAX_VALUE;
+            double speedMultiplierByDifficulty = 1.0;
+            double dmgMultiplierByDifficulty = 1.0;
             boolean instantDeath = false;
 
 
@@ -137,91 +138,72 @@ public final class OpponentRuntimeFactory {
                 for (var e : diff.getEnemyMaxCount()) {
                     monsterTypecaps.put(e.getType(), e.getMaxCount());
                 }
-                maxThreat = diff.getMaxThreat();
-                speedMul = diff.getMonstersMovementSpeedMultiplier();
-                dmgMul   = diff.getMonstersDamageMultiplier();
+                maxThreatByDifficulty = diff.getMaxThreat();
+                speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
+                dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
                 instantDeath = diff.isInstantDeath();
             }
             
-            int ghosts = 0, zombies = 0;
+            AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
+            AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
             double threatSum = 0.0;
             
             var characterList = opponentModel.getCharacterTypes();
             for (var characterType : characterList) {
                 if (!characterType.isEnabled()) continue;
-
-                EnemyTypes et;
-                if (characterType instanceof Ghost)  et = EnemyTypes.GHOST;
-                else if (characterType instanceof Zombie) et = EnemyTypes.ZOMBIE;
-                else continue;
-
-                int cap = monsterTypecaps.getOrDefault(et, Integer.MAX_VALUE);
-
-                if (et == EnemyTypes.GHOST && ghosts >= cap)  continue;
-                if (et == EnemyTypes.ZOMBIE && zombies >= cap) continue;
+                
+                if(characterNrCapsIsExceeded(characterType, noOfGhostsSpawned, noOfZombiesSpawned, monsterTypecaps)) {
+                    continue;
+                }
 
                 double nextThreat = threatSum + characterType.getThreatLevel();                
-                if (nextThreat > maxThreat) continue;
+                if (nextThreat > maxThreatByDifficulty) continue;
                 threatSum += characterType.getEffectiveThreat();
+                
+                setCharacterAttributesByDifficulty(
+                    characterType, 
+                    speedMultiplierByDifficulty, 
+                    dmgMultiplierByDifficulty, 
+                    instantDeath);
 
-                characterType.setSpeed(characterType.getSpeed() * speedMul);
-                if (characterType instanceof Zombie z) {
-                    zombies++;
-                    
-                    if (instantDeath) {
-                        z.setAttackDamage(Integer.MAX_VALUE);
-                    } else {
-                        z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMul)));
-                    }
+                doCharacterRegistration(
+                    gameController, 
+                    characterType, 
+                    noOfGhostsSpawned, 
+                    noOfZombiesSpawned);
 
-                    Platform.runLater(() -> {
-                        try {
-                            final double spawnX = ThreadLocalRandom.current()
-                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
-                            final double spawnY = ThreadLocalRandom.current()
-                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
-
-                            Node graphicsNode = createCharacterGraphics(characterType, StageConstants.ZombieCharacterXYSize);
-                            graphicsNode.setLayoutX(spawnX);
-                            graphicsNode.setLayoutY(spawnY);
-                            ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, (Zombie)characterType);
-                            gameController.registerComputerCharacter(zombieCharacter, graphicsNode);
-                        } catch (Exception fxException) {
-                            LOGGER.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
-                        }
-                    });
-                } else if (characterType instanceof Ghost g) {                            
-                    ghosts++;
-                    
-                    if (instantDeath) {
-                        g.setAttackDamage(Integer.MAX_VALUE);
-                    } else {
-                        g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMul)));
-                    }
-
-                    Platform.runLater(() -> {
-                        try {
-                            final double spawnX = ThreadLocalRandom.current()
-                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
-                            final double spawnY = ThreadLocalRandom.current()
-                                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
-
-                            Node graphicsNode = createCharacterGraphics(characterType, StageConstants.GhostCharacterXYSize);
-                            graphicsNode.setLayoutX(spawnX);
-                            graphicsNode.setLayoutY(spawnY);
-                            var character = new GhostCharacter(graphicsNode, spawnX, spawnY, (Ghost)characterType);
-                            gameController.registerComputerCharacter(character, graphicsNode);
-                        } catch (Exception fxException) {
-                            LOGGER.log(Level.SEVERE, "Failed to create or register a GhostCharacter.", fxException);
-                        }
-                    });
-                } else {
-                    LOGGER.log(Level.FINER, "Skipping unsupported character type: {0}", characterType.getClass().getName());
-                }
             }
+            double sum = threatSum;  // working copy
+
+            while (sum <= maxThreatByDifficulty) {
+                final double remaining = maxThreatByDifficulty - sum;
+
+                var next = characterList.stream()
+                    .filter(CharacterType::isEnabled)                 
+                    .filter(ct -> ct.getEffectiveThreat() > 0)
+                    .filter(ct -> ct.getEffectiveThreat() <= remaining)
+                    // optional: respect per-type caps during fill (prevents overshooting caps)
+                    .filter(ct -> !characterNrCapsIsExceeded(ct, noOfGhostsSpawned, noOfZombiesSpawned, monsterTypecaps))
+                    .min(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat)); // pick weakest
+
+                if (next.isEmpty()) break; // nothing fits -> stop
+
+                var picked = next.get();
+
+                doCharacterRegistration(
+                    gameController, 
+                    picked, 
+                    noOfGhostsSpawned, 
+                    noOfZombiesSpawned);
+
+                // If you actually spawn here, also bump the counters here.
+                sum += picked.getEffectiveThreat();
+            }
+            threatSum = sum;
+            opponentModel.setGameSetCurrentThreatLevel(threatSum);
             validateOrFail(opponentModel);
         } catch (Exception loadException) {
-            LOGGER.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
+            _logger.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
              Dialogs.showError(
                 "Failed to load opponents",
                 "The opponent configuration could not be loaded.",
@@ -230,6 +212,91 @@ public final class OpponentRuntimeFactory {
             );
             throw loadException;
         }
+    }
+
+    private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
+            AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned) {
+                
+            final double spawnX = ThreadLocalRandom.current()
+                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
+            final double spawnY = ThreadLocalRandom.current()
+                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
+            
+            if (characterType instanceof Zombie z) {
+                noOfZombiesSpawned.incrementAndGet();        
+                registerZombieCharacter(gameController, spawnX, spawnY, z);
+            } else if (characterType instanceof Ghost g) {                            
+                noOfGhostsSpawned.incrementAndGet();                    
+                registerGhostCharacter(gameController, spawnX, spawnY, g);
+            } else {
+                _logger.log(Level.FINER, "Skipping unsupported character type: {0}", characterType.getClass().getName());
+            }
+    }
+
+    private static void registerGhostCharacter(GameController gameController, double spawnX, double spawnY, Ghost g) {
+        Platform.runLater(() -> {
+            try {
+                Node graphicsNode = createCharacterGraphics(g, StageConstants.GhostCharacterXYSize);
+                graphicsNode.setLayoutX(spawnX);
+                graphicsNode.setLayoutY(spawnY);
+                var character = new GhostCharacter(graphicsNode, spawnX, spawnY, g);
+                gameController.registerComputerCharacter(character, graphicsNode);
+            } catch (Exception fxException) {
+                _logger.log(Level.SEVERE, "Failed to create or register a GhostCharacter.", fxException);
+            }
+        });
+    }
+
+    private static void registerZombieCharacter(GameController gameController, double spawnX,
+            double spawnY, Zombie z) {                
+        Platform.runLater(() -> {
+            try {
+                Node graphicsNode = createCharacterGraphics(z, StageConstants.ZombieCharacterXYSize);
+                graphicsNode.setLayoutX(spawnX);
+                graphicsNode.setLayoutY(spawnY);
+                ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, z);
+                gameController.registerComputerCharacter(zombieCharacter, graphicsNode);
+            } catch (Exception fxException) {
+                _logger.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
+            }
+        });
+    }
+
+    private static void setCharacterAttributesByDifficulty(CharacterType characterType,
+            double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
+
+        characterType.setSpeed(characterType.getSpeed() * speedMultiplierByDifficulty);
+
+        if (characterType instanceof Zombie z) {
+          if (instantDeath) {
+                z.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
+        } else if (characterType instanceof Ghost g) {
+            if (instantDeath) {
+                g.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
+        }
+        
+    }
+
+    private static boolean characterNrCapsIsExceeded(
+        CharacterType characterType, 
+        AtomicInteger noOfGhosts, AtomicInteger noOfZombies, Map<EnemyTypes, Integer> monsterTypecaps) {
+        EnemyTypes et;
+        if (characterType instanceof Ghost)  et = EnemyTypes.GHOST;
+        else if (characterType instanceof Zombie) et = EnemyTypes.ZOMBIE;
+        else return true;
+
+        int cap = monsterTypecaps.getOrDefault(et, Integer.MAX_VALUE);
+
+        if (et == EnemyTypes.GHOST && noOfGhosts.get() >= cap)  return true;
+        if (et == EnemyTypes.ZOMBIE && noOfZombies.get() >= cap) return true;
+                    
+        return false;
     }
 
     private static synchronized void ensureXmiFactoryRegistered() {

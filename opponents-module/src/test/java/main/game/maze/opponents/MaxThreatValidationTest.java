@@ -16,11 +16,11 @@ class MaxThreatValidationTest {
   void sumEffectiveThreat_mustNotExceed_maxThreat() {
     // Build a small fixture from your generated EMF API
     OpponentModel model = OpponentsFactory.eINSTANCE.createOpponentModel();
-    var normalDifficulty = DifficultiesFactory.eINSTANCE.createNormalDifficulty();
-    normalDifficulty.setMaxThreat(10);
-    model.setSelectedDifficulty(normalDifficulty);
+    var easyDifficulty = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
+    easyDifficulty.setMaxThreat(10);
+    model.setSelectedDifficulty(easyDifficulty);
      
-    System.out.println("Using maxThreat on difficulty: " + normalDifficulty.getMaxThreat());
+    System.out.println("Using maxThreat on difficulty: " + easyDifficulty.getMaxThreat());
     System.out.println("Using maxThreat on OpponentModel: " + model.getMaxThreat());
 
     Zombie ct1 = OpponentsFactory.eINSTANCE.createZombie();
@@ -28,8 +28,11 @@ class MaxThreatValidationTest {
     CharacterType ct2 = OpponentsFactory.eINSTANCE.createZombie();
     ct2.setThreatLevel(4);
 
+    System.out.println("Adding " + ct1.getThreatLevel() + " threat from ct1");
     model.getCharacterTypes().add(ct1);
+    System.out.println("Adding " + ct2.getThreatLevel() + " threat from ct2");
     model.getCharacterTypes().add(ct2);
+    double currentThreatLevel = ct1.getThreatLevel() + ct2.getThreatLevel();
 
     Diagnostic okDiag = Diagnostician.INSTANCE.validate(model);
     assertEquals(Diagnostic.OK, okDiag.getSeverity(), () -> "Expected OK but got: " + okDiag);
@@ -37,7 +40,9 @@ class MaxThreatValidationTest {
     // Now exceed the limit
     CharacterType ct3 = OpponentsFactory.eINSTANCE.createZombie();
     ct3.setThreatLevel(7);
+    System.out.println("Adding " + ct3.getThreatLevel() + " threat from ct3");
     model.getCharacterTypes().add(ct3);
+    model.setGameSetCurrentThreatLevel(currentThreatLevel + ct3.getThreatLevel());
 
     Diagnostic badDiag = Diagnostician.INSTANCE.validate(model);
     assertTrue(badDiag.getSeverity() >= Diagnostic.ERROR,

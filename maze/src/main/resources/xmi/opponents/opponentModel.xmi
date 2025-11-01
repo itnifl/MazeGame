@@ -9,8 +9,8 @@
     <name>Testing Game</name>
   
   <selectedDifficulty
-      xsi:type="diff:NormalDifficulty"
-      href="../difficulties/difficulties.xmi#normal"/>
+      xsi:type="diff:EasyDifficulty"
+      href="../difficulties/difficulties.xmi#easy"/>
     <characterTypes xsi:type="opponents:Ghost">
       <id>ghost_weak_1</id>
       <displayName>Ghost Zombie</displayName>
@@ -21,10 +21,10 @@
       <attackDamage>1</attackDamage>
       <behavior>WANDER</behavior>
       <ImageBase>/main/game/maze/ghost1.png</ImageBase>
-      <ImageTurnLeft>/main/game/maze/ghost1.png</ImageTurnLeft>
+      <ImageTurnLeft>/main/game/maze/ghost1-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/ghost1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost1.png</ImageTurnUp>
-      <ImageTurnDown>/main/game/maze/ghost1-right.png</ImageTurnDown>
+      <ImageTurnDown>/main/game/maze/ghost1.png</ImageTurnDown>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">

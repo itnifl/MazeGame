@@ -22,6 +22,8 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="selectedDifficulty" eType="ecore:EClass ../../../../difficulty-module/src/main/resources/difficulty-module.ecore#//Difficulty"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="GameSetCurrentThreatLevel"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CharacterType" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

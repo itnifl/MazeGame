@@ -53,5 +53,5 @@
     </enemyMaxCount>
   </difficulties>
 
-  <currentDifficulty href="#normal"/>
+  <currentDifficulty href="#easy"/>
 </diff:DifficultyGameData>

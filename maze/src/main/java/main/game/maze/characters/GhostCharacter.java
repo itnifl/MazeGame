@@ -74,7 +74,7 @@ public class GhostCharacter extends ComputerCharacter
 
         @Override
     public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
-        touchTargets.add(touchEntity);
+        touchTargets.remove(touchEntity);
     }
 
     @Override
