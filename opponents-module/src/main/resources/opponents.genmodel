@@ -19,6 +19,11 @@
       <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/TRAP"/>
       <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/WEAPON"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//ProjectileType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/STRAIGHT"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/LOB"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/BEAM"/>
+    </genEnums>
     <genClasses ecoreClass="opponents.ecore#//OpponentModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
@@ -64,5 +69,19 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/visibilityLevel"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/nonTangibilityEnergy"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="opponents.ecore#//RangedEnemy">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackRange"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackCooldownMs"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileSpeed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/splashRadius"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/arcHeight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileImage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/explosionImage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/explosionSound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/throwSound"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//PumpkinBomber"/>
   </genPackages>
 </genmodel:GenModel>

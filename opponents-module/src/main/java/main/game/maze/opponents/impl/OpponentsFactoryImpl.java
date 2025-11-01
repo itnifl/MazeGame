@@ -62,6 +62,7 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 			case OpponentsPackage.LOOT_TABLE: return createLootTable();
 			case OpponentsPackage.LOOT_ITEM: return createLootItem();
 			case OpponentsPackage.GHOST: return createGhost();
+			case OpponentsPackage.PUMPKIN_BOMBER: return createPumpkinBomber();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -79,6 +80,8 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 				return createBehaviorTypeFromString(eDataType, initialValue);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return createLootItemTypeFromString(eDataType, initialValue);
+			case OpponentsPackage.PROJECTILE_TYPE:
+				return createProjectileTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -96,6 +99,8 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 				return convertBehaviorTypeToString(eDataType, instanceValue);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return convertLootItemTypeToString(eDataType, instanceValue);
+			case OpponentsPackage.PROJECTILE_TYPE:
+				return convertProjectileTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -161,6 +166,17 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public PumpkinBomber createPumpkinBomber() {
+		PumpkinBomberImpl pumpkinBomber = new PumpkinBomberImpl();
+		return pumpkinBomber;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public BehaviorType createBehaviorTypeFromString(EDataType eDataType, String initialValue) {
 		BehaviorType result = BehaviorType.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -193,6 +209,26 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	 * @generated
 	 */
 	public String convertLootItemTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ProjectileType createProjectileTypeFromString(EDataType eDataType, String initialValue) {
+		ProjectileType result = ProjectileType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertProjectileTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

@@ -1,6 +1,6 @@
 /**
  */
-package main.game.maze.difficulties;
+package main.game.maze.opponents;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,107 +10,109 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Enemy Types</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Projectile Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see main.game.maze.difficulties.DifficultiesPackage#getEnemyTypes()
+ * @see main.game.maze.opponents.OpponentsPackage#getProjectileType()
  * @model
  * @generated
  */
-public enum EnemyTypes implements Enumerator {
+public enum ProjectileType implements Enumerator {
 	/**
-	 * The '<em><b>ZOMBIE</b></em>' literal object.
+	 * The '<em><b>STRAIGHT</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #ZOMBIE_VALUE
+	 * @see #STRAIGHT_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	ZOMBIE(0, "ZOMBIE", "ZOMBIE"),
+	STRAIGHT(0, "STRAIGHT", "STRAIGHT"),
 
 	/**
-	 * The '<em><b>GHOST</b></em>' literal object.
+	 * The '<em><b>LOB</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #GHOST_VALUE
+	 * @see #LOB_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	GHOST(1, "GHOST", "GHOST"), /**
-	 * The '<em><b>PUMPKINBOMBER</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #PUMPKINBOMBER_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	PUMPKINBOMBER(2, "PUMPKINBOMBER", "PUMPKINBOMBER");
+	LOB(1, "LOB", "LOB"),
 
 	/**
-	 * The '<em><b>ZOMBIE</b></em>' literal value.
+	 * The '<em><b>BEAM</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #ZOMBIE
+	 * @see #BEAM_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	BEAM(2, "BEAM", "BEAM");
+
+	/**
+	 * The '<em><b>STRAIGHT</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #STRAIGHT
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ZOMBIE_VALUE = 0;
+	public static final int STRAIGHT_VALUE = 0;
 
 	/**
-	 * The '<em><b>GHOST</b></em>' literal value.
+	 * The '<em><b>LOB</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #GHOST
+	 * @see #LOB
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int GHOST_VALUE = 1;
+	public static final int LOB_VALUE = 1;
 
 	/**
-	 * The '<em><b>PUMPKINBOMBER</b></em>' literal value.
+	 * The '<em><b>BEAM</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #PUMPKINBOMBER
+	 * @see #BEAM
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PUMPKINBOMBER_VALUE = 2;
+	public static final int BEAM_VALUE = 2;
 
 	/**
-	 * An array of all the '<em><b>Enemy Types</b></em>' enumerators.
+	 * An array of all the '<em><b>Projectile Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final EnemyTypes[] VALUES_ARRAY =
-		new EnemyTypes[] {
-			ZOMBIE,
-			GHOST,
-			PUMPKINBOMBER,
+	private static final ProjectileType[] VALUES_ARRAY =
+		new ProjectileType[] {
+			STRAIGHT,
+			LOB,
+			BEAM,
 		};
 
 	/**
-	 * A public read-only list of all the '<em><b>Enemy Types</b></em>' enumerators.
+	 * A public read-only list of all the '<em><b>Projectile Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<EnemyTypes> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<ProjectileType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
-	 * Returns the '<em><b>Enemy Types</b></em>' literal with the specified literal value.
+	 * Returns the '<em><b>Projectile Type</b></em>' literal with the specified literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param literal the literal.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static EnemyTypes get(String literal) {
+	public static ProjectileType get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			EnemyTypes result = VALUES_ARRAY[i];
+			ProjectileType result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -119,16 +121,16 @@ public enum EnemyTypes implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Enemy Types</b></em>' literal with the specified name.
+	 * Returns the '<em><b>Projectile Type</b></em>' literal with the specified name.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param name the name.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static EnemyTypes getByName(String name) {
+	public static ProjectileType getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			EnemyTypes result = VALUES_ARRAY[i];
+			ProjectileType result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -137,18 +139,18 @@ public enum EnemyTypes implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Enemy Types</b></em>' literal with the specified integer value.
+	 * Returns the '<em><b>Projectile Type</b></em>' literal with the specified integer value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the integer value.
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static EnemyTypes get(int value) {
+	public static ProjectileType get(int value) {
 		switch (value) {
-			case ZOMBIE_VALUE: return ZOMBIE;
-			case GHOST_VALUE: return GHOST;
-			case PUMPKINBOMBER_VALUE: return PUMPKINBOMBER;
+			case STRAIGHT_VALUE: return STRAIGHT;
+			case LOB_VALUE: return LOB;
+			case BEAM_VALUE: return BEAM;
 		}
 		return null;
 	}
@@ -180,7 +182,7 @@ public enum EnemyTypes implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EnemyTypes(int value, String name, String literal) {
+	private ProjectileType(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;
@@ -227,4 +229,4 @@ public enum EnemyTypes implements Enumerator {
 		return literal;
 	}
 	
-} //EnemyTypes
+} //ProjectileType

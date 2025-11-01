@@ -12,6 +12,9 @@ import main.game.maze.opponents.LootTable;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.OpponentsPackage;
+import main.game.maze.opponents.ProjectileType;
+import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.RangedEnemy;
 import main.game.maze.opponents.Zombie;
 
 import main.game.maze.opponents.util.OpponentsValidator;
@@ -79,6 +82,20 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass rangedEnemyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass pumpkinBomberEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum behaviorTypeEEnum = null;
 
 	/**
@@ -87,6 +104,13 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	private EEnum lootItemTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum projectileTypeEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -557,6 +581,136 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EClass getRangedEnemy() {
+		return rangedEnemyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_AttackRange() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_AttackCooldownMs() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_AttackDamage() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ProjectileSpeed() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ProjectileType() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_SplashRadius() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ArcHeight() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ProjectileImage() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ExplosionImage() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ExplosionSound() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getRangedEnemy_ThrowSound() {
+		return (EAttribute)rangedEnemyEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getPumpkinBomber() {
+		return pumpkinBomberEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getBehaviorType() {
 		return behaviorTypeEEnum;
 	}
@@ -569,6 +723,16 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	@Override
 	public EEnum getLootItemType() {
 		return lootItemTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getProjectileType() {
+		return projectileTypeEEnum;
 	}
 
 	/**
@@ -645,9 +809,25 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(ghostEClass, GHOST__VISIBILITY_LEVEL);
 		createEAttribute(ghostEClass, GHOST__NON_TANGIBILITY_ENERGY);
 
+		rangedEnemyEClass = createEClass(RANGED_ENEMY);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__ATTACK_RANGE);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__ATTACK_COOLDOWN_MS);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__ATTACK_DAMAGE);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__PROJECTILE_SPEED);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__PROJECTILE_TYPE);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__SPLASH_RADIUS);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__ARC_HEIGHT);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__PROJECTILE_IMAGE);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__EXPLOSION_IMAGE);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__EXPLOSION_SOUND);
+		createEAttribute(rangedEnemyEClass, RANGED_ENEMY__THROW_SOUND);
+
+		pumpkinBomberEClass = createEClass(PUMPKIN_BOMBER);
+
 		// Create enums
 		behaviorTypeEEnum = createEEnum(BEHAVIOR_TYPE);
 		lootItemTypeEEnum = createEEnum(LOOT_ITEM_TYPE);
+		projectileTypeEEnum = createEEnum(PROJECTILE_TYPE);
 	}
 
 	/**
@@ -683,6 +863,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		// Add supertypes to classes
 		zombieEClass.getESuperTypes().add(this.getCharacterType());
 		ghostEClass.getESuperTypes().add(this.getCharacterType());
+		rangedEnemyEClass.getESuperTypes().add(this.getCharacterType());
+		pumpkinBomberEClass.getESuperTypes().add(this.getRangedEnemy());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -730,6 +912,21 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEDouble(), "nonTangibilityEnergy", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(rangedEnemyEClass, RangedEnemy.class, "RangedEnemy", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getRangedEnemy_AttackRange(), ecorePackage.getEDouble(), "attackRange", "50", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_AttackCooldownMs(), ecorePackage.getEInt(), "attackCooldownMs", "10000", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ProjectileSpeed(), ecorePackage.getEDouble(), "projectileSpeed", "0", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ProjectileType(), this.getProjectileType(), "projectileType", null, 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_SplashRadius(), ecorePackage.getEDouble(), "splashRadius", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ArcHeight(), ecorePackage.getEDouble(), "arcHeight", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ProjectileImage(), ecorePackage.getEString(), "projectileImage", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ExplosionImage(), ecorePackage.getEString(), "explosionImage", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ExplosionSound(), ecorePackage.getEString(), "explosionSound", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ThrowSound(), ecorePackage.getEString(), "throwSound", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(pumpkinBomberEClass, PumpkinBomber.class, "PumpkinBomber", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
 		// Initialize enums and add enum literals
 		initEEnum(behaviorTypeEEnum, BehaviorType.class, "BehaviorType");
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.PASSIVE);
@@ -741,6 +938,11 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.BOMB);
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.TRAP);
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.WEAPON);
+
+		initEEnum(projectileTypeEEnum, ProjectileType.class, "ProjectileType");
+		addEEnumLiteral(projectileTypeEEnum, ProjectileType.STRAIGHT);
+		addEEnumLiteral(projectileTypeEEnum, ProjectileType.LOB);
+		addEEnumLiteral(projectileTypeEEnum, ProjectileType.BEAM);
 
 		// Create resource
 		createResource(eNS_URI);

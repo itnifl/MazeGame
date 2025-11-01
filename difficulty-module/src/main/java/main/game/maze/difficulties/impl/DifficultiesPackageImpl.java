@@ -408,6 +408,7 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		initEEnum(enemyTypesEEnum, EnemyTypes.class, "EnemyTypes");
 		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.ZOMBIE);
 		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.GHOST);
+		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.PUMPKINBOMBER);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -99,10 +99,16 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateLootItem((LootItem)value, diagnostics, context);
 			case OpponentsPackage.GHOST:
 				return validateGhost((Ghost)value, diagnostics, context);
+			case OpponentsPackage.RANGED_ENEMY:
+				return validateRangedEnemy((RangedEnemy)value, diagnostics, context);
+			case OpponentsPackage.PUMPKIN_BOMBER:
+				return validatePumpkinBomber((PumpkinBomber)value, diagnostics, context);
 			case OpponentsPackage.BEHAVIOR_TYPE:
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return validateLootItemType((LootItemType)value, diagnostics, context);
+			case OpponentsPackage.PROJECTILE_TYPE:
+				return validateProjectileType((ProjectileType)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -229,6 +235,24 @@ public class OpponentsValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateRangedEnemy(RangedEnemy rangedEnemy, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(rangedEnemy, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validatePumpkinBomber(PumpkinBomber pumpkinBomber, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(pumpkinBomber, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateBehaviorType(BehaviorType behaviorType, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
@@ -239,6 +263,15 @@ public class OpponentsValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateLootItemType(LootItemType lootItemType, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateProjectileType(ProjectileType projectileType, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

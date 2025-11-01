@@ -107,4 +107,31 @@
       <ImageTurnDown>/main/game/maze/zombie3-down.png</ImageTurnDown>
     </characterTypes>
 
+  <characterTypes xsi:type="opponents:PumpkinBomber">
+    <id>pb_small</id>
+    <displayName>Pumpkin Bomber Example</displayName>
+    <enabled>false</enabled>
+    <health>100</health>
+    <speed>0</speed>
+    <threatLevel>5.0</threatLevel>
+
+    <attackDamage>10</attackDamage>
+    <attackRange>100</attackRange>
+    <attackCooldownMs>6000</attackCooldownMs>
+    <projectileSpeed>260.0</projectileSpeed>
+    <projectileType>LOB</projectileType>
+    <splashRadius>48</splashRadius>
+    <arcHeight>10.0</arcHeight>
+    
+    <projectileImage>/main/game/maze/pumpkin.png</projectileImage>
+    <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
+    <explosionSound>/main/game/maze/pumpkin-pop.mp3</explosionSound>
+
+    <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
+    <ImageTurnLeft>/main/game/maze/pb-left.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pb-right.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pb-up.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pb-down.png</ImageTurnDown>
+  </characterTypes>
+
 </opponents:OpponentModel>

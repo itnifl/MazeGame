@@ -20,17 +20,18 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
+import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.util.Dialogs;
 import main.game.maze.characters.GhostCharacter;
+import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
 import main.game.maze.difficulties.DifficultiesPackage;
@@ -146,13 +147,14 @@ public final class OpponentRuntimeFactory {
             
             AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
             AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
+            AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
             double threatSum = 0.0;
             
             var characterList = opponentModel.getCharacterTypes();
             for (var characterType : characterList) {
                 if (!characterType.isEnabled()) continue;
-                
-                if(characterNrCapsIsExceeded(characterType, noOfGhostsSpawned, noOfZombiesSpawned, monsterTypecaps)) {
+
+                if(characterNrCapsIsExceeded(characterType, noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned, monsterTypecaps)) {
                     continue;
                 }
 
@@ -170,7 +172,8 @@ public final class OpponentRuntimeFactory {
                     gameController, 
                     characterType, 
                     noOfGhostsSpawned, 
-                    noOfZombiesSpawned);
+                    noOfZombiesSpawned,
+                    noOfPumpkinBombersSpawned);
 
             }
             double sum = threatSum;  // working copy
@@ -187,7 +190,11 @@ public final class OpponentRuntimeFactory {
                 var next = byThreatDesc.stream()
                     .filter(ct -> ct.getEffectiveThreat() > 0)
                     .filter(ct -> ct.getEffectiveThreat() <= remaining)
-                    .filter(ct -> !characterNrCapsIsExceeded(ct, noOfGhostsSpawned, noOfZombiesSpawned, monsterTypecaps))
+                    .filter(ct -> !characterNrCapsIsExceeded(ct, 
+                        noOfGhostsSpawned, 
+                        noOfZombiesSpawned, 
+                        noOfPumpkinBombersSpawned, 
+                        monsterTypecaps))
                     .findFirst(); // highest that fits
 
                 if (next.isEmpty()) break;
@@ -198,10 +205,12 @@ public final class OpponentRuntimeFactory {
                     speedMultiplierByDifficulty, 
                     dmgMultiplierByDifficulty, 
                     instantDeath);
+                    
                 doCharacterRegistration(gameController, 
                     picked, 
                     noOfGhostsSpawned, 
-                    noOfZombiesSpawned);
+                    noOfZombiesSpawned, 
+                    noOfPumpkinBombersSpawned);
 
                 sum += picked.getEffectiveThreat();
             }
@@ -222,7 +231,7 @@ public final class OpponentRuntimeFactory {
     }
 
     private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
-            AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned) {
+            AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned, AtomicInteger noOfPumpkinBombersSpawned) {
                 
             final double spawnX = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
@@ -235,9 +244,27 @@ public final class OpponentRuntimeFactory {
             } else if (characterType instanceof Ghost g) {                            
                 noOfGhostsSpawned.incrementAndGet();                    
                 registerGhostCharacter(gameController, spawnX, spawnY, g);
+            }  else if (characterType instanceof PumpkinBomber b) {
+                noOfPumpkinBombersSpawned.incrementAndGet();
+                registerPumpkinBomberCharacter(gameController, spawnX, spawnY, b);
             } else {
                 _logger.log(Level.FINER, "Skipping unsupported character type: {0}", characterType.getClass().getName());
             }
+    }
+
+    private static void registerPumpkinBomberCharacter(GameController gameController, double spawnX, double spawnY,
+            PumpkinBomber b) {
+        Platform.runLater(() -> {
+            try {
+                Node graphicsNode = createCharacterGraphics(b, StageConstants.PumpkinBomberCharacterXYSize);
+                graphicsNode.setLayoutX(spawnX);
+                graphicsNode.setLayoutY(spawnY);
+                var character = new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
+                //gameController.registerComputerCharacter(character, graphicsNode); //Need new method to register pumpkin bomber
+            } catch (Exception fxException) {
+                _logger.log(Level.SEVERE, "Failed to create or register a PumpkinBomberCharacter.", fxException);
+            }
+        });
     }
 
     private static void registerGhostCharacter(GameController gameController, double spawnX, double spawnY, Ghost g) {
@@ -286,23 +313,34 @@ public final class OpponentRuntimeFactory {
             } else {
                 g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
             }
+        } else if (characterType instanceof PumpkinBomber b) {
+            if (instantDeath) {
+                b.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                b.setAttackDamage(Math.max(1, (int)Math.round(b.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
         }
         
     }
 
     private static boolean characterNrCapsIsExceeded(
         CharacterType characterType, 
-        AtomicInteger noOfGhosts, AtomicInteger noOfZombies, Map<EnemyTypes, Integer> monsterTypecaps) {
+        AtomicInteger noOfGhosts, 
+        AtomicInteger noOfZombies, 
+        AtomicInteger noOfPumpkinBombers,
+        Map<EnemyTypes, Integer> monsterTypecaps) {
         EnemyTypes et;
         if (characterType instanceof Ghost)  et = EnemyTypes.GHOST;
         else if (characterType instanceof Zombie) et = EnemyTypes.ZOMBIE;
+        else if (characterType instanceof PumpkinBomber) et = EnemyTypes.PUMPKINBOMBER;
         else return true;
 
         int cap = monsterTypecaps.getOrDefault(et, Integer.MAX_VALUE);
 
         if (et == EnemyTypes.GHOST && noOfGhosts.get() >= cap)  return true;
         if (et == EnemyTypes.ZOMBIE && noOfZombies.get() >= cap) return true;
-                    
+        if (et == EnemyTypes.PUMPKINBOMBER && noOfPumpkinBombers.get() >= cap) return true;
+
         return false;
     }
 

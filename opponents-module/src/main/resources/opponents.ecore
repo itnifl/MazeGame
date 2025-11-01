@@ -98,4 +98,28 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nonTangibilityEnergy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         defaultValueLiteral="100"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RangedEnemy" abstract="true" eSuperTypes="#//CharacterType">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackRange" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="50"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackCooldownMs" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="10000"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackDamage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectileSpeed" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectileType" lowerBound="1"
+        eType="#//ProjectileType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="splashRadius" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="arcHeight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectileImage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="explosionImage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="explosionSound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="throwSound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ProjectileType">
+    <eLiterals name="STRAIGHT"/>
+    <eLiterals name="LOB" value="1"/>
+    <eLiterals name="BEAM" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PumpkinBomber" eSuperTypes="#//RangedEnemy"/>
 </ecore:EPackage>

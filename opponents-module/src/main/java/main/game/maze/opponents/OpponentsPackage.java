@@ -757,6 +757,494 @@ public interface OpponentsPackage extends EPackage {
 	int GHOST_OPERATION_COUNT = CHARACTER_TYPE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.impl.RangedEnemyImpl <em>Ranged Enemy</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.impl.RangedEnemyImpl
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getRangedEnemy()
+	 * @generated
+	 */
+	int RANGED_ENEMY = 6;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ID = CHARACTER_TYPE__ID;
+
+	/**
+	 * The feature id for the '<em><b>Display Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__DISPLAY_NAME = CHARACTER_TYPE__DISPLAY_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ENABLED = CHARACTER_TYPE__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Health</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__HEALTH = CHARACTER_TYPE__HEALTH;
+
+	/**
+	 * The feature id for the '<em><b>Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__SPEED = CHARACTER_TYPE__SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__THREAT_LEVEL = CHARACTER_TYPE__THREAT_LEVEL;
+
+	/**
+	 * The feature id for the '<em><b>Effective Threat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__EFFECTIVE_THREAT = CHARACTER_TYPE__EFFECTIVE_THREAT;
+
+	/**
+	 * The feature id for the '<em><b>Image Base</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__IMAGE_BASE = CHARACTER_TYPE__IMAGE_BASE;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Left</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__IMAGE_TURN_LEFT = CHARACTER_TYPE__IMAGE_TURN_LEFT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Right</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__IMAGE_TURN_RIGHT = CHARACTER_TYPE__IMAGE_TURN_RIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Up</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__IMAGE_TURN_UP = CHARACTER_TYPE__IMAGE_TURN_UP;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Down</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__IMAGE_TURN_DOWN = CHARACTER_TYPE__IMAGE_TURN_DOWN;
+
+	/**
+	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
+
+	/**
+	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ATTACK_RANGE = CHARACTER_TYPE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Attack Cooldown Ms</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ATTACK_COOLDOWN_MS = CHARACTER_TYPE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ATTACK_DAMAGE = CHARACTER_TYPE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__PROJECTILE_SPEED = CHARACTER_TYPE_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__PROJECTILE_TYPE = CHARACTER_TYPE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Splash Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__SPLASH_RADIUS = CHARACTER_TYPE_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Arc Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ARC_HEIGHT = CHARACTER_TYPE_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__PROJECTILE_IMAGE = CHARACTER_TYPE_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Explosion Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__EXPLOSION_IMAGE = CHARACTER_TYPE_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Explosion Sound</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__EXPLOSION_SOUND = CHARACTER_TYPE_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Throw Sound</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__THROW_SOUND = CHARACTER_TYPE_FEATURE_COUNT + 10;
+
+	/**
+	 * The number of structural features of the '<em>Ranged Enemy</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY_FEATURE_COUNT = CHARACTER_TYPE_FEATURE_COUNT + 11;
+
+	/**
+	 * The number of operations of the '<em>Ranged Enemy</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY_OPERATION_COUNT = CHARACTER_TYPE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.impl.PumpkinBomberImpl <em>Pumpkin Bomber</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.impl.PumpkinBomberImpl
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getPumpkinBomber()
+	 * @generated
+	 */
+	int PUMPKIN_BOMBER = 7;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ID = RANGED_ENEMY__ID;
+
+	/**
+	 * The feature id for the '<em><b>Display Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__DISPLAY_NAME = RANGED_ENEMY__DISPLAY_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ENABLED = RANGED_ENEMY__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Health</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__HEALTH = RANGED_ENEMY__HEALTH;
+
+	/**
+	 * The feature id for the '<em><b>Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__SPEED = RANGED_ENEMY__SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Threat Level</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__THREAT_LEVEL = RANGED_ENEMY__THREAT_LEVEL;
+
+	/**
+	 * The feature id for the '<em><b>Effective Threat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__EFFECTIVE_THREAT = RANGED_ENEMY__EFFECTIVE_THREAT;
+
+	/**
+	 * The feature id for the '<em><b>Image Base</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__IMAGE_BASE = RANGED_ENEMY__IMAGE_BASE;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Left</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__IMAGE_TURN_LEFT = RANGED_ENEMY__IMAGE_TURN_LEFT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Right</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__IMAGE_TURN_RIGHT = RANGED_ENEMY__IMAGE_TURN_RIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Up</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__IMAGE_TURN_UP = RANGED_ENEMY__IMAGE_TURN_UP;
+
+	/**
+	 * The feature id for the '<em><b>Image Turn Down</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__IMAGE_TURN_DOWN = RANGED_ENEMY__IMAGE_TURN_DOWN;
+
+	/**
+	 * The feature id for the '<em><b>Behavior</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__BEHAVIOR = RANGED_ENEMY__BEHAVIOR;
+
+	/**
+	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ATTACK_RANGE = RANGED_ENEMY__ATTACK_RANGE;
+
+	/**
+	 * The feature id for the '<em><b>Attack Cooldown Ms</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ATTACK_COOLDOWN_MS = RANGED_ENEMY__ATTACK_COOLDOWN_MS;
+
+	/**
+	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ATTACK_DAMAGE = RANGED_ENEMY__ATTACK_DAMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__PROJECTILE_SPEED = RANGED_ENEMY__PROJECTILE_SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__PROJECTILE_TYPE = RANGED_ENEMY__PROJECTILE_TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Splash Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__SPLASH_RADIUS = RANGED_ENEMY__SPLASH_RADIUS;
+
+	/**
+	 * The feature id for the '<em><b>Arc Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ARC_HEIGHT = RANGED_ENEMY__ARC_HEIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Projectile Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__PROJECTILE_IMAGE = RANGED_ENEMY__PROJECTILE_IMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Explosion Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__EXPLOSION_IMAGE = RANGED_ENEMY__EXPLOSION_IMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Explosion Sound</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__EXPLOSION_SOUND = RANGED_ENEMY__EXPLOSION_SOUND;
+
+	/**
+	 * The feature id for the '<em><b>Throw Sound</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__THROW_SOUND = RANGED_ENEMY__THROW_SOUND;
+
+	/**
+	 * The number of structural features of the '<em>Pumpkin Bomber</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER_FEATURE_COUNT = RANGED_ENEMY_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Pumpkin Bomber</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER_OPERATION_COUNT = RANGED_ENEMY_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -764,7 +1252,7 @@ public interface OpponentsPackage extends EPackage {
 	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getBehaviorType()
 	 * @generated
 	 */
-	int BEHAVIOR_TYPE = 6;
+	int BEHAVIOR_TYPE = 8;
 
 	/**
 	 * The meta object id for the '{@link main.game.maze.opponents.LootItemType <em>Loot Item Type</em>}' enum.
@@ -774,7 +1262,18 @@ public interface OpponentsPackage extends EPackage {
 	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getLootItemType()
 	 * @generated
 	 */
-	int LOOT_ITEM_TYPE = 7;
+	int LOOT_ITEM_TYPE = 9;
+
+
+	/**
+	 * The meta object id for the '{@link main.game.maze.opponents.ProjectileType <em>Projectile Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see main.game.maze.opponents.ProjectileType
+	 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getProjectileType()
+	 * @generated
+	 */
+	int PROJECTILE_TYPE = 10;
 
 
 	/**
@@ -1201,6 +1700,147 @@ public interface OpponentsPackage extends EPackage {
 	EAttribute getGhost_NonTangibilityEnergy();
 
 	/**
+	 * Returns the meta object for class '{@link main.game.maze.opponents.RangedEnemy <em>Ranged Enemy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Ranged Enemy</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy
+	 * @generated
+	 */
+	EClass getRangedEnemy();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getAttackRange <em>Attack Range</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Attack Range</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getAttackRange()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_AttackRange();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getAttackCooldownMs <em>Attack Cooldown Ms</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Attack Cooldown Ms</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getAttackCooldownMs()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_AttackCooldownMs();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getAttackDamage <em>Attack Damage</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Attack Damage</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getAttackDamage()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_AttackDamage();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getProjectileSpeed <em>Projectile Speed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Projectile Speed</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getProjectileSpeed()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ProjectileSpeed();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getProjectileType <em>Projectile Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Projectile Type</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getProjectileType()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ProjectileType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getSplashRadius <em>Splash Radius</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Splash Radius</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getSplashRadius()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_SplashRadius();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getArcHeight <em>Arc Height</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Arc Height</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getArcHeight()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ArcHeight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getProjectileImage <em>Projectile Image</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Projectile Image</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getProjectileImage()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ProjectileImage();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getExplosionImage <em>Explosion Image</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Explosion Image</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getExplosionImage()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ExplosionImage();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getExplosionSound <em>Explosion Sound</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Explosion Sound</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getExplosionSound()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ExplosionSound();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.RangedEnemy#getThrowSound <em>Throw Sound</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Throw Sound</em>'.
+	 * @see main.game.maze.opponents.RangedEnemy#getThrowSound()
+	 * @see #getRangedEnemy()
+	 * @generated
+	 */
+	EAttribute getRangedEnemy_ThrowSound();
+
+	/**
+	 * Returns the meta object for class '{@link main.game.maze.opponents.PumpkinBomber <em>Pumpkin Bomber</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Pumpkin Bomber</em>'.
+	 * @see main.game.maze.opponents.PumpkinBomber
+	 * @generated
+	 */
+	EClass getPumpkinBomber();
+
+	/**
 	 * Returns the meta object for enum '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1219,6 +1859,16 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getLootItemType();
+
+	/**
+	 * Returns the meta object for enum '{@link main.game.maze.opponents.ProjectileType <em>Projectile Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Projectile Type</em>'.
+	 * @see main.game.maze.opponents.ProjectileType
+	 * @generated
+	 */
+	EEnum getProjectileType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1568,6 +2218,114 @@ public interface OpponentsPackage extends EPackage {
 		EAttribute GHOST__NON_TANGIBILITY_ENERGY = eINSTANCE.getGhost_NonTangibilityEnergy();
 
 		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.impl.RangedEnemyImpl <em>Ranged Enemy</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.impl.RangedEnemyImpl
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getRangedEnemy()
+		 * @generated
+		 */
+		EClass RANGED_ENEMY = eINSTANCE.getRangedEnemy();
+
+		/**
+		 * The meta object literal for the '<em><b>Attack Range</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__ATTACK_RANGE = eINSTANCE.getRangedEnemy_AttackRange();
+
+		/**
+		 * The meta object literal for the '<em><b>Attack Cooldown Ms</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__ATTACK_COOLDOWN_MS = eINSTANCE.getRangedEnemy_AttackCooldownMs();
+
+		/**
+		 * The meta object literal for the '<em><b>Attack Damage</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__ATTACK_DAMAGE = eINSTANCE.getRangedEnemy_AttackDamage();
+
+		/**
+		 * The meta object literal for the '<em><b>Projectile Speed</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__PROJECTILE_SPEED = eINSTANCE.getRangedEnemy_ProjectileSpeed();
+
+		/**
+		 * The meta object literal for the '<em><b>Projectile Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__PROJECTILE_TYPE = eINSTANCE.getRangedEnemy_ProjectileType();
+
+		/**
+		 * The meta object literal for the '<em><b>Splash Radius</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__SPLASH_RADIUS = eINSTANCE.getRangedEnemy_SplashRadius();
+
+		/**
+		 * The meta object literal for the '<em><b>Arc Height</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__ARC_HEIGHT = eINSTANCE.getRangedEnemy_ArcHeight();
+
+		/**
+		 * The meta object literal for the '<em><b>Projectile Image</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__PROJECTILE_IMAGE = eINSTANCE.getRangedEnemy_ProjectileImage();
+
+		/**
+		 * The meta object literal for the '<em><b>Explosion Image</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__EXPLOSION_IMAGE = eINSTANCE.getRangedEnemy_ExplosionImage();
+
+		/**
+		 * The meta object literal for the '<em><b>Explosion Sound</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__EXPLOSION_SOUND = eINSTANCE.getRangedEnemy_ExplosionSound();
+
+		/**
+		 * The meta object literal for the '<em><b>Throw Sound</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RANGED_ENEMY__THROW_SOUND = eINSTANCE.getRangedEnemy_ThrowSound();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.impl.PumpkinBomberImpl <em>Pumpkin Bomber</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.impl.PumpkinBomberImpl
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getPumpkinBomber()
+		 * @generated
+		 */
+		EClass PUMPKIN_BOMBER = eINSTANCE.getPumpkinBomber();
+
+		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.BehaviorType <em>Behavior Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1586,6 +2344,16 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum LOOT_ITEM_TYPE = eINSTANCE.getLootItemType();
+
+		/**
+		 * The meta object literal for the '{@link main.game.maze.opponents.ProjectileType <em>Projectile Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see main.game.maze.opponents.ProjectileType
+		 * @see main.game.maze.opponents.impl.OpponentsPackageImpl#getProjectileType()
+		 * @generated
+		 */
+		EEnum PROJECTILE_TYPE = eINSTANCE.getProjectileType();
 
 	}
 

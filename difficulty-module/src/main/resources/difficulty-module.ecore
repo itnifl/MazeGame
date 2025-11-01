@@ -30,5 +30,6 @@
   <eClassifiers xsi:type="ecore:EEnum" name="EnemyTypes">
     <eLiterals name="ZOMBIE"/>
     <eLiterals name="GHOST" value="1"/>
+    <eLiterals name="PUMPKINBOMBER" value="2"/>
   </eClassifiers>
 </ecore:EPackage>

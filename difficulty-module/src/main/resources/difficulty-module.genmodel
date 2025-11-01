@@ -10,6 +10,7 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="difficulty-module.ecore#//EnemyTypes">
       <genEnumLiterals ecoreEnumLiteral="difficulty-module.ecore#//EnemyTypes/ZOMBIE"/>
       <genEnumLiterals ecoreEnumLiteral="difficulty-module.ecore#//EnemyTypes/GHOST"/>
+      <genEnumLiterals ecoreEnumLiteral="difficulty-module.ecore#//EnemyTypes/PUMPKINBOMBER"/>
     </genEnums>
     <genClasses ecoreClass="difficulty-module.ecore#//DifficultyGameData">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference difficulty-module.ecore#//DifficultyGameData/difficulties"/>
