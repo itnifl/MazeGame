@@ -29,6 +29,8 @@ public class App extends Application {
 
     public static MediaPlayer inGameMediaPlayer;
     public static GameController gameController;
+    public static Difficulty lastChosenDifficulty;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -47,7 +49,22 @@ public class App extends Application {
             primaryStage.show();
 
             // --- MDD difficulty selection (reads difficulties.xmi) ---
-            DifficultyService svc = new DifficultyService();
+            this.setDifficulty(primaryStage);
+            // --------------------------------------------------------
+
+            gameController.setupGame();
+
+            // Start playing the music
+            MediaView view = addMusic();
+            root.getChildren().add(view);
+            inGameMediaPlayer.play();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setDifficulty(Stage primaryStage) {
+        DifficultyService svc = new DifficultyService();
             List<Difficulty> diffs = svc.list();
             Difficulty current = svc.getCurrent();
 
@@ -71,22 +88,13 @@ public class App extends Application {
                 if (chosen != null) {
                     svc.setCurrent(chosen);                // keep XMI's currentDifficulty in sync (in-memory)
                     gameController.setStartDifficulty(chosen); // inject into controller
+                    lastChosenDifficulty = chosen;
                 }
             } else if (current != null) {
                 // Cancel → fall back to currentDifficulty from XMI
                 gameController.setStartDifficulty(current);
+                lastChosenDifficulty = current;
             }
-            // --------------------------------------------------------
-
-            gameController.setupGame();
-
-            // Start playing the music
-            MediaView view = addMusic();
-            root.getChildren().add(view);
-            inGameMediaPlayer.play();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void main(String[] args) {
