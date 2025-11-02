@@ -10,6 +10,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.Media;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.constants.StageConstants;
@@ -65,37 +66,48 @@ public class App extends Application {
 
     private void setDifficulty(Stage primaryStage) {
         DifficultyService svc = new DifficultyService();
-            List<Difficulty> diffs = svc.list();
-            Difficulty current = svc.getCurrent();
+        Difficulty current = svc.getCurrent();
 
-            LinkedHashMap<String, Difficulty> byName = new LinkedHashMap<>();
-            for (Difficulty d : diffs) {
-                byName.put(displayName(d), d);
-            }
-            String defaultName = current != null
-                    ? displayName(current)
-                    : (byName.isEmpty() ? null : byName.keySet().iterator().next());
-
-            ChoiceDialog<String> dlg = new ChoiceDialog<>(defaultName, byName.keySet());
-            dlg.setTitle("Select difficulty");
-            dlg.setHeaderText("Choose game difficulty");
-            dlg.setContentText("Difficulty:");
-            dlg.initOwner(primaryStage);
-
-            Optional<String> result = dlg.showAndWait();
-            if (result.isPresent()) {
-                Difficulty chosen = byName.get(result.get());
-                if (chosen != null) {
-                    svc.setCurrent(chosen);                // keep XMI's currentDifficulty in sync (in-memory)
-                    gameController.setStartDifficulty(chosen); // inject into controller
-                    lastChosenDifficulty = chosen;
-                }
-            } else if (current != null) {
-                // Cancel → fall back to currentDifficulty from XMI
-                gameController.setStartDifficulty(current);
-                lastChosenDifficulty = current;
-            }
+        Optional<Difficulty> chosen = pickDifficulty(primaryStage);
+        if (chosen.isPresent()) {
+            gameController.setStartDifficulty(chosen.get());
+        } else if (current != null) {
+            // Cancel → keep current from XMI
+            gameController.setStartDifficulty(current);
+            lastChosenDifficulty = current;
+        }
     }
+
+    public static Optional<Difficulty> pickDifficulty(Window owner) {
+        DifficultyService svc = new DifficultyService();
+        List<Difficulty> diffs = svc.list();
+        Difficulty current = svc.getCurrent();
+
+        LinkedHashMap<String, Difficulty> byName = new LinkedHashMap<>();
+        for (Difficulty d : diffs) byName.put(displayName(d), d);
+
+        String def = current != null
+                ? displayName(current)
+                : (byName.isEmpty() ? null : byName.keySet().iterator().next());
+
+        ChoiceDialog<String> dlg = new ChoiceDialog<>(def, byName.keySet());
+        dlg.setTitle("Select difficulty");
+        dlg.setHeaderText("Choose game difficulty");
+        dlg.setContentText("Difficulty:");
+        dlg.initOwner(owner);
+
+        Optional<String> result = dlg.showAndWait();
+        if (result.isPresent()) {
+            Difficulty chosen = byName.get(result.get());
+            if (chosen != null) {
+                svc.setCurrent(chosen);          // sync DifficultyGameData.currentDifficulty (in-memory)
+                lastChosenDifficulty = chosen;   // remember for restarts
+                return Optional.of(chosen);
+            }
+        }
+        return Optional.empty();
+    }
+    
 
     public static void main(String[] args) {
         launch(args);
@@ -110,7 +122,7 @@ public class App extends Application {
     }
 
     // Helper to show clean names (Easy/Normal/Hard) directly from the model type
-    private static String displayName(Difficulty d) {
+    public static String displayName(Difficulty d) {
         if (d == null) return "";
         String n = d.eClass().getName(); // e.g., NormalDifficulty
         return n.endsWith("Difficulty") ? n.substring(0, n.length() - 10) : n;

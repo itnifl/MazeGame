@@ -12,6 +12,8 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyEvent;
@@ -92,6 +94,9 @@ public class GameController implements Initializable {
             case H:
                 showHighScore();
                 break;
+            case ESCAPE:
+                openDifficultyPickerAndMaybeRestart();
+            break;
             default:
                 break;
         }
@@ -108,6 +113,29 @@ public class GameController implements Initializable {
         var score = winGameAction.updateScore();
 
         scoreLabel.setText("Score: " + String.valueOf(score));
+    }
+
+    private void openDifficultyPickerAndMaybeRestart() {
+        var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
+
+        App.pickDifficulty(window).ifPresent(chosen -> {
+            // Offer to restart now with the chosen difficulty
+            var confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Restart required");
+            confirm.setHeaderText("Restart with " + App.displayName(chosen) + " difficulty now?");
+            confirm.setContentText("Choose OK to restart, or Cancel to keep playing and apply on next restart.");
+            if (window != null) confirm.initOwner(window);
+
+            var res = confirm.showAndWait();
+            if (res.isPresent() && res.get() == ButtonType.OK) {
+                // Restart will inject App.lastChosenDifficulty in RestartGameAction
+                new main.game.maze.actions.RestartGameAction(root).Load();
+            } else {
+                // Keep playing, but remember for the next restart in this session, too
+                this.setStartDifficulty(chosen);
+                App.lastChosenDifficulty = chosen;
+            }
+        });
     }
 
     @FXML
