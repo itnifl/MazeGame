@@ -65,5 +65,7 @@
     </enemyMaxCount>
   </difficulties>
 
-  <currentDifficulty href="#normal"/>
+  <currentDifficulty 
+    xsi:type="diff:NormalDifficulty"  
+    href="#normal"/>
 </diff:DifficultyGameData>

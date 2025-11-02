@@ -29,6 +29,7 @@ import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.constants.StageConstants;
+import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import javafx.scene.canvas.Canvas;
@@ -65,10 +66,12 @@ public class GameController implements Initializable {
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
 
     private static Task runComputerCharacters;
+    private Difficulty startDifficulty; // <-- injected by StartController
+    public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //Empty..
+        //Empty.. 
     }
 
     @FXML
@@ -188,7 +191,11 @@ public class GameController implements Initializable {
         player.requestFocus();
         gameBoard.requestFocus();
         
-        OpponentRuntimeFactory.instantiateFromModel(this);
+        if (startDifficulty != null) {
+            OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
+        } else {
+            OpponentRuntimeFactory.instantiateFromModel(this); 
+        }
 
         runComputerCharacters();
         playerCharacter.setHitPoints(100);
