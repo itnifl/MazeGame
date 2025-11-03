@@ -29,12 +29,14 @@ import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
+import main.game.maze.service.DifficultyService;
 import main.game.maze.util.Dialogs;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
 import main.game.maze.difficulties.DifficultiesPackage;
+import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyTypes;
 
 /**
@@ -49,13 +51,22 @@ public final class OpponentRuntimeFactory {
 
     private OpponentRuntimeFactory() { /* utility class */  }
 
+
+    public static void instantiateFromModel(GameController gameController) {
+        instantiateFromModel(gameController, null);
+    }
+
+    public static void instantiateFromModel(GameController gameController, Difficulty override) {
+        instantiateFromModelInternal(gameController, override);
+    }
+
     /**
      * Instantiate characters from an XMI model and register them with the provided GameController.
      *
      * @param resourcePath  classpath path to the XMI (e.g. "/opponents/instances/classic_zombie.xmi")
      * @param gameController the controller responsible for registering characters and nodes
      */
-    public static void instantiateFromModel(GameController gameController) {
+    public static void instantiateFromModelInternal(GameController gameController, Difficulty setOverrideDifficulty) {
         String resourcePath = OpponentConstants.ZombieModelPath;
 
         if (resourcePath == null || resourcePath.isBlank()) {
@@ -121,7 +132,7 @@ public final class OpponentRuntimeFactory {
                 throw loadEx;
             }
 
-            var diff = opponentModel.getSelectedDifficulty();
+            var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
             if (diff == null) {
                 _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
             } else {
@@ -390,4 +401,29 @@ public final class OpponentRuntimeFactory {
             throw new IllegalStateException("Invalid opponent model: " + ", " + diag.getChildren() + ", " + diag.getMessage());
         }
     }
+
+    private static Difficulty resolveActiveDifficulty(Difficulty override, OpponentModel model) {
+        Difficulty resolved = null;
+
+        if (override != null) {
+            resolved = override;
+        } else if (model != null && model.getSelectedDifficulty() != null) {
+            resolved = model.getSelectedDifficulty();
+        } else {
+            try {
+                resolved = new DifficultyService().getCurrent();
+            } catch (Exception e) {
+                _logger.log(Level.WARNING, "Falling back: no difficulty available", e);
+                return null;
+            }
+        }
+
+        // Keep OpponentModel in sync for validators, caps, etc.
+        if (model != null && resolved != null && model.getSelectedDifficulty() != resolved) {
+            model.setSelectedDifficulty(resolved);
+        }
+
+        return resolved;
+    }
+
 }

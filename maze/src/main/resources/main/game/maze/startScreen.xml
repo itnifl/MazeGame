@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="main.game.maze.StartController"
+      alignment="CENTER" spacing="16" prefWidth="800" prefHeight="600">
+  <Label text="Choose difficulty"/>
+  <ComboBox fx:id="difficultyCombo" prefWidth="240"/>
+  <Button text="Start" onAction="#onStart" prefWidth="240"/>
+  <Label fx:id="error" textFill="orangered"/>
+</VBox>
