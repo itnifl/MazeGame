@@ -99,11 +99,8 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-<<<<<<< HEAD
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="visionRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
-=======
->>>>>>> 77edf810f8a57b4c8934964e2914bc034b204ae9
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Position">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -120,7 +117,6 @@
       <details key="documentation" value="Represents a patrol step&#xA;"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-<<<<<<< HEAD
       <details key="constraints" value="PositiveRegenAmount PositivePatrolPointCoords ValidHealthEventsProbability ValidSpeedEventsProbability ValidTimeEventsProbability"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
@@ -130,16 +126,6 @@
       <details key="ValidSpeedEventsProbability" value="self.events->select(p | p.oclIsKindOf(PatrolSpeedEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
       <details key="ValidTimeEventsProbability" value="self.events->select(p | p.oclIsKindOf(PatrolTimeEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
     </eAnnotations>
-=======
-      <details key="constraints" value="PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords"/>
-    </eAnnotations>
-    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-      <details key="PositiveRegenAmount" value="self.regenAmount >= 0"/>
-      <details key="PositivePatrolPointTime" value="self.time >= 0"/>
-      <details key="PositivePatrolPointCoords" value="self.point->forAll(p | p.posX > 0 and p.posY > 0)"/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
->>>>>>> 77edf810f8a57b4c8934964e2914bc034b204ae9
     <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position"
         containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -192,7 +178,6 @@
     <eLiterals name="MANHATTAN"/>
     <eLiterals name="EUCLIDEAN" value="1"/>
   </eClassifiers>
-<<<<<<< HEAD
   <eClassifiers xsi:type="ecore:EEnum" name="PatrolPathBehavior">
     <eLiterals name="LOOP"/>
     <eLiterals name="BACKWARD" value="1"/>
@@ -244,7 +229,7 @@
       <details key="PositivePatrolTime" value="self.time >= 0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-=======
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PatrolZone">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" lowerBound="1"
@@ -255,6 +240,5 @@
         <details key="documentation" value="Top left corner of the rectangular patrol zone&#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
->>>>>>> 77edf810f8a57b4c8934964e2914bc034b204ae9
   </eClassifiers>
 </ecore:EPackage>

@@ -145,12 +145,6 @@ public class GameController implements Initializable {
     }
 
     @FXML
-    private void handleMouseClicked(MouseEvent event) {
-        System.out.println("Game has been clicked");
-        mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
-    }
-
-    @FXML
     private void showHighScore() {
         runComputerCharacters.cancel();
         HighscoreAction action = new HighscoreAction(root);
