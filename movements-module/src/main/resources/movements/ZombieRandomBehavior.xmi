@@ -7,4 +7,5 @@
     xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
     attackRadius="2.0"
     movementSpeed="3.0"
+    visionRadius="30.0"
     regenPerSecond="1.0"/>

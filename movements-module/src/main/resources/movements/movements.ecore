@@ -45,7 +45,8 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pathcalculator" lowerBound="1"
         eType="#//PathCalculator" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pathBehavior" eType="#//PatrolPathBehavior"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pathBehavior" lowerBound="1"
+        eType="#//PatrolPathBehavior"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//MovementBehavior">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -68,11 +69,11 @@
       <details key="documentation" value="The MovementBehavior contains the positions of the character in the maze and methods to update the position."/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="PositiveMovementSpeed validAttackRange PositiveVisionRange"/>
+      <details key="constraints" value="PositiveMovementSpeed ValidAttackRange PositiveVisionRange"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="PositiveMovementSpeed" value="self.movementSpeed > 0"/>
-      <details key="validAttackRange" value="self.attackRadius > 0 and self.attackRadius &lt;= self.visionRadius"/>
+      <details key="ValidAttackRange" value="self.attackRadius > 0 and self.attackRadius &lt;= self.visionRadius"/>
       <details key="PositiveVisionRange" value="self.visionRadius > 0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreWalls" lowerBound="1"
@@ -113,14 +114,15 @@
       <details key="documentation" value="Represents a patrol step&#xA;"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords"/>
+      <details key="constraints" value="PositiveRegenAmount PositivePatrolPointCoords ValidHealthEventsProbability ValidSpeedEventsProbability ValidTimeEventsProbability"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="PositiveRegenAmount" value="self.regenAmount >= 0"/>
-      <details key="PositivePatrolPointTime" value="self.time >= 0"/>
       <details key="PositivePatrolPointCoords" value="self.point->forAll(p | p.posX > 0 and p.posY > 0)"/>
+      <details key="ValidHealthEventsProbability" value="self.events->select(p | p.oclIsKindOf(PatrolHealthEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
+      <details key="ValidSpeedEventsProbability" value="self.events->select(p | p.oclIsKindOf(PatrolSpeedEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
+      <details key="ValidTimeEventsProbability" value="self.events->select(p | p.oclIsKindOf(PatrolTimeEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position"
         containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -133,6 +135,8 @@
         <details key="documentation" value="Amount of HP the character will regain when reaching this step."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="events" ordered="false"
+        upperBound="-1" eType="#//PatrolPointEvent" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathCalculator" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="distanceMethod" lowerBound="1"
@@ -175,5 +179,52 @@
     <eLiterals name="LOOP"/>
     <eLiterals name="BACKWARD" value="1"/>
     <eLiterals name="RANDOM" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PatrolPointEvent" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidProbability"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="ValidProbability" value="self.probability >= 0 and self.probability &lt;= 100"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="probability" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PatrolHealthEvent" eSuperTypes="#//PatrolPointEvent">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositiveHealthAmount ValidHealthPercentage"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositiveHealthAmount" value="self.healthAmount >= 0"/>
+      <details key="ValidHealthPercentage" value="self.healthPercentage >= 0 and self.healthPercentage &lt;= 100"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="healthAmount" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="healthPercentage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PatrolSpeedEvent" eSuperTypes="#//PatrolPointEvent">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidSpeedAmount ValidSpeedPercentage"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="ValidSpeedAmount" value="speedAmount >= 0 and speedAmount &lt;= maxSpeed"/>
+      <details key="ValidSpeedPercentage" value="self.speedPercentage >= -100 and self.speedPercentage &lt;= 100"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="speedAmount" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="speedPercentage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxSpeed" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PatrolTimeEvent" eSuperTypes="#//PatrolPointEvent">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="PositivePatrolTime"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+      <details key="PositivePatrolTime" value="self.time >= 0"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
 </ecore:EPackage>

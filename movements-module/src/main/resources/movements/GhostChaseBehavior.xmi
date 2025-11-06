@@ -7,7 +7,8 @@
     xsi:schemaLocation="http://main.game.maze/behaviour movements.ecore"
     ignoreWalls="true"
     attackRadius="1.0"
-    movementSpeed="2.0">
+    movementSpeed="2.0"
+    visionRadius="50.0">
   <relativePositionTarget/>
   <pathcalculator
       xsi:type="behaviour:LocalPathCalculator"
