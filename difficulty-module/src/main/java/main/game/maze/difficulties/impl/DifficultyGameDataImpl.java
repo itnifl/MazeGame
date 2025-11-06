@@ -10,6 +10,7 @@ import main.game.maze.difficulties.DifficultyGameData;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -18,7 +19,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,7 +38,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class DifficultyGameDataImpl extends MinimalEObjectImpl.Container implements DifficultyGameData {
 	/**
-	 * The cached value of the '{@link #getDifficulties() <em>Difficulties</em>}' reference list.
+	 * The cached value of the '{@link #getDifficulties() <em>Difficulties</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getDifficulties()
@@ -82,7 +84,7 @@ public class DifficultyGameDataImpl extends MinimalEObjectImpl.Container impleme
 	@Override
 	public EList<Difficulty> getDifficulties() {
 		if (difficulties == null) {
-			difficulties = new EObjectResolvingEList<Difficulty>(Difficulty.class, this, DifficultiesPackage.DIFFICULTY_GAME_DATA__DIFFICULTIES);
+			difficulties = new EObjectContainmentEList<Difficulty>(Difficulty.class, this, DifficultiesPackage.DIFFICULTY_GAME_DATA__DIFFICULTIES);
 		}
 		return difficulties;
 	}
@@ -125,6 +127,20 @@ public class DifficultyGameDataImpl extends MinimalEObjectImpl.Container impleme
 		currentDifficulty = newCurrentDifficulty;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, DifficultiesPackage.DIFFICULTY_GAME_DATA__CURRENT_DIFFICULTY, oldCurrentDifficulty, currentDifficulty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case DifficultiesPackage.DIFFICULTY_GAME_DATA__DIFFICULTIES:
+				return ((InternalEList<?>)getDifficulties()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

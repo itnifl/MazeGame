@@ -384,12 +384,12 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(difficultyGameDataEClass, DifficultyGameData.class, "DifficultyGameData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDifficultyGameData_Difficulties(), this.getDifficulty(), null, "difficulties", null, 1, -1, DifficultyGameData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDifficultyGameData_Difficulties(), this.getDifficulty(), null, "difficulties", null, 1, -1, DifficultyGameData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDifficultyGameData_CurrentDifficulty(), this.getDifficulty(), null, "currentDifficulty", null, 0, 1, DifficultyGameData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(easyDifficultyEClass, EasyDifficulty.class, "EasyDifficulty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(difficultyEClass, Difficulty.class, "Difficulty", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(difficultyEClass, Difficulty.class, "Difficulty", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDifficulty_InstantDeath(), ecorePackage.getEBoolean(), "instantDeath", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDifficulty_EnemyMaxCount(), this.getEnemyMaxCount(), null, "enemyMaxCount", null, 0, -1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 		initEAttribute(getDifficulty_MonstersMovementSpeedMultiplier(), ecorePackage.getEDouble(), "monstersMovementSpeedMultiplier", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -408,6 +408,7 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		initEEnum(enemyTypesEEnum, EnemyTypes.class, "EnemyTypes");
 		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.ZOMBIE);
 		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.GHOST);
+		addEEnumLiteral(enemyTypesEEnum, EnemyTypes.PUMPKINBOMBER);
 
 		// Create resource
 		createResource(eNS_URI);

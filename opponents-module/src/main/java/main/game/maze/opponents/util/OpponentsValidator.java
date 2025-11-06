@@ -4,6 +4,7 @@ package main.game.maze.opponents.util;
 
 import java.util.Map;
 
+import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.*;
 
 import org.eclipse.emf.common.util.Diagnostic;
@@ -98,10 +99,16 @@ public class OpponentsValidator extends EObjectValidator {
 				return validateLootItem((LootItem)value, diagnostics, context);
 			case OpponentsPackage.GHOST:
 				return validateGhost((Ghost)value, diagnostics, context);
+			case OpponentsPackage.RANGED_ENEMY:
+				return validateRangedEnemy((RangedEnemy)value, diagnostics, context);
+			case OpponentsPackage.PUMPKIN_BOMBER:
+				return validatePumpkinBomber((PumpkinBomber)value, diagnostics, context);
 			case OpponentsPackage.BEHAVIOR_TYPE:
 				return validateBehaviorType((BehaviorType)value, diagnostics, context);
 			case OpponentsPackage.LOOT_ITEM_TYPE:
 				return validateLootItemType((LootItemType)value, diagnostics, context);
+			case OpponentsPackage.PROJECTILE_TYPE:
+				return validateProjectileType((ProjectileType)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -127,31 +134,55 @@ public class OpponentsValidator extends EObjectValidator {
 	}
 
 	/**
-	 * Validates the validateMaxThreat constraint of '<em>Opponent Model</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * Validates the validateMaxThreat constraint of 'OpponentModel'.
+	 * @generated NOT
 	 */
-	public boolean validateOpponentModel_validateMaxThreat(OpponentModel opponentModel, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		// TODO implement the constraint
-		// -> specify the condition that violates the constraint
-		// -> verify the diagnostic details, including severity, code, and message
-		// Ensure that you remove @generated or mark it @generated NOT
-		if (false) {
-			if (diagnostics != null) {
-				diagnostics.add
-					(createDiagnostic
-						(Diagnostic.ERROR,
-						 DIAGNOSTIC_SOURCE,
-						 0,
-						 "_UI_GenericConstraint_diagnostic",
-						 new Object[] { "validateMaxThreat", getObjectLabel(opponentModel, context) },
-						 new Object[] { opponentModel },
-						 context));
-			}
-			return false;
+	public boolean validateOpponentModel_validateMaxThreat(
+		OpponentModel opponentModel, DiagnosticChain diagnostics, Map<Object,Object> context) {
+
+		// 1) Read maxThreat from the selected difficulty (or 0 if none)
+		int maxThreat = 0;
+		Difficulty d = opponentModel.getSelectedDifficulty();
+		if (d != null) {
+			maxThreat = d.getMaxThreat();
 		}
-		return true;
+
+		// 2) Sum effective threat of all character types
+		var currentThreatLevel = opponentModel.getGameSetCurrentThreatLevel();		
+		if(currentThreatLevel == 0) {
+			int sum = 0;
+			for (CharacterType ct : opponentModel.getCharacterTypes()) {
+				// If you have ct.getEffectiveThreat(), use that; otherwise use threatLevel
+				int t;
+				try {
+					t = ct.getEffectiveThreat(); // comment this out if you do not have it
+				} catch (Throwable ignore) {
+					t = (int) ct.getThreatLevel();     // fallback
+				}
+				if (t > 0) {
+					sum += t;
+					if (sum > maxThreat) break;
+				}
+			}
+			opponentModel.setGameSetCurrentThreatLevel(sum);
+		}
+		
+		// 3) Pass or report a diagnostic
+		if (opponentModel.getGameSetCurrentThreatLevel() <= maxThreat) return true;
+
+		if (diagnostics != null) {
+			diagnostics.add(
+				createDiagnostic(
+					Diagnostic.ERROR,
+					DIAGNOSTIC_SOURCE,
+					0, // or a specific constant if you keep one
+					"_UI_GenericConstraint_diagnostic",
+					new Object[] { "validateMaxThreat", getObjectLabel(opponentModel, context) },
+					new Object[] { opponentModel },
+					context));
+
+		}
+		return false;
 	}
 
 	/**
@@ -204,6 +235,24 @@ public class OpponentsValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateRangedEnemy(RangedEnemy rangedEnemy, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(rangedEnemy, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validatePumpkinBomber(PumpkinBomber pumpkinBomber, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(pumpkinBomber, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateBehaviorType(BehaviorType behaviorType, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
@@ -214,6 +263,15 @@ public class OpponentsValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateLootItemType(LootItemType lootItemType, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateProjectileType(ProjectileType projectileType, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

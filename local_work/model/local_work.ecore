@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="local_work" nsURI="http://www.example.org/local_work" nsPrefix="local_work">
+  <eClassifiers xsi:type="ecore:EClass" name="MovementBehavior" abstract="true">
+    <eOperations name="move" lowerBound="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="BehaviorType" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" abstract="true" eSuperTypes="#//MovementBehavior">
+    <eOperations name="setDirectionToPlayer" lowerBound="1"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wallCollision" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChaseWander" eSuperTypes="#//ChaseBehavior">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="followFactor" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChaseAgressive" eSuperTypes="#//ChaseBehavior">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="predictionFactor" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat" defaultValueLiteral="0.2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ChasePassive" eSuperTypes="#//ChaseBehavior">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visionRange" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hasLineOfSight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        transient="true" derived="true"/>
+  </eClassifiers>
+</ecore:EPackage>

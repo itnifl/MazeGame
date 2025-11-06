@@ -92,6 +92,14 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 				return createGhostAdapter();
 			}
 			@Override
+			public Adapter caseRangedEnemy(RangedEnemy object) {
+				return createRangedEnemyAdapter();
+			}
+			@Override
+			public Adapter casePumpkinBomber(PumpkinBomber object) {
+				return createPumpkinBomberAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -192,6 +200,34 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGhostAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.RangedEnemy <em>Ranged Enemy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.RangedEnemy
+	 * @generated
+	 */
+	public Adapter createRangedEnemyAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.opponents.PumpkinBomber <em>Pumpkin Bomber</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.opponents.PumpkinBomber
+	 * @generated
+	 */
+	public Adapter createPumpkinBomberAdapter() {
 		return null;
 	}
 

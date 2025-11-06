@@ -36,7 +36,15 @@ public enum EnemyTypes implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	GHOST(1, "GHOST", "GHOST");
+	GHOST(1, "GHOST", "GHOST"), /**
+	 * The '<em><b>PUMPKINBOMBER</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PUMPKINBOMBER_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	PUMPKINBOMBER(2, "PUMPKINBOMBER", "PUMPKINBOMBER");
 
 	/**
 	 * The '<em><b>ZOMBIE</b></em>' literal value.
@@ -61,6 +69,17 @@ public enum EnemyTypes implements Enumerator {
 	public static final int GHOST_VALUE = 1;
 
 	/**
+	 * The '<em><b>PUMPKINBOMBER</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PUMPKINBOMBER
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PUMPKINBOMBER_VALUE = 2;
+
+	/**
 	 * An array of all the '<em><b>Enemy Types</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -70,6 +89,7 @@ public enum EnemyTypes implements Enumerator {
 		new EnemyTypes[] {
 			ZOMBIE,
 			GHOST,
+			PUMPKINBOMBER,
 		};
 
 	/**
@@ -128,6 +148,7 @@ public enum EnemyTypes implements Enumerator {
 		switch (value) {
 			case ZOMBIE_VALUE: return ZOMBIE;
 			case GHOST_VALUE: return GHOST;
+			case PUMPKINBOMBER_VALUE: return PUMPKINBOMBER;
 		}
 		return null;
 	}

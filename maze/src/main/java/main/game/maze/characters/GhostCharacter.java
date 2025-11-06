@@ -22,12 +22,16 @@ public class GhostCharacter extends ComputerCharacter
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
+
+
     public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
         super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));        
         this.ghostModel = model;
+
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+
     }
 
     @Override
@@ -70,7 +74,7 @@ public class GhostCharacter extends ComputerCharacter
 
         @Override
     public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
-        touchTargets.add(touchEntity);
+        touchTargets.remove(touchEntity);
     }
 
     @Override

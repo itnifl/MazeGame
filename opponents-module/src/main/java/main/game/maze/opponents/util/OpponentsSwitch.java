@@ -104,6 +104,21 @@ public class OpponentsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OpponentsPackage.RANGED_ENEMY: {
+				RangedEnemy rangedEnemy = (RangedEnemy)theEObject;
+				T result = caseRangedEnemy(rangedEnemy);
+				if (result == null) result = caseCharacterType(rangedEnemy);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OpponentsPackage.PUMPKIN_BOMBER: {
+				PumpkinBomber pumpkinBomber = (PumpkinBomber)theEObject;
+				T result = casePumpkinBomber(pumpkinBomber);
+				if (result == null) result = caseRangedEnemy(pumpkinBomber);
+				if (result == null) result = caseCharacterType(pumpkinBomber);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -195,6 +210,36 @@ public class OpponentsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseGhost(Ghost object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Ranged Enemy</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Ranged Enemy</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseRangedEnemy(RangedEnemy object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Pumpkin Bomber</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Pumpkin Bomber</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePumpkinBomber(PumpkinBomber object) {
 		return null;
 	}
 

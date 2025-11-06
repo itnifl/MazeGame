@@ -16,6 +16,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link main.game.maze.behaviour.PatrolBehavior#getPath <em>Path</em>}</li>
  *   <li>{@link main.game.maze.behaviour.PatrolBehavior#getCurrentIndex <em>Current Index</em>}</li>
  *   <li>{@link main.game.maze.behaviour.PatrolBehavior#getPathcalculator <em>Pathcalculator</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.PatrolBehavior#getPatrolZone <em>Patrol Zone</em>}</li>
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getPatrolBehavior()
@@ -82,5 +83,31 @@ public interface PatrolBehavior extends MovementBehavior {
 	 * @generated
 	 */
 	void setPathcalculator(PathCalculator value);
+
+	/**
+	 * Returns the value of the '<em><b>Patrol Zone</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * List of 1 or 0 patrol zone
+	 * It is optional
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Patrol Zone</em>' reference.
+	 * @see #setPatrolZone(PatrolZone)
+	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolBehavior_PatrolZone()
+	 * @model
+	 * @generated
+	 */
+	PatrolZone getPatrolZone();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolBehavior#getPatrolZone <em>Patrol Zone</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Patrol Zone</em>' reference.
+	 * @see #getPatrolZone()
+	 * @generated
+	 */
+	void setPatrolZone(PatrolZone value);
 
 } // PatrolBehavior

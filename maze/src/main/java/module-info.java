@@ -1,4 +1,5 @@
 module main.game.maze {
+    requires main.game.maze.difficulties;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
@@ -7,10 +8,9 @@ module main.game.maze {
     requires transitive javafx.graphics;
     requires transitive javafx.media;
     requires org.eclipse.emf.ecore.xmi;
-    requires java.logging;
+    requires java.logging;    
     requires main.game.maze.opponents;
-    requires main.game.maze.difficulties;
-    requires main.game.maze.behaviour;
+    requires main.game.maze.behaviour;    
 
     exports main.game.maze; 
     exports main.game.maze.dto;

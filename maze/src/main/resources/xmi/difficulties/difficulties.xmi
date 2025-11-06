@@ -6,54 +6,66 @@
     xmlns:diff="http://main.game.maze/difficulty">
 
   <!-- EASY -->
-  <difficulties xsi:type="diff:EasyDifficulty"
+  <difficulties xmi:id="easy" xsi:type="diff:EasyDifficulty"
                 instantDeath="false"
-                monstersMovementSpeedMultiplier="1.05"
+                monstersMovementSpeedMultiplier="0.80"
                 monstersDamageMultiplier="0.70"
-                maxThreat="10">
+                maxThreat="12">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>2</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>4</maxCount>
+      <maxCount>3</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
     </enemyMaxCount>
   </difficulties>
 
   <!-- NORMAL -->
-  <difficulties xsi:type="diff:NormalDifficulty"
+  <difficulties xmi:id="normal" xsi:type="diff:NormalDifficulty"
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.00"
                 monstersDamageMultiplier="1.00"
                 maxThreat="20">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>4</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>6</maxCount>
+      <maxCount>4</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
     </enemyMaxCount>
   </difficulties>
 
   <!-- HARD -->
-  <difficulties xsi:type="diff:HardDifficulty"
+  <difficulties xmi:id="hard" xsi:type="diff:HardDifficulty"
                 instantDeath="false"
-                monstersMovementSpeedMultiplier="1.40"
+                monstersMovementSpeedMultiplier="1.20"
                 monstersDamageMultiplier="1.60"
-                maxThreat="30">
+                maxThreat="50">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>6</maxCount>
+      <maxCount>10</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>10</maxCount>
+      <maxCount>5</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
     </enemyMaxCount>
   </difficulties>
 
-  <!-- Pick which one is active (here: Normal) -->
-  <currentDifficulty href="#//@difficulties.1"/>
-
+  <currentDifficulty 
+    xsi:type="diff:NormalDifficulty"  
+    href="#normal"/>
 </diff:DifficultyGameData>

@@ -10,20 +10,6 @@
             "request": "launch",
             "mainClass": "main.game.maze/main.game.maze.App",
             "projectName": "main.game.maze"
-        },
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "main.game.maze/main.game.maze.App",
-            "projectName": "maze-base"
-        },
-        {
-            "type": "java",
-            "name": "App",
-            "request": "launch",
-            "mainClass": "main.game.maze/main.game.maze.App",
-            "projectName": "maze"
         }
     ]
 }

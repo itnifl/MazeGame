@@ -13,6 +13,7 @@ import main.game.maze.behaviour.MovementBehavior;
 import main.game.maze.behaviour.PathCalculator;
 import main.game.maze.behaviour.PatrolBehavior;
 import main.game.maze.behaviour.PatrolPoint;
+import main.game.maze.behaviour.PatrolZone;
 import main.game.maze.behaviour.Position;
 import main.game.maze.behaviour.RandomBehavior;
 
@@ -101,6 +102,13 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	private EClass localPathCalculatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass patrolZoneEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -227,6 +235,16 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	@Override
 	public EReference getPatrolBehavior_Pathcalculator() {
 		return (EReference)patrolBehaviorEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPatrolBehavior_PatrolZone() {
+		return (EReference)patrolBehaviorEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -455,6 +473,46 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	@Override
+	public EClass getPatrolZone() {
+		return patrolZoneEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPatrolZone_Width() {
+		return (EAttribute)patrolZoneEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPatrolZone_Height() {
+		return (EAttribute)patrolZoneEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPatrolZone_TopLeft() {
+		return (EReference)patrolZoneEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getDistanceMethod() {
 		return distanceMethodEEnum;
 	}
@@ -495,6 +553,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATH);
 		createEAttribute(patrolBehaviorEClass, PATROL_BEHAVIOR__CURRENT_INDEX);
 		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATHCALCULATOR);
+		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATROL_ZONE);
 
 		chaseBehaviorEClass = createEClass(CHASE_BEHAVIOR);
 		createEReference(chaseBehaviorEClass, CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET);
@@ -525,6 +584,11 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		createEAttribute(astarPathCalculatorEClass, ASTAR_PATH_CALCULATOR__MAX_ITERATIONS);
 
 		localPathCalculatorEClass = createEClass(LOCAL_PATH_CALCULATOR);
+
+		patrolZoneEClass = createEClass(PATROL_ZONE);
+		createEAttribute(patrolZoneEClass, PATROL_ZONE__WIDTH);
+		createEAttribute(patrolZoneEClass, PATROL_ZONE__HEIGHT);
+		createEReference(patrolZoneEClass, PATROL_ZONE__TOP_LEFT);
 
 		// Create enums
 		distanceMethodEEnum = createEEnum(DISTANCE_METHOD);
@@ -573,6 +637,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		initEReference(getPatrolBehavior_Path(), this.getPatrolPoint(), null, "path", null, 1, -1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPatrolBehavior_CurrentIndex(), ecorePackage.getEInt(), "currentIndex", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPatrolBehavior_Pathcalculator(), this.getPathCalculator(), null, "pathcalculator", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPatrolBehavior_PatrolZone(), this.getPatrolZone(), null, "patrolZone", null, 0, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(chaseBehaviorEClass, ChaseBehavior.class, "ChaseBehavior", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getChaseBehavior_RelativePositionTarget(), this.getPosition(), null, "relativePositionTarget", null, 1, 1, ChaseBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -604,6 +669,11 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		initEAttribute(getAstarPathCalculator_MaxIterations(), ecorePackage.getEInt(), "maxIterations", null, 1, 1, AstarPathCalculator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localPathCalculatorEClass, LocalPathCalculator.class, "LocalPathCalculator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(patrolZoneEClass, PatrolZone.class, "PatrolZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPatrolZone_Width(), ecorePackage.getEDouble(), "width", null, 1, 1, PatrolZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPatrolZone_Height(), ecorePackage.getEDouble(), "height", null, 1, 1, PatrolZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPatrolZone_TopLeft(), this.getPosition(), null, "topLeft", null, 1, 1, PatrolZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(distanceMethodEEnum, DistanceMethod.class, "DistanceMethod");

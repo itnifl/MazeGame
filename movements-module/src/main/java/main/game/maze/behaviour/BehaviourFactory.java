@@ -94,6 +94,15 @@ public interface BehaviourFactory extends EFactory {
 	LocalPathCalculator createLocalPathCalculator();
 
 	/**
+	 * Returns a new object of class '<em>Patrol Zone</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Patrol Zone</em>'.
+	 * @generated
+	 */
+	PatrolZone createPatrolZone();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
