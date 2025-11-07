@@ -102,12 +102,18 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+        <details key="derivation" value="self.charactertype->any(true).speed"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="visionRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="nextPositions" eType="#//Position"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="charactertype" lowerBound="1"
         eType="ecore:EClass ../../../../../opponents-module/src/main/resources/opponents.ecore#//CharacterType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="position" eType="#//Position"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="direction" eType="#//Direction"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Position">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -242,5 +248,11 @@
         <details key="documentation" value="Top left corner of the rectangular patrol zone&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Direction">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="startPosition" lowerBound="1"
+        eType="#//Position"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="endPosition" lowerBound="1"
+        eType="#//Position"/>
   </eClassifiers>
 </ecore:EPackage>
