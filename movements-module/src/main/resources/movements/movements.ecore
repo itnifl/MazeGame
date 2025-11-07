@@ -7,6 +7,7 @@
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/OCL/Import">
     <details key="ecore" value="http://www.eclipse.org/emf/2002/Ecore"/>
+    <details key="opp" value="../../../../../opponents-module/src/main/resources/opponents.ecore#/"/>
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
     <details key="invocationDelegates" value="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"/>
@@ -29,11 +30,12 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PatrolBehavior" eSuperTypes="#//MovementBehavior">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="RequiresOnePatrolPoint ValidStardIndex"/>
+      <details key="constraints" value="RequiresOnePatrolPoint ValidStardIndex ValidPatrolZone"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="RequiresOnePatrolPoint" value="self.path->size() > 0"/>
       <details key="ValidStardIndex" value="self.startIndex >= 0 and self.startIndex &lt; self.path->size()"/>
+      <details key="ValidPatrolZone" value="self.patrolZone->size() = 0 or&#xA;&#x9;&#x9;&#x9;let width : ecore::EDouble = self.patrolZone->collect(z | z.width)->any(true),&#xA;&#x9;&#x9;&#x9;    height : ecore::EDouble = self.patrolZone->collect(z | z.height)->any(true),&#xA;&#x9;&#x9;&#x9;    topLeft : Position = self.patrolZone->collect(z | z.topLeft)->any(true)&#xA;&#x9;&#x9;&#x9;in self.path->forAll(pp | pp.point->any(p | &#xA;&#x9;&#x9;&#x9;&#x9;p.posX >= topLeft.posX and&#xA;&#x9;&#x9;&#x9;&#x9;p.posY >= topLeft.posY and&#xA;&#x9;&#x9;&#x9;&#x9;p.posX &lt;= topLeft.posX + width and&#xA;&#x9;&#x9;&#x9;&#x9;p.posY &lt;= topLeft.posY + height&#xA;&#x9;&#x9;))"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="path" lowerBound="1" upperBound="-1"
         eType="#//PatrolPoint" containment="true">
@@ -47,9 +49,10 @@
         eType="#//PathCalculator" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="patrolZone" eType="#//PatrolZone">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="List of 1 or 0 patrol zone&#xD;&#xA;It is optional"/>
+        <details key="documentation" value="List of 1 or 0 patrol zone&#xA;It is optional"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="#//PatrolPathBehavior"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChaseBehavior" eSuperTypes="#//MovementBehavior">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -76,31 +79,35 @@
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="PositiveMovementSpeed" value="self.movementSpeed > 0"/>
-      <details key="ValidAttackRange" value="self.attackRadius > 0 and self.attackRadius &lt;= self.visionRadius"/>
+      <details key="ValidAttackRange" value="self.visionRadius > 0 and&#xA;&#x9;&#x9;&#x9;if self.charactertype->any(true).oclIsKindOf(opp::RangedEnemy) then&#xA;&#x9;&#x9;&#x9; &#x9;let rangedCharacter : opp::RangedEnemy = self.charactertype->any(true).oclAsType(opp::RangedEnemy)&#xA;&#x9;&#x9;&#x9;    in rangedCharacter.attackRange &lt;= self.visionRadius&#xA;&#x9;&#x9;&#x9;else&#xA;&#x9;&#x9;&#x9;&#x9;true&#xA;&#x9;&#x9;&#x9;endif"/>
       <details key="PositiveVisionRange" value="self.visionRadius > 0"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreWalls" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Indicates if the movements should ignore walls&#xA;"/>
+        <details key="documentation" value="Indicates if the movements should ignore walls."/>
       </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attackRadius" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Radius from which the character can attack (for long range distance enemies)."/>
+      <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+        <details key="derivation" value="&#xA;&#x9;&#x9;&#x9;&#x9;if self.charactertype->any(true).oclIsKindOf(opp::Ghost) then&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;let ghostCharacter : opp::Ghost = self.charactertype->any(true).oclAsType(opp::Ghost)&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;in ghostCharacter.nonTangibilityEnergy >= 0&#xA;&#x9;&#x9;&#x9;&#x9;else&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;false&#xA;&#x9;&#x9;&#x9;&#x9;endif"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="instantKillOnCollision"
-        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Indicates if the player should be killed when it collides this character."/>
+      </eAnnotations>
+      <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
+        <details key="derivation" value="self.charactertype->any(true).threatLevel > 100"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="visionRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nextPositions" eType="#//Position"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="charactertype" lowerBound="1"
+        eType="ecore:EClass ../../../../../opponents-module/src/main/resources/opponents.ecore#//CharacterType"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Position">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -132,16 +139,11 @@
         <details key="documentation" value="Coords of the patrol step&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="regenAmount" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Amount of HP the character will regain when reaching this step."/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="events" ordered="false"
         upperBound="-1" eType="#//PatrolPointEvent" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PathCalculator" abstract="true">
+    <eOperations name="compute" lowerBound="1" upperBound="-1" eType="#//Position"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="distanceMethod" lowerBound="1"
         eType="#//DistanceMethod"/>
   </eClassifiers>
@@ -237,7 +239,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="topLeft" lowerBound="1"
         eType="#//Position">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Top left corner of the rectangular patrol zone&#xD;&#xA;"/>
+        <details key="documentation" value="Top left corner of the rectangular patrol zone&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
