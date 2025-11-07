@@ -57,10 +57,15 @@ Download Java 24 SDK to run the game:
 Download Java FX 21 SDK was used during the development of this game and it is needed to run it:
 - ⬇️ https://gluonhq.com/products/javafx/
 
-Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
+Download and install Apache Maven, read here:
+- ⬇️ https://maven.apache.org/install.html
+
+Remember set JAVA_HOME, PATH_TO_FX, MAVEN_HOME and PATH environment variables, for instance:
 - 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-24
 - 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
 - 🛠️ PATH+=C:\Program Files\Java\jdk-24\bin
+- 🛠️ MAVEN_HOME=C:\Program Files\Apache\Apache Maven
+- 🛠️ PATH+=C:\Program Files\Apache\Apache Maven\bin
 
 ``Then:
 ***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``
