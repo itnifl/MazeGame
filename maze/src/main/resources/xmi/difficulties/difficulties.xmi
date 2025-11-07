@@ -13,7 +13,7 @@
                 maxThreat="12">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>3</maxCount>
+      <maxCount>4</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
@@ -37,7 +37,7 @@
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>4</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
@@ -57,7 +57,7 @@
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>5</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
