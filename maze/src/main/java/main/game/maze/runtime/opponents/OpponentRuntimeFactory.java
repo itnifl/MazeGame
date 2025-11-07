@@ -2,6 +2,7 @@ package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +38,7 @@ import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.EnemyTypes;
 
 /**
@@ -161,34 +163,49 @@ public final class OpponentRuntimeFactory {
             AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
             double threatSum = 0.0;
             
-            var characterList = opponentModel.getCharacterTypes();
-            for (var characterType : characterList) {
-                if (!characterType.isEnabled()) continue;
-
-                if(characterNrCapsIsExceeded(characterType, noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned, monsterTypecaps)) {
-                    continue;
-                }
-
-                double nextThreat = threatSum + characterType.getThreatLevel();                
-                if (nextThreat > maxThreatByDifficulty) continue;
-                threatSum += characterType.getEffectiveThreat();
-                
-                setCharacterAttributesByDifficulty(
-                    characterType, 
-                    speedMultiplierByDifficulty, 
-                    dmgMultiplierByDifficulty, 
-                    instantDeath);
-
-                doCharacterRegistration(
-                    gameController, 
-                    characterType, 
-                    noOfGhostsSpawned, 
-                    noOfZombiesSpawned,
-                    noOfPumpkinBombersSpawned);
-
-            }
+            var characterList = opponentModel.getCharacterTypes();            
             double sum = threatSum;  // working copy
 
+            sum = populateRandomWeakCharacters(characterList, 
+                monsterTypecaps, maxThreatByDifficulty, gameController,
+                noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned,
+                speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath,
+                sum);
+
+            sum = populateRandomCharacters(characterList, diff,
+                monsterTypecaps, maxThreatByDifficulty, gameController,
+                noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned,
+                speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath,
+                sum);
+
+            threatSum = sum;
+            opponentModel.setGameSetCurrentThreatLevel(threatSum);
+            validateOrFail(opponentModel);
+        } catch (Exception loadException) {
+            _logger.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
+             Dialogs.showError(
+                "Failed to load opponents",
+                "The opponent configuration could not be loaded.",
+                loadException.getMessage(),
+                loadException
+            );
+            throw loadException;
+        }
+    }
+
+    private static double populateRandomCharacters(List<CharacterType> characterList, 
+        Difficulty diff,
+        Map<EnemyTypes, Integer> monsterTypecaps,
+            double maxThreatByDifficulty, 
+            GameController gameController,
+            AtomicInteger noOfGhostsSpawned, 
+            AtomicInteger noOfZombiesSpawned, 
+            AtomicInteger noOfPumpkinBombersSpawned,
+            double speedMultiplierByDifficulty, 
+            double dmgMultiplierByDifficulty, 
+            boolean instantDeath,
+            double sum) {
+        
             // Sort once: highest effective threat first
             var byThreatDesc = characterList.stream()
                 .filter(CharacterType::isEnabled)
@@ -198,15 +215,17 @@ public final class OpponentRuntimeFactory {
             while (sum <= maxThreatByDifficulty) {
                 final double remaining = maxThreatByDifficulty - sum;
 
-                var next = byThreatDesc.stream()
+                var charactersFiltered = byThreatDesc.stream()
                     .filter(ct -> ct.getEffectiveThreat() > 0)
                     .filter(ct -> ct.getEffectiveThreat() <= remaining)
                     .filter(ct -> !characterNrCapsIsExceeded(ct, 
                         noOfGhostsSpawned, 
                         noOfZombiesSpawned, 
                         noOfPumpkinBombersSpawned, 
-                        monsterTypecaps))
-                    .findFirst(); // highest that fits
+                        monsterTypecaps));
+
+                var next = diff instanceof EasyDifficulty ? charactersFiltered.reduce((first, second) -> second) // lowest that fits
+                    : charactersFiltered.findAny(); // highest that fits
 
                 if (next.isEmpty()) break;
 
@@ -225,21 +244,59 @@ public final class OpponentRuntimeFactory {
 
                 sum += picked.getEffectiveThreat();
             }
-
-            threatSum = sum;
-            opponentModel.setGameSetCurrentThreatLevel(threatSum);
-            validateOrFail(opponentModel);
-        } catch (Exception loadException) {
-            _logger.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
-             Dialogs.showError(
-                "Failed to load opponents",
-                "The opponent configuration could not be loaded.",
-                loadException.getMessage(),
-                loadException
-            );
-            throw loadException;
-        }
+        return sum;
     }
+
+
+    private static double populateRandomWeakCharacters(
+        List<CharacterType> characterList, 
+        Map<EnemyTypes, Integer> monsterTypecaps,
+            double maxThreatByDifficulty, 
+            GameController gameController,
+            AtomicInteger noOfGhostsSpawned, 
+            AtomicInteger noOfZombiesSpawned, 
+            AtomicInteger noOfPumpkinBombersSpawned,
+            double speedMultiplierByDifficulty, 
+            double dmgMultiplierByDifficulty, 
+            boolean instantDeath,
+            double sum) {
+
+        var byThreatAsc = characterList.stream()
+                .filter(CharacterType::isEnabled)
+                .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat));
+
+            var typesInModel = byThreatAsc
+                .map(ct -> ct.getClass())   
+                .distinct()
+                .toList();
+
+            for (var t : typesInModel) {
+                double remaining = maxThreatByDifficulty - sum;
+
+                var seed = characterList.stream()
+                    .filter(CharacterType::isEnabled)
+                    .filter(ct -> ct.getClass() == t)
+                    .filter(ct -> ct.getEffectiveThreat() > 0)
+                    .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat)) // easiest of that type
+                    .filter(ct -> ct.getEffectiveThreat() <= remaining)
+                    .filter(ct -> !characterNrCapsIsExceeded(ct,
+                            noOfGhostsSpawned,
+                            noOfZombiesSpawned,
+                            noOfPumpkinBombersSpawned,
+                            monsterTypecaps))
+                    .findFirst();
+
+                if (seed.isPresent()) {
+                    var picked = seed.get();
+                    setCharacterAttributesByDifficulty(picked, speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath);
+                    doCharacterRegistration(gameController, picked,
+                            noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned);
+                    sum += picked.getEffectiveThreat();
+                }
+            }
+        return sum;
+    }
+
 
     private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
             AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned, AtomicInteger noOfPumpkinBombersSpawned) {
