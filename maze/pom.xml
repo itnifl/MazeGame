@@ -14,9 +14,10 @@
   <artifactId>main.game.maze</artifactId>
 
   <properties>
+    <javafx.platform>win</javafx.platform>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>21</maven.compiler.release>
-    <javafx.version>21.0.9</javafx.version>
+    <maven.compiler.release>25</maven.compiler.release>
+    <javafx.version>25.0.1</javafx.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
     <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
@@ -151,6 +152,20 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <!-- Put dependencies on the JPMS module path -->
+          <useModulePath>true</useModulePath>
+          <!-- Let the JVM enable all modules found on the module path -->
+          <argLine>--add-modules=ALL-MODULE-PATH</argLine>
+          <!-- Optional: avoid flaky native console issues on Windows -->
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+        </configuration>
       </plugin>      
     </plugins>
 
