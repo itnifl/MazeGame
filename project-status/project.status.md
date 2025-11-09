@@ -11,23 +11,23 @@ You have been added to Blackboard groups based on the agreed group composition. 
 
 1. **Select a project.**
    Together with your group, choose one project to develop from the individual assignments submitted by group members.
-   • Ideally, some proposals will be better suited than others, so selection should be straightforward. Reach out if you need help.
+   - Ideally, some proposals will be better suited than others, so selection should be straightforward. Reach out if you need help.
 
 2. **Define a variability aspect.**
    From the selected project, choose a variability aspect to develop using model driven engineering.
-   • You do not need to build new functionality from scratch. Expand and generalize what exists. Focus on behavior that can be abstracted in a model.
+   - You do not need to build new functionality from scratch. Expand and generalize what exists. Focus on behavior that can be abstracted in a model.
 
 3. **Develop a DSL and its infrastructure.**
    Include the following:
-   • An Ecore metamodel for the DSL. Instances of this metamodel (models) represent the configuration of your product or part of it.
-   • Constraints in OCL or regular code to ensure model validity.
-   • At least three representative model instances that demonstrate different properties. Models with identical structure and only renamed elements do not satisfy this requirement.
-   • A mapping from model instances to application behavior, using one or more of these alternatives:
-   – Code generation for the application (for example with Xtend or Acceleo), or parts of it. Typically you will generate or modify specific files and resources while leaving other parts unchanged. This does not mean simply generating getters and setters from Ecore models.
-   – Interpretation of the model (for example with the Java APIs generated from the model) to alter application behavior based on model content.
-   – Build process configuration that includes specific components, libraries, or files based on model content.
-   • A concrete syntax for the DSL and an editor, either textual (for example with Xtext) or graphical (for example with Sirius).
-   • Packaging configuration for the developed components as a set of Eclipse plugins.
+   - An Ecore metamodel for the DSL. Instances of this metamodel (models) represent the configuration of your product or part of it.
+   - Constraints in OCL or regular code to ensure model validity.
+   - At least three representative model instances that demonstrate different properties. Models with identical structure and only renamed elements do not satisfy this requirement.
+   - A mapping from model instances to application behavior, using one or more of these alternatives:
+   - Code generation for the application (for example with Xtend or Acceleo), or parts of it. Typically you will generate or modify specific files and resources while leaving other parts unchanged. This does not mean simply generating getters and setters from Ecore models.
+   - Interpretation of the model (for example with the Java APIs generated from the model) to alter application behavior based on model content.
+   - Build process configuration that includes specific components, libraries, or files based on model content.
+   - A concrete syntax for the DSL and an editor, either textual (for example with Xtext) or graphical (for example with Sirius).
+   - Packaging configuration for the developed components as a set of Eclipse plugins.
 
 4. **Document the work.**
    Provide documentation in the repository. It is fine to use a README.md or another format. We expect a README.md that points to the rest of the documentation in whichever format you prefer.
