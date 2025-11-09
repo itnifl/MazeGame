@@ -29,6 +29,8 @@ import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
@@ -271,7 +273,12 @@ public class PlayerCharacter extends Character
             if (javafx.application.Platform.isFxApplicationThread()) {
                 gfx.setEffect(null);
             } else {
-                javafx.application.Platform.runLater(() -> gfx.setEffect(null));
+                CountDownLatch latch = new CountDownLatch(1);
+                javafx.application.Platform.runLater(() -> {
+                    try { gfx.setEffect(null); }
+                    finally { latch.countDown(); }
+                });
+                try { latch.await(2, TimeUnit.SECONDS); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
             }
         }
 
