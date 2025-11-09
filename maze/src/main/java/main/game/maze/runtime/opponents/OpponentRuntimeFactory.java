@@ -224,8 +224,8 @@ public final class OpponentRuntimeFactory {
                         noOfPumpkinBombersSpawned, 
                         monsterTypecaps));
 
-                var next = diff instanceof EasyDifficulty ? charactersFiltered.reduce((first, second) -> second) // lowest that fits
-                    : charactersFiltered.findAny(); // highest that fits
+                var next = diff instanceof EasyDifficulty ? charactersFiltered.findFirst() // lowest that fits
+                    : charactersFiltered.findAny(); 
 
                 if (next.isEmpty()) break;
 
