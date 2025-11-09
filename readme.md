@@ -68,6 +68,7 @@ Remember set JAVA_HOME, PATH_TO_FX, MAVEN_HOME and PATH environment variables, f
 - 🛠️ PATH+=C:\Program Files\Apache\Apache Maven\bin
 
 Set your VS Code to use this version of Java:
+- Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”.
 - Ctrl + Shift + P → “Java: Configure Java Runtime”.
 - Under JDKs, add C:\Program Files\Java\jdk-25 and set it as Default.
 - In the same panel, set JDK for Language Server to the same JDK 25.
