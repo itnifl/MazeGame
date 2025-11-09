@@ -50,8 +50,8 @@ This game is developed in Visual Studio Code with the following extensions:
 - ⬇️ "Debugger for java"
 - ⬇️ "Test runner for Java"
 
-Download Java 24 SDK to run the game:
-- ⬇️ https://www.oracle.com/java/technologies/downloads/#java24
+Download Java 25 SDK to run the game:
+- ⬇️ https://www.oracle.com/java/technologies/downloads/#java25
 
 
 Download Java FX 25 SDK was used during the development of this game and it is needed to run it:
