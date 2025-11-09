@@ -56,6 +56,7 @@ Download Java 24 SDK to run the game:
 
 Download Java FX 21 SDK was used during the development of this game and it is needed to run it:
 - ⬇️ https://gluonhq.com/products/javafx/
+- 🛠️ Setup: https://dev.java/learn/javafx/install/#javafx-windows
 
 Download and install Apache Maven, read here:
 - ⬇️ https://maven.apache.org/install.html
