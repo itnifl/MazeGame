@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build & Test (JavaFX + Maven)
 
 on:
   push:
@@ -6,10 +6,11 @@ on:
 
 jobs:
   build:
+    name: Compile + Test on Ubuntu
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Temurin JDK 25
@@ -19,29 +20,51 @@ jobs:
           java-version: 25
           cache: maven
 
-      - name: Build and run all tests
-        run: |
-          mvn -B -U -e \
-            -Djavafx.platform=linux \
-            -Dtestfx.robot=glass \
-            -Dtestfx.headless=true \
-            -Dprism.order=sw \
-            -Dprism.text=t2k \
-            -Dheadless=true \
-            -DskipTests=false \
-            clean verify
+      - name: 📦 Install Xvfb (virtual display for JavaFX)
+        run: sudo apt-get update && sudo apt-get install -y xvfb
 
-      - name: Upload surefire test reports (always)
+      - name: 🧩 Build & run tests (headless JavaFX)
+        id: build
+        run: |
+          echo "Starting Maven build and tests..."
+          xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
+            mvn -B -U -e \
+              -Djavafx.platform=linux \
+              -Dtestfx.robot=glass \
+              -Dtestfx.headless=true \
+              -Dprism.order=sw \
+              -Dprism.text=t2k \
+              clean verify
+        continue-on-error: false
+
+      - name: 📊 Summarize test results
+        if: always()
+        run: |
+          echo "### ✅ Maven summary" >> $GITHUB_STEP_SUMMARY
+          mvn surefire-report:report-only -Daggregate=true
+          if [ -d target/site ]; then
+            echo "Artifacts produced in target/site/" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📁 Upload Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
           path: "**/target/surefire-reports/**"
 
-      - name: Upload failsafe (integration) test reports if present
+      - name: 📁 Upload Failsafe reports (if any)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: failsafe-reports
           path: "**/target/failsafe-reports/**"
+          if-no-files-found: ignore
+
+      - name: 🧾 Upload HTML site (test summary)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary-site
+          path: target/site/**
           if-no-files-found: ignore
