@@ -73,5 +73,5 @@ The aim is to gain experience with DSLs and model driven engineering on a real p
 # Criteria:
 
 <br/><br/>
-<img src="./evaluation.png" alt="Evaluation" width="150%" />
+<img src="./evaluation.png" alt="Evaluation" width="190%" />
 <br/><br/>
