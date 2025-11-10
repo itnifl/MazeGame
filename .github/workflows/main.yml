@@ -21,8 +21,15 @@ jobs:
 
       - name: Build and run all tests
         run: |
-          # Override JavaFX platform to match the runner OS
-          mvn -B -U -e -Djavafx.platform=linux -DskipTests=false clean verify
+          mvn -B -U -e \
+            -Djavafx.platform=linux \
+            -Dtestfx.robot=glass \
+            -Dtestfx.headless=true \
+            -Dprism.order=sw \
+            -Dprism.text=t2k \
+            -Dheadless=true \
+            -DskipTests=false \
+            clean verify
 
       - name: Upload surefire test reports (always)
         if: always()
