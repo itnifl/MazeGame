@@ -1,0 +1,40 @@
+name: Build and Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+
+      - name: Build and run all tests
+        run: |
+          # Override JavaFX platform to match the runner OS
+          mvn -B -U -e -Djavafx.platform=linux -DskipTests=false clean verify
+
+      - name: Upload surefire test reports (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: "**/target/surefire-reports/**"
+
+      - name: Upload failsafe (integration) test reports if present
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failsafe-reports
+          path: "**/target/failsafe-reports/**"
+          if-no-files-found: ignore
