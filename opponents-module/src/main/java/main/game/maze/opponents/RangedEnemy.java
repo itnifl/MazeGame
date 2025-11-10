@@ -38,7 +38,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Attack Range</em>' attribute.
 	 * @see #setAttackRange(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_AttackRange()
-	 * @model default="50"
+	 * @model default="50" required="true"
 	 * @generated
 	 */
 	double getAttackRange();
@@ -61,7 +61,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Attack Cooldown Ms</em>' attribute.
 	 * @see #setAttackCooldownMs(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_AttackCooldownMs()
-	 * @model default="10000"
+	 * @model default="10000" required="true"
 	 * @generated
 	 */
 	int getAttackCooldownMs();
@@ -84,7 +84,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Attack Damage</em>' attribute.
 	 * @see #setAttackDamage(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_AttackDamage()
-	 * @model default="1"
+	 * @model default="1" required="true"
 	 * @generated
 	 */
 	int getAttackDamage();
@@ -107,7 +107,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Projectile Speed</em>' attribute.
 	 * @see #setProjectileSpeed(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_ProjectileSpeed()
-	 * @model default="0"
+	 * @model default="0" required="true"
 	 * @generated
 	 */
 	double getProjectileSpeed();
@@ -154,7 +154,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Splash Radius</em>' attribute.
 	 * @see #setSplashRadius(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_SplashRadius()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	double getSplashRadius();
@@ -176,7 +176,7 @@ public interface RangedEnemy extends CharacterType {
 	 * @return the value of the '<em>Arc Height</em>' attribute.
 	 * @see #setArcHeight(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getRangedEnemy_ArcHeight()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	double getArcHeight();

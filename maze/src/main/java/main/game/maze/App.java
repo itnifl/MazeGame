@@ -17,7 +17,10 @@ import main.game.maze.constants.StageConstants;
 
 // NEW imports:
 import main.game.maze.service.DifficultyService;
+import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.opponents.OpponentsPackage;
+import main.game.maze.runtime.OclBootstrap;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -36,6 +39,11 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            OclBootstrap.init();
+            OpponentsPackage.eINSTANCE.eClass();
+            DifficultiesPackage.eINSTANCE.eClass();
+
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
             AnchorPane root = loader.load();
 

@@ -870,18 +870,18 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEClass(opponentModelEClass, OpponentModel.class, "OpponentModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getOpponentModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOpponentModel_CharacterTypes(), this.getCharacterType(), null, "characterTypes", null, 1, -1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, OpponentModel.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOpponentModel_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 1, 1, OpponentModel.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getOpponentModel_SelectedDifficulty(), theDifficultiesPackage.getDifficulty(), null, "selectedDifficulty", null, 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getOpponentModel_GameSetCurrentThreatLevel(), ecorePackage.getEDouble(), "GameSetCurrentThreatLevel", "0", 0, 1, OpponentModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOpponentModel_GameSetCurrentThreatLevel(), ecorePackage.getEDouble(), "gameSetCurrentThreatLevel", "0", 1, 1, OpponentModel.class, !IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(characterTypeEClass, CharacterType.class, "CharacterType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCharacterType_Id(), ecorePackage.getEString(), "id", null, 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_Health(), ecorePackage.getEInt(), "health", "100", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_Speed(), ecorePackage.getEDouble(), "speed", "1.0", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", null, 0, 1, CharacterType.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_EffectiveThreat(), ecorePackage.getEInt(), "effectiveThreat", "1", 0, 1, CharacterType.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_Health(), ecorePackage.getEInt(), "health", "100", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_Speed(), ecorePackage.getEDouble(), "speed", "1.0", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", null, 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_EffectiveThreat(), ecorePackage.getEInt(), "effectiveThreat", "1", 1, 1, CharacterType.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageBase(), ecorePackage.getEString(), "ImageBase", "/main/game/maze/zombie.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnLeft(), ecorePackage.getEString(), "ImageTurnLeft", "/main/game/maze/zombie-left.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnRight(), ecorePackage.getEString(), "ImageTurnRight", "/main/game/maze/zombie-right.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -890,10 +890,10 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 1, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getZombie_ZombieLootTable(), this.getLootTable(), null, "zombieLootTable", null, 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getZombie_InfectionLevel(), ecorePackage.getEInt(), "infectionLevel", "1", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getZombie_ResurrectionTime(), ecorePackage.getEInt(), "resurrectionTime", "0", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_InfectionLevel(), ecorePackage.getEInt(), "infectionLevel", "1", 1, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getZombie_ResurrectionTime(), ecorePackage.getEInt(), "resurrectionTime", "0", 1, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getZombie_TouchSound(), ecorePackage.getEString(), "touchSound", "/main/game/maze/zombieScream.mp3", 0, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(lootTableEClass, LootTable.class, "LootTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -903,23 +903,23 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEClass(lootItemEClass, LootItem.class, "LootItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLootItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLootItem_Type(), this.getLootItemType(), "type", "FOOD", 1, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLootItem_Value(), ecorePackage.getEInt(), "value", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLootItem_Value(), ecorePackage.getEInt(), "value", null, 1, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLootItem_Weight(), ecorePackage.getEInt(), "weight", null, 1, 10, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLootItem_GraphicBase(), ecorePackage.getEString(), "graphicBase", null, 0, 1, LootItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(ghostEClass, Ghost.class, "Ghost", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEDouble(), "nonTangibilityEnergy", "100", 0, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 1, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_VisibilityLevel(), ecorePackage.getEInt(), "visibilityLevel", "100", 1, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGhost_NonTangibilityEnergy(), ecorePackage.getEDouble(), "nonTangibilityEnergy", "100", 1, 1, Ghost.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(rangedEnemyEClass, RangedEnemy.class, "RangedEnemy", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRangedEnemy_AttackRange(), ecorePackage.getEDouble(), "attackRange", "50", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRangedEnemy_AttackCooldownMs(), ecorePackage.getEInt(), "attackCooldownMs", "10000", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRangedEnemy_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRangedEnemy_ProjectileSpeed(), ecorePackage.getEDouble(), "projectileSpeed", "0", 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_AttackRange(), ecorePackage.getEDouble(), "attackRange", "50", 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_AttackCooldownMs(), ecorePackage.getEInt(), "attackCooldownMs", "10000", 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "1", 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ProjectileSpeed(), ecorePackage.getEDouble(), "projectileSpeed", "0", 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRangedEnemy_ProjectileType(), this.getProjectileType(), "projectileType", null, 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRangedEnemy_SplashRadius(), ecorePackage.getEDouble(), "splashRadius", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRangedEnemy_ArcHeight(), ecorePackage.getEDouble(), "arcHeight", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_SplashRadius(), ecorePackage.getEDouble(), "splashRadius", null, 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRangedEnemy_ArcHeight(), ecorePackage.getEDouble(), "arcHeight", null, 1, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRangedEnemy_ProjectileImage(), ecorePackage.getEString(), "projectileImage", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRangedEnemy_ExplosionImage(), ecorePackage.getEString(), "explosionImage", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRangedEnemy_ExplosionSound(), ecorePackage.getEString(), "explosionSound", null, 0, 1, RangedEnemy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -948,10 +948,53 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createResource(eNS_URI);
 
 		// Create annotations
-		// http://www.eclipse.org/emf/2002/Ecore/OCL
-		createOCLAnnotations();
+		// http://www.eclipse.org/OCL/Import
+		createImportAnnotations();
 		// http://www.eclipse.org/emf/2002/Ecore
 		createEcoreAnnotations();
+		// http://www.eclipse.org/emf/2002/Ecore/OCL
+		createOCLAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/OCL/Import</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createImportAnnotations() {
+		String source = "http://www.eclipse.org/OCL/Import";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "diff", "platform:/resource/difficulty-module/src/main/resources/difficulty-module.ecore#/",
+			   "ecore", "http://www.eclipse.org/emf/2002/Ecore"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createEcoreAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "invocationDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL",
+			   "settingDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL",
+			   "validationDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL"
+		   });
+		addAnnotation
+		  (opponentModelEClass,
+		   source,
+		   new String[] {
+			   "constraints", "validateMaxThreat"
+		   });
 	}
 
 	/**
@@ -966,29 +1009,19 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		  (opponentModelEClass,
 		   source,
 		   new String[] {
-			   "validateMaxThreat", "self.characterTypes->collect(ct | ct.effectiveThreat)->sum() <= self.maxThreat"
+			   "validateMaxThreat", "self.characterTypes.threatLevel->sum() <= self.maxThreat.oclAsType(Real)"
 		   });
 		addAnnotation
 		  (getOpponentModel_MaxThreat(),
 		   source,
 		   new String[] {
-			   "derivation", "if self.selectedDifficulty.oclIsUndefined()\nthen 0\nelse self.selectedDifficulty.maxThreat\nendif"
+			   "derivation", "if self.selectedDifficulty = null then 20 else self.selectedDifficulty.maxThreat endif"
 		   });
-	}
-
-	/**
-	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void createEcoreAnnotations() {
-		String source = "http://www.eclipse.org/emf/2002/Ecore";
 		addAnnotation
-		  (opponentModelEClass,
+		  (getOpponentModel_GameSetCurrentThreatLevel(),
 		   source,
 		   new String[] {
-			   "constraints", "validateMaxThreat"
+			   "derivation", "self.characterTypes.threatLevel->sum()"
 		   });
 	}
 

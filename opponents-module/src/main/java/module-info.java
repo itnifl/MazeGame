@@ -3,7 +3,7 @@ module main.game.maze.opponents {
     requires org.eclipse.emf.ecore;
     requires org.eclipse.emf.ecore.xmi; 
     requires main.game.maze.difficulties;
-    // keep exports/opens as before
+    requires org.eclipse.ocl.ecore;
     exports main.game.maze.opponents;
     exports main.game.maze.opponents.util;
 
