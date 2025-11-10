@@ -20,10 +20,10 @@ jobs:
           java-version: 25
           cache: maven
 
-      - name: 📦 Install Xvfb (virtual display for JavaFX)
+      - name: Install Xvfb (virtual display for JavaFX)
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
-      - name: 🧩 Build & run tests (headless JavaFX)
+      - name: Build & run tests (headless JavaFX)
         id: build
         run: |
           echo "Starting Maven build and tests..."
@@ -37,7 +37,7 @@ jobs:
               clean verify
         continue-on-error: false
 
-      - name: 📊 Summarize test results
+      - name: Summarize test results
         if: always()
         run: |
           echo "### ✅ Maven summary" >> $GITHUB_STEP_SUMMARY
@@ -46,14 +46,14 @@ jobs:
             echo "Artifacts produced in target/site/" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: 📁 Upload Surefire reports
+      - name: Upload Surefire reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports
           path: "**/target/surefire-reports/**"
 
-      - name: 📁 Upload Failsafe reports (if any)
+      - name: Upload Failsafe reports (if any)
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -61,7 +61,7 @@ jobs:
           path: "**/target/failsafe-reports/**"
           if-no-files-found: ignore
 
-      - name: 🧾 Upload HTML site (test summary)
+      - name: Upload HTML site (test summary)
         if: always()
         uses: actions/upload-artifact@v4
         with:
