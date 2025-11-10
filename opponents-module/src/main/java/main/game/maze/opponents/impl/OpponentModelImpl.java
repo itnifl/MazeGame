@@ -14,6 +14,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -71,14 +72,14 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	protected EList<CharacterType> characterTypes;
 
 	/**
-	 * The default value of the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
+	 * The cached setting delegate for the '{@link #getMaxThreat() <em>Max Threat</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getMaxThreat()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int MAX_THREAT_EDEFAULT = 0;
+	protected EStructuralFeature.Internal.SettingDelegate MAX_THREAT__ESETTING_DELEGATE = ((EStructuralFeature.Internal)OpponentsPackage.Literals.OPPONENT_MODEL__MAX_THREAT).getSettingDelegate();
 
 	/**
 	 * The cached value of the '{@link #getSelectedDifficulty() <em>Selected Difficulty</em>}' reference.
@@ -91,24 +92,14 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	protected Difficulty selectedDifficulty;
 
 	/**
-	 * The default value of the '{@link #getGameSetCurrentThreatLevel() <em>Game Set Current Threat Level</em>}' attribute.
+	 * The cached setting delegate for the '{@link #getGameSetCurrentThreatLevel() <em>Game Set Current Threat Level</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getGameSetCurrentThreatLevel()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final double GAME_SET_CURRENT_THREAT_LEVEL_EDEFAULT = 0.0;
-
-	/**
-	 * The cached value of the '{@link #getGameSetCurrentThreatLevel() <em>Game Set Current Threat Level</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGameSetCurrentThreatLevel()
-	 * @generated
-	 * @ordered
-	 */
-	protected double gameSetCurrentThreatLevel = GAME_SET_CURRENT_THREAT_LEVEL_EDEFAULT;
+	protected EStructuralFeature.Internal.SettingDelegate GAME_SET_CURRENT_THREAT_LEVEL__ESETTING_DELEGATE = ((EStructuralFeature.Internal)OpponentsPackage.Literals.OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL).getSettingDelegate();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -225,7 +216,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 */
 	@Override
 	public double getGameSetCurrentThreatLevel() {
-		return gameSetCurrentThreatLevel;
+		return (Double)GAME_SET_CURRENT_THREAT_LEVEL__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
 	}
 
 	/**
@@ -235,10 +226,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	 */
 	@Override
 	public void setGameSetCurrentThreatLevel(double newGameSetCurrentThreatLevel) {
-		double oldGameSetCurrentThreatLevel = gameSetCurrentThreatLevel;
-		gameSetCurrentThreatLevel = newGameSetCurrentThreatLevel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL, oldGameSetCurrentThreatLevel, gameSetCurrentThreatLevel));
+		GAME_SET_CURRENT_THREAT_LEVEL__ESETTING_DELEGATE.dynamicSet(this, null, 0, newGameSetCurrentThreatLevel);
 	}
 
 	/**
@@ -322,7 +310,7 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 				setSelectedDifficulty((Difficulty)null);
 				return;
 			case OpponentsPackage.OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL:
-				setGameSetCurrentThreatLevel(GAME_SET_CURRENT_THREAT_LEVEL_EDEFAULT);
+				GAME_SET_CURRENT_THREAT_LEVEL__ESETTING_DELEGATE.dynamicUnset(this, null, 0);
 				return;
 		}
 		super.eUnset(featureID);
@@ -341,11 +329,11 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 			case OpponentsPackage.OPPONENT_MODEL__CHARACTER_TYPES:
 				return characterTypes != null && !characterTypes.isEmpty();
 			case OpponentsPackage.OPPONENT_MODEL__MAX_THREAT:
-				return getMaxThreat() != MAX_THREAT_EDEFAULT;
+				return MAX_THREAT__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 			case OpponentsPackage.OPPONENT_MODEL__SELECTED_DIFFICULTY:
 				return selectedDifficulty != null;
 			case OpponentsPackage.OPPONENT_MODEL__GAME_SET_CURRENT_THREAT_LEVEL:
-				return gameSetCurrentThreatLevel != GAME_SET_CURRENT_THREAT_LEVEL_EDEFAULT;
+				return GAME_SET_CURRENT_THREAT_LEVEL__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -362,8 +350,6 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", GameSetCurrentThreatLevel: ");
-		result.append(gameSetCurrentThreatLevel);
 		result.append(')');
 		return result.toString();
 	}

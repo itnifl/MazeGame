@@ -179,7 +179,6 @@ public final class OpponentRuntimeFactory {
                 sum);
 
             threatSum = sum;
-            opponentModel.setGameSetCurrentThreatLevel(threatSum);
             validateOrFail(opponentModel);
         } catch (Exception loadException) {
             _logger.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);

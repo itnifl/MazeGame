@@ -134,6 +134,14 @@ public class OpponentsValidator extends EObjectValidator {
 	}
 
 	/**
+	 * The cached validation expression for the validateMaxThreat constraint of '<em>Opponent Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected static final String OPPONENT_MODEL__VALIDATE_MAX_THREAT__EEXPRESSION = "self.characterTypes.threatLevel->sum() <= self.maxThreat.oclAsType(Real)";
+
+	/**
 	 * Validates the validateMaxThreat constraint of 'OpponentModel'.
 	 * @generated NOT
 	 */
