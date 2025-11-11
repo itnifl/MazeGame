@@ -4,7 +4,7 @@
 <!--
 -->
 
-<plugin id="main.game.maze.difficulty"
+<plugin id="main.game.maze.difficulties"
     name="%pluginName"
     version="1.0.0.qualifier"
     provider-name="%providerName">

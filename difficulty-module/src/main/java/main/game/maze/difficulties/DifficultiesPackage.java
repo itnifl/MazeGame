@@ -123,7 +123,7 @@ public interface DifficultiesPackage extends EPackage {
 	int DIFFICULTY__INSTANT_DEATH = 0;
 
 	/**
-	 * The feature id for the '<em><b>Enemy Max Count</b></em>' reference list.
+	 * The feature id for the '<em><b>Enemy Max Count</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -196,7 +196,7 @@ public interface DifficultiesPackage extends EPackage {
 	int EASY_DIFFICULTY__INSTANT_DEATH = DIFFICULTY__INSTANT_DEATH;
 
 	/**
-	 * The feature id for the '<em><b>Enemy Max Count</b></em>' reference list.
+	 * The feature id for the '<em><b>Enemy Max Count</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -269,7 +269,7 @@ public interface DifficultiesPackage extends EPackage {
 	int NORMAL_DIFFICULTY__INSTANT_DEATH = DIFFICULTY__INSTANT_DEATH;
 
 	/**
-	 * The feature id for the '<em><b>Enemy Max Count</b></em>' reference list.
+	 * The feature id for the '<em><b>Enemy Max Count</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -342,7 +342,7 @@ public interface DifficultiesPackage extends EPackage {
 	int HARD_DIFFICULTY__INSTANT_DEATH = DIFFICULTY__INSTANT_DEATH;
 
 	/**
-	 * The feature id for the '<em><b>Enemy Max Count</b></em>' reference list.
+	 * The feature id for the '<em><b>Enemy Max Count</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -516,10 +516,10 @@ public interface DifficultiesPackage extends EPackage {
 	EAttribute getDifficulty_InstantDeath();
 
 	/**
-	 * Returns the meta object for the reference list '{@link main.game.maze.difficulties.Difficulty#getEnemyMaxCount <em>Enemy Max Count</em>}'.
+	 * Returns the meta object for the containment reference list '{@link main.game.maze.difficulties.Difficulty#getEnemyMaxCount <em>Enemy Max Count</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Enemy Max Count</em>'.
+	 * @return the meta object for the containment reference list '<em>Enemy Max Count</em>'.
 	 * @see main.game.maze.difficulties.Difficulty#getEnemyMaxCount()
 	 * @see #getDifficulty()
 	 * @generated
@@ -699,7 +699,7 @@ public interface DifficultiesPackage extends EPackage {
 		EAttribute DIFFICULTY__INSTANT_DEATH = eINSTANCE.getDifficulty_InstantDeath();
 
 		/**
-		 * The meta object literal for the '<em><b>Enemy Max Count</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Enemy Max Count</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

@@ -12,12 +12,14 @@ import main.game.maze.difficulties.EnemyTypes;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
 
+import main.game.maze.difficulties.util.DifficultiesValidator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -127,6 +129,16 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 
 		// Initialize created meta-data
 		theDifficultiesPackage.initializePackageContents();
+
+		// Register package validator
+		EValidator.Registry.INSTANCE.put
+			(theDifficultiesPackage,
+			 new EValidator.Descriptor() {
+				 @Override
+				 public EValidator getEValidator() {
+					 return DifficultiesValidator.INSTANCE;
+				 }
+			 });
 
 		// Mark meta-data to indicate it can't be changed
 		theDifficultiesPackage.freeze();
@@ -391,7 +403,7 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 
 		initEClass(difficultyEClass, Difficulty.class, "Difficulty", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDifficulty_InstantDeath(), ecorePackage.getEBoolean(), "instantDeath", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDifficulty_EnemyMaxCount(), this.getEnemyMaxCount(), null, "enemyMaxCount", null, 0, -1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getDifficulty_EnemyMaxCount(), this.getEnemyMaxCount(), null, "enemyMaxCount", null, 0, -1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 		initEAttribute(getDifficulty_MonstersMovementSpeedMultiplier(), ecorePackage.getEDouble(), "monstersMovementSpeedMultiplier", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDifficulty_MonstersDamageMultiplier(), ecorePackage.getEDouble(), "monstersDamageMultiplier", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDifficulty_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -412,6 +424,26 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2002/Ecore
+		createEcoreAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createEcoreAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore";
+		addAnnotation
+		  (difficultyEClass,
+		   source,
+		   new String[] {
+			   "constraints", "MaxThreatNonNegative"
+		   });
 	}
 
 } //DifficultiesPackageImpl
