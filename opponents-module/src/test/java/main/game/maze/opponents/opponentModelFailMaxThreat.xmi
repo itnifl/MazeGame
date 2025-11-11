@@ -94,7 +94,7 @@
       <enabled>true</enabled>
       <health>120</health>
       <speed>3</speed>
-      <threatLevel>2</threatLevel>
+      <threatLevel>10</threatLevel>
       <attackDamage>1</attackDamage>
       <behavior>WANDER</behavior>
       <ImageBase>/main/game/maze/zombie3-down.png</ImageBase>
