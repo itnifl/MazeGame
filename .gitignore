@@ -36,3 +36,41 @@ opponents-module/icons/
 
 /maze/.m2
 .vscode\settings.json
+/releng/local-p2/plugins
+/releng/local-p2/features
+releng/local-p2/artifacts.jar
+releng/local-p2/content.jar
+
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# IDEs
+# Eclipse / PDE
+.project
+.classpath
+.settings/
+.loadpath
+.factorypath
+.recommenders/
+.metadata/
+*.launch
+bin/
+
+# Tycho / p2 artefacts 
+**/.flattened-pom.xml
+**/target/repository/
+**/target/*.repo.zip
+
+# JavaFX packaging (optional)
+dist/
+out/
+
+# Misc temp/backups 
+*.tmp
+*.temp
+~$*
+*.bak
+*.orig
+*.rej
