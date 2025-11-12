@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>maze-generator.acceleo</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-eclipse-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+          <execution>
+            <id>run-acceleo</id>
+            <phase>generate-sources</phase>
+            <goals><goal>eclipse-run</goal></goals>
+            <configuration>
+              <repositories>
+                <repository>
+                  <url>file:${project.basedir}/../releng/local-p2</url>
+                </repository>
+              </repositories>
+              <dependencies>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.equinox.app</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.core.runtime</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>
+                <!-- this plug-in so the app class is present -->
+                <dependency><type>eclipse-plugin</type><artifactId>${project.artifactId}</artifactId></dependency>
+              </dependencies>
+              <executionEnvironment>JavaSE-21</executionEnvironment>
+              <application>main.game.maze.gen.app</application>
+              <applicationArgs>
+                <arg>${project.basedir}/../models/DifficultyGameData.xmi</arg>
+                <arg>${project.basedir}/../maze-generated/src/main/java</arg>
+              </applicationArgs>
+              <jvmArgs>
+                <arg>-Dfile.encoding=UTF-8</arg>
+              </jvmArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

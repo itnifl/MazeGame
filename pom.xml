@@ -4,10 +4,48 @@
   <artifactId>MazeGame</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <properties>
+    <tycho.version>5.0.0</tycho.version>
+  </properties>
+
   <modules>
-    <module>opponents-module</module>
-    <module>difficulty-module</module>
+    <module>releng/mirror</module>
     <module>movements-module</module>
+    <module>difficulty-module</module>
+    <module>opponents-module</module>
+    <module>maze-feature</module>
+    <module>maze-repository</module>
+    <module>maze-generator.acceleo</module>
+    <module>maze-generated</module>
     <module>maze</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <target>releng/maze.target</target>
+          <pomDependencies>ignore</pomDependencies>
+          <!-- optional: lock build env(s)
+          <environments>
+            <environment>
+              <os>win32</os><ws>win32</ws><arch>x86_64</arch>
+            </environment>
+          </environments>
+          -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

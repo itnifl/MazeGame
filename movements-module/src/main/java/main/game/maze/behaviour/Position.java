@@ -18,7 +18,8 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getPosition()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositivePositions'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositivePositions='self.posX &gt;= 0 and self.posY &gt;= 0'"
  * @generated
  */
 public interface Position extends EObject {

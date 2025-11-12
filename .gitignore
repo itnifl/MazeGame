@@ -74,3 +74,4 @@ out/
 *.bak
 *.orig
 *.rej
+/releng/local-p2/binary

@@ -16,7 +16,8 @@ package main.game.maze.behaviour;
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getRandomBehavior()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositiveRegenPerSecond'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositiveRegenPerSecond='self.regenPerSecond &gt;= 0'"
  * @generated
  */
 public interface RandomBehavior extends MovementBehavior {
@@ -29,12 +30,12 @@ public interface RandomBehavior extends MovementBehavior {
 	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Regen Per Second</em>' attribute.
-	 * @see #setRegenPerSecond(int)
+	 * @see #setRegenPerSecond(double)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getRandomBehavior_RegenPerSecond()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
-	int getRegenPerSecond();
+	double getRegenPerSecond();
 
 	/**
 	 * Sets the value of the '{@link main.game.maze.behaviour.RandomBehavior#getRegenPerSecond <em>Regen Per Second</em>}' attribute.
@@ -44,6 +45,6 @@ public interface RandomBehavior extends MovementBehavior {
 	 * @see #getRegenPerSecond()
 	 * @generated
 	 */
-	void setRegenPerSecond(int value);
+	void setRegenPerSecond(double value);
 
 } // RandomBehavior

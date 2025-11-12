@@ -1,0 +1,43 @@
+name: Build & Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  generate-and-build-game:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
+
+      - name: Ensure generated source folder exists
+        run: mkdir -p maze-generated/src/main/java
+
+      - name: Run Acceleo generator
+        run: |
+          mvn -B -U -e \
+            -pl maze-generator.acceleo \
+            -am \
+            -DskipTests clean verify
+
+      - name: Build generated jar + game (JavaFX)
+        run: |
+          mvn -B -U -e \
+            -pl maze \
+            -am \
+            -Djavafx.platform=linux \
+            -DskipTests=false clean verify
+
+      - name: Upload game artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maze-game
+          path: "maze/target/**/*.jar"

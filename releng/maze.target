@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<target name="Maze Target" sequenceNumber="9">
+  <locations>
+    <location includeAllPlugins="true" type="InstallableUnit">
+      <repository location="file:./local-p2"/>
+      <unit id="org.eclipse.platform.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.core.runtime" version="0.0.0"/>
+      <unit id="org.eclipse.equinox.common" version="0.0.0"/>
+      <unit id="org.eclipse.core.jobs" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecore" version="0.0.0"/>
+      <unit id="org.eclipse.emf.common" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
+    </location>
+  </locations>
+</target>

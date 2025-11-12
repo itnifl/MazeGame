@@ -49,6 +49,10 @@ This game is developed in Visual Studio Code with the following extensions:
 - ⬇️ "Maven for Java" 
 - ⬇️ "Debugger for java"
 - ⬇️ "Test runner for Java"
+- ⬇️ "XML by Red Hat"
+- ⬇️ "OSGi for VS Code"
+- ⬇️ "YAML by Red Hat"
+- ⬇️ "OCL support"
 
 Download Java 25 SDK to run the game:
 - ⬇️ https://www.oracle.com/java/technologies/downloads/#java25
@@ -121,4 +125,5 @@ mvn -U clean install #Run from root: To compile all projects and run all unit te
 mvn test #Run from root: Run all unit tests
 mvn -pl opponents-module -am test #Run from root: Run all unit tests in the opponents-module
 mvn clean javafx:run -pl maze #Run the game
+mvn -f releng/mirror/pom.xml -U verify
 ```

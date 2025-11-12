@@ -10,15 +10,6 @@
     provider-name="%providerName">
 
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated opponents -->
-      <package
-            uri="http://main.game.maze/difficulty"
-            class="main.game.maze.opponents.DifficultyPackage"
-            genModel="src/main/resources/difficulty-module.genmodel"/>
-   </extension>
-
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated difficulty-module -->
       <package
             uri="http://main.game.maze/difficulty"
