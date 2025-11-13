@@ -1,4 +1,4 @@
-# maze generated
+# maze-generated
 
 ## Purpose
 
@@ -41,3 +41,26 @@ After a build, the jar is created at `target/maze-generated-<version>.jar`.
 
 * You can commit the generated sources to keep the project build friendly for new contributors and for continuous integration.
 * If templates or the input model change, run the generator again before compiling the app so this module reflects the latest output.
+
+## Relationship to other modules
+
+* **maze-generator.acceleo** → produces the Java sources that live here. Run it first to update code, then build this module to publish the jar.
+* **main.game.maze** → depends on the jar from this module to compile and run the game logic that is model driven.
+* **releng** → provides the target and optional local p2 mirror used when the generator runs headless, ensuring consistent generation inputs.
+* **movements-module, difficulty-module, opponents-module** → independent Eclipse plug ins. Changes in the metamodel or OCL inside `difficulty-module` may require regenerating this module so that the app sees the updated classes.
+* **maze-feature and maze-repository** → collect only Eclipse plug ins and features for p2 distribution. This module is a plain Maven jar and is not published to the p2 site.
+
+## Typical workflow
+
+1. Update model or templates.
+2. Run the generator:
+
+   ```bash
+   mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+   ```
+3. Build the generated jar and the app:
+
+   ```bash
+   mvn -pl maze -am -DskipTests=false clean verify
+   ```
+

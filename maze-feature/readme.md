@@ -1,6 +1,3 @@
-Here is an updated `maze-feature/README.md` you can drop in:
-
-````markdown
 # maze-feature
 
 Eclipse feature that groups the Maze game plugins for build and distribution.
@@ -69,6 +66,48 @@ There is no direct dependency between `maze-feature` and `maze-generated`. The f
 * Feature and p2: `mvn -pl maze-feature -am clean verify` then `mvn -pl maze-repository -am clean verify`
 * Generated jar: `mvn -pl maze-generated -am clean verify` (typically produced after running `maze-generator.acceleo`)
 
+## Relationship to other modules
+
+- **maze-generated**
+  - Output destination. The generator writes Java sources into `maze-generated/src/main/java`.
+  - The `maze-generated` module then packages those sources into a jar that other modules can depend on.
+  - Typical run that produces sources:
+    ```bash
+    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    ```
+
+- **main.game.maze**
+  - Consumer of the generated jar. The app compiles and runs against the classes packaged by `maze-generated`.
+  - After generation, build the app:
+    ```bash
+    mvn -pl maze -am -DskipTests=false clean verify
+    ```
+
+- **releng**
+  - Provides the Eclipse target and optional local p2 mirror used to run Acceleo headless in a stable and offline friendly way.
+  - If you refresh the mirror or target, regenerate to ensure the generator runs against the same platform:
+    ```bash
+    mvn -f releng/mirror/pom.xml -U verify
+    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    ```
+
+- **movements-module, difficulty-module, opponents-module**
+  - Independent of the generator outputs. These are Eclipse plug ins and do not consume the generated jar directly.
+  - Changes in the metamodel or OCL within `difficulty-module` can affect templates and the produced sources. Regenerate after such changes.
+
+- **maze-feature and maze-repository**
+  - The generator and the generated jar are not published to the p2 site. They are plain Maven artifacts.
+  - The feature and repository collect only Eclipse plug ins and features. Build order can still include the generator so that the app side has fresh sources before any end to end build.
+
+### End to end flow
+
 ```
-::contentReference[oaicite:0]{index=0}
+models/*.xmi + templates
+│
+▼
+maze-generator.acceleo  —(writes Java)→  maze-generated  —(jar)→  main.game.maze
+▲
+│
+releng target and mirror provide the headless Eclipse runtime for the generator
+
 ```
