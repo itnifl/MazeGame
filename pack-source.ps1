@@ -5,7 +5,7 @@
 #   - releng/local-p2/features and releng/local-p2/plugins
 #   - any first-level subfolder 'target' folders
 #   - maze/src/main/resources/main/game/maze and its contents
-# .\pack.ps1 -Root "D:\Source\MazeGame" -OutZip "D:\Source\MazeGame-src.zip"
+# .\pack-source.ps1 -Root "D:\Source\MazeGame" -OutZip "D:\Source\MazeGame-src.zip"
 param(
   [string]$Root = (Get-Location).Path,
   [string]$OutZip
@@ -70,5 +70,5 @@ foreach ($f in $files) {
 $zip.Dispose()
 $fs.Close()
 
-Write-Host ("Created: {0}" -f $OutZip)
-Write-Host ("Files included: {0}" -f $files.Count)
+Write-Host ("[{0}] Created: {1}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $OutZip)
+Write-Host ("[{0}] Files included: {1}" -f (Get-Date -Format "yyyy-MM-dd HH:mm:ss"), $files.Count)
