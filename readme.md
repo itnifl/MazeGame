@@ -2,16 +2,16 @@
 
 ## Index
 
-* 🧩 [project-status](project-status/README.md)
-* 🧩 [movements-module](movements-module/README.md)
-* 🧩 [difficulty-module](difficulty-module/README.md)
-* 🧩 [opponents-module](opponents-module/README.md)
-* 🖥️ [maze](maze/README.md)
-* 🧩 [maze-feature](maze-feature/README.md)
-* 🧩 [maze-repository](maze-repository/README.md)
-* 🧩 [maze-generator.acceleo](maze-generator.acceleo/README.md)
-* 🧩 [maze-generated](maze-generated/README.md)
-* 🧩 [releng](releng/README.md)
+* 🧩 [project-status](project-status/readme.md)
+* 🧩 [movements-module](movements-module/readme.md)
+* 🧩 [difficulty-module](difficulty-module/readme.md)
+* 🧩 [opponents-module](opponents-module/readme.md)
+* 🖥️ [maze](maze/readme.md)
+* 🧩 [maze-feature](maze-feature/readme.md)
+* 🧩 [maze-repository](maze-repository/readme.md)
+* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
+* 🧩 [maze-generated](maze-generated/readme.md)
+* 🧩 [releng](releng/readme.md)
 
 ---
 
@@ -295,41 +295,41 @@ Outputs:
 
 ### - movements-module
 
-Movement behaviors for characters and utilities used by the game loop. See the module guide: [movements-module/README.md](movements-module/README.md).
+Movement behaviors for characters and utilities used by the game loop. See the module guide: [movements-module/readme.md](movements-module/readme.md).
 
 ### - difficulty-module
 
-Ecore model and logic for difficulty profiles, defaults, and validations. See the module guide: [difficulty-module/README.md](difficulty-module/README.md).
+Ecore model and logic for difficulty profiles, defaults, and validations. See the module guide: [difficulty-module/readme.md](difficulty-module/readme.md).
 
 ### - opponents-module
 
-Ecore model and runtime helpers for enemies, threat values, and validation rules. See the module guide: [opponents-module/README.md](opponents-module/README.md).
+Ecore model and runtime helpers for enemies, threat values, and validation rules. See the module guide: [opponents-module/readme.md](opponents-module/readme.md).
 
 ### - maze
 
-The JavaFX application code and entry point for running the game. See the module guide: [maze/README.md](maze/README.md).
+The JavaFX application code and entry point for running the game. See the module guide: [maze/readme.md](maze/readme.md).
 
 ### - maze-feature
 
-Eclipse feature that groups the plug-ins for p2 builds. See the module guide: [maze-feature/README.md](maze-feature/README.md).
+Eclipse feature that groups the plug-ins for p2 builds. See the module guide: [maze-feature/readme.md](maze-feature/readme.md).
 
 ### - maze-repository
 
-The p2 update site produced by Tycho for the Eclipse artifacts. See the module guide: [maze-repository/README.md](maze-repository/README.md).
+The p2 update site produced by Tycho for the Eclipse artifacts. See the module guide: [maze-repository/readme.md](maze-repository/readme.md).
 
 ### - maze-generator.acceleo
 
-Headless Acceleo generator that turns models into source code for the game. See the module guide: [maze-generator.acceleo/README.md](maze-generator.acceleo/README.md).
+Headless Acceleo generator that turns models into source code for the game. See the module guide: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md).
 
 ### - maze-generated
 
-The generated Java sources and jar produced by the Acceleo step. See the module guide: [maze-generated/README.md](maze-generated/README.md).
+The generated Java sources and jar produced by the Acceleo step. See the module guide: [maze-generated/readme.md](maze-generated/readme.md).
 
 ### - project-status
 
-Course and project status notes for context and progress tracking. See: [project-status/README.md](project-status/README.md).
+Course and project status notes for context and progress tracking. See: [project-status/readme.md](project-status/readme.md).
 
 ### - releng
 
-Build infrastructure, local p2 mirror, and target platform. See: [releng/README.md](releng/README.md).
+Build infrastructure, local p2 mirror, and target platform. See: [releng/readme.md](releng/readme.md).
 
