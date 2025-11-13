@@ -13,6 +13,8 @@
 * 🧩 [maze-generated](maze-generated/readme.md)
 * 🧩 [releng](releng/readme.md)
 
+Also, see: [Acceleo](racceleo.readme.md) in the Maze Game
+
 ---
 
 ## Instructions
