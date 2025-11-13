@@ -142,5 +142,5 @@ Everything lands under `maze-generated/src/main/java`, then `maze-generated` pac
 
 If you want to dive into the details, open the module READMEs:
 
-* [`maze-generator.acceleo`](./maze-generator.acceleo/README.md)
-* [`maze-generated`](./maze-generated/README.md)
+* [`maze-generator.acceleo`](./maze-generator.acceleo/readme.md)
+* [`maze-generated`](./maze-generated/readme.md)
