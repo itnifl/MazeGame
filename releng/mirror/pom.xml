@@ -30,6 +30,12 @@
                 <repository>
                   <url>https://download.eclipse.org/acceleo/updates/releases/3.7</url>
                 </repository>
+                <repository>
+                  <url>https://download.eclipse.org/modeling/emf/emf/updates/</url>
+                </repository>
+                <repository>
+                  <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
+                </repository>
               </source>
               <ius>
                 <!-- modeling -->
@@ -39,14 +45,14 @@
                 <iu><id>org.eclipse.ocl.pivot</id></iu>
                 <iu><id>org.eclipse.acceleo.runtime.feature.group</id></iu>
 
-                <!-- choose ONE of these; keep platform -->
-                <iu><id>org.eclipse.platform.feature.group</id></iu>
-
                 <!-- keep these explicit must-haves -->
                 <iu><id>org.eclipse.core.runtime</id></iu>
                 <iu><id>org.eclipse.osgi</id></iu>
                 <iu><id>org.eclipse.equinox.common</id></iu>
                 <iu><id>org.eclipse.core.jobs</id></iu>
+
+                <iu><id>org.eclipse.emf.sdk.feature.group</id></iu>
+                <iu><id>org.eclipse.ocl.all.sdk.feature.group</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>
