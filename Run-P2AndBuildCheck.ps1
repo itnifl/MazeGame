@@ -49,6 +49,18 @@ function Write-StepResult {
     Write-Host ("[{0}] {1} — {2}" -f $Status, $Step, $Summary)
 }
 
+# Step 0 ─ environment info
+$step0 = "0. Toolchain versions"
+$cmdText0 = @'
+mvn -version
+java -version
+'@
+$output0 = & {
+    & mvn -version
+    & java -version
+} 2>&1
+Write-StepResult -Step $step0 -Status "OK" -CommandText $cmdText0 -Summary "Recorded Maven/Java versions." -Output $output0
+
 # Step 1 ─ rebuild local p2 mirror
 $step1     = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
@@ -58,6 +70,7 @@ mvn -f releng/mirror/pom.xml -U verify
 
 Write-Host "Starting step 1: Rebuild local p2 mirror..."
 $output1 = & {
+    Remove-Item -Recurse -Force $env:USERPROFILE\.m2\repository -ErrorAction SilentlyContinue
     Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
     & mvn -f releng/mirror/pom.xml -U verify
 } 2>&1
@@ -217,7 +230,7 @@ Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $
 # Step 4 ─ full Tycho + app build
 $step4     = "4. Full build (Tycho + app)"
 $cmdText4 = @'
-mvn -U -DskipTests=false clean verify
+mvn -U -DskipTests=false -Dtycho.localArtifacts=ignore clean verify -e -X
 '@
 
 Write-Host "Starting step 4: Full build (Tycho + app)..."
