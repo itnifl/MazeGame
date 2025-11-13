@@ -39,14 +39,11 @@
 
 * More music and game sounds
 * Animations for die action and happy action
-* More characters and more levels
 * Read a maze from SVG for play
 * Generate a random maze on demand
-* Ghost factory that outputs a chosen number of ghosts based on difficulty
-* Better design for high score, win, and game over screens
-* General visual design improvements
+* More and different levels with their own characters and setup
+* Better design for high score
 * A menu with instructions and setup
-* Separate game logic more cleanly in GameController
 * Refactor score handling out of CharacterActionScreens
 * Implement stronger algorithms for gameplay and movement
 * Replace `System.out.println` with a logger
@@ -294,43 +291,45 @@ Outputs:
 12. The build outputs two deliverables: the JavaFX game artifacts from the Maven side and an installable p2 repository from the Tycho side.
       Command to produce both in one go: same as in step 3.
 
-### movements-module
+## The modules
+
+### - movements-module
 
 Movement behaviors for characters and utilities used by the game loop. See the module guide: [movements-module/README.md](movements-module/README.md).
 
-### difficulty-module
+### - difficulty-module
 
 Ecore model and logic for difficulty profiles, defaults, and validations. See the module guide: [difficulty-module/README.md](difficulty-module/README.md).
 
-### opponents-module
+### - opponents-module
 
 Ecore model and runtime helpers for enemies, threat values, and validation rules. See the module guide: [opponents-module/README.md](opponents-module/README.md).
 
-### maze
+### - maze
 
 The JavaFX application code and entry point for running the game. See the module guide: [maze/README.md](maze/README.md).
 
-### maze-feature
+### - maze-feature
 
 Eclipse feature that groups the plug-ins for p2 builds. See the module guide: [maze-feature/README.md](maze-feature/README.md).
 
-### maze-repository
+### - maze-repository
 
 The p2 update site produced by Tycho for the Eclipse artifacts. See the module guide: [maze-repository/README.md](maze-repository/README.md).
 
-### maze-generator.acceleo
+### - maze-generator.acceleo
 
 Headless Acceleo generator that turns models into source code for the game. See the module guide: [maze-generator.acceleo/README.md](maze-generator.acceleo/README.md).
 
-### maze-generated
+### - maze-generated
 
 The generated Java sources and jar produced by the Acceleo step. See the module guide: [maze-generated/README.md](maze-generated/README.md).
 
-### project-status
+### - project-status
 
 Course and project status notes for context and progress tracking. See: [project-status/README.md](project-status/README.md).
 
-### releng
+### - releng
 
 Build infrastructure, local p2 mirror, and target platform. See: [releng/README.md](releng/README.md).
 
