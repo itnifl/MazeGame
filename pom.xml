@@ -60,8 +60,16 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <target>releng/maze.target</target>
           <pomDependencies>ignore</pomDependencies>
+          <resolver>p2</resolver>
+          <target>releng/maze.target</target>
+          <repositories>
+            <repository>
+              <id>local-p2</id>
+              <layout>p2</layout>
+              <url>file:${project.basedir}/releng/local-p2</url>
+            </repository>
+          </repositories>          
           <!-- optional: lock build env(s)
           <environments>
             <environment>
