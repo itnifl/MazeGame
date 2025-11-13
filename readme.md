@@ -333,3 +333,80 @@ Course and project status notes for context and progress tracking. See: [project
 
 Build infrastructure, local p2 mirror, and target platform. See: [releng/readme.md](releng/readme.md).
 
+# Utility scripts at the project root
+
+This repository includes two helper scripts for packaging the source and for running a repeatable build with diagnostics. Both scripts live in the root of the repo for easy access.
+
+* 📦 **[pack-source.ps1](./pack-source.ps1)**
+* 🧪 **[Run-P2AndBuildCheck.ps1](./Run-P2AndBuildCheck.ps1)**
+
+---
+
+### pack-source.ps1
+
+**What it does**
+Creates a clean zip of the workspace for sharing or archival. It excludes build outputs and common development clutter so that the archive only contains what is needed to review or rebuild.
+
+**Typical exclusions**
+`.git`, target folders, local p2 mirror under `releng/local-p2`, temporary work areas, and other transient files.
+The archive name normally includes a timestamp to make artifacts traceable.
+
+**Quick start**
+
+```powershell
+# From the repo root
+.\pack-source.ps1
+```
+
+**Common options**
+Most usage works out of the box. If the script supports switches, you can pass them as regular PowerShell parameters, for example:
+
+```powershell
+# Example if supported by your script
+.\pack-source.ps1 -Output ".\dist\MazeGame-src.zip"
+```
+
+---
+
+### Run-P2AndBuildCheck.ps1
+
+**What it does**
+Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
+
+**Typical flow**
+
+1. Optionally clears `releng\local-p2` and rebuilds the mirror.
+2. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
+3. Performs a clean verify from the root with tests enabled.
+4. Prints a compact result table and writes the full log under `releng\test-results`.
+
+**Quick start**
+
+```powershell
+# From the repo root
+.\Run-P2AndBuildCheck.ps1
+```
+
+**Parameters**
+
+```powershell
+# Default output folder for logs
+.\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
+
+# You can add other switches if your script supports them, for example:
+# -NoMirror to skip mirroring
+# -NoCacheReset to keep the Tycho cache
+# -SkipTests to run a faster compile only pass
+```
+
+**Outputs**
+
+* A log file named like `p2-and-build-check_yyyyMMdd_HHmmss.log` under the chosen log directory
+* A terminal summary showing step name, status, and a short note
+
+---
+
+### When to use which
+
+* Use **pack-source.ps1** when you want to hand off the codebase without build noise or when you need a reproducible snapshot of the current tree.
+* Use **Run-P2AndBuildCheck.ps1** when you want a single command to validate the mirror and the full build and to collect evidence in one place for troubleshooting or CI parity.
