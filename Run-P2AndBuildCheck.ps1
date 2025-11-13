@@ -1,8 +1,8 @@
 param(
     [string]$LogDirectory = "releng\test-results"
 )
-# After this script finishes you get a log file under 
-# releng\test-results\p2-and-build-check_yyyyMMdd_HHmmss.log 
+# After this script finishes you get a log file under
+# releng\test-results\p2-and-build-check_yyyyMMdd_HHmmss.log
 # with sections for each step, their commands, status, summary, and the captured output.
 # Ensure we run from the directory where the script lives (assumed repo root)
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -44,15 +44,17 @@ function Write-StepResult {
         Status  = $Status
         Summary = $Summary
     }) | Out-Null
+
+    # Also print a concise summary line to the terminal
+    Write-Host ("[{0}] {1} — {2}" -f $Status, $Step, $Summary)
 }
 
 # Step 1 ─ rebuild local p2 mirror
-$step1       = "1. Rebuild local p2 mirror"
+$step1     = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
 Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
 mvn -f releng/mirror/pom.xml -U verify
 '@
-
 
 Write-Host "Starting step 1: Rebuild local p2 mirror..."
 $output1 = & {
@@ -69,10 +71,11 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 Write-Host "Completed step 1, status: $status1"
+Write-Host "Summary: $summary1"
 Write-StepResult -Step $step1 -Status $status1 -CommandText $cmdText1 -Summary $summary1 -Output $output1
 
 # Step 2 ─ verify EMF and OCL bundles in local mirror
-$step2      = "2. Verify EMF and OCL bundles in local mirror"
+$step2     = "2. Verify EMF and OCL bundles in local mirror"
 $cmdText2 = @'
 dir releng\local-p2\plugins\org.eclipse.emf.ecore_*,
     releng\local-p2\plugins\org.eclipse.emf.common_*,
@@ -176,12 +179,16 @@ try {
     $combinedOutput2 += ""
     $combinedOutput2 += "Pattern summary:"
     $combinedOutput2 += $patternSummaryLines
+
     Write-Host "Completed step 2, status: $status2"
+    Write-Host "Summary: $summary2"
     Write-StepResult -Step $step2 -Status $status2 -CommandText $cmdText2 -Summary $summary2 -Output $combinedOutput2
 }
 catch {
     $status2  = "FAIL (exception while checking mirror)"
     $summary2 = $_.Exception.Message
+    Write-Host "Completed step 2, status: $status2"
+    Write-Host "Summary: $summary2"
     Write-StepResult -Step $step2 -Status $status2 -CommandText $cmdText2 -Summary $summary2 -Output $_
 }
 finally {
@@ -191,7 +198,7 @@ finally {
 }
 
 # Step 3 ─ clear Tycho p2 cache
-$step3      = "3. Clear Tycho p2 cache"
+$step3     = "3. Clear Tycho p2 cache"
 $cmdText3 = @'
 Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
 '@
@@ -204,10 +211,11 @@ $status3  = "OK"
 $summary3 = "Tycho cache folder removed if it existed."
 
 Write-Host "Completed step 3, status: $status3"
+Write-Host "Summary: $summary3"
 Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $summary3 -Output $output3
 
 # Step 4 ─ full Tycho + app build
-$step4      = "4. Full build (Tycho + app)"
+$step4     = "4. Full build (Tycho + app)"
 $cmdText4 = @'
 mvn -U -DskipTests=false clean verify
 '@
@@ -226,16 +234,23 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 Write-Host "Completed step 4, status: $status4"
+Write-Host "Summary: $summary4"
 Write-StepResult -Step $step4 -Status $status4 -CommandText $cmdText4 -Summary $summary4 -Output $output4
 
-# Overall summary at end of file
+# Overall summary at end of file and to terminal
 "================================================================" | Out-File -FilePath $logFile -Append
 "Overall summary:"             | Out-File -FilePath $logFile -Append
 foreach ($s in $stepSummaries) {
     "Step: {0} | Status: {1} | Summary: {2}" -f $s.Step, $s.Status, $s.Summary |
         Out-File -FilePath $logFile -Append
 }
-"" | Out-File -FilePath $logFile -Append
+
+Write-Host ""
+Write-Host "Overall summary:"
+foreach ($s in $stepSummaries) {
+    Write-Host ("• {0} — {1} — {2}" -f $s.Step, $s.Status, $s.Summary)
+}
+Write-Host ""
 
 Write-Host "Test run finished. Log written to:"
 Write-Host "  $logFile"
