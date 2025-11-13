@@ -53,6 +53,8 @@ Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
 mvn -f releng/mirror/pom.xml -U verify
 '@
 
+
+Write-Host "Starting step 1: Rebuild local p2 mirror..."
 $output1 = & {
     Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
     & mvn -f releng/mirror/pom.xml -U verify
@@ -66,6 +68,7 @@ if ($LASTEXITCODE -eq 0) {
     $summary1 = "Mirror build failed."
 }
 
+Write-Host "Completed step 1, status: $status1"
 Write-StepResult -Step $step1 -Status $status1 -CommandText $cmdText1 -Summary $summary1 -Output $output1
 
 # Step 2 ─ verify EMF and OCL bundles in local mirror
@@ -99,6 +102,7 @@ $namesToCheck = @(
 $foundPatterns = @{}
 foreach ($n in $namesToCheck) { $foundPatterns[$n] = $false }
 
+Write-Host "Starting step 2: Verify EMF and OCL bundles in local mirror..."
 try {
     # Directory listing of plugin jars
     $dirOutput = & {
@@ -172,7 +176,7 @@ try {
     $combinedOutput2 += ""
     $combinedOutput2 += "Pattern summary:"
     $combinedOutput2 += $patternSummaryLines
-
+    Write-Host "Completed step 2, status: $status2"
     Write-StepResult -Step $step2 -Status $status2 -CommandText $cmdText2 -Summary $summary2 -Output $combinedOutput2
 }
 catch {
@@ -191,7 +195,7 @@ $step3      = "3. Clear Tycho p2 cache"
 $cmdText3 = @'
 Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
 '@
-
+Write-Host "Starting step 3: Clear Tycho p2 cache..."
 $output3 = & {
     Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
 } 2>&1
@@ -199,6 +203,7 @@ $output3 = & {
 $status3  = "OK"
 $summary3 = "Tycho cache folder removed if it existed."
 
+Write-Host "Completed step 3, status: $status3"
 Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $summary3 -Output $output3
 
 # Step 4 ─ full Tycho + app build
@@ -207,6 +212,7 @@ $cmdText4 = @'
 mvn -U -DskipTests=false clean verify
 '@
 
+Write-Host "Starting step 4: Full build (Tycho + app)..."
 $output4 = & {
     & mvn -U -DskipTests=false clean verify
 } 2>&1
@@ -219,6 +225,7 @@ if ($LASTEXITCODE -eq 0) {
     $summary4 = "Full build including tests failed."
 }
 
+Write-Host "Completed step 4, status: $status4"
 Write-StepResult -Step $step4 -Status $status4 -CommandText $cmdText4 -Summary $summary4 -Output $output4
 
 # Overall summary at end of file
