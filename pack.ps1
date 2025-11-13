@@ -1,8 +1,15 @@
+# Packs the game with only source code in a zip for minimal distribution size.
+# Excludes:
+#   - .git folder
+#   - temporary-workarea folder
+#   - releng/local-p2/features and releng/local-p2/plugins
+#   - any first-level subfolder 'target' folders
+#   - maze/src/main/resources/main/game/maze and its contents
+# .\pack.ps1 -Root "D:\Source\MazeGame" -OutZip "D:\Source\MazeGame-src.zip"
 param(
   [string]$Root = (Get-Location).Path,
   [string]$OutZip
 )
-
 # Normalize inputs
 $Root = (Resolve-Path $Root).Path
 if (-not $OutZip) {
