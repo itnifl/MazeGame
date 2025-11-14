@@ -203,6 +203,7 @@
       <details key="ValidVisionEventsProbability" value="self.events->select(p | p.oclIsKindOf(VisionEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
       <details key="ValidAttackEventsProbability" value="self.events->select(p | p.oclIsKindOf(AttackEvent))->collect(p | p.probability)->sum() &lt;= 100"/>
     </eAnnotations>
+    <eOperations name="triggerEvents"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="point" lowerBound="1" eType="#//Position"
         containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -240,26 +241,26 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DijkstraPathCalculator" eSuperTypes="#//PathCalculator">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="ValidDijsktraIterationsCount"/>
+      <details key="constraints" value="ValidDijsktraPath"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-      <details key="ValidDijsktraIterationsCount" value="self.maxIterations > 0 and self.maxIterations &lt; 50"/>
+      <details key="ValidDijsktraPath" value="self.maxPathLength > 0"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxIterations" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxPathLength" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="When computing the Disjkstra algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points."/>
+        <details key="documentation" value="When computing the Dijkstra algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AstarPathCalculator" eSuperTypes="#//PathCalculator">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="ValidAstarIterationsCount"/>
+      <details key="constraints" value="ValidAStartPath"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-      <details key="ValidAstarIterationsCount" value="self.maxIterations > 0 and self.maxIterations &lt; 50"/>
+      <details key="ValidAStartPath" value="self.maxPathLength > 0"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxIterations" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxPathLength" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="When computing the A* algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points."/>
@@ -290,8 +291,8 @@
         <details key="documentation" value="Probability in percentage of this event to happen."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="subscribers" ordered="false"
-        upperBound="-1" eType="#//MovementBehavior">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subscriber" lowerBound="1"
+        eType="#//MovementBehavior">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Set of movement behaviors to notify when this event is triggered."/>
       </eAnnotations>
