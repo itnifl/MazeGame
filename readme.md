@@ -138,47 +138,7 @@ mvn -pl maze -am clean javafx:run -Djavafx.platform=windows
 
 ## Debug
 
-1. Verify the mirror really contains the platform feature and runtime
-   • In `releng/mirror/pom.xml`, make sure you mirror at least one umbrella feature that pulls the platform units:
-
-```xml
-<iu><id>org.eclipse.platform.feature.group</id></iu>
-<!-- or -->
-<iu><id>org.eclipse.rcp.feature.group</id></iu>
-```
-
-• After `mvn -f releng/mirror/pom.xml -U verify`, confirm presence:
-
-```powershell
-Select-String releng\local-p2\content.* -Pattern 'org\.eclipse\.platform\.feature\.group|org\.eclipse\.core\.runtime'
-```
-
-If this prints nothing, the mirror selection is too narrow.
-
-2. Ensure Tycho actually uses your target and mirror
-   • Root POM must have `target-platform-configuration` pointing to `releng/maze.target` and `pomDependencies` set to `ignore`.
-   • `maze.target` must reference `file:./local-p2` (relative to `releng/`).
-   • Always clear Tycho p2 cache before retesting:
-
-```powershell
-Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho"
-```
-
-3. Make feature and plug-in ids match the bundles
-   • In `feature.xml`, use the bundle symbolic names (the `Bundle-SymbolicName` from each plug-in’s `MANIFEST.MF`), not folder names.
-
-4. Common causes of “requires org.eclipse.core.runtime … but it could not be found”
-   • Mirror missing `org.eclipse.platform.feature.group` or `org.eclipse.rcp.feature.group`.
-   • Target not loaded by Tycho (wrong path, not referenced, cache not cleared).
-   • Building offline without a complete local mirror. Use `-o` only after the mirror is verified.
-
-5. Extra diagnostics when resolution fails
-
-```bash
-mvn -X -Dtycho.debug.resolver=true -Dtycho.p2.transport.min-cache-minutes=0 clean verify
-```
-
-This prints the exact IUs Tycho is trying to resolve and from which repositories.
+Use the script `Run-P2AndBuildCheck.ps1` to run a build and check, then start by reading the logs.
 
 ---
 
@@ -247,46 +207,46 @@ Outputs:
 ## Step overview
 
 1. releng/mirror builds a local p2 mirror that contains EMF, OCL, Acceleo, and platform units.
-     Command:
+<br/>Command:
      `mvn -f releng/mirror/pom.xml -U verify`
 
-2. releng/maze.target points Tycho to that local p2 so dependency resolution is stable and offline friendly.
-     Command used when building (Tycho reads the target): same as in step 3.
+2. releng/maze.target points Tycho to that local p2 so dependency resolution is stable and offline friendly.<br/>
+Command used when building (Tycho reads the target): same as in step 3.
 
-3. The root build starts. Tycho reads releng/maze.target to resolve Eclipse plug in and feature dependencies.
-     Command:
+3. The root build starts. Tycho reads releng/maze.target to resolve Eclipse plug in and feature dependencies.<br/>
+Command:
      `mvn -U -DskipTests=false clean verify`
 
-4. movements-module compiles as an Eclipse plug in that provides movement behavior code.
-     Command:
+4. movements-module compiles as an Eclipse plug in that provides movement behavior code.<br/>
+Command:
      `mvn -pl movements-module -am -DskipTests=false clean verify`
 
-5. difficulty-module compiles as an Eclipse plug in that provides the Ecore model, OCL, and related runtime for difficulties.
-     Command:
+5. difficulty-module compiles as an Eclipse plug in that provides the Ecore model, OCL, and related runtime for difficulties.<br/>
+Command:
      `mvn -pl difficulty-module -am -DskipTests=false clean verify`
 
 6. opponents-module compiles as an Eclipse plug in that depends on difficulty-module and EMF runtime.
-     Command:
+<br/>Command:
      `mvn -pl opponents-module -am -DskipTests=false clean verify`
 
-7. maze-feature collects the project’s Eclipse plug ins into one installable feature.
-     Command:
+7. maze-feature collects the project’s Eclipse plug ins into one installable feature.<br/>
+Command:
      `mvn -pl maze-feature -am -DskipTests=false clean verify`
 
-8. maze-repository assembles a p2 update site that contains the feature and the plug ins for installation in an Eclipse based product or workspace.
-     Command:
+8. maze-repository assembles a p2 update site that contains the feature and the plug ins for installation in an Eclipse based product or workspace.<br/>
+Command:
      `mvn -pl maze-repository -am -DskipTests=false clean verify`
 
-9. maze-generator.acceleo runs headless during the generate sources phase, launches the Acceleo application, reads the model input, and writes Java sources into maze-generated.
-     Command:
+9. maze-generator.acceleo runs headless during the generate sources phase, launches the Acceleo application, reads the model input, and writes Java sources into maze-generated.<br/>
+Command:
      `mvn -pl maze-generator.acceleo -am -DskipTests clean verify`
 
-10. maze-generated is a plain jar module that compiles the generated sources and publishes a stable artifact.
-      Command:
+10. maze-generated is a plain jar module that compiles the generated sources and publishes a stable artifact.<br/>
+Command:
       `mvn -pl maze-generated -am -DskipTests=false clean verify`
 
-11. main.game.maze compiles the JavaFX application, depends on the jar from maze-generated, and runs unit tests.
-      Command:
+11. main.game.maze compiles the JavaFX application, depends on the jar from maze-generated, and runs unit tests.<br/>
+Command:
       `mvn -pl maze -am -Djavafx.platform=windows -DskipTests=false clean verify`
       (or use `-Djavafx.platform=linux` on Linux runners)
 

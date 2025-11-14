@@ -43,7 +43,7 @@ Add a p2 repository entry that points to the built site:
   <repository>
     <id>maze-local</id>
     <layout>p2</layout>
-    <url>file:${project.basedir}/../maze-repository/target/repository</url>
+    <url>file:${maven.multiModuleProjectDirectory}/maze-repository/target/repository</url>
   </repository>
 </repositories>
 ```
