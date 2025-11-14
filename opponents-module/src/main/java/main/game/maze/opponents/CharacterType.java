@@ -85,7 +85,7 @@ public interface CharacterType extends EObject {
 	 * @return the value of the '<em>Enabled</em>' attribute.
 	 * @see #setEnabled(boolean)
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_Enabled()
-	 * @model default="true"
+	 * @model default="true" required="true"
 	 * @generated
 	 */
 	boolean isEnabled();
@@ -108,7 +108,7 @@ public interface CharacterType extends EObject {
 	 * @return the value of the '<em>Health</em>' attribute.
 	 * @see #setHealth(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_Health()
-	 * @model default="100"
+	 * @model default="100" required="true"
 	 * @generated
 	 */
 	int getHealth();
@@ -131,7 +131,7 @@ public interface CharacterType extends EObject {
 	 * @return the value of the '<em>Speed</em>' attribute.
 	 * @see #setSpeed(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_Speed()
-	 * @model default="1.0"
+	 * @model default="1.0" required="true"
 	 * @generated
 	 */
 	double getSpeed();
@@ -153,7 +153,7 @@ public interface CharacterType extends EObject {
 	 * @return the value of the '<em>Threat Level</em>' attribute.
 	 * @see #setThreatLevel(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ThreatLevel()
-	 * @model transient="true" derived="true"
+	 * @model required="true" derived="true"
 	 * @generated
 	 */
 	double getThreatLevel();
@@ -175,7 +175,7 @@ public interface CharacterType extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Effective Threat</em>' attribute.
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_EffectiveThreat()
-	 * @model default="1" transient="true" changeable="false" volatile="true" derived="true"
+	 * @model default="1" required="true" transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
 	int getEffectiveThreat();

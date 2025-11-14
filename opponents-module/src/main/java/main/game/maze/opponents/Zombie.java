@@ -32,7 +32,7 @@ public interface Zombie extends CharacterType {
 	 * @return the value of the '<em>Attack Damage</em>' attribute.
 	 * @see #setAttackDamage(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_AttackDamage()
-	 * @model default="10"
+	 * @model default="10" required="true"
 	 * @generated
 	 */
 	int getAttackDamage();
@@ -77,7 +77,7 @@ public interface Zombie extends CharacterType {
 	 * @return the value of the '<em>Infection Level</em>' attribute.
 	 * @see #setInfectionLevel(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_InfectionLevel()
-	 * @model default="1"
+	 * @model default="1" required="true"
 	 * @generated
 	 */
 	int getInfectionLevel();
@@ -100,7 +100,7 @@ public interface Zombie extends CharacterType {
 	 * @return the value of the '<em>Resurrection Time</em>' attribute.
 	 * @see #setResurrectionTime(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getZombie_ResurrectionTime()
-	 * @model default="0"
+	 * @model default="0" required="true"
 	 * @generated
 	 */
 	int getResurrectionTime();

@@ -24,8 +24,8 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel()
- * @model annotation="http://www.eclipse.org/emf/2002/Ecore/OCL validateMaxThreat='self.characterTypes-&gt;collect(ct | ct.effectiveThreat)-&gt;sum() &lt;= self.maxThreat'"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore constraints='validateMaxThreat'"
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='validateMaxThreat'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL validateMaxThreat='self.characterTypes.threatLevel-&gt;sum() &lt;= self.maxThreat.oclAsType(Real)'"
  * @generated
  */
 public interface OpponentModel extends EObject {
@@ -69,8 +69,8 @@ public interface OpponentModel extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Max Threat</em>' attribute.
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_MaxThreat()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='if self.selectedDifficulty.oclIsUndefined()\nthen 0\nelse self.selectedDifficulty.maxThreat\nendif'"
+	 * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='if self.selectedDifficulty = null then 20 else self.selectedDifficulty.maxThreat endif'"
 	 * @generated
 	 */
 	int getMaxThreat();
@@ -105,7 +105,8 @@ public interface OpponentModel extends EObject {
 	 * @return the value of the '<em>Game Set Current Threat Level</em>' attribute.
 	 * @see #setGameSetCurrentThreatLevel(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_GameSetCurrentThreatLevel()
-	 * @model default="0"
+	 * @model default="0" required="true" volatile="true" derived="true"
+	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='self.characterTypes.threatLevel-&gt;sum()'"
 	 * @generated
 	 */
 	double getGameSetCurrentThreatLevel();

@@ -14,9 +14,10 @@
   <artifactId>main.game.maze</artifactId>
 
   <properties>
+    <javafx.platform>win</javafx.platform>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>21</maven.compiler.release>
-    <javafx.version>21.0.9</javafx.version>
+    <maven.compiler.release>25</maven.compiler.release>
+    <javafx.version>25.0.1</javafx.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
     <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
@@ -64,7 +65,7 @@
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.common</artifactId>
-      <version>2.43.0</version>
+      <version>2.38.0</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
@@ -76,37 +77,67 @@
       <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
       <version>2.38.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl</artifactId>
+      <version>3.4.0-v20140524-1358</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar</systemPath>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.ocl</groupId>
       <artifactId>org.eclipse.ocl.ecore</artifactId>
-      <version>3.3.100.v20140610-0641</version> 
+      <version>3.3.0-v20130520-1222</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.eclipse.ocl</groupId>
       <artifactId>org.eclipse.ocl.common</artifactId>
-      <version>1.2.0.v20140610-0641</version>
-    </dependency>
-    <!-- JavaFX LTS 21.0.8 -->
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-base</artifactId>
-      <version>${javafx.version}</version>
+      <version>1.2.0-v20140528-1458</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
     </dependency>
     <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>${javafx.version}</version>
+      <groupId>lpg.runtime</groupId>
+      <artifactId>java</artifactId>
+      <version>2.0.17-v201004271640</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/java-2.0.17-v201004271640.jar</systemPath>
     </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-fxml</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-media</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
+
+      <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-base</artifactId>
+    <version>${javafx.version}</version>
+    <classifier>${javafx.platform}</classifier>
+  </dependency>
+  <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-graphics</artifactId>
+    <version>${javafx.version}</version>
+    <classifier>${javafx.platform}</classifier>
+  </dependency>
+  <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-controls</artifactId>
+    <version>${javafx.version}</version>
+    <classifier>${javafx.platform}</classifier>
+  </dependency>
+  <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-fxml</artifactId>
+    <version>${javafx.version}</version>
+    <classifier>${javafx.platform}</classifier>
+  </dependency>
+  <dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-media</artifactId>
+    <version>${javafx.version}</version>
+    <classifier>${javafx.platform}</classifier>
+  </dependency>
+
     <dependency>
         <groupId>main.game.maze</groupId>
         <artifactId>main.game.maze.opponents</artifactId>
@@ -115,7 +146,7 @@
     </dependency>
     <dependency>
         <groupId>main.game.maze</groupId>
-        <artifactId>main.game.maze.difficulty</artifactId>
+        <artifactId>main.game.maze.difficulties</artifactId>
         <version>1.0.0-SNAPSHOT</version> 
         <scope>compile</scope>
     </dependency>
@@ -151,6 +182,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <useModulePath>true</useModulePath>
+          <argLine>--add-modules=ALL-MODULE-PATH</argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+        </configuration>
       </plugin>      
     </plugins>
 

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.*;
+import main.game.maze.opponents.constants.OpponentModuleDefaults;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
@@ -134,14 +135,22 @@ public class OpponentsValidator extends EObjectValidator {
 	}
 
 	/**
+	 * The cached validation expression for the validateMaxThreat constraint of '<em>Opponent Model</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected static final String OPPONENT_MODEL__VALIDATE_MAX_THREAT__EEXPRESSION = "self.characterTypes.threatLevel->sum() <= self.maxThreat.oclAsType(Real)";
+
+	/**
 	 * Validates the validateMaxThreat constraint of 'OpponentModel'.
 	 * @generated NOT
 	 */
 	public boolean validateOpponentModel_validateMaxThreat(
 		OpponentModel opponentModel, DiagnosticChain diagnostics, Map<Object,Object> context) {
 
-		// 1) Read maxThreat from the selected difficulty (or 0 if none)
-		int maxThreat = 0;
+		// 1) Read maxThreat from the selected difficulty (or 20 if none)
+		int maxThreat = OpponentModuleDefaults.DefaultMaxThreat;
 		Difficulty d = opponentModel.getSelectedDifficulty();
 		if (d != null) {
 			maxThreat = d.getMaxThreat();

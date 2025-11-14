@@ -12,6 +12,9 @@ module main.game.maze {
     requires main.game.maze.opponents;
     requires main.game.maze.behaviour;    
 
+    requires org.eclipse.ocl.ecore;
+    requires org.eclipse.ocl.common;
+
     exports main.game.maze; 
     exports main.game.maze.dto;
     opens main.game.maze to javafx.fxml, javafx.base, javafx.controls;

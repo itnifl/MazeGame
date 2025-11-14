@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @see main.game.maze.difficulties.DifficultiesPackage#getDifficulty()
  * @model abstract="true"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore constraints='MaxThreatNonNegative'"
  * @generated
  */
 public interface Difficulty extends EObject {
@@ -50,13 +51,13 @@ public interface Difficulty extends EObject {
 	void setInstantDeath(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Enemy Max Count</b></em>' reference list.
+	 * Returns the value of the '<em><b>Enemy Max Count</b></em>' containment reference list.
 	 * The list contents are of type {@link main.game.maze.difficulties.EnemyMaxCount}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Enemy Max Count</em>' reference list.
+	 * @return the value of the '<em>Enemy Max Count</em>' containment reference list.
 	 * @see main.game.maze.difficulties.DifficultiesPackage#getDifficulty_EnemyMaxCount()
-	 * @model ordered="false"
+	 * @model containment="true" ordered="false"
 	 * @generated
 	 */
 	EList<EnemyMaxCount> getEnemyMaxCount();

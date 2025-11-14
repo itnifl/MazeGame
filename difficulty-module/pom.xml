@@ -9,11 +9,11 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
-  <artifactId>main.game.maze.difficulty</artifactId>
+  <artifactId>main.game.maze.difficulties</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>25</maven.compiler.release>
   </properties>
 
   <!-- p2 repositories (Eclipse SimRel + OCL) -->
@@ -28,7 +28,6 @@
       <layout>p2</layout>
       <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
     </repository>
-    <!-- (Optional) Maven repo for any non-p2 artifacts you still use -->
     <repository>
       <id>eclipse-releases</id>
       <url>https://repo.eclipse.org/content/groups/releases/</url>
@@ -36,7 +35,6 @@
   </repositories>
 
   <dependencies>
-    <!-- Keep ONLY non-p2 dependencies here. -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -72,7 +70,6 @@
 
   <build>
     <plugins>
-      <!-- Compile with Maven compiler plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

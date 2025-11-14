@@ -50,17 +50,31 @@ This game is developed in Visual Studio Code with the following extensions:
 - ⬇️ "Debugger for java"
 - ⬇️ "Test runner for Java"
 
-Download Java 24 SDK to run the game:
-- ⬇️ https://www.oracle.com/java/technologies/downloads/#java24
+Download Java 25 SDK to run the game:
+- ⬇️ https://www.oracle.com/java/technologies/downloads/#java25
 
 
-Download Java FX 21 SDK was used during the development of this game and it is needed to run it:
+Download Java FX 25 SDK was used during the development of this game and it is needed to run it:
 - ⬇️ https://gluonhq.com/products/javafx/
+- 🛠️ Setup: https://dev.java/learn/javafx/install/#javafx-windows
 
-Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
-- 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-24
-- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
-- 🛠️ PATH+=C:\Program Files\Java\jdk-24\bin
+Download and install Apache Maven, read here:
+- ⬇️ https://maven.apache.org/install.html
+
+Remember set JAVA_HOME, PATH_TO_FX, MAVEN_HOME and PATH environment variables, for instance:
+- 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-25
+- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25
+- 🛠️ PATH+=C:\Program Files\Java\jdk-25\bin
+- 🛠️ MAVEN_HOME=C:\Program Files\Apache\Apache Maven
+- 🛠️ PATH+=C:\Program Files\Apache\Apache Maven\bin
+
+Set your VS Code to use this version of Java:
+- Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”.
+- Ctrl + Shift + P → “Java: Configure Java Runtime”.
+- Under JDKs, add C:\Program Files\Java\jdk-25 and set it as Default.
+- In the same panel, set JDK for Language Server to the same JDK 25.
+
+Reload Window.
 
 ``Then:
 ***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``

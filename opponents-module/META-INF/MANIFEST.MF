@@ -4,14 +4,14 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: opponents-module;singleton:=true
 Automatic-Module-Name: opponents-module
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-25
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implementation
 Eclipse-ExtensibleAPI: true
-Require-Bundle: main.game.maze.difficulty,
+Require-Bundle: main.game.maze.difficulties,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,

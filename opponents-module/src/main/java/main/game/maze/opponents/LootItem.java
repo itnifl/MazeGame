@@ -82,7 +82,7 @@ public interface LootItem extends EObject {
 	 * @return the value of the '<em>Value</em>' attribute.
 	 * @see #setValue(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getLootItem_Value()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	int getValue();

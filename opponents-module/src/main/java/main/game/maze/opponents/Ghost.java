@@ -30,7 +30,7 @@ public interface Ghost extends CharacterType {
 	 * @return the value of the '<em>Attack Damage</em>' attribute.
 	 * @see #setAttackDamage(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_AttackDamage()
-	 * @model default="1"
+	 * @model default="1" required="true"
 	 * @generated
 	 */
 	int getAttackDamage();
@@ -53,7 +53,7 @@ public interface Ghost extends CharacterType {
 	 * @return the value of the '<em>Visibility Level</em>' attribute.
 	 * @see #setVisibilityLevel(int)
 	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_VisibilityLevel()
-	 * @model default="100"
+	 * @model default="100" required="true"
 	 * @generated
 	 */
 	int getVisibilityLevel();
@@ -76,7 +76,7 @@ public interface Ghost extends CharacterType {
 	 * @return the value of the '<em>Non Tangibility Energy</em>' attribute.
 	 * @see #setNonTangibilityEnergy(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getGhost_NonTangibilityEnergy()
-	 * @model default="100"
+	 * @model default="100" required="true"
 	 * @generated
 	 */
 	double getNonTangibilityEnergy();
