@@ -13,15 +13,23 @@
 
   <modules>
     <module>releng/mirror</module>
+    <module>maze-generator.acceleo</module>
+    <module>maze-generated</module>
     <module>movements-module</module>
     <module>difficulty-module</module>
     <module>opponents-module</module>
     <module>maze-feature</module>
     <module>maze-repository</module>
-    <module>maze-generator.acceleo</module>
-    <module>maze-generated</module>
     <module>maze</module>
   </modules>
+
+  <repositories>
+    <repository>
+      <id>local-p2</id>
+      <layout>p2</layout>
+      <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
+    </repository>
+  </repositories>
 
   <build>
     <pluginManagement>
@@ -60,16 +68,10 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <pomDependencies>ignore</pomDependencies>
-          <resolver>p2</resolver>
-          <target>releng/maze.target</target>
-          <repositories>
-            <repository>
-              <id>local-p2</id>
-              <layout>p2</layout>
-              <url>file:${project.basedir}/releng/local-p2</url>
-            </repository>
-          </repositories>          
+          <pomDependencies>ignore</pomDependencies>          
+          <target> 
+            <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
+          </target>                     
           <!-- optional: lock build env(s)
           <environments>
             <environment>
