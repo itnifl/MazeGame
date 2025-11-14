@@ -35,10 +35,9 @@
       <details key="documentation" value="The MovementBehavior contains the positions of the character in the maze and methods to update the position."/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-      <details key="constraints" value="PositiveMovementSpeed ValidVisionRange"/>
+      <details key="constraints" value="ValidVisionRange"/>
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-      <details key="PositiveMovementSpeed" value="self.movementSpeed > 0"/>
       <details key="ValidVisionRange" value="self.visionRange > 0 and&#xA;&#x9;&#x9;&#x9;if self.charactertype->any(true).oclIsKindOf(opp::RangedEnemy) then&#xA;&#x9;&#x9;&#x9; &#x9;let rangedCharacter : opp::RangedEnemy = self.charactertype->any(true).oclAsType(opp::RangedEnemy)&#xA;&#x9;&#x9;&#x9;    in rangedCharacter.attackRange &lt;= self.visionRange&#xA;&#x9;&#x9;&#x9;else&#xA;&#x9;&#x9;&#x9;&#x9;true&#xA;&#x9;&#x9;&#x9;endif"/>
     </eAnnotations>
     <eOperations name="move"/>
@@ -80,15 +79,6 @@
       </eAnnotations>
       <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
         <details key="derivation" value="self.charactertype->any(true).threatLevel > 100"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="movementSpeed" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" derived="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Attributes derived from character speed"/>
-      </eAnnotations>
-      <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
-        <details key="derivation" value="self.charactertype->any(true).speed"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="baseVisionRange" lowerBound="1"
