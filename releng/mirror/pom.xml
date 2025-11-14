@@ -15,7 +15,7 @@
         <executions>
           <execution>
             <goals><goal>mirror</goal></goals>
-            <phase>prepare-package</phase>
+            <phase>initialize</phase>
             <configuration>
               <latestVersionOnly>true</latestVersionOnly>
               <includeOptional>true</includeOptional>
@@ -53,6 +53,10 @@
 
                 <iu><id>org.eclipse.emf.sdk.feature.group</id></iu>
                 <iu><id>org.eclipse.ocl.all.sdk.feature.group</id></iu>
+                <iu><id>org.eclipse.acceleo.feature.group</id></iu>
+                <iu><id>org.eclipse.emf.codegen.feature.group</id></iu>
+                <iu><id>org.eclipse.equinox.app</id></iu>
+                <iu><id>org.eclipse.ocl.examples.codegen</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>

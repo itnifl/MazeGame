@@ -1,3 +1,4 @@
+<!-- maze-generator.acceleo/pom.xml -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -13,6 +14,37 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>3.0.2</version>
+        <dependencies>
+                <dependency>
+                    <groupId>org.apache.groovy</groupId>
+                    <artifactId>groovy</artifactId>
+                    <version>4.0.15</version>
+                </dependency>
+            </dependencies>
+        <executions>
+            <execution>
+              <id>normalize-p2-repo-path</id>
+              <phase>initialize</phase>
+              <goals>
+                  <goal>execute</goal>
+              </goals>
+              <configuration>
+                  <scripts>
+                      <script>
+                          // Get the parent directory of the current module (which is the project root)
+                          def projectRoot = project.basedir.parentFile.getCanonicalPath()
+                          // Construct the full, normalized path to the local p2 repository
+                          project.properties['p2.repo.url'] = projectRoot.replace('\\', '/') + '/releng/local-p2'
+                      </script>
+                  </scripts>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-eclipse-plugin</artifactId>
         <version>${tycho.version}</version>
@@ -24,7 +56,7 @@
             <configuration>
               <repositories>
                 <repository>
-                  <url>file:${project.basedir}/../releng/local-p2</url>
+                  <url>file:${p2.repo.url}</url>
                 </repository>
               </repositories>
               <dependencies>
@@ -41,8 +73,8 @@
               <executionEnvironment>JavaSE-21</executionEnvironment>
               <application>main.game.maze.gen.app</application>
               <applicationArgs>
-                <arg>${project.basedir}/../models/DifficultyGameData.xmi</arg>
-                <arg>${project.basedir}/../maze-generated/src/main/java</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-generated/src/main/java</arg>
               </applicationArgs>
               <jvmArgs>
                 <arg>-Dfile.encoding=UTF-8</arg>
