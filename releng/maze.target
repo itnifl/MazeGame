@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<target name="Maze Target" sequenceNumber="16">
+<target name="Maze Target" sequenceNumber="38">
   <locations>
-    <location includeAllPlugins="true" type="InstallableUnit">
-      <repository location="file:${project.basedir}/releng/local-p2"/>
+    <location includeAllPlugins="true" includeAllPlatforms="true" includeConfigurePhase="true" includeSource="true" type="InstallableUnit">
+      <repository location="file:/D:/Source/MazeGame/releng/local-p2"/>
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
@@ -10,10 +10,11 @@
       <unit id="org.eclipse.emf.common" version="0.0.0"/>
       <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
       <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.ecore" version="[6.18,6.19)"/>
-      <unit id="org.eclipse.ocl" version="[6.18,6.19)"/>
-      <unit id="org.eclipse.acceleo.feature.group" version="[3.7,4.0)"/>
-      <unit id="org.eclipse.emf.codegen.feature.group" version="[2.38,2.39)"/>
+      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
+      <unit id="org.eclipse.ocl" version="0.0.0"/>
+      <unit id="org.eclipse.acceleo.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.codegen.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.examples.codegen" version="0.0.0"/>
     </location>
   </locations>
 </target>
