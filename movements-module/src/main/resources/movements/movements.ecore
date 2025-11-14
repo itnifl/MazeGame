@@ -51,6 +51,12 @@
     <eOperations name="update">
       <eParameters name="timeEvent" lowerBound="1" eType="#//TimeEvent"/>
     </eOperations>
+    <eOperations name="update">
+      <eParameters name="attackEvent" lowerBound="1" eType="#//AttackEvent"/>
+    </eOperations>
+    <eOperations name="update">
+      <eParameters name="visionEvent" lowerBound="1" eType="#//VisionEvent"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="charactertype" lowerBound="1"
         eType="ecore:EClass ../../../../../opponents-module/src/main/resources/opponents.ecore#//CharacterType">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
