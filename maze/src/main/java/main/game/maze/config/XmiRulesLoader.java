@@ -41,7 +41,7 @@ public final class XmiRulesLoader {
     OpponentModel oppRoot       = (OpponentModel)       rs.getResource(oppUri,  true).getContents().get(0);
 
     // avg threat per type (only allowed enemies)
-    Map<EnemyType, Double> avgThreat = avgThreatByType(oppRoot);
+    Map<EnemyTypes, Double> avgThreat = avgThreatByType(oppRoot);
 
     // Builds ProfileRules for each difficulty level declared in difficulties.xmi
     Map<String, ProfileRules> out = new LinkedHashMap<>();
@@ -50,13 +50,13 @@ public final class XmiRulesLoader {
         // xmi:id (easy/normal/hard)
         String name = ((XMIResource) d.eResource()).getID(d); // "easy","normal","hard"
       // Caps per type from enemyMaxCount
-      Map<EnemyType,Integer> caps = new EnumMap<>(EnemyType.class);
+      Map<EnemyTypes,Integer> caps = new EnumMap<>(EnemyTypes.class);
       for (EnemyMaxCount emc : d.getEnemyMaxCount()) {
-        caps.put(EnemyType.valueOf(emc.getType().name()), Math.max(0, emc.getMaxCount()));
+        caps.put(EnemyTypes.valueOf(emc.getType().name()), Math.max(0, emc.getMaxCount()));
       }
       // Ratios derived from caps > 0 -> normalized to sum 1
       int capSum = caps.values().stream().mapToInt(Integer::intValue).sum();
-      Map<EnemyType,Double> ratios = new EnumMap<>(EnemyType.class);
+      Map<EnemyTypes,Double> ratios = new EnumMap<>(EnemyTypes.class);
       if (capSum > 0) caps.forEach((t,c)-> { if (c>0) ratios.put(t, c/(double)capSum); });
 
       // estimated enemyCount : maxThreat/ meanThreat
@@ -77,18 +77,18 @@ public final class XmiRulesLoader {
     return URI.createURI(url.toString());
   }
 
-  private static Map<EnemyType, Double> avgThreatByType(OpponentModel oppRoot) {
-    Map<EnemyType, List<Double>> vals = new EnumMap<>(EnemyType.class);
+  private static Map<EnemyTypes, Double> avgThreatByType(OpponentModel oppRoot) {
+    Map<EnemyTypes, List<Double>> vals = new EnumMap<>(EnemyTypes.class);
     for (CharacterType c : oppRoot.getCharacterTypes()) {
       if (!c.isEnabled()) continue;
-      EnemyType t = (c instanceof Ghost) ? EnemyType.GHOST
-                   : (c instanceof Zombie) ? EnemyType.ZOMBIE
-                   : EnemyType.PUMPKINBOMBER;
+      EnemyTypes t = (c instanceof Ghost) ? EnemyTypes.GHOST
+                   : (c instanceof Zombie) ? EnemyTypes.ZOMBIE
+                   : EnemyTypes.PUMPKINBOMBER;
       vals.computeIfAbsent(t,k->new ArrayList<>()).add(c.getThreatLevel());
     }
-    Map<EnemyType, Double> avg = new EnumMap<>(EnemyType.class);
+    Map<EnemyTypes, Double> avg = new EnumMap<>(EnemyTypes.class);
     vals.forEach((t, list)-> avg.put(t, Math.max(0.1, list.stream().mapToDouble(x->x).average().orElse(1.0))));
-    for (EnemyType t : EnemyType.values()) avg.putIfAbsent(t, 1.0);
+    for (EnemyTypes t : EnemyTypes.values()) avg.putIfAbsent(t, 1.0);
     return avg;
   }
 
