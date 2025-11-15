@@ -15,7 +15,6 @@ Require-Bundle: main.game.maze.difficulties,
  org.eclipse.emf.common;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.ocl.pivot;visibility:=reexport,
- org.eclipse.ocl.examples.codegen;visibility:=reexport,
  org.eclipse.ocl.ecore;visibility:=reexport
 Export-Package: main.game.maze.opponents,
  main.game.maze.opponents.impl,

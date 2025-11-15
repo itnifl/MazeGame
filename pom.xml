@@ -1,3 +1,5 @@
+
+<!-- /pom.xml -->
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>main.game.maze</groupId>
@@ -13,13 +15,19 @@
 
   <modules>
     <module>releng/mirror</module>
+
+    <!-- plugins / bundles -->
     <module>maze-generator.acceleo</module>
-    <module>maze-generated</module>
     <module>movements-module</module>
     <module>difficulty-module</module>
     <module>opponents-module</module>
+    <module>maze-generated</module>
+
+    <!-- feature and repository -->
     <module>maze-feature</module>
     <module>maze-repository</module>
+
+    <!-- app / product -->
     <module>maze</module>
   </modules>
 

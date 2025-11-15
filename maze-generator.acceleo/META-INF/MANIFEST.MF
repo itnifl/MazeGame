@@ -1,5 +1,5 @@
 Bundle-SymbolicName: maze-generator.acceleo
-Bundle-Name: Maze Generator (Acceleo)
+Bundle-Name: maze-generator.acceleo
 Bundle-Version: 1.0.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: JavaSE-21

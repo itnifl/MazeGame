@@ -111,7 +111,6 @@ Check for these bundles/features in releng\local-p2 and content.xml:
     org.eclipse.emf.sdk.feature.group
     org.eclipse.ocl.all.sdk.feature.group
     org.eclipse.acceleo.feature.group
-    org.eclipse.acceleo.runtime.feature.group
     org.eclipse.emf.codegen.feature.group
 '@
 if ($StartAt -gt 2) {
@@ -137,7 +136,7 @@ if ($StartAt -gt 2) {
         "org.eclipse.emf.sdk.feature.group",
         "org.eclipse.ocl.all.sdk.feature.group",
         "org.eclipse.acceleo.feature.group",
-        "org.eclipse.acceleo.runtime.feature.group",
+        #"org.eclipse.acceleo.runtime.feature.group",
         "org.eclipse.emf.codegen.feature.group"
     )
 
@@ -179,8 +178,7 @@ if ($StartAt -gt 2) {
             "releng\local-p2\plugins\org.eclipse.ocl.pivot_*",
             "releng\local-p2\features\org.eclipse.emf.sdk_*",          # org.eclipse.emf.sdk.feature.group
             "releng\local-p2\features\org.eclipse.ocl.all.sdk_*",      # org.eclipse.ocl.all.sdk.feature.group
-            "releng\local-p2\features\org.eclipse.acceleo_*",          # org.eclipse.acceleo.feature.group
-            "releng\local-p2\features\org.eclipse.acceleo.runtime_*",  # org.eclipse.acceleo.runtime.feature.group
+            "releng\local-p2\features\org.eclipse.acceleo_*",          # org.eclipse.acceleo.feature.group        
             "releng\local-p2\features\org.eclipse.emf.codegen_*"       # org.eclipse.emf.codegen.feature.group
         )
         foreach ($jp in $jarPaths) {
