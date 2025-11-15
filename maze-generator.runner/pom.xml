@@ -1,0 +1,61 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>maze-generator.runner</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-eclipse-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+          <execution>
+            <id>run-acceleo</id>
+            <phase>generate-sources</phase>
+            <goals><goal>eclipse-run</goal></goals>
+            <configuration>
+              <dependencies>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.equinox.app</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.core.runtime</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>
+
+                <!-- important: this is now a *built* reactor bundle -->
+                <dependency><type>eclipse-plugin</type><artifactId>maze-generator.acceleo</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>main.game.maze.difficulties</artifactId></dependency>
+              </dependencies>
+
+              <repositories>
+                <repository>
+                  <id>local-p2</id>
+                  <layout>p2</layout>
+                  <url>${p2.repo.url}</url>
+                </repository>
+              </repositories>
+
+              <executionEnvironment>JavaSE-17</executionEnvironment>
+              <application>main.game.maze.gen.app</application>
+              <applicationArgs>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-generated/src/main/java</arg>
+              </applicationArgs>
+              <jvmArgs>
+                <arg>-Dfile.encoding=UTF-8</arg>
+              </jvmArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

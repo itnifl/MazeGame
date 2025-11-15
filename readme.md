@@ -61,7 +61,7 @@ Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
 
 ## Prerequisites and setup
 
-This project prefers JDK 24 and JavaFX 25.
+This project prefers JDK 25 and JavaFX 25.
 
 * Visual Studio Code: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
   Extensions:
@@ -75,7 +75,7 @@ This project prefers JDK 24 and JavaFX 25.
   * ⬇️ YAML by Red Hat
   * ⬇️ OCL support
 
-* JDK 24: [https://www.oracle.com/java/technologies/downloads/#java24](https://www.oracle.com/java/technologies/downloads/#java24)
+* JDK 25: [https://www.oracle.com/java/technologies/downloads/#java25](https://www.oracle.com/java/technologies/downloads/#java25)
 
 * JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
   Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
@@ -84,9 +84,9 @@ This project prefers JDK 24 and JavaFX 25.
 
 Environment variables (examples on Windows):
 
-* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-24`
+* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-25`
 * 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
-* 🛠️ `PATH+=C:\Program Files\Java\jdk-24\bin`
+* 🛠️ `PATH+=C:\Program Files\Java\jdk-25\bin`
 * 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
 * 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
 
@@ -94,8 +94,8 @@ VS Code Java runtime:
 
 * Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
 * Ctrl + Shift + P → “Java: Configure Java Runtime”
-* Under JDKs, add `C:\Program Files\Java\jdk-24` and set it as Default
-* In the same panel, set JDK for Language Server to JDK 24
+* Under JDKs, add `C:\Program Files\Java\jdk-25` and set it as Default
+* In the same panel, set JDK for Language Server to JDK 25
 * Reload Window
 
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.

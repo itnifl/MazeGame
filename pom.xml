@@ -12,22 +12,17 @@
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
+  
   <modules>
     <module>releng/mirror</module>
-
-    <!-- plugins / bundles -->
-    <module>maze-generator.acceleo</module>
     <module>movements-module</module>
     <module>difficulty-module</module>
     <module>opponents-module</module>
+    <module>maze-generator.acceleo</module>
+    <module>maze-generator.runner</module>
     <module>maze-generated</module>
-
-    <!-- feature and repository -->
     <module>maze-feature</module>
     <module>maze-repository</module>
-
-    <!-- app / product -->
     <module>maze</module>
   </modules>
 
