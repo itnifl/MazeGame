@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.config.CompositionResolverImpl;
-import main.game.maze.config.EnemyType;
+import main.game.maze.difficulties.*;
 import main.game.maze.config.ProfileRules;
 import main.game.maze.config.XmiRulesLoader;
 
@@ -54,15 +54,15 @@ class CompositionResolverImplTest {
   @Test
   void precedence_countsOverrideOverridesRatios_andRedistributesToTotal() {
     // Perfil artificial con override: PUMPKINBOMBER=3, total=10, cap alto
-    Map<EnemyType, Integer> countsOverride = new EnumMap<>(EnemyType.class);
-    countsOverride.put(EnemyType.PUMPKINBOMBER, 3);
+    Map<EnemyTypes, Integer> countsOverride = new EnumMap<>(EnemyTypes.class);
+    countsOverride.put(EnemyTypes.PUMPKINBOMBER, 3);
 
     ProfileRules custom = new ProfileRules(
         "custom",
         10, // total
-        Map.of(EnemyType.GHOST, 0.6, EnemyType.ZOMBIE, 0.4), // debería ignorarse
+        Map.of(EnemyTypes.GHOST, 0.6, EnemyTypes.ZOMBIE, 0.4), // debería ignorarse
         countsOverride,
-        Map.of(EnemyType.GHOST, 100, EnemyType.ZOMBIE, 100, EnemyType.PUMPKINBOMBER, 100)
+        Map.of(EnemyTypes.GHOST, 100, EnemyTypes.ZOMBIE, 100, EnemyTypes.PUMPKINBOMBER, 100)
     );
     Map<String, ProfileRules> map = Map.of("custom", custom);
 
@@ -70,7 +70,7 @@ class CompositionResolverImplTest {
     var comp = resolver.resolve("custom");
 
     // Debe respetar override (>=3) y rellenar el resto hasta total=10
-    assertTrue(comp.getOrDefault(EnemyType.PUMPKINBOMBER, 0) >= 3, "override debe respetarse");
+    assertTrue(comp.getOrDefault(EnemyTypes.PUMPKINBOMBER, 0) >= 3, "override debe respetarse");
     int sum = comp.values().stream().mapToInt(Integer::intValue).sum();
     assertEquals(10, sum, "la suma debe ser exactamente 10");
   }
@@ -80,17 +80,17 @@ class CompositionResolverImplTest {
     // ratios 0.6 / 0.4 con total 5 -> esperamos 3 y 2 (con cualquier orden)
     ProfileRules simple = new ProfileRules(
         "simple", 5,
-        Map.of(EnemyType.GHOST, 0.6, EnemyType.ZOMBIE, 0.4),
+        Map.of(EnemyTypes.GHOST, 0.6, EnemyTypes.ZOMBIE, 0.4),
         Map.of(),
-        Map.of(EnemyType.GHOST, 100, EnemyType.ZOMBIE, 100)
+        Map.of(EnemyTypes.GHOST, 100, EnemyTypes.ZOMBIE, 100)
     );
     CompositionResolverImpl resolver = new CompositionResolverImpl(Map.of("simple", simple));
     var comp = resolver.resolve("simple");
 
     assertEquals(5, comp.values().stream().mapToInt(Integer::intValue).sum(), "total exacto");
-    assertEquals(3, comp.getOrDefault(EnemyType.GHOST, 0) + comp.getOrDefault(EnemyType.PUMPKINBOMBER, 0), 
+    assertEquals(3, comp.getOrDefault(EnemyTypes.GHOST, 0) + comp.getOrDefault(EnemyTypes.PUMPKINBOMBER, 0), 
       "ghost debería llevarse ~60% ≈ 3 (si no hay pumpkin, es todo ghost)");
-    assertEquals(2, comp.getOrDefault(EnemyType.ZOMBIE, 0), "zombie ~40% ≈ 2");
+    assertEquals(2, comp.getOrDefault(EnemyTypes.ZOMBIE, 0), "zombie ~40% ≈ 2");
   }
 
   @Test
@@ -98,15 +98,15 @@ class CompositionResolverImplTest {
     // ratios 0.5/0.5 total 6, pero cap de ZOMBIE=1 → el resto debe redistribuirse a GHOST
     ProfileRules capped = new ProfileRules(
         "cap", 6,
-        Map.of(EnemyType.GHOST, 0.5, EnemyType.ZOMBIE, 0.5),
+        Map.of(EnemyTypes.GHOST, 0.5, EnemyTypes.ZOMBIE, 0.5),
         Map.of(),
-        Map.of(EnemyType.GHOST, 100, EnemyType.ZOMBIE, 1)
+        Map.of(EnemyTypes.GHOST, 100, EnemyTypes.ZOMBIE, 1)
     );
     CompositionResolverImpl resolver = new CompositionResolverImpl(Map.of("cap", capped));
     var comp = resolver.resolve("cap");
 
     assertEquals(6, comp.values().stream().mapToInt(Integer::intValue).sum(), "total exacto");
-    assertTrue(comp.getOrDefault(EnemyType.ZOMBIE, 0) <= 1, "no debe exceder cap de ZOMBIE");
-    assertTrue(comp.getOrDefault(EnemyType.GHOST, 0) >= 5, "GHOST absorbe el sobrante");
+    assertTrue(comp.getOrDefault(EnemyTypes.ZOMBIE, 0) <= 1, "no debe exceder cap de ZOMBIE");
+    assertTrue(comp.getOrDefault(EnemyTypes.GHOST, 0) >= 5, "GHOST absorbe el sobrante");
   }
 }

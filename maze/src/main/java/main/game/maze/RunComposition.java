@@ -4,9 +4,9 @@ import java.util.Map;
 
 import main.game.maze.config.CompositionResolver;
 import main.game.maze.config.CompositionResolverImpl;
-import main.game.maze.config.EnemyType;
 import main.game.maze.config.ProfileRules;
 import main.game.maze.config.XmiRulesLoader;
+import main.game.maze.difficulties.*;
 
 public class RunComposition {
 
@@ -31,7 +31,7 @@ public class RunComposition {
       // 2. Resolver composición para el perfil pedido
       CompositionResolver resolver = new CompositionResolverImpl(profiles);
       ProfileRules rules = profiles.get(profile);
-      Map<EnemyType, Integer> comp = resolver.resolve(profile);
+      Map<EnemyTypes, Integer> comp = resolver.resolve(profile);
 
       // 3) Diagnóstico breve
       int sum = comp.values().stream().mapToInt(Integer::intValue).sum();
