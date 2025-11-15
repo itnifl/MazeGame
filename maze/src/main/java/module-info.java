@@ -9,8 +9,8 @@ module main.game.maze {
     requires transitive javafx.media;
     requires org.eclipse.emf.ecore.xmi;
     requires java.logging;    
-    requires transitive main.game.maze.opponents;
-    requires transitive main.game.maze.behaviour;  
+    requires main.game.maze.opponents;
+    requires main.game.maze.behaviour;  
 
     requires org.eclipse.ocl.ecore;
     requires org.eclipse.ocl.common;

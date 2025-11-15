@@ -63,8 +63,8 @@ Download and install Apache Maven, read here:
 
 Remember set JAVA_HOME, PATH_TO_FX, MAVEN_HOME and PATH environment variables, for instance:
 - 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-25
-- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25
 - 🛠️ PATH+=C:\Program Files\Java\jdk-25\bin
+- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25
 - 🛠️ MAVEN_HOME=C:\Program Files\Apache\Apache Maven
 - 🛠️ PATH+=C:\Program Files\Apache\Apache Maven\bin
 
