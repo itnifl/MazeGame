@@ -17,5 +17,6 @@ module main.game.maze {
 
     exports main.game.maze; 
     exports main.game.maze.dto;
+    exports main.game.maze.config;
     opens main.game.maze to javafx.fxml, javafx.base, javafx.controls;
 }
