@@ -1,3 +1,4 @@
+<!-- maze/pom.xml -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -12,8 +13,7 @@
 
   <artifactId>main.game.maze</artifactId>
 
-  <properties>
-    <javafx.platform>win</javafx.platform>
+  <properties>    
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
     <javafx.version>25.0.1</javafx.version>
@@ -53,20 +53,42 @@
       <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl</artifactId>
+      <version>3.4.0-v20140524-1358</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.ecore</artifactId>
+      <version>3.3.0-v20130520-1222</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.common</artifactId>
+      <version>1.2.0-v20140528-1458</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
+    </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.common</artifactId>
-      <version>2.38.0</version>
+      <version>${emf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore</artifactId>
-      <version>2.38.0</version>
+      <version>${emf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>2.38.0</version>
+      <version>${emf.version}</version>
     </dependency>
   
     <dependency>
@@ -93,12 +115,14 @@
       <version>${javafx.version}</version>
       <classifier>${javafx.platform}</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
       <classifier>${javafx.platform}</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
@@ -136,6 +160,19 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>main.game.maze.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
       <!-- Run JavaFX app via mvn javafx:run -->
       <plugin>
         <groupId>org.openjfx</groupId>
@@ -169,4 +206,42 @@
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>win</javafx.platform>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>macos</id>
+      <activation>
+        <os>
+          <family>Mac</family>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>mac</javafx.platform>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>linux</javafx.platform>
+      </properties>
+    </profile>
+  </profiles>
 </project>

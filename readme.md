@@ -133,7 +133,10 @@ mvn test
 mvn -pl opponents-module -am test
 
 # run the JavaFX game (Windows)
-mvn -pl maze -am clean javafx:run -Djavafx.platform=windows
+java `
+  --module-path "$Env:PATH_TO_FX\lib" `
+  --add-modules javafx.controls,javafx.fxml,javafx.media `
+  -jar .\maze\target\main.game.maze-1.0.0-SNAPSHOT.jar
 ```
 
 ## Debug
