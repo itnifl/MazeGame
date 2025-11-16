@@ -19,8 +19,6 @@
     <module>difficulty-module</module>
     <module>opponents-module</module>
     <module>maze-generator.acceleo</module>
-    <module>maze-generator.runner</module>
-    <module>maze-generated</module>
     <module>maze-feature</module>
     <module>maze-repository</module>
     <module>maze</module>
@@ -75,7 +73,14 @@
            <includeModules>true</includeModules>      
           <target> 
             <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
-          </target>                     
+          </target>        
+          <repositories>
+              <repository>
+                  <id>local-p2</id>
+                  <layout>p2</layout>
+                  <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
+              </repository>
+          </repositories>             
           <!-- optional: lock build env(s)
           <environments>
             <environment>

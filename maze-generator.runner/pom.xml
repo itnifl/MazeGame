@@ -23,6 +23,12 @@
             <phase>generate-sources</phase>
             <goals><goal>eclipse-run</goal></goals>
             <configuration>
+              <applicationArgs>
+                <arg>-application</arg>
+                <arg>main.game.maze.gen.app</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-generated/target/generated-sources/acceleo</arg>
+              </applicationArgs>
               <dependencies>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.equinox.app</artifactId></dependency>
@@ -31,6 +37,13 @@
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>                
+                <dependency>
+                  <groupId>main.game.maze</groupId>
+                  <artifactId>maze-generator.acceleo</artifactId>
+                  <version>${project.version}</version>
+                  <type>eclipse-plugin</type>
+                </dependency>
+
               </dependencies>
 
               <repositories>
@@ -41,13 +54,7 @@
                 </repository>
               </repositories>
 
-              <executionEnvironment>JavaSE-17</executionEnvironment>
-              <applicationArgs>
-                <arg>-application</arg>
-                <arg>main.game.maze.gen.app</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze-generated/src/main/java</arg>
-              </applicationArgs>
+              <executionEnvironment>JavaSE-24</executionEnvironment>
               <jvmArgs>
                 <arg>-Dfile.encoding=UTF-8</arg>
               </jvmArgs>

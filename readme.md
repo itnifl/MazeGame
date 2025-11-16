@@ -84,9 +84,9 @@ This project prefers JDK 25 and JavaFX 25.
 
 Environment variables (examples on Windows):
 
-* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-25`
-* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
-* 🛠️ `PATH+=C:\Program Files\Java\jdk-25\bin`
+* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-24`
+* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-24`
+* 🛠️ `PATH+=C:\Program Files\Java\jdk-24\bin`
 * 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
 * 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
 
@@ -94,7 +94,7 @@ VS Code Java runtime:
 
 * Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
 * Ctrl + Shift + P → “Java: Configure Java Runtime”
-* Under JDKs, add `C:\Program Files\Java\jdk-25` and set it as Default
+* Under JDKs, add `C:\Program Files\Java\jdk-24` and set it as Default
 * In the same panel, set JDK for Language Server to JDK 25
 * Reload Window
 

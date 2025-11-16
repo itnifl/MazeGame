@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: main.game.maze.difficulties;singleton:=true
 Automatic-Module-Name: main.game.maze.difficulties
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-24
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Bundle-ClassPath: .
