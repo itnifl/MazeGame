@@ -29,9 +29,7 @@
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>maze-generator.acceleo</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>main.game.maze.difficulties</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>                
               </dependencies>
 
               <repositories>
