@@ -14,14 +14,25 @@
   </properties>
   
   <modules>
+    <!-- 1: p2 mirror bygges først -->
     <module>releng/mirror</module>
+
+    <!-- 2: modell-/plugin-moduler -->
     <module>movements-module</module>
     <module>difficulty-module</module>
     <module>opponents-module</module>
     <module>maze-generator.acceleo</module>
+    <!-- Disabled - we are not generating yet: <module>maze-generator.runner</module> -->
+
+    <!-- 3: feature og p2-repo -->
     <module>maze-feature</module>
-    <module>maze-repository</module>
-    <module>maze</module>
+    <module>maze-module-repository</module>
+
+    <!-- 4: evt. egen generated/jar-modul for spillet -->
+    <module>maze-module-generator</module>
+
+    <!-- 5: selve JavaFX-spillet -->
+    <module>maze</module>    
   </modules>
 
   <repositories>

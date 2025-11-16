@@ -7,9 +7,9 @@
     <artifactId>MazeGame</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>maze-generated</artifactId>
+  <artifactId>maze-module-generator</artifactId>
   <packaging>jar</packaging>
-  <name>maze-generated</name>
+  <name>maze-module-generator</name>
 
   <build>
     <plugins>
