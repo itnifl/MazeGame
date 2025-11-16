@@ -1,10 +1,12 @@
 package main.game.maze.gen;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.acceleo.engine.service.AcceleoService;
+import org.eclipse.acceleo.model.mtl.Module;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -31,10 +33,21 @@ public class RunAcceleo {
       throw new IllegalStateException("Cannot create output dir: " + out);
     }
 
-    // Run Acceleo (engine only, no UI)
+        // Run Acceleo (engine only, no UI)
     AcceleoService service = new AcceleoService();
-    Map<String, Object> vars = Collections.emptyMap();
-    service.doGenerate(MODULE, TEMPLATE, root, out, vars);
+
+    // Finn .emtl-filen fra pluginens classpath
+    URL moduleUrl = RunAcceleo.class.getResource("/" + MODULE + ".emtl");
+    if (moduleUrl == null) {
+      throw new IllegalStateException("Cannot find Acceleo module: /" + MODULE + ".emtl");
+    }
+
+    Resource moduleRes = rs.getResource(URI.createURI(moduleUrl.toString()), true);
+    Module module = (Module) moduleRes.getContents().get(0);
+
+    List<Object> args = Collections.emptyList();
+    service.doGenerate(module, TEMPLATE, root, args, out, null);
+
     System.out.println("Acceleo done → " + out.getAbsolutePath());
   }
 }
