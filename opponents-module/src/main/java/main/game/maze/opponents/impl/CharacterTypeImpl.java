@@ -455,7 +455,7 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	public int getEffectiveThreat() {
 		// Defensive defaults
 		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
-		int healthPercent = Math.clamp(getHealth(), 0, 100);
+		int healthPercent = Math.max(0, Math.min(getHealth(), 100));
 		double behaviorMultiplier = 1.0; //There is no implementation of behavior here.		
 		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
 		return Math.max(0, (int)Math.round(computed));
