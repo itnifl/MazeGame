@@ -71,7 +71,8 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho.version}</version>
         <configuration>
-          <pomDependencies>ignore</pomDependencies>          
+          <pomDependencies>ignore</pomDependencies>    
+           <includeModules>true</includeModules>      
           <target> 
             <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
           </target>                     

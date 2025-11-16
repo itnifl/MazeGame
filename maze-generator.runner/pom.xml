@@ -5,6 +5,7 @@
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>maze-generator.runner</artifactId>
@@ -41,8 +42,9 @@
               </repositories>
 
               <executionEnvironment>JavaSE-17</executionEnvironment>
-              <application>main.game.maze.gen.app</application>
               <applicationArgs>
+                <arg>-application</arg>
+                <arg>main.game.maze.gen.app</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-generated/src/main/java</arg>
               </applicationArgs>
