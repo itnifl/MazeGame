@@ -9,7 +9,7 @@
 
   <properties>
     <tycho.version>5.0.0</tycho.version>
-    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -97,7 +97,7 @@
                   <version>[3.9.6,)</version>
                 </requireMavenVersion>
                 <requireJavaVersion>
-                  <version>[21,)</version>
+                  <version>[17,)</version>
                 </requireJavaVersion>
               </rules>
             </configuration>

@@ -7,10 +7,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: main.game.maze.behaviour,
  main.game.maze.behaviour.impl,
  main.game.maze.behaviour.util
-Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport
-Bundle-ActivationPolicy: lazy
+Bundle-ActivationPolicy: lazynull

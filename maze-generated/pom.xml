@@ -9,7 +9,7 @@
   </parent>
   <artifactId>maze-generated</artifactId>
   <packaging>jar</packaging>
-  <name>Maze Generated Code</name>
+  <name>maze-generated</name>
 
   <build>
     <plugins>

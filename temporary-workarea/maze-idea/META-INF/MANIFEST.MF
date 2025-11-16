@@ -7,7 +7,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implementation
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.emf.ecore;visibility:=reexport,
