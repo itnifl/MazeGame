@@ -25,7 +25,7 @@ jobs:
       - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,main.game.maze,maze-feature,maze-module-repository \
+            -pl releng/mirror,movements-module,difficulty-module,opponents-module,maze,maze-feature,maze-module-repository \
             -am \
             -DskipTests=true \
             clean verify
