@@ -24,6 +24,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
 
+      # 🔹 NYTT: bygg p2-mirror til releng/local-p2
+      - name: Build local p2 mirror
+        run: |
+          mvn -B -U -e \
+            -pl releng/mirror \
+            -am \
+            -DskipTests=true \
+            clean verify
+
       - name: Build game with tests
         env:
           MAVEN_OPTS: -Xmx2g
