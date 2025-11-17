@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane fx:id="highScoreRoot" fx:controller="main.game.maze.HighScoreController" xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
-    <VBox xmlns="http://javafx.com/javafx/25.0.1" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" layoutX="0" layoutY="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+    <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" layoutX="0" layoutY="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
         <Label text="High Scores:" style="-fx-font-size: 24px; -fx-text-fill: black; -fx-font-weight: bold;" />
         <VBox fx:id="highScoresVBox" spacing="3" alignment="CENTER">
             <!-- high scores will be added here -->

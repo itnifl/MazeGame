@@ -9,7 +9,7 @@
 
   <properties>
     <tycho.version>5.0.0</tycho.version>
-    <maven.compiler.release>24</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <emf.version>2.38.0</emf.version>
   </properties>

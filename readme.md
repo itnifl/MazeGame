@@ -70,6 +70,8 @@ This project prefers JDK 25 and JavaFX 25.
   * ⬇️ Maven for Java
   * ⬇️ Debugger for Java
   * ⬇️ Test Runner for Java
+
+Optional:
   * ⬇️ XML by Red Hat
   * ⬇️ OSGi for VS Code
   * ⬇️ YAML by Red Hat
@@ -153,108 +155,374 @@ The maze generator [Acceleo](https://www.eclipse.org/acceleo/) module is the [He
 
 The maze feature-module collects the Eclipse plug ins from your project into a single feature that describes what should be installed together. The maze-repository module then assembles a p2 update site that contains that feature and its plug ins, ready for installation in an Eclipse based product or workspace. Together these pieces let you build two deliverables at once. A runnable JavaFX app from the ordinary Maven modules and an Eclipse installable set of plug ins and features from the Tycho side, all resolved against the target and mirror produced by releng.
 
-```
-+------------------------------- releng -------------------------------+
-| prepares build env for Eclipse parts                                 |
-|                                                                      |
-|   +----------------------+        +-------------------------------+  |
-|   | mirror (local p2)   | <----> | Eclipse & Modeling units      |  |
-|   | file:releng/local-p2|        | EMF / OCL / Acceleo / platform|  |
-|   +----------+-----------+        +-------------------------------+  |
-|              |                                                     |
-|   +----------v-----------+                                         |
-|   | maze.target          |  -> Tycho resolves bundles/features     |
-|   | (points to mirror)   |                                         |
-|   +----------------------+                                         |
-+---------------------------------------------------------------------+
-
-                      root `mvn clean verify`
-                                   |
-                  +----------------+----------------+
-                  |                                 |
-            (ordinary Maven)                  (Tycho build)
-                  |                                 |
-   +--------------+------------+          +---------+---------+
-   |                           |          |                   |
-+--v------------------+   +----v-----+    |   Eclipse plug-ins|
-| maze-generator.     |   | maze-    |    |   from project    |
-| acceleo (headless)  |   | generated|    |   (e.g.,          |
-| - runs Acceleo app  |   | (plain JAR)   |   movements,      |
-|   in Eclipse runtime|   | - compiles     |   difficulties,   |
-| - reads model input |   |   generated src|   opponents)      |
-| - writes Java to    |   +----+-----+     |                   |
-|   maze-generated/src|        |           +---------+---------+
-+----------+----------+        |                     |
-           |                   | depends             |
-           | generates         |                     |
-           |                   |                     |
-      +----v-------------------v----+        +-------v--------+
-      | main.game.maze (JavaFX app) |        | maze-feature   |
-      | and tests depend on the JAR |        | - collects     |
-      +-------------+---------------+        |   plug-ins     |
-                    |                        +-------+--------+
-                    | uses                             |
-                    |                                  |
-                    |                          +-------v--------+
-                    |                          | maze-repository|
-                    |                          | - builds p2    |
-                    |                          |   update site  |
-                    |                          +----------------+
-                    |
-Outputs:
-- Runnable JavaFX app JAR(s) from Maven side (maze + maze-generated)
-- Installable p2 site (features + plug-ins) from Tycho side
-(all resolved against releng/maze.target → releng/local-p2 mirror)
-```
 
 ## Step overview
 
-1. releng/mirror builds a local p2 mirror that contains EMF, OCL, Acceleo, and platform units.
-<br/>Command:
-     `mvn -f releng/mirror/pom.xml -U verify`
+Here is what each module does, and how they depend on each other.
 
-2. releng/maze.target points Tycho to that local p2 so dependency resolution is stable and offline friendly.<br/>
-Command used when building (Tycho reads the target): same as in step 3.
+---
 
-3. The root build starts. Tycho reads releng/maze.target to resolve Eclipse plug in and feature dependencies.<br/>
-Command:
-     `mvn -U -DskipTests=false clean verify`
+## Infrastructure
 
-4. movements-module compiles as an Eclipse plug in that provides movement behavior code.<br/>
-Command:
-     `mvn -pl movements-module -am -DskipTests=false clean verify`
+### 1. `releng/mirror`
 
-5. difficulty-module compiles as an Eclipse plug in that provides the Ecore model, OCL, and related runtime for difficulties.<br/>
-Command:
-     `mvn -pl difficulty-module -am -DskipTests=false clean verify`
+**Type:** Tycho p2 mirror (pure build infra, no code of your own).
+**What it does:**
+Uses `tycho-p2-extras:mirror` to download Eclipse bundles/features into a local p2 repo:
 
-6. opponents-module compiles as an Eclipse plug in that depends on difficulty-module and EMF runtime.
-<br/>Command:
-     `mvn -pl opponents-module -am -DskipTests=false clean verify`
+* EMF (`org.eclipse.emf.*`, `org.eclipse.emf.sdk.feature.group`)
+* OCL (`org.eclipse.ocl.*`, `org.eclipse.ocl.all.sdk.feature.group`)
+* Acceleo (`org.eclipse.acceleo.feature.group`)
+* Equinox runtime (`org.eclipse.equinox.app`, `org.eclipse.equinox.executable.feature.group`)
+* Core runtime (`org.eclipse.core.runtime`, etc.)
 
-7. maze-feature collects the project’s Eclipse plug ins into one installable feature.<br/>
-Command:
-     `mvn -pl maze-feature -am -DskipTests=false clean verify`
+and writes them to:
 
-8. maze-repository assembles a p2 update site that contains the feature and the plug ins for installation in an Eclipse based product or workspace.<br/>
-Command:
-     `mvn -pl maze-repository -am -DskipTests=false clean verify`
+* `releng/local-p2/`
 
-9. maze-generator.acceleo runs headless during the generate sources phase, launches the Acceleo application, reads the model input, and writes Java sources into maze-generated.<br/>
-Command:
-     `mvn -pl maze-generator.acceleo -am -DskipTests clean verify`
+This repo is then:
 
-10. maze-generated is a plain jar module that compiles the generated sources and publishes a stable artifact.<br/>
-Command:
-      `mvn -pl maze-generated -am -DskipTests=false clean verify`
+* Referenced from `releng/maze.target`
+* Exposed in the root POM as a p2 `<repository>` with id `local-p2`.
 
-11. main.game.maze compiles the JavaFX application, depends on the jar from maze-generated, and runs unit tests.<br/>
-Command:
-      `mvn -pl maze -am -Djavafx.platform=windows -DskipTests=false clean verify`
-      (or use `-Djavafx.platform=linux` on Linux runners)
+**Prerequisites:** none (this must be built first).
+**Used by / must exist before:**
 
-12. The build outputs two deliverables: the JavaFX game artifacts from the Maven side and an installable p2 repository from the Tycho side.
-      Command to produce both in one go: same as in step 3.
+* All `eclipse-plugin` modules that require EMF/OCL/Acceleo:
+
+  * `movements-module`
+  * `difficulty-module`
+  * `opponents-module`
+  * `maze-generator.acceleo`
+  * `maze-generator.runner` (if enabled)
+
+---
+
+## EMF model plug-ins
+
+### 2. `movements-module`
+
+**Bundle:** `main.game.maze.behaviour`
+**Type:** `eclipse-plugin` EMF model.
+
+**What it does:**
+
+* Defines the “behaviour/movements” Ecore model (`main.game.maze.behaviour.*`).
+* Exports:
+
+  * `main.game.maze.behaviour`
+  * `main.game.maze.behaviour.impl`
+  * `main.game.maze.behaviour.util`
+* Requires:
+
+  * `org.eclipse.core.runtime`
+  * `org.eclipse.emf.ecore`
+  * `org.eclipse.emf.ecore.xmi`
+
+**Prerequisites:**
+
+* External: EMF + core runtime from `releng/local-p2` (so `releng/mirror` must run first).
+* No internal MazeGame bundles are required.
+
+**Used by:**
+
+* Included in `maze-feature`.
+* Used conceptually by the JavaFX game (`maze`) when you hook behaviour into the game logic.
+
+---
+
+### 3. `difficulty-module`
+
+**Bundle:** `main.game.maze.difficulties`
+**Type:** `eclipse-plugin` EMF model.
+
+**What it does:**
+
+* Defines the difficulties Ecore model (`main.game.maze.difficulties.*`).
+* Registers:
+
+  * The generated package with EMF (`org.eclipse.emf.ecore.generated_package`).
+  * A resource factory for `"*.difficulties"` via `org.eclipse.emf.ecore.extension_parser`.
+* Exports:
+
+  * `main.game.maze.difficulties`
+  * `main.game.maze.difficulties.impl`
+  * `main.game.maze.difficulties.util`
+* Requires:
+
+  * `org.eclipse.core.runtime`
+  * `org.eclipse.emf.ecore`
+  * `org.eclipse.emf.common`
+  * `org.eclipse.emf.ecore.xmi`
+  * `org.eclipse.ocl.pivot`
+
+**Prerequisites:**
+
+* External: same EMF/OCL stuff from `releng/local-p2`.
+* Internal: none; it is the “base” model for difficulties.
+
+**Used by:**
+
+* `opponents-module` (via `Require-Bundle: main.game.maze.difficulties`)
+* `maze-generator.acceleo` (uses the difficulty model as input)
+* Indirectly by the JavaFX game (`maze`).
+
+---
+
+### 4. `opponents-module`
+
+**Bundle:** `main.game.maze.opponents`
+**Type:** `eclipse-plugin` EMF model + OCL.
+
+**What it does:**
+
+* Defines the opponents Ecore model (`main.game.maze.opponents.*`).
+* Contains OCL-based constraints / derived features (since it requires both OCL pivot + OCL ecore).
+* Exports:
+
+  * `main.game.maze.opponents`
+  * `main.game.maze.opponents.impl`
+  * `main.game.maze.opponents.util`
+* Requires:
+
+  * `main.game.maze.difficulties`
+  * `org.eclipse.emf.ecore`
+  * `org.eclipse.emf.common`
+  * `org.eclipse.emf.ecore.xmi`
+  * `org.eclipse.ocl.pivot`
+  * `org.eclipse.ocl.ecore`
+
+**Prerequisites:**
+
+* `releng/mirror` (for EMF/OCL).
+* `difficulty-module` (because of `Require-Bundle: main.game.maze.difficulties`).
+
+**Used by:**
+
+* Included in `maze-feature`.
+* Consumed by the JavaFX game (`maze`) when you wire opponents into gameplay.
+
+---
+
+## Acceleo code generation plug-ins
+
+### 5. `maze-generator.acceleo`
+
+**Bundle:** `maze-generator.acceleo`
+**Type:** `eclipse-plugin`, Acceleo module.
+
+**What it does:**
+
+* Contains the Acceleo templates for generating Java code from your EMF models.
+* Declares an Equinox application:
+
+  * In `plugin.xml`:
+
+    * `extension point="org.eclipse.core.runtime.applications"`
+    * Application id: `main.game.maze.gen.app`
+    * Run class: `main.game.maze.gen.HeadlessGeneratorApplication`
+* Requires:
+
+  * `org.eclipse.core.runtime`
+  * `org.eclipse.emf.ecore`
+  * `org.eclipse.emf.ecore.xmi`
+  * `org.eclipse.ocl.pivot`
+  * `org.eclipse.acceleo.engine`
+  * `main.game.maze.difficulties`
+
+**Prerequisites:**
+
+* `releng/mirror` (for EMF, OCL, Acceleo).
+* `difficulty-module` (the difficulty model is part of the input for the templates).
+
+**Used by:**
+
+* `maze-generator.runner`, which actually *runs* the `main.game.maze.gen.app` application.
+* `maze-module-generator` indirectly, as the Maven-side bridge that wants the generated sources.
+
+---
+
+### 6. `maze-generator.runner`  *(currently commented out in the root modules, but functionally important)*
+
+**Bundle:** `maze-generator.runner`
+**Type:** `eclipse-plugin`, headless runner.
+
+**What it does:**
+
+* Provides the runtime environment for `main.game.maze.gen.app`:
+
+  * Requires:
+
+    * `org.eclipse.core.runtime`
+    * `org.eclipse.equinox.app`
+    * `org.eclipse.emf.ecore`
+    * `org.eclipse.emf.ecore.xmi`
+    * `org.eclipse.ocl.pivot`
+    * `org.eclipse.acceleo.engine`
+    * `maze-generator.acceleo`
+* Its POM uses:
+
+  * `tycho-eclipse-plugin` to run the Equinox application (Acceleo headless generation).
+  * `gmavenplus-plugin` to compute the `p2.repo.url` property pointing at `releng/local-p2`.
+
+**Prerequisites:**
+
+* `releng/mirror` (to have EMF/OCL/Acceleo in `local-p2`).
+* `maze-generator.acceleo` (because it needs the generator plug-in and its application id).
+
+**Used by:**
+
+* The actual headless Acceleo generation step (when you enable it and configure it as a Maven goal).
+* Typically integrated with `maze-module-generator` in the Maven build to produce generated Java sources.
+
+---
+
+## Feature and repository modules
+
+### 7. `maze-feature`
+
+**Type:** Eclipse feature project.
+
+**What it does:**
+
+* Bundles your three EMF plug-ins into a feature:
+
+  ```xml
+  <plugin id="main.game.maze.behaviour"    …/>
+  <plugin id="main.game.maze.difficulties" …/>
+  <plugin id="main.game.maze.opponents"    …/>
+  ```
+
+* This is what you install in Eclipse or publish via a p2 repository.
+
+**Prerequisites:**
+
+* `movements-module` (`main.game.maze.behaviour`)
+* `difficulty-module` (`main.game.maze.difficulties`)
+* `opponents-module` (`main.game.maze.opponents`)
+
+**Used by:**
+
+* `maze-module-repository`, which turns the feature into a p2 update site.
+
+---
+
+### 8. `maze-module-repository`
+
+**Type:** `eclipse-repository` (p2 repo).
+
+**What it does:**
+
+* Uses `tycho-p2-publisher-plugin` to build a p2 repo containing the `maze.feature`.
+* `category.xml` exposes:
+
+  * Feature `maze.feature` under the “maze” category.
+
+**Prerequisites:**
+
+* `maze-feature` (the feature is referenced as `features/maze.feature_1.0.0.qualifier.jar`).
+
+**Used by:**
+
+* Anything that wants to consume the Maze modules via p2:
+
+  * Your own Eclipse installations.
+  * A Tycho build that resolves the maze feature from a p2 repo.
+
+---
+
+## Maven bridge and game
+
+### 9. `maze-module-generator`
+
+**Type:** Plain `jar` module (Maven-side helper).
+
+**What it does (from the POM):**
+
+* Sets up a build that:
+
+  * Runs an Acceleo headless generation step (through a plugin, typically using the `maze-generator.runner` Equinox application, and the `p2.repo.url`).
+
+  * Writes generated Java sources under:
+
+    * `${project.build.directory}/generated-sources/acceleo`
+
+  * Uses `build-helper-maven-plugin` (seen in the POM) to:
+
+    * Attach those generated sources:
+
+      ```xml
+      <execution>
+        <id>add-generated</id>
+        <phase>generate-sources</phase>
+        <goals><goal>add-source</goal></goals>
+        <configuration>
+          <sources>
+            <source>${project.build.directory}/generated-sources/acceleo</source>
+          </sources>
+        </configuration>
+      </execution>
+      ```
+
+* The idea is: this module “bridges” the Eclipse/Tycho-style code generation into a normal Maven source folder, so downstream modules (like the game) can just compile the generated classes.
+
+**Prerequisites:**
+
+* `releng/mirror` (for p2 repo).
+* `maze-generator.acceleo` and `maze-generator.runner` (to actually run the Acceleo application).
+* The EMF model plug-ins (`difficulty-module`, `opponents-module`, `movements-module`) as inputs to generation.
+
+**Used by:**
+
+* The `maze` module, which can depend on this JAR or on its generated sources in the same reactor.
+
+---
+
+### 10. `maze`
+
+**Artifact:** `main.game.maze`
+**Type:** Plain Maven module (JavaFX app).
+
+**What it does:**
+
+* Contains the JavaFX Maze game application.
+
+* Uses Maven dependencies (not OSGi) to pull in:
+
+  * The EMF model modules (`main.game.maze.difficulties`, `main.game.maze.opponents`, `main.game.maze.behaviour`) as plain JARs.
+  * JavaFX (`org.openjfx:javafx-*`).
+  * Optionally, the generated code from `maze-module-generator`.
+
+* Has OS-specific profiles (`windows`, `mac`, `linux`) that set the `javafx.platform` property.
+
+**Prerequisites:**
+
+* All EMF model modules built (`movements-module`, `difficulty-module`, `opponents-module`).
+* `maze-module-generator` built, if the game uses the generated sources.
+* JavaFX available via Maven (nothing to do with p2).
+
+**Used by:**
+
+* This is the final runnable game.
+
+---
+
+## Suggested logical build / dependency order
+
+Putting it all together, the clean conceptual order (respecting prerequisites) is:
+
+1. `releng/mirror`
+2. `movements-module`
+3. `difficulty-module`
+4. `opponents-module`  *(needs `difficulty-module`)*
+5. `maze-generator.acceleo`  *(needs `difficulty-module`)*
+6. `maze-generator.runner`  *(needs `maze-generator.acceleo`, uses `local-p2`)*
+7. `maze-feature`  *(wraps movements, difficulty, opponents)*
+8. `maze-module-repository`  *(wraps `maze-feature` into a p2 site)*
+9. `maze-module-generator`  *(runs the headless generator and exposes generated sources)*
+10. `maze`  *(JavaFX game using the models and generated code)*
+
+In your current root POM, `maze-generator.runner` is commented out, but if you re-enable it, it should sit right after `maze-generator.acceleo` and before anything that relies on the headless generator.
 
 ## The modules
 

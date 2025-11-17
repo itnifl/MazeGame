@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BackgroundImage?>
 <?import javafx.scene.layout.Pane?>
 
-<AnchorPane fx:id="root" onMouseClicked="#handleMouseClicked" xmlns="http://javafx.com/javafx/25.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.game.maze.GameController">    
+<AnchorPane fx:id="root" onMouseClicked="#handleMouseClicked" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.game.maze.GameController">    
     <Pane fx:id="gameBoard" focusTraversable="true" onKeyPressed="#handleKeyPressed" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         
         <background>
