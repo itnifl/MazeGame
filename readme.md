@@ -15,6 +15,7 @@
 * 🧩 [releng](releng/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 
 ---
 
