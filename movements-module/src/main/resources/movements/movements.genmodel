@@ -16,8 +16,9 @@
     </genClasses>
     <genClasses ecoreClass="movements.ecore#//PatrolBehavior">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/path"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolBehavior/currentIndex"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolBehavior/startIndex"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/pathcalculator"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/patrolZone"/>
     </genClasses>
     <genClasses ecoreClass="movements.ecore#//ChaseBehavior">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//ChaseBehavior/relativePositionTarget"/>
@@ -27,7 +28,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/ignoreWalls"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/attackRadius"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/instantKillOnCollision"/>
-      <genOperations ecoreOperation="movements.ecore#//MovementBehavior/next"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/movementSpeed"/>
     </genClasses>
     <genClasses ecoreClass="movements.ecore#//Position">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//Position/posX"/>
@@ -48,5 +49,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//AstarPathCalculator/maxIterations"/>
     </genClasses>
     <genClasses ecoreClass="movements.ecore#//LocalPathCalculator"/>
+    <genClasses ecoreClass="movements.ecore#//PatrolZone">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolZone/width"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolZone/height"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolZone/topLeft"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>
