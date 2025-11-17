@@ -16,35 +16,7 @@
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl</artifactId>
-      <version>3.4.0-v20140524-1358</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.ecore</artifactId>
-      <version>3.3.0-v20130520-1222</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.common</artifactId>
-      <version>1.2.0-v20140528-1458</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
-    </dependency>
-    <dependency>
-      <groupId>lpg.runtime</groupId>
-      <artifactId>java</artifactId>
-      <version>2.0.17-v201004271640</version>    
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/java-2.0.17-v201004271640.jar</systemPath>  
-    </dependency>
+  <dependencies>    
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore</artifactId>

@@ -1,7 +1,15 @@
 # difficulty-module
 
-Simple EMF and OCL based model for game difficulty.
-Provides the `DifficultyGameData` meta model, default values, sample XMI, and validation with OCL invariants.
+EMF and OCL based model for game difficulty.  
+Provides the `DifficultyGameData` meta-model, default values, sample XMI instances, and validation through OCL invariants.
+
+## What you get
+
+• Ecore model and generated EMF code  
+• OCL constraints and derived attributes (via OCL Pivot)  
+• Sample XMI files for smoke testing  
+• JUnit tests that load, validate, and exercise the model
+
 
 ## What you get
 
@@ -60,3 +68,32 @@ System.out.println(diag.getMessage());
 ## Notes
 
 This bundle is consumed by other game modules at runtime and inside tests.
+
+## Key concepts
+
+• Difficulty profiles such as Easy, Normal, Hard
+• Enemy count limits, scaling factors, and multipliers
+• A max-threat style constraint that guards total effective threat over all opponents
+• Default values so XMI instances are usable with minimal configuration
+
+## Where things live
+
+• `model/` – Ecore model and OCL definitions
+• `src/main/java/` – generated and hand-written EMF code
+• `src/test/java/` – JUnit tests for loading and validation
+• `src/test/resources/` – sample `.xmi` difficulty configurations
+
+## Requirements
+
+• Java 21 or newer (project root prefers JDK 21+ / 25)
+• Maven
+• EMF and OCL resolved via the Tycho target and local p2 mirror in `releng/local-p2` (when built as part of the MazeGame reactor)
+
+## Role in MazeGame
+
+This bundle defines the difficulty model used by:
+
+• `opponents-module` for threat and balancing rules
+• The Acceleo generator for producing game code from difficulty configurations
+• The JavaFX game module (`maze`) at runtime through its generated JAR
+

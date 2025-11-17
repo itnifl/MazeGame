@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - "maze/**"
-      - "maze-generated/**"
+      - "mazer-module-generator/**"
       - ".github/workflows/**"
   pull_request:
 
@@ -21,7 +21,7 @@ jobs:
           cache: maven
 
       - name: Ensure generated sources exist
-        run: mkdir -p maze-generated/src/main/java
+        run: mkdir -p mazer-module-generator/src/main/java
 
       - name: Run Acceleo generator
         run: mvn -B -U -e -pl maze-generator.acceleo -am -DskipTests clean verify

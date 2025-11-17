@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maze-p2-repository
-          path: maze-repository/target/repository/**
+          path: maze-module-repository/target/repository/**
 
   game:
     runs-on: ubuntu-latest
@@ -47,9 +47,9 @@ jobs:
           cache: maven
 
       - name: Ensure generated source folder exists
-        run: mkdir -p maze-generated/src/main/java
+        run: mkdir -p mazer-module-generator/src/main/java
 
-      # run the generator so maze-generated has sources
+      # run the generator so mazer-module-generator has sources
       - name: Run Acceleo generator
         run: |
           mvn -B -U -e \
@@ -77,4 +77,4 @@ jobs:
           name: maze-game
           path: |
             maze/target/**/*.jar
-            maze-generated/target/**/*.jar
+            mazer-module-generator/target/**/*.jar

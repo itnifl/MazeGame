@@ -1,4 +1,4 @@
-# maze-repository
+# maze-module-repository
 
 ## Overview
 This module builds a p2 repository that contains the Maze Game feature and its Eclipse plugins. The repository is a consumable update site that Eclipse can install from and Tycho can resolve against during builds.
@@ -11,7 +11,7 @@ This module builds a p2 repository that contains the Maze Game feature and its E
 ## Build
 From the repository root:
 ```bash
-mvn -pl maze-repository -am -DskipTests clean verify
+mvn -pl maze-module-repository -am -DskipTests clean verify
 ````
 
 ## Output
@@ -19,7 +19,7 @@ mvn -pl maze-repository -am -DskipTests clean verify
 The built p2 repository is written to:
 
 ```
-maze-repository/target/repository/
+maze-module-repository/target/repository/
 ```
 
 ## How others consume it
@@ -30,7 +30,7 @@ maze-repository/target/repository/
 2. Add a new software site with:
 
    ```
-   file:/absolute/path/to/maze-repository/target/repository/
+   file:/absolute/path/to/maze-module-repository/target/repository/
    ```
 3. Install the **Maze Feature** (feature group).
 
@@ -43,7 +43,7 @@ Add a p2 repository entry that points to the built site:
   <repository>
     <id>maze-local</id>
     <layout>p2</layout>
-    <url>file:${maven.multiModuleProjectDirectory}/maze-repository/target/repository</url>
+    <url>file:${maven.multiModuleProjectDirectory}/maze-module-repository/target/repository</url>
   </repository>
 </repositories>
 ```
@@ -54,41 +54,41 @@ If you manage repositories via the Tycho target configuration, reference the sit
 
 ## Relationship to other modules
 
-- **maze-feature → maze-repository**
+- **maze-feature → maze-module-repository**
   - The feature is the payload this repository publishes. When you build the repository, it picks up the feature jar and its included plugins and writes them into the p2 site under `target/repository`.
   - Rebuild the feature whenever any included plugin changes, then rebuild the repository so Eclipse and Tycho see the updated units.
   - Typical sequence:
     ```bash
     mvn -pl maze-feature -am clean verify
-    mvn -pl maze-repository -am clean verify
+    mvn -pl maze-module-repository -am clean verify
     ```
 
-- **movements-module, difficulty-module, opponents-module → maze-feature → maze-repository**
+- **movements-module, difficulty-module, opponents-module → maze-feature → maze-module-repository**
   - These are Eclipse plugins. The feature lists them. The repository packages the feature and these plugins into installable units.
   - If any of these plugins change, rebuild the feature and then the repository so the site contains the fresh versions.
 
 - **releng (mirror and target) ↔ Tycho parts (plugins, feature, repository)**
   - The releng folder can build a local mirror and define a target platform that Tycho uses to resolve dependencies consistently and offline. While the repository you are reading about publishes your output, the releng target tells Tycho where to look for inputs during the build.
-  - You can either resolve against public update sites through releng, or you can point Tycho at the locally built repository in `maze-repository/target/repository` for self contained builds.
+  - You can either resolve against public update sites through releng, or you can point Tycho at the locally built repository in `maze-module-repository/target/repository` for self contained builds.
 
-- **maze-generated and maze (plain Maven modules)**
+- **mazer-module-generator and maze (plain Maven modules)**
   - These are not installed from p2 and do not get published in this repository. They are built and consumed through normal Maven dependency resolution.
   - The game app in `maze` may still be built in the same reactor as the Tycho parts, but it does not consume anything from this p2 site.
 
 ### Data flow summary
 ```
 [movements-module] 
-[difficulty-module]  >--> [maze-feature] --> [maze-repository p2 site]
+[difficulty-module]  >--> [maze-feature] --> [maze-module-repository p2 site]
 [opponents-module]  /
 
 releng (target and mirror) --> provides input repositories for Tycho resolution
 
-maze-generator.acceleo --> writes sources --> [maze-generated jar] --> used by [maze app]
+maze-generator.acceleo --> writes sources --> [mazer-module-generator jar] --> used by [maze app]
 ```
 
 ### Who consumes the repository
 
-- **Eclipse** installs the Maze Feature from `maze-repository/target/repository` for local testing and tool support.
+- **Eclipse** installs the Maze Feature from `maze-module-repository/target/repository` for local testing and tool support.
 - **Tycho builds** can list this repository as a p2 source so they resolve your feature and plugins without contacting public update sites.
 
 
@@ -96,7 +96,7 @@ maze-generator.acceleo --> writes sources --> [maze-generated jar] --> used by [
 ## Clean
 
 ```bash
-mvn -pl maze-repository clean
+mvn -pl maze-module-repository clean
 ```
 
 ## Notes
@@ -110,6 +110,6 @@ mvn -pl maze-repository clean
   Then run the repository build:
 
   ```bash
-  mvn -pl maze-repository -am clean verify
+  mvn -pl maze-module-repository -am clean verify
   ```
-* In CI, you can upload the `maze-repository/target/repository/` folder as an artifact for other jobs to consume.
+* In CI, you can upload the `maze-module-repository/target/repository/` folder as an artifact for other jobs to consume.

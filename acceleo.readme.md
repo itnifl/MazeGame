@@ -16,7 +16,7 @@ In this project, Acceleo reads the **DifficultyGameData** model and produces dom
 * **Templates and launcher** → [`maze-generator.acceleo`](./maze-generator.acceleo)
   Contains the `.mtl` templates and a small headless launcher.
 
-* **Generated sources** → [`maze-generated`](./maze-generated)
+* **Generated sources** → [`mazer-module-generator`](./mazer-module-generator)
   Receives generated Java sources and builds them into a jar that other modules depend on.
 
 * **Model input** → [`models/DifficultyGameData.xmi`](./models/DifficultyGameData.xmi)
@@ -37,8 +37,8 @@ High-level flow:
 2. The generator app starts inside that runtime.
 3. The app loads `models/DifficultyGameData.xmi`.
 4. Acceleo templates render Java files.
-5. Files are written into `maze-generated/src/main/java`.
-6. `maze-generated` compiles those sources and publishes a jar that the game uses.
+5. Files are written into `mazer-module-generator/src/main/java`.
+6. `mazer-module-generator` compiles those sources and publishes a jar that the game uses.
 
 ---
 
@@ -89,7 +89,7 @@ mvn -B -U -e -pl maze-generator.acceleo,maze -am -DskipTests=false clean verify
 
 ## CI usage
 
-In GitHub Actions, the “Generate and build game” job runs the generator first, then builds the app. This guarantees the `maze-generated` jar matches the current model before tests execute. See the workflow in `.github/workflows`.
+In GitHub Actions, the “Generate and build game” job runs the generator first, then builds the app. This guarantees the `mazer-module-generator` jar matches the current model before tests execute. See the workflow in `.github/workflows`.
 
 ---
 
@@ -101,7 +101,7 @@ Typical outputs include:
 * Utility functions derived from OCL invariants and derived features in the model.
 * Boilerplate to load and validate models at runtime.
 
-Everything lands under `maze-generated/src/main/java`, then `maze-generated` packages it as a jar. The game module declares a dependency on that jar and uses the generated types directly.
+Everything lands under `mazer-module-generator/src/main/java`, then `mazer-module-generator` packages it as a jar. The game module declares a dependency on that jar and uses the generated types directly.
 
 ---
 
@@ -109,7 +109,7 @@ Everything lands under `maze-generated/src/main/java`, then `maze-generated` pac
 
 * Edit the Ecore model or the `.mtl` templates.
 * Re-run the generator command shown above.
-* Commit the updated sources in `maze-generated` so collaborators can build without running Acceleo locally.
+* Commit the updated sources in `mazer-module-generator` so collaborators can build without running Acceleo locally.
 * If you want to regenerate automatically in CI only, you can keep local workflows the same and rely on the workflow job to refresh outputs.
 
 ---
@@ -127,7 +127,7 @@ Everything lands under `maze-generated/src/main/java`, then `maze-generated` pac
   ```
 
 * **Generator runs but no files appear**
-  Check that the launcher arguments point to `models/DifficultyGameData.xmi` and to `maze-generated/src/main/java`, and verify that `HeadlessGeneratorApp` finds your root template.
+  Check that the launcher arguments point to `models/DifficultyGameData.xmi` and to `mazer-module-generator/src/main/java`, and verify that `HeadlessGeneratorApp` finds your root template.
 
 * **Template errors**
   Acceleo exceptions are surfaced as a build failure from `HeadlessGeneratorApp`. Open the build log to see the exact template and line number.
@@ -143,4 +143,4 @@ Everything lands under `maze-generated/src/main/java`, then `maze-generated` pac
 If you want to dive into the details, open the module READMEs:
 
 * [`maze-generator.acceleo`](./maze-generator.acceleo/readme.md)
-* [`maze-generated`](./maze-generated/readme.md)
+* [`mazer-module-generator`](./mazer-module-generator/readme.md)

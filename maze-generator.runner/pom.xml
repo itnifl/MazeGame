@@ -27,7 +27,7 @@
                 <arg>-application</arg>
                 <arg>main.game.maze.gen.app</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze-generated/target/generated-sources/acceleo</arg>
+                <arg>${maven.multiModuleProjectDirectory}/mazer-module-generator/target/generated-sources/acceleo</arg>
               </applicationArgs>
               <dependencies>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>

@@ -1,4 +1,4 @@
-# maze-generated
+# mazer-module-generator
 
 ## Purpose
 
@@ -10,7 +10,7 @@ This module is the home for code that the Acceleo generator produces from the EM
 * Any small utilities that the templates emit to support the generated model code
 * Optional resources the generator places under `src/main/resources` when needed
 
-After a build, the jar is created at `target/maze-generated-<version>.jar`.
+After a build, the jar is created at `target/mazer-module-generator-<version>.jar`.
 
 ## How other modules use it
 
@@ -48,7 +48,7 @@ After a build, the jar is created at `target/maze-generated-<version>.jar`.
 * **main.game.maze** → depends on the jar from this module to compile and run the game logic that is model driven.
 * **releng** → provides the target and optional local p2 mirror used when the generator runs headless, ensuring consistent generation inputs.
 * **movements-module, difficulty-module, opponents-module** → independent Eclipse plug ins. Changes in the metamodel or OCL inside `difficulty-module` may require regenerating this module so that the app sees the updated classes.
-* **maze-feature and maze-repository** → collect only Eclipse plug ins and features for p2 distribution. This module is a plain Maven jar and is not published to the p2 site.
+* **maze-feature and maze-module-repository** → collect only Eclipse plug ins and features for p2 distribution. This module is a plain Maven jar and is not published to the p2 site.
 
 ## Typical workflow
 
