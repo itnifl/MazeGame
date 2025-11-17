@@ -6,7 +6,7 @@
         includeAllPlugins="false" includeAllPlatforms="false" 
         includeConfigurePhase="true" includeSource="true" 
         type="InstallableUnit">
-      <repository location="file:/D:/Source/MazeGame/releng/local-p2"/>
+      <repository location="file:local-p2"/>
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
