@@ -10,22 +10,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Temurin JDK 21
+      - name: Set up Temurin JDK 24
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 24
           cache: maven
 
-      # optional: cache local p2 mirror if you use releng/mirror
       - name: Cache local p2 mirror
         uses: actions/cache@v4
         with:
           path: releng/local-p2
           key: p2-${{ runner.os }}-${{ hashFiles('releng/mirror/pom.xml','releng/maze.target') }}
 
-      - name: Build Eclipse plug-ins + p2 site (Tycho)
-        run: mvn -B -U -e -DskipTests=false clean verify
+      - name: Build Eclipse plug-ins + p2 site (Tycho only)
+        run: |
+          mvn -B -U -e \
+            -pl releng/mirror,maze-feature,maze-module-repository \
+            -am \
+            -DskipTests=true \
+            clean verify
 
       - name: Upload p2 site
         uses: actions/upload-artifact@v4
@@ -39,28 +43,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Temurin JDK 21
+      - name: Set up Temurin JDK 24
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 24
           cache: maven
 
-      - name: Ensure generated source folder exists
-        run: mkdir -p mazer-module-generator/src/main/java
-
-      # run the generator so mazer-module-generator has sources
-      - name: Run Acceleo generator
-        run: |
-          mvn -B -U -e \
-            -pl maze-generator.acceleo -am \
-            -Dtycho.localArtifacts=ignore \
-            -DskipTests clean verify
-
       - name: Install Xvfb (headless JavaFX)
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
 
-      - name: Build generated code + game (with tests)
+      - name: Build game (with tests)
         env:
           MAVEN_OPTS: -Xmx2g
         run: |
@@ -68,8 +63,8 @@ jobs:
           mvn -B -U -e \
             -pl maze -am \
             -Djavafx.platform=linux \
-            -Dtycho.localArtifacts=ignore \
-            -DskipTests=false clean verify
+            -DskipTests=false \
+            clean verify
 
       - name: Upload game artifact
         uses: actions/upload-artifact@v4
@@ -77,4 +72,3 @@ jobs:
           name: maze-game
           path: |
             maze/target/**/*.jar
-            mazer-module-generator/target/**/*.jar
