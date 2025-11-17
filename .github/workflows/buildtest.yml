@@ -25,16 +25,11 @@ jobs:
       - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror,\
-            main.game.maze.behaviour,\
-            main.game.maze.difficulties,\
-            main.game.maze.opponents,\
-            main.game.maze,\
-            maze-feature,\
-            maze-module-repository \
-                  -am \
-                  -DskipTests=true \
-                  clean verify
+            -pl releng/mirror,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,main.game.maze,maze-feature,maze-module-repository \
+            -am \
+            -DskipTests=true \
+            clean verify
+                  
       - name: Upload p2 site
         uses: actions/upload-artifact@v4
         with:
@@ -54,7 +49,6 @@ jobs:
           java-version: 24
           cache: maven
 
-      # 🔹 NYTT: hent opp lokalt p2-mirror bygget i 'tycho'-jobben
       - name: Restore local p2 mirror
         uses: actions/cache@v4
         with:
@@ -78,4 +72,3 @@ jobs:
             -Djavafx.platform=linux \
             -DskipTests=false \
             clean verify
-
