@@ -880,8 +880,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Health(), ecorePackage.getEInt(), "health", "100", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Speed(), ecorePackage.getEDouble(), "speed", "1.0", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", null, 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCharacterType_EffectiveThreat(), ecorePackage.getEInt(), "effectiveThreat", "1", 1, 1, CharacterType.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_ThreatLevel(), ecorePackage.getEDouble(), "threatLevel", "0.0", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_EffectiveThreat(), ecorePackage.getEDouble(), "effectiveThreat", "0.0", 1, 1, CharacterType.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageBase(), ecorePackage.getEString(), "ImageBase", "/main/game/maze/zombie.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnLeft(), ecorePackage.getEString(), "ImageTurnLeft", "/main/game/maze/zombie-left.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnRight(), ecorePackage.getEString(), "ImageTurnRight", "/main/game/maze/zombie-right.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1021,7 +1021,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		  (getOpponentModel_GameSetCurrentThreatLevel(),
 		   source,
 		   new String[] {
-			   "derivation", "self.characterTypes.threatLevel->sum()"
+			   "derivation", "self.characterTypes.effectiveThreat->sum()"
 		   });
 	}
 

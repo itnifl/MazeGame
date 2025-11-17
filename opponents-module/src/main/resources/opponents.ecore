@@ -37,7 +37,7 @@
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         volatile="true" defaultValueLiteral="0" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL">
-        <details key="derivation" value="self.characterTypes.threatLevel->sum()"/>
+        <details key="derivation" value="self.characterTypes.effectiveThreat->sum()"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -51,10 +51,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="speed" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         defaultValueLiteral="1.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="threatLevel" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" derived="true"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0"
+        derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="effectiveThreat" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" changeable="false"
-        volatile="true" transient="true" defaultValueLiteral="1" derived="true"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" changeable="false"
+        volatile="true" transient="true" defaultValueLiteral="0.0" derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageBase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral="/main/game/maze/zombie.png"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnLeft" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

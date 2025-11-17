@@ -4,7 +4,6 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.ocl.ecore.delegate.OCLDelegateDomainFactory;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
