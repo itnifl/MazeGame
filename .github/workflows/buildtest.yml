@@ -35,7 +35,7 @@ jobs:
         with:
           name: maze-p2-repository
           path: maze-module-repository/target/repository/**
-
+          
   game:
     runs-on: ubuntu-latest
     needs: tycho
@@ -48,6 +48,15 @@ jobs:
           distribution: temurin
           java-version: 24
           cache: maven
+
+      # 🔹 NYTT: hent opp lokalt p2-mirror bygget i 'tycho'-jobben
+      - name: Restore local p2 mirror
+        uses: actions/cache@v4
+        with:
+          path: releng/local-p2
+          key: p2-${{ runner.os }}-${{ hashFiles('releng/mirror/pom.xml','releng/maze.target') }}
+          restore-keys: |
+            p2-${{ runner.os }}-
 
       - name: Install Xvfb (headless JavaFX)
         run: |
@@ -65,9 +74,3 @@ jobs:
             -DskipTests=false \
             clean verify
 
-      - name: Upload game artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: maze-game
-          path: |
-            maze/target/**/*.jar
