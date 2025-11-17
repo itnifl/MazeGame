@@ -8,9 +8,9 @@
 * 🧩 [opponents-module](opponents-module/readme.md)
 * 🖥️ [maze](maze/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
-* 🧩 [maze-repository](maze-repository/readme.md)
+* 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
-* 🧩 [maze-generated](maze-generated/readme.md)
+* 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🧩 [releng](releng/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
@@ -86,9 +86,9 @@ Optional:
 
 Environment variables (examples on Windows):
 
-* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-24`
-* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-24`
-* 🛠️ `PATH+=C:\Program Files\Java\jdk-24\bin`
+* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-25`
+* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
+* 🛠️ `PATH+=C:\Program Files\Java\jdk-25\bin`
 * 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
 * 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
 
@@ -96,8 +96,8 @@ VS Code Java runtime:
 
 * Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
 * Ctrl + Shift + P → “Java: Configure Java Runtime”
-* Under JDKs, add `C:\Program Files\Java\jdk-24` and set it as Default
-* In the same panel, set JDK for Language Server to JDK 25
+* Under JDKs, add `C:\Program Files\Java\jdk-25` and set it as Default
+* In the same panel, set JDK for Language Server to JDK 21
 * Reload Window
 
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
@@ -149,12 +149,6 @@ Use the script `Run-P2AndBuildCheck.ps1` to run a build and check, then start by
 
 ## Module introductions
 
-The releng folder prepares the build environment for all Eclipse parts of the project. It creates a local p2 mirror with the needed Eclipse and Modeling units and defines the target file that points [Tycho](https://github.com/eclipse-tycho) to that mirror. With this in place the build is repeatable and offline friendly, since all required bundles such as EMF, OCL, Acceleo, and the platform units are available from a local path. When the root build starts, Tycho reads the target from releng to resolve plug in and feature dependencies for the modules that follow.
-
-The maze generator [Acceleo](https://www.eclipse.org/acceleo/) module is the [Headless mode](https://en.wikipedia.org/wiki/Headless_software) code generator. During the generate sources phase it launches the Acceleo application inside an Eclipse runtime, reads your model input, and writes Java sources into the maze generated module. The maze generated module is a plain jar module that simply compiles and packages those produced sources so that the game app and tests can depend on a stable artifact. In short, the generator produces code and maze generated ships it as a jar.
-
-The maze feature-module collects the Eclipse plug ins from your project into a single feature that describes what should be installed together. The maze-repository module then assembles a p2 update site that contains that feature and its plug ins, ready for installation in an Eclipse based product or workspace. Together these pieces let you build two deliverables at once. A runnable JavaFX app from the ordinary Maven modules and an Eclipse installable set of plug ins and features from the Tycho side, all resolved against the target and mirror produced by releng.
-
 
 ## Step overview
 
@@ -195,6 +189,18 @@ This repo is then:
   * `opponents-module`
   * `maze-generator.acceleo`
   * `maze-generator.runner` (if enabled)
+
+The game itself (maze module) does not fetch anything from releng/local-p2. All the Eclipse / Tycho modules (the eclipse-plugin, eclipse-repository, feature) get their EMF/OCL/Acceleo/etc from releng/local-p2 when Tycho resolves them. The wiring happens via the target definition in releng and the Tycho configuration in your POMs.
+
+Who actually uses releng/local-p2?
+- These modules depend on the local p2 mirror during build:
+- movements-module (eclipse-plugin)
+- difficulty-module (eclipse-plugin)
+- opponents-module (eclipse-plugin)
+- maze-generator.acceleo (eclipse-plugin)
+- maze-generator.runner (eclipse-plugin)
+- maze-feature (feature)
+- maze-module-repository (eclipse-repository)
 
 ---
 
