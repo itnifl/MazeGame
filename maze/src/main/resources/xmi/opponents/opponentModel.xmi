@@ -113,7 +113,7 @@
     <enabled>false</enabled>
     <health>100</health>
     <speed>0</speed>
-    <threatLevel>5.0</threatLevel>
+    <threatLevel>0.0</threatLevel>
 
     <attackDamage>10</attackDamage>
     <attackRange>100</attackRange>

@@ -20,10 +20,13 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.behaviour.MovementBehavior#isIgnoreWalls <em>Ignore Walls</em>}</li>
  *   <li>{@link main.game.maze.behaviour.MovementBehavior#getAttackRadius <em>Attack Radius</em>}</li>
  *   <li>{@link main.game.maze.behaviour.MovementBehavior#isInstantKillOnCollision <em>Instant Kill On Collision</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.MovementBehavior#getMovementSpeed <em>Movement Speed</em>}</li>
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getMovementBehavior()
  * @model abstract="true"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositiveMovementSpeed'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositiveMovementSpeed='self.movementSpeed &gt; 0'"
  * @generated
  */
 public interface MovementBehavior extends EObject {
@@ -38,7 +41,7 @@ public interface MovementBehavior extends EObject {
 	 * @return the value of the '<em>Ignore Walls</em>' attribute.
 	 * @see #setIgnoreWalls(boolean)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getMovementBehavior_IgnoreWalls()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	boolean isIgnoreWalls();
@@ -63,7 +66,7 @@ public interface MovementBehavior extends EObject {
 	 * @return the value of the '<em>Attack Radius</em>' attribute.
 	 * @see #setAttackRadius(double)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getMovementBehavior_AttackRadius()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	double getAttackRadius();
@@ -88,7 +91,7 @@ public interface MovementBehavior extends EObject {
 	 * @return the value of the '<em>Instant Kill On Collision</em>' attribute.
 	 * @see #setInstantKillOnCollision(boolean)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getMovementBehavior_InstantKillOnCollision()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	boolean isInstantKillOnCollision();
@@ -104,11 +107,25 @@ public interface MovementBehavior extends EObject {
 	void setInstantKillOnCollision(boolean value);
 
 	/**
+	 * Returns the value of the '<em><b>Movement Speed</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @return the value of the '<em>Movement Speed</em>' attribute.
+	 * @see #setMovementSpeed(double)
+	 * @see main.game.maze.behaviour.BehaviourPackage#getMovementBehavior_MovementSpeed()
+	 * @model required="true"
 	 * @generated
 	 */
-	void next();
+	double getMovementSpeed();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.behaviour.MovementBehavior#getMovementSpeed <em>Movement Speed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Movement Speed</em>' attribute.
+	 * @see #getMovementSpeed()
+	 * @generated
+	 */
+	void setMovementSpeed(double value);
 
 } // MovementBehavior

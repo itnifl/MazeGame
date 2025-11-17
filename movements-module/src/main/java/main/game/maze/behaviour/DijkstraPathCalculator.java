@@ -16,7 +16,8 @@ package main.game.maze.behaviour;
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getDijkstraPathCalculator()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='ValidDijsktraIterationsCount'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot ValidDijsktraIterationsCount='self.maxIterations &gt; 0 and self.maxIterations &lt; 50'"
  * @generated
  */
 public interface DijkstraPathCalculator extends PathCalculator {

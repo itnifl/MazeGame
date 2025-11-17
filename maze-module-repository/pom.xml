@@ -1,0 +1,22 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>maze-module-repository</artifactId>
+  <packaging>eclipse-repository</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-publisher-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <categoryDefinition>category.xml</categoryDefinition>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

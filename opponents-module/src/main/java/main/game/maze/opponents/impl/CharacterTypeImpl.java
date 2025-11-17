@@ -167,7 +167,7 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int EFFECTIVE_THREAT_EDEFAULT = 1;
+	protected static final double EFFECTIVE_THREAT_EDEFAULT = 0.0;
 
 	/**
 	 * The default value of the '{@link #getImageBase() <em>Image Base</em>}' attribute.
@@ -452,10 +452,10 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated NOT
 	 */
 	@Override
-	public int getEffectiveThreat() {
+	public double getEffectiveThreat() {
 		// Defensive defaults
 		int baseThreatLevel = (int) Math.round(this.getThreatLevel());
-		int healthPercent = Math.clamp(getHealth(), 0, 100);
+		int healthPercent = Math.max(0, Math.min(getHealth(), 100));
 		double behaviorMultiplier = 1.0; //There is no implementation of behavior here.		
 		double computed = (baseThreatLevel * (healthPercent / 100.0)) * behaviorMultiplier;
 		return Math.max(0, (int)Math.round(computed));

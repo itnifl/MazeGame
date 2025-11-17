@@ -9,6 +9,7 @@ import main.game.maze.behaviour.Position;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
@@ -30,7 +31,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBehavior {
 	/**
-	 * The cached value of the '{@link #getRelativePositionTarget() <em>Relative Position Target</em>}' reference.
+	 * The cached value of the '{@link #getRelativePositionTarget() <em>Relative Position Target</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getRelativePositionTarget()
@@ -40,7 +41,7 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	protected Position relativePositionTarget;
 
 	/**
-	 * The cached value of the '{@link #getPathcalculator() <em>Pathcalculator</em>}' reference.
+	 * The cached value of the '{@link #getPathcalculator() <em>Pathcalculator</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPathcalculator()
@@ -75,14 +76,6 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 */
 	@Override
 	public Position getRelativePositionTarget() {
-		if (relativePositionTarget != null && relativePositionTarget.eIsProxy()) {
-			InternalEObject oldRelativePositionTarget = (InternalEObject)relativePositionTarget;
-			relativePositionTarget = (Position)eResolveProxy(oldRelativePositionTarget);
-			if (relativePositionTarget != oldRelativePositionTarget) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, oldRelativePositionTarget, relativePositionTarget));
-			}
-		}
 		return relativePositionTarget;
 	}
 
@@ -91,8 +84,14 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Position basicGetRelativePositionTarget() {
-		return relativePositionTarget;
+	public NotificationChain basicSetRelativePositionTarget(Position newRelativePositionTarget, NotificationChain msgs) {
+		Position oldRelativePositionTarget = relativePositionTarget;
+		relativePositionTarget = newRelativePositionTarget;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, oldRelativePositionTarget, newRelativePositionTarget);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
 	}
 
 	/**
@@ -102,10 +101,17 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 */
 	@Override
 	public void setRelativePositionTarget(Position newRelativePositionTarget) {
-		Position oldRelativePositionTarget = relativePositionTarget;
-		relativePositionTarget = newRelativePositionTarget;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, oldRelativePositionTarget, relativePositionTarget));
+		if (newRelativePositionTarget != relativePositionTarget) {
+			NotificationChain msgs = null;
+			if (relativePositionTarget != null)
+				msgs = ((InternalEObject)relativePositionTarget).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, null, msgs);
+			if (newRelativePositionTarget != null)
+				msgs = ((InternalEObject)newRelativePositionTarget).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, null, msgs);
+			msgs = basicSetRelativePositionTarget(newRelativePositionTarget, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET, newRelativePositionTarget, newRelativePositionTarget));
 	}
 
 	/**
@@ -115,14 +121,6 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 */
 	@Override
 	public PathCalculator getPathcalculator() {
-		if (pathcalculator != null && pathcalculator.eIsProxy()) {
-			InternalEObject oldPathcalculator = (InternalEObject)pathcalculator;
-			pathcalculator = (PathCalculator)eResolveProxy(oldPathcalculator);
-			if (pathcalculator != oldPathcalculator) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, pathcalculator));
-			}
-		}
 		return pathcalculator;
 	}
 
@@ -131,8 +129,14 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public PathCalculator basicGetPathcalculator() {
-		return pathcalculator;
+	public NotificationChain basicSetPathcalculator(PathCalculator newPathcalculator, NotificationChain msgs) {
+		PathCalculator oldPathcalculator = pathcalculator;
+		pathcalculator = newPathcalculator;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, newPathcalculator);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
 	}
 
 	/**
@@ -142,10 +146,33 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	 */
 	@Override
 	public void setPathcalculator(PathCalculator newPathcalculator) {
-		PathCalculator oldPathcalculator = pathcalculator;
-		pathcalculator = newPathcalculator;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, pathcalculator));
+		if (newPathcalculator != pathcalculator) {
+			NotificationChain msgs = null;
+			if (pathcalculator != null)
+				msgs = ((InternalEObject)pathcalculator).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, null, msgs);
+			if (newPathcalculator != null)
+				msgs = ((InternalEObject)newPathcalculator).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, null, msgs);
+			msgs = basicSetPathcalculator(newPathcalculator, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR, newPathcalculator, newPathcalculator));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET:
+				return basicSetRelativePositionTarget(null, msgs);
+			case BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR:
+				return basicSetPathcalculator(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -157,11 +184,9 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case BehaviourPackage.CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET:
-				if (resolve) return getRelativePositionTarget();
-				return basicGetRelativePositionTarget();
+				return getRelativePositionTarget();
 			case BehaviourPackage.CHASE_BEHAVIOR__PATHCALCULATOR:
-				if (resolve) return getPathcalculator();
-				return basicGetPathcalculator();
+				return getPathcalculator();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
