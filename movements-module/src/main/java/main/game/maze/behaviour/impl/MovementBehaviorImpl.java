@@ -2,15 +2,10 @@
  */
 package main.game.maze.behaviour.impl;
 
-import java.lang.reflect.InvocationTargetException;
-
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.MovementBehavior;
 
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -27,6 +22,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.behaviour.impl.MovementBehaviorImpl#isIgnoreWalls <em>Ignore Walls</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.MovementBehaviorImpl#getAttackRadius <em>Attack Radius</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.MovementBehaviorImpl#isInstantKillOnCollision <em>Instant Kill On Collision</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.MovementBehaviorImpl#getMovementSpeed <em>Movement Speed</em>}</li>
  * </ul>
  *
  * @generated
@@ -91,6 +87,26 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	 * @ordered
 	 */
 	protected boolean instantKillOnCollision = INSTANT_KILL_ON_COLLISION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMovementSpeed() <em>Movement Speed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMovementSpeed()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final double MOVEMENT_SPEED_EDEFAULT = 0.0;
+
+	/**
+	 * The cached value of the '{@link #getMovementSpeed() <em>Movement Speed</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMovementSpeed()
+	 * @generated
+	 * @ordered
+	 */
+	protected double movementSpeed = MOVEMENT_SPEED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -186,10 +202,21 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	 * @generated
 	 */
 	@Override
-	public void next() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public double getMovementSpeed() {
+		return movementSpeed;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMovementSpeed(double newMovementSpeed) {
+		double oldMovementSpeed = movementSpeed;
+		movementSpeed = newMovementSpeed;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.MOVEMENT_BEHAVIOR__MOVEMENT_SPEED, oldMovementSpeed, movementSpeed));
 	}
 
 	/**
@@ -206,6 +233,8 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 				return getAttackRadius();
 			case BehaviourPackage.MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION:
 				return isInstantKillOnCollision();
+			case BehaviourPackage.MOVEMENT_BEHAVIOR__MOVEMENT_SPEED:
+				return getMovementSpeed();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -226,6 +255,9 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 				return;
 			case BehaviourPackage.MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION:
 				setInstantKillOnCollision((Boolean)newValue);
+				return;
+			case BehaviourPackage.MOVEMENT_BEHAVIOR__MOVEMENT_SPEED:
+				setMovementSpeed((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -248,6 +280,9 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 			case BehaviourPackage.MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION:
 				setInstantKillOnCollision(INSTANT_KILL_ON_COLLISION_EDEFAULT);
 				return;
+			case BehaviourPackage.MOVEMENT_BEHAVIOR__MOVEMENT_SPEED:
+				setMovementSpeed(MOVEMENT_SPEED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -266,23 +301,10 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 				return attackRadius != ATTACK_RADIUS_EDEFAULT;
 			case BehaviourPackage.MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION:
 				return instantKillOnCollision != INSTANT_KILL_ON_COLLISION_EDEFAULT;
+			case BehaviourPackage.MOVEMENT_BEHAVIOR__MOVEMENT_SPEED:
+				return movementSpeed != MOVEMENT_SPEED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
-		switch (operationID) {
-			case BehaviourPackage.MOVEMENT_BEHAVIOR___NEXT:
-				next();
-				return null;
-		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**
@@ -301,6 +323,8 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 		result.append(attackRadius);
 		result.append(", instantKillOnCollision: ");
 		result.append(instantKillOnCollision);
+		result.append(", movementSpeed: ");
+		result.append(movementSpeed);
 		result.append(')');
 		return result.toString();
 	}

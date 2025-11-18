@@ -1,35 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: opponents-module;singleton:=true
-Automatic-Module-Name: opponents-module
+Bundle-SymbolicName: main.game.maze.opponents
+Automatic-Module-Name: main.game.maze.opponents
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-25
+Bundle-RequiredExecutionEnvironment: JavaSE-24
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
-Bundle-Activator: main.game.maze.opponents.provider.OpponentsEditPlugin$Implementation
 Eclipse-ExtensibleAPI: true
 Require-Bundle: main.game.maze.difficulties,
  org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.emf.common,
+ org.eclipse.emf.common;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
- difficulty-module;visibility:=reexport,
  org.eclipse.ocl.pivot;visibility:=reexport,
- org.eclipse.ocl.examples.codegen;visibility:=reexport,
- org.eclipse.core.runtime,
- org.eclipse.core.resources,
- org.eclipse.emf.edit,
- org.eclipse.emf.edit.ui,
- org.eclipse.ui.ide,
- org.eclipse.emf.ecore,
- org.eclipse.emf.common,
- org.eclipse.emf.ecore.xmi,
- org.eclipse.ocl.pivot
-Export-Package: main.game.maze.difficulties,
- main.game.maze.difficulties.impl,
- main.game.maze.difficulties.util,
- main.game.maze.opponents,
+ org.eclipse.ocl.ecore;visibility:=reexport
+Export-Package: main.game.maze.opponents,
  main.game.maze.opponents.impl,
  main.game.maze.opponents.util

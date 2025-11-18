@@ -5,8 +5,6 @@ package main.game.maze.difficulties.util;
 import java.util.Map;
 
 import main.game.maze.difficulties.*;
-
-import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
 

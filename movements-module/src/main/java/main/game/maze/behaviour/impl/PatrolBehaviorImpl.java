@@ -12,6 +12,7 @@ import main.game.maze.behaviour.PatrolPoint;
 import main.game.maze.behaviour.PatrolZone;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -19,7 +20,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,7 +32,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPath <em>Path</em>}</li>
- *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getCurrentIndex <em>Current Index</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getStartIndex <em>Start Index</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPathcalculator <em>Pathcalculator</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPatrolZone <em>Patrol Zone</em>}</li>
  * </ul>
@@ -39,7 +41,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBehavior {
 	/**
-	 * The cached value of the '{@link #getPath() <em>Path</em>}' reference list.
+	 * The cached value of the '{@link #getPath() <em>Path</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPath()
@@ -49,27 +51,27 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	protected EList<PatrolPoint> path;
 
 	/**
-	 * The default value of the '{@link #getCurrentIndex() <em>Current Index</em>}' attribute.
+	 * The default value of the '{@link #getStartIndex() <em>Start Index</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCurrentIndex()
+	 * @see #getStartIndex()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int CURRENT_INDEX_EDEFAULT = 0;
+	protected static final int START_INDEX_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getCurrentIndex() <em>Current Index</em>}' attribute.
+	 * The cached value of the '{@link #getStartIndex() <em>Start Index</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCurrentIndex()
+	 * @see #getStartIndex()
 	 * @generated
 	 * @ordered
 	 */
-	protected int currentIndex = CURRENT_INDEX_EDEFAULT;
+	protected int startIndex = START_INDEX_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getPathcalculator() <em>Pathcalculator</em>}' reference.
+	 * The cached value of the '{@link #getPathcalculator() <em>Pathcalculator</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPathcalculator()
@@ -115,7 +117,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	@Override
 	public EList<PatrolPoint> getPath() {
 		if (path == null) {
-			path = new EObjectResolvingEList<PatrolPoint>(PatrolPoint.class, this, BehaviourPackage.PATROL_BEHAVIOR__PATH);
+			path = new EObjectContainmentEList<PatrolPoint>(PatrolPoint.class, this, BehaviourPackage.PATROL_BEHAVIOR__PATH);
 		}
 		return path;
 	}
@@ -126,8 +128,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
-	public int getCurrentIndex() {
-		return currentIndex;
+	public int getStartIndex() {
+		return startIndex;
 	}
 
 	/**
@@ -136,11 +138,11 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
-	public void setCurrentIndex(int newCurrentIndex) {
-		int oldCurrentIndex = currentIndex;
-		currentIndex = newCurrentIndex;
+	public void setStartIndex(int newStartIndex) {
+		int oldStartIndex = startIndex;
+		startIndex = newStartIndex;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX, oldCurrentIndex, currentIndex));
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__START_INDEX, oldStartIndex, startIndex));
 	}
 
 	/**
@@ -150,14 +152,6 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 */
 	@Override
 	public PathCalculator getPathcalculator() {
-		if (pathcalculator != null && pathcalculator.eIsProxy()) {
-			InternalEObject oldPathcalculator = (InternalEObject)pathcalculator;
-			pathcalculator = (PathCalculator)eResolveProxy(oldPathcalculator);
-			if (pathcalculator != oldPathcalculator) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, pathcalculator));
-			}
-		}
 		return pathcalculator;
 	}
 
@@ -166,8 +160,14 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public PathCalculator basicGetPathcalculator() {
-		return pathcalculator;
+	public NotificationChain basicSetPathcalculator(PathCalculator newPathcalculator, NotificationChain msgs) {
+		PathCalculator oldPathcalculator = pathcalculator;
+		pathcalculator = newPathcalculator;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, newPathcalculator);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
 	}
 
 	/**
@@ -177,10 +177,17 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 */
 	@Override
 	public void setPathcalculator(PathCalculator newPathcalculator) {
-		PathCalculator oldPathcalculator = pathcalculator;
-		pathcalculator = newPathcalculator;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, oldPathcalculator, pathcalculator));
+		if (newPathcalculator != pathcalculator) {
+			NotificationChain msgs = null;
+			if (pathcalculator != null)
+				msgs = ((InternalEObject)pathcalculator).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, null, msgs);
+			if (newPathcalculator != null)
+				msgs = ((InternalEObject)newPathcalculator).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, null, msgs);
+			msgs = basicSetPathcalculator(newPathcalculator, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR, newPathcalculator, newPathcalculator));
 	}
 
 	/**
@@ -229,15 +236,30 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
+				return ((InternalEList<?>)getPath()).basicRemove(otherEnd, msgs);
+			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
+				return basicSetPathcalculator(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				return getPath();
-			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
-				return getCurrentIndex();
+			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
+				return getStartIndex();
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
-				if (resolve) return getPathcalculator();
-				return basicGetPathcalculator();
+				return getPathcalculator();
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
 				if (resolve) return getPatrolZone();
 				return basicGetPatrolZone();
@@ -258,8 +280,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				getPath().clear();
 				getPath().addAll((Collection<? extends PatrolPoint>)newValue);
 				return;
-			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
-				setCurrentIndex((Integer)newValue);
+			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
+				setStartIndex((Integer)newValue);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)newValue);
@@ -282,8 +304,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				getPath().clear();
 				return;
-			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
-				setCurrentIndex(CURRENT_INDEX_EDEFAULT);
+			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
+				setStartIndex(START_INDEX_EDEFAULT);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)null);
@@ -305,8 +327,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				return path != null && !path.isEmpty();
-			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
-				return currentIndex != CURRENT_INDEX_EDEFAULT;
+			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
+				return startIndex != START_INDEX_EDEFAULT;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				return pathcalculator != null;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
@@ -325,8 +347,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (currentIndex: ");
-		result.append(currentIndex);
+		result.append(" (startIndex: ");
+		result.append(startIndex);
 		result.append(')');
 		return result.toString();
 	}

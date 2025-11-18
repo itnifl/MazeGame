@@ -148,12 +148,13 @@ public interface CharacterType extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Threat Level</b></em>' attribute.
+	 * The default value is <code>"0.0"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Threat Level</em>' attribute.
 	 * @see #setThreatLevel(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_ThreatLevel()
-	 * @model required="true" derived="true"
+	 * @model default="0.0" required="true" derived="true"
 	 * @generated
 	 */
 	double getThreatLevel();
@@ -170,15 +171,15 @@ public interface CharacterType extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Effective Threat</b></em>' attribute.
-	 * The default value is <code>"1"</code>.
+	 * The default value is <code>"0.0"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Effective Threat</em>' attribute.
 	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_EffectiveThreat()
-	 * @model default="1" required="true" transient="true" changeable="false" volatile="true" derived="true"
+	 * @model default="0.0" required="true" transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
-	int getEffectiveThreat();
+	double getEffectiveThreat();
 
 	/**
 	 * Returns the value of the '<em><b>Image Base</b></em>' attribute.

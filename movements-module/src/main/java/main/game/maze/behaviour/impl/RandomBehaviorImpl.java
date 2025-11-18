@@ -33,7 +33,7 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int REGEN_PER_SECOND_EDEFAULT = 0;
+	protected static final double REGEN_PER_SECOND_EDEFAULT = 0.0;
 
 	/**
 	 * The cached value of the '{@link #getRegenPerSecond() <em>Regen Per Second</em>}' attribute.
@@ -43,7 +43,7 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	 * @generated
 	 * @ordered
 	 */
-	protected int regenPerSecond = REGEN_PER_SECOND_EDEFAULT;
+	protected double regenPerSecond = REGEN_PER_SECOND_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,7 +70,7 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	 * @generated
 	 */
 	@Override
-	public int getRegenPerSecond() {
+	public double getRegenPerSecond() {
 		return regenPerSecond;
 	}
 
@@ -80,8 +80,8 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	 * @generated
 	 */
 	@Override
-	public void setRegenPerSecond(int newRegenPerSecond) {
-		int oldRegenPerSecond = regenPerSecond;
+	public void setRegenPerSecond(double newRegenPerSecond) {
+		double oldRegenPerSecond = regenPerSecond;
 		regenPerSecond = newRegenPerSecond;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.RANDOM_BEHAVIOR__REGEN_PER_SECOND, oldRegenPerSecond, regenPerSecond));
@@ -110,7 +110,7 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case BehaviourPackage.RANDOM_BEHAVIOR__REGEN_PER_SECOND:
-				setRegenPerSecond((Integer)newValue);
+				setRegenPerSecond((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

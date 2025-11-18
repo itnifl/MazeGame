@@ -16,7 +16,8 @@ package main.game.maze.behaviour;
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getAstarPathCalculator()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='ValidAstarIterationsCount'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot ValidAstarIterationsCount='self.maxIterations &gt; 0 and self.maxIterations &lt; 50'"
  * @generated
  */
 public interface AstarPathCalculator extends PathCalculator {

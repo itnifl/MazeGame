@@ -24,7 +24,8 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint()
- * @model
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositiveRegenAmount='self.regenAmount &gt;= 0' PositivePatrolPointTime='self.time &gt;= 0' PositivePatrolPointCoords='self.point-&gt;forAll(p | p.posX &gt; 0 and p.posY &gt; 0)'"
  * @generated
  */
 public interface PatrolPoint extends EObject {
@@ -35,7 +36,7 @@ public interface PatrolPoint extends EObject {
 	 * @return the value of the '<em>Time</em>' attribute.
 	 * @see #setTime(int)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_Time()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	int getTime();
@@ -51,26 +52,26 @@ public interface PatrolPoint extends EObject {
 	void setTime(int value);
 
 	/**
-	 * Returns the value of the '<em><b>Point</b></em>' reference.
+	 * Returns the value of the '<em><b>Point</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Coords of the patrol step
 	 * 
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Point</em>' reference.
+	 * @return the value of the '<em>Point</em>' containment reference.
 	 * @see #setPoint(Position)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_Point()
-	 * @model required="true"
+	 * @model containment="true" required="true"
 	 * @generated
 	 */
 	Position getPoint();
 
 	/**
-	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolPoint#getPoint <em>Point</em>}' reference.
+	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolPoint#getPoint <em>Point</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Point</em>' reference.
+	 * @param value the new value of the '<em>Point</em>' containment reference.
 	 * @see #getPoint()
 	 * @generated
 	 */
@@ -84,12 +85,12 @@ public interface PatrolPoint extends EObject {
 	 * Amount of HP the character will regain when reaching this step.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Regen Amount</em>' attribute.
-	 * @see #setRegenAmount(int)
+	 * @see #setRegenAmount(double)
 	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_RegenAmount()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
-	int getRegenAmount();
+	double getRegenAmount();
 
 	/**
 	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolPoint#getRegenAmount <em>Regen Amount</em>}' attribute.
@@ -99,6 +100,6 @@ public interface PatrolPoint extends EObject {
 	 * @see #getRegenAmount()
 	 * @generated
 	 */
-	void setRegenAmount(int value);
+	void setRegenAmount(double value);
 
 } // PatrolPoint

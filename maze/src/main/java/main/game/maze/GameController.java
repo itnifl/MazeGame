@@ -270,7 +270,7 @@ public class GameController implements Initializable {
                                 BehaviorType characterBehavior = cc.getCharacterBehaviour();
                                 //TODO: Implement other behaviours
                                 switch (characterBehavior) {
-                                    case BehaviorType.WANDER:
+                                    case WANDER:
                                             doCharacterWanderMove(computerCharacter);
                                         break;
                                 

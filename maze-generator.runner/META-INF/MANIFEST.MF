@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: maze-generator.runner
+Bundle-Name: maze-generator.runner
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-24
+Bundle-ActivationPolicy: lazy
+Require-Bundle:  org.eclipse.core.runtime,
+ org.eclipse.equinox.app,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.ocl.pivot,
+ org.eclipse.acceleo.engine,
+ maze-generator.acceleo
+Export-Package: main.game.maze.gen

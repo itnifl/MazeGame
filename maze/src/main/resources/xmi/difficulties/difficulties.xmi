@@ -10,7 +10,7 @@
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="0.80"
                 monstersDamageMultiplier="0.70"
-                maxThreat="12">
+                maxThreat="20">
     <enemyMaxCount>
       <type>GHOST</type>
       <maxCount>4</maxCount>
@@ -30,7 +30,7 @@
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.00"
                 monstersDamageMultiplier="1.00"
-                maxThreat="20">
+                maxThreat="30">
     <enemyMaxCount>
       <type>GHOST</type>
       <maxCount>5</maxCount>

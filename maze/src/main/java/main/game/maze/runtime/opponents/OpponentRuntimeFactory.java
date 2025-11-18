@@ -124,8 +124,7 @@ public final class OpponentRuntimeFactory {
             if (!(rootObject instanceof OpponentModel)) {
                 _logger.log(Level.WARNING, "Root object is not an OpponentModel: {0}", resourcePath);
                 return;
-            }
-
+            }            
             OpponentModel opponentModel;
             try {
                 opponentModel = (OpponentModel) rootObject;

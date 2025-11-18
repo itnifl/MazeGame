@@ -1,3 +1,4 @@
+<!-- maze/pom.xml -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,22 +8,20 @@
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <!-- We recommend adding a <relativePath/> to the parent POM -->
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>main.game.maze</artifactId>
 
-  <properties>
-    <javafx.platform>win</javafx.platform>
+  <properties>    
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>25</maven.compiler.release>
-    <javafx.version>25.0.1</javafx.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <javafx.version>21.0.9</javafx.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
     <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
-    <maven.failsafe.plugin.version>3.5.3</maven.failsafe.plugin.version>
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+    <javafx.platform>win</javafx.platform> <!-- Default, can be overridden by profile -->
   </properties>
 
   <repositories>
@@ -38,10 +37,6 @@
         <id>eclipse-releases</id>
         <url>https://repo.eclipse.org/content/repositories/releases/</url>
     </repository>
-    <repository>
-      <id>openjfx</id>
-      <url>https://maven.openjfx.io</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -49,7 +44,7 @@
         <id>eclipse-releases</id>
         <url>https://repo.eclipse.org/content/repositories/releases/</url>
     </pluginRepository>
-    <pluginRepository>
+        <pluginRepository>
         <id>openjfx-repo</id>
         <url>https://maven.openjfx.io</url>
     </pluginRepository>
@@ -61,21 +56,6 @@
       <artifactId>junit-jupiter</artifactId>
       <version>5.10.2</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.common</artifactId>
-      <version>2.43.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore</artifactId>
-      <version>2.38.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>2.38.0</version>
     </dependency>
 
     <dependency>
@@ -99,12 +79,28 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
     </dependency>
-    <dependency>
+        <dependency>
       <groupId>lpg.runtime</groupId>
       <artifactId>java</artifactId>
-      <version>2.0.17-v201004271640</version>
+      <version>2.0.17-v201004271640</version>    
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/java-2.0.17-v201004271640.jar</systemPath>
+      <systemPath>${project.basedir}/lib/java-2.0.17-v201004271640.jar</systemPath>  
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+      <version>${emf.version}</version>
     </dependency>
 
     <dependency>
@@ -125,12 +121,14 @@
       <version>${javafx.version}</version>
       <classifier>${javafx.platform}</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
       <classifier>${javafx.platform}</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
@@ -139,22 +137,21 @@
     </dependency>
 
     <dependency>
-        <groupId>main.game.maze</groupId>
-        <artifactId>main.game.maze.opponents</artifactId>
-        <version>1.0.0-SNAPSHOT</version> 
-        <scope>compile</scope>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.difficulties</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
     <dependency>
-        <groupId>main.game.maze</groupId>
-        <artifactId>main.game.maze.difficulties</artifactId>
-        <version>1.0.0-SNAPSHOT</version> 
-        <scope>compile</scope>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.opponents</artifactId>
+      <version>${project.version}</version>
     </dependency>
+
     <dependency>
-        <groupId>main.game.maze</groupId>
-        <artifactId>main.game.maze.behaviour</artifactId>
-        <version>1.0.0-SNAPSHOT</version> 
-        <scope>compile</scope>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.behaviour</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
@@ -166,6 +163,19 @@
         <version>${maven.compiler.plugin.version}</version>
         <configuration>
           <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>main.game.maze.App</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
 
@@ -193,7 +203,27 @@
           <forkCount>1</forkCount>
           <reuseForks>true</reuseForks>
         </configuration>
-      </plugin>      
+      </plugin>     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+            <execution>
+                <id>copy-dependencies</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>
+                        ${project.build.directory}/libs
+                    </outputDirectory>
+                    <includeScope>runtime</includeScope>
+                </configuration>
+            </execution>
+        </executions> 
+      </plugin>       
     </plugins>
 
      <resources>
@@ -202,4 +232,57 @@
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>win</javafx.platform>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>macos-intel</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>x86_64</arch>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>mac</javafx.platform>
+      </properties>
+    </profile>
+
+    <!-- macOS Apple Silicon -->
+    <profile>
+      <id>macos-aarch64</id>
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>aarch64</arch>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>mac-aarch64</javafx.platform>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <javafx.platform>linux</javafx.platform>
+      </properties>
+    </profile>
+  </profiles>
 </project>
