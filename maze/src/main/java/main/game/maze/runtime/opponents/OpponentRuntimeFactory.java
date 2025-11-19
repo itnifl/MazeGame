@@ -69,6 +69,8 @@ public final class OpponentRuntimeFactory {
      * @param gameController the controller responsible for registering characters and nodes
      */
     public static void instantiateFromModelInternal(GameController gameController, Difficulty setOverrideDifficulty) {
+
+        /** REFACTOR START Extract into XmiRulesLoader  line 73-161 **/
         String resourcePath = OpponentConstants.ZombieModelPath;
 
         if (resourcePath == null || resourcePath.isBlank()) {
@@ -132,7 +134,8 @@ public final class OpponentRuntimeFactory {
                 _logger.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
                 throw loadEx;
             }
-
+            /* REFACTOR END Extract into XmiRulesLoader line 73-137*/
+            /* REFACTOR START Composition Resolver line 137-161 */
             var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
             if (diff == null) {
                 _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
@@ -156,7 +159,7 @@ public final class OpponentRuntimeFactory {
                 dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
                 instantDeath = diff.isInstantDeath();
             }
-            
+            /* REFACTOR END Composition Resolver line 73-161 */
             AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
             AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
             AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
