@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- /maze-module-repository/category.xml -->
+<site>
+  <feature url="features/maze.feature_1.0.0.qualifier.jar"
+           id="maze.feature"
+           version="1.0.0.qualifier">
+    <category name="maze"/>
+  </feature>
+  <category-def name="maze" label="Maze Modules"/>
+</site>

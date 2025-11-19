@@ -17,13 +17,14 @@ import main.game.maze.behaviour.PatrolZone;
 import main.game.maze.behaviour.Position;
 import main.game.maze.behaviour.RandomBehavior;
 
+import main.game.maze.behaviour.util.BehaviourValidator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -169,6 +170,16 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		// Initialize created meta-data
 		theBehaviourPackage.initializePackageContents();
 
+		// Register package validator
+		EValidator.Registry.INSTANCE.put
+			(theBehaviourPackage,
+			 new EValidator.Descriptor() {
+				 @Override
+				 public EValidator getEValidator() {
+					 return BehaviourValidator.INSTANCE;
+				 }
+			 });
+
 		// Mark meta-data to indicate it can't be changed
 		theBehaviourPackage.freeze();
 
@@ -223,7 +234,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPatrolBehavior_CurrentIndex() {
+	public EAttribute getPatrolBehavior_StartIndex() {
 		return (EAttribute)patrolBehaviorEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -323,8 +334,8 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	@Override
-	public EOperation getMovementBehavior__Next() {
-		return movementBehaviorEClass.getEOperations().get(0);
+	public EAttribute getMovementBehavior_MovementSpeed() {
+		return (EAttribute)movementBehaviorEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -551,7 +562,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 
 		patrolBehaviorEClass = createEClass(PATROL_BEHAVIOR);
 		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATH);
-		createEAttribute(patrolBehaviorEClass, PATROL_BEHAVIOR__CURRENT_INDEX);
+		createEAttribute(patrolBehaviorEClass, PATROL_BEHAVIOR__START_INDEX);
 		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATHCALCULATOR);
 		createEReference(patrolBehaviorEClass, PATROL_BEHAVIOR__PATROL_ZONE);
 
@@ -563,7 +574,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		createEAttribute(movementBehaviorEClass, MOVEMENT_BEHAVIOR__IGNORE_WALLS);
 		createEAttribute(movementBehaviorEClass, MOVEMENT_BEHAVIOR__ATTACK_RADIUS);
 		createEAttribute(movementBehaviorEClass, MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION);
-		createEOperation(movementBehaviorEClass, MOVEMENT_BEHAVIOR___NEXT);
+		createEAttribute(movementBehaviorEClass, MOVEMENT_BEHAVIOR__MOVEMENT_SPEED);
 
 		positionEClass = createEClass(POSITION);
 		createEAttribute(positionEClass, POSITION__POS_X);
@@ -631,33 +642,32 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(randomBehaviorEClass, RandomBehavior.class, "RandomBehavior", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRandomBehavior_RegenPerSecond(), ecorePackage.getEInt(), "regenPerSecond", null, 0, 1, RandomBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRandomBehavior_RegenPerSecond(), ecorePackage.getEDouble(), "regenPerSecond", null, 1, 1, RandomBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(patrolBehaviorEClass, PatrolBehavior.class, "PatrolBehavior", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPatrolBehavior_Path(), this.getPatrolPoint(), null, "path", null, 1, -1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPatrolBehavior_CurrentIndex(), ecorePackage.getEInt(), "currentIndex", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPatrolBehavior_Pathcalculator(), this.getPathCalculator(), null, "pathcalculator", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPatrolBehavior_Path(), this.getPatrolPoint(), null, "path", null, 1, -1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPatrolBehavior_StartIndex(), ecorePackage.getEInt(), "startIndex", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPatrolBehavior_Pathcalculator(), this.getPathCalculator(), null, "pathcalculator", null, 1, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPatrolBehavior_PatrolZone(), this.getPatrolZone(), null, "patrolZone", null, 0, 1, PatrolBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(chaseBehaviorEClass, ChaseBehavior.class, "ChaseBehavior", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getChaseBehavior_RelativePositionTarget(), this.getPosition(), null, "relativePositionTarget", null, 1, 1, ChaseBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getChaseBehavior_Pathcalculator(), this.getPathCalculator(), null, "pathcalculator", null, 1, 1, ChaseBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getChaseBehavior_RelativePositionTarget(), this.getPosition(), null, "relativePositionTarget", null, 1, 1, ChaseBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getChaseBehavior_Pathcalculator(), this.getPathCalculator(), null, "pathcalculator", null, 1, 1, ChaseBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(movementBehaviorEClass, MovementBehavior.class, "MovementBehavior", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMovementBehavior_IgnoreWalls(), ecorePackage.getEBoolean(), "ignoreWalls", null, 0, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMovementBehavior_AttackRadius(), ecorePackage.getEDouble(), "attackRadius", null, 0, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMovementBehavior_InstantKillOnCollision(), ecorePackage.getEBoolean(), "instantKillOnCollision", null, 0, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEOperation(getMovementBehavior__Next(), null, "next", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEAttribute(getMovementBehavior_IgnoreWalls(), ecorePackage.getEBoolean(), "ignoreWalls", null, 1, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMovementBehavior_AttackRadius(), ecorePackage.getEDouble(), "attackRadius", null, 1, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMovementBehavior_InstantKillOnCollision(), ecorePackage.getEBoolean(), "instantKillOnCollision", null, 1, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMovementBehavior_MovementSpeed(), ecorePackage.getEDouble(), "movementSpeed", null, 1, 1, MovementBehavior.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(positionEClass, Position.class, "Position", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPosition_PosX(), ecorePackage.getEDouble(), "posX", null, 1, 1, Position.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPosition_PosY(), ecorePackage.getEDouble(), "posY", null, 1, 1, Position.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(patrolPointEClass, PatrolPoint.class, "PatrolPoint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPatrolPoint_Time(), ecorePackage.getEInt(), "time", null, 0, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPatrolPoint_Point(), this.getPosition(), null, "point", null, 1, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPatrolPoint_RegenAmount(), ecorePackage.getEInt(), "regenAmount", null, 0, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPatrolPoint_Time(), ecorePackage.getEInt(), "time", null, 1, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPatrolPoint_Point(), this.getPosition(), null, "point", null, 1, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPatrolPoint_RegenAmount(), ecorePackage.getEDouble(), "regenAmount", null, 1, 1, PatrolPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pathCalculatorEClass, PathCalculator.class, "PathCalculator", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPathCalculator_DistanceMethod(), this.getDistanceMethod(), "distanceMethod", null, 1, 1, PathCalculator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -682,6 +692,157 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// http://www.eclipse.org/OCL/Import
+		createImportAnnotations();
+		// http://www.eclipse.org/emf/2002/Ecore
+		createEcoreAnnotations();
+		// http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot
+		createPivotAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/OCL/Import</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createImportAnnotations() {
+		String source = "http://www.eclipse.org/OCL/Import";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "ecore", "http://www.eclipse.org/emf/2002/Ecore"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createEcoreAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "invocationDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot",
+			   "settingDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot",
+			   "validationDelegates", "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
+		   });
+		addAnnotation
+		  (randomBehaviorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "PositiveRegenPerSecond"
+		   });
+		addAnnotation
+		  (patrolBehaviorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "RequiresOnePatrolPoint ValidStardIndex"
+		   });
+		addAnnotation
+		  (chaseBehaviorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "NotTooLargeAttackRadius"
+		   });
+		addAnnotation
+		  (movementBehaviorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "PositiveMovementSpeed"
+		   });
+		addAnnotation
+		  (positionEClass,
+		   source,
+		   new String[] {
+			   "constraints", "PositivePositions"
+		   });
+		addAnnotation
+		  (patrolPointEClass,
+		   source,
+		   new String[] {
+			   "constraints", "PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords"
+		   });
+		addAnnotation
+		  (dijkstraPathCalculatorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "ValidDijsktraIterationsCount"
+		   });
+		addAnnotation
+		  (astarPathCalculatorEClass,
+		   source,
+		   new String[] {
+			   "constraints", "ValidAstarIterationsCount"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createPivotAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot";
+		addAnnotation
+		  (randomBehaviorEClass,
+		   source,
+		   new String[] {
+			   "PositiveRegenPerSecond", "self.regenPerSecond >= 0"
+		   });
+		addAnnotation
+		  (patrolBehaviorEClass,
+		   source,
+		   new String[] {
+			   "RequiresOnePatrolPoint", "self.path->size() > 0",
+			   "ValidStardIndex", "self.startIndex >= 0 and self.startIndex < self.path->size()"
+		   });
+		addAnnotation
+		  (chaseBehaviorEClass,
+		   source,
+		   new String[] {
+			   "NotTooLargeAttackRadius", "self.relativePositionTarget->forAll(p | self.attackRadius > p.posX and self.attackRadius > p.posY)"
+		   });
+		addAnnotation
+		  (movementBehaviorEClass,
+		   source,
+		   new String[] {
+			   "PositiveMovementSpeed", "self.movementSpeed > 0"
+		   });
+		addAnnotation
+		  (positionEClass,
+		   source,
+		   new String[] {
+			   "PositivePositions", "self.posX >= 0 and self.posY >= 0"
+		   });
+		addAnnotation
+		  (patrolPointEClass,
+		   source,
+		   new String[] {
+			   "PositiveRegenAmount", "self.regenAmount >= 0",
+			   "PositivePatrolPointTime", "self.time >= 0",
+			   "PositivePatrolPointCoords", "self.point->forAll(p | p.posX > 0 and p.posY > 0)"
+		   });
+		addAnnotation
+		  (dijkstraPathCalculatorEClass,
+		   source,
+		   new String[] {
+			   "ValidDijsktraIterationsCount", "self.maxIterations > 0 and self.maxIterations < 50"
+		   });
+		addAnnotation
+		  (astarPathCalculatorEClass,
+		   source,
+		   new String[] {
+			   "ValidAstarIterationsCount", "self.maxIterations > 0 and self.maxIterations < 50"
+		   });
 	}
 
 } //BehaviourPackageImpl

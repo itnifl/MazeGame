@@ -1,13 +1,120 @@
+
+<!-- /pom.xml -->
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>main.game.maze</groupId>
   <artifactId>MazeGame</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+
+  <properties>
+    <tycho.version>5.0.0</tycho.version>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <emf.version>2.38.0</emf.version>
+  </properties>
+  
   <modules>
-    <module>opponents-module</module>
-    <module>difficulty-module</module>
+    <!-- 1: p2 mirror bygges først -->
+    <module>releng/mirror</module>
+
+    <!-- 2: modell-/plugin-moduler -->
     <module>movements-module</module>
-    <module>maze</module>
+    <module>difficulty-module</module>
+    <module>opponents-module</module>
+    <module>maze-generator.acceleo</module>
+    <!-- Disabled - we are not generating yet: <module>maze-generator.runner</module> -->
+
+    <!-- 3: feature og p2-repo -->
+    <module>maze-feature</module>
+    <module>maze-module-repository</module>
+
+    <!-- 4: evt. egen generated/jar-modul for spillet -->
+    <module>maze-module-generator</module>
+
+    <!-- 5: selve JavaFX-spillet -->
+    <module>maze</module>    
   </modules>
+
+  <repositories>
+    <repository>
+      <id>local-p2</id>
+      <layout>p2</layout>
+      <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
+    </repository>
+  </repositories>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+            <release>${maven.compiler.release}</release>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-maven-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>target-platform-configuration</artifactId>
+          <version>${tycho.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>   
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+  
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <pomDependencies>ignore</pomDependencies>    
+           <includeModules>true</includeModules>      
+          <target> 
+            <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
+          </target>        
+          <repositories>
+              <repository>
+                  <id>local-p2</id>
+                  <layout>p2</layout>
+                  <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
+              </repository>
+          </repositories>             
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <goals><goal>enforce</goal></goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.9.6,)</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>[21,)</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

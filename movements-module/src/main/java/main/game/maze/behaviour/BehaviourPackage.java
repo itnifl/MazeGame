@@ -5,7 +5,6 @@ package main.game.maze.behaviour;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -23,6 +22,8 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see main.game.maze.behaviour.BehaviourFactory
  * @model kind="package"
+ *        annotation="http://www.eclipse.org/OCL/Import ecore='http://www.eclipse.org/emf/2002/Ecore'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore invocationDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot' settingDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot' validationDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot'"
  * @generated
  */
 public interface BehaviourPackage extends EPackage {
@@ -96,22 +97,22 @@ public interface BehaviourPackage extends EPackage {
 	int MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION = 2;
 
 	/**
+	 * The feature id for the '<em><b>Movement Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVEMENT_BEHAVIOR__MOVEMENT_SPEED = 3;
+
+	/**
 	 * The number of structural features of the '<em>Movement Behavior</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MOVEMENT_BEHAVIOR_FEATURE_COUNT = 3;
-
-	/**
-	 * The operation id for the '<em>Next</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVEMENT_BEHAVIOR___NEXT = 0;
+	int MOVEMENT_BEHAVIOR_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Movement Behavior</em>' class.
@@ -120,7 +121,7 @@ public interface BehaviourPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MOVEMENT_BEHAVIOR_OPERATION_COUNT = 1;
+	int MOVEMENT_BEHAVIOR_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link main.game.maze.behaviour.impl.RandomBehaviorImpl <em>Random Behavior</em>}' class.
@@ -160,6 +161,15 @@ public interface BehaviourPackage extends EPackage {
 	int RANDOM_BEHAVIOR__INSTANT_KILL_ON_COLLISION = MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION;
 
 	/**
+	 * The feature id for the '<em><b>Movement Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANDOM_BEHAVIOR__MOVEMENT_SPEED = MOVEMENT_BEHAVIOR__MOVEMENT_SPEED;
+
+	/**
 	 * The feature id for the '<em><b>Regen Per Second</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -176,15 +186,6 @@ public interface BehaviourPackage extends EPackage {
 	 * @ordered
 	 */
 	int RANDOM_BEHAVIOR_FEATURE_COUNT = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 1;
-
-	/**
-	 * The operation id for the '<em>Next</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RANDOM_BEHAVIOR___NEXT = MOVEMENT_BEHAVIOR___NEXT;
 
 	/**
 	 * The number of operations of the '<em>Random Behavior</em>' class.
@@ -233,7 +234,16 @@ public interface BehaviourPackage extends EPackage {
 	int PATROL_BEHAVIOR__INSTANT_KILL_ON_COLLISION = MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION;
 
 	/**
-	 * The feature id for the '<em><b>Path</b></em>' reference list.
+	 * The feature id for the '<em><b>Movement Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PATROL_BEHAVIOR__MOVEMENT_SPEED = MOVEMENT_BEHAVIOR__MOVEMENT_SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Path</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -242,16 +252,16 @@ public interface BehaviourPackage extends EPackage {
 	int PATROL_BEHAVIOR__PATH = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Current Index</b></em>' attribute.
+	 * The feature id for the '<em><b>Start Index</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PATROL_BEHAVIOR__CURRENT_INDEX = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 1;
+	int PATROL_BEHAVIOR__START_INDEX = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Pathcalculator</b></em>' reference.
+	 * The feature id for the '<em><b>Pathcalculator</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -276,15 +286,6 @@ public interface BehaviourPackage extends EPackage {
 	 * @ordered
 	 */
 	int PATROL_BEHAVIOR_FEATURE_COUNT = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 4;
-
-	/**
-	 * The operation id for the '<em>Next</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PATROL_BEHAVIOR___NEXT = MOVEMENT_BEHAVIOR___NEXT;
 
 	/**
 	 * The number of operations of the '<em>Patrol Behavior</em>' class.
@@ -333,7 +334,16 @@ public interface BehaviourPackage extends EPackage {
 	int CHASE_BEHAVIOR__INSTANT_KILL_ON_COLLISION = MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION;
 
 	/**
-	 * The feature id for the '<em><b>Relative Position Target</b></em>' reference.
+	 * The feature id for the '<em><b>Movement Speed</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHASE_BEHAVIOR__MOVEMENT_SPEED = MOVEMENT_BEHAVIOR__MOVEMENT_SPEED;
+
+	/**
+	 * The feature id for the '<em><b>Relative Position Target</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -342,7 +352,7 @@ public interface BehaviourPackage extends EPackage {
 	int CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Pathcalculator</b></em>' reference.
+	 * The feature id for the '<em><b>Pathcalculator</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -358,15 +368,6 @@ public interface BehaviourPackage extends EPackage {
 	 * @ordered
 	 */
 	int CHASE_BEHAVIOR_FEATURE_COUNT = MOVEMENT_BEHAVIOR_FEATURE_COUNT + 2;
-
-	/**
-	 * The operation id for the '<em>Next</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CHASE_BEHAVIOR___NEXT = MOVEMENT_BEHAVIOR___NEXT;
 
 	/**
 	 * The number of operations of the '<em>Chase Behavior</em>' class.
@@ -443,7 +444,7 @@ public interface BehaviourPackage extends EPackage {
 	int PATROL_POINT__TIME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Point</b></em>' reference.
+	 * The feature id for the '<em><b>Point</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -742,10 +743,10 @@ public interface BehaviourPackage extends EPackage {
 	EClass getPatrolBehavior();
 
 	/**
-	 * Returns the meta object for the reference list '{@link main.game.maze.behaviour.PatrolBehavior#getPath <em>Path</em>}'.
+	 * Returns the meta object for the containment reference list '{@link main.game.maze.behaviour.PatrolBehavior#getPath <em>Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Path</em>'.
+	 * @return the meta object for the containment reference list '<em>Path</em>'.
 	 * @see main.game.maze.behaviour.PatrolBehavior#getPath()
 	 * @see #getPatrolBehavior()
 	 * @generated
@@ -753,21 +754,21 @@ public interface BehaviourPackage extends EPackage {
 	EReference getPatrolBehavior_Path();
 
 	/**
-	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.PatrolBehavior#getCurrentIndex <em>Current Index</em>}'.
+	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.PatrolBehavior#getStartIndex <em>Start Index</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Current Index</em>'.
-	 * @see main.game.maze.behaviour.PatrolBehavior#getCurrentIndex()
+	 * @return the meta object for the attribute '<em>Start Index</em>'.
+	 * @see main.game.maze.behaviour.PatrolBehavior#getStartIndex()
 	 * @see #getPatrolBehavior()
 	 * @generated
 	 */
-	EAttribute getPatrolBehavior_CurrentIndex();
+	EAttribute getPatrolBehavior_StartIndex();
 
 	/**
-	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.PatrolBehavior#getPathcalculator <em>Pathcalculator</em>}'.
+	 * Returns the meta object for the containment reference '{@link main.game.maze.behaviour.PatrolBehavior#getPathcalculator <em>Pathcalculator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Pathcalculator</em>'.
+	 * @return the meta object for the containment reference '<em>Pathcalculator</em>'.
 	 * @see main.game.maze.behaviour.PatrolBehavior#getPathcalculator()
 	 * @see #getPatrolBehavior()
 	 * @generated
@@ -796,10 +797,10 @@ public interface BehaviourPackage extends EPackage {
 	EClass getChaseBehavior();
 
 	/**
-	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.ChaseBehavior#getRelativePositionTarget <em>Relative Position Target</em>}'.
+	 * Returns the meta object for the containment reference '{@link main.game.maze.behaviour.ChaseBehavior#getRelativePositionTarget <em>Relative Position Target</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Relative Position Target</em>'.
+	 * @return the meta object for the containment reference '<em>Relative Position Target</em>'.
 	 * @see main.game.maze.behaviour.ChaseBehavior#getRelativePositionTarget()
 	 * @see #getChaseBehavior()
 	 * @generated
@@ -807,10 +808,10 @@ public interface BehaviourPackage extends EPackage {
 	EReference getChaseBehavior_RelativePositionTarget();
 
 	/**
-	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.ChaseBehavior#getPathcalculator <em>Pathcalculator</em>}'.
+	 * Returns the meta object for the containment reference '{@link main.game.maze.behaviour.ChaseBehavior#getPathcalculator <em>Pathcalculator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Pathcalculator</em>'.
+	 * @return the meta object for the containment reference '<em>Pathcalculator</em>'.
 	 * @see main.game.maze.behaviour.ChaseBehavior#getPathcalculator()
 	 * @see #getChaseBehavior()
 	 * @generated
@@ -861,14 +862,15 @@ public interface BehaviourPackage extends EPackage {
 	EAttribute getMovementBehavior_InstantKillOnCollision();
 
 	/**
-	 * Returns the meta object for the '{@link main.game.maze.behaviour.MovementBehavior#next() <em>Next</em>}' operation.
+	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.MovementBehavior#getMovementSpeed <em>Movement Speed</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Next</em>' operation.
-	 * @see main.game.maze.behaviour.MovementBehavior#next()
+	 * @return the meta object for the attribute '<em>Movement Speed</em>'.
+	 * @see main.game.maze.behaviour.MovementBehavior#getMovementSpeed()
+	 * @see #getMovementBehavior()
 	 * @generated
 	 */
-	EOperation getMovementBehavior__Next();
+	EAttribute getMovementBehavior_MovementSpeed();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.behaviour.Position <em>Position</em>}'.
@@ -924,10 +926,10 @@ public interface BehaviourPackage extends EPackage {
 	EAttribute getPatrolPoint_Time();
 
 	/**
-	 * Returns the meta object for the reference '{@link main.game.maze.behaviour.PatrolPoint#getPoint <em>Point</em>}'.
+	 * Returns the meta object for the containment reference '{@link main.game.maze.behaviour.PatrolPoint#getPoint <em>Point</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Point</em>'.
+	 * @return the meta object for the containment reference '<em>Point</em>'.
 	 * @see main.game.maze.behaviour.PatrolPoint#getPoint()
 	 * @see #getPatrolPoint()
 	 * @generated
@@ -1123,7 +1125,7 @@ public interface BehaviourPackage extends EPackage {
 		EClass PATROL_BEHAVIOR = eINSTANCE.getPatrolBehavior();
 
 		/**
-		 * The meta object literal for the '<em><b>Path</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Path</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1131,15 +1133,15 @@ public interface BehaviourPackage extends EPackage {
 		EReference PATROL_BEHAVIOR__PATH = eINSTANCE.getPatrolBehavior_Path();
 
 		/**
-		 * The meta object literal for the '<em><b>Current Index</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Start Index</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PATROL_BEHAVIOR__CURRENT_INDEX = eINSTANCE.getPatrolBehavior_CurrentIndex();
+		EAttribute PATROL_BEHAVIOR__START_INDEX = eINSTANCE.getPatrolBehavior_StartIndex();
 
 		/**
-		 * The meta object literal for the '<em><b>Pathcalculator</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Pathcalculator</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1165,7 +1167,7 @@ public interface BehaviourPackage extends EPackage {
 		EClass CHASE_BEHAVIOR = eINSTANCE.getChaseBehavior();
 
 		/**
-		 * The meta object literal for the '<em><b>Relative Position Target</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Relative Position Target</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1173,7 +1175,7 @@ public interface BehaviourPackage extends EPackage {
 		EReference CHASE_BEHAVIOR__RELATIVE_POSITION_TARGET = eINSTANCE.getChaseBehavior_RelativePositionTarget();
 
 		/**
-		 * The meta object literal for the '<em><b>Pathcalculator</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Pathcalculator</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1215,12 +1217,12 @@ public interface BehaviourPackage extends EPackage {
 		EAttribute MOVEMENT_BEHAVIOR__INSTANT_KILL_ON_COLLISION = eINSTANCE.getMovementBehavior_InstantKillOnCollision();
 
 		/**
-		 * The meta object literal for the '<em><b>Next</b></em>' operation.
+		 * The meta object literal for the '<em><b>Movement Speed</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation MOVEMENT_BEHAVIOR___NEXT = eINSTANCE.getMovementBehavior__Next();
+		EAttribute MOVEMENT_BEHAVIOR__MOVEMENT_SPEED = eINSTANCE.getMovementBehavior_MovementSpeed();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.behaviour.impl.PositionImpl <em>Position</em>}' class.
@@ -1267,7 +1269,7 @@ public interface BehaviourPackage extends EPackage {
 		EAttribute PATROL_POINT__TIME = eINSTANCE.getPatrolPoint_Time();
 
 		/**
-		 * The meta object literal for the '<em><b>Point</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Point</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

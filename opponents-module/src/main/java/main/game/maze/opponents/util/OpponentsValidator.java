@@ -162,7 +162,7 @@ public class OpponentsValidator extends EObjectValidator {
 			int sum = 0;
 			for (CharacterType ct : opponentModel.getCharacterTypes()) {
 				// If you have ct.getEffectiveThreat(), use that; otherwise use threatLevel
-				int t;
+				double t;
 				try {
 					t = ct.getEffectiveThreat(); // comment this out if you do not have it
 				} catch (Throwable ignore) {
@@ -170,7 +170,6 @@ public class OpponentsValidator extends EObjectValidator {
 				}
 				if (t > 0) {
 					sum += t;
-					if (sum > maxThreat) break;
 				}
 			}
 			opponentModel.setGameSetCurrentThreatLevel(sum);

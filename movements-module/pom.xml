@@ -2,66 +2,35 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>main.game.maze</groupId>
     <artifactId>MazeGame</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <packaging>jar</packaging>
-
+  <packaging>eclipse-plugin</packaging>
   <artifactId>main.game.maze.behaviour</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>25</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
-  <!-- p2 repos for Eclipse + OCL -->
-  <repositories>
-    <repository>
-      <id>eclipse-2025-09</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/releases/2025-09/</url>
-    </repository>
-    <repository>
-      <id>ocl-latest</id>
-      <layout>p2</layout>
-      <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
-    </repository>
-    <!-- (Optional) Maven repo if you still consume any plain Maven artifacts -->
-    <repository>
-      <id>eclipse-releases</id>
-      <url>https://repo.eclipse.org/content/groups/releases/</url>
-    </repository>
-  </repositories>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.common</artifactId>
-      <version>2.43.0</version>
-    </dependency>
+  <dependencies>    
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore</artifactId>
-      <version>2.38.0</version>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>${emf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>2.38.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.ecore</artifactId>
-      <version>3.3.100.v20140610-0641</version> 
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.ocl</groupId>
-      <artifactId>org.eclipse.ocl.common</artifactId>
-      <version>1.2.0.v20140610-0641</version>
+      <version>${emf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -73,15 +42,7 @@
 
   <build>
     <plugins>
-      <!-- Compile with standard Maven compiler plugin -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
-        <configuration>
-          <release>21</release>
-        </configuration>
-      </plugin>
+
     </plugins>
   </build>
 </project>

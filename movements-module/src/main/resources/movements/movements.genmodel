@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/movements-module/src/main/java" modelPluginID="movements-module"
+    modelName="Movements" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="24.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>movements.ecore</foreignModel>
+  <genPackages prefix="Behaviour" basePackage="main.game.maze" resource="XMI" disposableProviderFactory="true"
+      ecorePackage="movements.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="movements.ecore#//DistanceMethod">
+      <genEnumLiterals ecoreEnumLiteral="movements.ecore#//DistanceMethod/MANHATTAN"/>
+      <genEnumLiterals ecoreEnumLiteral="movements.ecore#//DistanceMethod/EUCLIDEAN"/>
+    </genEnums>
+    <genClasses ecoreClass="movements.ecore#//RandomBehavior">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//RandomBehavior/regenPerSecond"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//PatrolBehavior">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/path"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolBehavior/startIndex"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/pathcalculator"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolBehavior/patrolZone"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//ChaseBehavior">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//ChaseBehavior/relativePositionTarget"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//ChaseBehavior/pathcalculator"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="movements.ecore#//MovementBehavior">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/ignoreWalls"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/attackRadius"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/instantKillOnCollision"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//MovementBehavior/movementSpeed"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//Position">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//Position/posX"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//Position/posY"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//PatrolPoint">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolPoint/time"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolPoint/point"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolPoint/regenAmount"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="movements.ecore#//PathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PathCalculator/distanceMethod"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//DijkstraPathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//DijkstraPathCalculator/maxIterations"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//AstarPathCalculator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//AstarPathCalculator/maxIterations"/>
+    </genClasses>
+    <genClasses ecoreClass="movements.ecore#//LocalPathCalculator"/>
+    <genClasses ecoreClass="movements.ecore#//PatrolZone">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolZone/width"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//PatrolZone/height"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//PatrolZone/topLeft"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

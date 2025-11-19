@@ -106,7 +106,7 @@ public interface OpponentModel extends EObject {
 	 * @see #setGameSetCurrentThreatLevel(double)
 	 * @see main.game.maze.opponents.OpponentsPackage#getOpponentModel_GameSetCurrentThreatLevel()
 	 * @model default="0" required="true" volatile="true" derived="true"
-	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='self.characterTypes.threatLevel-&gt;sum()'"
+	 *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL derivation='self.characterTypes.effectiveThreat-&gt;sum()'"
 	 * @generated
 	 */
 	double getGameSetCurrentThreatLevel();

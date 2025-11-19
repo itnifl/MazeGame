@@ -1,0 +1,69 @@
+<!-- releng/mirror/pom.xml -->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>main.game.maze</groupId>
+  <artifactId>mirror</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho.extras</groupId>
+        <artifactId>tycho-p2-extras-plugin</artifactId>
+        <version>5.0.0</version>
+        <executions>
+          <execution>
+            <goals><goal>mirror</goal></goals>
+            <phase>initialize</phase>
+            <configuration>
+              <latestVersionOnly>true</latestVersionOnly>
+              <includeOptional>true</includeOptional>
+              <includeNonGreedy>true</includeNonGreedy>
+              <source>
+                <!-- <repository>
+                  <url>https://download.eclipse.org/releases/2024-09</url>
+                </repository> -->
+                <repository>
+                  <url>https://download.eclipse.org/tools/orbit/downloads/latest-R/</url>
+                </repository>  
+                <repository>
+                  <url>https://download.eclipse.org/eclipse/updates/4.33/</url>
+                </repository>
+                <repository>
+                  <url>https://download.eclipse.org/modeling/emf/emf/updates/</url>
+                </repository>
+                <repository>
+                  <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
+                </repository>
+                <repository>
+                  <url>https://download.eclipse.org/acceleo/updates/releases/3.7</url>
+                </repository>              
+              </source>               
+              <ius>
+                <iu><id>org.eclipse.emf.ecore</id></iu>
+                <iu><id>org.eclipse.emf.common</id></iu>
+                <iu><id>org.eclipse.emf.ecore.xmi</id></iu>
+                <iu><id>org.eclipse.ocl.pivot</id></iu>
+                <iu><id>org.eclipse.ocl</id></iu>
+                <iu><id>org.eclipse.ocl.ecore</id></iu>
+                <iu><id>org.eclipse.core.runtime</id></iu>
+                <iu><id>org.eclipse.osgi</id></iu>
+                <iu><id>org.eclipse.equinox.common</id></iu>
+                <iu><id>org.eclipse.core.jobs</id></iu>
+                <iu><id>org.eclipse.equinox.launcher</id></iu>
+                <iu><id>org.eclipse.acceleo.feature.group</id></iu>
+                <iu><id>org.eclipse.emf.sdk.feature.group</id></iu>
+                <iu><id>org.eclipse.ocl.all.sdk.feature.group</id></iu>                
+                <iu><id>org.eclipse.emf.codegen.feature.group</id></iu>
+                <iu><id>org.eclipse.equinox.app</id></iu>                
+                <iu><id>org.eclipse.equinox.executable.feature.group</id></iu>
+              </ius>
+              <destination>${project.basedir}/../local-p2</destination>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

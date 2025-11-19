@@ -8,6 +8,7 @@ import main.game.maze.behaviour.Position;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
@@ -51,7 +52,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	protected int time = TIME_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getPoint() <em>Point</em>}' reference.
+	 * The cached value of the '{@link #getPoint() <em>Point</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getPoint()
@@ -68,7 +69,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int REGEN_AMOUNT_EDEFAULT = 0;
+	protected static final double REGEN_AMOUNT_EDEFAULT = 0.0;
 
 	/**
 	 * The cached value of the '{@link #getRegenAmount() <em>Regen Amount</em>}' attribute.
@@ -78,7 +79,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 * @ordered
 	 */
-	protected int regenAmount = REGEN_AMOUNT_EDEFAULT;
+	protected double regenAmount = REGEN_AMOUNT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -129,14 +130,6 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 */
 	@Override
 	public Position getPoint() {
-		if (point != null && point.eIsProxy()) {
-			InternalEObject oldPoint = (InternalEObject)point;
-			point = (Position)eResolveProxy(oldPoint);
-			if (point != oldPoint) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, BehaviourPackage.PATROL_POINT__POINT, oldPoint, point));
-			}
-		}
 		return point;
 	}
 
@@ -145,8 +138,14 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Position basicGetPoint() {
-		return point;
+	public NotificationChain basicSetPoint(Position newPoint, NotificationChain msgs) {
+		Position oldPoint = point;
+		point = newPoint;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__POINT, oldPoint, newPoint);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
 	}
 
 	/**
@@ -156,10 +155,17 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 */
 	@Override
 	public void setPoint(Position newPoint) {
-		Position oldPoint = point;
-		point = newPoint;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__POINT, oldPoint, point));
+		if (newPoint != point) {
+			NotificationChain msgs = null;
+			if (point != null)
+				msgs = ((InternalEObject)point).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.PATROL_POINT__POINT, null, msgs);
+			if (newPoint != null)
+				msgs = ((InternalEObject)newPoint).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - BehaviourPackage.PATROL_POINT__POINT, null, msgs);
+			msgs = basicSetPoint(newPoint, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__POINT, newPoint, newPoint));
 	}
 
 	/**
@@ -168,7 +174,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 */
 	@Override
-	public int getRegenAmount() {
+	public double getRegenAmount() {
 		return regenAmount;
 	}
 
@@ -178,11 +184,25 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 */
 	@Override
-	public void setRegenAmount(int newRegenAmount) {
-		int oldRegenAmount = regenAmount;
+	public void setRegenAmount(double newRegenAmount) {
+		double oldRegenAmount = regenAmount;
 		regenAmount = newRegenAmount;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__REGEN_AMOUNT, oldRegenAmount, regenAmount));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case BehaviourPackage.PATROL_POINT__POINT:
+				return basicSetPoint(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -196,8 +216,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 			case BehaviourPackage.PATROL_POINT__TIME:
 				return getTime();
 			case BehaviourPackage.PATROL_POINT__POINT:
-				if (resolve) return getPoint();
-				return basicGetPoint();
+				return getPoint();
 			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
 				return getRegenAmount();
 		}
@@ -219,7 +238,7 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 				setPoint((Position)newValue);
 				return;
 			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
-				setRegenAmount((Integer)newValue);
+				setRegenAmount((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
