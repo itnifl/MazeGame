@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: main.game.maze.comp
+Bundle-ManifestVersion: 2
+Bundle-Name: main.game.maze.comp
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: main.game.maze.comp; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: main.game.maze.difficulty;visibility:=reexport,
+ main.game.maze.opponents;visibility:=reexport,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.19.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-21
