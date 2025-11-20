@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/main.game.maze.difficulties/src/main/java/" modelPluginID="main.game.maze.opponents"
+    modelName="main.game.maze.opponents" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    testsDirectory="/main.game.maze.opponents.tests/src" importerID="org.eclipse.emf.importer.ecore"
+    bundleManifest="false" complianceLevel="21.0" copyrightFields="false" usedGenPackages="../../../../main.game.maze.difficulties/src/main/resources/difficulty-module.genmodel#//difficulties"
+    operationReflection="true" importOrganizing="true" pluginKey="main.game.maze.opponents">
+  <foreignModel>opponents.ecore</foreignModel>
+  <genPackages prefix="Opponents" basePackage="main.game.maze" resource="XMI" disposableProviderFactory="true"
+      ecorePackage="opponents.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//BehaviorType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/PASSIVE"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/WANDER"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//BehaviorType/AGGRESSIVE"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//LootItemType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/FOOD"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/BOMB"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/TRAP"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//LootItemType/WEAPON"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="opponents.ecore#//ProjectileType">
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/STRAIGHT"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/LOB"/>
+      <genEnumLiterals ecoreEnumLiteral="opponents.ecore#//ProjectileType/BEAM"/>
+    </genEnums>
+    <genClasses ecoreClass="opponents.ecore#//OpponentModel">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/characterTypes"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/maxThreat"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//OpponentModel/selectedDifficulty"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//OpponentModel/gameSetCurrentThreatLevel"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="opponents.ecore#//CharacterType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/displayName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/enabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/health"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/speed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/threatLevel"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/effectiveThreat"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageBase"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnLeft"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnRight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnUp"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnDown"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/behavior"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//Zombie">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference opponents.ecore#//Zombie/zombieLootTable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/infectionLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/resurrectionTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/touchSound"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//LootTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference opponents.ecore#//LootTable/items"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootTable/weightCapacity"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//LootItem">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/weight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//LootItem/graphicBase"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//Ghost">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/visibilityLevel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Ghost/nonTangibilityEnergy"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="opponents.ecore#//RangedEnemy">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackRange"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackCooldownMs"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/attackDamage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileSpeed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/splashRadius"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/arcHeight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/projectileImage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/explosionImage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/explosionSound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//RangedEnemy/throwSound"/>
+    </genClasses>
+    <genClasses ecoreClass="opponents.ecore#//PumpkinBomber"/>
+  </genPackages>
+</genmodel:GenModel>

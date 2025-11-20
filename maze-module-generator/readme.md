@@ -47,7 +47,7 @@ After a build, the jar is created at `target/mazer-module-generator-<version>.ja
 * **maze-generator.acceleo** → produces the Java sources that live here. Run it first to update code, then build this module to publish the jar.
 * **main.game.maze** → depends on the jar from this module to compile and run the game logic that is model driven.
 * **releng** → provides the target and optional local p2 mirror used when the generator runs headless, ensuring consistent generation inputs.
-* **movements-module, difficulty-module, opponents-module** → independent Eclipse plug ins. Changes in the metamodel or OCL inside `difficulty-module` may require regenerating this module so that the app sees the updated classes.
+* **main.game.maze.behaviour, main.game.maze.difficulties, main.game.maze.opponents** → independent Eclipse plug ins. Changes in the metamodel or OCL inside `main.game.maze.difficulties` may require regenerating this module so that the app sees the updated classes.
 * **maze-feature and maze-module-repository** → collect only Eclipse plug ins and features for p2 distribution. This module is a plain Maven jar and is not published to the p2 site.
 
 ## Typical workflow
