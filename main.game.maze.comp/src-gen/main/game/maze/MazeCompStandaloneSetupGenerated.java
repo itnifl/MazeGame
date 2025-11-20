@@ -6,6 +6,8 @@ package main.game.maze;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import main.game.maze.mazecomp.MazecompPackage;
+import main.game.maze.xtextgen.MazeCompRuntimeModule;
+
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.ISetup;

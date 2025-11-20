@@ -116,11 +116,11 @@ public class PatrolHelper {
                 throw new IllegalArgumentException(
                     "Waypoint out of bounds: (" + pos.getPosX() + "," + pos.getPosY() + ")");
 
-            if (p.getTime() < 0) {
+            /*if (p.getTime() < 0) {
                 LOG.warning(() -> "Negative holdMsPerWaypoint clamped to 0 at (" +
                         pos.getPosX() + "," + pos.getPosY() + ")");
                 p.setTime(0);
-            }
+            }*/
 
             // collapse adjacent duplicates
             if (last != null && samePos(last.getPoint(), pos)) {

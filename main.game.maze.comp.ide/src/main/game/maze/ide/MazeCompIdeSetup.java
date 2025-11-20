@@ -5,8 +5,10 @@ package main.game.maze.ide;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import main.game.maze.MazeCompRuntimeModule;
-import main.game.maze.MazeCompStandaloneSetup;
+
+import main.game.maze.xtextgen.MazeCompRuntimeModule;
+import main.game.maze.xtextgen.MazeCompStandaloneSetup;
+
 import org.eclipse.xtext.util.Modules2;
 
 /**
