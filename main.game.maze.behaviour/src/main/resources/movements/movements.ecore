@@ -7,7 +7,7 @@
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/OCL/Import">
     <details key="ecore" value="http://www.eclipse.org/emf/2002/Ecore"/>
-    <details key="opp" value="../../../../../opponents-module/src/main/resources/opponents.ecore#/"/>
+    <details key="opp" value="../../../../../main.game.maze.opponents/src/main/resources/opponents.ecore#/"/>
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
     <details key="invocationDelegates" value="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"/>
@@ -57,7 +57,7 @@
       <eParameters name="visionEvent" lowerBound="1" eType="#//VisionEvent"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="charactertype" lowerBound="1"
-        eType="ecore:EClass ../../../../../opponents-module/src/main/resources/opponents.ecore#//CharacterType">
+        eType="ecore:EClass ../../../../../main.game.maze.opponents/src/main/resources/opponents.ecore#//CharacterType">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Character on which those movements should apply."/>
       </eAnnotations>

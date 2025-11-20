@@ -7,7 +7,7 @@
     <details key="bundleManifest" value="false"/>
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/OCL/Import">
-    <details key="diff" value="platform:/resource/main.game.maze.difficulty/src/main/resources/difficulty-module.ecore#/"/>
+    <details key="diff" value="platform:/resource/main.game.maze.difficulties/src/main/resources/difficulty-module.ecore#/"/>
     <details key="ecore" value="http://www.eclipse.org/emf/2002/Ecore"/>
   </eAnnotations>
   <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
@@ -32,7 +32,7 @@
         <details key="derivation" value="if self.selectedDifficulty = null then 20 else self.selectedDifficulty.maxThreat endif"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="selectedDifficulty" eType="ecore:EClass ../../../../main.game.maze.difficulty/src/main/resources/difficulty-module.ecore#//Difficulty"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="selectedDifficulty" eType="ecore:EClass ../../../../main.game.maze.difficulties/src/main/resources/difficulty-module.ecore#//Difficulty"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gameSetCurrentThreatLevel"
         lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
         volatile="true" defaultValueLiteral="0" derived="true">

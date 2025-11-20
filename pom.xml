@@ -19,9 +19,9 @@
     <module>releng/mirror</module>
 
     <!-- 2: modell-/plugin-moduler -->
-    <module>movements-module</module>
-    <module>difficulty-module</module>
-    <module>opponents-module</module>
+    <module>main.game.maze.behaviour</module>
+    <module>main.game.maze.difficulties</module>
+    <module>main.game.maze.opponents</module>
     <module>maze-generator.acceleo</module>
     <!-- Disabled - we are not generating yet: <module>maze-generator.runner</module> -->
 

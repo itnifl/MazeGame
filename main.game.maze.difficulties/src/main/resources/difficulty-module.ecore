@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="difficulties" nsURI="http://main.game.maze/difficulty" nsPrefix="diff">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="difficulties" nsURI="http://main.game.maze/difficulties" nsPrefix="diff">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
     <details key="basePackage" value="main.game.maze"/>
     <details key="resource" value="XMI"/>
+    <details key="pluginKey" value="main.game.maze.difficulties"/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="DifficultyGameData">
     <eStructuralFeatures xsi:type="ecore:EReference" name="difficulties" lowerBound="1"
