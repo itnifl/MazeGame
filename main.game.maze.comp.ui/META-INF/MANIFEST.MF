@@ -14,6 +14,13 @@ Require-Bundle: main.game.maze.comp,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.ui.editors;bundle-version="3.14.300",
- org.eclipse.ui.ide;bundle-version="3.18.500"
+ org.eclipse.ui.ide;bundle-version="3.18.500",
+ org.eclipse.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: main.game.maze.ui.contentassist,
+ main.game.maze.comp.ui.internal,
+ main.game.maze.ui.quickfix
+Bundle-Activator: main.game.maze.comp.ui.internal.CompActivator

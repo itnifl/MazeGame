@@ -35,7 +35,7 @@ Workflow {
 		language = StandardLanguage {
 			name = "main.game.maze.MazeComp"
 			fileExtensions = "mazecomp"
-			referencedResource = "platform:/resource/main.game.maze.difficulty/src/main/resources/difficulty-module.genmodel"
+			referencedResource = "platform:/resource/main.game.maze.difficulties/src/main/resources/difficulty-module.genmodel"
 			referencedResource = "platform:/resource/main.game.maze.opponents/src/main/resources/opponents.genmodel"
 			
 			fragment = ecore2xtext.Ecore2XtextValueConverterServiceFragment2 auto-inject {}

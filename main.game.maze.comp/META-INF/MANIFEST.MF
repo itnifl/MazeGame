@@ -15,7 +15,21 @@ Require-Bundle: main.game.maze.difficulties;visibility:=reexport,
  org.eclipse.equinox.common,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
- org.antlr.runtime,
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
  org.eclipse.emf.mwe2.launch,
- org.eclipse.emf.mwe2.lib
+ org.eclipse.emf.mwe2.lib,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.40.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: main.game.maze.services,
+ main.game.maze.validation,
+ main.game.maze.mazecomp.impl,
+ main.game.maze,
+ main.game.maze.parser.antlr.internal,
+ main.game.maze.mazecomp.util,
+ main.game.maze.generator,
+ main.game.maze.formatting2,
+ main.game.maze.serializer,
+ main.game.maze.mazecomp,
+ main.game.maze.parser.antlr,
+ main.game.maze.scoping
+Import-Package: org.apache.log4j
