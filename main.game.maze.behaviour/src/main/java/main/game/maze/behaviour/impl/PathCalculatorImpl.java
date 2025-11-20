@@ -2,12 +2,15 @@
  */
 package main.game.maze.behaviour.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.DistanceMethod;
 import main.game.maze.behaviour.PathCalculator;
 
+import main.game.maze.behaviour.Position;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -95,6 +98,18 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 	 * @generated
 	 */
 	@Override
+	public EList<Position> compute(Position target) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case BehaviourPackage.PATH_CALCULATOR__DISTANCE_METHOD:
@@ -145,6 +160,20 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 				return distanceMethod != DISTANCE_METHOD_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case BehaviourPackage.PATH_CALCULATOR___COMPUTE__POSITION:
+				return compute((Position)arguments.get(0));
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

@@ -68,6 +68,18 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 	protected BehaviourSwitch<Adapter> modelSwitch =
 		new BehaviourSwitch<Adapter>() {
 			@Override
+			public Adapter caseDirection(Direction object) {
+				return createDirectionAdapter();
+			}
+			@Override
+			public Adapter casePosition(Position object) {
+				return createPositionAdapter();
+			}
+			@Override
+			public Adapter caseMovementBehavior(MovementBehavior object) {
+				return createMovementBehaviorAdapter();
+			}
+			@Override
 			public Adapter caseRandomBehavior(RandomBehavior object) {
 				return createRandomBehaviorAdapter();
 			}
@@ -80,16 +92,12 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 				return createChaseBehaviorAdapter();
 			}
 			@Override
-			public Adapter caseMovementBehavior(MovementBehavior object) {
-				return createMovementBehaviorAdapter();
-			}
-			@Override
-			public Adapter casePosition(Position object) {
-				return createPositionAdapter();
-			}
-			@Override
 			public Adapter casePatrolPoint(PatrolPoint object) {
 				return createPatrolPointAdapter();
+			}
+			@Override
+			public Adapter casePatrolZone(PatrolZone object) {
+				return createPatrolZoneAdapter();
 			}
 			@Override
 			public Adapter casePathCalculator(PathCalculator object) {
@@ -108,8 +116,28 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 				return createLocalPathCalculatorAdapter();
 			}
 			@Override
-			public Adapter casePatrolZone(PatrolZone object) {
-				return createPatrolZoneAdapter();
+			public Adapter caseCharacterEvent(CharacterEvent object) {
+				return createCharacterEventAdapter();
+			}
+			@Override
+			public Adapter caseHealthEvent(HealthEvent object) {
+				return createHealthEventAdapter();
+			}
+			@Override
+			public Adapter caseSpeedEvent(SpeedEvent object) {
+				return createSpeedEventAdapter();
+			}
+			@Override
+			public Adapter caseTimeEvent(TimeEvent object) {
+				return createTimeEventAdapter();
+			}
+			@Override
+			public Adapter caseVisionEvent(VisionEvent object) {
+				return createVisionEventAdapter();
+			}
+			@Override
+			public Adapter caseAttackEvent(AttackEvent object) {
+				return createAttackEventAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -130,6 +158,20 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.Direction <em>Direction</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.Direction
+	 * @generated
+	 */
+	public Adapter createDirectionAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.RandomBehavior <em>Random Behavior</em>}'.
@@ -268,6 +310,90 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLocalPathCalculatorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.CharacterEvent <em>Character Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.CharacterEvent
+	 * @generated
+	 */
+	public Adapter createCharacterEventAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.HealthEvent <em>Health Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.HealthEvent
+	 * @generated
+	 */
+	public Adapter createHealthEventAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.SpeedEvent <em>Speed Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.SpeedEvent
+	 * @generated
+	 */
+	public Adapter createSpeedEventAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.TimeEvent <em>Time Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.TimeEvent
+	 * @generated
+	 */
+	public Adapter createTimeEventAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.VisionEvent <em>Vision Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.VisionEvent
+	 * @generated
+	 */
+	public Adapter createVisionEventAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link main.game.maze.behaviour.AttackEvent <em>Attack Event</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see main.game.maze.behaviour.AttackEvent
+	 * @generated
+	 */
+	public Adapter createAttackEventAdapter() {
 		return null;
 	}
 

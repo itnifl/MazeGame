@@ -18,7 +18,7 @@ package main.game.maze.behaviour;
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getChaseBehavior()
  * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='NotTooLargeAttackRadius'"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot NotTooLargeAttackRadius='self.relativePositionTarget-&gt;forAll(p | self.attackRadius &gt; p.posX and self.attackRadius &gt; p.posY)'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot NotTooLargeAttackRadius='self.charactertype-&gt;select(p | p.oclIsKindOf(opp::RangedEnemy))-&gt;isEmpty() or\n\t\t\tlet rangedEnemy : opp::RangedEnemy = self.charactertype-&gt;any(true).oclAsType(opp::RangedEnemy),\n\t\t\t\trelativeTarget : Position = self.relativePositionTarget-&gt;any(true)\n\t\t\tin rangedEnemy.attackRange &gt;= relativeTarget.posX and rangedEnemy.attackRange &gt;= relativeTarget.posY'"
  * @generated
  */
 public interface ChaseBehavior extends MovementBehavior {

@@ -2,18 +2,24 @@
  */
 package main.game.maze.behaviour.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import main.game.maze.behaviour.BehaviourPackage;
+import main.game.maze.behaviour.CharacterEvent;
 import main.game.maze.behaviour.PatrolPoint;
 import main.game.maze.behaviour.Position;
 
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,34 +29,13 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link main.game.maze.behaviour.impl.PatrolPointImpl#getTime <em>Time</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolPointImpl#getPoint <em>Point</em>}</li>
- *   <li>{@link main.game.maze.behaviour.impl.PatrolPointImpl#getRegenAmount <em>Regen Amount</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.PatrolPointImpl#getEvents <em>Events</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class PatrolPointImpl extends MinimalEObjectImpl.Container implements PatrolPoint {
-	/**
-	 * The default value of the '{@link #getTime() <em>Time</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTime()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int TIME_EDEFAULT = 0;
-
-	/**
-	 * The cached value of the '{@link #getTime() <em>Time</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTime()
-	 * @generated
-	 * @ordered
-	 */
-	protected int time = TIME_EDEFAULT;
-
 	/**
 	 * The cached value of the '{@link #getPoint() <em>Point</em>}' containment reference.
 	 * <!-- begin-user-doc -->
@@ -62,24 +47,14 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	protected Position point;
 
 	/**
-	 * The default value of the '{@link #getRegenAmount() <em>Regen Amount</em>}' attribute.
+	 * The cached value of the '{@link #getEvents() <em>Events</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getRegenAmount()
+	 * @see #getEvents()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final double REGEN_AMOUNT_EDEFAULT = 0.0;
-
-	/**
-	 * The cached value of the '{@link #getRegenAmount() <em>Regen Amount</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRegenAmount()
-	 * @generated
-	 * @ordered
-	 */
-	protected double regenAmount = REGEN_AMOUNT_EDEFAULT;
+	protected EList<CharacterEvent> events;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -98,29 +73,6 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	@Override
 	protected EClass eStaticClass() {
 		return BehaviourPackage.Literals.PATROL_POINT;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int getTime() {
-		return time;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setTime(int newTime) {
-		int oldTime = time;
-		time = newTime;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__TIME, oldTime, time));
 	}
 
 	/**
@@ -174,8 +126,11 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 */
 	@Override
-	public double getRegenAmount() {
-		return regenAmount;
+	public EList<CharacterEvent> getEvents() {
+		if (events == null) {
+			events = new EObjectContainmentEList<CharacterEvent>(CharacterEvent.class, this, BehaviourPackage.PATROL_POINT__EVENTS);
+		}
+		return events;
 	}
 
 	/**
@@ -184,11 +139,10 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 */
 	@Override
-	public void setRegenAmount(double newRegenAmount) {
-		double oldRegenAmount = regenAmount;
-		regenAmount = newRegenAmount;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_POINT__REGEN_AMOUNT, oldRegenAmount, regenAmount));
+	public void triggerEvents() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -201,6 +155,8 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 		switch (featureID) {
 			case BehaviourPackage.PATROL_POINT__POINT:
 				return basicSetPoint(null, msgs);
+			case BehaviourPackage.PATROL_POINT__EVENTS:
+				return ((InternalEList<?>)getEvents()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -213,12 +169,10 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BehaviourPackage.PATROL_POINT__TIME:
-				return getTime();
 			case BehaviourPackage.PATROL_POINT__POINT:
 				return getPoint();
-			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
-				return getRegenAmount();
+			case BehaviourPackage.PATROL_POINT__EVENTS:
+				return getEvents();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -228,17 +182,16 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BehaviourPackage.PATROL_POINT__TIME:
-				setTime((Integer)newValue);
-				return;
 			case BehaviourPackage.PATROL_POINT__POINT:
 				setPoint((Position)newValue);
 				return;
-			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
-				setRegenAmount((Double)newValue);
+			case BehaviourPackage.PATROL_POINT__EVENTS:
+				getEvents().clear();
+				getEvents().addAll((Collection<? extends CharacterEvent>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -252,14 +205,11 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BehaviourPackage.PATROL_POINT__TIME:
-				setTime(TIME_EDEFAULT);
-				return;
 			case BehaviourPackage.PATROL_POINT__POINT:
 				setPoint((Position)null);
 				return;
-			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
-				setRegenAmount(REGEN_AMOUNT_EDEFAULT);
+			case BehaviourPackage.PATROL_POINT__EVENTS:
+				getEvents().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -273,12 +223,10 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BehaviourPackage.PATROL_POINT__TIME:
-				return time != TIME_EDEFAULT;
 			case BehaviourPackage.PATROL_POINT__POINT:
 				return point != null;
-			case BehaviourPackage.PATROL_POINT__REGEN_AMOUNT:
-				return regenAmount != REGEN_AMOUNT_EDEFAULT;
+			case BehaviourPackage.PATROL_POINT__EVENTS:
+				return events != null && !events.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -289,16 +237,13 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	 * @generated
 	 */
 	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (time: ");
-		result.append(time);
-		result.append(", regenAmount: ");
-		result.append(regenAmount);
-		result.append(')');
-		return result.toString();
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case BehaviourPackage.PATROL_POINT___TRIGGER_EVENTS:
+				triggerEvents();
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 } //PatrolPointImpl

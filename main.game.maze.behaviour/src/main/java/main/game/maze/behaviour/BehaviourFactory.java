@@ -22,6 +22,15 @@ public interface BehaviourFactory extends EFactory {
 	BehaviourFactory eINSTANCE = main.game.maze.behaviour.impl.BehaviourFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Direction</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Direction</em>'.
+	 * @generated
+	 */
+	Direction createDirection();
+
+	/**
 	 * Returns a new object of class '<em>Random Behavior</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -92,6 +101,51 @@ public interface BehaviourFactory extends EFactory {
 	 * @generated
 	 */
 	LocalPathCalculator createLocalPathCalculator();
+
+	/**
+	 * Returns a new object of class '<em>Health Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Health Event</em>'.
+	 * @generated
+	 */
+	HealthEvent createHealthEvent();
+
+	/**
+	 * Returns a new object of class '<em>Speed Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Speed Event</em>'.
+	 * @generated
+	 */
+	SpeedEvent createSpeedEvent();
+
+	/**
+	 * Returns a new object of class '<em>Time Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Time Event</em>'.
+	 * @generated
+	 */
+	TimeEvent createTimeEvent();
+
+	/**
+	 * Returns a new object of class '<em>Vision Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Vision Event</em>'.
+	 * @generated
+	 */
+	VisionEvent createVisionEvent();
+
+	/**
+	 * Returns a new object of class '<em>Attack Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Attack Event</em>'.
+	 * @generated
+	 */
+	AttackEvent createAttackEvent();
 
 	/**
 	 * Returns a new object of class '<em>Patrol Zone</em>'.

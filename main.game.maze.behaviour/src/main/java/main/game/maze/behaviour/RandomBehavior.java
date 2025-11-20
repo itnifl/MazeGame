@@ -27,7 +27,6 @@ public interface RandomBehavior extends MovementBehavior {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Amount of HP when regained per second.
-	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Regen Per Second</em>' attribute.
 	 * @see #setRegenPerSecond(double)

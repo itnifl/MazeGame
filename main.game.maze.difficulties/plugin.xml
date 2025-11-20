@@ -24,4 +24,17 @@
             type="difficulties"
             class="main.game.maze.difficulties.util.DifficultiesResourceFactoryImpl"/>
    </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated main.game.maze.opponents -->
+      <package
+            uri="http://main.game.maze/opponents"
+            class="main.game.maze.opponents.OpponentsPackage"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated main.game.maze.opponents -->
+      <parser
+            type="opponents"
+            class="main.game.maze.opponents.util.OpponentsResourceFactoryImpl"/>
+   </extension>
 </plugin>

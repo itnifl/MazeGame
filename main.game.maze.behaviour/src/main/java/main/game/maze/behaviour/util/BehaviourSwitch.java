@@ -66,6 +66,24 @@ public class BehaviourSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case BehaviourPackage.DIRECTION: {
+				Direction direction = (Direction)theEObject;
+				T result = caseDirection(direction);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.POSITION: {
+				Position position = (Position)theEObject;
+				T result = casePosition(position);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.MOVEMENT_BEHAVIOR: {
+				MovementBehavior movementBehavior = (MovementBehavior)theEObject;
+				T result = caseMovementBehavior(movementBehavior);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case BehaviourPackage.RANDOM_BEHAVIOR: {
 				RandomBehavior randomBehavior = (RandomBehavior)theEObject;
 				T result = caseRandomBehavior(randomBehavior);
@@ -87,21 +105,15 @@ public class BehaviourSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case BehaviourPackage.MOVEMENT_BEHAVIOR: {
-				MovementBehavior movementBehavior = (MovementBehavior)theEObject;
-				T result = caseMovementBehavior(movementBehavior);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case BehaviourPackage.POSITION: {
-				Position position = (Position)theEObject;
-				T result = casePosition(position);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case BehaviourPackage.PATROL_POINT: {
 				PatrolPoint patrolPoint = (PatrolPoint)theEObject;
 				T result = casePatrolPoint(patrolPoint);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.PATROL_ZONE: {
+				PatrolZone patrolZone = (PatrolZone)theEObject;
+				T result = casePatrolZone(patrolZone);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -132,14 +144,64 @@ public class BehaviourSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case BehaviourPackage.PATROL_ZONE: {
-				PatrolZone patrolZone = (PatrolZone)theEObject;
-				T result = casePatrolZone(patrolZone);
+			case BehaviourPackage.CHARACTER_EVENT: {
+				CharacterEvent characterEvent = (CharacterEvent)theEObject;
+				T result = caseCharacterEvent(characterEvent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.HEALTH_EVENT: {
+				HealthEvent healthEvent = (HealthEvent)theEObject;
+				T result = caseHealthEvent(healthEvent);
+				if (result == null) result = caseCharacterEvent(healthEvent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.SPEED_EVENT: {
+				SpeedEvent speedEvent = (SpeedEvent)theEObject;
+				T result = caseSpeedEvent(speedEvent);
+				if (result == null) result = caseCharacterEvent(speedEvent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.TIME_EVENT: {
+				TimeEvent timeEvent = (TimeEvent)theEObject;
+				T result = caseTimeEvent(timeEvent);
+				if (result == null) result = caseCharacterEvent(timeEvent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.VISION_EVENT: {
+				VisionEvent visionEvent = (VisionEvent)theEObject;
+				T result = caseVisionEvent(visionEvent);
+				if (result == null) result = caseCharacterEvent(visionEvent);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BehaviourPackage.ATTACK_EVENT: {
+				AttackEvent attackEvent = (AttackEvent)theEObject;
+				T result = caseAttackEvent(attackEvent);
+				if (result == null) result = caseCharacterEvent(attackEvent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Direction</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Direction</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseDirection(Direction object) {
+		return null;
 	}
 
 	/**
@@ -289,6 +351,96 @@ public class BehaviourSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseLocalPathCalculator(LocalPathCalculator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Character Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Character Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCharacterEvent(CharacterEvent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Health Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Health Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseHealthEvent(HealthEvent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Speed Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Speed Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSpeedEvent(SpeedEvent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Time Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Time Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseTimeEvent(TimeEvent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Vision Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Vision Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseVisionEvent(VisionEvent object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Attack Event</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Attack Event</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseAttackEvent(AttackEvent object) {
 		return null;
 	}
 

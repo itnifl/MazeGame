@@ -12,38 +12,38 @@ package main.game.maze.behaviour;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link main.game.maze.behaviour.DijkstraPathCalculator#getMaxIterations <em>Max Iterations</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.DijkstraPathCalculator#getMaxPathLength <em>Max Path Length</em>}</li>
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getDijkstraPathCalculator()
- * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='ValidDijsktraIterationsCount'"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot ValidDijsktraIterationsCount='self.maxIterations &gt; 0 and self.maxIterations &lt; 50'"
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='ValidDijsktraPath'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot ValidDijsktraPath='self.maxPathLength &gt; 0'"
  * @generated
  */
 public interface DijkstraPathCalculator extends PathCalculator {
 	/**
-	 * Returns the value of the '<em><b>Max Iterations</b></em>' attribute.
+	 * Returns the value of the '<em><b>Max Path Length</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * When computing the Disjkstra algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points.
+	 * When computing the Dijkstra algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Max Iterations</em>' attribute.
-	 * @see #setMaxIterations(int)
-	 * @see main.game.maze.behaviour.BehaviourPackage#getDijkstraPathCalculator_MaxIterations()
+	 * @return the value of the '<em>Max Path Length</em>' attribute.
+	 * @see #setMaxPathLength(int)
+	 * @see main.game.maze.behaviour.BehaviourPackage#getDijkstraPathCalculator_MaxPathLength()
 	 * @model required="true"
 	 * @generated
 	 */
-	int getMaxIterations();
+	int getMaxPathLength();
 
 	/**
-	 * Sets the value of the '{@link main.game.maze.behaviour.DijkstraPathCalculator#getMaxIterations <em>Max Iterations</em>}' attribute.
+	 * Sets the value of the '{@link main.game.maze.behaviour.DijkstraPathCalculator#getMaxPathLength <em>Max Path Length</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Max Iterations</em>' attribute.
-	 * @see #getMaxIterations()
+	 * @param value the new value of the '<em>Max Path Length</em>' attribute.
+	 * @see #getMaxPathLength()
 	 * @generated
 	 */
-	void setMaxIterations(int value);
+	void setMaxPathLength(int value);
 
 } // DijkstraPathCalculator

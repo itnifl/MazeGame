@@ -6,7 +6,7 @@ Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: main.game.maze.comp; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: main.game.maze.difficulty;visibility:=reexport,
+Require-Bundle: main.game.maze.difficulties;visibility:=reexport,
  main.game.maze.opponents;visibility:=reexport,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,

@@ -20,4 +20,34 @@
             type="behaviour"
             class="main.game.maze.behaviour.util.BehaviourResourceFactoryImpl"/>
    </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated main.game.maze.behaviour -->
+      <package
+            uri="http://main.game.maze/opponents"
+            class="main.game.maze.opponents.OpponentsPackage"
+            genModel="src/main/resources/movements/movements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated main.game.maze.behaviour -->
+      <parser
+            type="opponents"
+            class="main.game.maze.opponents.util.OpponentsResourceFactoryImpl"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated main.game.maze.behaviour -->
+      <package
+            uri="http://main.game.maze/difficulties"
+            class="main.game.maze.difficulties.DifficultiesPackage"
+            genModel="src/main/resources/movements/movements.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated main.game.maze.behaviour -->
+      <parser
+            type="difficulties"
+            class="main.game.maze.difficulties.util.DifficultiesResourceFactoryImpl"/>
+   </extension>
 </plugin>

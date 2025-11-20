@@ -2,6 +2,7 @@
  */
 package main.game.maze.behaviour;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -18,46 +19,22 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link main.game.maze.behaviour.PatrolPoint#getTime <em>Time</em>}</li>
  *   <li>{@link main.game.maze.behaviour.PatrolPoint#getPoint <em>Point</em>}</li>
- *   <li>{@link main.game.maze.behaviour.PatrolPoint#getRegenAmount <em>Regen Amount</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.PatrolPoint#getEvents <em>Events</em>}</li>
  * </ul>
  *
  * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint()
- * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositiveRegenAmount PositivePatrolPointTime PositivePatrolPointCoords'"
- *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositiveRegenAmount='self.regenAmount &gt;= 0' PositivePatrolPointTime='self.time &gt;= 0' PositivePatrolPointCoords='self.point-&gt;forAll(p | p.posX &gt; 0 and p.posY &gt; 0)'"
+ * @model annotation="http://www.eclipse.org/emf/2002/Ecore constraints='PositivePatrolPointCoords ValidHealthEventsProbability ValidSpeedEventsProbability ValidTimeEventsProbability ValidVisionEventsProbability ValidAttackEventsProbability'"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot PositivePatrolPointCoords='self.point-&gt;forAll(p | p.posX &gt; 0 and p.posY &gt; 0)' ValidHealthEventsProbability='self.events-&gt;select(p | p.oclIsKindOf(HealthEvent))-&gt;collect(p | p.probability)-&gt;sum() &lt;= 100' ValidSpeedEventsProbability='self.events-&gt;select(p | p.oclIsKindOf(SpeedEvent))-&gt;collect(p | p.probability)-&gt;sum() &lt;= 100' ValidTimeEventsProbability='self.events-&gt;select(p | p.oclIsKindOf(TimeEvent))-&gt;collect(p | p.probability)-&gt;sum() &lt;= 100' ValidVisionEventsProbability='self.events-&gt;select(p | p.oclIsKindOf(VisionEvent))-&gt;collect(p | p.probability)-&gt;sum() &lt;= 100' ValidAttackEventsProbability='self.events-&gt;select(p | p.oclIsKindOf(AttackEvent))-&gt;collect(p | p.probability)-&gt;sum() &lt;= 100'"
  * @generated
  */
 public interface PatrolPoint extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Time</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Time</em>' attribute.
-	 * @see #setTime(int)
-	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_Time()
-	 * @model required="true"
-	 * @generated
-	 */
-	int getTime();
-
-	/**
-	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolPoint#getTime <em>Time</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Time</em>' attribute.
-	 * @see #getTime()
-	 * @generated
-	 */
-	void setTime(int value);
-
 	/**
 	 * Returns the value of the '<em><b>Point</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Coords of the patrol step
-	 * 
+	 * Coordinates of the patrol step
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Point</em>' containment reference.
 	 * @see #setPoint(Position)
@@ -78,28 +55,26 @@ public interface PatrolPoint extends EObject {
 	void setPoint(Position value);
 
 	/**
-	 * Returns the value of the '<em><b>Regen Amount</b></em>' attribute.
+	 * Returns the value of the '<em><b>Events</b></em>' containment reference list.
+	 * The list contents are of type {@link main.game.maze.behaviour.CharacterEvent}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Amount of HP the character will regain when reaching this step.
+	 * List of events that can occur when the enemy reaches this point.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Regen Amount</em>' attribute.
-	 * @see #setRegenAmount(double)
-	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_RegenAmount()
-	 * @model required="true"
+	 * @return the value of the '<em>Events</em>' containment reference list.
+	 * @see main.game.maze.behaviour.BehaviourPackage#getPatrolPoint_Events()
+	 * @model containment="true" ordered="false"
 	 * @generated
 	 */
-	double getRegenAmount();
+	EList<CharacterEvent> getEvents();
 
 	/**
-	 * Sets the value of the '{@link main.game.maze.behaviour.PatrolPoint#getRegenAmount <em>Regen Amount</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Regen Amount</em>' attribute.
-	 * @see #getRegenAmount()
+	 * @model
 	 * @generated
 	 */
-	void setRegenAmount(double value);
+	void triggerEvents();
 
 } // PatrolPoint

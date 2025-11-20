@@ -57,15 +57,21 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case BehaviourPackage.DIRECTION: return createDirection();
+			case BehaviourPackage.POSITION: return createPosition();
 			case BehaviourPackage.RANDOM_BEHAVIOR: return createRandomBehavior();
 			case BehaviourPackage.PATROL_BEHAVIOR: return createPatrolBehavior();
 			case BehaviourPackage.CHASE_BEHAVIOR: return createChaseBehavior();
-			case BehaviourPackage.POSITION: return createPosition();
 			case BehaviourPackage.PATROL_POINT: return createPatrolPoint();
+			case BehaviourPackage.PATROL_ZONE: return createPatrolZone();
 			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR: return createDijkstraPathCalculator();
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR: return createAstarPathCalculator();
 			case BehaviourPackage.LOCAL_PATH_CALCULATOR: return createLocalPathCalculator();
-			case BehaviourPackage.PATROL_ZONE: return createPatrolZone();
+			case BehaviourPackage.HEALTH_EVENT: return createHealthEvent();
+			case BehaviourPackage.SPEED_EVENT: return createSpeedEvent();
+			case BehaviourPackage.TIME_EVENT: return createTimeEvent();
+			case BehaviourPackage.VISION_EVENT: return createVisionEvent();
+			case BehaviourPackage.ATTACK_EVENT: return createAttackEvent();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -81,6 +87,8 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 		switch (eDataType.getClassifierID()) {
 			case BehaviourPackage.DISTANCE_METHOD:
 				return createDistanceMethodFromString(eDataType, initialValue);
+			case BehaviourPackage.PATROL_PATH_BEHAVIOR:
+				return createPatrolPathBehaviorFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -96,9 +104,22 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 		switch (eDataType.getClassifierID()) {
 			case BehaviourPackage.DISTANCE_METHOD:
 				return convertDistanceMethodToString(eDataType, instanceValue);
+			case BehaviourPackage.PATROL_PATH_BEHAVIOR:
+				return convertPatrolPathBehaviorToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Direction createDirection() {
+		DirectionImpl direction = new DirectionImpl();
+		return direction;
 	}
 
 	/**
@@ -195,6 +216,61 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 	 * @generated
 	 */
 	@Override
+	public HealthEvent createHealthEvent() {
+		HealthEventImpl healthEvent = new HealthEventImpl();
+		return healthEvent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SpeedEvent createSpeedEvent() {
+		SpeedEventImpl speedEvent = new SpeedEventImpl();
+		return speedEvent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public TimeEvent createTimeEvent() {
+		TimeEventImpl timeEvent = new TimeEventImpl();
+		return timeEvent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public VisionEvent createVisionEvent() {
+		VisionEventImpl visionEvent = new VisionEventImpl();
+		return visionEvent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public AttackEvent createAttackEvent() {
+		AttackEventImpl attackEvent = new AttackEventImpl();
+		return attackEvent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PatrolZone createPatrolZone() {
 		PatrolZoneImpl patrolZone = new PatrolZoneImpl();
 		return patrolZone;
@@ -217,6 +293,26 @@ public class BehaviourFactoryImpl extends EFactoryImpl implements BehaviourFacto
 	 * @generated
 	 */
 	public String convertDistanceMethodToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PatrolPathBehavior createPatrolPathBehaviorFromString(EDataType eDataType, String initialValue) {
+		PatrolPathBehavior result = PatrolPathBehavior.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertPatrolPathBehaviorToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

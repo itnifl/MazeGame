@@ -73,7 +73,6 @@ public interface PatrolZone extends EObject {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Top left corner of the rectangular patrol zone
-	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Top Left</em>' reference.
 	 * @see #setTopLeft(Position)

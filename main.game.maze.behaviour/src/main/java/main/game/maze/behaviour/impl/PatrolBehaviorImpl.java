@@ -2,11 +2,13 @@
  */
 package main.game.maze.behaviour.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.PathCalculator;
 import main.game.maze.behaviour.PatrolBehavior;
+import main.game.maze.behaviour.PatrolPathBehavior;
 import main.game.maze.behaviour.PatrolPoint;
 
 import main.game.maze.behaviour.PatrolZone;
@@ -32,8 +34,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPath <em>Path</em>}</li>
- *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getStartIndex <em>Start Index</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getCurrentIndex <em>Current Index</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPathcalculator <em>Pathcalculator</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.behaviour.impl.PatrolBehaviorImpl#getPatrolZone <em>Patrol Zone</em>}</li>
  * </ul>
  *
@@ -51,24 +54,24 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	protected EList<PatrolPoint> path;
 
 	/**
-	 * The default value of the '{@link #getStartIndex() <em>Start Index</em>}' attribute.
+	 * The default value of the '{@link #getCurrentIndex() <em>Current Index</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStartIndex()
+	 * @see #getCurrentIndex()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int START_INDEX_EDEFAULT = 0;
+	protected static final int CURRENT_INDEX_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getStartIndex() <em>Start Index</em>}' attribute.
+	 * The cached value of the '{@link #getCurrentIndex() <em>Current Index</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getStartIndex()
+	 * @see #getCurrentIndex()
 	 * @generated
 	 * @ordered
 	 */
-	protected int startIndex = START_INDEX_EDEFAULT;
+	protected int currentIndex = CURRENT_INDEX_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getPathcalculator() <em>Pathcalculator</em>}' containment reference.
@@ -79,6 +82,26 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @ordered
 	 */
 	protected PathCalculator pathcalculator;
+
+	/**
+	 * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBehavior()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final PatrolPathBehavior BEHAVIOR_EDEFAULT = PatrolPathBehavior.LOOP;
+
+	/**
+	 * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBehavior()
+	 * @generated
+	 * @ordered
+	 */
+	protected PatrolPathBehavior behavior = BEHAVIOR_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getPatrolZone() <em>Patrol Zone</em>}' reference.
@@ -128,8 +151,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
-	public int getStartIndex() {
-		return startIndex;
+	public int getCurrentIndex() {
+		return currentIndex;
 	}
 
 	/**
@@ -138,11 +161,11 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
-	public void setStartIndex(int newStartIndex) {
-		int oldStartIndex = startIndex;
-		startIndex = newStartIndex;
+	public void setCurrentIndex(int newCurrentIndex) {
+		int oldCurrentIndex = currentIndex;
+		currentIndex = newCurrentIndex;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__START_INDEX, oldStartIndex, startIndex));
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX, oldCurrentIndex, currentIndex));
 	}
 
 	/**
@@ -196,6 +219,29 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
+	public PatrolPathBehavior getBehavior() {
+		return behavior;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setBehavior(PatrolPathBehavior newBehavior) {
+		PatrolPathBehavior oldBehavior = behavior;
+		behavior = newBehavior == null ? BEHAVIOR_EDEFAULT : newBehavior;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATROL_BEHAVIOR__BEHAVIOR, oldBehavior, behavior));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PatrolZone getPatrolZone() {
 		if (patrolZone != null && patrolZone.eIsProxy()) {
 			InternalEObject oldPatrolZone = (InternalEObject)patrolZone;
@@ -236,6 +282,18 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
+	public void nextIndex() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
@@ -256,10 +314,12 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				return getPath();
-			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
-				return getStartIndex();
+			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
+				return getCurrentIndex();
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				return getPathcalculator();
+			case BehaviourPackage.PATROL_BEHAVIOR__BEHAVIOR:
+				return getBehavior();
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
 				if (resolve) return getPatrolZone();
 				return basicGetPatrolZone();
@@ -280,11 +340,14 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				getPath().clear();
 				getPath().addAll((Collection<? extends PatrolPoint>)newValue);
 				return;
-			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
-				setStartIndex((Integer)newValue);
+			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
+				setCurrentIndex((Integer)newValue);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)newValue);
+				return;
+			case BehaviourPackage.PATROL_BEHAVIOR__BEHAVIOR:
+				setBehavior((PatrolPathBehavior)newValue);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
 				setPatrolZone((PatrolZone)newValue);
@@ -304,11 +367,14 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				getPath().clear();
 				return;
-			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
-				setStartIndex(START_INDEX_EDEFAULT);
+			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
+				setCurrentIndex(CURRENT_INDEX_EDEFAULT);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				setPathcalculator((PathCalculator)null);
+				return;
+			case BehaviourPackage.PATROL_BEHAVIOR__BEHAVIOR:
+				setBehavior(BEHAVIOR_EDEFAULT);
 				return;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
 				setPatrolZone((PatrolZone)null);
@@ -327,10 +393,12 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		switch (featureID) {
 			case BehaviourPackage.PATROL_BEHAVIOR__PATH:
 				return path != null && !path.isEmpty();
-			case BehaviourPackage.PATROL_BEHAVIOR__START_INDEX:
-				return startIndex != START_INDEX_EDEFAULT;
+			case BehaviourPackage.PATROL_BEHAVIOR__CURRENT_INDEX:
+				return currentIndex != CURRENT_INDEX_EDEFAULT;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATHCALCULATOR:
 				return pathcalculator != null;
+			case BehaviourPackage.PATROL_BEHAVIOR__BEHAVIOR:
+				return behavior != BEHAVIOR_EDEFAULT;
 			case BehaviourPackage.PATROL_BEHAVIOR__PATROL_ZONE:
 				return patrolZone != null;
 		}
@@ -343,12 +411,29 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated
 	 */
 	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case BehaviourPackage.PATROL_BEHAVIOR___NEXT_INDEX:
+				nextIndex();
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (startIndex: ");
-		result.append(startIndex);
+		result.append(" (currentIndex: ");
+		result.append(currentIndex);
+		result.append(", behavior: ");
+		result.append(behavior);
 		result.append(')');
 		return result.toString();
 	}

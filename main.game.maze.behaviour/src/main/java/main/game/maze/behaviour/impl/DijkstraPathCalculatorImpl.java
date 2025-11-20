@@ -19,31 +19,31 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link main.game.maze.behaviour.impl.DijkstraPathCalculatorImpl#getMaxIterations <em>Max Iterations</em>}</li>
+ *   <li>{@link main.game.maze.behaviour.impl.DijkstraPathCalculatorImpl#getMaxPathLength <em>Max Path Length</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements DijkstraPathCalculator {
 	/**
-	 * The default value of the '{@link #getMaxIterations() <em>Max Iterations</em>}' attribute.
+	 * The default value of the '{@link #getMaxPathLength() <em>Max Path Length</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMaxIterations()
+	 * @see #getMaxPathLength()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int MAX_ITERATIONS_EDEFAULT = 0;
+	protected static final int MAX_PATH_LENGTH_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getMaxIterations() <em>Max Iterations</em>}' attribute.
+	 * The cached value of the '{@link #getMaxPathLength() <em>Max Path Length</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getMaxIterations()
+	 * @see #getMaxPathLength()
 	 * @generated
 	 * @ordered
 	 */
-	protected int maxIterations = MAX_ITERATIONS_EDEFAULT;
+	protected int maxPathLength = MAX_PATH_LENGTH_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,8 +70,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	 * @generated
 	 */
 	@Override
-	public int getMaxIterations() {
-		return maxIterations;
+	public int getMaxPathLength() {
+		return maxPathLength;
 	}
 
 	/**
@@ -80,11 +80,11 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	 * @generated
 	 */
 	@Override
-	public void setMaxIterations(int newMaxIterations) {
-		int oldMaxIterations = maxIterations;
-		maxIterations = newMaxIterations;
+	public void setMaxPathLength(int newMaxPathLength) {
+		int oldMaxPathLength = maxPathLength;
+		maxPathLength = newMaxPathLength;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_ITERATIONS, oldMaxIterations, maxIterations));
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_PATH_LENGTH, oldMaxPathLength, maxPathLength));
 	}
 
 	/**
@@ -95,8 +95,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_ITERATIONS:
-				return getMaxIterations();
+			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_PATH_LENGTH:
+				return getMaxPathLength();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -109,8 +109,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_ITERATIONS:
-				setMaxIterations((Integer)newValue);
+			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_PATH_LENGTH:
+				setMaxPathLength((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -124,8 +124,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_ITERATIONS:
-				setMaxIterations(MAX_ITERATIONS_EDEFAULT);
+			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_PATH_LENGTH:
+				setMaxPathLength(MAX_PATH_LENGTH_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -139,8 +139,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_ITERATIONS:
-				return maxIterations != MAX_ITERATIONS_EDEFAULT;
+			case BehaviourPackage.DIJKSTRA_PATH_CALCULATOR__MAX_PATH_LENGTH:
+				return maxPathLength != MAX_PATH_LENGTH_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -155,8 +155,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (maxIterations: ");
-		result.append(maxIterations);
+		result.append(" (maxPathLength: ");
+		result.append(maxPathLength);
 		result.append(')');
 		return result.toString();
 	}

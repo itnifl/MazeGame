@@ -2,6 +2,7 @@
  */
 package main.game.maze.behaviour;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -26,6 +27,9 @@ public interface PathCalculator extends EObject {
 	 * The literals are from the enumeration {@link main.game.maze.behaviour.DistanceMethod}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Method used to compute when the path calculator did not hit the target, or as heuristic method for A* algorithm.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Distance Method</em>' attribute.
 	 * @see main.game.maze.behaviour.DistanceMethod
 	 * @see #setDistanceMethod(DistanceMethod)
@@ -45,5 +49,13 @@ public interface PathCalculator extends EObject {
 	 * @generated
 	 */
 	void setDistanceMethod(DistanceMethod value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model required="true"
+	 * @generated
+	 */
+	EList<Position> compute(Position target);
 
 } // PathCalculator
