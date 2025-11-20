@@ -8,8 +8,8 @@ Bundle-SymbolicName: main.game.maze.comp.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: main.game.maze.comp,
  main.game.maze.comp.ide,
- difficulty-module,
- opponents-module,
+ main.game.maze.difficulties,
+ main.game.maze.opponents,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.ui.codetemplates.ui,
