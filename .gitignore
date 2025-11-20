@@ -49,7 +49,6 @@ dependency-reduced-pom.xml
 # IDEs
 # Eclipse / PDE
 .project
-.classpath
 .settings/
 .loadpath
 .factorypath
