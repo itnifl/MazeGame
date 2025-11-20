@@ -10,7 +10,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ocl.pivot,
- org.eclipse.acceleo.engine,
- main.game.maze.difficulties,
- main.game.maze.opponents
+ org.eclipse.acceleo.engine
 Export-Package: main.game.maze.gen
