@@ -1321,13 +1321,13 @@ public interface BehaviourPackage extends EPackage {
 	int CHARACTER_EVENT_FEATURE_COUNT = 2;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_EVENT___NOTIFY = 0;
+	int CHARACTER_EVENT___NOTIFY_SUBSCRIBERS = 0;
 
 	/**
 	 * The number of operations of the '<em>Character Event</em>' class.
@@ -1384,13 +1384,13 @@ public interface BehaviourPackage extends EPackage {
 	int HEALTH_EVENT_FEATURE_COUNT = CHARACTER_EVENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HEALTH_EVENT___NOTIFY = CHARACTER_EVENT___NOTIFY;
+	int HEALTH_EVENT___NOTIFY_SUBSCRIBERS = CHARACTER_EVENT___NOTIFY_SUBSCRIBERS;
 
 	/**
 	 * The number of operations of the '<em>Health Event</em>' class.
@@ -1447,13 +1447,13 @@ public interface BehaviourPackage extends EPackage {
 	int SPEED_EVENT_FEATURE_COUNT = CHARACTER_EVENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SPEED_EVENT___NOTIFY = CHARACTER_EVENT___NOTIFY;
+	int SPEED_EVENT___NOTIFY_SUBSCRIBERS = CHARACTER_EVENT___NOTIFY_SUBSCRIBERS;
 
 	/**
 	 * The number of operations of the '<em>Speed Event</em>' class.
@@ -1501,13 +1501,13 @@ public interface BehaviourPackage extends EPackage {
 	int TIME_EVENT_FEATURE_COUNT = CHARACTER_EVENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TIME_EVENT___NOTIFY = CHARACTER_EVENT___NOTIFY;
+	int TIME_EVENT___NOTIFY_SUBSCRIBERS = CHARACTER_EVENT___NOTIFY_SUBSCRIBERS;
 
 	/**
 	 * The number of operations of the '<em>Time Event</em>' class.
@@ -1564,13 +1564,13 @@ public interface BehaviourPackage extends EPackage {
 	int VISION_EVENT_FEATURE_COUNT = CHARACTER_EVENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VISION_EVENT___NOTIFY = CHARACTER_EVENT___NOTIFY;
+	int VISION_EVENT___NOTIFY_SUBSCRIBERS = CHARACTER_EVENT___NOTIFY_SUBSCRIBERS;
 
 	/**
 	 * The number of operations of the '<em>Vision Event</em>' class.
@@ -1645,13 +1645,13 @@ public interface BehaviourPackage extends EPackage {
 	int ATTACK_EVENT_FEATURE_COUNT = CHARACTER_EVENT_FEATURE_COUNT + 4;
 
 	/**
-	 * The operation id for the '<em>Notify</em>' operation.
+	 * The operation id for the '<em>Notify Subscribers</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ATTACK_EVENT___NOTIFY = CHARACTER_EVENT___NOTIFY;
+	int ATTACK_EVENT___NOTIFY_SUBSCRIBERS = CHARACTER_EVENT___NOTIFY_SUBSCRIBERS;
 
 	/**
 	 * The number of operations of the '<em>Attack Event</em>' class.
@@ -2214,14 +2214,14 @@ public interface BehaviourPackage extends EPackage {
 	EReference getCharacterEvent_Subscriber();
 
 	/**
-	 * Returns the meta object for the '{@link main.game.maze.behaviour.CharacterEvent#notify() <em>Notify</em>}' operation.
+	 * Returns the meta object for the '{@link main.game.maze.behaviour.CharacterEvent#notifySubscribers() <em>Notify Subscribers</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Notify</em>' operation.
-	 * @see main.game.maze.behaviour.CharacterEvent#notify()
+	 * @return the meta object for the '<em>Notify Subscribers</em>' operation.
+	 * @see main.game.maze.behaviour.CharacterEvent#notifySubscribers()
 	 * @generated
 	 */
-	EOperation getCharacterEvent__Notify();
+	EOperation getCharacterEvent__NotifySubscribers();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.behaviour.HealthEvent <em>Health Event</em>}'.
@@ -2905,12 +2905,12 @@ public interface BehaviourPackage extends EPackage {
 		EReference CHARACTER_EVENT__SUBSCRIBER = eINSTANCE.getCharacterEvent_Subscriber();
 
 		/**
-		 * The meta object literal for the '<em><b>Notify</b></em>' operation.
+		 * The meta object literal for the '<em><b>Notify Subscribers</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation CHARACTER_EVENT___NOTIFY = eINSTANCE.getCharacterEvent__Notify();
+		EOperation CHARACTER_EVENT___NOTIFY_SUBSCRIBERS = eINSTANCE.getCharacterEvent__NotifySubscribers();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.behaviour.impl.HealthEventImpl <em>Health Event</em>}' class.

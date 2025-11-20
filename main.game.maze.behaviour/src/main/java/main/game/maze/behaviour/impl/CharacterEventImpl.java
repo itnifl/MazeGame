@@ -151,7 +151,7 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	 * @generated
 	 */
 	@Override
-	public void notify() {
+	public void notifySubscribers() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -234,8 +234,8 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case BehaviourPackage.CHARACTER_EVENT___NOTIFY:
-				notify();
+			case BehaviourPackage.CHARACTER_EVENT___NOTIFY_SUBSCRIBERS:
+				notifySubscribers();
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

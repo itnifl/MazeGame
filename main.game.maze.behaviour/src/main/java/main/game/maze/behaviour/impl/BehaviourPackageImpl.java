@@ -773,7 +773,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	@Override
-	public EOperation getCharacterEvent__Notify() {
+	public EOperation getCharacterEvent__NotifySubscribers() {
 		return characterEventEClass.getEOperations().get(0);
 	}
 
@@ -1092,7 +1092,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		characterEventEClass = createEClass(CHARACTER_EVENT);
 		createEAttribute(characterEventEClass, CHARACTER_EVENT__PROBABILITY);
 		createEReference(characterEventEClass, CHARACTER_EVENT__SUBSCRIBER);
-		createEOperation(characterEventEClass, CHARACTER_EVENT___NOTIFY);
+		createEOperation(characterEventEClass, CHARACTER_EVENT___NOTIFY_SUBSCRIBERS);
 
 		healthEventEClass = createEClass(HEALTH_EVENT);
 		createEAttribute(healthEventEClass, HEALTH_EVENT__HEALTH_AMOUNT);
@@ -1246,7 +1246,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 		initEAttribute(getCharacterEvent_Probability(), ecorePackage.getEDouble(), "probability", null, 1, 1, CharacterEvent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getCharacterEvent_Subscriber(), this.getMovementBehavior(), null, "subscriber", null, 1, 1, CharacterEvent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEOperation(getCharacterEvent__Notify(), null, "notify", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getCharacterEvent__NotifySubscribers(), null, "notifySubscribers", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(healthEventEClass, HealthEvent.class, "HealthEvent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getHealthEvent_HealthAmount(), ecorePackage.getEInt(), "healthAmount", null, 1, 1, HealthEvent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

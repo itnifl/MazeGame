@@ -80,6 +80,6 @@ public interface CharacterEvent extends EObject {
 	 * @model
 	 * @generated
 	 */
-	void notify();
+	void notifySubscribers();
 
 } // CharacterEvent

@@ -280,7 +280,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot">
       <details key="ValidProbability" value="self.probability >= 0 and self.probability &lt;= 100"/>
     </eAnnotations>
-    <eOperations name="notify"/>
+    <eOperations name="notifySubscribers"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="probability" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

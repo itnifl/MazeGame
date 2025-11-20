@@ -21,20 +21,6 @@
     <validationDelegate
         uri="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
         class="org.eclipse.ocl.pivot.delegate.OCLValidationDelegateFactory"/>
-  </extension>
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated opponents -->
-      <package
-            uri="http://main.game.maze/opponents"
-            class="main.game.maze.opponents.OpponentsPackage"
-            genModel="src/main/resources/opponents.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.extension_parser">
-      <!-- @generated opponents -->
-      <parser
-            type="opponents"
-            class="main.game.maze.opponents.util.OpponentsResourceFactoryImpl"/>
-   </extension>
+  </extension>   
 
 </plugin>
