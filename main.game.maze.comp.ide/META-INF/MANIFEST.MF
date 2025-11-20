@@ -7,11 +7,18 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: main.game.maze.comp.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: main.game.maze.comp,
- main.game.maze.difficulties,
- main.game.maze.opponents,
- org.eclipse.xtext.ide,
- org.eclipse.xtext.xbase.ide,
- org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
+ org.eclipse.jface.text,
+ org.eclipse.ui,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: main.game.maze.ide.contentassist.antlr,
  main.game.maze.ide.contentassist.antlr.internal

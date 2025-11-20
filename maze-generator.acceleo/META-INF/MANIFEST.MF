@@ -1,12 +1,16 @@
-Bundle-SymbolicName: maze-generator.acceleo
-Bundle-Name: maze-generator.acceleo
-Bundle-Version: 1.0.0.qualifier
+Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-RequiredExecutionEnvironment: JavaSE-24
+Bundle-Name: maze-generator.acceleo
+Bundle-SymbolicName: maze-generator.acceleo;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ocl.pivot,
  org.eclipse.acceleo.engine,
- main.game.maze.difficulties
+ main.game.maze.difficulties,
+ main.game.maze.opponents
 Export-Package: main.game.maze.gen
