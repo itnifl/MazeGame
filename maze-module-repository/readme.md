@@ -63,7 +63,7 @@ If you manage repositories via the Tycho target configuration, reference the sit
     mvn -pl maze-module-repository -am clean verify
     ```
 
-- **movements-module, difficulty-module, opponents-module → maze-feature → maze-module-repository**
+- **main.game.maze.behaviour, main.game.maze.difficulties, main.game.maze.opponents → maze-feature → maze-module-repository**
   - These are Eclipse plugins. The feature lists them. The repository packages the feature and these plugins into installable units.
   - If any of these plugins change, rebuild the feature and then the repository so the site contains the fresh versions.
 
@@ -77,9 +77,9 @@ If you manage repositories via the Tycho target configuration, reference the sit
 
 ### Data flow summary
 ```
-[movements-module] 
-[difficulty-module]  >--> [maze-feature] --> [maze-module-repository p2 site]
-[opponents-module]  /
+[main.game.maze.behaviour] 
+[main.game.maze.difficulties]  >--> [maze-feature] --> [maze-module-repository p2 site]
+[main.game.maze.opponents]  /
 
 releng (target and mirror) --> provides input repositories for Tycho resolution
 

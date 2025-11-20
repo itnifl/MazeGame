@@ -3,9 +3,9 @@
 ## Index
 
 * 🧩 [project-status](project-status/readme.md)
-* 🧩 [movements-module](movements-module/readme.md)
-* 🧩 [difficulty-module](difficulty-module/readme.md)
-* 🧩 [opponents-module](opponents-module/readme.md)
+* 🧩 [main.game.maze.behaviour](main.game.maze.behaviour/readme.md)
+* 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
+* 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 🖥️ [maze](maze/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
@@ -133,8 +133,8 @@ mvn -U clean install
 # run all unit tests
 mvn test
 
-# run unit tests only in opponents-module
-mvn -pl opponents-module -am test
+# run unit tests only in main.game.maze.opponents
+mvn -pl main.game.maze.opponents -am test
 
 # Run the JavaFX game (Windows)
 # -> Start in VSCode (CTRl + F5)
@@ -215,9 +215,9 @@ This repo is then:
 
 * All `eclipse-plugin` modules that require EMF/OCL/Acceleo:
 
-  * `movements-module`
-  * `difficulty-module`
-  * `opponents-module`
+  * `main.game.maze.behaviour`
+  * `main.game.maze.difficulties`
+  * `main.game.maze.opponents`
   * `maze-generator.acceleo`
   * `maze-generator.runner` (if enabled)
 
@@ -225,9 +225,9 @@ The game itself (maze module) does not fetch anything from releng/local-p2. All 
 
 Who actually uses releng/local-p2?
 - These modules depend on the local p2 mirror during build:
-- movements-module (eclipse-plugin)
-- difficulty-module (eclipse-plugin)
-- opponents-module (eclipse-plugin)
+- main.game.maze.behaviour (eclipse-plugin)
+- main.game.maze.difficulties (eclipse-plugin)
+- main.game.maze.opponents (eclipse-plugin)
 - maze-generator.acceleo (eclipse-plugin)
 - maze-generator.runner (eclipse-plugin)
 - maze-feature (feature)
@@ -237,7 +237,7 @@ Who actually uses releng/local-p2?
 
 ## EMF model plug-ins
 
-### 2. `movements-module`
+### 2. `main.game.maze.behaviour`
 
 **Bundle:** `main.game.maze.behaviour`
 **Type:** `eclipse-plugin` EMF model.
@@ -268,7 +268,7 @@ Who actually uses releng/local-p2?
 
 ---
 
-### 3. `difficulty-module`
+### 3. `main.game.maze.difficulties`
 
 **Bundle:** `main.game.maze.difficulties`
 **Type:** `eclipse-plugin` EMF model.
@@ -300,13 +300,13 @@ Who actually uses releng/local-p2?
 
 **Used by:**
 
-* `opponents-module` (via `Require-Bundle: main.game.maze.difficulties`)
+* `main.game.maze.opponents` (via `Require-Bundle: main.game.maze.difficulties`)
 * `maze-generator.acceleo` (uses the difficulty model as input)
 * Indirectly by the JavaFX game (`maze`).
 
 ---
 
-### 4. `opponents-module`
+### 4. `main.game.maze.opponents`
 
 **Bundle:** `main.game.maze.opponents`
 **Type:** `eclipse-plugin` EMF model + OCL.
@@ -331,7 +331,7 @@ Who actually uses releng/local-p2?
 **Prerequisites:**
 
 * `releng/mirror` (for EMF/OCL).
-* `difficulty-module` (because of `Require-Bundle: main.game.maze.difficulties`).
+* `main.game.maze.difficulties` (because of `Require-Bundle: main.game.maze.difficulties`).
 
 **Used by:**
 
@@ -367,7 +367,7 @@ Who actually uses releng/local-p2?
 **Prerequisites:**
 
 * `releng/mirror` (for EMF, OCL, Acceleo).
-* `difficulty-module` (the difficulty model is part of the input for the templates).
+* `main.game.maze.difficulties` (the difficulty model is part of the input for the templates).
 
 **Used by:**
 
@@ -430,9 +430,9 @@ Who actually uses releng/local-p2?
 
 **Prerequisites:**
 
-* `movements-module` (`main.game.maze.behaviour`)
-* `difficulty-module` (`main.game.maze.difficulties`)
-* `opponents-module` (`main.game.maze.opponents`)
+* `main.game.maze.behaviour` (`main.game.maze.behaviour`)
+* `main.game.maze.difficulties` (`main.game.maze.difficulties`)
+* `main.game.maze.opponents` (`main.game.maze.opponents`)
 
 **Used by:**
 
@@ -503,7 +503,7 @@ Who actually uses releng/local-p2?
 
 * `releng/mirror` (for p2 repo).
 * `maze-generator.acceleo` and `maze-generator.runner` (to actually run the Acceleo application).
-* The EMF model plug-ins (`difficulty-module`, `opponents-module`, `movements-module`) as inputs to generation.
+* The EMF model plug-ins (`main.game.maze.difficulties`, `main.game.maze.opponents`, `main.game.maze.behaviour`) as inputs to generation.
 
 **Used by:**
 
@@ -530,7 +530,7 @@ Who actually uses releng/local-p2?
 
 **Prerequisites:**
 
-* All EMF model modules built (`movements-module`, `difficulty-module`, `opponents-module`).
+* All EMF model modules built (`main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`).
 * `maze-module-generator` built, if the game uses the generated sources.
 * JavaFX available via Maven (nothing to do with p2).
 
@@ -545,10 +545,10 @@ Who actually uses releng/local-p2?
 Putting it all together, the clean conceptual order (respecting prerequisites) is:
 
 1. `releng/mirror`
-2. `movements-module`
-3. `difficulty-module`
-4. `opponents-module`  *(needs `difficulty-module`)*
-5. `maze-generator.acceleo`  *(needs `difficulty-module`)*
+2. `main.game.maze.behaviour`
+3. `main.game.maze.difficulties`
+4. `main.game.maze.opponents`  *(needs `main.game.maze.difficulties`)*
+5. `maze-generator.acceleo`  *(needs `main.game.maze.difficulties`)*
 6. `maze-generator.runner`  *(needs `maze-generator.acceleo`, uses `local-p2`)*
 7. `maze-feature`  *(wraps movements, difficulty, opponents)*
 8. `maze-module-repository`  *(wraps `maze-feature` into a p2 site)*
@@ -559,17 +559,17 @@ In your current root POM, `maze-generator.runner` is commented out, but if you r
 
 ## The modules
 
-### - movements-module
+### - main.game.maze.behaviour
 
-Movement behaviors for characters and utilities used by the game loop. See the module guide: [movements-module/readme.md](movements-module/readme.md).
+Movement behaviors for characters and utilities used by the game loop. See the module guide: [main.game.maze.behaviour/readme.md](main.game.maze.behaviour/readme.md).
 
-### - difficulty-module
+### - main.game.maze.difficulties
 
-Ecore model and logic for difficulty profiles, defaults, and validations. See the module guide: [difficulty-module/readme.md](difficulty-module/readme.md).
+Ecore model and logic for difficulty profiles, defaults, and validations. See the module guide: [main.game.maze.difficulties/readme.md](main.game.maze.difficulties/readme.md).
 
-### - opponents-module
+### - main.game.maze.opponents
 
-Ecore model and runtime helpers for enemies, threat values, and validation rules. See the module guide: [opponents-module/readme.md](opponents-module/readme.md).
+Ecore model and runtime helpers for enemies, threat values, and validation rules. See the module guide: [main.game.maze.opponents/readme.md](main.game.maze.opponents/readme.md).
 
 ### - maze
 

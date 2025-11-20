@@ -54,7 +54,7 @@
                 </repository>
               </repositories>
 
-              <executionEnvironment>JavaSE-24</executionEnvironment>
+              <executionEnvironment>JavaSE-21</executionEnvironment>
               <jvmArgs>
                 <arg>-Dfile.encoding=UTF-8</arg>
               </jvmArgs>
