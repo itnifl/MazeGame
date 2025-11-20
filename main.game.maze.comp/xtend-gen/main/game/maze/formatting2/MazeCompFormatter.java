@@ -4,7 +4,9 @@
 package main.game.maze.formatting2;
 
 import com.google.inject.Inject;
+import main.game.maze.mazecomp.MazeFile;
 import main.game.maze.opponents.LootTable;
+import main.game.maze.services.MazeCompGrammarAccess;
 import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
 import org.eclipse.xtext.xbase.lib.Extension;
@@ -13,19 +15,14 @@ import org.eclipse.xtext.xbase.lib.XbaseGenerated;
 public class MazeCompFormatter extends AbstractFormatter2 {
   @Inject
   @Extension
-  private /* MazeCompGrammarAccess */Object _mazeCompGrammarAccess;
+  private MazeCompGrammarAccess _mazeCompGrammarAccess;
 
-  protected void _format(final /* MazeFile */Object mazeFile, @Extension final IFormattableDocument document) {
+  protected void _format(final MazeFile mazeFile, @Extension final IFormattableDocument document) {
     throw new Error("Unresolved compilation problems:"
-      + "\nzombies cannot be resolved"
       + "\nformat cannot be resolved"
-      + "\nghosts cannot be resolved"
       + "\nformat cannot be resolved"
-      + "\npumpkinBombers cannot be resolved"
       + "\nformat cannot be resolved"
-      + "\nlootTables cannot be resolved"
       + "\nformat cannot be resolved"
-      + "\nlootItems cannot be resolved"
       + "\nformat cannot be resolved");
   }
 
@@ -35,22 +32,22 @@ public class MazeCompFormatter extends AbstractFormatter2 {
   }
 
   @XbaseGenerated
-  public void format(final MazeFile lootTable, final IFormattableDocument document) {
-    if (lootTable != null) {
-      _format(lootTable, document);
+  public void format(final Object mazeFile, final IFormattableDocument document) {
+    if (mazeFile != null) {
+      _format(mazeFile, document);
       return;
-    } else if (lootTable != null) {
-      _format(lootTable, document);
+    } else if (mazeFile != null) {
+      _format(mazeFile, document);
       return;
-    } else if (lootTable != null) {
-      _format(lootTable, document);
+    } else if (mazeFile != null) {
+      _format(mazeFile, document);
       return;
-    } else if (lootTable != null) {
-      _format(lootTable, document);
+    } else if (mazeFile != null) {
+      _format(mazeFile, document);
       return;
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
-        Arrays.<Object>asList(lootTable, document).toString());
+        Arrays.<Object>asList(mazeFile, document).toString());
     }
   }
 }
