@@ -9,7 +9,7 @@ This module defines the opponent metamodel and generated code for enemies in the
 From the repository root:
 
 ```bash
-mvn -pl opponents-module -am -DskipTests clean verify
+mvn -pl main.game.maze.opponents -am -DskipTests clean verify
 ```
 
 ## Test
@@ -17,7 +17,7 @@ mvn -pl opponents-module -am -DskipTests clean verify
 Run unit tests for this module:
 
 ```bash
-mvn -pl opponents-module -DskipTests=false test
+mvn -pl main.game.maze.opponents -DskipTests=false test
 ```
 
 ## What it provides
@@ -31,11 +31,11 @@ mvn -pl opponents-module -DskipTests=false test
 The built jar is created at:
 
 ```
-opponents-module/target/main.game.maze.opponents-1.0.0-SNAPSHOT.jar
+main.game.maze.opponents/target/main.game.maze.opponents-1.0.0-SNAPSHOT.jar
 ```
 
 ## Clean
 
 ```bash
-mvn -pl opponents-module clean
+mvn -pl main.game.maze.opponents clean
 ```

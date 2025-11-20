@@ -12,7 +12,7 @@ scores.txt
 
 # Maven build output:
 **/target/
-/opponents-module/target
+/main.game.maze.opponents/target
 maze/testScores.txt
 
 
@@ -20,8 +20,8 @@ maze/testScores.txt
 **/.settings/
 **/.factorypath
 **/.metadata/
-opponents-module/icons/
-!opponents-module/src/main/resources/icons/
+main.game.maze.opponents/icons/
+!main.game.maze.opponents/src/main/resources/icons/
 
 # Eclipse/IDE caches / temp
 **/.cache/

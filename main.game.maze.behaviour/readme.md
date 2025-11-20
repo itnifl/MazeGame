@@ -9,7 +9,7 @@ This module contains reusable movement logic for the Maze Game characters. It pr
 From the repository root:
 
 ```bash
-mvn -pl movements-module -am -DskipTests clean verify
+mvn -pl main.game.maze.behaviour -am -DskipTests clean verify
 ```
 
 ## Test
@@ -17,7 +17,7 @@ mvn -pl movements-module -am -DskipTests clean verify
 Run unit tests for this module:
 
 ```bash
-mvn -pl movements-module -DskipTests=false test
+mvn -pl main.game.maze.behaviour -DskipTests=false test
 ```
 
 ## What it provides
@@ -31,11 +31,11 @@ mvn -pl movements-module -DskipTests=false test
 The built jar is created at:
 
 ```
-movements-module/target/main.game.maze.behaviour-1.0.0-SNAPSHOT.jar
+main.game.maze.behaviour/target/main.game.maze.behaviour-1.0.0-SNAPSHOT.jar
 ```
 
 ## Clean
 
 ```bash
-mvn -pl movements-module clean
+mvn -pl main.game.maze.behaviour clean
 ```

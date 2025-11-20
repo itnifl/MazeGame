@@ -1,4 +1,4 @@
-# difficulty-module
+# main.game.maze.difficulties
 
 EMF and OCL based model for game difficulty.  
 Provides the `DifficultyGameData` meta-model, default values, sample XMI instances, and validation through OCL invariants.
@@ -93,7 +93,7 @@ This bundle is consumed by other game modules at runtime and inside tests.
 
 This bundle defines the difficulty model used by:
 
-• `opponents-module` for threat and balancing rules
+• `main.game.maze.opponents` for threat and balancing rules
 • The Acceleo generator for producing game code from difficulty configurations
 • The JavaFX game module (`maze`) at runtime through its generated JAR
 

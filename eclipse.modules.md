@@ -11,9 +11,9 @@ The trick is: the same EMF code lives as **Eclipse plug-ins** in the first world
 
 These modules are pure Eclipse / Tycho:
 
-* `movements-module` → bundle `main.game.maze.behaviour`
-* `difficulty-module` → bundle `main.game.maze.difficulties`
-* `opponents-module` → bundle `main.game.maze.opponents`
+* `main.game.maze.behaviour` → bundle `main.game.maze.behaviour`
+* `main.game.maze.difficulties` → bundle `main.game.maze.difficulties`
+* `main.game.maze.opponents` → bundle `main.game.maze.opponents`
 * `maze-generator.acceleo` → Acceleo templates + app id
 * `maze-generator.runner` → headless Equinox runner
 
@@ -90,7 +90,7 @@ Conceptual pipeline:
    → fills `releng/local-p2` with EMF/OCL/Acceleo/etc.
 
 2. Tycho builds the Eclipse modules
-   → `movements-module`, `difficulty-module`, `opponents-module`, `maze-generator.*`
+   → `main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`, `maze-generator.*`
 
 3. `maze-module-generator` (or `maze-generated`)
    → gets generated Java from Acceleo and exposes it as another Maven JAR
