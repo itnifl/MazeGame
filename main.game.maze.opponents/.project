@@ -3,9 +3,14 @@
 	<name>main.game.maze.opponents</name>
 	<comment></comment>
 	<projects>
-		<project>difficulty-module</project>
+		<project>main.game.maze.difficulties</project>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.ocl.pivot.ui.oclbuilder</name>
 			<arguments>
@@ -44,6 +49,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.ocl.pivot.ui.oclnature</nature>
