@@ -1,4 +1,4 @@
-module main.game.maze.GenerateMazeComp
+module main.game.maze.xtextgen.GenerateMazeComp
 
 import org.eclipse.xtext.xtext.generator.*
 import org.eclipse.xtext.xtext.generator.model.project.*
