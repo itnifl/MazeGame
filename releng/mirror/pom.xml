@@ -34,7 +34,7 @@
                   <url>https://download.eclipse.org/modeling/emf/emf/updates/</url>
                 </repository>
                 <repository>
-                  <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/latest/</url>
+                  <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/</url>
                 </repository>
                 <repository>
                   <url>https://download.eclipse.org/acceleo/updates/releases/3.7</url>

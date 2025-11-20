@@ -69,6 +69,7 @@ Write-StepResult -Step $step0 -Status "OK" -CommandText $cmdText0 -Summary "Reco
 $step1   = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
 Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
+mkdir -p releng\local-p2
 mvn -f releng/mirror/pom.xml -U verify
 '@
 if ($StartAt -gt 1) {
@@ -78,6 +79,7 @@ if ($StartAt -gt 1) {
     $output1 = & {
         Remove-Item -Recurse -Force $env:USERPROFILE\.m2\repository -ErrorAction SilentlyContinue
         Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
+        & mkdir -p releng\local-p2
         & mvn -f releng/mirror/pom.xml -U verify
     } 2>&1
     if ($LASTEXITCODE -eq 0) {
