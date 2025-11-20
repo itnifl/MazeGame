@@ -93,7 +93,7 @@
     <genClasses image="false" ecoreClass="movements.ecore#//CharacterEvent">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//CharacterEvent/probability"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference movements.ecore#//CharacterEvent/subscriber"/>
-      <genOperations ecoreOperation="movements.ecore#//CharacterEvent/notify"/>
+      <genOperations ecoreOperation="movements.ecore#//CharacterEvent/notifySubscribers"/>
     </genClasses>
     <genClasses ecoreClass="movements.ecore#//HealthEvent">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute movements.ecore#//HealthEvent/healthAmount"/>
