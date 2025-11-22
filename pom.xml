@@ -92,17 +92,10 @@
         <version>${tycho.version}</version>
         <configuration>
           <pomDependencies>ignore</pomDependencies>    
-           <includeModules>true</includeModules>      
+            <includeModules>true</includeModules>      
           <target> 
             <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
-          </target>        
-          <repositories>
-              <repository>
-                  <id>local-p2</id>
-                  <layout>p2</layout>
-                  <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
-              </repository>
-          </repositories>             
+          </target>                   
         </configuration>
       </plugin>
       <plugin>
