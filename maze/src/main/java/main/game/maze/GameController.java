@@ -1,6 +1,5 @@
 package main.game.maze;
 
-import java.io.Console;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
+import main.game.maze.service.CharacterIntersectionFixerService;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -73,7 +73,11 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //Empty.. 
+        javafx.application.Platform.runLater(() -> {
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+            }
+        });
     }
 
     @FXML
@@ -226,9 +230,15 @@ public class GameController implements Initializable {
         }
 
         runComputerCharacters();
+        var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
+        characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
         playerCharacter.setHitPoints(100);
         var score = winGameAction.resetScore();
         scoreLabel.setText("Score: " + String.valueOf(score));
+
+        // Ensure the board is the main focus owner for key events
+        gameBoard.setFocusTraversable(true);
+        gameBoard.requestFocus();
     }
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
