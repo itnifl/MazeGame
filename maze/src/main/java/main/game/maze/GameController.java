@@ -1,6 +1,5 @@
 package main.game.maze;
 
-import java.io.Console;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,11 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //Empty.. 
+        javafx.application.Platform.runLater(() -> {
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+            }
+        });
     }
 
     @FXML
@@ -232,6 +235,10 @@ public class GameController implements Initializable {
         playerCharacter.setHitPoints(100);
         var score = winGameAction.resetScore();
         scoreLabel.setText("Score: " + String.valueOf(score));
+
+        // Ensure the board is the main focus owner for key events
+        gameBoard.setFocusTraversable(true);
+        gameBoard.requestFocus();
     }
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
