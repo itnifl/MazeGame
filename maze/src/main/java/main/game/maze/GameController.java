@@ -34,6 +34,7 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
+import main.game.maze.service.CharacterIntersectionFixerService;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -226,6 +227,8 @@ public class GameController implements Initializable {
         }
 
         runComputerCharacters();
+        var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
+        characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
         playerCharacter.setHitPoints(100);
         var score = winGameAction.resetScore();
         scoreLabel.setText("Score: " + String.valueOf(score));
