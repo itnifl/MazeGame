@@ -19,17 +19,24 @@ public class MazeWorld {
      */
     public static MazeWorld GetWorld() {
         if (world == null) {
-            MazeGeneratorConfig cfg = new MazeGeneratorConfig(
-                        StageConstants.BoardMaxX,
-                        StageConstants.BoardMaxY,
-                        20,
-                        60,
-                        60,
-                        40
-                );
-            world = new MazeWorld(new DfsMazeGenerator(cfg));
+            world = new MazeWorld(new DfsMazeGenerator(getMazeConfig()));
         }
         return world;
+    }
+
+    public static MazeWorld RegenerateWorld() {
+        world = new MazeWorld(new DfsMazeGenerator(getMazeConfig()));
+        return world;
+    }
+    private static MazeGeneratorConfig getMazeConfig() {
+        return new MazeGeneratorConfig(
+            StageConstants.BoardMaxX,
+            StageConstants.BoardMaxY,
+            20,
+            60,
+            60,
+            40
+        );
     }
 
     public MazeWorld(IMazeGenerator generator) {

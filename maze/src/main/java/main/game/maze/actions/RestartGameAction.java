@@ -3,16 +3,14 @@ package main.game.maze.actions;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.GameOverController;
-import main.game.maze.StartController;
+import main.game.maze.MazeWorld;
 import main.game.maze.WinGameController;
 import main.game.maze.actions.base.ActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.constants.ScreenNameConstants;
-import main.game.maze.service.DifficultyService;
 
 public class RestartGameAction extends ActionScreens {
     private AnchorPane root;
@@ -50,7 +48,8 @@ public class RestartGameAction extends ActionScreens {
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
             App.gameController = controller;
-
+            MazeWorld.RegenerateWorld();
+            
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(screen);
 
