@@ -44,7 +44,6 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * More music and game sounds
 * Animations for die action and happy action
 * Read a maze from SVG for play
-* Generate a random maze on demand
 * More and different levels with their own characters and setup
 * Better design for high score
 * A menu with instructions and setup
@@ -110,7 +109,7 @@ VS Code Java runtime:
 # PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build
 
 # 1) start clean so the mirror is rebuilt
-Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
 mvn -f releng/mirror/pom.xml -U verify
 
 # 2) prove org.eclipse.core.runtime is in the mirror (True means found)
