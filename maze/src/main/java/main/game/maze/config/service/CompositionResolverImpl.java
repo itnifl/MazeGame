@@ -6,11 +6,11 @@ import java.util.*;
 
 /**
  * Implements the composition logic:
- * <ul>
- *     <li>If countsOverride is present, use it (takes precedence over ratios).</li>
- *     <li>If not, distribute according to ratios.</li>
- *     <li>Apply caps and then redistribute so the total enemy count is preserved.</li>
- * </ul>
+ * 
+ *     If countsOverride is present, use it (takes precedence over ratios).
+ *     If not, distribute according to ratios.
+ *     Apply caps and then redistribute so the total enemy count is preserved.
+ * 
  */
 public final class CompositionResolverImpl implements CompositionResolver {
 
@@ -35,14 +35,16 @@ public final class CompositionResolverImpl implements CompositionResolver {
 
         // 1) If explicit counts are provided, they override everything else
         if (profileRules.countsOverride() != null && !profileRules.countsOverride().isEmpty()) {
+
             Map<EnemyTypes, Integer> nonNegativeCounts =
                     clampNonNegative(profileRules.countsOverride());
             Map<EnemyTypes, Integer> capped =
                     applyCaps(nonNegativeCounts, profileRules.caps());
+
             return redistributeToTotal(capped, totalEnemyCount);
         }
 
-        // 2) Otherwise, use ratios
+        // Otherwise, use ratios
         Map<EnemyTypes, Double> sanitizedRatios = sanitizeRatios(profileRules.ratios());
         Map<EnemyTypes, Double> normalizedRatios = normalize(sanitizedRatios);
 
@@ -63,10 +65,12 @@ public final class CompositionResolverImpl implements CompositionResolver {
      */
     private static Map<EnemyTypes, Integer> clampNonNegative(Map<EnemyTypes, Integer> input) {
         Map<EnemyTypes, Integer> result = new EnumMap<>(EnemyTypes.class);
+
         input.forEach((type, value) -> {
             int safeValue = (value == null ? 0 : value);
             result.put(type, Math.max(0, safeValue));
         });
+
         return result;
     }
 
@@ -117,10 +121,10 @@ public final class CompositionResolverImpl implements CompositionResolver {
 
     /**
      * Allocates integers from fractional targets by:
-     * <ol>
-     *     <li>Taking the floor of each target.</li>
-     *     <li>Distributing remaining units to the largest fractional remainders.</li>
-     * </ol>
+     * 
+     *     Taking the floor of each target
+     *     Distributing remaining units to the largest fractional remainders.
+     * 
      */
     private static Map<EnemyTypes, Integer> largestRemainderAllocate(
             Map<EnemyTypes, Double> targets
@@ -130,6 +134,7 @@ public final class CompositionResolverImpl implements CompositionResolver {
 
         int sumOfFloors = 0;
         for (var entry : targets.entrySet()) {
+
             EnemyTypes type = entry.getKey();
             double value = entry.getValue();
 

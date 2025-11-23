@@ -1,174 +1,86 @@
 package main.game.maze.config.service;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Objects;
+import java.util.logging.Logger;
 
-import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.DifficultyGameData;
-import main.game.maze.difficulties.DifficultiesPackage;
-import main.game.maze.difficulties.EnemyMaxCount;
-import main.game.maze.difficulties.EnemyTypes;
-import main.game.maze.opponents.CharacterType;
-import main.game.maze.opponents.Ghost;
-import main.game.maze.opponents.OpponentModel;
-import main.game.maze.opponents.OpponentsPackage;
-import main.game.maze.opponents.Zombie;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMIResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
+import main.game.maze.opponents.OpponentModel;
+import main.game.maze.opponents.OpponentsPackage;
+import main.game.maze.difficulties.DifficultiesPackage;
+
+
 /**
- * Loads XMI with EMF and builds ProfileRules for each difficulty.
- * It translates the XMI files into simpler data used by the CompositionResolver.
+ * Centralized loader for EMF XMI resources used by the game.
+ * Focus here: loading OpponentModel from a classpath resource.
  */
 public final class XmiRulesLoader {
 
-    // Paths inside src/main/resources
-    private static final String DIFFICULTIES_XMI_PATH = "xmi/difficulties/difficulties.xmi";
-    private static final String OPPONENTS_XMI_PATH = "xmi/opponents/opponentModel.xmi";
+  private static final Logger LOG = Logger.getLogger(XmiRulesLoader.class.getName());
+  private static volatile boolean XMI_FACTORY_REGISTERED = false;
 
-    /**
-     * Loads difficulty and opponent data from XMI and constructs rules for each profile.
-     *
-     * @return map of profile name → ProfileRules
-     */
-    public Map<String, ProfileRules> load() {
-        // Initialize EMF to read XMI
-        ResourceSet resourceSet = new ResourceSetImpl();
-        resourceSet.getResourceFactoryRegistry()
-                .getExtensionToFactoryMap()
-                .put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+  public XmiRulesLoader() {}
 
-        // Register EPackages (so EMF knows the generated classes)
-        DifficultiesPackage.eINSTANCE.eClass();
-        OpponentsPackage.eINSTANCE.eClass();
+  /**
+   * Loads an OpponentModel from a classpath path (e.g. "/xmi/opponents/opponentModel.xmi").
+   * - Registers EMF packages once.
+   * - Resolves the classpath URL.
+   * - Loads and returns the root OpponentModel.
+   * Throws RuntimeException if anything fails (caller can show dialogs/log).
+   */
+  public OpponentModel loadOpponentModelFromClasspath(String classpathXmi) {
+    Objects.requireNonNull(classpathXmi, "classpathXmi must not be null");
+    ensureXmiFactory();
 
-        // Build URIs from classpath and load resources
-        URI difficultiesUri = uriFromResource(DIFFICULTIES_XMI_PATH);
-        URI opponentsUri = uriFromResource(OPPONENTS_XMI_PATH);
+    // 1) Register packages in both global and per-ResourceSet registries
+    OpponentsPackage.eINSTANCE.eClass();
+    DifficultiesPackage.eINSTANCE.eClass();
 
-        DifficultyGameData difficultiesRoot = (DifficultyGameData) resourceSet
-                .getResource(difficultiesUri, true)
-                .getContents()
-                .get(0);
+    EPackage.Registry.INSTANCE.put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
+    EPackage.Registry.INSTANCE.put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
 
-        OpponentModel opponentsRoot = (OpponentModel) resourceSet
-                .getResource(opponentsUri, true)
-                .getContents()
-                .get(0);
+    ResourceSet rs = new ResourceSetImpl();
+    rs.getPackageRegistry().put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
+    rs.getPackageRegistry().put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
 
-        // Average threat per type (only enabled enemies)
-        Map<EnemyTypes, Double> averageThreatByType = avgThreatByType(opponentsRoot);
-
-        // Build ProfileRules for each difficulty level declared in difficulties.xmi
-        Map<String, ProfileRules> result = new LinkedHashMap<>();
-
-        for (Difficulty difficulty : difficultiesRoot.getDifficulties()) {
-            XMIResource resource = (XMIResource) difficulty.eResource();
-
-            // XMI id (for example "easy", "normal", "hard")
-            String name = resource.getID(difficulty);
-
-            // Caps per type from enemyMaxCount
-            Map<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
-            for (EnemyMaxCount maxCount : difficulty.getEnemyMaxCount()) {
-                EnemyTypes type = EnemyTypes.valueOf(maxCount.getType().name());
-                int cappedValue = Math.max(0, maxCount.getMaxCount());
-                caps.put(type, cappedValue);
-            }
-
-            // Ratios derived from caps > 0, then normalized to sum to 1
-            int capSum = caps.values().stream()
-                    .mapToInt(Integer::intValue)
-                    .sum();
-
-            Map<EnemyTypes, Double> ratios = new EnumMap<>(EnemyTypes.class);
-            if (capSum > 0) {
-                caps.forEach((type, cap) -> {
-                    if (cap > 0) {
-                        ratios.put(type, cap / (double) capSum);
-                    }
-                });
-            }
-
-            // Estimated enemyCount : maxThreat / meanThreat
-            double meanThreat = averageThreatByType.values().stream()
-                    .mapToDouble(Double::doubleValue)
-                    .average()
-                    .orElse(1.0);
-
-            int estimatedEnemyCount = Math.max(
-                    1,
-                    (int) Math.floor(difficulty.getMaxThreat() / meanThreat)
-            );
-
-            // countsOverride is empty for now (XMI support can be added later)
-            Map<EnemyTypes, Integer> countsOverride = Map.of();
-
-            ProfileRules rules = new ProfileRules(
-                    name,
-                    estimatedEnemyCount,
-                    ratios,
-                    countsOverride,
-                    caps
-            );
-
-            result.put(name, rules);
-        }
-
-        return result;
+    // 2) Resolve the classpath resource
+    URL url = OpponentsPackage.class.getResource(classpathXmi);
+    if (url == null) {
+      url = XmiRulesLoader.class.getResource(classpathXmi);
+    }
+    if (url == null) {
+      throw new IllegalStateException("Opponent model resource not found in classpath: " + classpathXmi);
     }
 
-    /* ================= Helpers ================= */
-
-    private static URI uriFromResource(String path) {
-        URL url = Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(path);
-
-        if (url == null) {
-            throw new IllegalStateException("Resource not found on classpath: " + path);
-        }
-
-        return URI.createURI(url.toString());
+    // 3) Load via EMF
+    URI uri = URI.createURI(url.toString());
+    Resource res = rs.getResource(uri, true);
+    if (res == null || res.getContents().isEmpty()) {
+      throw new IllegalStateException("Loaded resource is empty: " + classpathXmi);
     }
 
-    private static Map<EnemyTypes, Double> avgThreatByType(OpponentModel opponentModel) {
-        Map<EnemyTypes, List<Double>> threatsByType = new EnumMap<>(EnemyTypes.class);
-
-        for (CharacterType character : opponentModel.getCharacterTypes()) {
-            if (!character.isEnabled()) {
-                continue;
-            }
-
-            EnemyTypes type =
-                    (character instanceof Ghost) ? EnemyTypes.GHOST
-                            : (character instanceof Zombie) ? EnemyTypes.ZOMBIE
-                            : EnemyTypes.PUMPKINBOMBER;
-
-            threatsByType
-                    .computeIfAbsent(type, key -> new ArrayList<>())
-                    .add(character.getThreatLevel());
-        }
-
-        Map<EnemyTypes, Double> averageThreat = new EnumMap<>(EnemyTypes.class);
-        threatsByType.forEach((type, threatLevels) -> {
-            double avg = threatLevels.stream()
-                    .mapToDouble(Double::doubleValue)
-                    .average()
-                    .orElse(1.0);
-            // Ensure there is always some minimal threat
-            averageThreat.put(type, Math.max(0.1, avg));
-        });
-
-        // Ensure all enemy types have a default value
-        for (EnemyTypes type : EnemyTypes.values()) {
-            averageThreat.putIfAbsent(type, 1.0);
-        }
-
-        return averageThreat;
+    Object root = res.getContents().get(0);
+    if (!(root instanceof OpponentModel om)) {
+      throw new IllegalStateException("Root is not OpponentModel: " + root);
     }
+
+    return om;
+  }
+
+  /** Registers the XMI factory only once. */
+  // Reduces redundancy and efficiency
+  private static synchronized void ensureXmiFactory() {
+    if (!XMI_FACTORY_REGISTERED) {
+      Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
+          .put("xmi", new XMIResourceFactoryImpl());
+      XMI_FACTORY_REGISTERED = true;
+      LOG.fine("XMIResourceFactoryImpl registered.");
+    }
+  }
 }
