@@ -92,7 +92,7 @@ public final class OpponentRuntimeFactory {
         diff.getEnemyMaxCount().forEach(e -> caps.put(e.getType(), Math.max(0, e.getMaxCount())));
         
         // 3) Choose a total enemyCount and ratios for the resolver
-        //    - enemyCount: use sum(caps) as a reasonable default (fallback to 10 if 0)
+        //    - enemyCount: use sum(caps) as a reasonable default 
         //    - ratios: uniform distribution among types present in caps (or among all types if caps empty)
         int enemyCount = caps.values().stream().mapToInt(Integer::intValue).sum();
         if (enemyCount <= 0) enemyCount = 10;
@@ -124,7 +124,6 @@ public final class OpponentRuntimeFactory {
         
         Map<EnemyTypes, Integer> target = resolver.resolve(key);
 
-        // diff ya está garantizado (hicimos early-return si era null)
         final int maxThreatByDifficulty = diff.getMaxThreat();
         final double speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
         final double dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
@@ -139,13 +138,13 @@ public final class OpponentRuntimeFactory {
 
 
         double threatSum = spawnByTarget(
-            characterList,  // candidatos del modelo
-            target,                             // lo que decidió el resolver
-            maxThreatByDifficulty,              // techo de amenaza
+            characterList,  // candidates
+            target,                             // resolvers decision
+            maxThreatByDifficulty,              // threat limit per difficulty
             speedMultiplierByDifficulty,
             dmgMultiplierByDifficulty,
             instantDeath,
-            gameController,                     // para registrar en FX
+            gameController,                     
             noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned
     );
 
@@ -197,15 +196,15 @@ private static double spawnByTarget(
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;
 
-            // Busca el primer candidato que quepa en el threat restante
+            // Search first candidate fitting threat limits
             CharacterType picked = null;
             while (!candidates.isEmpty()) {
                 var peek = candidates.peekFirst();
                 if (peek.getEffectiveThreat() > 0 && peek.getEffectiveThreat() <= remaining) {
-                    picked = candidates.pollFirst(); // consumir
+                    picked = candidates.pollFirst(); // consume it
                     break;
                 } else {
-                    // si no cabe, prueba con el siguiente (algo mayor no va a caber, pero dejamos el loop simple)
+                    // if not fitting
                     candidates.pollFirst();
                 }
             }
