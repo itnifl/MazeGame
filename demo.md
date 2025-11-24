@@ -315,3 +315,36 @@ This ties together:
 * The **runtime behavior** of the game.
 * The **validation behavior** for both correct and incorrect models.
 * The **build pipeline**, where `make.ps1` / `make` handle the local p2 mirror plus Maven build, and `Run-P2AndBuildCheck.ps1` gives a quick "build and run" flow for the demo.
+
+## 5. Build automation: GitHub Actions, `make`, and `make.ps1`
+
+The project has a small but coherent build story that is shared between local development and CI.
+
+- **GitHub Actions workflows** live in `.github/workflows/`:
+  - `buildtest.yml` runs on pull requests and performs a **full Tycho + game build**:
+    - Checks out the repo and sets up Temurin JDK 24 with Maven caching.
+    - Caches the local p2 mirror in `releng/local-p2` based on `releng/mirror/pom.xml` and `releng/maze.target`.
+    - Runs a Tycho build of the Eclipse plug-ins and p2 repository, then uploads the generated p2 site.
+    - In a separate `game` job, installs Xvfb and runs `mvn … -pl maze -am … clean verify` to build and test the JavaFX game headless on Linux.
+  - `main.yml` is a **JavaFX-only pipeline** that triggers on pull requests touching the `maze` module or workflow files:
+    - Sets up JDK 24 and runs the same `xvfb-run … mvn -pl maze -am … clean verify`.
+    - Uploads Surefire test reports and the built game jar from `maze/target`.
+
+- **`make` (Makefile)** is a Windows-friendly command-line shortcut that mirrors the CI steps:
+  - `make` or `make all` runs:
+    1. `toolchain-info` → prints Maven and Java versions.
+    2. `mirror` → (re)builds the local p2 mirror into `releng\local-p2` and updates `.mirror.stamp` based on `releng/mirror/pom.xml`.
+    3. `clear-tycho-cache` → removes the local Tycho p2 cache.
+    4. `build` → runs `mvn -U -DskipTests=false clean verify` for the full multi-module build.
+  - Additional targets like `force-mirror` and `clean-mirror` let you control the local p2 mirror explicitly.
+
+- **`make.ps1`** is a PowerShell wrapper that exposes the same flow with a single parameter:
+  - Usage: `./make.ps1 all`, `./make.ps1 mirror`, `./make.ps1 build`, `./make.ps1 clear-cache`, `./make.ps1 toolchain`.
+  - Internally it:
+    - Shows toolchain info (`mvn -version`, `java -version`).
+    - Checks whether the mirror in `releng\local-p2` is outdated based on its stamp and `releng\mirror\pom.xml`, and rebuilds it via `mvn -f releng/mirror/pom.xml -U verify` if needed.
+    - Clears the Tycho cache.
+    - Runs the same full Maven build as the CI pipelines (`mvn -U -DskipTests=false clean verify`).
+
+In short: **GitHub Actions** enforce the full build and tests on pull requests, while **`make`** and **`make.ps1`** give you the same steps locally with one command.```
+
