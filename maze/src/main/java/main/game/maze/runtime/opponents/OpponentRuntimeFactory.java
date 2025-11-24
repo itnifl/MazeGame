@@ -16,31 +16,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
-import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
-import main.game.maze.util.Dialogs;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
-import main.game.maze.config.service.ProfileRules;
 import main.game.maze.GameController;
-import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.EnemyTypes;
 
 /**
@@ -135,22 +124,12 @@ public final class OpponentRuntimeFactory {
         
         Map<EnemyTypes, Integer> target = resolver.resolve(key);
 
-        Map<EnemyTypes, Integer> monsterTypecaps = new EnumMap<>(EnemyTypes.class);
-        int maxThreatByDifficulty = Integer.MAX_VALUE;
-        double speedMultiplierByDifficulty = 1.0;
-        double dmgMultiplierByDifficulty = 1.0;
-        boolean instantDeath = false;
+        // diff ya está garantizado (hicimos early-return si era null)
+        final int maxThreatByDifficulty = diff.getMaxThreat();
+        final double speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
+        final double dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
+        final boolean instantDeath = diff.isInstantDeath();
 
-
-        if (diff != null) {
-            for (var e : diff.getEnemyMaxCount()) {
-                monsterTypecaps.put(e.getType(), e.getMaxCount());
-            }
-            maxThreatByDifficulty = diff.getMaxThreat();
-            speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
-            dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
-            instantDeath = diff.isInstantDeath();
-            }
         /* REFACTOR END Composition Resolver line 137-161 */
         AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
         AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
@@ -192,50 +171,55 @@ private static double spawnByTarget(
         AtomicInteger spawnedZombies,
         AtomicInteger spawnedPumpkins
 ) {
-    // Helper: stream of candidates of a given EnemyTypes, ordered by effective threat ASC
-    java.util.function.Function<EnemyTypes, java.util.stream.Stream<CharacterType>> candidates =
-            (EnemyTypes t) -> all.stream()
-                    .filter(CharacterType::isEnabled)
-                    .filter(ct ->
-                            (t == EnemyTypes.ZOMBIE && ct instanceof Zombie) ||
-                            (t == EnemyTypes.GHOST && ct instanceof Ghost) ||
-                            (t == EnemyTypes.PUMPKINBOMBER && ct instanceof PumpkinBomber))
-                    .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat));
+    // Prepara listas consumibles por tipo (ordenadas por amenaza ascendente)
+    Map<EnemyTypes, java.util.ArrayDeque<CharacterType>> pool = new EnumMap<>(EnemyTypes.class);
+    pool.put(EnemyTypes.ZOMBIE, new java.util.ArrayDeque<>());
+    pool.put(EnemyTypes.GHOST, new java.util.ArrayDeque<>());
+    pool.put(EnemyTypes.PUMPKINBOMBER, new java.util.ArrayDeque<>());
+
+    all.stream()
+       .filter(CharacterType::isEnabled)
+       .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat))
+       .forEach(ct -> {
+           if (ct instanceof Zombie) pool.get(EnemyTypes.ZOMBIE).add(ct);
+           else if (ct instanceof Ghost) pool.get(EnemyTypes.GHOST).add(ct);
+           else if (ct instanceof PumpkinBomber) pool.get(EnemyTypes.PUMPKINBOMBER).add(ct);
+       });
 
     double threat = 0.0;
 
     for (Map.Entry<EnemyTypes, Integer> e : target.entrySet()) {
         EnemyTypes type = e.getKey();
         int toSpawn = Math.max(0, e.getValue());
+        var candidates = pool.getOrDefault(type, new java.util.ArrayDeque<>());
 
         for (int i = 0; i < toSpawn; i++) {
             double remaining = maxThreat - threat;
-            if (remaining <= 0) {
-                return threat; // techo alcanzado
+            if (remaining <= 0) return threat;
+
+            // Busca el primer candidato que quepa en el threat restante
+            CharacterType picked = null;
+            while (!candidates.isEmpty()) {
+                var peek = candidates.peekFirst();
+                if (peek.getEffectiveThreat() > 0 && peek.getEffectiveThreat() <= remaining) {
+                    picked = candidates.pollFirst(); // consumir
+                    break;
+                } else {
+                    // si no cabe, prueba con el siguiente (algo mayor no va a caber, pero dejamos el loop simple)
+                    candidates.pollFirst();
+                }
             }
 
-            var nextOpt = candidates.apply(type)
-                    .filter(ct -> ct.getEffectiveThreat() > 0)
-                    .filter(ct -> ct.getEffectiveThreat() <= remaining)
-                    .findFirst();
-
-            if (nextOpt.isEmpty()) {
-                // No suitable options left
-                break;
-            }
-
-            CharacterType picked = nextOpt.get();
+            if (picked == null) break; // no suitable options left
 
             // apply difficulty multipliers
             setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);
-
             // register in game (updates per-type counters)
             doCharacterRegistration(gameController, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
 
             threat += picked.getEffectiveThreat();
         }
     }
-
     return threat;
 }
 
