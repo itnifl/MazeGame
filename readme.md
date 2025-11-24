@@ -67,23 +67,22 @@ This project prefers JDK 25 and JavaFX 25.
 * Visual Studio Code: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
   Extensions:
 
-  * ⬇️ Extension Pack for Java
-  * ⬇️ Maven for Java
-  * ⬇️ Debugger for Java
-  * ⬇️ Test Runner for Java
+  * ⬇️ Extension Pack for Java (Required)
+  * ⬇️ Maven for Java (Required)
+  * ⬇️ Debugger for Java (Required)
+  * ⬇️ Test Runner for Java (Required)
+  * ⬇️ XML by Red Hat (Optional)
+  * ⬇️ OSGi for VS Code (Optional)
+  * ⬇️ YAML by Red Hat (Optional)
+  * ⬇️ OCL support (Optional)
 
-Optional:
-  * ⬇️ XML by Red Hat
-  * ⬇️ OSGi for VS Code
-  * ⬇️ YAML by Red Hat
-  * ⬇️ OCL support
+Download and install:
 
-* JDK 25: [https://www.oracle.com/java/technologies/downloads/#java25](https://www.oracle.com/java/technologies/downloads/#java25)
-
-* JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
-  Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
-
-* Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
+  * JDK 25: [https://www.oracle.com/java/technologies/downloads/#java25](https://www.oracle.com/java/technologies/downloads/#java25)
+  * JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
+    Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
+  * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
+  * Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
 
 Environment variables (examples on Windows):
 
