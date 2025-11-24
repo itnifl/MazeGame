@@ -178,11 +178,11 @@ private static double spawnByTarget(
         AtomicInteger spawnedZombies,
         AtomicInteger spawnedPumpkins
 ) {
-    // Prepara listas consumibles por tipo (ordenadas por amenaza ascendente)
+    // Prepare consumable lists per type (ordered by ascending threat)"
     Map<EnemyTypes, java.util.ArrayDeque<CharacterType>> pool = new EnumMap<>(EnemyTypes.class);
-    pool.put(EnemyTypes.ZOMBIE, new java.util.ArrayDeque<>());
-    pool.put(EnemyTypes.GHOST, new java.util.ArrayDeque<>());
-    pool.put(EnemyTypes.PUMPKINBOMBER, new java.util.ArrayDeque<>());
+    for (EnemyTypes type : EnemyTypes.values()) {
+        pool.put(type, new java.util.ArrayDeque<>());
+    }
 
     all.stream()
        .filter(CharacterType::isEnabled)
