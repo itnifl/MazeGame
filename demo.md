@@ -6,7 +6,7 @@ This demo describes how to:
 
 1. Show the effect of the **difficulty model** at runtime (how `difficulties.xmi` and the code work together).
 2. Show how the **opponent models** behave when validation succeeds or fails (using the sample XMI files and JUnit tests). 
-3. <span style="color:red; font-weight:bold">Show how the **behaviour models** behave when validation succeeds or fails (using the sample XMI files and JUnit tests).</span>
+3. <span style="color:red; font-weight:bold">🔴 Show how the **behaviour models** behave when validation succeeds or fails (using the sample XMI files and JUnit tests).</span>
 
 ---
 
@@ -46,7 +46,7 @@ This demo describes how to:
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelSuccessMaxThreat.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelFailMaxThreat.xmi`
   * `maze/src/test/patrol_behavior_example.xmi` (behaviour / movements patrol example used by `TestPatrolMovementController`)
-  * <span style="color:red; font-weight:bold">Missing on behaviour model</span>
+  * <span style="color:red; font-weight:bold">🔴 Missing on behaviour model</span>
 
 - Main application class:
 
@@ -102,7 +102,7 @@ The selected `Difficulty` instance is then passed into:
 
 ### 2.2 Show the effect of each difficulty
 
-<span style="color:red; font-weight:bold">We need more here about behaviour module<span>
+<span style="color:red; font-weight:bold">🔴 We need more here about behaviour module<span>
 Repeat the following loop three times, once for each difficulty.
 
 1. **Start the game**, pick one difficulty in the dialog:
@@ -110,7 +110,7 @@ Repeat the following loop three times, once for each difficulty.
    * First run: choose **Easy**
    * Second run: choose **Normal**
    * Third run: choose **Hard**
-   * <span style="color:red; font-weight:bold">We should output the current threat level somewhere, and adjust scoring based on it.</span>
+   * <span style="color:red; font-weight:bold">🔴 We should output the current threat level somewhere, and adjust scoring based on it.</span>
 
 2. Play a short round and observe:
 
@@ -161,7 +161,7 @@ You do **not** swap different XMI files on the command line; you always use the 
 
 ## 3. Model validation demo: valid versus invalid opponent models
 
-<span style="color:red; font-weight:bold">We need more here about behaviour module<span>
+<span style="color:red; font-weight:bold">🔴 We need more here about behaviour module<span>
 
 This part uses the **sample opponent models** and the **JUnit tests** to show how validation behaves, including failures.
 
@@ -291,7 +291,7 @@ You can use the following as a spoken script:
 2. **Run the model validation tests.**
 
    * Run `mvn -pl main.game.maze.opponents test -Dtest=ModelLoadSmokeTest`.
-   * <span style="color:red; font-weight:bold">We need something for difficulty and behaviour module also</span>
+   * <span style="color:red; font-weight:bold">🔴 We need something for difficulty and behaviour module also</span>
    * See that valid samples pass and the invalid sample is explicitly expected to fail validation.
 
 3. **(Optional) Show a runtime failure.**
@@ -302,7 +302,7 @@ You can use the following as a spoken script:
 4. **(Optional) Show the behaviour / movements module.**
 
    * Open `maze/src/test/patrol_behavior_example.xmi` and show the patrol waypoints.
-   * Run `TestPatrolMovementController` from the `maze` module.<span style="color:red; font-weight:bold">Must be implemented</span>
+   * Run `TestPatrolMovementController` from the `maze` module. <span style="color:red; font-weight:bold">🔴 Must be implemented</span>
    * See the point  that:
 
      * The patrol path is defined in the EMF behaviour model.
