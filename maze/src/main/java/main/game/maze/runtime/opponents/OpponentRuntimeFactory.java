@@ -149,7 +149,15 @@ public final class OpponentRuntimeFactory {
             noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned
     );
 
-
+        _logger.log(Level.INFO, "Spawned characters - Ghosts: {0}, Zombies: {1}, PumpkinBombers: {2}, Total Threat: {3} vs Max Threat: {4}",
+            new Object[] {
+                noOfGhostsSpawned.get(),
+                noOfZombiesSpawned.get(),
+                noOfPumpkinBombersSpawned.get(),
+                threatSum,
+                maxThreatByDifficulty
+            }
+        );
 
         validateOrFail(opponentModel);
          
