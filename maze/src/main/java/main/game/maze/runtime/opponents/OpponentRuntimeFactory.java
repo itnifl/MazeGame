@@ -146,7 +146,7 @@ public final class OpponentRuntimeFactory {
             instantDeath,
             gameController,                     
             noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned
-    );
+        );
 
         _logger.log(Level.INFO, "Spawned characters - Ghosts: {0}, Zombies: {1}, PumpkinBombers: {2}, Total Threat: {3} vs Max Threat: {4}",
             new Object[] {
@@ -179,18 +179,18 @@ private static double spawnByTarget(
         AtomicInteger spawnedPumpkins
 ) {
     // Prepare consumable lists per type (ordered by ascending threat)"
-    Map<EnemyTypes, java.util.ArrayDeque<CharacterType>> pool = new EnumMap<>(EnemyTypes.class);
+    Map<EnemyTypes, java.util.ArrayDeque<CharacterType>> poolofAvailableEnemies = new EnumMap<>(EnemyTypes.class);
     for (EnemyTypes type : EnemyTypes.values()) {
-        pool.put(type, new java.util.ArrayDeque<>());
+        poolofAvailableEnemies.put(type, new java.util.ArrayDeque<>());
     }
 
     all.stream()
        .filter(CharacterType::isEnabled)
        .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat))
        .forEach(ct -> {
-           if (ct instanceof Zombie) pool.get(EnemyTypes.ZOMBIE).add(ct);
-           else if (ct instanceof Ghost) pool.get(EnemyTypes.GHOST).add(ct);
-           else if (ct instanceof PumpkinBomber) pool.get(EnemyTypes.PUMPKINBOMBER).add(ct);
+           if (ct instanceof Zombie) poolofAvailableEnemies.get(EnemyTypes.ZOMBIE).add(ct);
+           else if (ct instanceof Ghost) poolofAvailableEnemies.get(EnemyTypes.GHOST).add(ct);
+           else if (ct instanceof PumpkinBomber) poolofAvailableEnemies.get(EnemyTypes.PUMPKINBOMBER).add(ct);
        });
 
     double threat = 0.0;
@@ -198,7 +198,7 @@ private static double spawnByTarget(
     for (Map.Entry<EnemyTypes, Integer> e : target.entrySet()) {
         EnemyTypes type = e.getKey();
         int toSpawn = Math.max(0, e.getValue());
-        var candidates = pool.getOrDefault(type, new java.util.ArrayDeque<>());
+        var candidates = poolofAvailableEnemies.getOrDefault(type, new java.util.ArrayDeque<>());
 
         for (int i = 0; i < toSpawn; i++) {
             double remaining = maxThreat - threat;
