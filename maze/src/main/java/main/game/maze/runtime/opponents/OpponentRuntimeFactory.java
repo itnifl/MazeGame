@@ -1,6 +1,7 @@
 package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -16,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.CharacterType;
@@ -179,13 +182,42 @@ private static double spawnByTarget(
         AtomicInteger spawnedPumpkins
 ) {
     // Prepare consumable lists per type (ordered by ascending threat)"
-    Map<EnemyTypes, java.util.ArrayDeque<CharacterType>> poolofAvailableEnemies = new EnumMap<>(EnemyTypes.class);
+    Map<EnemyTypes, java.util.List<CharacterType>> poolofAvailableEnemies =
+
+        new EnumMap<>(EnemyTypes.class);
+    
     for (EnemyTypes type : EnemyTypes.values()) {
-        poolofAvailableEnemies.put(type, new java.util.ArrayDeque<>());
+
+        boolean isEnabled = all.stream()
+
+     .peek(ct -> System.out.println("Seen: " + ct.getClass().getSimpleName()))
+     .filter(ct -> {
+
+         String className = ct.getClass().getSimpleName();
+         boolean match = className.equalsIgnoreCase(type.name()+ "Impl");
+         if (match) {
+
+             System.out.println("Matched: " + className + " for " + type.name());
+
+         }
+
+         return match;
+
+     })
+
+     .anyMatch(CharacterType::isEnabled);
+    
+        if (isEnabled) {
+
+            poolofAvailableEnemies.put(type, new ArrayList<CharacterType>());
+
+        }
+
     }
+ 
 
     all.stream()
-       .filter(CharacterType::isEnabled)
+       .filter(ct -> ct.isEnabled())
        .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat))
        .forEach(ct -> {
            if (ct instanceof Zombie) poolofAvailableEnemies.get(EnemyTypes.ZOMBIE).add(ct);
@@ -198,34 +230,43 @@ private static double spawnByTarget(
     for (Map.Entry<EnemyTypes, Integer> e : target.entrySet()) {
         EnemyTypes type = e.getKey();
         int toSpawn = Math.max(0, e.getValue());
-        var candidates = poolofAvailableEnemies.getOrDefault(type, new java.util.ArrayDeque<>());
+        var candidates = poolofAvailableEnemies.getOrDefault(type, new ArrayList<CharacterType>());
+
+        if (candidates.isEmpty()) {
+            continue;
+        }
+
 
         for (int i = 0; i < toSpawn; i++) {
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;
 
-            // Search first candidate fitting threat limits
             CharacterType picked = null;
-            while (!candidates.isEmpty()) {
-                var peek = candidates.peekFirst();
-                if (peek.getEffectiveThreat() > 0 && peek.getEffectiveThreat() <= remaining) {
-                    picked = candidates.pollFirst(); // consume it
-                    break;
-                } else {
-                    // if not fitting
-                    candidates.pollFirst();
-                }
-            }
 
+            // Try to pick a fitting candidate at random
+          
+            int index = ThreadLocalRandom.current().nextInt(candidates.size());
+            CharacterType template = candidates.get(index);   // don't remove yet
+
+            double effThreat = template.getEffectiveThreat();
+            if (effThreat > 0 && effThreat <= remaining) {
+                // Make a *copy* so we don't mutate the template in the pool
+                // Replace this with your actual copy mechanism
+                picked = EcoreUtil.copy(template); 
+                
+            } 
+            
             if (picked == null) break; // no suitable options left
 
             // apply difficulty multipliers
-            setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);
-            // register in game (updates per-type counters)
-            doCharacterRegistration(gameController, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+            setCharacterAttributesByDifficulty(template, speedMult, dmgMult, instantDeath);
 
-            threat += picked.getEffectiveThreat();
+            // register in game (updates per-type counters)
+            doCharacterRegistration(gameController, template, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+
+            threat += template.getEffectiveThreat();
         }
+
     }
     return threat;
 }

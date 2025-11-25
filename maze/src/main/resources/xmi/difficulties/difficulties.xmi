@@ -13,11 +13,11 @@
                 maxThreat="20">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>4</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>3</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
@@ -33,11 +33,11 @@
                 maxThreat="30">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>5</maxCount>
+      <maxCount>7</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>3</maxCount>
+      <maxCount>7</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
@@ -57,7 +57,7 @@
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>3</maxCount>
+      <maxCount>10</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
