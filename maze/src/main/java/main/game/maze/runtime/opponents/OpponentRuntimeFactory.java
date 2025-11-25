@@ -1,7 +1,9 @@
 package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,30 +17,22 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.constants.StageConstants;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
-import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
-import main.game.maze.util.Dialogs;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.GameController;
-import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.EnemyTypes;
 
 /**
@@ -49,7 +43,6 @@ public final class OpponentRuntimeFactory {
 
     private static final Logger _logger = Logger.getLogger(OpponentRuntimeFactory.class.getName());
     private static final int SPAWN_MARGIN = 20;
-    private static volatile boolean xmiFactoryRegistered = false;
 
     private OpponentRuntimeFactory() { /* utility class */  }
 
@@ -69,6 +62,8 @@ public final class OpponentRuntimeFactory {
      * @param gameController the controller responsible for registering characters and nodes
      */
     public static void instantiateFromModelInternal(GameController gameController, Difficulty setOverrideDifficulty) {
+
+        /** REFACTOR START Extract into XmiRulesLoader  line 73-161 **/
         String resourcePath = OpponentConstants.ZombieModelPath;
 
         if (resourcePath == null || resourcePath.isBlank()) {
@@ -79,221 +74,187 @@ public final class OpponentRuntimeFactory {
             _logger.warning("instantiateFromModel requires a non-null GameController");
             return;
         }
+        // should I use the RunComposition.java instead o delete it?
+        var loader = new main.game.maze.config.service.XmiRulesLoader();
+            OpponentModel opponentModel = loader.loadOpponentModelFromClasspath(
+            main.game.maze.constants.OpponentConstants.ZombieModelPath);   
+        /* REFACTOR END Extract into XmiRulesLoader line 73-137*/
 
-        try {
-            ensureXmiFactoryRegistered();
+        /* REFACTOR START Composition Resolver line 137-161 */
+        var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
+        if (diff == null) {
+            _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
+        } else {
+            _logger.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
+        }
+        // 1) Key for the profile (e.g., "easy", "normal", "hard")
+        String key = diff.eClass().getName().toLowerCase(java.util.Locale.ROOT);
 
-            ResourceSet resourceSet = new ResourceSetImpl();            
-            Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-            
-            OpponentsPackage.eINSTANCE.eClass(); 
-            DifficultiesPackage.eINSTANCE.eClass();
-            
-            EPackage.Registry.INSTANCE.put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
-            EPackage.Registry.INSTANCE.put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
+        // 2) Build caps from Difficulty (type -> maxCount)
+        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
+        diff.getEnemyMaxCount().forEach(e -> caps.put(e.getType(), Math.max(0, e.getMaxCount())));
+        
+        // 3) Choose a total enemyCount and ratios for the resolver
+        //    - enemyCount: use sum(caps) as a reasonable default 
+        //    - ratios: uniform distribution among types present in caps (or among all types if caps empty)
+        int enemyCount = caps.values().stream().mapToInt(Integer::intValue).sum();
+        if (enemyCount <= 0) enemyCount = 10;
 
-            resourceSet.getPackageRegistry().put(OpponentsPackage.eNS_URI, OpponentsPackage.eINSTANCE);
-            resourceSet.getPackageRegistry().put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
-                        
-            var resourceUrlReference = main.game.maze.opponents.OpponentsPackage.class.getResource(resourcePath);
+        EnumSet<EnemyTypes> presentTypes = caps.isEmpty()
+                ? EnumSet.allOf(EnemyTypes.class)
+                : EnumSet.copyOf(caps.keySet());
 
-            if(resourceUrlReference == null) {
-                resourceUrlReference = OpponentRuntimeFactory.class.getResource(resourcePath);
+        EnumMap<EnemyTypes, Double> ratios = new EnumMap<>(EnemyTypes.class);
+        double share = presentTypes.isEmpty() ? 0.0 : (1.0 / presentTypes.size());
+        for (EnemyTypes t : presentTypes) {
+            ratios.put(t, share);
+        }
+
+        main.game.maze.config.service.ProfileRules pr =
+        new main.game.maze.config.service.ProfileRules(
+                key,                // name
+                enemyCount,         // enemyCount
+                ratios,             // ratios
+                Map.of(),           // countsOverride (empty -> ratios used)
+                caps                // caps
+        );
+
+        Map<String, main.game.maze.config.service.ProfileRules> profiles = Map.of(key, pr);
+
+
+        main.game.maze.config.service.CompositionResolver resolver =
+        new main.game.maze.config.service.CompositionResolverImpl(profiles);
+        
+        Map<EnemyTypes, Integer> target = resolver.resolve(key);
+
+        final int maxThreatByDifficulty = diff.getMaxThreat();
+        final double speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
+        final double dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
+        final boolean instantDeath = diff.isInstantDeath();
+
+        /* REFACTOR END Composition Resolver line 137-161 */
+        AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
+        AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
+        AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
+      
+        var characterList = opponentModel.getCharacterTypes();            
+
+
+        double threatSum = spawnByTarget(
+            characterList,  // candidates
+            target,                             // resolvers decision
+            maxThreatByDifficulty,              // threat limit per difficulty
+            speedMultiplierByDifficulty,
+            dmgMultiplierByDifficulty,
+            instantDeath,
+            gameController,                     
+            noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned
+        );
+
+        _logger.log(Level.INFO, "Spawned characters - Ghosts: {0}, Zombies: {1}, PumpkinBombers: {2}, Total Threat: {3} vs Max Threat: {4}",
+            new Object[] {
+                noOfGhostsSpawned.get(),
+                noOfZombiesSpawned.get(),
+                noOfPumpkinBombersSpawned.get(),
+                threatSum,
+                maxThreatByDifficulty
             }
-            
-            if (resourceUrlReference == null) {
-                _logger.log(Level.WARNING, "Opponent model resource not found: {0}", resourcePath);
-                return;
-            }
+        );
 
-            URI modelUri = URI.createURI(resourceUrlReference.toString());
-            Resource resource = resourceSet.getResource(modelUri, true);
-            if (resource == null || resource.getContents().isEmpty()) {
-                _logger.log(Level.WARNING, "Loaded resource is empty or null: {0}", resourcePath);
-                return;
-            }
+        validateOrFail(opponentModel);
+         
+}
 
-            Object rootObject;
-            try {
-                rootObject = resource.getContents().get(0);
-            } catch (Exception loadEx) {
-                _logger.log(Level.SEVERE, "Failed to load root content: " + resourcePath, loadEx);
-                throw loadEx;
-            }
-            
-            if (!(rootObject instanceof OpponentModel)) {
-                _logger.log(Level.WARNING, "Root object is not an OpponentModel: {0}", resourcePath);
-                return;
-            }            
-            OpponentModel opponentModel;
-            try {
-                opponentModel = (OpponentModel) rootObject;
-            } catch (Exception loadEx) {
-                _logger.log(Level.SEVERE, "Failed to cast root object to OpponentModel: " + resourcePath, loadEx);
-                throw loadEx;
-            }
+/**
+ * Spawns exactly the counts requested by 'target' while honoring maxThreat.
+ * Picks candidates of each type from the model (ascending threat to fit easier).
+ */
+private static double spawnByTarget(
+        List<CharacterType> all,
+        Map<EnemyTypes, Integer> target,
+        int maxThreat,
+        double speedMult,
+        double dmgMult,
+        boolean instantDeath,
+        GameController gameController,
+        AtomicInteger spawnedGhosts,
+        AtomicInteger spawnedZombies,
+        AtomicInteger spawnedPumpkins
+) {
+    // Prepare consumable lists per type (ordered by ascending threat)"
+    // Build pools only for types that have at least one *enabled* instance in `all`.
+    Map<EnemyTypes, List<CharacterType>> poolofAvailableEnemies = new EnumMap<>(EnemyTypes.class);
 
-            var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
-            if (diff == null) {
-                _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
-            } else {
-                _logger.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
-            }
-
-            Map<EnemyTypes, Integer> monsterTypecaps = new EnumMap<>(EnemyTypes.class);
-            int maxThreatByDifficulty = Integer.MAX_VALUE;
-            double speedMultiplierByDifficulty = 1.0;
-            double dmgMultiplierByDifficulty = 1.0;
-            boolean instantDeath = false;
-
-
-            if (diff != null) {
-                for (var e : diff.getEnemyMaxCount()) {
-                    monsterTypecaps.put(e.getType(), e.getMaxCount());
-                }
-                maxThreatByDifficulty = diff.getMaxThreat();
-                speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
-                dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
-                instantDeath = diff.isInstantDeath();
-            }
-            
-            AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
-            AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
-            AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
-            double threatSum = 0.0;
-            
-            var characterList = opponentModel.getCharacterTypes();            
-            double sum = threatSum;  // working copy
-
-            sum = populateRandomWeakCharacters(characterList, 
-                monsterTypecaps, maxThreatByDifficulty, gameController,
-                noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned,
-                speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath,
-                sum);
-
-            sum = populateRandomCharacters(characterList, diff,
-                monsterTypecaps, maxThreatByDifficulty, gameController,
-                noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned,
-                speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath,
-                sum);
-
-            threatSum = sum;
-            validateOrFail(opponentModel);
-        } catch (Exception loadException) {
-            _logger.log(Level.SEVERE, "Failed to load or instantiate opponent model: " + resourcePath + " with " + loadException.getMessage(), loadException);
-             Dialogs.showError(
-                "Failed to load opponents",
-                "The opponent configuration could not be loaded.",
-                loadException.getMessage(),
-                loadException
+    for (EnemyTypes t : EnemyTypes.values()) {
+        boolean anyEnabled = all.stream()
+            .filter(CharacterType::isEnabled)
+            .anyMatch(ct ->
+                (t == EnemyTypes.ZOMBIE        && ct instanceof Zombie) ||
+                (t == EnemyTypes.GHOST         && ct instanceof Ghost) ||
+                (t == EnemyTypes.PUMPKINBOMBER && ct instanceof PumpkinBomber)
             );
-            throw loadException;
+
+        if (anyEnabled) {
+            poolofAvailableEnemies.put(t, new ArrayList<>());
         }
     }
 
-    private static double populateRandomCharacters(List<CharacterType> characterList, 
-        Difficulty diff,
-        Map<EnemyTypes, Integer> monsterTypecaps,
-            double maxThreatByDifficulty, 
-            GameController gameController,
-            AtomicInteger noOfGhostsSpawned, 
-            AtomicInteger noOfZombiesSpawned, 
-            AtomicInteger noOfPumpkinBombersSpawned,
-            double speedMultiplierByDifficulty, 
-            double dmgMultiplierByDifficulty, 
-            boolean instantDeath,
-            double sum) {
-        
-            // Sort once: highest effective threat first
-            var byThreatDesc = characterList.stream()
-                .filter(CharacterType::isEnabled)
-                .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat).reversed())
-                .toList();
 
-            while (sum <= maxThreatByDifficulty) {
-                final double remaining = maxThreatByDifficulty - sum;
+    all.stream()
+       .filter(ct -> ct.isEnabled())
+       .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat))
+       .forEach(ct -> {
+           if (ct instanceof Zombie) poolofAvailableEnemies.get(EnemyTypes.ZOMBIE).add(ct);
+           else if (ct instanceof Ghost) poolofAvailableEnemies.get(EnemyTypes.GHOST).add(ct);
+           else if (ct instanceof PumpkinBomber) poolofAvailableEnemies.get(EnemyTypes.PUMPKINBOMBER).add(ct);
+       });
 
-                var charactersFiltered = byThreatDesc.stream()
-                    .filter(ct -> ct.getEffectiveThreat() > 0)
-                    .filter(ct -> ct.getEffectiveThreat() <= remaining)
-                    .filter(ct -> !characterNrCapsIsExceeded(ct, 
-                        noOfGhostsSpawned, 
-                        noOfZombiesSpawned, 
-                        noOfPumpkinBombersSpawned, 
-                        monsterTypecaps));
+    double threat = 0.0;
 
-                var next = diff instanceof EasyDifficulty ? charactersFiltered.findFirst() // lowest that fits
-                    : charactersFiltered.findAny(); 
+    for (Map.Entry<EnemyTypes, Integer> e : target.entrySet()) {
+        EnemyTypes type = e.getKey();
+        int toSpawn = Math.max(0, e.getValue());
+        var candidates = poolofAvailableEnemies.getOrDefault(type, new ArrayList<CharacterType>());
 
-                if (next.isEmpty()) break;
+        if (candidates.isEmpty()) {
+            continue;
+        }
 
-                var picked = next.get();
 
-                setCharacterAttributesByDifficulty(picked, 
-                    speedMultiplierByDifficulty, 
-                    dmgMultiplierByDifficulty, 
-                    instantDeath);
-                    
-                doCharacterRegistration(gameController, 
-                    picked, 
-                    noOfGhostsSpawned, 
-                    noOfZombiesSpawned, 
-                    noOfPumpkinBombersSpawned);
+        for (int i = 0; i < toSpawn; i++) {
+            double remaining = maxThreat - threat;
+            if (remaining <= 0) return threat;
 
-                sum += picked.getEffectiveThreat();
-            }
-        return sum;
+            CharacterType picked = null;
+
+            // Try to pick a fitting candidate at random
+          
+            int index = ThreadLocalRandom.current().nextInt(candidates.size());
+            CharacterType template = candidates.get(index);   // don't remove yet
+
+            double effThreat = template.getEffectiveThreat();
+            if (effThreat > 0 && effThreat <= remaining) {
+                // Make a *copy* so we don't mutate the template in the pool
+                // Replace this with your actual copy mechanism
+                picked = EcoreUtil.copy(template); 
+                
+            } 
+            
+            if (picked == null) break; // no suitable options left
+
+            // apply difficulty multipliers
+            setCharacterAttributesByDifficulty(template, speedMult, dmgMult, instantDeath);
+
+            // register in game (updates per-type counters)
+            doCharacterRegistration(gameController, template, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+
+            threat += template.getEffectiveThreat();
+        }
+
     }
+    return threat;
+}
 
-
-    private static double populateRandomWeakCharacters(
-        List<CharacterType> characterList, 
-        Map<EnemyTypes, Integer> monsterTypecaps,
-            double maxThreatByDifficulty, 
-            GameController gameController,
-            AtomicInteger noOfGhostsSpawned, 
-            AtomicInteger noOfZombiesSpawned, 
-            AtomicInteger noOfPumpkinBombersSpawned,
-            double speedMultiplierByDifficulty, 
-            double dmgMultiplierByDifficulty, 
-            boolean instantDeath,
-            double sum) {
-
-        var byThreatAsc = characterList.stream()
-                .filter(CharacterType::isEnabled)
-                .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat));
-
-            var typesInModel = byThreatAsc
-                .map(ct -> ct.getClass())   
-                .distinct()
-                .toList();
-
-            for (var t : typesInModel) {
-                double remaining = maxThreatByDifficulty - sum;
-
-                var seed = characterList.stream()
-                    .filter(CharacterType::isEnabled)
-                    .filter(ct -> ct.getClass() == t)
-                    .filter(ct -> ct.getEffectiveThreat() > 0)
-                    .sorted(java.util.Comparator.comparingDouble(CharacterType::getEffectiveThreat)) // easiest of that type
-                    .filter(ct -> ct.getEffectiveThreat() <= remaining)
-                    .filter(ct -> !characterNrCapsIsExceeded(ct,
-                            noOfGhostsSpawned,
-                            noOfZombiesSpawned,
-                            noOfPumpkinBombersSpawned,
-                            monsterTypecaps))
-                    .findFirst();
-
-                if (seed.isPresent()) {
-                    var picked = seed.get();
-                    setCharacterAttributesByDifficulty(picked, speedMultiplierByDifficulty, dmgMultiplierByDifficulty, instantDeath);
-                    doCharacterRegistration(gameController, picked,
-                            noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned);
-                    sum += picked.getEffectiveThreat();
-                }
-            }
-        return sum;
-    }
 
 
     private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
@@ -389,33 +350,7 @@ public final class OpponentRuntimeFactory {
         
     }
 
-    private static boolean characterNrCapsIsExceeded(
-        CharacterType characterType, 
-        AtomicInteger noOfGhosts, 
-        AtomicInteger noOfZombies, 
-        AtomicInteger noOfPumpkinBombers,
-        Map<EnemyTypes, Integer> monsterTypecaps) {
-        EnemyTypes et;
-        if (characterType instanceof Ghost)  et = EnemyTypes.GHOST;
-        else if (characterType instanceof Zombie) et = EnemyTypes.ZOMBIE;
-        else if (characterType instanceof PumpkinBomber) et = EnemyTypes.PUMPKINBOMBER;
-        else return true;
 
-        int cap = monsterTypecaps.getOrDefault(et, Integer.MAX_VALUE);
-
-        if (et == EnemyTypes.GHOST && noOfGhosts.get() >= cap)  return true;
-        if (et == EnemyTypes.ZOMBIE && noOfZombies.get() >= cap) return true;
-        if (et == EnemyTypes.PUMPKINBOMBER && noOfPumpkinBombers.get() >= cap) return true;
-
-        return false;
-    }
-
-    private static synchronized void ensureXmiFactoryRegistered() {
-        if (!xmiFactoryRegistered) {
-            Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-            xmiFactoryRegistered = true;
-        }
-    }
 
     /**
      * Replace this with your real sprite/ImageView creation.

@@ -10,10 +10,10 @@
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="0.80"
                 monstersDamageMultiplier="0.70"
-                maxThreat="20">
+                maxThreat="12">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>4</maxCount>
+      <maxCount>3</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
@@ -30,14 +30,14 @@
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.00"
                 monstersDamageMultiplier="1.00"
-                maxThreat="30">
+                maxThreat="20">
     <enemyMaxCount>
       <type>GHOST</type>
       <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>3</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
@@ -48,16 +48,16 @@
   <!-- HARD -->
   <difficulties xmi:id="hard" xsi:type="diff:HardDifficulty"
                 instantDeath="false"
-                monstersMovementSpeedMultiplier="1.20"
-                monstersDamageMultiplier="1.60"
-                maxThreat="50">
+                monstersMovementSpeedMultiplier="1.15"
+                monstersDamageMultiplier="1.40"
+                maxThreat="32">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>10</maxCount>
+      <maxCount>7</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>3</maxCount>
+      <maxCount>7</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
