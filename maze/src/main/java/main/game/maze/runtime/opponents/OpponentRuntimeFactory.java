@@ -182,39 +182,23 @@ private static double spawnByTarget(
         AtomicInteger spawnedPumpkins
 ) {
     // Prepare consumable lists per type (ordered by ascending threat)"
-    Map<EnemyTypes, java.util.List<CharacterType>> poolofAvailableEnemies =
+    // Build pools only for types that have at least one *enabled* instance in `all`.
+    Map<EnemyTypes, List<CharacterType>> poolofAvailableEnemies = new EnumMap<>(EnemyTypes.class);
 
-        new EnumMap<>(EnemyTypes.class);
-    
-    for (EnemyTypes type : EnemyTypes.values()) {
+    for (EnemyTypes t : EnemyTypes.values()) {
+        boolean anyEnabled = all.stream()
+            .filter(CharacterType::isEnabled)
+            .anyMatch(ct ->
+                (t == EnemyTypes.ZOMBIE        && ct instanceof Zombie) ||
+                (t == EnemyTypes.GHOST         && ct instanceof Ghost) ||
+                (t == EnemyTypes.PUMPKINBOMBER && ct instanceof PumpkinBomber)
+            );
 
-        boolean isEnabled = all.stream()
-
-     .peek(ct -> System.out.println("Seen: " + ct.getClass().getSimpleName()))
-     .filter(ct -> {
-
-         String className = ct.getClass().getSimpleName();
-         boolean match = className.equalsIgnoreCase(type.name()+ "Impl");
-         if (match) {
-
-             System.out.println("Matched: " + className + " for " + type.name());
-
-         }
-
-         return match;
-
-     })
-
-     .anyMatch(CharacterType::isEnabled);
-    
-        if (isEnabled) {
-
-            poolofAvailableEnemies.put(type, new ArrayList<CharacterType>());
-
+        if (anyEnabled) {
+            poolofAvailableEnemies.put(t, new ArrayList<>());
         }
-
     }
- 
+
 
     all.stream()
        .filter(ct -> ct.isEnabled())
