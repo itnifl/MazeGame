@@ -13,7 +13,7 @@ In this project, Acceleo reads the **DifficultyGameData** model and produces dom
 
 ## Where things live
 
-* **Templates and launcher** → [`maze-generator.acceleo`](./maze-generator.acceleo)
+* **Templates and launcher** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)
   Contains the `.mtl` templates and a small headless launcher.
 
 * **Generated sources** → [`mazer-module-generator`](./mazer-module-generator)
@@ -70,7 +70,7 @@ These are kept minimal on purpose: all domain logic lives in the `.mtl` template
 Generate sources and build all dependencies:
 
 ```bash
-mvn -B -U -e -pl maze-generator.acceleo -am -DskipTests clean verify
+mvn -B -U -e -pl maze-generator.acceleo-runner -am -DskipTests clean verify
 ```
 
 Build the game afterward, using the freshly generated jar:
@@ -82,7 +82,7 @@ mvn -B -U -e -pl maze -am -DskipTests=false clean verify
 Quick one-liner to do both from a clean checkout:
 
 ```bash
-mvn -B -U -e -pl maze-generator.acceleo,maze -am -DskipTests=false clean verify
+mvn -B -U -e -pl maze-generator.acceleo-runner,maze -am -DskipTests=false clean verify
 ```
 
 ---
@@ -142,5 +142,5 @@ Everything lands under `mazer-module-generator/src/main/java`, then `mazer-modul
 
 If you want to dive into the details, open the module READMEs:
 
-* [`maze-generator.acceleo`](./maze-generator.acceleo/readme.md)
+* [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner/readme.md)
 * [`mazer-module-generator`](./mazer-module-generator/readme.md)

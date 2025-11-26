@@ -10,7 +10,7 @@
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
-* 🧩 [maze-generator.runner](maze-generator.runner/readme.md)
+* 🧩 [maze-generator.acceleo-runner](maze-generator.acceleo-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🧩 [releng](releng/readme.md)
 
@@ -216,7 +216,7 @@ This repo is then:
   * `main.game.maze.behaviour`
   * `main.game.maze.difficulties`
   * `main.game.maze.opponents`
-  * `maze-generator.acceleo`
+  * `maze-generator.acceleo-runner`
   * `maze-generator.runner` (if enabled)
 
 The game itself (maze module) does not fetch anything from releng/local-p2. All the Eclipse / Tycho modules (the eclipse-plugin, eclipse-repository, feature) get their EMF/OCL/Acceleo/etc from releng/local-p2 when Tycho resolves them. The wiring happens via the target definition in releng and the Tycho configuration in your POMs.
@@ -226,7 +226,7 @@ Who actually uses releng/local-p2?
 - main.game.maze.behaviour (eclipse-plugin)
 - main.game.maze.difficulties (eclipse-plugin)
 - main.game.maze.opponents (eclipse-plugin)
-- maze-generator.acceleo (eclipse-plugin)
+- maze-generator.acceleo-runner (eclipse-plugin)
 - maze-generator.runner (eclipse-plugin)
 - maze-feature (feature)
 - maze-module-repository (eclipse-repository)
@@ -299,7 +299,7 @@ Who actually uses releng/local-p2?
 **Used by:**
 
 * `main.game.maze.opponents` (via `Require-Bundle: main.game.maze.difficulties`)
-* `maze-generator.acceleo` (uses the difficulty model as input)
+* `maze-generator.acceleo-runner` (uses the difficulty model as input)
 * Indirectly by the JavaFX game (`maze`).
 
 ---
@@ -340,9 +340,9 @@ Who actually uses releng/local-p2?
 
 ## Acceleo code generation plug-ins
 
-### 5. `maze-generator.acceleo`
+### 5. `maze-generator.acceleo-runner`
 **Currently disabled**
-**Bundle:** `maze-generator.acceleo`
+**Bundle:** `maze-generator.acceleo-runner`
 **Type:** `eclipse-plugin`, Acceleo module.
 
 **What it does:**
@@ -390,7 +390,7 @@ Who actually uses releng/local-p2?
     * `org.eclipse.emf.ecore.xmi`
     * `org.eclipse.ocl.pivot`
     * `org.eclipse.acceleo.engine`
-    * `maze-generator.acceleo`
+    * `maze-generator.acceleo-runner`
 
 * Its POM uses:
   * `tycho-eclipse-plugin` to run the Equinox application (Acceleo headless generation).
@@ -399,7 +399,7 @@ Who actually uses releng/local-p2?
 **Prerequisites:**
 
 * `releng/mirror` (to have EMF/OCL/Acceleo in `local-p2`).
-* `maze-generator.acceleo` (because it needs the generator plug-in and its application id).
+* `maze-generator.acceleo-runner` (because it needs the generator plug-in and its application id).
 
 **Used by:**
 
@@ -500,7 +500,7 @@ Who actually uses releng/local-p2?
 **Prerequisites:**
 
 * `releng/mirror` (for p2 repo).
-* `maze-generator.acceleo` and `maze-generator.runner` (to actually run the Acceleo application).
+* `maze-generator.acceleo-runner` and `maze-generator.runner` (to actually run the Acceleo application).
 * The EMF model plug-ins (`main.game.maze.difficulties`, `main.game.maze.opponents`, `main.game.maze.behaviour`) as inputs to generation.
 
 **Used by:**
@@ -546,14 +546,14 @@ Putting it all together, the clean conceptual order (respecting prerequisites) i
 2. `main.game.maze.behaviour`
 3. `main.game.maze.difficulties`
 4. `main.game.maze.opponents`  *(needs `main.game.maze.difficulties`)*
-5. `maze-generator.acceleo`  *(needs `main.game.maze.difficulties`)*
-6. `maze-generator.runner`  *(needs `maze-generator.acceleo`, uses `local-p2`)*
+5. `maze-generator.acceleo-runner`  *(needs `main.game.maze.difficulties`)*
+6. `maze-generator.runner`  *(needs `maze-generator.acceleo-runner`, uses `local-p2`)*
 7. `maze-feature`  *(wraps movements, difficulty, opponents)*
 8. `maze-module-repository`  *(wraps `maze-feature` into a p2 site)*
 9. `maze-module-generator`  *(runs the headless generator and exposes generated sources)*
 10. `maze`  *(JavaFX game using the models and generated code)*
 
-In your current root POM, `maze-generator.runner` is commented out, but if you re-enable it, it should sit right after `maze-generator.acceleo` and before anything that relies on the headless generator.
+In your current root POM, `maze-generator.runner` is commented out, but if you re-enable it, it should sit right after `maze-generator.acceleo-runner` and before anything that relies on the headless generator.
 
 ## The modules
 
@@ -581,9 +581,9 @@ Eclipse feature that groups the plug-ins for p2 builds. See the module guide: [m
 
 The p2 update site produced by Tycho for the Eclipse artifacts. See the module guide: [maze-module-repository/readme.md](maze-module-repository/readme.md).
 
-### - maze-generator.acceleo
+### - maze-generator.acceleo-runner
 
-Headless Acceleo generator that turns models into source code for the game. See the module guide: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md).
+Headless Acceleo generator that turns models into source code for the game. See the module guide: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md).
 
 ### - mazer-module-generator
 

@@ -8,7 +8,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>maze-generator.runner</artifactId>
+  <artifactId>maze-generator.acceleo-runner</artifactId>
   <packaging>eclipse-plugin</packaging>
 
   <build>
@@ -39,7 +39,7 @@
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>                
                 <dependency>
                   <groupId>main.game.maze</groupId>
-                  <artifactId>maze-generator.acceleo</artifactId>
+                  <artifactId>maze-generator.acceleo-runner</artifactId>
                   <version>${project.version}</version>
                   <type>eclipse-plugin</type>
                 </dependency>

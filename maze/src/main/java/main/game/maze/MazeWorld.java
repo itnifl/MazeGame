@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.game.maze.constants.StageConstants;
+import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.runtime.generators.DfsMazeGenerator;
 import main.game.maze.runtime.generators.IMazeGenerator;
 import main.game.maze.runtime.generators.MazeGeneratorConfig;
@@ -30,8 +31,8 @@ public class MazeWorld {
     }
     private static MazeGeneratorConfig getMazeConfig() {
         return new MazeGeneratorConfig(
-            StageConstants.BoardMaxX,
-            StageConstants.BoardMaxY,
+            App.getBoardMaxX(),
+            App.getBoardMaxY(),
             20,
             60,
             60,

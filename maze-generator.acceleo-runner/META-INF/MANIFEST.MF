@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: maze-generator.runner
-Bundle-Name: maze-generator.runner
+Bundle-SymbolicName: maze-generator.acceleo-runner
+Bundle-Name: maze-generator.acceleo-runner
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
@@ -11,5 +11,5 @@ Require-Bundle:  org.eclipse.core.runtime,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ocl.pivot,
  org.eclipse.acceleo.engine,
- maze-generator.acceleo
+ maze-generator.acceleo-runner
 Export-Package: main.game.maze.gen

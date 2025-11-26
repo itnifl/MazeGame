@@ -63,7 +63,7 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
   - The `mazer-module-generator` module then packages those sources into a jar that other modules can depend on.
   - Typical run that produces sources:
     ```bash
-    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
     ```
 
 - **main.game.maze**
@@ -78,7 +78,7 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
   - If you refresh the mirror or target, regenerate to ensure the generator runs against the same platform:
     ```bash
     mvn -f releng/mirror/pom.xml -U verify
-    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
     ```
 
 - **main.game.maze.behaviour, main.game.maze.difficulties, main.game.maze.opponents**
@@ -95,7 +95,7 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
 models/*.xmi + templates
 │
 ▼
-maze-generator.acceleo  —(writes Java)→  mazer-module-generator  —(jar)→  main.game.maze
+maze-generator.acceleo-runner  —(writes Java)→  mazer-module-generator  —(jar)→  main.game.maze
 ▲
 │
 releng target and mirror provide the headless Eclipse runtime for the generator
