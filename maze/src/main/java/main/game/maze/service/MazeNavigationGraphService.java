@@ -28,7 +28,6 @@ public final class MazeNavigationGraphService {
             throw new IllegalArgumentException("walls must not be null or empty");
         }
 
-        
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;
@@ -43,7 +42,6 @@ public final class MazeNavigationGraphService {
             maxY = Math.max(maxY, Math.max(s.getY(), e.getY()));
         }
 
-        
         double padding = stepSize;
         minX -= padding;
         minY -= padding;
@@ -53,7 +51,6 @@ public final class MazeNavigationGraphService {
         int cols = (int) Math.ceil((maxX - minX) / stepSize) + 1;
         int rows = (int) Math.ceil((maxY - minY) / stepSize) + 1;
 
-        
         MazeNavigationGraph.Node[][] grid = new MazeNavigationGraph.Node[cols][rows];
 
         for (int c = 0; c < cols; c++) {
@@ -64,12 +61,11 @@ public final class MazeNavigationGraphService {
             }
         }
 
-        
         for (int c = 0; c < cols; c++) {
             for (int r = 0; r < rows; r++) {
                 Node n = grid[c][r];
 
-                // Høyre nabo
+                // Right neighbor
                 if (c + 1 < cols) {
                     Node right = grid[c + 1][r];
                     if (segmentIsFree(n.toPoint2D(), right.toPoint2D(), walls, stepSize * 0.25)) {
@@ -78,7 +74,7 @@ public final class MazeNavigationGraphService {
                     }
                 }
 
-                // Ned nabo
+                // Down neighbor
                 if (r + 1 < rows) {
                     Node down = grid[c][r + 1];
                     if (segmentIsFree(n.toPoint2D(), down.toPoint2D(), walls, stepSize * 0.25)) {
@@ -91,6 +87,8 @@ public final class MazeNavigationGraphService {
 
         MazeNavigationGraph graph = new MazeNavigationGraph(grid, cols, rows, stepSize, minX, minY);
 
+        // Du kan gjerne la denne stå, men den blir uansett overskrevet når vi
+        // bygger tree fra spillerposisjon:
         buildSpanningTree(graph, graph.getNode(0, 0));
 
         return graph;
@@ -101,7 +99,7 @@ public final class MazeNavigationGraphService {
                                          List<Vector2D> walls,
                                          double wallOffset) {
         Vector2D seg = new Vector2D(a, b);
-        for (Vector2D wall : walls) {            
+        for (Vector2D wall : walls) {
             if (seg.doIntersect(wall, (int) Math.ceil(wallOffset))) {
                 return false;
             }
@@ -110,8 +108,21 @@ public final class MazeNavigationGraphService {
     }
 
     private static void buildSpanningTree(MazeNavigationGraph graph, Node root) {
-        if (root == null) {
+        if (graph == null || root == null) {
             return;
+        }
+
+        // Rens tidligere treeParent før vi bygger et nytt tre
+        Node[][] grid = graph.getGrid();
+        int cols = graph.getCols();
+        int rows = graph.getRows();
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                Node n = grid[c][r];
+                if (n != null) {
+                    n.setTreeParent(null);
+                }
+            }
         }
 
         ArrayDeque<Node> queue = new ArrayDeque<>();
@@ -127,6 +138,18 @@ public final class MazeNavigationGraphService {
                 }
             }
         }
+    }
+
+    /**
+     * Bygger spanning-tree med root på nærmeste node til gitt verdensposisjon.
+     * Brukes for å starte treet fra spillerens posisjon.
+     */
+    public static void rebuildSpanningTreeFrom(MazeNavigationGraph graph, Point2D worldPos) {
+        if (graph == null || worldPos == null) {
+            return;
+        }
+        Node root = graph.snapToNode(worldPos);
+        buildSpanningTree(graph, root);
     }
 
     public static List<Point2D> findPath(MazeNavigationGraph graph,

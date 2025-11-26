@@ -472,7 +472,7 @@ public class GameController implements Initializable {
     }
 
     private void showSpanningTree() {
-        if (maze == null || treeCanvas == null) {
+        if (maze == null || treeCanvas == null || playerCharacter == null) {
             return;
         }
 
@@ -481,11 +481,18 @@ public class GameController implements Initializable {
             return;
         }
 
+        // Root = spillerens posisjon
+        Point2D playerPos = new Point2D(
+                playerCharacter.getCharacterPosition().getX(),
+                playerCharacter.getCharacterPosition().getY()
+        );
+        MazeNavigationGraphService.rebuildSpanningTreeFrom(navGraph, playerPos);
+
         GraphicsContext gc = treeCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
 
         gc.setStroke(Color.RED);
-        gc.setLineWidth(6.0);
+        gc.setLineWidth(4.0);
         gc.setGlobalAlpha(0.6);
 
         var grid = navGraph.getGrid();
@@ -506,8 +513,9 @@ public class GameController implements Initializable {
             }
         }
 
-        gc.setGlobalAlpha(1.0); // reset
+        gc.setGlobalAlpha(1.0);
     }
+
 
     private void clearSpanningTree() {
         if (treeCanvas == null) {
