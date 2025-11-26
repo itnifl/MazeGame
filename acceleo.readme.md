@@ -142,5 +142,5 @@ Everything lands under `mazer-module-generator/src/main/java`, then `mazer-modul
 
 If you want to dive into the details, open the module READMEs:
 
-* [`maze-generator.acceleo`](./maze-generator.acceleo/readme.md)
+* [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner/readme.md)
 * [`mazer-module-generator`](./mazer-module-generator/readme.md)

@@ -53,7 +53,7 @@ You can point the app to another XMI via args or config if added.
 The app depends on sources produced by the Acceleo generator
 
 ```
-maze-generator.acceleo  →  mazer-module-generator
+maze-generator.acceleo-runner  →  mazer-module-generator
 ```
 
 The CI workflow runs the generator before building this module.

@@ -83,7 +83,7 @@ If you manage repositories via the Tycho target configuration, reference the sit
 
 releng (target and mirror) --> provides input repositories for Tycho resolution
 
-maze-generator.acceleo --> writes sources --> [mazer-module-generator jar] --> used by [maze app]
+maze-generator.acceleo-runner --> writes sources --> [mazer-module-generator jar] --> used by [maze app]
 ```
 
 ### Who consumes the repository

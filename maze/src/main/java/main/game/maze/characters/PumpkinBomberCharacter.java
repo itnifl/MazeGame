@@ -90,8 +90,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     public void updateProjectiles(double dtSeconds) {
         if (projectiles.isEmpty()) return;
 
-        double maxX = StageConstants.BoardMaxX;
-        double maxY = StageConstants.BoardMaxY;
+        double maxX = App.getBoardMaxX();
+        double maxY = App.getBoardMaxY();
 
         Iterator<PumpkinProjectile> it = projectiles.iterator();
         while (it.hasNext()) {

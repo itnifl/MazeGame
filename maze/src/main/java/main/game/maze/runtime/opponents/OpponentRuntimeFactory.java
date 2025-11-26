@@ -31,6 +31,7 @@ import main.game.maze.service.DifficultyService;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
+import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyTypes;
@@ -261,9 +262,9 @@ private static double spawnByTarget(
             AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned, AtomicInteger noOfPumpkinBombersSpawned) {
                 
             final double spawnX = ThreadLocalRandom.current()
-                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxX - SPAWN_MARGIN));
+                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxX() - SPAWN_MARGIN));
             final double spawnY = ThreadLocalRandom.current()
-                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, StageConstants.BoardMaxY - SPAWN_MARGIN));
+                .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
             if (characterType instanceof Zombie z) {
                 noOfZombiesSpawned.incrementAndGet();        

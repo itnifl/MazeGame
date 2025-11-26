@@ -29,7 +29,7 @@ After a build, the jar is created at `target/mazer-module-generator-<version>.ja
 1. Run the generator module so it writes updated sources into this module.
 
    ```bash
-   mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+   mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
    ```
 2. Build this module or the whole project to produce the jar.
 
@@ -44,7 +44,7 @@ After a build, the jar is created at `target/mazer-module-generator-<version>.ja
 
 ## Relationship to other modules
 
-* **maze-generator.acceleo** → produces the Java sources that live here. Run it first to update code, then build this module to publish the jar.
+* **maze-generator.acceleo-runner** → produces the Java sources that live here. Run it first to update code, then build this module to publish the jar.
 * **main.game.maze** → depends on the jar from this module to compile and run the game logic that is model driven.
 * **releng** → provides the target and optional local p2 mirror used when the generator runs headless, ensuring consistent generation inputs.
 * **main.game.maze.behaviour, main.game.maze.difficulties, main.game.maze.opponents** → independent Eclipse plug ins. Changes in the metamodel or OCL inside `main.game.maze.difficulties` may require regenerating this module so that the app sees the updated classes.
@@ -56,7 +56,7 @@ After a build, the jar is created at `target/mazer-module-generator-<version>.ja
 2. Run the generator:
 
    ```bash
-   mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+   mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
    ```
 3. Build the generated jar and the app:
 

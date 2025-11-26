@@ -6,7 +6,7 @@ Headless Eclipse/Equinox runner used to execute the Acceleo code generator
 This bundle provides the **runtime environment** for the generator — it does not
 contain templates itself. Templates and the actual generator logic live in:
 
-- `maze-generator.acceleo`
+- `maze-generator.acceleo-runner`
 
 `maze-generator.runner` exists to *launch* that generator inside an OSGi
 container during the Maven/Tycho build, so the resulting Java sources can be
@@ -29,7 +29,7 @@ main.game.maze.gen.app
 
 ````
 
-registered inside `maze-generator.acceleo`.
+registered inside `maze-generator.acceleo-runner`.
 
 The output is written to the generated-sources directory of:
 
@@ -70,7 +70,7 @@ through Tycho inside the Eclipse runtime it configures.
 
 `maze-generator.runner` requires:
 
-* `maze-generator.acceleo`
+* `maze-generator.acceleo-runner`
 * EMF (`org.eclipse.emf.ecore`, `org.eclipse.emf.common`, `.xmi`)
 * OCL (`org.eclipse.ocl.pivot`)
 * Acceleo Engine (`org.eclipse.acceleo.engine`)
@@ -90,7 +90,7 @@ These are resolved from:
 ```
 releng/mirror → local-p2
          ↓
-maze-generator.acceleo (templates)
+maze-generator.acceleo-runner (templates)
          ↓
 maze-generator.runner (runs the app)
          ↓
@@ -108,7 +108,7 @@ constant versions of EMF/OCL/Acceleo.
 
 • `plugin.xml` — requires Acceleo + EMF + OCL + generator bundle
 • `pom.xml` — Tycho plugin config for `eclipse-run`
-• No templates inside this module — they are in `maze-generator.acceleo`
+• No templates inside this module — they are in `maze-generator.acceleo-runner`
 
 ---
 

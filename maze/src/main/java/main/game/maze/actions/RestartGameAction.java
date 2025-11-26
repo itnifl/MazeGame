@@ -3,6 +3,7 @@ package main.game.maze.actions;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.GameOverController;
@@ -48,16 +49,21 @@ public class RestartGameAction extends ActionScreens {
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
             App.gameController = controller;
-            MazeWorld.RegenerateWorld();
+            
             
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(screen);
-
-            this.replaceRoot(root, newRoot);
+            
 
             if (App.lastChosenDifficulty != null) {
                 controller.setStartDifficulty(App.lastChosenDifficulty);
             }
+
+            Stage stage = (Stage) root.getScene().getWindow();
+            this.replaceRoot(root, newRoot);
+            App.applySizeForCurrentDifficulty(stage);
+                        
+            MazeWorld.RegenerateWorld();
 
             controller.initialize(null, null);
 

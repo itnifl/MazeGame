@@ -38,9 +38,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class GameController implements Initializable {
-    private static int BoardMaxX = StageConstants.BoardMaxX;
-    private static int BoardMaxY = StageConstants.BoardMaxY;
-
     @FXML
     private AnchorPane root;
     @FXML
@@ -230,8 +227,25 @@ public class GameController implements Initializable {
         }
 
         runComputerCharacters();
-        var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
-        characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
+        javafx.application.Platform.runLater(() -> {
+            var node = root.lookup("#heart");
+            if (node instanceof javafx.scene.image.ImageView heart) {
+                double heartW = heart.getBoundsInLocal().getWidth();
+                double heartH = heart.getBoundsInLocal().getHeight();
+
+                if (heartW <= 0) heartW = heart.getFitWidth();
+                if (heartH <= 0) heartH = heart.getFitHeight();
+
+                int width  = App.getBoardMaxX();
+                int height = App.getBoardMaxY();
+                heart.setLayoutX((width  - heartW) / 2.0);
+                heart.setLayoutY((height - heartH) / 2.0);
+
+                var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
+                characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
+            }
+        });
+
         playerCharacter.setHitPoints(100);
         var score = winGameAction.resetScore();
         scoreLabel.setText("Score: " + String.valueOf(score));
@@ -242,7 +256,7 @@ public class GameController implements Initializable {
     }
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
-        Canvas canvas = new Canvas(BoardMaxX, BoardMaxY);
+        Canvas canvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         // Set the stroke color and width

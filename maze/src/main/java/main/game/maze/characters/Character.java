@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import main.game.maze.App;
 import main.game.maze.MazeWorld;
 import main.game.maze.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
@@ -44,8 +45,8 @@ public class Character  {
     }
 
     protected void calculateMaxPositions() {
-        maxX = StageConstants.BoardMaxX-characterXYSizeFromPoint;
-        maxY = StageConstants.BoardMaxY-characterXYSizeFromPoint;
+        maxX = App.getBoardMaxX()-characterXYSizeFromPoint;
+        maxY = App.getBoardMaxY()-characterXYSizeFromPoint;
     }
 
     public Node getCharacterGraphics() {
