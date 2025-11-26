@@ -27,7 +27,7 @@
         </background>
 
         
-        <ImageView fx:id="player" fitHeight="50" layoutX="0" layoutY="52" preserveRatio="true">
+        <ImageView fx:id="player" fitHeight="30" layoutX="0" layoutY="52" preserveRatio="true">
             <image><Image url="@you2.png" /></image>
         </ImageView>
 
