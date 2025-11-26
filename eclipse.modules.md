@@ -14,8 +14,8 @@ These modules are pure Eclipse / Tycho:
 * `main.game.maze.behaviour` → bundle `main.game.maze.behaviour`
 * `main.game.maze.difficulties` → bundle `main.game.maze.difficulties`
 * `main.game.maze.opponents` → bundle `main.game.maze.opponents`
-* `maze-generator.acceleo-runner` → Acceleo templates + app id
-* `maze-generator.runner` → headless Equinox runner
+* `maze-generator.acceleo` → Acceleo templates + app id
+* `maze-generator.acceleo-runner` → headless Equinox runner
 
 Tycho builds them like this:
 
@@ -30,8 +30,8 @@ So after the build, you effectively have JARs for:
 * `main.game.maze.behaviour`
 * `main.game.maze.difficulties`
 * `main.game.maze.opponents`
+* `maze-generator.acceleo`
 * `maze-generator.acceleo-runner`
-* `maze-generator.runner`
 
 These are still “Eclipse modules”, but they are also just JARs in the Maven reactor.
 
