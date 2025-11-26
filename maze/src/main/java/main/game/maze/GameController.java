@@ -1,3 +1,4 @@
+// maze/src/main/java/main/game/maze/GameController.java
 package main.game.maze;
 
 import java.net.URL;
@@ -10,11 +11,13 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +37,7 @@ import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
+import main.game.maze.service.MazeNavigationGraphService;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -63,6 +67,8 @@ public class GameController implements Initializable {
     private Thread runComputerCharactersThread;
     private final List<IMovingComputerCharacter> allComputerCharacters = new ArrayList<>();
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
+    private Canvas pathCanvas;
+    private Canvas treeCanvas;
 
     private static Task runComputerCharacters;
     private Difficulty startDifficulty; // <-- injected by StartController
@@ -76,6 +82,17 @@ public class GameController implements Initializable {
             }
         });
     }
+    
+
+    @FXML
+    private void handleKeyReleased(KeyEvent event) {
+        if (event.getCode() == KeyCode.P) {
+            clearNavigationPath();
+        } else if (event.getCode() == KeyCode.O) {
+            clearSpanningTree();
+        }
+    }
+
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
@@ -97,6 +114,12 @@ public class GameController implements Initializable {
                 break;
             case ESCAPE:
                 openDifficultyPickerAndMaybeRestart();
+                break;
+            case P:   
+                showNavigationPath();
+                break;
+            case O: 
+                showSpanningTree();
             break;
             default:
                 break;
@@ -120,7 +143,6 @@ public class GameController implements Initializable {
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
 
         App.pickDifficulty(window).ifPresent(chosen -> {
-            // Offer to restart now with the chosen difficulty
             var confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Restart required");
             confirm.setHeaderText("Restart with " + App.displayName(chosen) + " difficulty now?");
@@ -129,10 +151,8 @@ public class GameController implements Initializable {
 
             var res = confirm.showAndWait();
             if (res.isPresent() && res.get() == ButtonType.OK) {
-                // Restart will inject App.lastChosenDifficulty in RestartGameAction
                 new main.game.maze.actions.RestartGameAction(root).Load();
             } else {
-                // Keep playing, but remember for the next restart in this session, too
                 this.setStartDifficulty(chosen);
                 App.lastChosenDifficulty = chosen;
             }
@@ -199,6 +219,12 @@ public class GameController implements Initializable {
         // Create a canvas
         var canvas = this.drawCanvas(vectors);
         root.getChildren().add(canvas);
+
+        pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
+        root.getChildren().add(pathCanvas);
+
+        treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
+        root.getChildren().add(treeCanvas);
 
         gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {
             runComputerCharacters.cancel();
@@ -392,4 +418,111 @@ public class GameController implements Initializable {
     public void showInfectionWarning() {
         //TODO: Player is now infected, make sure this is properly communicated to the player
     }
+
+    private void showNavigationPath() {
+        if (maze == null || pathCanvas == null || heart == null || playerCharacter == null) {
+            return;
+        }
+
+        var navGraph = maze.getNavigationGraph();
+        if (navGraph == null) {
+            return;
+        }
+
+        Point2D start = new Point2D(
+                playerCharacter.getCharacterPosition().getX(),
+                playerCharacter.getCharacterPosition().getY()
+        );
+
+        double heartW = heart.getBoundsInLocal().getWidth();
+        double heartH = heart.getBoundsInLocal().getHeight();
+        double hx = heart.getLayoutX() + heartW / 2.0;
+        double hy = heart.getLayoutY() + heartH / 2.0;
+        Point2D goal = new Point2D(hx, hy);
+
+        var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
+        if (path == null || path.size() < 2) {
+            clearNavigationPath();
+            return;
+        }
+
+        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+
+        gc.setLineWidth(8.0);
+        gc.setStroke(Color.DODGERBLUE);
+        gc.setGlobalAlpha(0.6);
+
+        Point2D prev = path.get(0);
+        for (int i = 1; i < path.size(); i++) {
+            Point2D p = path.get(i);
+            gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
+            prev = p;
+        }
+
+        gc.setGlobalAlpha(1.0); 
+    }
+
+    private void clearNavigationPath() {
+        if (pathCanvas == null) {
+            return;
+        }
+        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+    }
+
+    private void showSpanningTree() {
+        if (maze == null || treeCanvas == null || playerCharacter == null) {
+            return;
+        }
+
+        var navGraph = maze.getNavigationGraph();
+        if (navGraph == null) {
+            return;
+        }
+
+        // Root = spillerens posisjon
+        Point2D playerPos = new Point2D(
+                playerCharacter.getCharacterPosition().getX(),
+                playerCharacter.getCharacterPosition().getY()
+        );
+        MazeNavigationGraphService.rebuildSpanningTreeFrom(navGraph, playerPos);
+
+        GraphicsContext gc = treeCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
+
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(4.0);
+        gc.setGlobalAlpha(0.6);
+
+        var grid = navGraph.getGrid();
+        int cols = navGraph.getCols();
+        int rows = navGraph.getRows();
+
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                var node = grid[c][r];
+                if (node == null) continue;
+                var parent = node.getTreeParent();
+                if (parent != null) {
+                    gc.strokeLine(
+                            node.getX(), node.getY(),
+                            parent.getX(), parent.getY()
+                    );
+                }
+            }
+        }
+
+        gc.setGlobalAlpha(1.0);
+    }
+
+
+    private void clearSpanningTree() {
+        if (treeCanvas == null) {
+            return;
+        }
+        GraphicsContext gc = treeCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
+    }
+
 }

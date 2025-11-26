@@ -1,3 +1,4 @@
+// maze/src/main/java/main/game/maze/App.java
 package main.game.maze;
 
 import javafx.application.Application;
@@ -52,7 +53,7 @@ public class App extends Application {
             this.setDifficulty(primaryStage);
             // --------------------------------------------------------
             applySizeForCurrentDifficulty(primaryStage);
-        
+            primaryStage.setResizable(false);
             primaryStage.show();
 
             gameController.setupGame();
@@ -125,25 +126,49 @@ public class App extends Application {
         stage.setWidth(width);
         stage.setHeight(height);
 
-        stage.setWidth(App.getBoardMaxX());
-        stage.setHeight(App.getBoardMaxY());
+        stage.setWidth(width);
+        stage.setHeight(height);
 
         Scene scene = stage.getScene();
         if (scene != null) {
             var root = (AnchorPane) scene.getRoot();
-            root.setPrefWidth(App.getBoardMaxX());
-            root.setPrefHeight(App.getBoardMaxY());
-            root.setMaxWidth(App.getBoardMaxX());
-            root.setMaxHeight(App.getBoardMaxY());
-            
-            ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
-            if (progressBar != null) progressBar.prefWidthProperty().bind(root.widthProperty());
-
+            root.setPrefWidth(width);
+            root.setPrefHeight(height);
+            root.setMaxWidth(width);
+            root.setMaxHeight(height);        
+            setProgressBarWidth(root);
             scene.setRoot(root); 
 
         }
+    }
 
+    public static void applyStandardSize(Stage stage) {
+        int width  = StageConstants.BoardMaxX;
+        int height = StageConstants.BoardMaxY;
 
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        Scene scene = stage.getScene();
+        if (scene != null) {
+            var root = (AnchorPane) scene.getRoot();
+            root.setPrefWidth(width);
+            root.setPrefHeight(height);
+            root.setMaxWidth(width);
+            root.setMaxHeight(height);            
+            setProgressBarWidth(root);
+            scene.setRoot(root); 
+        }
+    }
+
+    private static void setProgressBarWidth(AnchorPane root) {
+        ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
+        if (progressBar != null) {
+            progressBar.prefWidthProperty().bind(root.widthProperty());
+        }
     }
 
     public static void main(String[] args) {

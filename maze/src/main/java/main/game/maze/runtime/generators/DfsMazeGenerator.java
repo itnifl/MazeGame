@@ -59,11 +59,8 @@ public class DfsMazeGenerator implements IMazeGenerator {
         this.cols = Math.max(1, cfg.getWidthPx() / cellSize);
         this.rows = Math.max(1, cfg.getHeightPx() / cellSize);
 
-        int usedWidth = cols * cellSize;
-        int usedHeight = rows * cellSize;
-
-        this.marginX = (cfg.getWidthPx() - usedWidth) / 2;
-        this.marginY = (cfg.getHeightPx() - usedHeight) / 2;
+        this.marginX = 0;
+        this.marginY = 0;;
     }
 
     @Override
@@ -179,10 +176,11 @@ public class DfsMazeGenerator implements IMazeGenerator {
                     addVerticalWall(walls, cellY, cellY + cellSize, wallX, step);
                 }
             }
-        }
+        }        
 
-        // new: ensure corridor width against outer edges
-        enforceEdgeCorridorWidths(walls);
+        enforceEdgeCorridorWidths(walls);     
+        
+        addBorderWalls(walls, step);
 
         return walls;
     }
@@ -255,4 +253,47 @@ public class DfsMazeGenerator implements IMazeGenerator {
             return false;
         });
     }
+
+    private void addBorderWalls(List<Vector2D> walls, int step) {
+        int width = cfg.getWidthPx();
+        int height = cfg.getHeightPx();
+
+        int topY = MIN_Y;      // toppkant (respekterer MIN_Y)
+        int bottomY = height - 30;  // bunnkant
+        int leftX = 0;         // venstrekant
+        int rightX = width;    // høyrekant
+
+        // Øvre horisontale kant
+        for (int x = leftX; x < rightX; x += step) {
+            int x2 = Math.min(x + step, rightX);
+            walls.add(new Vector2D(
+                    new Point2D(x, topY),
+                    new Point2D(x2, topY)));
+        }
+
+        // Nedre horisontale kant
+        for (int x = leftX; x < rightX; x += step) {
+            int x2 = Math.min(x + step, rightX);
+            walls.add(new Vector2D(
+                    new Point2D(x, bottomY),
+                    new Point2D(x2, bottomY)));
+        }
+
+        // Venstre vertikale kant
+        for (int y = topY; y < bottomY; y += step) {
+            int y2 = Math.min(y + step, bottomY);
+            walls.add(new Vector2D(
+                    new Point2D(leftX, y),
+                    new Point2D(leftX, y2)));
+        }
+
+        // Høyre vertikale kant
+        for (int y = topY; y < bottomY; y += step) {
+            int y2 = Math.min(y + step, bottomY);
+            walls.add(new Vector2D(
+                    new Point2D(rightX, y),
+                    new Point2D(rightX, y2)));
+        }
+    }
+
 }

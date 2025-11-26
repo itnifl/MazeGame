@@ -8,7 +8,7 @@ public class StageConstants {
     public final static int TouchDistance = 40;
     public final static int PlayerCharacterSpeed = 10;
     public final static int SpeedReducer = 1;
-    public final static int PlayerCharacterXYSize = 40;
+    public final static int PlayerCharacterXYSize = 30;
     public final static int GhostCharacterXYSize = 40;
     public final static int ZombieCharacterXYSize = 40;
     public final static int PumpkinBomberCharacterXYSize = 40;
@@ -17,5 +17,6 @@ public class StageConstants {
     public final static int ScoreSubtractFactor = 10;
     public final static int ScoreDeathPenalty = 4000;
     public final static int ScoreWinBonus = 4000;
+    public final static int NaviGraphStepSize = 30;
     
 }
