@@ -68,7 +68,7 @@ public final class MazeNavigationGraphService {
                 // Right neighbor
                 if (c + 1 < cols) {
                     Node right = grid[c + 1][r];
-                    if (segmentIsFree(n.toPoint2D(), right.toPoint2D(), walls, stepSize * 0.25)) {
+                    if (segmentIsFree(n.toPoint2D(), right.toPoint2D(), walls, stepSize * 0)) { //Delete the stepSize away from the walls here
                         n.addNeighbor(right);
                         right.addNeighbor(n);
                     }
@@ -77,7 +77,7 @@ public final class MazeNavigationGraphService {
                 // Down neighbor
                 if (r + 1 < rows) {
                     Node down = grid[c][r + 1];
-                    if (segmentIsFree(n.toPoint2D(), down.toPoint2D(), walls, stepSize * 0.25)) {
+                    if (segmentIsFree(n.toPoint2D(), down.toPoint2D(), walls, stepSize * 0)) { //Delete the stepSize away from the walls here
                         n.addNeighbor(down);
                         down.addNeighbor(n);
                     }
