@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.game.maze.constants.StageConstants;
-import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.runtime.generators.DfsMazeGenerator;
 import main.game.maze.runtime.generators.IMazeGenerator;
 import main.game.maze.runtime.generators.MazeGeneratorConfig;
+import main.game.maze.service.MazeNavigationGraph;
+import main.game.maze.service.MazeNavigationGraphService;
 
 public class MazeWorld {
     private static MazeWorld world;
     private final IMazeGenerator mazeGenerator;
     private List<Vector2D> mazeVectors;
+    private MazeNavigationGraph navigationGraph;
 
     /*
      * Factory method that creates a new world, or returns an existing one if one
@@ -45,6 +47,7 @@ public class MazeWorld {
         this.mazeVectors = new ArrayList<>();
         if (this.mazeGenerator != null) {
             this.mazeVectors.addAll(this.mazeGenerator.generateMaze());
+            navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
         }
     }
     /*
@@ -103,6 +106,8 @@ public class MazeWorld {
         mazeVectors.add(new Vector2D(80, 90, 80, 150)); // vertical vector
         mazeVectors.add(new Vector2D(200, 400, 200, 550)); // vertical vector
         mazeVectors.add(new Vector2D(220, 100, 360, 100)); // horizontal vector
+
+        navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
     }
 
     public MazeWorld(String svgPath) {
@@ -121,5 +126,9 @@ public class MazeWorld {
 
     public List<Vector2D> getMazeVectors() {
         return mazeVectors;
+    }
+
+    public MazeNavigationGraph getNavigationGraph() {
+        return navigationGraph;
     }
 }

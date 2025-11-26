@@ -62,7 +62,7 @@ public class DfsMazeGenerator implements IMazeGenerator {
         int usedWidth = cols * cellSize;
         int usedHeight = rows * cellSize;
 
-        this.marginX = (cfg.getWidthPx() - usedWidth) / 2;
+        this.marginX = 0;//(cfg.getWidthPx() - usedWidth) / 2;
         this.marginY = (cfg.getHeightPx() - usedHeight) / 2;
     }
 
@@ -181,7 +181,6 @@ public class DfsMazeGenerator implements IMazeGenerator {
             }
         }
 
-        // new: ensure corridor width against outer edges
         enforceEdgeCorridorWidths(walls);
 
         return walls;
