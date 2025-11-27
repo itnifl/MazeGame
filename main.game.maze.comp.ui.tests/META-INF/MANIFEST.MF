@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: main.game.maze.comp.ui.tests
+Bundle-ManifestVersion: 2
+Bundle-Name: main.game.maze.comp.ui.tests
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: main.game.maze.comp.ui.tests; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: main.game.maze.comp.ui,
+ main.game.maze.difficulties,
+ main.game.maze.opponents,
+ org.eclipse.xtext.testing,
+ org.eclipse.xtext.ui.testing,
+ org.eclipse.xtext.xbase.testing,
+ org.eclipse.xtext.xbase.ui.testing,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench;resolution:=optional
+Import-Package: org.junit.jupiter.api;version="[5.1.0,6.0.0)",
+ org.junit.jupiter.api.extension;version="[5.1.0,6.0.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: main.game.maze.ui.tests;x-internal=true

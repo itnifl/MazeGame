@@ -1,4 +1,4 @@
-# maze-generator.acceleo
+# maze-generator.acceleo-runner
 
 ## Overview
 
@@ -24,7 +24,7 @@ This module holds the Acceleo templates and a small headless launcher used to ge
 
 ```bash
 # From repo root — runs the Eclipse Application inside Tycho
-mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
 ```
 
 ### `HeadlessGeneratorApp.java` — Plain Java entry point (dev utility)
@@ -77,7 +77,7 @@ java -cp "<compiled-classes-and-deps>" main.game.maze.gen.HeadlessGeneratorApp ^
 **Full generator run (Tycho, recommended)**
 
 ```bash
-mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
 ```
 
 **End-to-end build (includes generator)**

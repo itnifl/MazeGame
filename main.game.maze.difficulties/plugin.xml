@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin id="main.game.maze.difficulties"
+    name="%pluginName"
+    version="1.0.0.qualifier"
+    provider-name="%providerName">
+
+	<extension point="org.eclipse.emf.ecore.generated_package">
+	   <!-- @generated difficulty-module -->
+	   <package
+	         uri="http://main.game.maze/difficulties"
+	         class="main.game.maze.difficulties.DifficultiesPackage"
+	         genModel="platform:/resource/main.game.maze.difficulties/src/main/resources/difficulty-module.genmodel"/>
+	</extension>
+
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated difficulty-module -->
+      <parser
+            type="difficulties"
+            class="main.game.maze.difficulties.util.DifficultiesResourceFactoryImpl"/>
+   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated main.game.maze.opponents -->
+      <package
+            uri="http://main.game.maze/opponents"
+            class="main.game.maze.opponents.OpponentsPackage"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated main.game.maze.opponents -->
+      <parser
+            type="opponents"
+            class="main.game.maze.opponents.util.OpponentsResourceFactoryImpl"/>
+   </extension>
+</plugin>

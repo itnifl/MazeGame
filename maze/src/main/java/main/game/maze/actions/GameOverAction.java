@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.GameOverController;
 import main.game.maze.actions.base.CharacterActionScreens;
@@ -50,7 +51,9 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
                 controller.showDeathPenaltyLabel();
             }
 
+            Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
+            App.applyStandardSize(stage);
 
         } catch (IOException e) {
             e.printStackTrace();

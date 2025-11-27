@@ -23,9 +23,9 @@ The second command is the one that actually produces the installable p2 site inc
 
 ## Contents
 
-* movements-module plugin
-* difficulty-module plugin
-* opponents-module plugin
+* main.game.maze.behaviour plugin
+* main.game.maze.difficulties plugin
+* main.game.maze.opponents plugin
 
 ## Build
 
@@ -63,7 +63,7 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
   - The `mazer-module-generator` module then packages those sources into a jar that other modules can depend on.
   - Typical run that produces sources:
     ```bash
-    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
     ```
 
 - **main.game.maze**
@@ -78,12 +78,12 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
   - If you refresh the mirror or target, regenerate to ensure the generator runs against the same platform:
     ```bash
     mvn -f releng/mirror/pom.xml -U verify
-    mvn -pl maze-generator.acceleo -am -DskipTests clean verify
+    mvn -pl maze-generator.acceleo-runner -am -DskipTests clean verify
     ```
 
-- **movements-module, difficulty-module, opponents-module**
+- **main.game.maze.behaviour, main.game.maze.difficulties, main.game.maze.opponents**
   - Independent of the generator outputs. These are Eclipse plug ins and do not consume the generated jar directly.
-  - Changes in the metamodel or OCL within `difficulty-module` can affect templates and the produced sources. Regenerate after such changes.
+  - Changes in the metamodel or OCL within `main.game.maze.difficulties` can affect templates and the produced sources. Regenerate after such changes.
 
 - **maze-feature and maze-module-repository**
   - The generator and the generated jar are not published to the p2 site. They are plain Maven artifacts.
@@ -95,7 +95,7 @@ The feature uses version `1.0.0.qualifier`, and the plugin entries use version `
 models/*.xmi + templates
 │
 ▼
-maze-generator.acceleo  —(writes Java)→  mazer-module-generator  —(jar)→  main.game.maze
+maze-generator.acceleo-runner  —(writes Java)→  mazer-module-generator  —(jar)→  main.game.maze
 ▲
 │
 releng target and mirror provide the headless Eclipse runtime for the generator

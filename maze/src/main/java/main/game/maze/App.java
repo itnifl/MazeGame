@@ -1,3 +1,4 @@
+// maze/src/main/java/main/game/maze/App.java
 package main.game.maze;
 
 import javafx.application.Application;
@@ -19,6 +20,7 @@ import main.game.maze.constants.StageConstants;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.runtime.OclBootstrap;
 
@@ -28,9 +30,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class App extends Application {
-    private static int boardMaxX = StageConstants.BoardMaxX;
-    private static int boardMaxY = StageConstants.BoardMaxY;
-
     public static MediaPlayer inGameMediaPlayer;
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
@@ -46,20 +45,16 @@ public class App extends Application {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
             AnchorPane root = loader.load();
-
-            // Bind HP bar width after FXML is loaded
-            ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
-            if (progressBar != null) progressBar.prefWidthProperty().bind(root.widthProperty());
-
             gameController = loader.getController();
 
             primaryStage.setTitle("Maze Game");
-            primaryStage.setScene(new Scene(root, boardMaxX, boardMaxY));
-            primaryStage.show();
-
+            primaryStage.setScene(new Scene(root, App.getBoardMaxX(), App.getBoardMaxY()));
             // --- MDD difficulty selection (reads difficulties.xmi) ---
             this.setDifficulty(primaryStage);
             // --------------------------------------------------------
+            applySizeForCurrentDifficulty(primaryStage);
+            primaryStage.setResizable(false);
+            primaryStage.show();
 
             gameController.setupGame();
 
@@ -115,7 +110,66 @@ public class App extends Application {
         }
         return Optional.empty();
     }
-    
+
+    public static int getBoardMaxX() {
+        return (App.lastChosenDifficulty instanceof HardDifficulty) ? StageConstants.BoardMaxXLarge : StageConstants.BoardMaxX;
+    }
+
+    public static int getBoardMaxY() {
+        return (App.lastChosenDifficulty instanceof HardDifficulty) ? StageConstants.BoardMaxYLarge : StageConstants.BoardMaxY;
+    }
+
+    public static void applySizeForCurrentDifficulty(Stage stage) {
+        int width  = getBoardMaxX();
+        int height = getBoardMaxY();
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        Scene scene = stage.getScene();
+        if (scene != null) {
+            var root = (AnchorPane) scene.getRoot();
+            root.setPrefWidth(width);
+            root.setPrefHeight(height);
+            root.setMaxWidth(width);
+            root.setMaxHeight(height);        
+            setProgressBarWidth(root);
+            scene.setRoot(root); 
+
+        }
+    }
+
+    public static void applyStandardSize(Stage stage) {
+        int width  = StageConstants.BoardMaxX;
+        int height = StageConstants.BoardMaxY;
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        stage.setWidth(width);
+        stage.setHeight(height);
+
+        Scene scene = stage.getScene();
+        if (scene != null) {
+            var root = (AnchorPane) scene.getRoot();
+            root.setPrefWidth(width);
+            root.setPrefHeight(height);
+            root.setMaxWidth(width);
+            root.setMaxHeight(height);            
+            setProgressBarWidth(root);
+            scene.setRoot(root); 
+        }
+    }
+
+    private static void setProgressBarWidth(AnchorPane root) {
+        ProgressBar progressBar = (ProgressBar) root.lookup("#hpBar");
+        if (progressBar != null) {
+            progressBar.prefWidthProperty().bind(root.widthProperty());
+        }
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -17,10 +17,10 @@ public class ActionScreens {
 
             scene.setRoot(newRoot);    // no need to call setScene again
 
-            Window win = scene.getWindow();
+            /*Window win = scene.getWindow();
             if (win instanceof Stage stage) {
-                stage.sizeToScene();   // keep your resize behavior
-            }
+                stage.sizeToScene();   
+            }*/
         };
 
         if (javafx.application.Platform.isFxApplicationThread()) {

@@ -19,11 +19,11 @@
     <module>releng/mirror</module>
 
     <!-- 2: modell-/plugin-moduler -->
-    <module>movements-module</module>
-    <module>difficulty-module</module>
-    <module>opponents-module</module>
+    <module>main.game.maze.behaviour</module>
+    <module>main.game.maze.difficulties</module>
+    <module>main.game.maze.opponents</module>
     <module>maze-generator.acceleo</module>
-    <!-- Disabled - we are not generating yet: <module>maze-generator.runner</module> -->
+    <!-- Disabled - we are not generating yet: <module>maze-generator.acceleo-runner</module> -->
 
     <!-- 3: feature og p2-repo -->
     <module>maze-feature</module>
@@ -37,6 +37,16 @@
   </modules>
 
   <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+
+    <repository>
+      <id>eclipse-releases</id>
+      <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </repository>
+    
     <repository>
       <id>local-p2</id>
       <layout>p2</layout>
@@ -82,17 +92,10 @@
         <version>${tycho.version}</version>
         <configuration>
           <pomDependencies>ignore</pomDependencies>    
-           <includeModules>true</includeModules>      
+            <includeModules>true</includeModules>      
           <target> 
             <file>${maven.multiModuleProjectDirectory}/releng/maze.target</file>          
-          </target>        
-          <repositories>
-              <repository>
-                  <id>local-p2</id>
-                  <layout>p2</layout>
-                  <url>file:${maven.multiModuleProjectDirectory}/releng/local-p2</url>
-              </repository>
-          </repositories>             
+          </target>                   
         </configuration>
       </plugin>
       <plugin>

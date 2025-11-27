@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin id="main.game.maze.opponents"
+    name="%pluginName"
+    version="1.0.0.qualifier"
+    provider-name="%providerName">
+  <extension point="org.eclipse.emf.ecore.delegate">
+    <factory
+        uri="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
+        class="org.eclipse.ocl.pivot.delegate.OCLDelegateDomainFactory"/>
+    <invocationDelegate
+        uri="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
+        class="org.eclipse.ocl.pivot.delegate.OCLInvocationDelegateFactory"/>
+    <settingDelegate
+        uri="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
+        class="org.eclipse.ocl.pivot.delegate.OCLSettingDelegateFactory"/>
+    <validationDelegate
+        uri="http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot"
+        class="org.eclipse.ocl.pivot.delegate.OCLValidationDelegateFactory"/>
+  </extension>   
+
+</plugin>

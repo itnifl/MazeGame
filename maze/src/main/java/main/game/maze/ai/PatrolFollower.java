@@ -45,7 +45,7 @@ public class PatrolFollower {
 
         if (reachedWaypoint(x, y)) {
             PatrolPoint wp = path.get(currentIndex);
-            long holdMs = (long) wp.getTime();
+            long holdMs = 0; //(long) wp.getTime();
 
             if (holdMs > 0) {
                 holding = true;
