@@ -83,6 +83,7 @@ Download and install:
     Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
   * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
   * Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
+  * Powershell [Powershell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
 
 Environment variables (examples on Windows):
 
