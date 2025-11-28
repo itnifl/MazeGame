@@ -13,7 +13,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter

@@ -32,7 +32,7 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;

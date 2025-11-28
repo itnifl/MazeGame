@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.GameOverController;
-import main.game.maze.MazeWorld;
 import main.game.maze.WinGameController;
+import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.actions.base.ActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.constants.ScreenNameConstants;
@@ -63,7 +63,7 @@ public class RestartGameAction extends ActionScreens {
             this.replaceRoot(root, newRoot);
             App.applySizeForCurrentDifficulty(stage);
                         
-            MazeWorld.RegenerateWorld();
+            GameMazeWorld.RegenerateWorld();
 
             controller.initialize(null, null);
 

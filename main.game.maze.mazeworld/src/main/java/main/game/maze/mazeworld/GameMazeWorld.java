@@ -1,17 +1,17 @@
-package main.game.maze;
+package main.game.maze.mazeworld;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import main.game.maze.constants.StageConstants;
-import main.game.maze.runtime.generators.DfsMazeGenerator;
-import main.game.maze.runtime.generators.IMazeGenerator;
-import main.game.maze.runtime.generators.MazeGeneratorConfig;
-import main.game.maze.service.MazeNavigationGraph;
-import main.game.maze.service.MazeNavigationGraphService;
+import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.mazeworld.generators.DfsMazeGenerator;
+import main.game.maze.mazeworld.generators.IMazeGenerator;
+import main.game.maze.mazeworld.generators.MazeGeneratorConfig;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
+import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 
-public class MazeWorld {
-    private static MazeWorld world;
+public class GameMazeWorld {
+    private static GameMazeWorld world;
     private final IMazeGenerator mazeGenerator;
     private List<Vector2D> mazeVectors;
     private MazeNavigationGraph navigationGraph;
@@ -20,21 +20,21 @@ public class MazeWorld {
      * Factory method that creates a new world, or returns an existing one if one
      * already exists:
      */
-    public static MazeWorld GetWorld() {
+    public static GameMazeWorld GetWorld(int boardMaxX, int boardMaxY) {
         if (world == null) {
-            world = new MazeWorld(new DfsMazeGenerator(getMazeConfig()));
+            world = new GameMazeWorld(new DfsMazeGenerator(getMazeConfig(boardMaxX, boardMaxY)));
         }
         return world;
     }
 
-    public static MazeWorld RegenerateWorld() {
-        world = new MazeWorld(new DfsMazeGenerator(getMazeConfig()));
+    public static GameMazeWorld RegenerateWorld(int boardMaxX, int boardMaxY) {
+        world = new GameMazeWorld(new DfsMazeGenerator(getMazeConfig(boardMaxX, boardMaxY)));
         return world;
     }
-    private static MazeGeneratorConfig getMazeConfig() {
+    private static MazeGeneratorConfig getMazeConfig(int boardMaxX, int boardMaxY) {
         return new MazeGeneratorConfig(
-            App.getBoardMaxX(),
-            App.getBoardMaxY(),
+            boardMaxX,
+            boardMaxY,
             20,
             60,
             60,
@@ -42,7 +42,7 @@ public class MazeWorld {
         );
     }
 
-    public MazeWorld(IMazeGenerator generator) {
+    public GameMazeWorld(IMazeGenerator generator) {
         this.mazeGenerator = generator;
         this.mazeVectors = new ArrayList<>();
         if (this.mazeGenerator != null) {
@@ -53,7 +53,7 @@ public class MazeWorld {
     /*
      * Gives us a predefined standard map
      */
-    public MazeWorld() {
+    public GameMazeWorld() {
         mazeGenerator = null;
         mazeVectors = new ArrayList<>();
         mazeVectors.add(new Vector2D(400, 22, 400, 100)); // vertical vector
@@ -110,7 +110,7 @@ public class MazeWorld {
         navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
     }
 
-    public MazeWorld(String svgPath) {
+    public GameMazeWorld(String svgPath) {
         // Generate a maze based on a SVG image.
         // One can be created in Adobe Illustrator, Inkscape, Sketch, or Figma.
         mazeGenerator = null;

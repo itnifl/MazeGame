@@ -1,4 +1,4 @@
-package main.game.maze.runtime.generators;
+package main.game.maze.mazeworld.generators;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import javafx.geometry.Point2D;
-import main.game.maze.Vector2D;
+import main.game.maze.mazeworld.Vector2D;
 
 /**
  * Depth-first search backtracking maze generator.

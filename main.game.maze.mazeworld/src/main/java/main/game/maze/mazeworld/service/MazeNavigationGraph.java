@@ -1,4 +1,4 @@
-package main.game.maze.service;
+package main.game.maze.mazeworld.service;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package main.game.maze.actions.base;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import main.game.maze.characters.PlayerCharacter;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 
 public class CharacterActionScreens extends ActionScreens {
     protected int score = 0;

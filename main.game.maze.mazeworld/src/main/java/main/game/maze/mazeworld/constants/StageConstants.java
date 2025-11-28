@@ -1,4 +1,4 @@
-package main.game.maze.constants;
+package main.game.maze.mazeworld.constants;
 
 public class StageConstants {
     public final static int BoardMaxX = 800;

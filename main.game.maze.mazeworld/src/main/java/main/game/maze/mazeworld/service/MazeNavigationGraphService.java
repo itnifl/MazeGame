@@ -1,5 +1,5 @@
 // maze/src/main/java/main/game/maze/service/MazeNavigationGraphService.java
-package main.game.maze.service;
+package main.game.maze.mazeworld.service;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javafx.geometry.Point2D;
-import main.game.maze.Vector2D;
-import main.game.maze.service.MazeNavigationGraph.Node;
+import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.service.MazeNavigationGraph.Node;
 
 /**
  * Service that builds a MazeNavigationGraph based on maze vectors.

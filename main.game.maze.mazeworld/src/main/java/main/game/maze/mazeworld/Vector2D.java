@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.mazeworld;
 
 import javafx.geometry.Point2D;
 
