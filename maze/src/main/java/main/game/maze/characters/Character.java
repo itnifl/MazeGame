@@ -1,6 +1,5 @@
 package main.game.maze.characters;
-
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,7 +39,7 @@ public class Character  {
             this.characterPosition.getX(), this.characterPosition.getY(), 
             this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(StageConstants.PlayerCharacterSpeed);
 
-        maze = GameMazeWorld.GetWorld();
+        maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
         calculateMaxPositions();
     }
 

@@ -63,7 +63,7 @@ public class RestartGameAction extends ActionScreens {
             this.replaceRoot(root, newRoot);
             App.applySizeForCurrentDifficulty(stage);
                         
-            GameMazeWorld.RegenerateWorld();
+            GameMazeWorld.RegenerateWorld(App.getBoardMaxX(), App.getBoardMaxY());
 
             controller.initialize(null, null);
 

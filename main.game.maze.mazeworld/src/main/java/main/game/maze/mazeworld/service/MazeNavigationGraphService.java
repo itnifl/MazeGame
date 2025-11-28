@@ -9,8 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.service.MazeNavigationGraph.Node;
 

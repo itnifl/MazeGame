@@ -6,8 +6,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Random;
-
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 
 /**

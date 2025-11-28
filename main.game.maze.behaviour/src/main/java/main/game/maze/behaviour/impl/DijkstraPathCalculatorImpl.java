@@ -2,10 +2,10 @@
  */
 package main.game.maze.behaviour.impl;
 
-import main.game.maze.mazeworld;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.DijkstraPathCalculator;
 import main.game.maze.behaviour.Position;
+import main.game.maze.mazeworld.GameMazeWorld;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
@@ -56,9 +56,16 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		super();
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
 	@Override
 	public EList<Position> compute(Position target) {
-		MazeWorld mazeWorld = MazeWorld.GetWorld();
+		var mazeWorld = GameMazeWorld.GetWorld();
+		//TODO: something here	
+		return null;
 	}
 
 	/**

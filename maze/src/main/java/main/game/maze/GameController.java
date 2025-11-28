@@ -37,7 +37,8 @@ import main.game.maze.difficulties.Difficulty;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
-import main.game.maze.service.MazeNavigationGraphService;
+import main.game.maze.mazeworld.service.MazeNavigationGraphService;
+import main.game.maze.mazeworld.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -60,7 +61,7 @@ public class GameController implements Initializable {
     private Label scoreLabel;
 
     private PlayerCharacter playerCharacter;
-    private MazeWorld maze;
+    private GameMazeWorld maze;
     private GameOverAction gameOverAction;
     private WinGameAction winGameAction;
     private WinArea winarea;
@@ -207,7 +208,7 @@ public class GameController implements Initializable {
     public void setupGame() {
         hpBar.setProgress(1.0);
 
-        maze = MazeWorld.GetWorld();
+        maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
         playerCharacter = new PlayerCharacter(
                 player,
                 player.getLayoutX(),

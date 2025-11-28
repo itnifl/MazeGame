@@ -2,7 +2,7 @@ package main.game.maze.mazeworld.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
 
 /**
  * Runtime navigation graph built from maze vectors.

@@ -1,7 +1,5 @@
 package main.game.maze.mazeworld;
 
-import javafx.geometry.Point2D;
-
 public class Vector2D {
     private Point2D start;
     private Point2D end;

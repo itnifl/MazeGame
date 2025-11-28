@@ -11,9 +11,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: main.game.maze.mazeworld
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime
-Import-Package: javafx.application,
- javafx.stage,
- javafx.scene,
- javafx.scene.control,
- javafx.scene.layout,
- javafx.geometry

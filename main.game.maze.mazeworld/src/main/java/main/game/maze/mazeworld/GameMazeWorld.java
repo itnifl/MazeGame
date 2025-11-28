@@ -27,6 +27,10 @@ public class GameMazeWorld {
         return world;
     }
 
+    public static GameMazeWorld GetWorld() {
+        return world;
+    }
+
     public static GameMazeWorld RegenerateWorld(int boardMaxX, int boardMaxY) {
         world = new GameMazeWorld(new DfsMazeGenerator(getMazeConfig(boardMaxX, boardMaxY)));
         return world;

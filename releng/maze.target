@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="62">
+<target name="Maze Target" sequenceNumber="65">
   <locations>
     <location 
         includeAllPlugins="false" includeAllPlatforms="false" 
@@ -8,7 +8,6 @@
         type="InstallableUnit">
         <repository location="https://download.eclipse.org/releases/2025-09/"/>
         <repository location="https://download.eclipse.org/tools/orbit/downloads/latest-R/"/>
-        <repository location="https://download.eclipse.org/efxclipse/updates-released/3.9.0/site"/>
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
@@ -26,7 +25,6 @@
       <unit id="org.eclipse.acceleo.parser" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.profiler" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.traceability" version="0.0.0"/>
-      <unit id="org.eclipse.fx.runtime.min.feature.feature_group" version="0.0.0"/>
     </location>
   </locations>
 </target>
