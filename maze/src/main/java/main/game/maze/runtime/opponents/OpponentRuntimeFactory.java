@@ -20,7 +20,7 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import main.game.maze.constants.OpponentConstants;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;

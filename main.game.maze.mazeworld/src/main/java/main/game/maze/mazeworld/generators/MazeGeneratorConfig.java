@@ -1,4 +1,4 @@
-package main.game.maze.runtime.generators;
+package main.game.maze.mazeworld.generators;
 
 public final class MazeGeneratorConfig {
 

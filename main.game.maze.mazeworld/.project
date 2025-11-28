@@ -1,30 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>opponents-module</name>
+	<name>main.game.maze.mazeworld</name>
 	<comment></comment>
 	<projects>
-		<project>difficulty-module</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.ocl.pivot.ui.oclbuilder</name>
+			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
-				<dictionary>
-					<key>disabledExtensions</key>
-					<value>*,essentialocl</value>
-				</dictionary>
-				<dictionary>
-					<key>disabledPaths</key>
-					<value>bin/**,target/**</value>
-				</dictionary>
-				<dictionary>
-					<key>enabledExtensions</key>
-					<value>ecore,ocl,oclinecore,oclstdlib,uml</value>
-				</dictionary>
-				<dictionary>
-					<key>enabledPaths</key>
-					<value>**</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
@@ -44,13 +27,13 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
-		<nature>org.eclipse.ocl.pivot.ui.oclnature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1761213830078</id>
+			<id>1761213830072</id>
 			<name></name>
 			<type>30</type>
 			<matcher>

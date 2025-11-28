@@ -27,7 +27,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.ResourceFileConstants;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

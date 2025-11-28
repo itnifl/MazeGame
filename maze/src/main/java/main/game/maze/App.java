@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 
 // NEW imports:
 import main.game.maze.service.DifficultyService;

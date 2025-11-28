@@ -12,6 +12,9 @@
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <emf.version>2.38.0</emf.version>
+    <javafx.version>21.0.9</javafx.version>
+    <javafx.platform>win</javafx.platform> <!-- Default, can be overridden by profile -->
+    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
   </properties>
   
   <modules>
@@ -19,6 +22,7 @@
     <module>releng/mirror</module>
 
     <!-- 2: modell-/plugin-moduler -->
+    <module>main.game.maze.mazeworld</module>
     <module>main.game.maze.behaviour</module>
     <module>main.game.maze.difficulties</module>
     <module>main.game.maze.opponents</module>

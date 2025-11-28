@@ -9,42 +9,21 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <packaging>eclipse-plugin</packaging>
-  <artifactId>main.game.maze.behaviour</artifactId>
+  <artifactId>main.game.maze.mazeworld</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
-  <dependencies>  
-
-    <dependency>
-      <groupId>main.game.maze</groupId>
-      <artifactId>main.game.maze.mazeworld</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore</artifactId>
-      <version>${emf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.common</artifactId>
-      <version>${emf.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.emf</groupId>
-      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-      <version>${emf.version}</version>
-    </dependency>
+  <dependencies>        
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.11.0</version>
+      <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>

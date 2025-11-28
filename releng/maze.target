@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="62">
+<target name="Maze Target" sequenceNumber="65">
   <locations>
     <location 
         includeAllPlugins="false" includeAllPlatforms="false" 
