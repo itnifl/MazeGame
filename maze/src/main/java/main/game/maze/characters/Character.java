@@ -39,7 +39,7 @@ public class Character  {
             this.characterPosition.getX(), this.characterPosition.getY(), 
             this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(StageConstants.PlayerCharacterSpeed);
 
-        maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
+        maze = GameMazeWorld.GetWorld();
         calculateMaxPositions();
     }
 
