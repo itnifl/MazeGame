@@ -4,7 +4,7 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:opponents="http://main.game.maze/opponents"
-    xmlns:diff="http://main.game.maze/difficulty" 
+    xmlns:diff="http://main.game.maze/difficulties" 
     name="MazeGame">
     <name>Testing Game</name>
   

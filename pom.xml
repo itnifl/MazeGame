@@ -27,11 +27,11 @@
     <module>main.game.maze.difficulties</module>
     <module>main.game.maze.opponents</module>
     <module>maze-generator.acceleo</module>
-    <!-- Disabled - we are not generating yet: <module>maze-generator.acceleo-runner</module> -->
 
     <!-- 3: feature og p2-repo -->
     <module>maze-feature</module>
     <module>maze-module-repository</module>
+    <module>maze-generator.acceleo-runner</module>
 
     <!-- 4: evt. egen generated/jar-modul for spillet -->
     <module>maze-module-generator</module>
