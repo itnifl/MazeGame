@@ -1,0 +1,10 @@
+[comment encoding = UTF-8 /]
+[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/difficulties')]
+[template public generate(root : OpponentModel)]
+	[comment @main /]
+	[file ('generated_info.txt', false, 'UTF-8')]
+		Generation Start
+		----------------
+		Number of enemies in model: [root.characterTypes->size()/]
+	[/file]
+[/template]

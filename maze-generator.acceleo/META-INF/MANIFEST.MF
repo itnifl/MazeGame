@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.acceleo.engine,
  main.game.maze.difficulties,
  main.game.maze.opponents
-Export-Package: main.game.maze.gen
+Export-Package: main.game.maze.gen,
+ main.game.maze.gen.templates
