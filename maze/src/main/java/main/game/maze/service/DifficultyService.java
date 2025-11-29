@@ -39,7 +39,7 @@ public final class DifficultyService {
         local.put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
 
         // (Optional but safe) also register the literal used in your XMI
-        final String XMI_NS = "http://main.game.maze/difficulty";
+        final String XMI_NS = "http://main.game.maze/difficulties";
         global.put(XMI_NS, DifficultiesPackage.eINSTANCE);
         local.put(XMI_NS, DifficultiesPackage.eINSTANCE);
 

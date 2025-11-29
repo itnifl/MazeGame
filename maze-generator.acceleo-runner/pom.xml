@@ -25,32 +25,115 @@
             <configuration>
               <applicationArgs>
                 <arg>-application</arg>
-                <arg>main.game.maze.gen.app</arg>
+                <arg>maze-generator.acceleo.main.game.maze.gen.RunAcceleo</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
-                <arg>${maven.multiModuleProjectDirectory}/mazer-module-generator/target/generated-sources/acceleo</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
               <dependencies>
+                <!-- CRITICAL: Acceleo Engine often requires JDT Core to resolve -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>org.eclipse.jdt.core</artifactId>
+                </dependency>
+
+                <!-- CRITICAL: EMF utilities often require Codegen -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>org.eclipse.emf.codegen</artifactId>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
+                </dependency>
+                <!-- CRITICAL: Acceleo Engine needs the Workspace/Resources plugin -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>org.eclipse.core.resources</artifactId>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>org.eclipse.ocl.pivot</artifactId>
+                </dependency>
+
+              <dependency>
+                  <type>eclipse-plugin</type>
+                  <artifactId>org.eclipse.jdt.launching</artifactId>
+              </dependency>
+              <dependency>
+                  <type>eclipse-plugin</type>
+                  <artifactId>org.eclipse.jdt.debug</artifactId>
+              </dependency>
+
+              <!-- EMF Edit (often required by generated model code) -->
+              <dependency>
+                  <type>eclipse-plugin</type>
+                  <artifactId>org.eclipse.emf.edit</artifactId>
+              </dependency>
+                <!-- CRITICAL: OCL needs the LPG Runtime -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>lpg.runtime.java</artifactId>
+                </dependency>
+                <!-- Standard Eclipse Dependencies -->
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.equinox.app</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.core.runtime</artifactId></dependency>
+                
+                <!-- EMF Dependencies -->
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>                
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.common</artifactId></dependency>
+
+                <!-- ACCELEO Dependencies -->
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.engine</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.common</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.acceleo.model</artifactId></dependency>
+
+                <!-- OCL Dependencies (CRITICAL for Acceleo) -->
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.common</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.ecore</artifactId></dependency>
+
+                <!-- Your Generator -->
                 <dependency>
-                  <groupId>main.game.maze</groupId>
-                  <artifactId>maze-generator.acceleo-runner</artifactId>
-                  <version>${project.version}</version>
-                  <type>eclipse-plugin</type>
+                    <type>eclipse-plugin</type>
+                    <artifactId>maze-generator.acceleo</artifactId>
+                    <version>0.0.0</version>
                 </dependency>
 
-              </dependencies>
-
+                <!-- Your Domain Models -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.difficulties</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.opponents</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.mazeworld</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.behaviour</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+            </dependencies>
               <repositories>
                 <repository>
                   <id>local-p2</id>
                   <layout>p2</layout>
                   <url>${p2.repo.url}</url>
+                </repository>
+                 <repository>
+                  <id>maze-repo</id>
+                  <layout>p2</layout>
+                  <url>${maze.repo.url}</url>
                 </repository>
               </repositories>
 
@@ -92,6 +175,8 @@
                         def projectRoot = project.basedir.parentFile.getCanonicalPath()
                         // Construct the full, normalized path to the local p2 repository
                         project.properties['p2.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/releng/local-p2'
+                        //file:${maven.multiModuleProjectDirectory}/maze-module-repository/target/repository
+                        project.properties['maze.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/maze-module-repository/target/repository'
                     </script>
                 </scripts>
             </configuration>

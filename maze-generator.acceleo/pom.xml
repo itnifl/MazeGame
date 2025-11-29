@@ -11,5 +11,65 @@
   <artifactId>maze-generator.acceleo</artifactId>
   <packaging>eclipse-plugin</packaging>
 
-  
+  <dependencies>
+    <!-- Eclipse Core Runtime -->
+    <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.core.runtime</artifactId>
+        <version>3.30.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- Eclipse Equinox App (Fixes IApplication error) -->
+    <dependency>
+        <groupId>org.eclipse.platform</groupId>
+        <artifactId>org.eclipse.equinox.app</artifactId>
+        <version>1.7.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- EMF Ecore -->
+    <dependency>
+        <groupId>org.eclipse.emf</groupId>
+        <artifactId>org.eclipse.emf.ecore</artifactId>
+        <version>2.36.0</version>
+        <scope>provided</scope>
+    </dependency>
+    
+    <!-- EMF XMI -->
+    <dependency>
+        <groupId>org.eclipse.emf</groupId>
+        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+        <version>2.37.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- Acceleo Engine -->
+    <dependency>
+        <groupId>org.eclipse.acceleo</groupId>
+        <artifactId>org.eclipse.acceleo.engine</artifactId>
+        <version>3.5.1.201409021433</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.acceleo</groupId>
+        <artifactId>org.eclipse.acceleo.model</artifactId>
+        <version>3.5.1.201409021433</version>
+        <scope>provided</scope>
+    </dependency>
+    
+    <!-- Local Project Dependencies (VS Code usually handles these if in same workspace, but being explicit helps) -->
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.difficulties</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>main.game.maze.opponents</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

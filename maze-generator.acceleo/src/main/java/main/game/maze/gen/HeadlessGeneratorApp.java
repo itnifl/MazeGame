@@ -1,5 +1,5 @@
 package main.game.maze.gen;
-
+///maze-generator.acceleo/src/main/game/maze/gen/HeadlessGeneratorApp.java
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,13 +14,20 @@ public class HeadlessGeneratorApp implements IApplication {
     String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
     
     if (args == null || args.length < 2) {
-      System.err.println("Usage: -application main.game.maze.gen.app <input.xmi> <outDir>");
+      System.out.println("Usage: -application main.game.maze.gen.RunAcceleo <input.xmi> <outDir>");
       return IApplication.EXIT_OK;
     }
 
-    String modelPath = new File(args[0]).getAbsolutePath();
-    String outDir    = new File(args[1]).getAbsolutePath();
-    new RunAcceleo().run(modelPath, outDir);
+    String opponentPath = new File(args[0]).getAbsolutePath();
+    String diffPath     = new File(args[1]).getAbsolutePath();
+    String outDir       = new File(args[2]).getAbsolutePath();
+
+    System.out.println("Generating from:");
+    System.out.println("  Opponents: " + opponentPath);
+    System.out.println("  Difficulty: " + diffPath);
+    System.out.println("  Output:    " + outDir);
+
+    new RunAcceleo().run(opponentPath, diffPath, outDir);
     
     return IApplication.EXIT_OK;
   }

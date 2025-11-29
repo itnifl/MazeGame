@@ -75,7 +75,7 @@ $files = Get-ChildItem -Path $Root -Recurse -File -Force | Where-Object {
   # Specific Java files
   elseif ($lowerName -eq 'runacceleo.java') { $include = $true }
   elseif ($lowerName -eq 'headlessgenerator.java') { $include = $true }
-  elseif ($lowerName -eq 'headlessgenmerator.java') { $include = $true } # handle typo
+  elseif ($lowerName -eq 'headlessgeneratorapp.java') { $include = $true } 
 
   # maze.target and other *.target files
   elseif ($lowerName -eq 'maze.target') { $include = $true }

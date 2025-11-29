@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- /maze-generator.acceleo/plugin.xml -->
 <plugin>
 
   <extension
-        id="main.game.maze.gen.app"
+        id="main.game.maze.gen.RunAcceleo"
         point="org.eclipse.core.runtime.applications">
     <application
           cardinality="singleton-global"
           thread="main"
           visible="false">
       <run
-          class="main.game.maze.gen.HeadlessGeneratorApplication"/>
+          class="main.game.maze.gen.HeadlessGeneratorApp"/>
     </application>
   </extension>
 
