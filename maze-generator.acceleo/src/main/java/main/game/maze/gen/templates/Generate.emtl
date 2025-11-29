@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:mtl="http://www.eclipse.org/acceleo/mtl/3.0" xmlns:ocl.ecore="http://www.eclipse.org/ocl/1.1.0/Ecore">
-  <mtl:Module name="Generate" nsURI="main::game::maze::gen::templates::Generate" startHeaderPosition="30" endHeaderPosition="188">
+  <mtl:Module name="Generate" nsURI="main::game::maze::gen::templates::Generate" startHeaderPosition="30" endHeaderPosition="233">
+    <input>
+      <takesTypesFrom href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </input>
     <input>
       <takesTypesFrom href="http://main.game.maze/opponents#/"/>
     </input>
@@ -9,19 +12,36 @@
     </input>
     <ownedModuleElement xsi:type="mtl:Template" name="generate" visibility="Public" main="true">
       <body xsi:type="mtl:FileBlock" openMode="OverWrite">
-        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&#x9;&#x9;Generation Start&#xD;&#xA;&#x9;&#x9;----------------&#xD;&#xA;&#x9;&#x9;Number of enemies in model: "/>
-        <body xsi:type="ocl.ecore:OperationCallExp">
-          <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Integer"/>
-          <source xsi:type="ocl.ecore:PropertyCallExp" eType="/8/OrderedSet(CharacterType)">
+        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&#x9;&#x9;GENERATION TRIGGERED!&#xD;&#xA;&#x9;&#x9;Root Object Found: "/>
+        <body xsi:type="ocl.ecore:PropertyCallExp">
+          <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+          <source xsi:type="ocl.ecore:OperationCallExp">
+            <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
             <source xsi:type="ocl.ecore:VariableExp" name="root" referredVariable="/0/generate/root">
-              <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+              <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
             </source>
-            <referredProperty xsi:type="ecore:EReference" href="http://main.game.maze/opponents#//OpponentModel/characterTypes"/>
+            <referredOperation xsi:type="ecore:EOperation" href="http://www.eclipse.org/emf/2002/Ecore#//EObject/eClass"/>
           </source>
-          <referredOperation xsi:type="ecore:EOperation" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/OrderedSet(T)_Class/size"/>
+          <referredProperty xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//ENamedElement/name"/>
+        </body>
+        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&#xD;&#xA;&#x9;&#x9;Package URI: "/>
+        <body xsi:type="ocl.ecore:PropertyCallExp">
+          <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+          <source xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EPackage"/>
+            <source xsi:type="ocl.ecore:OperationCallExp">
+              <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+              <source xsi:type="ocl.ecore:VariableExp" name="root" referredVariable="/0/generate/root">
+                <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+              </source>
+              <referredOperation xsi:type="ecore:EOperation" href="http://www.eclipse.org/emf/2002/Ecore#//EObject/eClass"/>
+            </source>
+            <referredProperty xsi:type="ecore:EReference" href="http://www.eclipse.org/emf/2002/Ecore#//EClassifier/ePackage"/>
+          </source>
+          <referredProperty xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//EPackage/nsURI"/>
         </body>
         <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&#xD;&#xA;"/>
-        <fileUrl xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="generated_info.txt">
+        <fileUrl xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="debug_info.txt">
           <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
         </fileUrl>
         <charset xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="UTF-8">
@@ -29,7 +49,7 @@
         </charset>
       </body>
       <parameter name="root">
-        <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+        <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
       </parameter>
     </ownedModuleElement>
   </mtl:Module>
@@ -60,7 +80,7 @@
         <eAnnotations source="MTL" references="/0/generate"/>
         <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
         <eParameters name="root">
-          <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+          <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
         </eParameters>
       </eOperations>
     </eClassifiers>
@@ -84,94 +104,109 @@
         <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/OrderedSet(T)"/>
       </eAnnotations>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="opponents_OpponentModel_Class">
-      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
-        <references href="http://main.game.maze/opponents#//OpponentModel"/>
-      </eAnnotations>
-    </eClassifiers>
   </ecore:EPackage>
   <ocl.ecore:Variable name="self">
     <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
-    <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
     <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
-    <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
-    <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
-    <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
-  <ecore:EPackage name="collections">
-    <eClassifiers xsi:type="ocl.ecore:OrderedSetType" name="OrderedSet(CharacterType)" instanceClassName="java.util.LinkedHashSet">
-      <elementType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//CharacterType"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ocl.ecore:SetType" instanceClassName="java.util.Set">
-      <elementType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//CharacterType"/>
-    </eClassifiers>
-  </ecore:EPackage>
   <ocl.ecore:Variable name="self">
-    <eType xsi:type="ecore:EClass" href="http://main.game.maze/opponents#//OpponentModel"/>
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ocl.ecore:Variable name="self">
     <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
   </ocl.ecore:Variable>
   <ecore:EAnnotation source="positions">
     <eAnnotations source="positions.0" references="/0/generate">
-      <details key="start" value="122"/>
-      <details key="end" value="363"/>
-      <details key="line" value="3"/>
+      <details key="start" value="166"/>
+      <details key="end" value="421"/>
+      <details key="line" value="4"/>
     </eAnnotations>
     <eAnnotations source="positions.1" references="/0/generate/%">
-      <details key="start" value="193"/>
-      <details key="end" value="350"/>
-      <details key="line" value="5"/>
-    </eAnnotations>
-    <eAnnotations source="positions.2" references="/0/generate/%/%">
-      <details key="start" value="240"/>
-      <details key="end" value="310"/>
+      <details key="start" value="238"/>
+      <details key="end" value="408"/>
       <details key="line" value="6"/>
     </eAnnotations>
+    <eAnnotations source="positions.2" references="/0/generate/%/%">
+      <details key="start" value="281"/>
+      <details key="end" value="327"/>
+      <details key="line" value="7"/>
+    </eAnnotations>
     <eAnnotations source="positions.3" references="/0/generate/%/%.1">
-      <details key="start" value="311"/>
-      <details key="end" value="338"/>
+      <details key="start" value="328"/>
+      <details key="end" value="346"/>
       <details key="line" value="0"/>
     </eAnnotations>
     <eAnnotations source="positions.4" references="/0/generate/%/%.1/%">
-      <details key="start" value="311"/>
-      <details key="end" value="330"/>
+      <details key="start" value="328"/>
+      <details key="end" value="341"/>
       <details key="line" value="0"/>
     </eAnnotations>
     <eAnnotations source="positions.5" references="/0/generate/%/%.1/%/root">
-      <details key="start" value="311"/>
-      <details key="end" value="315"/>
+      <details key="start" value="328"/>
+      <details key="end" value="332"/>
       <details key="line" value="0"/>
     </eAnnotations>
     <eAnnotations source="positions.6" references="/0/generate/%/%.2">
-      <details key="start" value="340"/>
-      <details key="end" value="342"/>
+      <details key="start" value="349"/>
+      <details key="end" value="366"/>
       <details key="line" value="9"/>
     </eAnnotations>
     <eAnnotations source="positions.7" references="/0/generate/%/%.3">
-      <details key="start" value="200"/>
-      <details key="end" value="220"/>
+      <details key="start" value="367"/>
+      <details key="end" value="395"/>
       <details key="line" value="0"/>
     </eAnnotations>
-    <eAnnotations source="positions.8" references="/0/generate/%/%.4">
-      <details key="start" value="229"/>
-      <details key="end" value="236"/>
+    <eAnnotations source="positions.8" references="/0/generate/%/%.3/%">
+      <details key="start" value="367"/>
+      <details key="end" value="389"/>
       <details key="line" value="0"/>
     </eAnnotations>
-    <eAnnotations source="positions.9" references="/0/generate/root">
-      <details key="start" value="148"/>
-      <details key="end" value="168"/>
-      <details key="line" value="3"/>
+    <eAnnotations source="positions.9" references="/0/generate/%/%.3/%/%">
+      <details key="start" value="367"/>
+      <details key="end" value="380"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.10" references="/0/generate/%/%.3/%/%/root">
+      <details key="start" value="367"/>
+      <details key="end" value="371"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.11" references="/0/generate/%/%.4">
+      <details key="start" value="398"/>
+      <details key="end" value="400"/>
+      <details key="line" value="10"/>
+    </eAnnotations>
+    <eAnnotations source="positions.12" references="/0/generate/%/%.5">
+      <details key="start" value="245"/>
+      <details key="end" value="261"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.13" references="/0/generate/%/%.6">
+      <details key="start" value="270"/>
+      <details key="end" value="277"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.14" references="/0/generate/root">
+      <details key="start" value="192"/>
+      <details key="end" value="213"/>
+      <details key="line" value="4"/>
     </eAnnotations>
   </ecore:EAnnotation>
 </xmi:XMI>

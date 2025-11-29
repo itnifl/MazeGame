@@ -28,7 +28,7 @@
                 <arg>maze-generator.acceleo.main.game.maze.gen.RunAcceleo</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/target/generated-sources/acceleo</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
               <dependencies>
                 <!-- CRITICAL: Acceleo Engine often requires JDT Core to resolve -->

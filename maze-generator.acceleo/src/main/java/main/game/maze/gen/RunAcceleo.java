@@ -63,6 +63,12 @@ public class RunAcceleo {
         Resource oppRes = rs.getResource(URI.createFileURI(new File(opponentModelPath).getAbsolutePath()), true);
         EObject root = oppRes.getContents().get(0);
 
+        System.out.println("DEBUG: Loaded XMI Root Object");
+        System.out.println("Type: " + root.eClass().getName());
+        System.out.println("Package: " + root.eClass().getEPackage().getNsURI());
+        System.out.println("Java Class: " + root.getClass().getName());
+        System.out.println("==========================================");
+
         // 4. Load the compiled Acceleo Module (.emtl)
         URL moduleUrl = RunAcceleo.class.getResource("/" + MODULE_PATH + ".emtl");
         if (moduleUrl == null) {

@@ -1,10 +1,11 @@
 [comment encoding = UTF-8 /]
-[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/difficulties')]
-[template public generate(root : OpponentModel)]
+[module Generate('http://www.eclipse.org/emf/2002/Ecore', 'http://main.game.maze/opponents', 'http://main.game.maze/difficulties') ]
+
+[template public generate(root : ecore::EObject)]
 	[comment @main /]
-	[file ('generated_info.txt', false, 'UTF-8')]
-		Generation Start
-		----------------
-		Number of enemies in model: [root.characterTypes->size()/]
+	[file ('debug_info.txt', false, 'UTF-8')]
+		GENERATION TRIGGERED!
+		Root Object Found: [root.eClass().name /]
+		Package URI: [root.eClass().ePackage.nsURI /]
 	[/file]
 [/template]
