@@ -15,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
+import main.game.maze.mazeworld.Vector2D;
 
 public class CharacterDisposeTest {
 

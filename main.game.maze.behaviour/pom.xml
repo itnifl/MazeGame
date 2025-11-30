@@ -16,7 +16,14 @@
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
-  <dependencies>    
+  <dependencies>  
+
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore</artifactId>

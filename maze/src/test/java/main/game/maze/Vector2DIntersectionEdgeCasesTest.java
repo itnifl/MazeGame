@@ -1,6 +1,8 @@
 package main.game.maze;
 
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

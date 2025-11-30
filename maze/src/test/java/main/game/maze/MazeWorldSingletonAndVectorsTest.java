@@ -3,12 +3,15 @@ package main.game.maze;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
+
 public class MazeWorldSingletonAndVectorsTest {
 
     @Test
     void getWorldReturnsSingletonAndHasOrthogonalSegments() {
-        MazeWorld w1 = MazeWorld.GetWorld();
-        MazeWorld w2 = MazeWorld.GetWorld();
+        GameMazeWorld w1 = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
+        GameMazeWorld w2 = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
         assertSame(w1, w2, "GetWorld should return the same singleton instance");
 
         assertFalse(w1.getMazeVectors().isEmpty(), "Maze should have segments");

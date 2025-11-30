@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: main.game.maze.mazeworld;singleton:=true
+Automatic-Module-Name: main.game.maze.mazeworld
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: main.game.maze.mazeworld
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.core.runtime

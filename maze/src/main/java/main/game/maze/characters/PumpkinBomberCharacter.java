@@ -19,7 +19,7 @@ import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
 

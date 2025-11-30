@@ -82,7 +82,9 @@ Download and install:
   * JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
     Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
   * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
-  * Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
+    - Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
+  * Powershell [Powershell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
+    - Note that Powershell can be installed on Linux and MacOs also.
 
 Environment variables (examples on Windows):
 
@@ -111,14 +113,21 @@ VS Code Java runtime:
 Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
 mvn -f releng/mirror/pom.xml -U verify
 
-# 2) prove org.eclipse.core.runtime is in the mirror (True means found)
-Select-String -Path releng\local-p2\content.* -Pattern 'org\.eclipse\.core\.runtime' -Quiet
-
-# 3) force Tycho to reread the target (clear its p2 cache)
+# 2) force Tycho to reread the target (clear its p2 cache)
 Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
 
-# 4) full build (Tycho + app)
-mvn -U -DskipTests=false clean verify
+# 3) full build (Tycho + app)
+mvn -U clean verify
+```
+
+#### **Fast incremental run**
+```bash
+make build
+```
+
+#### **Mirror only, if needed**
+```bash
+make mirror
 ```
 
 Other handy targets:
@@ -159,20 +168,9 @@ make clear-tycho-cache
 make build
 ```
 
-#### **Fast incremental run**
-```bash
-make build
-```
-
-#### **Mirror only, if needed**
-```bash
-make mirror
-```
-
-
 ## Debug
 
-Use the script `Run-P2AndBuildCheck.ps1` to run a build and check, then start by reading the logs.
+Use the script `Run-P2AndBuildCheck.ps1` to run a build and check by reading the logs under releng\test-results.
 
 ---
 

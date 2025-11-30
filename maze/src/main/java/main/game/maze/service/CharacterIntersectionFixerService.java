@@ -7,15 +7,15 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import main.game.maze.MazeWorld;
-import main.game.maze.Vector2D;
+import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.GameMazeWorld;
 
 public class CharacterIntersectionFixerService {
     
     private Pane gameBoard;
-    private MazeWorld maze;
+    private GameMazeWorld maze;
 
-    public CharacterIntersectionFixerService(Pane gameBoard, MazeWorld maze) {
+    public CharacterIntersectionFixerService(Pane gameBoard, GameMazeWorld maze) {
         this.gameBoard = gameBoard;
         this.maze = maze;
     }

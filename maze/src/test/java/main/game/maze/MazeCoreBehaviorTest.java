@@ -9,10 +9,14 @@ import main.game.maze.characters.PlayerCharacter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import main.game.maze.mazeworld.Point2D;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,8 +51,8 @@ public class MazeCoreBehaviorTest {
     @Test
     @DisplayName("Vector2D.normalize(k) preserves direction and sets magnitude")
     void vectorNormalizeMagnitudeAndDirection() {
-        Vector2D v = new Vector2D(new javafx.geometry.Point2D(10, 10),
-                                  new javafx.geometry.Point2D(13, 14)); // dx=3, dy=4, mag=5
+        Vector2D v = new Vector2D(new Point2D(10, 10),
+                                  new Point2D(13, 14)); // dx=3, dy=4, mag=5
         Vector2D n = v.normalize(20);
 
         double dx = n.getEnd().getX() - n.getStart().getX();
@@ -62,15 +66,15 @@ public class MazeCoreBehaviorTest {
     @Test
     @DisplayName("Vector2D.doIntersect: collinear overlap, endpoint touch, parallel no-hit")
     void vectorIntersectionEdgeCases() {
-        Vector2D a = new Vector2D(new javafx.geometry.Point2D(0, 0), new javafx.geometry.Point2D(10, 0));
-        Vector2D bOverlap = new Vector2D(new javafx.geometry.Point2D(5, 0), new javafx.geometry.Point2D(15, 0));
+        Vector2D a = new Vector2D(new Point2D(0, 0), new Point2D(10, 0));
+        Vector2D bOverlap = new Vector2D(new Point2D(5, 0), new Point2D(15, 0));
         assertTrue(a.doIntersect(bOverlap, 0), "Collinear overlapping segments must intersect");
 
-        Vector2D bEndpoint = new Vector2D(new javafx.geometry.Point2D(10, 0), new javafx.geometry.Point2D(10, 10));
+        Vector2D bEndpoint = new Vector2D(new Point2D(10, 0), new Point2D(10, 10));
         assertTrue(a.doIntersect(bEndpoint, 0), "Touching at an endpoint counts as intersection");
 
-        Vector2D v1 = new Vector2D(new javafx.geometry.Point2D(0, 0), new javafx.geometry.Point2D(0, 10));
-        Vector2D v2 = new Vector2D(new javafx.geometry.Point2D(5, 0), new javafx.geometry.Point2D(5, 10));
+        Vector2D v1 = new Vector2D(new Point2D(0, 0), new Point2D(0, 10));
+        Vector2D v2 = new Vector2D(new Point2D(5, 0), new Point2D(5, 10));
         assertFalse(v1.doIntersect(v2, 1), "Parallel with gap should not intersect even with small offset");
     }
 
@@ -79,23 +83,23 @@ public class MazeCoreBehaviorTest {
     @DisplayName("Vector2D.getFacingFromVector: RIGHT, LEFT, UP, DOWN, IDLE")
     void vectorFacingAllDirections() {
         assertEquals(Vector2D.VectorFacing.RIGHT,
-                new Vector2D(new javafx.geometry.Point2D(0,0), new javafx.geometry.Point2D(5,0)).getFacingFromVector());
+                new Vector2D(new Point2D(0,0), new Point2D(5,0)).getFacingFromVector());
         assertEquals(Vector2D.VectorFacing.LEFT,
-                new Vector2D(new javafx.geometry.Point2D(5,0), new javafx.geometry.Point2D(0,0)).getFacingFromVector());
+                new Vector2D(new Point2D(5,0), new Point2D(0,0)).getFacingFromVector());
         assertEquals(Vector2D.VectorFacing.DOWN,
-                new Vector2D(new javafx.geometry.Point2D(0,0), new javafx.geometry.Point2D(0,7)).getFacingFromVector());
+                new Vector2D(new Point2D(0,0), new Point2D(0,7)).getFacingFromVector());
         assertEquals(Vector2D.VectorFacing.UP,
-                new Vector2D(new javafx.geometry.Point2D(0,7), new javafx.geometry.Point2D(0,0)).getFacingFromVector());
+                new Vector2D(new Point2D(0,7), new Point2D(0,0)).getFacingFromVector());
         assertEquals(Vector2D.VectorFacing.IDLE,
-                new Vector2D(new javafx.geometry.Point2D(2,2), new javafx.geometry.Point2D(2,2)).getFacingFromVector());
+                new Vector2D(new Point2D(2,2), new Point2D(2,2)).getFacingFromVector());
     }
 
     // ========== 4) MazeWorld singleton + axis-aligned segments ==========
     @Test
     @DisplayName("MazeWorld is singleton and segments are axis-aligned")
     void mazeWorldSingletonAndOrthogonalSegments() {
-        MazeWorld w1 = MazeWorld.GetWorld();
-        MazeWorld w2 = MazeWorld.GetWorld();
+        GameMazeWorld w1 = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
+        GameMazeWorld w2 = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
         assertSame(w1, w2, "GetWorld must return the same instance");
 
         assertFalse(w1.getMazeVectors().isEmpty(), "Maze should contain segments");
