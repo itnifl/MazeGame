@@ -3,7 +3,10 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="walls" nsURI="http://main.game.maze/walls" nsPrefix="walls">
   <eClassifiers xsi:type="ecore:EClass" name="WallMaterial">
     <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL">
-      <details key="body" value="(breakable = false implies hitPoints = 0) and&#xA;(breakable = true implies hitPoints > 0)"/>
+      <details key="ValidHitPoints" value="(breakable = false implies hitPoints = 0) and&#xA;(breakable = true implies hitPoints > 0)"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidHitPoints"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="wallBaseType" lowerBound="1"
         eType="#//WallMaterialBaseType" defaultValueLiteral="STEEL"/>
