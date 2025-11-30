@@ -3,7 +3,7 @@
 
 [template public generate(model : WallModel)]
     [comment @main /]
-    [file ('src-gen/main/game/maze/generated/WallRegistry.java', false, 'UTF-8')]
+    [file ('main/game/maze/generated/WallRegistry.java', false, 'UTF-8')]
 package main.game.maze.generated;
 
 import java.util.Collections;
@@ -44,7 +44,12 @@ public final class WallRegistry {
         register(new WallDefinition(
             "[m.id/]",
             "[m.displayName/]",
-            WallMaterialBaseType.[m.wallBaseType/],
+[if m.wallBaseType = WallMaterialBaseType::GLASS]            WallMaterialBaseType.GLASS
+[elseif m.wallBaseType = WallMaterialBaseType::DIRT]         WallMaterialBaseType.DIRT
+[elseif m.wallBaseType = WallMaterialBaseType::WOOD]         WallMaterialBaseType.WOOD
+[elseif m.wallBaseType = WallMaterialBaseType::STONE]        WallMaterialBaseType.STONE
+[elseif m.wallBaseType = WallMaterialBaseType::STEEL]        WallMaterialBaseType.STEEL
+[else]                                                       WallMaterialBaseType.STEEL[/if],
             [m.breakable/],
             [m.hitPoints/],
             "[m.baseImage/]"

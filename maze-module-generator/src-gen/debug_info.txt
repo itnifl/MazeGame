@@ -1,3 +1,0 @@
-		GENERATION TRIGGERED!
-		Root Object Found: PumpkinBomber
-		Package URI: http://main.game.maze/opponents

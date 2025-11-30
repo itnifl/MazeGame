@@ -12,4 +12,3 @@ Require-Bundle:  org.eclipse.core.runtime,
  org.eclipse.ocl.pivot,
  org.eclipse.acceleo.engine,
  maze-generator.acceleo
-Export-Package: main.game.maze.gen

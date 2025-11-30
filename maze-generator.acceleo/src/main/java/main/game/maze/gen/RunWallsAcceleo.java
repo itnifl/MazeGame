@@ -38,7 +38,7 @@ public class RunWallsAcceleo {
         ResourceSet rs = new ResourceSetImpl();
         rs.getResourceFactoryRegistry()
           .getExtensionToFactoryMap()
-          .put("walls", new XMIResourceFactoryImpl());
+          .put("xmi", new XMIResourceFactoryImpl());
 
         // 2. Registrer EPackage for veggmodellen
         org.eclipse.emf.ecore.EPackage.Registry.INSTANCE.put(
