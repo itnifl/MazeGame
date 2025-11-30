@@ -22,6 +22,7 @@
     <module>releng/mirror</module>
 
     <!-- 2: modell-/plugin-moduler -->
+    <module>main.game.maze.walls</module>
     <module>main.game.maze.mazeworld</module>
     <module>main.game.maze.behaviour</module>
     <module>main.game.maze.difficulties</module>
