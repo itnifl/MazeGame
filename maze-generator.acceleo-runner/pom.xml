@@ -54,6 +54,20 @@
         </executions>
         <configuration>
           <dependencies>
+              <dependency>
+                <type>eclipse-plugin</type>
+                <artifactId>org.eclipse.core.contenttype</artifactId>
+              </dependency>
+
+              <dependency>
+                <type>eclipse-plugin</type>
+                <artifactId>org.eclipse.core.filesystem</artifactId>
+              </dependency>
+
+              <dependency>
+                <type>eclipse-plugin</type>
+                <artifactId>org.eclipse.equinox.common</artifactId>
+              </dependency>
                 <!-- CRITICAL: Acceleo Engine often requires JDT Core to resolve -->
                 <dependency>
                     <type>eclipse-plugin</type>
