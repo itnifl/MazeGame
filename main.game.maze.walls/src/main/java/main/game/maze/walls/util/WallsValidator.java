@@ -92,7 +92,7 @@ public class WallsValidator extends EObjectValidator {
 		case WallsPackage.WALL_MODEL:
 			return validateWallModel((WallModel) value, diagnostics, context);
 		case WallsPackage.WALL_MATERIAL_BASE_TYPE:
-			return validateWallMaterialBaseType(value, diagnostics, context);
+			return validateWallMaterialBaseType((WallMaterialBaseType)value, diagnostics, context);
 		default:
 			return true;
 		}

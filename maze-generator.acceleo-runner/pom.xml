@@ -26,7 +26,7 @@
               <applicationArgs>
                 <arg>-application</arg>
                 <arg>maze-generator.acceleo.main.game.maze.gen.HeadlessWallsApp</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
             </configuration>

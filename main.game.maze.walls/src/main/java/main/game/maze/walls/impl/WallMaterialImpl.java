@@ -348,7 +348,7 @@ public class WallMaterialImpl extends MinimalEObjectImpl.Container implements Wa
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 		case WallsPackage.WALL_MATERIAL__WALL_BASE_TYPE:
-			setWallBaseType(newValue);
+			setWallBaseType((WallMaterialBaseType)newValue);
 			return;
 		case WallsPackage.WALL_MATERIAL__DISPLAY_NAME:
 			setDisplayName((String) newValue);
