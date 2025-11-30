@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:mtl="http://www.eclipse.org/acceleo/mtl/3.0" xmlns:ocl.ecore="http://www.eclipse.org/ocl/1.1.0/Ecore">
+  <mtl:Module name="GenerateWalls" nsURI="main::game::maze::gen::templates::GenerateWalls" startHeaderPosition="32" endHeaderPosition="214">
+    <input>
+      <takesTypesFrom href="http://main.game.maze/walls#/"/>
+    </input>
+    <ownedModuleElement xsi:type="mtl:Template" name="generate" visibility="Public" main="true">
+      <body xsi:type="mtl:FileBlock" openMode="OverWrite">
+        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="package main.game.maze.generated;&#xD;&#xA;&#xD;&#xA;import java.util.Collections;&#xD;&#xA;import java.util.HashMap;&#xD;&#xA;import java.util.Map;&#xD;&#xA;&#xD;&#xA;public final class WallRegistry {&#xD;&#xA;&#xD;&#xA;    public enum BaseType {&#xD;&#xA;"/>
+        <body xsi:type="mtl:ForBlock">
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="        "/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="lit" referredVariable="/0/generate/%/%.1/lit">
+              <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://www.eclipse.org/emf/2002/Ecore#//ENamedElement/name"/>
+          </body>
+          <body xsi:type="mtl:IfBlock">
+            <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol=","/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&#xD;&#xA;"/>
+          <loopVariable name="lit">
+            <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+          </loopVariable>
+        </body>
+        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="    }&#xD;&#xA;&#xD;&#xA;    public static final class WallDefinition {&#xD;&#xA;        public final String id;&#xD;&#xA;        public final String displayName;&#xD;&#xA;        public final BaseType baseType;&#xD;&#xA;        public final boolean breakable;&#xD;&#xA;        public final int hitPoints;&#xD;&#xA;        public final String baseImage;&#xD;&#xA;&#xD;&#xA;        public WallDefinition(String id,&#xD;&#xA;                              String displayName,&#xD;&#xA;                              BaseType baseType,&#xD;&#xA;                              boolean breakable,&#xD;&#xA;                              int hitPoints,&#xD;&#xA;                              String baseImage) {&#xD;&#xA;            this.id = id;&#xD;&#xA;            this.displayName = displayName;&#xD;&#xA;            this.baseType = baseType;&#xD;&#xA;            this.breakable = breakable;&#xD;&#xA;            this.hitPoints = hitPoints;&#xD;&#xA;            this.baseImage = baseImage;&#xD;&#xA;        }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    private static final Map&lt;String, WallDefinition> BY_ID = new HashMap&lt;>();&#xD;&#xA;&#xD;&#xA;    static {&#xD;&#xA;"/>
+        <body xsi:type="mtl:ForBlock">
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="        register(new WallDefinition(&#xD;&#xA;            &quot;"/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="m" referredVariable="/0/generate/%/%.3/m">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://main.game.maze/walls#//WallMaterial/id"/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&quot;,&#xD;&#xA;            &quot;"/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="m" referredVariable="/0/generate/%/%.3/m">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://main.game.maze/walls#//WallMaterial/displayName"/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&quot;,&#xD;&#xA;            BaseType."/>
+          <body xsi:type="mtl:TemplateExpression"/>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol=",&#xD;&#xA;            "/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Boolean"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="m" referredVariable="/0/generate/%/%.3/m">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://main.game.maze/walls#//WallMaterial/breakable"/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol=",&#xD;&#xA;            "/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Integer"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="m" referredVariable="/0/generate/%/%.3/m">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://main.game.maze/walls#//WallMaterial/hitPoints"/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol=",&#xD;&#xA;            &quot;"/>
+          <body xsi:type="ocl.ecore:PropertyCallExp">
+            <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+            <source xsi:type="ocl.ecore:VariableExp" name="m" referredVariable="/0/generate/%/%.3/m">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+            </source>
+            <referredProperty xsi:type="ecore:EAttribute" href="http://main.game.maze/walls#//WallMaterial/baseImage"/>
+          </body>
+          <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="&quot;&#xD;&#xA;        ));&#xD;&#xA;"/>
+          <loopVariable name="m">
+            <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+          </loopVariable>
+          <iterSet xsi:type="ocl.ecore:PropertyCallExp" eType="/15/OrderedSet(WallMaterial)">
+            <source xsi:type="ocl.ecore:VariableExp" name="model" referredVariable="/0/generate/model">
+              <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+            </source>
+            <referredProperty xsi:type="ecore:EReference" href="http://main.game.maze/walls#//WallModel/materials"/>
+          </iterSet>
+        </body>
+        <body xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="    }&#xD;&#xA;&#xD;&#xA;    private static void register(WallDefinition def) {&#xD;&#xA;        BY_ID.put(def.id, def);&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public static WallDefinition get(String id) {&#xD;&#xA;        return BY_ID.get(id);&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    public static Map&lt;String, WallDefinition> all() {&#xD;&#xA;        return Collections.unmodifiableMap(BY_ID);&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    private WallRegistry() {&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;"/>
+        <fileUrl xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="src-gen/main/game/maze/generated/WallRegistry.java">
+          <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+        </fileUrl>
+        <charset xsi:type="ocl.ecore:StringLiteralExp" stringSymbol="UTF-8">
+          <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+        </charset>
+      </body>
+      <parameter name="model">
+        <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+      </parameter>
+    </ownedModuleElement>
+  </mtl:Module>
+  <ecore:EPackage name="additions">
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_String_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_Integer_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Integer"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_Real_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Real"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ecore_EObject_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      </eAnnotations>
+      <eOperations name="generate">
+        <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+          <contents xsi:type="ocl.ecore:Constraint"/>
+        </eAnnotations>
+        <eAnnotations source="MTL" references="/0/generate"/>
+        <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+        <eParameters name="model">
+          <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+        </eParameters>
+      </eOperations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_OclAny_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/OclAny"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_Collection(T)_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Collection(T)"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_Sequence(T)_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Sequence(T)"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="oclstdlib_OrderedSet(T)_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/OrderedSet(T)"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="walls_WallModel_Class">
+      <eAnnotations source="http://www.eclipse.org/ocl/1.1.0/OCL">
+        <references href="http://main.game.maze/walls#//WallModel"/>
+      </eAnnotations>
+    </eClassifiers>
+  </ecore:EPackage>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/String"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ecore:EPackage name="types">
+    <eClassifiers xsi:type="ocl.ecore:TypeType">
+      <referredType xsi:type="ecore:EEnum" href="http://main.game.maze/walls#//WallMaterialBaseType"/>
+    </eClassifiers>
+  </ecore:EPackage>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+  </ocl.ecore:Variable>
+  <ecore:EPackage name="collections">
+    <eClassifiers xsi:type="ocl.ecore:SetType" name="Set(OclInvalid)" instanceClassName="java.util.Set">
+      <elementType xsi:type="ocl.ecore:InvalidType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/OclInvalid"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ocl.ecore:OrderedSetType" name="OrderedSet(WallMaterial)" instanceClassName="java.util.LinkedHashSet">
+      <elementType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+    </eClassifiers>
+  </ecore:EPackage>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="i">
+    <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Integer"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallMaterial"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://main.game.maze/walls#//WallModel"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="i">
+    <eType xsi:type="ocl.ecore:PrimitiveType" href="http://www.eclipse.org/ocl/1.1.0/oclstdlib.ecore#/0/Integer"/>
+  </ocl.ecore:Variable>
+  <ocl.ecore:Variable name="self">
+    <eType xsi:type="ecore:EClass" href="http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </ocl.ecore:Variable>
+  <ecore:EAnnotation source="positions">
+    <eAnnotations source="positions.0" references="/0/generate">
+      <details key="start" value="148"/>
+      <details key="end" value="2248"/>
+      <details key="line" value="6"/>
+    </eAnnotations>
+    <eAnnotations source="positions.1" references="/0/generate/%">
+      <details key="start" value="222"/>
+      <details key="end" value="2235"/>
+      <details key="line" value="8"/>
+    </eAnnotations>
+    <eAnnotations source="positions.2" references="/0/generate/%/%">
+      <details key="start" value="301"/>
+      <details key="end" value="486"/>
+      <details key="line" value="9"/>
+    </eAnnotations>
+    <eAnnotations source="positions.3" references="/0/generate/%/%.1">
+      <details key="start" value="486"/>
+      <details key="end" value="642"/>
+      <details key="line" value="18"/>
+    </eAnnotations>
+    <eAnnotations source="positions.4" references="/0/generate/%/%.1/%">
+      <details key="start" value="554"/>
+      <details key="end" value="562"/>
+      <details key="line" value="19"/>
+    </eAnnotations>
+    <eAnnotations source="positions.5" references="/0/generate/%/%.1/%.1">
+      <details key="start" value="563"/>
+      <details key="end" value="571"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.6" references="/0/generate/%/%.1/%.1/lit">
+      <details key="start" value="563"/>
+      <details key="end" value="566"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.7" references="/0/generate/%/%.1/%.2">
+      <details key="start" value="573"/>
+      <details key="end" value="634"/>
+      <details key="line" value="19"/>
+    </eAnnotations>
+    <eAnnotations source="positions.8" references="/0/generate/%/%.1/%.2/%">
+      <details key="start" value="628"/>
+      <details key="end" value="629"/>
+      <details key="line" value="19"/>
+    </eAnnotations>
+    <eAnnotations source="positions.9" references="/0/generate/%/%.1/%.3">
+      <details key="start" value="634"/>
+      <details key="end" value="636"/>
+      <details key="line" value="20"/>
+    </eAnnotations>
+    <eAnnotations source="positions.10" references="/0/generate/%/%.1/lit">
+      <details key="start" value="492"/>
+      <details key="end" value="517"/>
+      <details key="line" value="18"/>
+    </eAnnotations>
+    <eAnnotations source="positions.11" references="/0/generate/%/%.2">
+      <details key="start" value="644"/>
+      <details key="end" value="1576"/>
+      <details key="line" value="21"/>
+    </eAnnotations>
+    <eAnnotations source="positions.12" references="/0/generate/%/%.3">
+      <details key="start" value="1576"/>
+      <details key="end" value="1868"/>
+      <details key="line" value="49"/>
+    </eAnnotations>
+    <eAnnotations source="positions.13" references="/0/generate/%/%.3/%">
+      <details key="start" value="1620"/>
+      <details key="end" value="1671"/>
+      <details key="line" value="50"/>
+    </eAnnotations>
+    <eAnnotations source="positions.14" references="/0/generate/%/%.3/%.1">
+      <details key="start" value="1672"/>
+      <details key="end" value="1676"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.15" references="/0/generate/%/%.3/%.1/m">
+      <details key="start" value="1672"/>
+      <details key="end" value="1673"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.16" references="/0/generate/%/%.3/%.2">
+      <details key="start" value="1678"/>
+      <details key="end" value="1695"/>
+      <details key="line" value="51"/>
+    </eAnnotations>
+    <eAnnotations source="positions.17" references="/0/generate/%/%.3/%.3">
+      <details key="start" value="1696"/>
+      <details key="end" value="1709"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.18" references="/0/generate/%/%.3/%.3/m">
+      <details key="start" value="1696"/>
+      <details key="end" value="1697"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.19" references="/0/generate/%/%.3/%.4">
+      <details key="start" value="1711"/>
+      <details key="end" value="1736"/>
+      <details key="line" value="52"/>
+    </eAnnotations>
+    <eAnnotations source="positions.20" references="/0/generate/%/%.3/%.5">
+      <details key="start" value="-1"/>
+      <details key="end" value="-1"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.21" references="/0/generate/%/%.3/%.6">
+      <details key="start" value="1758"/>
+      <details key="end" value="1773"/>
+      <details key="line" value="53"/>
+    </eAnnotations>
+    <eAnnotations source="positions.22" references="/0/generate/%/%.3/%.7">
+      <details key="start" value="1774"/>
+      <details key="end" value="1785"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.23" references="/0/generate/%/%.3/%.7/m">
+      <details key="start" value="1774"/>
+      <details key="end" value="1775"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.24" references="/0/generate/%/%.3/%.8">
+      <details key="start" value="1787"/>
+      <details key="end" value="1802"/>
+      <details key="line" value="54"/>
+    </eAnnotations>
+    <eAnnotations source="positions.25" references="/0/generate/%/%.3/%.9">
+      <details key="start" value="1803"/>
+      <details key="end" value="1814"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.26" references="/0/generate/%/%.3/%.9/m">
+      <details key="start" value="1803"/>
+      <details key="end" value="1804"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.27" references="/0/generate/%/%.3/%.10">
+      <details key="start" value="1816"/>
+      <details key="end" value="1832"/>
+      <details key="line" value="55"/>
+    </eAnnotations>
+    <eAnnotations source="positions.28" references="/0/generate/%/%.3/%.11">
+      <details key="start" value="1833"/>
+      <details key="end" value="1844"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.29" references="/0/generate/%/%.3/%.11/m">
+      <details key="start" value="1833"/>
+      <details key="end" value="1834"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.30" references="/0/generate/%/%.3/%.12">
+      <details key="start" value="1846"/>
+      <details key="end" value="1862"/>
+      <details key="line" value="56"/>
+    </eAnnotations>
+    <eAnnotations source="positions.31" references="/0/generate/%/%.3/m">
+      <details key="start" value="1582"/>
+      <details key="end" value="1598"/>
+      <details key="line" value="49"/>
+    </eAnnotations>
+    <eAnnotations source="positions.32" references="/0/generate/%/%.3/%.13">
+      <details key="start" value="1601"/>
+      <details key="end" value="1616"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.33" references="/0/generate/%/%.3/%.13/model">
+      <details key="start" value="1601"/>
+      <details key="end" value="1606"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.34" references="/0/generate/%/%.4">
+      <details key="start" value="1870"/>
+      <details key="end" value="2224"/>
+      <details key="line" value="59"/>
+    </eAnnotations>
+    <eAnnotations source="positions.35" references="/0/generate/%/%.5">
+      <details key="start" value="229"/>
+      <details key="end" value="281"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.36" references="/0/generate/%/%.6">
+      <details key="start" value="290"/>
+      <details key="end" value="297"/>
+      <details key="line" value="0"/>
+    </eAnnotations>
+    <eAnnotations source="positions.37" references="/0/generate/model">
+      <details key="start" value="174"/>
+      <details key="end" value="191"/>
+      <details key="line" value="6"/>
+    </eAnnotations>
+  </ecore:EAnnotation>
+</xmi:XMI>
