@@ -4,7 +4,9 @@ package main.game.maze.behaviour.impl;
 
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 /**
@@ -32,6 +34,12 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 	@Override
 	protected EClass eStaticClass() {
 		return BehaviourPackage.Literals.LOCAL_PATH_CALCULATOR;
+	}
+
+	@Override
+	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
+		
+		return null;
 	}
 
 } //LocalPathCalculatorImpl

@@ -5,6 +5,8 @@ package main.game.maze.behaviour;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Path Calculator</b></em>'.
@@ -56,6 +58,6 @@ public interface PathCalculator extends EObject {
 	 * @model required="true"
 	 * @generated
 	 */
-	EList<Position> compute(Position target);
+	EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target);
 
 } // PathCalculator

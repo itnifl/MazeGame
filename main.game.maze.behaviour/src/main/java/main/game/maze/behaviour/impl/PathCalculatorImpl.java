@@ -3,11 +3,14 @@
 package main.game.maze.behaviour.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.DistanceMethod;
 import main.game.maze.behaviour.PathCalculator;
 
 import main.game.maze.behaviour.Position;
+
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.EList;
@@ -15,6 +18,9 @@ import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
@@ -92,16 +98,47 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATH_CALCULATOR__DISTANCE_METHOD, oldDistanceMethod, distanceMethod));
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	/** Reconstructs a path given an array where each node originates
+	 * @param originNodes Array that references each node origin
+	 * @param target Final node reached
+	 * @return A list of node constituing the path
 	 */
-	@Override
-	public EList<Position> compute(Position target) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public EList<MazeNavigationGraph.Node> reconstructPath(MazeNavigationGraph.Node[][] originNodes, MazeNavigationGraph.Node target) {
+		EList<MazeNavigationGraph.Node> path = new org.eclipse.emf.common.util.BasicEList<MazeNavigationGraph.Node>();
+		var originNode = originNodes[target.getCol()][target.getRow()];
+		while (originNode != null) {
+			path.add(0, originNode);
+			originNode = originNodes[originNode.getCol()][originNode.getRow()];
+		}
+		return path;
+	}
+
+	/** Finds the nearest node in the list to a target
+	 * @param nodes List of nodes to evaluate
+	 * @param target Node to compare distance with
+	 * @return Nearest node in the list to target
+	 */
+	public MazeNavigationGraph.Node nearestNode(List<MazeNavigationGraph.Node> nodes, MazeNavigationGraph.Node target) {
+		MazeNavigationGraph.Node nearestNode = null;
+		double nearestDistance = Double.MAX_VALUE;
+		for (var node : nodes) {
+			double distance = 0;
+			switch (getDistanceMethod()) {
+				case DistanceMethod.EUCLIDEAN:
+					distance = Math.sqrt(Math.pow(node.getCol()-target.getCol(), 2) + Math.pow(node.getRow()-target.getRow(), 2));
+					break;
+				case DistanceMethod.MANHATTAN: {
+					distance = Math.abs(node.getCol()-target.getCol()) + Math.abs(node.getRow()-target.getRow());
+				}
+				default:
+					throw new AssertionError();
+			}
+			if (distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestNode = node;
+			}
+		}
+		return nearestNode;
 	}
 
 	/**
@@ -171,7 +208,7 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BehaviourPackage.PATH_CALCULATOR___COMPUTE__POSITION:
-				return compute((Position)arguments.get(0));
+				return compute((MazeNavigationGraph.Node)arguments.get(0), (MazeNavigationGraph.Node)arguments.get(1));
 		}
 		return super.eInvoke(operationID, arguments);
 	}
