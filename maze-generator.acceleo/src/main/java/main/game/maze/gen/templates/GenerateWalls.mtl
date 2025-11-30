@@ -1,0 +1,71 @@
+[comment encoding = 'UTF-8' /]
+[module GenerateWalls('http://main.game.maze/walls')]
+
+[template public generate(model : WallModel)]
+    [comment @main /]
+    [file ('src-gen/main/game/maze/generated/WallRegistry.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import main.game.maze.walls.WallMaterialBaseType;
+
+public final class WallRegistry {
+
+    public static final class WallDefinition {
+        public final String id;
+        public final String displayName;
+        public final WallMaterialBaseType baseType;
+        public final boolean breakable;
+        public final int hitPoints;
+        public final String baseImage;
+
+        public WallDefinition(String id,
+                              String displayName,
+                              WallMaterialBaseType baseType,
+                              boolean breakable,
+                              int hitPoints,
+                              String baseImage) {
+            this.id = id;
+            this.displayName = displayName;
+            this.baseType = baseType;
+            this.breakable = breakable;
+            this.hitPoints = hitPoints;
+            this.baseImage = baseImage;
+        }
+    }
+
+    private static final Map<String, WallDefinition> BY_ID = new HashMap<String, WallDefinition>();
+
+    static {
+[for (m : WallMaterial | model.materials)]
+        register(new WallDefinition(
+            "[m.id/]",
+            "[m.displayName/]",
+            WallMaterialBaseType.[m.wallBaseType/],
+            [m.breakable/],
+            [m.hitPoints/],
+            "[m.baseImage/]"
+        ));
+[/for]
+    }
+
+    private static void register(WallDefinition def) {
+        BY_ID.put(def.id, def);
+    }
+
+    public static WallDefinition get(String id) {
+        return BY_ID.get(id);
+    }
+
+    public static Map<String, WallDefinition> all() {
+        return Collections.unmodifiableMap(BY_ID);
+    }
+
+    private WallRegistry() {
+    }
+}
+    [/file]
+[/template]
