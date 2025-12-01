@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ocl.pivot,
  org.eclipse.acceleo.engine,
  main.game.maze.difficulties,
- main.game.maze.opponents
+ main.game.maze.opponents,
+ main.game.maze.walls
 Export-Package: main.game.maze.gen,
  main.game.maze.gen.templates

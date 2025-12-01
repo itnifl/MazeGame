@@ -46,12 +46,12 @@ public class RunAcceleo {
         // 2. Register your EPackages manually (since we are running standalone/headless)
         // Note: These classes are now visible because we added them to Require-Bundle in MANIFEST.MF
         org.eclipse.emf.ecore.EPackage.Registry.INSTANCE.put(
-                main.game.maze.difficulties.DifficultiesPackage.eNS_URI,
-                main.game.maze.difficulties.DifficultiesPackage.eINSTANCE
+                DifficultiesPackage.eNS_URI,
+                DifficultiesPackage.eINSTANCE
         );
         org.eclipse.emf.ecore.EPackage.Registry.INSTANCE.put(
-                main.game.maze.opponents.OpponentsPackage.eNS_URI,
-                main.game.maze.opponents.OpponentsPackage.eINSTANCE
+                OpponentsPackage.eNS_URI,
+                OpponentsPackage.eINSTANCE
         );
 
         // 3. Load Resources

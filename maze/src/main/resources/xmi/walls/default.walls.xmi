@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<walls:WallModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:walls="http://main.game.maze/walls"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    >
+
+  <materials
+      id="DIRT_BASIC"
+      displayName="Dirt"
+      wallBaseType="DIRT"
+      breakable="true"
+      hitPoints="10"
+      baseImage="/main/game/maze/dirt.png"/>
+
+  <materials
+      id="WOOD_BASIC"
+      displayName="Wood"
+      wallBaseType="WOOD"
+      breakable="true"
+      hitPoints="20"
+      baseImage="/main/game/maze/wood.png"/>
+
+  <materials
+      id="STEEL_SOLID"
+      displayName="Steel"
+      wallBaseType="STEEL"
+      breakable="false"
+      hitPoints="0"
+      baseImage="/main/game/maze/steel.png"/>
+
+</walls:WallModel>

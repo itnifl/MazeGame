@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated walls -->
+      <package
+            uri="http://main.game.maze/walls"
+            class="main.game.maze.walls.WallsPackage"
+            genModel="model/walls.genmodel"/>
+   </extension>
+
+</plugin>

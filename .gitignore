@@ -74,3 +74,4 @@ out/
 *.rej
 /releng/local-p2/binary
 releng/local-p2/.mirror.stamp
+/maze-module-generator/src-gen
