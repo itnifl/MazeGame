@@ -84,7 +84,7 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
 		queue.add(start);
 		while (queue.isEmpty() == false) {
-			MazeNavigationGraph.Node current = queue.poll();
+			var current = queue.poll();
 			for (var node : current.getNeighbors()) {
 				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
@@ -101,7 +101,8 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		}
 
 		// Reconstruct path
-		return reconstructPath(originsNodes, nearestNode(endNodes, target));
+		var targetNode = nearestNode(endNodes, target);
+		return reconstructPath(originsNodes, targetNode);
 	}
 
 	/**

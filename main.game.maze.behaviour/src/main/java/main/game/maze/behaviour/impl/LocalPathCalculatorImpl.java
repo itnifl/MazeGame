@@ -26,6 +26,18 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 		super();
 	}
 
+
+	@Override
+	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
+		EList<MazeNavigationGraph.Node> path = new org.eclipse.emf.common.util.BasicEList<>();
+		if (origin.getCol() == target.getCol() && origin.getRow() == target.getRow()) {
+			path.add(origin);
+			return path;
+		}
+		path.add(nearestNode(origin.getNeighbors(), target));
+		return path;
+	}
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -34,12 +46,6 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 	@Override
 	protected EClass eStaticClass() {
 		return BehaviourPackage.Literals.LOCAL_PATH_CALCULATOR;
-	}
-
-	@Override
-	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
-		
-		return null;
 	}
 
 } //LocalPathCalculatorImpl
