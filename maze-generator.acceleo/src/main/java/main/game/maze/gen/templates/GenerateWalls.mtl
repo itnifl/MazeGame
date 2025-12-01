@@ -10,21 +10,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.game.maze.walls.WallMaterialBaseType;
-
 public final class WallRegistry {
 
     public static final class WallDefinition {
         public final String id;
         public final String displayName;
-        public final WallMaterialBaseType baseType;
+        public final String baseType;
         public final boolean breakable;
         public final int hitPoints;
         public final String baseImage;
 
         public WallDefinition(String id,
                               String displayName,
-                              WallMaterialBaseType baseType,
+                              String baseType,
                               boolean breakable,
                               int hitPoints,
                               String baseImage) {
@@ -44,12 +42,7 @@ public final class WallRegistry {
         register(new WallDefinition(
             "[m.id/]",
             "[m.displayName/]",
-[if m.wallBaseType = WallMaterialBaseType::GLASS]            WallMaterialBaseType.GLASS
-[elseif m.wallBaseType = WallMaterialBaseType::DIRT]         WallMaterialBaseType.DIRT
-[elseif m.wallBaseType = WallMaterialBaseType::WOOD]         WallMaterialBaseType.WOOD
-[elseif m.wallBaseType = WallMaterialBaseType::STONE]        WallMaterialBaseType.STONE
-[elseif m.wallBaseType = WallMaterialBaseType::STEEL]        WallMaterialBaseType.STEEL
-[else]                                                       WallMaterialBaseType.STEEL[/if],
+            "[m.wallBaseType.name()/]", 
             [m.breakable/],
             [m.hitPoints/],
             "[m.baseImage/]"
