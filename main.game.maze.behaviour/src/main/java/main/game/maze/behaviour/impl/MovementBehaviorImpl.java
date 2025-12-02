@@ -473,62 +473,118 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a HealthEvent to the character.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(HealthEvent healthEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (healthEvent == null) return;
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        int amount = healthEvent.getHealthAmount();
+	        double percentage = healthEvent.getHealthPercentage();
+	        
+	        // Apply flat amount
+	        if (amount != 0) {
+	            int currentHp = ct.getHitPoints();
+	            ct.setHitPoints(currentHp + amount);
+	        }
+	        
+	        // Apply percentage (e.g., heal 10% of max HP)
+	        if (percentage != 0) {
+	            int maxHp = ct. getMaxHitPoints();
+	            int currentHp = ct. getHitPoints();
+	            int delta = (int) (maxHp * percentage);
+	            ct.setHitPoints(currentHp + delta);
+	        }
+	    } catch (Exception ignore) {}
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a SpeedEvent to the character. 
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(SpeedEvent speedEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (speedEvent == null) return;
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        double amount = speedEvent.getSpeedAmount();
+	        double percentage = speedEvent.getSpeedPercentage();
+	        
+	        double currentSpeed = ct. getMovementSpeed();
+	        
+	        // Apply flat amount
+	        if (amount != 0) {
+	            ct.setMovementSpeed(currentSpeed + amount);
+	        }
+	        
+	        // Apply percentage multiplier
+	        if (percentage != 0) {
+	            ct.setMovementSpeed(currentSpeed * (1. 0 + percentage));
+	        }
+	    } catch (Exception ignore) {}
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a TimeEvent — placeholder: could pause movement for a duration.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(TimeEvent timeEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (timeEvent == null) return;
+	    // TODO: implement time-based effect (e.g., stun, slow, pause)
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies an AttackEvent — placeholder: could deal damage or modify attack. 
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(AttackEvent attackEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (attackEvent == null) return;
+	    // TODO: implement attack effect
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a VisionEvent to modify vision range.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(VisionEvent visionEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (visionEvent == null) return;
+	    
+	    try {
+	        double amount = visionEvent. getRadiusAmount();
+	        double percentage = visionEvent.getRadiusPercentage();
+	        
+	        // Apply flat amount to additional vision range
+	        if (amount != 0) {
+	            setAdditionalVisionRange(getAdditionalVisionRange() + amount);
+	        }
+	        
+	        // Apply percentage to multiplier
+	        if (percentage != 0) {
+	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1. 0 + percentage));
+	        }
+	    } catch (Exception ignore) {}
 	}
 
 	/**

@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org. eclipse.emf. common.util. BasicEList;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Path Calculator</b></em>'.
@@ -93,15 +95,12 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public EList<Position> compute(Position target) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    // Default: return empty list.  Subclasses override this. 
+	    return new BasicEList<>();
 	}
 
 	/**
