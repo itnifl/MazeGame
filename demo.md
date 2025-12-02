@@ -16,7 +16,7 @@ This demo describes how to:
 
 * Eclipse
 
-* Chek out the root [readme.md](readme.md) for more prerequisites.
+* Chek out the root [readme.md](readme.md#prerequisites-and-setup) for the complete list of prerequisites.
 
 * Project built from the root. For a full build including the local p2 mirror you can use:
 

@@ -1,0 +1,19 @@
+[comment encoding = UTF-8 /]
+[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/difficulties')]
+
+[template public generate(root : OpponentModel)]
+[comment @main /]
+[file ('main/game/maze/generated/OpponentRegistry.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+public class OpponentRegistry {
+    public static final String GAME_NAME = "[root.name/]";
+    
+    public static void listEnemies() {
+        [for (enemy : CharacterType | root.characterTypes)]
+        System.out.println("Enemy: [enemy.displayName/] (Health: [enemy.health/])");
+        [/for]
+    }
+}
+[/file]
+[/template]

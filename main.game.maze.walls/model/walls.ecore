@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="walls" nsURI="http://main.game.maze/walls" nsPrefix="walls">
+  <eClassifiers xsi:type="ecore:EClass" name="WallMaterial">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore/OCL">
+      <details key="ValidHitPoints" value="(breakable = false implies hitPoints = 0) and&#xA;(breakable = true implies hitPoints > 0)"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
+      <details key="constraints" value="ValidHitPoints"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wallBaseType" lowerBound="1"
+        eType="#//WallMaterialBaseType" defaultValueLiteral="STEEL"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="breakable" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" transient="true"
+        defaultValueLiteral="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hitPoints" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        derived="true" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="baseImage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="/main/game/maze/baseWall.png"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="WallMaterialBaseType" instanceTypeName="WallMaterialBaseType">
+    <eLiterals name="GLASS"/>
+    <eLiterals name="DIRT" value="1"/>
+    <eLiterals name="WOOD" value="2"/>
+    <eLiterals name="STONE" value="3"/>
+    <eLiterals name="STEEL" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WallModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="materials" upperBound="-1"
+        eType="#//WallMaterial" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

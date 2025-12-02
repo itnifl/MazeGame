@@ -16,12 +16,9 @@
   <properties>    
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
-    <javafx.version>21.0.9</javafx.version>
     <junit.jupiter.version>5.13.4</junit.jupiter.version>
     <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
     <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
-    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-    <javafx.platform>win</javafx.platform> <!-- Default, can be overridden by profile -->
   </properties>
 
   <repositories>
@@ -153,6 +150,18 @@
       <artifactId>main.game.maze.behaviour</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- This is our Acceleo generated module -->
+    <dependency>
+        <groupId>main.game.maze</groupId>
+        <artifactId>maze-module-generator</artifactId>
+        <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -193,7 +202,7 @@
           </execution>
         </executions>
       </plugin>
-       <plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.plugin.version}</version>

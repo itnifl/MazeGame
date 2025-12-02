@@ -19,7 +19,7 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.opponents.Zombie;                // generated EMF class
 import main.game.maze.opponents.BehaviorType;         // generated enum
 import main.game.maze.actions.MovementNotifierAction;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class ZombieCharacter extends ComputerCharacter
