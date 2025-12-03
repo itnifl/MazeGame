@@ -469,6 +469,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
+		//Overwritten in PartolBehaviorImpl
 	}
 
 	/**
@@ -496,8 +497,8 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply percentage (e.g., heal 10% of max HP)
 	        if (percentage != 0) {
-	            int maxHp = ct. getMaxHitPoints();
-	            int currentHp = ct. getHitPoints();
+	            int maxHp = ct.getMaxHitPoints();
+	            int currentHp = ct.getHitPoints();
 	            int delta = (int) (maxHp * percentage);
 	            ct.setHitPoints(currentHp + delta);
 	        }
@@ -521,7 +522,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        double amount = speedEvent.getSpeedAmount();
 	        double percentage = speedEvent.getSpeedPercentage();
 	        
-	        double currentSpeed = ct. getMovementSpeed();
+	        double currentSpeed = ct.getMovementSpeed();
 	        
 	        // Apply flat amount
 	        if (amount != 0) {

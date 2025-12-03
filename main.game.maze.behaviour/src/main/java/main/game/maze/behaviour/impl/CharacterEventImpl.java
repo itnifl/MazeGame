@@ -154,8 +154,14 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	 */
 	@Override
 	public void notifySubscribers() {
-	    // Base implementation does nothing; subclasses must override
-	    // to call subscriber.update(specificEventType)
+	    if (!shouldFire()) return;
+	    
+	    MovementBehavior sub = getSubscriber();
+	    if (sub!=null) {
+	        try {
+	            sub.update(this);
+	        } catch (Exception ignore) {}
+	    }
 	}
 
 	/**
