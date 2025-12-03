@@ -4,6 +4,7 @@ package main.game.maze.behaviour.impl;
 
 import main.game.maze.behaviour.AttackEvent;
 import main.game.maze.behaviour.BehaviourPackage;
+import main.game.maze.behaviour.MovementBehavior;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -327,6 +328,20 @@ public class AttackEventImpl extends CharacterEventImpl implements AttackEvent {
 		result.append(damagePercentage);
 		result.append(')');
 		return result.toString();
+	}
+
+	/**
+	 * @generated NOT
+	 */
+	@Override
+	public void notifySubscribers() {
+		if (!shouldFire()) return;
+		MovementBehavior sub = getSubscriber();
+		if (sub != null) {
+			try {
+				sub. update(this); // 'this' is AttackEventImpl → resolves to update(AttackEvent)
+			} catch (Exception ignore) {}
+		}
 	}
 
 } //AttackEventImpl

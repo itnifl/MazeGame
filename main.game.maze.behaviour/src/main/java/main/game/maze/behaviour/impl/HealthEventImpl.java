@@ -4,6 +4,7 @@ package main.game.maze.behaviour.impl;
 
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.HealthEvent;
+import main.game.maze.behaviour.MovementBehavior;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -215,6 +216,20 @@ public class HealthEventImpl extends CharacterEventImpl implements HealthEvent {
 		result.append(healthPercentage);
 		result.append(')');
 		return result.toString();
+	}
+
+	/**
+	 * @generated NOT
+	 */
+	@Override
+	public void notifySubscribers() {
+		if (! shouldFire()) return;
+		MovementBehavior sub = getSubscriber();
+		if (sub != null) {
+			try {
+				sub. update(this);
+			} catch (Exception ignore) {}
+		}
 	}
 
 } //HealthEventImpl

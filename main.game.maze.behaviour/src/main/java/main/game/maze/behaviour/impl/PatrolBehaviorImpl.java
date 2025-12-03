@@ -27,7 +27,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import java.util.Random;
 import main.game.maze.behaviour.Position;
-import main. game.maze.behaviour.PathCalculator;
+
+import main.game.maze.behaviour.BehaviourFactory;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
@@ -486,160 +489,212 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	/**
 	 * <!-- begin-user-doc -->
 	 * Performs one movement tick: computes path to current target, moves along it,
-	 * detects arrival, triggers events, and advances to next patrol point. 
+	 * detects arrival, triggers events, and advances to next patrol point.
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@Override
 	public void move() {
-	    // Sanity checks
-	    if (getPath() == null || getPath().isEmpty()) {
-	        return;
-	    }
-	    if (getPosition() == null) {
-	        return;
-	    }
-	    
-	    // Calculate deltaMs since last tick
-	    long now = System.currentTimeMillis();
-	    long deltaMs = (lastTickTime == 0) ? 60L : (now - lastTickTime);
-	    lastTickTime = now;
-	    
-	    // Handle waiting at patrol point
-	    if (waitRemainingMs > 0) {
-	        waitRemainingMs = Math.max(0, waitRemainingMs - deltaMs);
-	        return; // still waiting, no movement
-	    }
 
-	    // Single-point path: stay in place, trigger events once
-	    if (getPath().size() == 1) {
-	        PatrolPoint single = getPath().get(0);
-	        // Snap to the single point if not already there
-	        Position target = single.getPoint();
-	        if (target != null && distance(getPosition(), target) > EPSILON) {
-	            getPosition().setPosX(target.getPosX());
-	            getPosition().setPosY(target.getPosY());
-	        }
-	        // Trigger events and wait (only once handled by wait timer)
-	        try {
-	            single.triggerEvents();
-	        } catch (Exception ignore) {}
-	        waitRemainingMs = PLACEHOLDER_WAIT_MS;
-	        return;
-	    }
+		if (getPath() == null || getPath().isEmpty()) {
+			return;
+		}
+		if (getPosition() == null) {
+			return;
+		}
 
-	    // Get current target patrol point
-	    int idx = getCurrentIndex();
-	    if (idx < 0 || idx >= getPath().size()) {
-	        setCurrentIndex(0);
-	        idx = 0;
-	    }
-	    PatrolPoint targetPoint = getPath(). get(idx);
-	    Position target = targetPoint.getPoint();
- 
-	    if (target == null) {
-	        nextIndex();
-	        return;
-	    }
+		// Tick timing
+		long now = System.currentTimeMillis();
+		long deltaMs = (lastTickTime == 0L) ? 60L : (now - lastTickTime);
+		lastTickTime = now;
 
-	    // If nextPositions is empty, compute path to target
-	    if (getNextPositions(). isEmpty()) {
-	        PathCalculator pc = getPathcalculator();
-	        if (pc == null) {
-	            // No path calculator: skip to next index
-	            nextIndex();
-	            return;
-	        }
-	        try {
-	            EList<Position> computed = pc.compute(target);
-	            if (computed == null || computed.isEmpty()) {
-	                // No path found: skip to next index
-	                nextIndex();
-	                return;
-	            }
-	            // Copy computed path to nextPositions
-	            getNextPositions().clear();
-	            for (Position p : computed) {
-	                Position copy = main.game.maze. behaviour.BehaviourFactory.eINSTANCE.createPosition();
-	                copy.setPosX(p.getPosX());
-	                copy.setPosY(p.getPosY());
-	                getNextPositions().add(copy);
-	            }
-	            // Drop first node if equals current position
-	            if (! getNextPositions(). isEmpty() && distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
-	                getNextPositions().remove(0);
-	            }
-	        } catch (Exception ex) {
-	            // On error, skip to next index
-	            nextIndex();
-	            return;
-	        }
-	    }
+		// Waiting at patrol point
+		if (waitRemainingMs > 0) {
+			waitRemainingMs = Math.max(0L, waitRemainingMs - deltaMs);
+			return;
+		}
 
-	    // If still no path, skip to next index
-	    if (getNextPositions().isEmpty()) {
-	        nextIndex();
-	        return;
-	    }
+		// Single-point path: jump to it, trigger events, wait, repeat
+		if (getPath().size() == 1) {
+			PatrolPoint single = getPath().get(0);
+			Position targetPos = single.getPoint();
+			
+			if (targetPos != null && distance(getPosition(), targetPos) > EPSILON) {
+				getPosition().setPosX(targetPos.getPosX());
+				getPosition().setPosY(targetPos.getPosY());
+			}
+			
+			try {
+				single.triggerEvents();
+			} catch (Exception ignore) {
+				// Event trigger failure should not stop movement
+			}
+			
+			waitRemainingMs = PLACEHOLDER_WAIT_MS;
+			return;
+		}
 
-	    // Get movement speed from CharacterType
-	    double movementSpeed = 2.0; // default fallback
-	    try {
-	        if (getCharactertype() != null) {
-	            movementSpeed = getCharactertype().getMovementSpeed();
-	        }
-	    } catch (Exception ignore) {}
+		// Resolve current patrol target
+		int idx = getCurrentIndex();
+		if (idx < 0 || idx >= getPath().size()) {
+			setCurrentIndex(0);
+			idx = 0;
+		}
+		PatrolPoint targetPoint = getPath().get(idx);
+		Position target = targetPoint.getPoint();
+		if (target == null) {
+			nextIndex();
+			return;
+		}
 
-	    // Consume movement along the path
-	    double allowed = movementSpeed;
-	    Position currentPos = getPosition();
+		// If we don't have next positions, compute using the navigation graph + calculator
+		if (getNextPositions().isEmpty()) {
+			try {
+				MazeNavigationGraph graph = null;
+				try {
+					graph = GameMazeWorld.GetWorld().getNavigationGraph();
+				} catch (Throwable t) {
+					// MazeWorld not initialized
+				}
 
-	    while (allowed > 0 && ! getNextPositions(). isEmpty()) {
-	        Position nextNode = getNextPositions().get(0);
-	        double seg = distance(currentPos, nextNode);
-	        
-	        if (seg <= allowed + EPSILON) {
-	            // Snap to node
-	            currentPos. setPosX(nextNode.getPosX());
-	            currentPos.setPosY(nextNode.getPosY());
-	            getNextPositions().remove(0);
-	            allowed -= seg;
-	        } else {
-	            // Interpolate toward nextNode
-	            double frac = allowed / seg;
-	            double nx = currentPos.getPosX() + (nextNode.getPosX() - currentPos.getPosX()) * frac;
-	            double ny = currentPos. getPosY() + (nextNode.getPosY() - currentPos.getPosY()) * frac;
-	            currentPos. setPosX(nx);
-	            currentPos.setPosY(ny);
-	            allowed = 0;
-	        }
-	    }
+				if (graph == null) {
+					nextIndex();
+					return;
+				}
 
-	    // Check arrival at target patrol point
-	    if (getNextPositions(). isEmpty() && distance(currentPos, target) <= EPSILON) {
-	        // Snap exactly to target
-	        currentPos.setPosX(target.getPosX());
-	        currentPos.setPosY(target.getPosY());
+				// Snap start and goal to nodes
+				javafx.geometry.Point2D startPt = new javafx.geometry.Point2D(
+					getPosition().getPosX(), getPosition().getPosY());
+				javafx.geometry.Point2D goalPt = new javafx.geometry.Point2D(
+					target.getPosX(), target.getPosY());
 
-	        // Trigger patrol point events
-	        try {
-	            targetPoint.triggerEvents();
-	        } catch (Exception ignore) {}
+				MazeNavigationGraph.Node startNode = graph.snapToNode(startPt);
+				MazeNavigationGraph.Node goalNode = graph.snapToNode(goalPt);
 
-	        // Set wait timer
-	        waitRemainingMs = PLACEHOLDER_WAIT_MS;
+				if (startNode == null || goalNode == null) {
+					nextIndex();
+					return;
+				}
 
-	        // Advance to next patrol point
-	        nextIndex();
-	    }
+				// Get calculator
+				PathCalculator pc = getPathcalculator();
+				if (pc == null) {
+					nextIndex();
+					return;
+				}
+
+				// Compute node path
+				@SuppressWarnings("unchecked")
+				EList<MazeNavigationGraph.Node> nodePath = 
+					(EList<MazeNavigationGraph.Node>) pc.compute(startNode, goalNode);
+
+				if (nodePath == null || nodePath.isEmpty()) {
+					nextIndex();
+					return;
+				}
+
+				// Convert nodePath -> getNextPositions()
+				getNextPositions().clear();
+				for (MazeNavigationGraph.Node node : nodePath) {
+					Position p = BehaviourFactory.eINSTANCE.createPosition();
+					p.setPosX(node.getX());
+					p.setPosY(node.getY());
+					getNextPositions().add(p);
+				}
+
+				// Append exact target as final waypoint (patrol point may not be exactly on a node)
+				Position lastWaypoint = getNextPositions().isEmpty() ? null : 
+					getNextPositions().get(getNextPositions().size() - 1);
+				if (lastWaypoint == null || distance(lastWaypoint, target) > EPSILON) {
+					Position finalPos = BehaviourFactory.eINSTANCE.createPosition();
+					finalPos.setPosX(target.getPosX());
+					finalPos.setPosY(target.getPosY());
+					getNextPositions().add(finalPos);
+				}
+
+				// Remove first node if it equals current position
+				if (! getNextPositions().isEmpty() && 
+					distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
+					getNextPositions().remove(0);
+				}
+
+			} catch (Exception ex) {
+				// Pathfinding failed — skip this target to prevent lockups
+				try { 
+					nextIndex(); 
+				} catch (Exception ignore) {
+					// Should not happen
+				}
+				return;
+			}
+		}
+
+		// If still empty after attempt -> skip target
+		if (getNextPositions().isEmpty()) {
+			nextIndex();
+			return;
+		}
+
+		// Movement speed from CharacterType, fallback to default
+		double movementSpeed = 2.0;
+		try {
+			if (getCharactertype() != null) {
+				movementSpeed = getCharactertype().getSpeed();
+			}
+		} catch (Exception ignore) {
+			// Use default speed
+		}
+
+		// Consume movement along the path
+		double allowed = movementSpeed;
+		Position currentPos = getPosition();
+
+		while (allowed > 0 && !getNextPositions().isEmpty()) {
+			Position nextWaypoint = getNextPositions().get(0);
+			double dx = nextWaypoint.getPosX() - currentPos.getPosX();
+			double dy = nextWaypoint.getPosY() - currentPos.getPosY();
+			double seg = Math.hypot(dx, dy);
+
+			if (seg <= allowed + EPSILON) {
+				// Snap to waypoint
+				currentPos.setPosX(nextWaypoint.getPosX());
+				currentPos.setPosY(nextWaypoint.getPosY());
+				getNextPositions().remove(0);
+				allowed -= seg;
+			} else {
+				// Move partially toward waypoint
+				double frac = allowed / seg;
+				double nx = currentPos.getPosX() + dx * frac;
+				double ny = currentPos.getPosY() + dy * frac;
+				currentPos.setPosX(nx);
+				currentPos.setPosY(ny);
+				allowed = 0;
+			}
+		}
+
+		// Arrival: consumed all waypoints and within EPSILON of target
+		if (getNextPositions().isEmpty() && distance(currentPos, target) <= EPSILON) {
+			// Snap to exact target
+			currentPos.setPosX(target.getPosX());
+			currentPos.setPosY(target.getPosY());
+
+			try {
+				targetPoint.triggerEvents();
+			} catch (Exception ignore) {
+				// Event trigger failure should not stop movement
+			}
+
+			waitRemainingMs = PLACEHOLDER_WAIT_MS;
+			nextIndex();
+		}
 	}
 
 	// Helper method for Euclidean distance
 	private double distance(Position a, Position b) {
-	    if (a == null || b == null) return Double.MAX_VALUE;
-	    double dx = a.getPosX() - b.getPosX();
-	    double dy = a.getPosY() - b.getPosY();
-	    return Math.hypot(dx, dy);
+		if (a == null || b == null) return Double.MAX_VALUE;
+		double dx = a.getPosX() - b.getPosX();
+		double dy = a.getPosY() - b.getPosY();
+		return Math.hypot(dx, dy);
 	}
 
 } //PatrolBehaviorImpl

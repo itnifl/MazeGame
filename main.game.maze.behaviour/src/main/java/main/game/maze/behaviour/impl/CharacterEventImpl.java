@@ -147,21 +147,14 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 
 	/**
 	 * <!-- begin-user-doc -->
-	 * Base implementation: checks probability and delegates to subclass-specific notify. 
-	 * Subclasses should override to call the appropriate update() method.
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public void notifySubscribers() {
-	    if (!shouldFire()) return;
-	    
-	    MovementBehavior sub = getSubscriber();
-	    if (sub!=null) {
-	        try {
-	            sub.update(this);
-	        } catch (Exception ignore) {}
-	    }
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -171,7 +164,7 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	protected boolean shouldFire() {
 	    double prob = getProbability();
 	    if (prob <= 0) return false;
-	    if (prob >= 1. 0) return true;
+	    if (prob >= 1.0) return true;
 	    return Math.random() < prob;
 	}
 

@@ -13,6 +13,7 @@ import main.game.maze.MazeWorld;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
+import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 import org.eclipse.emf.common.util.EList;
