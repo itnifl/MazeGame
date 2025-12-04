@@ -17,7 +17,7 @@
                 <images>
                     <BackgroundImage>
                         <image>
-                            <Image url="@gameBackGround2.png" />
+                            <Image url="@gameBackGround1.png" />
                         </image>
                         <repeatX>REPEAT</repeatX>
                         <repeatY>REPEAT</repeatY>

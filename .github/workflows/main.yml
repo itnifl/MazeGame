@@ -23,12 +23,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
-
-      # 🔹 NYTT: bygg p2-mirror til releng/local-p2
-      - name: Build local p2 mirror
+          
+      - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror \
+            -pl releng/mirror,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze,maze-feature,maze-module-repository,maze-generator.acceleo,maze-generator.acceleo-runner,maze-module-generator \
             -am \
             -DskipTests=true \
             clean verify
@@ -39,7 +38,6 @@ jobs:
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
           mvn -B -U -e \
-            -pl maze -am \
             -Djavafx.platform=linux \
             -DskipTests=false \
             clean verify

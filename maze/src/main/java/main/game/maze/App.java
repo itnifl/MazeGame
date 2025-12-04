@@ -21,6 +21,7 @@ import main.game.maze.service.DifficultyService;
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
+import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.runtime.OclBootstrap;
 
@@ -112,12 +113,25 @@ public class App extends Application {
     }
 
     public static int getBoardMaxX() {
-        return (App.lastChosenDifficulty instanceof HardDifficulty) ? StageConstants.BoardMaxXLarge : StageConstants.BoardMaxX;
+        if (App.lastChosenDifficulty instanceof HardDifficulty) {
+            return StageConstants.BoardMaxXLarge;
+        } else if (App.lastChosenDifficulty instanceof NormalDifficulty) {
+            return StageConstants.BoardMaxXMedium;
+        } else {
+            return StageConstants.BoardMaxX;
+        }
     }
 
     public static int getBoardMaxY() {
-        return (App.lastChosenDifficulty instanceof HardDifficulty) ? StageConstants.BoardMaxYLarge : StageConstants.BoardMaxY;
+        if (App.lastChosenDifficulty instanceof HardDifficulty) {
+            return StageConstants.BoardMaxYLarge;
+        } else if (App.lastChosenDifficulty instanceof NormalDifficulty) {
+            return StageConstants.BoardMaxYMedium;
+        } else {
+            return StageConstants.BoardMaxY;
+        }
     }
+
 
     public static void applySizeForCurrentDifficulty(Stage stage) {
         int width  = getBoardMaxX();

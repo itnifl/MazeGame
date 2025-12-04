@@ -12,7 +12,7 @@
       wallBaseType="DIRT"
       breakable="true"
       hitPoints="10"
-      baseImage="/main/game/maze/dirt.png"/>
+      baseImage="/main/game/maze/dirtWall.png"/>
 
   <materials
       id="WOOD_BASIC"
@@ -20,7 +20,7 @@
       wallBaseType="WOOD"
       breakable="true"
       hitPoints="20"
-      baseImage="/main/game/maze/wood.png"/>
+      baseImage="/main/game/maze/woodWall.png"/>
 
   <materials
       id="STEEL_SOLID"
@@ -28,6 +28,6 @@
       wallBaseType="STEEL"
       breakable="false"
       hitPoints="0"
-      baseImage="/main/game/maze/steel.png"/>
+      baseImage="/main/game/maze/steelWall.png"/>
 
 </walls:WallModel>
