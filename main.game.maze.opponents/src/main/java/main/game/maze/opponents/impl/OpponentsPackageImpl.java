@@ -932,6 +932,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.PASSIVE);
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.WANDER);
 		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.AGGRESSIVE);
+		addEEnumLiteral(behaviorTypeEEnum, BehaviorType.PATROL);
 
 		initEEnum(lootItemTypeEEnum, LootItemType.class, "LootItemType");
 		addEEnumLiteral(lootItemTypeEEnum, LootItemType.FOOD);
@@ -968,7 +969,7 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		  (this,
 		   source,
 		   new String[] {
-			   "diff", "platform:/resource/difficulty-module/src/main/resources/difficulty-module.ecore#/",
+			   "diff", "platform:/resource/main.game.maze.difficulties/src/main/resources/difficulty-module.ecore#/",
 			   "ecore", "http://www.eclipse.org/emf/2002/Ecore"
 		   });
 	}

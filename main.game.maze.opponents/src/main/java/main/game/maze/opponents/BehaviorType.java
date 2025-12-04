@@ -46,7 +46,15 @@ public enum BehaviorType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	AGGRESSIVE(2, "AGGRESSIVE", "AGGRESSIVE");
+	AGGRESSIVE(2, "AGGRESSIVE", "AGGRESSIVE"), /**
+	 * The '<em><b>PATROL</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PATROL_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	PATROL(3, "PATROL", "PATROL");
 
 	/**
 	 * The '<em><b>PASSIVE</b></em>' literal value.
@@ -82,6 +90,17 @@ public enum BehaviorType implements Enumerator {
 	public static final int AGGRESSIVE_VALUE = 2;
 
 	/**
+	 * The '<em><b>PATROL</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #PATROL
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PATROL_VALUE = 3;
+
+	/**
 	 * An array of all the '<em><b>Behavior Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -92,6 +111,7 @@ public enum BehaviorType implements Enumerator {
 			PASSIVE,
 			WANDER,
 			AGGRESSIVE,
+			PATROL,
 		};
 
 	/**
@@ -151,6 +171,7 @@ public enum BehaviorType implements Enumerator {
 			case PASSIVE_VALUE: return PASSIVE;
 			case WANDER_VALUE: return WANDER;
 			case AGGRESSIVE_VALUE: return AGGRESSIVE;
+			case PATROL_VALUE: return PATROL;
 		}
 		return null;
 	}
