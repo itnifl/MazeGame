@@ -12,7 +12,7 @@
       wallBaseType="DIRT"
       breakable="true"
       hitPoints="10"
-      baseImage="dirt.png"/>
+      baseImage="dirtWall.png"/>
 
   <materials
       id="WOOD_BASIC"
@@ -20,7 +20,7 @@
       wallBaseType="WOOD"
       breakable="true"
       hitPoints="20"
-      baseImage="wood.png"/>
+      baseImage="woodWall.png"/>
 
   <materials
       id="STEEL_SOLID"
@@ -28,6 +28,6 @@
       wallBaseType="STEEL"
       breakable="false"
       hitPoints="0"
-      baseImage="steel.png"/>
+      baseImage="steelWall.png"/>
 
 </walls:WallModel>
