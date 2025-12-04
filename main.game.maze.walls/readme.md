@@ -107,7 +107,6 @@ If there is a manual section in `WallRegistry`, add a new `WallDefinition` entry
 - Use the new wall in the maze generator or in hand written mazes:<br/>
 Refer to the new wall by its `id`. The runtime lookup will take care of image, hit points and behaviour.<br/>
 <br/>
----
 
 ## Design guidelines
 
