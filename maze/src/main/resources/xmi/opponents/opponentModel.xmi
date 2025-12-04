@@ -19,12 +19,13 @@
       <speed>2</speed>
       <threatLevel>1.0</threatLevel>
       <attackDamage>1</attackDamage>
-      <behavior>WANDER</behavior>
+      <behavior>PATROL</behavior>
       <ImageBase>/main/game/maze/ghost1.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/ghost1-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/ghost1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost1.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/ghost1.png</ImageTurnDown>
+      <nonTangibilityEnergy>600000.0</nonTangibilityEnergy>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">

@@ -30,59 +30,66 @@ public class PatrolController {
         if (!(computerCharacter instanceof ComputerCharacter cc)) {
             return new Point2D(0, 0);
         }
-
         try {
-            // 1. Get existing or Instantiate NEW PatrolBehavior (Stateful)
-            PatrolBehavior patrol = behaviorCache.computeIfAbsent(cc, k -> {
-                PatrolBehavior pb = BehaviourFactory.eINSTANCE.createPatrolBehavior();
-                initializePatrolRoute(pb);
-                return pb;
-            });
-
-            // 2. Sync EMF Position with Character's current visual position
-            // (The behavior needs to know where the character actually is to calculate the next step)
+            // Try to get an existing behavior
+            PatrolBehavior patrol = behaviorCache.get(cc);
+            // Lazily create and cache if missing
+            if (patrol == null) {
+                patrol = safeCreatePatrolBehavior();
+                if (patrol == null) {
+                    // Creation failed, give up gracefully for this frame
+                    return new Point2D(0, 0);
+                }
+                behaviorCache.put(cc, patrol);
+            }
+            // Sync EMF position with the character’s current visual position
             if (patrol.getPosition() == null) {
                 patrol.setPosition(BehaviourFactory.eINSTANCE.createPosition());
             }
             patrol.getPosition().setPosX(cc.getCharacterPosition().getX());
             patrol.getPosition().setPosY(cc.getCharacterPosition().getY());
-
-            // 3. Run EMF Logic (Calculate Path / Advance Index / Update NextPositions)
+            // Run patrol logic
             patrol.move();
-
-            // 4. Determine Direction Vector to the next immediate waypoint
+            // Use the next waypoint to decide direction
             if (!patrol.getNextPositions().isEmpty()) {
                 Position nextStep = patrol.getNextPositions().get(0);
                 double currentX = cc.getCharacterPosition().getX();
                 double currentY = cc.getCharacterPosition().getY();
-
                 double deltaX = nextStep.getPosX() - currentX;
                 double deltaY = nextStep.getPosY() - currentY;
-
-                // Normalize direction (-1, 0, 1)
                 int dirX = 0;
                 int dirY = 0;
-                
-                // Use small threshold to prevent jitter when aligned
                 if (Math.abs(deltaX) > 1.0) dirX = (int) Math.signum(deltaX);
                 if (Math.abs(deltaY) > 1.0) dirY = (int) Math.signum(deltaY);
-
-                // Simple 4-way movement priority to align with grid
                 if (dirX != 0 && dirY != 0) {
                     if (Math.abs(deltaX) > Math.abs(deltaY)) dirY = 0;
                     else dirX = 0;
                 }
-
                 return new Point2D(dirX, dirY);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            // No path or no next positions
+            return new Point2D(0, 0);
         }
-
-        return new Point2D(0, 0);
+        catch (Throwable t) {   // ← Important change
+            System.err.println("Fatal error in patrol movement for " + computerCharacter + ": " + t);
+            t.printStackTrace();
+            return new Point2D(0, 0);
+        }
     }
 
+    private static PatrolBehavior safeCreatePatrolBehavior() {
+        try {
+            PatrolBehavior pb = BehaviourFactory.eINSTANCE.createPatrolBehavior();
+            initializePatrolRoute(pb);
+            return pb;
+        }
+        catch (Throwable t) {   // Catch Error and Exception here as well
+            System.err.println("Failed to create or initialize PatrolBehavior: " + t);
+            t.printStackTrace();
+            return null;
+        }
+    }
+    
     private static void initializePatrolRoute(PatrolBehavior patrol) {
         try {
             GameMazeWorld maze = GameMazeWorld.GetWorld();

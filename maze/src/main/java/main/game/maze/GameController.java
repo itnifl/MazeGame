@@ -507,7 +507,7 @@ public class GameController implements Initializable {
             final int maxRandomValue = 10;
             final double randomTangientMoveThreshold = 7;
 
-            if(nonTangient) { 
+            if(nonTangient && energy <= 1000) { 
                 nontangientcc.setCharacterOpacity(noneOpacityValue-(energy/maxEnergy)+minOpacityValue);     
                 nontangientcc.setNonTangientEnergy(energy-energyDecreaseValue);   
             } 
