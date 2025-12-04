@@ -42,6 +42,11 @@ public interface PathCalculator extends EObject {
 	DistanceMethod getDistanceMethod();
 
 	/**
+     * @generated NOT
+     */
+    EList<Position> calculatePath(Position start, Position end);
+
+	/**
 	 * Sets the value of the '{@link main.game.maze.behaviour.PathCalculator#getDistanceMethod <em>Distance Method</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
