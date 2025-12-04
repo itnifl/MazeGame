@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +25,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import main.game.maze.actions.GameOverAction;
@@ -221,6 +227,8 @@ public class GameController implements Initializable {
     public void setupGame() {
         hpBar.setProgress(1.0);
 
+        updateBoardBackground();
+
         maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
         playerCharacter = new PlayerCharacter(
                 player,
@@ -293,6 +301,34 @@ public class GameController implements Initializable {
         gameBoard.requestFocus();
     }
 
+    private void updateBoardBackground() {
+        String bgImageName = "gameBackGround1.png"; // Default / Easy
+        
+        if (startDifficulty instanceof HardDifficulty) {
+            bgImageName = "gameBackGround3.png";
+        } else if (startDifficulty instanceof NormalDifficulty) {
+            bgImageName = "gameBackGround2.png";
+        }
+        
+        try {
+            var url = getClass().getResource(bgImageName);
+            if (url != null) {
+                Image bgImage = new Image(url.toExternalForm());
+                BackgroundImage bi = new BackgroundImage(bgImage,
+                    BackgroundRepeat.REPEAT,
+                    BackgroundRepeat.REPEAT,
+                    BackgroundPosition.DEFAULT,
+                    BackgroundSize.DEFAULT);
+                
+                gameBoard.setBackground(new Background(bi));
+            } else {
+                System.err.println("Could not find background image: " + bgImageName);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading background: " + e.getMessage());
+        }
+    }
+
     /**
      * Draws the maze using WallRegistry definitions.
      * Horizontal vectors are rotated because the base image is vertical.
@@ -338,48 +374,32 @@ public class GameController implements Initializable {
                 gc.setLineWidth(wallWidth);
                 gc.strokeLine(startX, startY, endX, endY);
             } else {
-                // Center the wall graphic on the vector line
-                double halfWidth = wallWidth / 2.0;
-
                 if (!isHorizontal) {
-                    // VERTICAL VECTOR
-                    // Draw image directly (since image is vertical)
-                    // x position = vector x - half thickness
-                    // y position = vector start y (assuming drawing downwards or normalize coordinates)
-                    double drawX = startX - halfWidth;
+                    // VERTICAL
+                    // We draw the image centered on the vector's X.
+                    // The height of the drawing is explicitly wallLength.
+                    double drawX = startX - (wallWidth / 2.0);
                     double drawY = Math.min(startY, endY);
-                    double drawHeight = Math.abs(endY - startY);
                     
-                    // In case vector length != segment length, we just stretch/tile. 
-                    // Given requirements, we draw with specific length. 
-                    // If the vector comes from generator, it's usually segment length.
-                    gc.drawImage(wallImage, drawX, drawY, wallWidth, drawHeight);
-                    
+                    gc.drawImage(wallImage, drawX, drawY, wallWidth, wallLength);
                 } else {
-                    // HORIZONTAL VECTOR
-                    // Image is vertical, so we must rotate 90 degrees
-                    double drawX = Math.min(startX, endX);
-                    double drawY = startY - halfWidth;
-                    double drawLength = Math.abs(endX - startX);
+                    // HORIZONTAL
+                    // Rotate 90 degrees to draw horizontal using the vertical image.
+                    double minX = Math.min(startX, endX);
+                    
+                    // Center of the wall segment
+                    double centerX = minX + (Math.abs(endX - startX) / 2.0); 
+                    double centerY = startY; 
 
-                    // Save state
                     gc.save();
-                    
-                    // Move to the center of where the wall should be
-                    double centerX = drawX + (drawLength / 2.0);
-                    double centerY = drawY + (wallWidth / 2.0);
                     gc.translate(centerX, centerY);
-                    
-                    // Rotate 90 degrees
                     gc.rotate(90);
                     
-                    // Draw image centered at (0,0) after rotation
-                    // Note: After rotation, Width becomes Height visually
-                    // We draw the vertical image: width=wallWidth, height=drawLength
-                    // shifted by -width/2, -height/2
-                    gc.drawImage(wallImage, -wallWidth / 2.0, -drawLength / 2.0, wallWidth, drawLength);
+                    // Draw centered at (0,0) after rotation.
+                    // wallWidth is drawn along local X (screen width), wallLength along local Y (screen height).
+                    // After 90 deg rotation, local Y becomes global X (horizontal length).
+                    gc.drawImage(wallImage, -wallWidth / 2.0, -wallLength / 2.0, wallWidth, wallLength);
                     
-                    // Restore state
                     gc.restore();
                 }
             }
