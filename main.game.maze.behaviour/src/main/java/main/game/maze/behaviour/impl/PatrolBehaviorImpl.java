@@ -301,8 +301,16 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 */
 	@Override
 	public void nextIndex() {
-	    int size = getPath().size();
-	    if (size == 0) return;
+	    setCurrentIndex(calculateNextIndex());
+	}
+
+	/**
+	 * Calculates the next index based on the current behavior mode.
+	 * @return the next index
+	 */
+	public int calculateNextIndex(){
+		int size = getPath().size();
+	    if (size == 0) return 0;
 	    
 	    int cur = getCurrentIndex();
 	    int next;
@@ -312,29 +320,24 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	    
 	    switch (mode) {
 	        case LOOP:
-	            next = (cur + 1) % size;
-	            break;
+	            return (cur + 1) % size;
 	        case RANDOM:
 	        	// random point but not the current
 	            if (size == 1) {
-	                next = 0;
+	                return 0;
 	            } else {
 	                next = rng.nextInt(size);
 	                while (next == cur) {
 	                    next = rng.nextInt(size);
 	                }
+					return next;
 	            }
-	            break;
 	        case BACKWARD:
 	            // cyclic decrement: 2 -> 1 -> 0 -> 2 -> 1 -> ... 
-	            next = (cur - 1 + size) % size;
-	            break;
+	            return (cur - 1 + size) % size;
 	        default:
-	            next = (cur + 1) % size;
-	            break;
+	            return (cur + 1) % size;
 	    }
-	    
-	    setCurrentIndex(next);
 	}
 
 	/**
@@ -539,12 +542,8 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		}
 
 		// Resolve current patrol target
-		int idx = getCurrentIndex();
-		if (idx < 0 || idx >= getPath().size()) {
-			setCurrentIndex(0);
-			idx = 0;
-		}
-		PatrolPoint targetPoint = getPath().get(idx);
+		int targetIdx = calculateNextIndex();
+		PatrolPoint targetPoint = getPath().get(targetIdx);
 		Position target = targetPoint.getPoint();
 		if (target == null) {
 			nextIndex();
@@ -625,7 +624,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				}
 
 				// Remove first node if it equals current position
-				if (! getNextPositions().isEmpty() && 
+				if (!getNextPositions().isEmpty() && 
 					distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
 					getNextPositions().remove(0);
 				}
