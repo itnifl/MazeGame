@@ -19,7 +19,7 @@ import main.game.maze.opponents.OpponentsFactory;
  * 
  * Run this class directly (has a main method).
  */
-public class TestPatrolBehaviorMove {
+public class TestPatrolBehaviorMoveManual {
 
     // ========== Configuration ==========
     private static final int TOTAL_TICKS = 50;
