@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import main.game.maze.mazeworld.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -41,6 +40,11 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 import main.game.maze.mazeworld.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import main.game.maze.behaviour.BehaviourFactory;
+import main.game.maze.behaviour.PatrolBehavior;
+import main.game.maze.behaviour.PatrolPathBehavior;
+import main.game.maze.behaviour.PatrolPoint;
+import main.game.maze.behaviour.Position;
 
 public class GameController implements Initializable {
     @FXML
@@ -325,9 +329,9 @@ public class GameController implements Initializable {
                                             doCharacterWanderMove(computerCharacter);
                                         break;
                                         
-                                    // case PATROL:
-                                    //     	doCharacterPatrolMove(computerCharacter);
-                                    //     break;
+                                    case PATROL:
+                                        	doCharacterPatrolMove(computerCharacter);
+                                        break;
                                 
                                     default:
                                         doCharacterWanderMove(computerCharacter);
@@ -354,6 +358,21 @@ public class GameController implements Initializable {
         }
 
         var successfulMove = computerCharacter.move(nonTangient);
+        if (!successfulMove) {
+            computerCharacter.changeDirection();
+        }
+    }
+
+    
+    private void doCharacterPatrolMove(IMovingComputerCharacter computerCharacter) {
+        var nonTangient = false;
+        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);                                     
+        }
+        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter); //If there is a wall in the way to the point, we adjust to next best possible. If the point is reached, we go to next
+        computerCharacter.setDirection(direction);
+        var successfulMove = computerCharacter.move(nonTangient);
+        
         if (!successfulMove) {
             computerCharacter.changeDirection();
         }
