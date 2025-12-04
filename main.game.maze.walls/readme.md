@@ -63,7 +63,7 @@ public final class WallRegistry {
     // Internal map with all registered walls
 }
 
-````markdown
+```
 
 The maze world and rendering logic use `WallRegistry` to
 
