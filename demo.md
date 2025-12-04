@@ -16,7 +16,7 @@ This demo describes how to:
 
 * Eclipse
 
-* Chek out the root [readme.md](readme.md#prerequisites-and-setup) for the complete list of prerequisites.
+* Check out the root [readme.md](readme.md#prerequisites-and-setup) for the complete list of prerequisites.
 
 * Project built from the root. For a full build including the local p2 mirror you can use:
 
@@ -52,7 +52,7 @@ This demo describes how to:
 
   * `maze/src/main/java/main/game/maze/App.java`
 
-Run it in Visual Studio Code.
+Run it in Visual Studio Code (this is the most tested environment). Running in Visual Studio code will use `.vscode\launch.json` with correct settings.
 
 ---
 
