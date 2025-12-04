@@ -325,9 +325,9 @@ public class GameController implements Initializable {
                                             doCharacterWanderMove(computerCharacter);
                                         break;
                                         
-                                    case PATROL:
-                                        	doCharacterPatrolMove(computerCharacter);
-                                        break;
+                                    // case PATROL:
+                                    //     	doCharacterPatrolMove(computerCharacter);
+                                    //     break;
                                 
                                     default:
                                         doCharacterWanderMove(computerCharacter);

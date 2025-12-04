@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
-import main.game.maze.ai.PatrolMovementController;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
