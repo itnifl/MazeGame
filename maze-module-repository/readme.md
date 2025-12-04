@@ -12,7 +12,7 @@ This module builds a p2 repository that contains the Maze Game feature and its E
 From the repository root:
 ```bash
 mvn -pl maze-module-repository -am -DskipTests clean verify
-````
+```
 
 ## Output
 
