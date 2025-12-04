@@ -1,24 +1,21 @@
-# Demo: Sample Models And Validation Behavior
+# Demo: Sample Models And Validation Behaviour
 
-> Add a short demo script that shows the effect of each sample model and the behavior on validation errors
+This demo shows how the **models** and the **runtime code** work together in MazeGame:
 
-This demo describes how to:
-
-1. Show the effect of the **difficulty model** at runtime (how `difficulties.xmi` and the code work together).
-2. Show how the **opponent models** behave when validation succeeds or fails (using the sample XMI files and JUnit tests). 
-3. <span style="color:red; font-weight:bold">🔴 Show how the **behaviour models** behave when validation succeeds or fails (using the sample XMI files and JUnit tests).</span>
+1. How the **difficulty model** affects the running game.
+2. How the **opponent models** behave when validation succeeds or fails.
+3. How the **behaviour / movements model** drives patrol movement and can be validated.
 
 ---
 
 ## 1. Prerequisites
 
-* Visual Studio Code
+- Visual Studio Code (recommended demo environment).
+- Eclipse (optional, for alternative run configurations).
+- All prerequisites from the root guide:  
+  See [readme.md](readme.md#prerequisites-and-setup).
 
-* Eclipse
-
-* Check out the root [readme.md](readme.md#prerequisites-and-setup) for the complete list of prerequisites.
-
-* Project built from the root. For a full build including the local p2 mirror you can use:
+- Project built from the root. For a full build including the local p2 mirror you can use:
 
   ```bash
   # Windows (PowerShell, from the repo root)
@@ -26,33 +23,32 @@ This demo describes how to:
 
   # Linux / macOS (or Windows with make installed)
   make all
-  ```
+```
 
-* If you already have the local p2 mirror and just want a quick rebuild, you can still use:
+For a quick rebuild when the mirror already exists:
 
   ```bash
   mvn clean install
   ```
 
-- Runtime XMI files on the classpath:
+* Runtime XMI files on the classpath:
 
   * `maze/src/main/resources/xmi/difficulties/difficulties.xmi`
   * `maze/src/main/resources/xmi/opponents/opponentModel.xmi`
 
-- Sample test models:
+* Sample test models:
 
   * `main.game.maze.difficulties/src/test/resources/difficultiesBasic.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentsBasic.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelSuccessMaxThreat.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelFailMaxThreat.xmi`
-  * `maze/src/test/patrol_behavior_example.xmi` (behaviour / movements patrol example used by `TestPatrolMovementController`)
-  * <span style="color:red; font-weight:bold">🔴 Missing on behaviour model</span>
+  * `maze/src/test/patrol_behavior_example.xmi` (behaviour / movements patrol example)
 
-- Main application class:
+* Main application class:
 
   * `maze/src/main/java/main/game/maze/App.java`
 
-Run it in Visual Studio Code (this is the most tested environment). Running in Visual Studio code will use `.vscode\launch.json` with correct settings.
+In Visual Studio Code, use the supplied `.vscode/launch.json` and run **Start Debugging** from the `maze` module.
 
 ---
 
@@ -62,116 +58,117 @@ Run it in Visual Studio Code (this is the most tested environment). Running in V
 
 You can start the game in one of two ways.
 
-**From Maven (command line + Visual Studio Code):**
+**From Maven and Visual Studio Code**
 
 ```bash
-# On Windows with Powershell 7.x on the project root
-./Run-P2AndBuildCheck.ps1
-# In Visual Studio Code:
-# Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"
-# Then from the repository root
+# From the repository root
 mvn clean install
-
-# Then run the built solution:
-# Run -> 'Start Debugging' in VSCode (CTRl + F5)
 ```
 
-**From Eclipse:**
+Then, in VS Code:
+
+* Open the workspace.
+* Use “Run → Start Debugging” (or the configured Java launch for `main.game.maze.App`).
+
+**From Eclipse**
 
 * Right click `App.java` in the `maze` module.
-* Choose `Run As → Java Application`.
-* This requires that you have compiled a Maven Build (see above) and that you are using the following VM arguments for the Run Cofiguration:
+* Choose **Run As → Java Application**.
+* Make sure the VM arguments include something like:
 
-```
---module-path "${project_loc:main.game.maze}/target/libs" --add-modules javafx.controls,javafx.fxml,javafx.media
-```
+  ```text
+  --module-path "${project_loc:main.game.maze}/target/libs" --add-modules javafx.controls,javafx.fxml,javafx.media
+  ```
+
+(depending on your JavaFX setup in `maze/pom.xml`).
 
 **After starting the game**
 
-When the game starts, you will see a **"Select difficulty"** dialog.
-This dialog is created in `App.setDifficulty`, which uses `DifficultyService` to read:
+When the game starts, you see a **Select difficulty** dialog.
 
-* `/xmi/difficulties/difficulties.xmi`
-* The contained `EasyDifficulty`, `NormalDifficulty`, `HardDifficulty`
-* The `currentDifficulty` reference in the model
+Internally:
 
-The selected `Difficulty` instance is then passed into:
+* `App.setDifficulty` uses `DifficultyService` to read:
 
-* `GameController.setStartDifficulty(...)`
-* `OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty)`
+  * `/xmi/difficulties/difficulties.xmi`
+  * the `EasyDifficulty`, `NormalDifficulty`, `HardDifficulty` objects
+  * the `currentDifficulty` reference
+
+* The selected `Difficulty` is then passed into:
+
+  * `GameController.setStartDifficulty(...)`
+  * `OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty)`
 
 ### 2.2 Show the effect of each difficulty
 
-<span style="color:red; font-weight:bold">🔴 We need more here about behaviour module<span>
-Repeat the following loop three times, once for each difficulty.
+Repeat this loop three times, once per difficulty:
 
-1. **Start the game**, pick one difficulty in the dialog:
+1. **Start the game** and pick a difficulty:
 
-   * First run: choose **Easy**
-   * Second run: choose **Normal**
-   * Third run: choose **Hard**
-   * <span style="color:red; font-weight:bold">🔴 We should output the current threat level somewhere, and adjust scoring based on it.</span>
+   * First run: **Easy**
+   * Second run: **Normal**
+   * Third run: **Hard**
 
-2. Play a short round and observe:
+2. Play a short round each time and ask the audience to notice:
 
-   * Enemy **max counts** per type (caps) change:
+   * **Enemy max counts per type**
 
-     * Loaded from `diff:getEnemyMaxCount` in `difficulties.xmi`.
-   * Enemy **movement speed** and **damage** change:
+     * Caps are loaded from `difficulties.xmi` (for example via functions like `diff:getEnemyMaxCount` in the model).
+     * Hard mode should have more allowed enemies or different compositions than Easy.
 
-     * Multipliers are read from the selected `Difficulty` and applied in `OpponentRuntimeFactory`
-       (`monstersMovementSpeedMultiplier`, `monstersDamageMultiplier`, `instantDeath`).
-   * Overall **threat level and density** change:
+   * **Enemy movement speed and damage**
 
-     * `maxThreat` from the difficulty model limits how many enemies are spawned.
+     * Multipliers (for example `monstersMovementSpeedMultiplier`, `monstersDamageMultiplier`, `instantDeath`) are read from the selected `Difficulty`.
+     * `OpponentRuntimeFactory` applies these multipliers when instantiating enemies.
 
-3. Explain to the audience:
+   * **Overall threat and density**
 
-   * The **structure and base values** (caps, multipliers, max threat) are stored in `difficulties.xmi`.
-   * The **behavior** (how enemies are chosen, how often they spawn, how multipliers are applied) is implemented in Java:
+     * `maxThreat` in the difficulty model limits how many enemies and which combinations can spawn.
+     * Hard mode should feel denser and more dangerous than Easy.
+
+3. Explain the division of responsibilities:
+
+   * **Model side (in `difficulties.xmi`)**
+
+     * Stores structure and base values:
+
+       * caps per enemy type
+       * threat values
+       * multipliers
+       * global `maxThreat`
+
+   * **Code side**
 
      * `DifficultyService` loads the model.
-     * `App` and `GameController` choose a `Difficulty` object.
+     * `App` and `GameController` choose a `Difficulty` instance.
      * `OpponentRuntimeFactory` uses that `Difficulty` to:
 
-       * Cap the number of each enemy type.
-       * Scale movement speed and damage.
-       * Adjust threat-based spawning.
+       * cap enemy counts
+       * scale movement speed and damage
+       * guide threat based spawning
 
-4. Connect this to the **behaviour / movements module**:
+4. Connect to the **behaviour / movements module**:
 
-   * The path-finding and patrol logic for enemies lives in the **behaviour module**:
+   * The **behaviour module** decides *where* enemies go.
+   * The **difficulty model** controls *how fast* and *how hard* they hit.
+   * Together they define how dangerous a level *feels*:
 
-     * EMF model: `main.game.maze.behaviour/src/main/resources/movements/movements.ecore`
-     * Java API: `main.game.maze.behaviour` package (for example `PatrolBehavior`, `MovementBehavior`, `PathCalculator`, `DijkstraPathCalculator`, `AstarPathCalculator`).
-   * In the running game, enemy movement is the combination of:
-
-     * **Difficulty model** → how fast enemies move and how hard they hit.
-     * **Behaviour / movements model** → where they move (patrol paths or patrol zones) and how they turn or accelerate.
-   * For a focused patrol demo (outside the full game) you can run:
-
-     * `maze/src/main/java/main/game/maze/ai/TestPatrolMovementController.java`
-
-       * It loads `maze/src/test/patrol_behavior_example.xmi` via `PatrolHelper`.
-       * It simulates an enemy moving along the patrol path and prints positions, showing how the behaviour model drives runtime behaviour.
-
-You do **not** swap different XMI files on the command line; you always use the same `difficulties.xmi`, and the game code uses that model plus the dialog choice to decide how to behave.
+     * difficulty → numeric parameters
+     * behaviour → movement and pathfinding logic
 
 ---
 
-## 3. Model validation demo: valid versus invalid opponent models
+## 3. Model validation demo: opponent models
 
-<span style="color:red; font-weight:bold">🔴 We need more here about behaviour module<span>
-
-This part uses the **sample opponent models** and the **JUnit tests** to show how validation behaves, including failures.
+This part uses the **sample opponent models** and **JUnit tests** to show how validation behaves.
 
 ### 3.1 How validation works
 
 * Opponent models are EMF instances of `OpponentModel`.
 
-* OCL and code-based constraints are hooked up through `OpponentsValidator`.
+* OCL and code based constraints are wired through `OpponentsValidator`.
 
-* At runtime, `OpponentRuntimeFactory` calls:
+* At runtime, `OpponentRuntimeFactory` performs validation, for example:
 
   ```java
   private static void validateOrFail(OpponentModel model) {
@@ -185,30 +182,38 @@ This part uses the **sample opponent models** and the **JUnit tests** to show ho
   }
   ```
 
-* If validation fails, the game does **not** silently continue; it throws an exception with diagnostic details.
+* If validation fails, the game throws an exception with detailed diagnostics instead of silently continuing.
 
 ### 3.2 Run the validation demo tests
 
-From the repository root, run:
+From the repository root:
 
 ```bash
 # Run only the opponent model validation tests
 mvn -pl main.game.maze.opponents test -Dtest=ModelLoadSmokeTest
 ```
 
-This gives a clear, automated demo of:
+Explain the result:
 
-* **Correct models**: load and validate without errors.
-* **Incorrect models**: load without parse errors, but fail semantic validation.
+* **Correct models** (for example `opponentsBasic.xmi`, `opponentModelSuccessMaxThreat.xmi`)
+  load and validate without errors.
+
+* **Incorrect models** (for example `opponentModelFailMaxThreat.xmi`)
+  parse successfully but fail semantic validation (max threat exceeded, inconsistent caps, and so on).
+
+This shows that:
+
+* Syntax correct but semantically invalid models are caught early.
+* The validation errors are explicit and testable.
 
 ### 3.3 Optional: provoke a runtime validation error in the game
 
-If you want to show what happens in the actual game:
+To show that the game also fails fast on invalid models:
 
-1. Copy the invalid sample to the runtime location:
+1. Replace the runtime opponent model:
 
-   * Take `opponentModelFailMaxThreat.xmi`.
-   * Replace `maze/src/main/resources/xmi/opponents/opponentModel.xmi` with that content (or intentionally break the existing file).
+   * Copy the contents of `opponentModelFailMaxThreat.xmi`.
+   * Paste it over `maze/src/main/resources/xmi/opponents/opponentModel.xmi`.
 
 2. Rebuild and run the game:
 
@@ -216,135 +221,174 @@ If you want to show what happens in the actual game:
    mvn clean install
    ```
 
-   Then run the game as described above.
+   Then start `App` as described in section 2.
 
-3. When `OpponentRuntimeFactory.instantiateFromModel(...)` runs, it will:
+3. During startup:
 
-   * Load the opponent model.
-   * Call `validateOrFail(...)`.
-   * Throw an `IllegalStateException` with diagnostic details because the constraints (for example, related to max threat) are violated.
+   * `OpponentRuntimeFactory.instantiateFromModel(...)` will:
 
-Explain that this is **intentional**: invalid DSL models are rejected early, with structured diagnostics, instead of producing undefined behavior or weird bugs in the running game.
+     * load the opponent model
+     * call `validateOrFail(...)`
+   * Since the constraints are violated, it throws `IllegalStateException` with diagnostic details.
 
-### 3.4 Behaviour / movements model: loading and validation
+Explain that this is **intentional**:
 
-Although the behaviour / movements module does not currently have a separate JUnit suite, it has a clear loading and validation path that you can demo:
-
-* The EMF behaviour model is generated into the `main.game.maze.behaviour` module:
-
-  * Types like `PatrolBehavior`, `PatrolPoint`, `PatrolZone`, `Position`, `MovementBehavior`, and the different `PathCalculator` implementations.
-
-* A small helper in the game module, `maze/src/main/java/main/game/maze/config/PatrolHelper.java`, is responsible for:
-
-  * Loading a patrol model from XMI:
-
-    ```java
-    String modelPath = "src/test/patrol_behavior_example.xmi";
-    PatrolBehavior model = PatrolHelper.loadPatrolModel(modelPath);
-    ```
-
-  * Validating the model in `PatrolHelper.fromModel(...)`:
-
-    * It checks that either a patrol path or a patrol zone exists.
-    * It verifies that all waypoints are within the map bounds.
-    * It rejects NaN coordinates and structurally invalid patrol definitions by throwing `IllegalArgumentException` with a descriptive message.
-
-* The sample XMI for this is:
-
-  * `maze/src/test/patrol_behavior_example.xmi`
-
-  It defines a `behaviour:PatrolBehavior` with several `<path time="…">` elements and `<point posX="…" posY="…"/>` waypoints.
-
-* To show the behaviour model in action:
-
-  1. Open `TestPatrolMovementController`:
-
-     * `maze/src/main/java/main/game/maze/ai/TestPatrolMovementController.java`
-
-  2. Run its `main` method from your IDE (VS Code or Eclipse) with the project built.
-
-  3. The demo will:
-
-     * Load `patrol_behavior_example.xmi` through `PatrolHelper`.
-     * Convert it to a runtime `PatrolDefinition`.
-     * Use `PatrolFollower` and `PatrolMovementController` to step through the patrol.
-     * Print out the simulated movement, or throw validation errors if you intentionally break the XMI (for example, by moving a waypoint outside the map).
-
-This ties the **behaviour / movements model** directly to:
-
-* EMF-based model loading (`PatrolBehavior`).
-* Procedural validation (`PatrolHelper.fromModel`).
-* Runtime movement behaviour (`PatrolMovementController`, `PatrolFollower`).
+* Invalid DSL models are rejected with clear messages.
+* You avoid strange runtime bugs from inconsistent configuration.
 
 ---
 
-## 4. Short version demo script:
+## 4. Behaviour / movements model demo
 
-You can use the following as a spoken script:
+This part shows how a **behaviour model** (patrol definition) is:
 
-1. **Start the game.**
+* loaded as EMF,
+* validated at a code level,
+* and used to drive patrol movement.
 
-   * The difficulty choices you see here come from `difficulties.xmi`.
-   * See Easy, Normal, Hard, and briefly demonstrate how the enemy behavior changes for each run.
-   * XMI provides the data, while the Java code (`DifficultyService`, `App`, `GameController`, `OpponentRuntimeFactory`) uses that data to apply multipliers and caps.
+### 4.1 Behaviour model artefacts
 
-2. **Run the model validation tests.**
+Relevant files and modules:
 
-   * Run `mvn -pl main.game.maze.opponents test -Dtest=ModelLoadSmokeTest`.
-   * <span style="color:red; font-weight:bold">🔴 We need something for difficulty and behaviour module also</span>
-   * See that valid samples pass and the invalid sample is explicitly expected to fail validation.
+* EMF behaviour model and generated classes:
 
-3. **(Optional) Show a runtime failure.**
+  * Module: `main.game.maze.behaviour`
+  * Packages: for example `PatrolBehavior`, `PatrolPoint`, `MovementBehavior`, `PathCalculator` implementations.
 
-   * Swap in the invalid opponent model.
-   * Restart the game and show that it aborts with a clear "Invalid opponent model" error instead of starting with a broken configuration.
+* Sample patrol model instance:
 
-4. **(Optional) Show the behaviour / movements module.**
+  * `maze/src/test/patrol_behavior_example.xmi`
+    Contains a `behaviour:PatrolBehavior` with a path and waypoints.
 
-   * Open `maze/src/test/patrol_behavior_example.xmi` and show the patrol waypoints.
-   * Run `TestPatrolMovementController` from the `maze` module. <span style="color:red; font-weight:bold">🔴 Must be implemented</span>
-   * See the point  that:
+* Helper and controller code (typical setup):
 
-     * The patrol path is defined in the EMF behaviour model.
-     * `PatrolHelper` validates the model and converts it into runtime data. <span style="color:red; font-weight:bold">Must be implemented</span>
-     * The controller then moves a simulated enemy along that path, using the same behaviour logic that the game will use once you integrate patrols into real enemies.
+  * `maze/src/main/java/main/game/maze/config/PatrolHelper.java`
+    will:
+
+    * load the XMI patrol model
+    * check basic structural rules
+    * convert it into a runtime patrol definition
+
+  * `maze/src/main/java/main/game/maze/ai/TestPatrolMovementController.java`
+    demo harness that:
+
+    * uses `PatrolHelper` to load the patrol model
+    * steps through the patrol path using runtime behaviour classes
+    * prints or visualises movement over time
+
+### 4.2 Running the patrol example
+
+1. Open `patrol_behavior_example.xmi`:
+
+   * File: `maze/src/test/patrol_behavior_example.xmi`
+   * Show that it describes:
+
+     * a patrol path
+     * a list of waypoints with coordinates and timing
+
+2. Run the patrol demo harness from your IDE:
+
+   * Main class: `TestPatrolMovementController`
+     (in `maze/src/main/java/main/game/maze/ai/`)
+
+3. Observe:
+
+   * The patrol model is loaded as an EMF object (for example a `PatrolBehavior` instance).
+   * `PatrolHelper` validates and transforms the model into runtime structures:
+
+     * ensures there is at least one path
+     * checks coordinates are within expected bounds
+     * rejects obviously invalid structures via exceptions
+   * `PatrolMovementController` and related classes then step through the patrol:
+
+     * position over time changes according to the model
+     * you get a clear mapping from XMI → behaviour → movement
+
+4. Optional: show a validation failure
+
+   * Edit `patrol_behavior_example.xmi` to introduce an error (for example move a waypoint far outside the map or remove required elements).
+   * Re run `TestPatrolMovementController`.
+   * The helper or controller should fail clearly instead of running with nonsense data.
+
+This demonstrates that the **behaviour model** is treated similarly to the opponent model:
+
+* loaded as EMF,
+* validated,
+* and used as the source for runtime behaviour.
+
+---
+
+## 5. Short demo script (for live presentations)
+
+Use this as a compact spoken script.
+
+1. **Start the game**
+
+   * Run the Maze game.
+   * Show the **Select difficulty** dialog.
+   * Explain that `difficulties.xmi` defines:
+
+     * Easy, Normal, Hard
+     * caps, multipliers, and max threat
+   * Play briefly on each difficulty and point out:
+
+     * more or fewer enemies
+     * faster or slower enemies
+     * damage differences
+
+2. **Run the opponent validation tests**
+
+   * Run:
+
+     ```bash
+     mvn -pl main.game.maze.opponents test -Dtest=ModelLoadSmokeTest
+     ```
+
+   * Explain:
+
+     * valid models pass,
+     * the invalid sample is expected to fail validation,
+     * the diagnostics describe *why* (for example max threat exceeded).
+
+3. **Optional: show a runtime failure**
+
+   * Replace the runtime opponent model with `opponentModelFailMaxThreat.xmi`.
+   * Start the game.
+   * Show that it aborts with “Invalid opponent model …” instead of silently misbehaving.
+
+4. **Show the behaviour / movements module**
+
+   * Open `maze/src/test/patrol_behavior_example.xmi` and briefly show the patrol definition.
+   * Run `TestPatrolMovementController`.
+   * Explain:
+
+     * the patrol path is defined in the EMF behaviour model,
+     * a helper loads and validates it,
+     * the controller moves a simulated enemy along that path using the same core logic the game will use.
 
 This ties together:
 
-* The **sample models** (difficulties, opponents, and behaviour / movements patrol).
-* The **runtime behavior** of the game.
-* The **validation behavior** for both correct and incorrect models.
-* The **build pipeline**, where `make.ps1` / `make` handle the local p2 mirror plus Maven build, and `Run-P2AndBuildCheck.ps1` gives a quick "build and run" flow for the demo.
+* **Sample models** (difficulties, opponents, behaviour / movements).
+* **Runtime behaviour** (enemy counts, speed, and patrol movement).
+* **Validation behaviour** (what happens with valid versus invalid models).
 
-## 5. Build automation: GitHub Actions, `make`, and `make.ps1`
+---
 
-The project has a small but coherent build story that is shared between local development and CI.
+## 6. Build helpers and CI (optional to mention in the demo)
 
-- **GitHub Actions workflows** live in `.github/workflows/`:
-  - `buildtest.yml` runs on pull requests and performs a **full Tycho + game build**:
-    - Checks out the repo and sets up Temurin JDK 24 with Maven caching.
-    - Caches the local p2 mirror in `releng/local-p2` based on `releng/mirror/pom.xml` and `releng/maze.target`.
-    - Runs a Tycho build of the Eclipse plug-ins and p2 repository, then uploads the generated p2 site.
-    - In a separate `game` job, installs Xvfb and runs `mvn … -pl maze -am … clean verify` to build and test the JavaFX game headless on Linux.
-  - `main.yml` is a **JavaFX-only pipeline** that triggers on pull requests touching the `maze` module or workflow files:
-    - Sets up JDK 24 and runs the same `xvfb-run … mvn -pl maze -am … clean verify`.
-    - Uploads Surefire test reports and the built game jar from `maze/target`.
+* **GitHub Actions** (in `.github/workflows/`) run:
 
-- **`make` (Makefile)** is a Windows-friendly command-line shortcut that mirrors the CI steps:
-  - `make` or `make all` runs:
-    1. `toolchain-info` → prints Maven and Java versions.
-    2. `mirror` → (re)builds the local p2 mirror into `releng\local-p2` and updates `.mirror.stamp` based on `releng/mirror/pom.xml`.
-    3. `clear-tycho-cache` → removes the local Tycho p2 cache.
-    4. `build` → runs `mvn -U -DskipTests=false clean verify` for the full multi-module build.
-  - Additional targets like `force-mirror` and `clean-mirror` let you control the local p2 mirror explicitly.
+  * full Tycho build of the Eclipse modules and p2 repository,
+  * full Maven build and test of the `maze` game (headless JavaFX on Linux).
 
-- **`make.ps1`** is a PowerShell wrapper that exposes the same flow with a single parameter:
-  - Usage: `./make.ps1 all`, `./make.ps1 mirror`, `./make.ps1 build`, `./make.ps1 clear-cache`, `./make.ps1 toolchain`.
-  - Internally it:
-    - Shows toolchain info (`mvn -version`, `java -version`).
-    - Checks whether the mirror in `releng\local-p2` is outdated based on its stamp and `releng\mirror\pom.xml`, and rebuilds it via `mvn -f releng/mirror/pom.xml -U verify` if needed.
-    - Clears the Tycho cache.
-    - Runs the same full Maven build as the CI pipelines (`mvn -U -DskipTests=false clean verify`).
+* **`make` (Makefile)** and **`make.ps1`** provide local shortcuts:
 
-In short: **GitHub Actions** enforce the full build and tests on pull requests, while **`make`** and **`make.ps1`** give you the same steps locally with one command.```
+  * `make` or `./make.ps1 all`:
 
+    * refresh the local p2 mirror when needed,
+    * clear the Tycho cache,
+    * run `mvn -U -DskipTests=false clean verify` for the whole project.
+
+For the demo you can summarise this as:
+
+> “The same steps you see locally are also run automatically in CI, so generated code, models and the game are always in sync.”
