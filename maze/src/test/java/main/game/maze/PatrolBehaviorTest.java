@@ -5,146 +5,109 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import main.game.maze.behaviour.BehaviourFactory;
-import main.game.maze.behaviour.DijkstraPathCalculator;
 import main.game.maze.behaviour.PatrolBehavior;
 import main.game.maze.behaviour.PatrolPathBehavior;
 import main.game.maze.behaviour.PatrolPoint;
 import main.game.maze.behaviour.Position;
-import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.behaviour.impl.PathCalculatorImpl;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentsFactory;
 
 /**
- * JUnit 5 Test for PatrolBehavior.
- * 
- * Note: Since GameMazeWorld depends on JavaFX, these tests assume 
- * the environment allows head-less JavaFX execution or is mocked.
+ * Unit Test for PatrolBehavior.
+ * Uses a StubPathCalculator to ensure tests are deterministic and independent of Maze generation.
  */
 public class PatrolBehaviorTest {
 
-    private static final int MAZE_WIDTH = 800;
-    private static final int MAZE_HEIGHT = 600;
-    private static final double MOVEMENT_SPEED = 2.0;
-
-    private GameMazeWorld mazeWorld;
-    private MazeNavigationGraph graph;
     private PatrolBehavior patrol;
+    private StubPathCalculator stubCalculator;
 
     @BeforeEach
     void setUp() throws Exception {
-        // 1. Initialize World (Ideally, you should mock MazeNavigationGraph to avoid loading the GUI)
-        // We wrap this in try-catch to fail the test gracefully if JavaFX isn't init
-        try {
-            mazeWorld = GameMazeWorld.GetWorld(MAZE_WIDTH, MAZE_HEIGHT);
-            graph = mazeWorld.getNavigationGraph();
-        } catch (Exception e) {
-            fail("Could not initialize GameMazeWorld. Ensure JavaFX is setup or use a Mock Graph. Error: " + e.getMessage());
-        }
-
-        assertNotNull(graph, "Navigation Graph must not be null");
-
-        // 2. Initialize Behavior
+        // 1. Initialize Behavior
         patrol = BehaviourFactory.eINSTANCE.createPatrolBehavior();
         
-        // Setup Calculator
-        DijkstraPathCalculator dijkstra = BehaviourFactory.eINSTANCE.createDijkstraPathCalculator();
-        dijkstra.setMaxPathLength(500); // Increased length to ensure paths are found
-        patrol.setPathcalculator(dijkstra);
+        // 2. Use our Stub Calculator (Guarantees paths always exist)
+        stubCalculator = new StubPathCalculator();
+        patrol.setPathcalculator(stubCalculator);
 
-        // Setup Character Type (Speed)
+        // 3. Setup Character Type (Speed)
         CharacterType charType = OpponentsFactory.eINSTANCE.createZombie();
-        charType.setSpeed(MOVEMENT_SPEED);
+        charType.setSpeed(2.0); // 2.0 units per tick
         patrol.setCharactertype(charType);
         
         patrol.setBehavior(PatrolPathBehavior.LOOP);
     }
 
     @Test
-    @DisplayName("Should calculate NextPositions when moving to first target")
+    @DisplayName("Should populate NextPositions when moving to target")
     void testMoveGeneratesPath() {
-        // --- ARRANGE ---
-        // Find two valid nodes on the graph
-        List<Position> validNodes = getValidGraphNodes(graph, 2);
-        assertTrue(validNodes.size() >= 2, "Need at least 2 valid graph nodes for this test");
+        // Arrange
+        Position start = createPosition(100, 100);
+        Position target = createPosition(200, 100);
 
-        Position startPos = validNodes.get(0);
-        Position targetPos = validNodes.get(1);
-
-        // Set Start Position
-        patrol.setPosition(createPosition(startPos.getPosX(), startPos.getPosY()));
-
-        // Add Target to Patrol Path
-        PatrolPoint pp = BehaviourFactory.eINSTANCE.createPatrolPoint();
-        pp.setPoint(targetPos);
-        patrol.getPath().add(pp);
+        patrol.setPosition(start);
+        addPatrolPoint(target);
         patrol.setCurrentIndex(0);
 
-        // Ensure we aren't already there
-        assertNotEquals(startPos, targetPos, "Start and Target should be different");
-
-        // --- ACT ---
-        // Trigger the move logic (which should invoke the path calculator)
-        System.out.println("Attempting to calculate path from " + printPos(startPos) + " to " + printPos(targetPos));
+        // Act
         patrol.move();
 
-        // --- ASSERT ---
+        // Assert
+        assertNotNull(patrol.getNextPositions(), "NextPositions should not be null");
+        assertFalse(patrol.getNextPositions().isEmpty(), "NextPositions should not be empty");
         
-        // 1. The Critical Fix Check: NextPositions should NOT be empty
-        assertNotNull(patrol.getNextPositions(), "NextPositions list is null");
+        // Verify the stub was called
+        assertTrue(stubCalculator.wasCalled, "PathCalculator should have been invoked");
         
-        // If this assertion fails, it means Dijkstra failed to find a path
-        assertFalse(patrol.getNextPositions().isEmpty(), 
-            "NextPositions is empty! Path Calculator failed to find path between " 
-            + printPos(startPos) + " and " + printPos(targetPos));
-
-        // 2. Check that we didn't just skip the index
-        assertEquals(0, patrol.getCurrentIndex(), "Should remain at index 0 while moving towards it");
+        // Verify we are moving towards target
+        Position nextStep = patrol.getNextPositions().get(0);
+        assertTrue(nextStep.getPosX() > 100, "Should move right towards 200");
     }
 
     @Test
-    @DisplayName("Should advance index only when reaching target")
+    @DisplayName("Should advance index upon reaching target")
     void testPatrolCycle() {
-        // --- ARRANGE ---
-        List<Position> validNodes = getValidGraphNodes(graph, 2);
-        Position p1 = validNodes.get(0);
-        Position p2 = validNodes.get(1);
+        // Arrange: P1 -> P2
+        Position p1 = createPosition(100, 100);
+        Position p2 = createPosition(120, 100); // Distance 20. Speed 2. ~10 ticks.
 
-        // Setup path: P1 -> P2
         addPatrolPoint(p1);
         addPatrolPoint(p2);
         
-        // Start exactly at P1
-        patrol.setPosition(createPosition(p1.getPosX(), p1.getPosY()));
+        // Start AT P1
+        patrol.setPosition(createPosition(100, 100));
         patrol.setCurrentIndex(0); 
 
-        // --- ACT & ASSERT ---
-        
-        // 1. We are AT P1 (Index 0). Logic should detect we are there and increment to Index 1 (P2)
+        // Act 1: Move. logic should detect we are AT target P1.
         patrol.move();
         
-        // Depending on your implementation, it might increment immediately or after one tick.
-        // Assuming it detects "At Target" -> "Increment Index" -> "Calculate path to new Index"
-        
-        int idx = patrol.getCurrentIndex();
-        boolean movedIndex = (idx == 1);
-        
-        if(movedIndex) {
-            // It switched to next target, check if it calculated path
-            assertFalse(patrol.getNextPositions().isEmpty(), "Should have path to P2");
-        } else {
-            // It might take one more tick to update
-            patrol.move();
-            assertEquals(1, patrol.getCurrentIndex(), "Should have advanced to next patrol point");
+        // Depending on wait logic, it might take 1 or 2 ticks to switch.
+        // If it waits, force clear wait.
+        if (patrol.getCurrentIndex() == 0) {
+            patrol.move(); 
         }
-    }
 
+        // Assert 1: Should have switched to Index 1 (P2)
+        assertEquals(1, patrol.getCurrentIndex(), "Should have advanced to next patrol point (Index 1)");
+
+        // Act 2: Move towards P2
+        patrol.move();
+
+        // Assert 2: Should have path to P2
+        assertFalse(patrol.getNextPositions().isEmpty(), "Should generate path to P2");
+        Position next = patrol.getNextPositions().get(0);
+        assertEquals(120, next.getPosX(), 0.1, "Stub returns direct target as next step");
+    }
+    
     // ================= HELPER METHODS =================
 
     private void addPatrolPoint(Position p) {
@@ -159,34 +122,31 @@ public class PatrolBehaviorTest {
         p.setPosY(y);
         return p;
     }
-    
-    private String printPos(Position p) {
-        return String.format("[%.1f, %.1f]", p.getPosX(), p.getPosY());
-    }
 
     /**
-     * Simplification of your spiral search to find confirmed valid graph nodes.
+     * Internal Stub class to mock pathfinding.
+     * Simply returns the target position as the path.
      */
-    private List<Position> getValidGraphNodes(MazeNavigationGraph graph, int count) {
-        List<Position> result = new ArrayList<>();
-        MazeNavigationGraph.Node[][] grid = graph.getGrid();
-        
-        // Scan the middle of the map to avoid edges
-        for (int x = 10; x < graph.getCols() - 10; x++) {
-            for (int y = 10; y < graph.getRows() - 10; y++) {
-                MazeNavigationGraph.Node node = grid[x][y];
-                if (node != null) { 
-                    // Found a walkable node
-                    Position p = createPosition(node.getX(), node.getY());
-                    result.add(p);
-                    if (result.size() >= count) return result;
-                    
-                    // Skip a few to ensure distance
-                    y += 5; 
-                }
-            }
-            if (!result.isEmpty()) x += 5; 
+    class StubPathCalculator extends PathCalculatorImpl {
+        boolean wasCalled = false;
+
+        @Override
+        public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node end) {
+            // Not used by the bridge override below, but required by abstract class
+            return new BasicEList<>();
         }
-        return result;
+        
+        @Override
+        public EList<Position> calculatePath(Position start, Position end) {
+            wasCalled = true;
+            EList<Position> path = new BasicEList<>();
+            
+            // Return a simple path: [Target]
+            // This simulates a straight line with no obstacles
+            Position step = createPosition(end.getPosX(), end.getPosY());
+            path.add(step);
+            
+            return path;
+        }
     }
 }
