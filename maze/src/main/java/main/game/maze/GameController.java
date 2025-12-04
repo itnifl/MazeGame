@@ -41,6 +41,7 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 import main.game.maze.mazeworld.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import main.game.maze.generated.WallRegistry;
 
 public class GameController implements Initializable {
     @FXML

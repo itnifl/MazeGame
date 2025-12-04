@@ -39,7 +39,7 @@ public class GameMazeWorld {
         return new MazeGeneratorConfig(
             boardMaxX,
             boardMaxY,
-            20,
+            StageConstants.WallSegmentLengthPx,
             60,
             60,
             40
