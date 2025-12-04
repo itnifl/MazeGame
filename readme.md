@@ -48,11 +48,13 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 
 * More music and game sounds
 * Animations for die action and happy action
+* Different new game actions like shooting and blowing up walls and enemies.
 * Read a maze from SVG for play
 * More and different levels with their own characters and setup
-* Better design for high score
-* A menu with instructions and setup
+* Better design for high score, and let high score be affected by the difficulty setting
+* A menu with instructions and game setup, including player profile settings
 * Refactor score handling out of CharacterActionScreens
+* Refactor code for code smells
 * Implement stronger algorithms for gameplay and movement
 * Replace `System.out.println` with a logger
 
