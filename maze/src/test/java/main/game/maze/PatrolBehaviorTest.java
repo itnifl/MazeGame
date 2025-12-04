@@ -27,7 +27,7 @@ import main.game.maze.opponents.OpponentsFactory;
  * Note: Since GameMazeWorld depends on JavaFX, these tests assume 
  * the environment allows head-less JavaFX execution or is mocked.
  */
-class PatrolBehaviorTest {
+public class PatrolBehaviorTest {
 
     private static final int MAZE_WIDTH = 800;
     private static final int MAZE_HEIGHT = 600;
