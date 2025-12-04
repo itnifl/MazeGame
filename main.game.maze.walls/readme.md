@@ -94,20 +94,20 @@ This separation keeps the maze data small and declarative, while the wall module
 
 ## Adding a new wall type
 
-The recommended workflow for extending the set of walls is
+The recommended workflow for extending the set of walls is:
 
-- Update the EMF model<br/>
+1. Update the EMF model<br/>
 　　Add a new wall type, material or property in the walls model.<br/>
 　　If you maintain a separate .xmi configuration of instances, add an instance entry there as well.
 <br/>
-- Regenerate the Java code<br/>
+2. Regenerate the Java code<br/>
 　　Run the Acceleo generator (for example from the `maze-generator.acceleo` module) so that the generated API and registry input are updated.<br/>
 <br/>
-- Wire the new wall into the registry<br/>
+3. Wire the new wall into the registry<br/>
 　　If the registry is generated from the model, this happens automatically.<br/>
 　　If there is a manual section in `WallRegistry`, add a new `WallDefinition` entry with a unique `id`.
 <br/>
-- Use the new wall in the maze generator or in hand written mazes<br/>
+4. Use the new wall in the maze generator or in hand written mazes<br/>
 　　Refer to the new wall by its `id`. The runtime lookup will take care of image, hit points and behaviour.<br/>
 <br/>
 ---
