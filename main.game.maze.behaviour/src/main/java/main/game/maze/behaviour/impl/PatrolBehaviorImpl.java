@@ -483,49 +483,6 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		return result.toString();
 	}
 	
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * Advances currentIndex to the next patrol point based on the behavior mode.
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	@Override
-	public void nextIndex() {
-		int size = getPath().size();
-		if (size == 0) return;
-
-		int cur = getCurrentIndex();
-		int next;
-
-		PatrolPathBehavior mode = getBehavior();
-		if (mode == null) mode = PatrolPathBehavior.LOOP;
-
-		switch (mode) {
-		case LOOP:
-			next = (cur + 1) % size;
-			break;
-		case RANDOM:
-			if (size <= 1) {
-				next = 0;
-			} else {
-				next = rng.nextInt(size);
-				while (next == cur) {
-					next = rng.nextInt(size);
-				}
-			}
-			break;
-		case BACKWARD:
-			next = (cur - 1 + size) % size;
-			break;
-		default:
-			next = (cur + 1) % size;
-			break;
-		}
-
-		setCurrentIndex(next);
-	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * Performs one movement tick: computes path to current target, moves along it,
