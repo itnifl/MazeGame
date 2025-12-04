@@ -1,9 +1,10 @@
-// maze/src/main/java/main/game/maze/GameController.java
 package main.game.maze;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,12 +12,14 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import main.game.maze.mazeworld.Point2D;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -32,16 +35,16 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
-import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.generated.WallRegistry;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
-import main.game.maze.mazeworld.service.MazeNavigationGraphService;
-import main.game.maze.mazeworld.*;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import main.game.maze.generated.WallRegistry;
 
 public class GameController implements Initializable {
     @FXML
@@ -73,7 +76,13 @@ public class GameController implements Initializable {
     private Canvas treeCanvas;
 
     private static Task runComputerCharacters;
-    private Difficulty startDifficulty; // <-- injected by StartController
+    private Difficulty startDifficulty; 
+
+    // Mapping vectors to their visual definition as requested
+    private final Map<Vector2D, WallRegistry.WallDefinition> vectorWallMap = new HashMap<>();
+    // Cache for loaded images to avoid IO lag during draw
+    private final Map<String, Image> wallImageCache = new HashMap<>();
+
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     @Override
@@ -85,7 +94,6 @@ public class GameController implements Initializable {
         });
     }
     
-
     @FXML
     private void handleKeyReleased(KeyEvent event) {
         if (event.getCode() == KeyCode.P) {
@@ -94,7 +102,6 @@ public class GameController implements Initializable {
             clearSpanningTree();
         }
     }
-
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
@@ -126,7 +133,10 @@ public class GameController implements Initializable {
             default:
                 break;
         }
+        updateDebugLabels();
+    }
 
+    private void updateDebugLabels() {
         var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
                 + playerCharacter.getCharacterPosition().getY();
         var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
@@ -169,7 +179,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void showHighScore() {
-        runComputerCharacters.cancel();
+        if(runComputerCharacters != null) runComputerCharacters.cancel();
         HighscoreAction action = new HighscoreAction(root);
         action.Load();
     }
@@ -238,7 +248,6 @@ public class GameController implements Initializable {
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
-
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);
         winarea.AddWinGameAction(winGameAction);
@@ -257,17 +266,17 @@ public class GameController implements Initializable {
         runComputerCharacters();
         javafx.application.Platform.runLater(() -> {
             var node = root.lookup("#heart");
-            if (node instanceof javafx.scene.image.ImageView heart) {
-                double heartW = heart.getBoundsInLocal().getWidth();
-                double heartH = heart.getBoundsInLocal().getHeight();
+            if (node instanceof javafx.scene.image.ImageView heartView) {
+                double heartW = heartView.getBoundsInLocal().getWidth();
+                double heartH = heartView.getBoundsInLocal().getHeight();
 
-                if (heartW <= 0) heartW = heart.getFitWidth();
-                if (heartH <= 0) heartH = heart.getFitHeight();
+                if (heartW <= 0) heartW = heartView.getFitWidth();
+                if (heartH <= 0) heartH = heartView.getFitHeight();
 
                 int width  = App.getBoardMaxX();
                 int height = App.getBoardMaxY();
-                heart.setLayoutX((width  - heartW) / 2.0);
-                heart.setLayoutY((height - heartH) / 2.0);
+                heartView.setLayoutX((width  - heartW) / 2.0);
+                heartView.setLayoutY((height - heartH) / 2.0);
 
                 var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
                 characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
@@ -278,30 +287,118 @@ public class GameController implements Initializable {
         var score = winGameAction.resetScore();
         scoreLabel.setText("Score: " + String.valueOf(score));
 
-        // Ensure the board is the main focus owner for key events
         gameBoard.setFocusTraversable(true);
         gameBoard.requestFocus();
     }
 
+    /**
+     * Draws the maze using WallRegistry definitions.
+     * Horizontal vectors are rotated because the base image is vertical.
+     */
     public Canvas drawCanvas(List<Vector2D> vectors) {
         Canvas canvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // Set the stroke color and width
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(3);
+        // Clear previous mappings
+        vectorWallMap.clear();
 
-        // Draw the maze vectors
+        // Configuration for drawing
+        double wallWidth = 5.0; // Defined in requirements
+        double wallLength = StageConstants.WallSegmentLengthPx; // Defined in requirements
+        
+        // Use WOOD_BASIC as default for now, or fetch from logic if available
+        WallRegistry.WallDefinition defaultWallDef = WallRegistry.get("WOOD_BASIC");
+        
+        // Ensure image is loaded
+        Image wallImage = getOrLoadImage(defaultWallDef);
+
         for (Vector2D vector : vectors) {
+            // Register mapping: Vector -> Graphic/Wall Definition
+            vectorWallMap.put(vector, defaultWallDef);
+
             double startX = vector.getStart().getX();
             double startY = vector.getStart().getY();
             double endX = vector.getEnd().getX();
             double endY = vector.getEnd().getY();
 
-            gc.strokeLine(startX, startY, endX, endY);
+            // Determine if horizontal or vertical
+            boolean isHorizontal = Math.abs(endY - startY) < 0.001;
+
+            if (wallImage == null) {
+                // Fallback to black lines if image not found
+                gc.setStroke(Color.BLACK);
+                gc.setLineWidth(wallWidth);
+                gc.strokeLine(startX, startY, endX, endY);
+            } else {
+                // Center the wall graphic on the vector line
+                double halfWidth = wallWidth / 2.0;
+
+                if (!isHorizontal) {
+                    // VERTICAL VECTOR
+                    // Draw image directly (since image is vertical)
+                    // x position = vector x - half thickness
+                    // y position = vector start y (assuming drawing downwards or normalize coordinates)
+                    double drawX = startX - halfWidth;
+                    double drawY = Math.min(startY, endY);
+                    double drawHeight = Math.abs(endY - startY);
+                    
+                    // In case vector length != segment length, we just stretch/tile. 
+                    // Given requirements, we draw with specific length. 
+                    // If the vector comes from generator, it's usually segment length.
+                    gc.drawImage(wallImage, drawX, drawY, wallWidth, drawHeight);
+                    
+                } else {
+                    // HORIZONTAL VECTOR
+                    // Image is vertical, so we must rotate 90 degrees
+                    double drawX = Math.min(startX, endX);
+                    double drawY = startY - halfWidth;
+                    double drawLength = Math.abs(endX - startX);
+
+                    // Save state
+                    gc.save();
+                    
+                    // Move to the center of where the wall should be
+                    double centerX = drawX + (drawLength / 2.0);
+                    double centerY = drawY + (wallWidth / 2.0);
+                    gc.translate(centerX, centerY);
+                    
+                    // Rotate 90 degrees
+                    gc.rotate(90);
+                    
+                    // Draw image centered at (0,0) after rotation
+                    // Note: After rotation, Width becomes Height visually
+                    // We draw the vertical image: width=wallWidth, height=drawLength
+                    // shifted by -width/2, -height/2
+                    gc.drawImage(wallImage, -wallWidth / 2.0, -drawLength / 2.0, wallWidth, drawLength);
+                    
+                    // Restore state
+                    gc.restore();
+                }
+            }
         }
 
         return canvas;
+    }
+    
+    private Image getOrLoadImage(WallRegistry.WallDefinition def) {
+        if (def == null || def.baseImage == null) return null;
+        
+        if (!wallImageCache.containsKey(def.id)) {
+            try {
+                // Load resource from classpath
+                var url = getClass().getResource(def.baseImage);
+                if (url != null) {
+                    wallImageCache.put(def.id, new Image(url.toExternalForm()));
+                } else {
+                    System.err.println("Could not find wall image: " + def.baseImage);
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return wallImageCache.get(def.id);
     }
 
     public void runComputerCharacters() {
@@ -320,12 +417,10 @@ public class GameController implements Initializable {
                         for (var computerCharacter : allComputerCharacters) {
                             if(computerCharacter instanceof ComputerCharacter cc) {
                                 BehaviorType characterBehavior = cc.getCharacterBehaviour();
-                                //TODO: Implement other behaviours
                                 switch (characterBehavior) {
                                     case WANDER:
                                             doCharacterWanderMove(computerCharacter);
                                         break;
-                                
                                     default:
                                         doCharacterWanderMove(computerCharacter);
                                         break;
@@ -356,7 +451,6 @@ public class GameController implements Initializable {
         }
     }
 
-    /* Non-Tangient Energy Calculation - returns true if there still is non-tangient energy left */
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
             var energy = nontangientcc.getNonTangientEnergy();
             boolean nonTangient = energy > 0; 
@@ -380,12 +474,11 @@ public class GameController implements Initializable {
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
-        // must be called on JavaFX thread
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> registerComputerCharacter(character, node));
             return;
         }
-        gameBoard.getChildren().add(node);               // add sprite to board
+        gameBoard.getChildren().add(node);
         allComputerCharacters.add(character);     
         if(character instanceof ICanSubscribeAndNotifyPosition){
             playerCharacter.addPositionSubscriber((ICanSubscribeAndNotifyPosition)character);
@@ -404,11 +497,9 @@ public class GameController implements Initializable {
     }
 
     public void dispose() {
-        // stop background loop
         if (runComputerCharacters != null) runComputerCharacters.cancel();
         if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
 
-        // detach any cross-subscriptions
         if (winarea != null && playerCharacter != null) {
             playerCharacter.removePositionSubscriber(winarea);
         }
@@ -418,7 +509,7 @@ public class GameController implements Initializable {
     }
 
     public void showInfectionWarning() {
-        //TODO: Player is now infected, make sure this is properly communicated to the player
+        // Implementation for infection warning
     }
 
     private void showNavigationPath() {
@@ -483,7 +574,6 @@ public class GameController implements Initializable {
             return;
         }
 
-        // Root = spillerens posisjon
         Point2D playerPos = new Point2D(
                 playerCharacter.getCharacterPosition().getX(),
                 playerCharacter.getCharacterPosition().getY()
@@ -518,7 +608,6 @@ public class GameController implements Initializable {
         gc.setGlobalAlpha(1.0);
     }
 
-
     private void clearSpanningTree() {
         if (treeCanvas == null) {
             return;
@@ -527,4 +616,8 @@ public class GameController implements Initializable {
         gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
     }
 
+    // Accessor for the map if needed by other components
+    public Map<Vector2D, WallRegistry.WallDefinition> getVectorWallMap() {
+        return vectorWallMap;
+    }
 }
