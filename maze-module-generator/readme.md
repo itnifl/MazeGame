@@ -1,131 +1,169 @@
 # maze-module-generator
 
-`maze-module-generator` is the central generator project for the MazeGame modelling stack.
+`maze-module-generator` is a small Java based generator module in the MazeGame build.
 
-Where the individual modules (`main.game.maze.opponents`, `main.game.maze.difficulties`, `main.game.maze.walls`, `main.game.maze.comp`, etc.) contain the actual EMF models and runtime code, this project collects the generation artefacts and launch configurations that regenerate model based code for those modules.
+It depends on `main.game.maze.walls` and is wired into the Maven lifecycle so that it can generate additional Java sources into `src-gen` and have them compiled together with the rest of the project.
 
-It is mainly used during development inside Eclipse, not on every Maven build.
+The module is packaged as a regular JAR (not an Eclipse plugin) and is meant to run headless as part of `mvn clean verify`.
 
 ---
 
 ## Purpose
 
-The project exists to give a single place where you can
+The project exists to:
 
-- open and run EMF `.genmodel` files for the MazeGame models  
-- run Xtext or MWE2 based generators tied to the MazeGame DSLs  
-- trigger regeneration of model driven code for the various `main.game.maze.*` modules  
-- keep all generator launch configurations in one, versioned project
+- host Java based generators that use the `main.game.maze.walls` model and code
+- write generated Java sources into `src-gen` in a reproducible way
+- register `src-gen` as an additional source folder during Maven builds
+- keep walls related generation concerns in a dedicated, versioned module
 
-The idea is that “all model driven generators for MazeGame live here”, so they are easy to discover and maintain.
+In other words, this module is the place where you put code that takes the walls model and produces extra Java artefacts for MazeGame.
+
+---
+
+## Maven configuration
+
+The `pom.xml` shows three key aspects:
+
+1. It is a child of the main `MazeGame` reactor:
+
+   - `groupId`: `main.game.maze`
+   - `artifactId`: `maze-module-generator`
+   - `packaging`: `jar`
+
+2. It depends on the walls module:
+
+   ```xml
+   <dependency>
+     <groupId>main.game.maze</groupId>
+     <artifactId>main.game.maze.walls</artifactId>
+     <version>${project.version}</version>
+   </dependency>
+```
+
+This allows generator code in `maze-module-generator` to use the walls model, enums and helper classes directly.
+
+3. It uses `build-helper-maven-plugin` to add `src-gen` as a source folder:
+
+   ```xml
+   <plugin>
+     <groupId>org.codehaus.mojo</groupId>
+     <artifactId>build-helper-maven-plugin</artifactId>
+     <version>3.5.0</version>
+     <executions>
+       <execution>
+         <id>add-generated</id>
+         <phase>generate-sources</phase>
+         <goals>
+           <goal>add-source</goal>
+         </goals>
+         <configuration>
+           <sources>
+             <source>src-gen</source>
+           </sources>
+         </configuration>
+       </execution>
+     </executions>
+   </plugin>
+   ```
+
+   This means anything you generate into `src-gen` during `generate-sources` will be treated as normal Java sources by the compiler.
 
 ---
 
 ## Typical contents
 
-The exact contents depend on your current setup, but you will usually find:
+You will usually find:
 
-- EMF generator models  
-  `.genmodel` files for domain models such as opponents, difficulties, walls and components.  
-  These are used to generate the EMF model, edit and editor code into their respective projects.
+* `src/`
+  Hand written Java code that performs the actual generation, for example:
 
-- Xtext and MWE2 workflows  
-  `.mwe2` files that drive Xtext code generation for DSLs like `main.game.maze.comp` (if applicable).  
-  Launch configurations for these workflows are also typically stored in this project.
+  * reading definitions from `main.game.maze.walls`
+  * building derived registries or helper classes
+  * writing Java code into `src-gen` using standard file APIs
 
-- Eclipse launch configurations  
-  `.launch` files for:
-  - EMF “Generate Model / Edit / Editor” actions  
-  - Xtext generator workflows  
-  - other custom generators that belong to the MazeGame toolchain  
+* `src-gen/`
+  Generated Java sources written by the generator code in this module.
+  These files are treated as additional sources by Maven (and should normally be kept out of version control).
 
-- Documentation and helper notes  
-  For example, this `readme.md` and any additional notes on how to extend or debug generators.
+* `pom.xml`
+  The Maven configuration shown above.
 
-Generated Java code itself is **not** stored inside `maze-module-generator`.  
-Instead, it is written back into the owning modules (for example `main.game.maze.opponents`, `main.game.maze.difficulties`, `main.game.maze.walls`) according to each generator’s configuration.
+The generator logic itself lives in this module; the code it produces is consumed by other MazeGame modules through standard Java dependencies.
 
 ---
 
-## How it relates to other generator projects
+## How the generator is used in the build
 
-MazeGame has multiple generator related projects:
+During a normal multi module build, for example:
 
-- `maze-generator.acceleo`  
-  Contains Acceleo templates that turn high level models into Java code and helpers.
+```bash
+mvn clean verify
+```
 
-- `maze-generator.acceleo-runner`  
-  Provides a headless runner for those Acceleo templates in the Tycho build.
+the sequence for this module is:
 
-- `maze-module-generator`  
-  Hosts EMF `.genmodel` files, Xtext workflows and general “developer side” generators for the core modelling projects.
+1. Maven runs the `generate-sources` phase.
+2. Your generator code in `maze-module-generator` (if wired into that phase, for example via a plugin or a custom main that you call) writes Java files into `src-gen`.
+3. `build-helper-maven-plugin` adds `src-gen` as an extra source root for this module.
+4. The `compile` phase compiles both `src` and `src-gen`.
+5. The resulting JAR can then be used by other modules that depend on `maze-module-generator`.
 
-A simple rule of thumb:
-
-- Use `maze-module-generator` when you are **inside Eclipse** and want to regenerate EMF or Xtext based code.  
-- Use the `maze-generator.*` projects when you want **Maven / Tycho** to run model to code generation automatically in a build.
-
----
-
-## Typical usage in Eclipse
-
-A common workflow when you change a model is:
-
-1. Open the relevant `.ecore` or DSL grammar in its home module.  
-2. Adjust the model (for example add a new attribute, type or reference).  
-3. Switch to `maze-module-generator` and:
-   - open the corresponding `.genmodel` and run the standard EMF “Generate” actions, and/or  
-   - run the associated `.mwe2` workflow for Xtext, if the change affects a DSL.
-4. Inspect the generated code in the owning module, fix compile errors if any, and commit the updated generated files as needed.
-
-By keeping all generator artefacts here, you do not need to remember which module owns which launch configuration.
+If the generator is purely internal to this module, other projects may only need the generated effects indirectly through the walls module or other consumers.
 
 ---
 
-## Role in the build
+## Integration with main.game.maze.walls
 
-`maze-module-generator` is mainly a **developer productivity** project:
+Because this module depends on `main.game.maze.walls`, you can:
 
-- EMF and Xtext generated code is usually checked into version control.  
-- The Tycho build compiles these generated sources but does not need to regenerate them every time.  
-- When the models evolve, you manually run the generators from this project and commit the updated code.
+* read model level classes and enums from the walls module
+* derive additional structures such as:
 
-This keeps the CI build fast and deterministic, while still letting you use full model driven workflows during development.
+  * precomputed lookup tables
+  * static registries
+  * helper classes for rendering or game logic that depend on wall definitions
+
+The overall pattern is:
+
+* `main.game.maze.walls` remains the main source of truth for wall definitions.
+* `maze-module-generator` uses those definitions to generate additional Java code into `src-gen`.
+* The generated code is then available as part of this module’s JAR to any consumer that needs it.
 
 ---
 
-## When to modify maze-module-generator
+## Running and maintaining the generator
 
-You should update this project when you:
+To run the generator as part of the normal build:
 
-- add a new EMF model that needs `.genmodel` based code generation  
-- introduce a new Xtext DSL or change an existing grammar and its MWE2 workflow  
-- reorganise where generated code should be written (for example move it to a new module)  
-- add or update launch configurations so other developers can run the generators in the same way
+```bash
+mvn -f maze-module-generator/pom.xml clean verify
+```
 
-Typical steps:
+If you add or change generator logic:
 
-1. Create or import the new `.genmodel` or `.mwe2` file into `maze-module-generator`.  
-2. Configure the output paths so generated code lands in the correct `main.game.maze.*` project.  
-3. Add or update launch configurations and test generation locally.  
-4. Commit both generator configuration and resulting generated sources.
+1. Implement or update the generator classes under `src/`.
+2. Make sure they are invoked during or before `generate-sources`
+   (for example via a plugin configuration or a small main method hooked into the lifecycle).
+3. Confirm that new files appear under `src-gen`.
+4. Rebuild the main reactor and fix any compile errors in consumers if the generated API changed.
 
 ---
 
 ## Design guidelines
 
-When maintaining `maze-module-generator`, keep these principles in mind:
+When working on `maze-module-generator`, keep these points in mind:
 
-- Keep generation logic here, not scattered  
-  All EMF and Xtext generator definitions for MazeGame should be easy to find in this project.
+* Keep all generated code in `src-gen`
+  Do not mix generated and manually written code in `src`.
 
-- Do not hand edit generated code  
-  Changes should go into models, grammars or templates, then be regenerated.
+* Treat `main.game.maze.walls` as the authoritative input
+  Do not duplicate wall definitions in this module; derive everything from the existing model and code.
 
-- Document generator entry points  
-  If a generator has specific preconditions or parameters, note them in this README or in a short comment near the `.mwe2` or `.genmodel`.
+* Make generation idempotent
+  Running the generator multiple times should produce the same `src-gen` contents without manual cleanup.
 
-- Make it team friendly  
-  Launch configurations and paths should work for all developers with a standard checkout of the repository.
+* Prefer not to commit `src-gen` to version control
+  Let Maven recreate it on each build, so that generated code always matches the current generator logic and walls model.
 
-By following these ideas, `maze-module-generator` remains a clear and convenient hub for all model driven code generation in the MazeGame project.
+With this setup, `maze-module-generator` provides a clean, Maven friendly way to generate additional code from the MazeGame walls module.
