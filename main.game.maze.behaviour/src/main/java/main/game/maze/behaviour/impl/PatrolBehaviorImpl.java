@@ -284,6 +284,53 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Advances currentIndex to the next patrol point based on the behavior mode.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public void nextIndex() {
+	    setCurrentIndex(calculateNextIndex());
+	}
+
+	/**
+	 * Calculates the next index based on the current behavior mode.
+	 * @return the next index
+	 */
+	public int calculateNextIndex(){
+		int size = getPath().size();
+	    if (size == 0) return 0;
+	    
+	    int cur = getCurrentIndex();
+	    int next;
+	    
+	    PatrolPathBehavior mode = getBehavior();
+	    if (mode == null) mode = PatrolPathBehavior.LOOP;
+	    
+	    switch (mode) {
+	        case LOOP:
+	            return (cur + 1) % size;
+	        case RANDOM:
+	        	// random point but not the current
+	            if (size == 1) {
+	                return 0;
+	            } else {
+	                next = rng.nextInt(size);
+	                while (next == cur) {
+	                    next = rng.nextInt(size);
+	                }
+					return next;
+	            }
+	        case BACKWARD:
+	            // cyclic decrement: 2 -> 1 -> 0 -> 2 -> 1 -> ... 
+	            return (cur - 1 + size) % size;
+	        default:
+	            return (cur + 1) % size;
+	    }
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -432,49 +479,6 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		return result.toString();
 	}
 	
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * Advances currentIndex to the next patrol point based on the behavior mode.
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	@Override
-	public void nextIndex() {
-		int size = getPath().size();
-		if (size == 0) return;
-
-		int cur = getCurrentIndex();
-		int next;
-
-		PatrolPathBehavior mode = getBehavior();
-		if (mode == null) mode = PatrolPathBehavior.LOOP;
-
-		switch (mode) {
-		case LOOP:
-			next = (cur + 1) % size;
-			break;
-		case RANDOM:
-			if (size <= 1) {
-				next = 0;
-			} else {
-				next = rng.nextInt(size);
-				while (next == cur) {
-					next = rng.nextInt(size);
-				}
-			}
-			break;
-		case BACKWARD:
-			next = (cur - 1 + size) % size;
-			break;
-		default:
-			next = (cur + 1) % size;
-			break;
-		}
-
-		setCurrentIndex(next);
-	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * Performs one movement tick: computes path to current target, moves along it,
@@ -483,24 +487,57 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 * @generated NOT
 	 */
 	@Override
-    public void move() {
-        // 1. Basic Safety Checks
-        if (getPath() == null || getPath().isEmpty()) return;
-        if (getPosition() == null) return;
+	public void move() {
+    	System.out.println("DEBUG: move() called");
 
-        // 2. Resolve Current Target
-        int idx = getCurrentIndex();
-        if (idx < 0 || idx >= getPath().size()) {
-            setCurrentIndex(0);
-            idx = 0;
-        }
-        PatrolPoint targetPoint = getPath().get(idx);
-        Position target = targetPoint.getPoint();
+		if (getPath() == null || getPath().isEmpty()) {
+	        System.out.println("DEBUG: path is null or empty");
+			return;
+		}
+		if (getPosition() == null) {
+        	System.out.println("DEBUG: position is null");
+			return;
+		}
 
-        if (target == null) {
-            nextIndex();
-            return;
-        }
+		// Tick timing
+		long now = System.currentTimeMillis();
+		long deltaMs = (lastTickTime == 0L) ? 60L : (now - lastTickTime);
+		lastTickTime = now;
+
+		// Waiting at patrol point
+		if (waitRemainingMs > 0) {
+			waitRemainingMs = Math.max(0L, waitRemainingMs - deltaMs);
+			return;
+		}
+
+		// Single-point path: jump to it, trigger events, wait, repeat
+		if (getPath().size() == 1) {
+			PatrolPoint single = getPath().get(0);
+			Position targetPos = single.getPoint();
+			
+			if (targetPos != null && distance(getPosition(), targetPos) > EPSILON) {
+				getPosition().setPosX(targetPos.getPosX());
+				getPosition().setPosY(targetPos.getPosY());
+			}
+			
+			try {
+				//single.triggerEvents();
+			} catch (Exception ignore) {
+				// Event trigger failure should not stop movement
+			}
+			
+			waitRemainingMs = PLACEHOLDER_WAIT_MS;
+			return;
+		}
+
+		// Resolve current patrol target
+		int targetIdx = calculateNextIndex();
+		PatrolPoint targetPoint = getPath().get(targetIdx);
+		Position target = targetPoint.getPoint();
+		if (target == null) {
+			nextIndex();
+			return;
+		}
 
         // 3. Check distance to target
         double distToTarget = distance(getPosition(), target);
