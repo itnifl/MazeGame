@@ -3,16 +3,18 @@
 ## Index
 
 * 🧩 [project-status](project-status/readme.md)
+* 🧩 [releng](releng/readme.md)
+* 🧩 [main.game.maze.walls](main.game.maze.walls/readme.md)
+* 🧩 [main.game.maze.mazeworld](main.game.maze.mazeworld/readme.md)
 * 🧩 [main.game.maze.behaviour](main.game.maze.behaviour/readme.md)
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
-* 🖥️ [maze](maze/readme.md)
+* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
-* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
 * 🧩 [maze-generator.acceleo-runner](maze-generator.acceleo-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
-* 🧩 [releng](releng/readme.md)
+* 🖥️ [maze](maze/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
@@ -25,7 +27,10 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Your score will lower for each move you make and the more life you lose.
 * You will get an extra 4 000 in score for reaching the heart.
 * You will lose 4 000 in score for dying.
+* You can press and hold the P key to see the navigation path to your win area, this will lower your score.
+* You can press and hold the O key to see all possible navigation pathsin the game, this will lower your score.
 * Press the H key to show high scores.
+* Press the ESC key to restart the game.
 * You can save your scores when you die or win.
 * Try the game a few times to get to know it.
 
@@ -35,9 +40,9 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 
 ## Bugs
 
-* If you run several instances at the same time, media files in the target directory can corrupt. Delete them in `target\classes\main\game\maze` and copy again from `resources\main\game\maze`.
+* The Non-player characters sometimes don't start. In such case, restart the game.
 * The application system is not very testable. Unit tests should have been written first.
-* The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare.
+* The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game.
 
 ## Missing implementations
 
