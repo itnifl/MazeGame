@@ -2,13 +2,8 @@
  */
 package main.game.maze.behaviour.impl;
 
-import java.util.List;
-
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-
-import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
 import main.game.maze.behaviour.Position;

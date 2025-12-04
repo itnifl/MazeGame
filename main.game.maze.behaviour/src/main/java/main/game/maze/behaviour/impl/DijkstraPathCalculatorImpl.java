@@ -2,15 +2,11 @@
  */
 package main.game.maze.behaviour.impl;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
-
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.DijkstraPathCalculator;
-import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.GameMazeWorld;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -18,8 +14,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import main.game.maze.behaviour.DistanceMethod;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
