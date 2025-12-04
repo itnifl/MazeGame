@@ -17,7 +17,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 - Project built from the root. For a full build including the local p2 mirror you can use:
 
-  ```bash
+```bash
   # Windows (PowerShell, from the repo root)
   ./make.ps1 all
 
