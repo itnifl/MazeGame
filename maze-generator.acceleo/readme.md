@@ -31,19 +31,7 @@ The Acceleo templates in this project generate several kinds of output for MazeG
 
 - Optional text files used for debugging or documentation of the model contents
 
-See: [main.game.maze.walls](../main.game.maze.walls/readme.md)
-
-The main Acceleo module typically looks similar to
-
-```mtl
-[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/difficulties')]
-```
-
-which tells Acceleo that this generator reads the opponent and difficulty models and produces code based on them.
-
-The exact set of outputs depends on the current templates in the project.
-Whenever the models change, the generator should be rerun so that the Java code and helper files stay in sync.
-
+Especially, we generate a Wall Registry for different types of Maze Walls: [main.game.maze.walls](../main.game.maze.walls/readme.md)
 
 ---
 
