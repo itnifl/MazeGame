@@ -29,7 +29,7 @@ The Acceleo templates in this project generate several kinds of output for MazeG
 
 - Optional text files used for debugging or documentation of the model contents
 
-Especially, we generate a Wall Registry for different types of Maze Walls: (main.game.maze.walls)[../main.game.maze.walls/readme.md]
+Especially, we generate a Wall Registry for different types of Maze Walls: [main.game.maze.walls](../main.game.maze.walls/readme.md)
 
 ---
 
