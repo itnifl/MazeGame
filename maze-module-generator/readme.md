@@ -1,128 +1,131 @@
-````markdown
-# maze-module-repository
+# maze-module-generator
 
-This project defines the Eclipse p2 repository for the MazeGame modules.
+`maze-module-generator` is the central generator project for the MazeGame modelling stack.
 
-While individual plugins and features live in their own projects (for example `main.game.maze.opponents`, `main.game.maze.difficulties`, `maze-feature`), this project is responsible for packaging them into an installable update site that Eclipse and Tycho can consume.
+Where the individual modules (`main.game.maze.opponents`, `main.game.maze.difficulties`, `main.game.maze.walls`, `main.game.maze.comp`, etc.) contain the actual EMF models and runtime code, this project collects the generation artefacts and launch configurations that regenerate model based code for those modules.
+
+It is mainly used during development inside Eclipse, not on every Maven build.
 
 ---
 
 ## Purpose
 
-`maze-module-repository` is used to
+The project exists to give a single place where you can
 
-- assemble one or more features (for example `maze-feature`) into a p2 repository  
-- define categories that group features in the Eclipse “Install New Software…” dialog  
-- provide a stable update site URL for MazeGame tooling  
-- act as a source repository that can be mirrored by `releng/mirror` into `releng/local-p2`
+- open and run EMF `.genmodel` files for the MazeGame models  
+- run Xtext or MWE2 based generators tied to the MazeGame DSLs  
+- trigger regeneration of model driven code for the various `main.game.maze.*` modules  
+- keep all generator launch configurations in one, versioned project
 
-In short, it answers the question:
-
-> “Where can Eclipse install MazeGame tooling from?”
+The idea is that “all model driven generators for MazeGame live here”, so they are easy to discover and maintain.
 
 ---
 
 ## Typical contents
 
-Inside `maze-module-repository` you normally find:
+The exact contents depend on your current setup, but you will usually find:
 
-- `category.xml`  
-  Defines which features belong in this repository and how they are grouped into categories such as “MazeGame Tools” or “MazeGame Runtime”.
+- EMF generator models  
+  `.genmodel` files for domain models such as opponents, difficulties, walls and components.  
+  These are used to generate the EMF model, edit and editor code into their respective projects.
 
-- `pom.xml`  
-  Tycho build configuration for producing the p2 repository under `target/repository`.
-  It references the features that should be included (for example `maze-feature`).
+- Xtext and MWE2 workflows  
+  `.mwe2` files that drive Xtext code generation for DSLs like `main.game.maze.comp` (if applicable).  
+  Launch configurations for these workflows are also typically stored in this project.
 
-- Optional metadata files  
-  Such as `p2.inf` or additional branding resources, if needed.
+- Eclipse launch configurations  
+  `.launch` files for:
+  - EMF “Generate Model / Edit / Editor” actions  
+  - Xtext generator workflows  
+  - other custom generators that belong to the MazeGame toolchain  
 
-The actual p2 repository (artifacts and metadata) is generated into:
+- Documentation and helper notes  
+  For example, this `readme.md` and any additional notes on how to extend or debug generators.
 
-```text
-maze-module-repository/target/repository/
-````
-
-This folder contains `artifacts.jar`, `content.jar` and the feature/plugin artifacts.
-
----
-
-## Role in the Tycho build
-
-During a full Tycho build of the MazeGame reactor:
-
-1. All MazeGame plugins and features (for example `maze-feature`) are built.
-2. `maze-module-repository` runs and assembles those features into a p2 repository under `target/repository`.
-3. This repository can be:
-
-   * consumed directly by Eclipse as an update site
-   * referenced from target definitions such as `releng/maze.target`
-   * mirrored by `releng/mirror` into `releng/local-p2` for offline builds
-
-Because the repository is produced as part of the normal build, it is always in sync with the current versions of the features and plugins.
+Generated Java code itself is **not** stored inside `maze-module-generator`.  
+Instead, it is written back into the owning modules (for example `main.game.maze.opponents`, `main.game.maze.difficulties`, `main.game.maze.walls`) according to each generator’s configuration.
 
 ---
 
-## Using the repository in Eclipse
+## How it relates to other generator projects
 
-After building `maze-module-repository` with Maven/Tycho:
+MazeGame has multiple generator related projects:
 
-```bash
-mvn -f maze-module-repository/pom.xml clean verify
-```
+- `maze-generator.acceleo`  
+  Contains Acceleo templates that turn high level models into Java code and helpers.
 
-you can install MazeGame tooling into Eclipse by:
+- `maze-generator.acceleo-runner`  
+  Provides a headless runner for those Acceleo templates in the Tycho build.
 
-1. Opening **Help → Install New Software…**
-2. Clicking **Add…** and pointing the location to
-   `path/to/MazeGame/maze-module-repository/target/repository`
-3. Selecting the category that contains the MazeGame features (for example “MazeGame Tools”)
-4. Completing the installation wizard and restarting Eclipse
+- `maze-module-generator`  
+  Hosts EMF `.genmodel` files, Xtext workflows and general “developer side” generators for the core modelling projects.
 
-For shared use you can publish the contents of `target/repository` to a web server and use the HTTP URL instead of a local file path.
+A simple rule of thumb:
 
----
-
-## Using the repository in target definitions
-
-Target files such as `releng/maze.target` can reference the repository produced by `maze-module-repository`:
-
-* When the repository is local (for development), use a `file:` URL pointing at `maze-module-repository/target/repository`.
-* When the repository is published (for teams or CI), use the HTTP URL of the hosted update site.
-
-This way all developers and builds resolve MazeGame features from a single, versioned location.
+- Use `maze-module-generator` when you are **inside Eclipse** and want to regenerate EMF or Xtext based code.  
+- Use the `maze-generator.*` projects when you want **Maven / Tycho** to run model to code generation automatically in a build.
 
 ---
 
-## When to modify maze-module-repository
+## Typical usage in Eclipse
+
+A common workflow when you change a model is:
+
+1. Open the relevant `.ecore` or DSL grammar in its home module.  
+2. Adjust the model (for example add a new attribute, type or reference).  
+3. Switch to `maze-module-generator` and:
+   - open the corresponding `.genmodel` and run the standard EMF “Generate” actions, and/or  
+   - run the associated `.mwe2` workflow for Xtext, if the change affects a DSL.
+4. Inspect the generated code in the owning module, fix compile errors if any, and commit the updated generated files as needed.
+
+By keeping all generator artefacts here, you do not need to remember which module owns which launch configuration.
+
+---
+
+## Role in the build
+
+`maze-module-generator` is mainly a **developer productivity** project:
+
+- EMF and Xtext generated code is usually checked into version control.  
+- The Tycho build compiles these generated sources but does not need to regenerate them every time.  
+- When the models evolve, you manually run the generators from this project and commit the updated code.
+
+This keeps the CI build fast and deterministic, while still letting you use full model driven workflows during development.
+
+---
+
+## When to modify maze-module-generator
 
 You should update this project when you:
 
-* add a new feature that should be part of the MazeGame update site
-* remove or deprecate an existing feature
-* want to change the categories or labels shown in Eclipse
-* adjust version ranges or include rules for the features in the repository
+- add a new EMF model that needs `.genmodel` based code generation  
+- introduce a new Xtext DSL or change an existing grammar and its MWE2 workflow  
+- reorganise where generated code should be written (for example move it to a new module)  
+- add or update launch configurations so other developers can run the generators in the same way
 
 Typical steps:
 
-1. Edit `category.xml` to include or remove features and to adjust category names.
-2. Update `pom.xml` if new features are introduced or project structure changes.
-3. Run `mvn clean verify` to regenerate `target/repository`.
-4. Test installation in Eclipse from the updated repository.
+1. Create or import the new `.genmodel` or `.mwe2` file into `maze-module-generator`.  
+2. Configure the output paths so generated code lands in the correct `main.game.maze.*` project.  
+3. Add or update launch configurations and test generation locally.  
+4. Commit both generator configuration and resulting generated sources.
 
 ---
 
 ## Design guidelines
 
-When maintaining `maze-module-repository`, keep these principles in mind:
+When maintaining `maze-module-generator`, keep these principles in mind:
 
-* Treat it as the public entry point for MazeGame tooling
-  Only include features that you intend users or developers to install.
+- Keep generation logic here, not scattered  
+  All EMF and Xtext generator definitions for MazeGame should be easy to find in this project.
 
-* Keep category names clear and concise
-  They appear directly in the Eclipse installation UI.
+- Do not hand edit generated code  
+  Changes should go into models, grammars or templates, then be regenerated.
 
-* Keep the repository reproducible
-  All content should be produced by the Tycho build, not manually copied into `target/repository`.
+- Document generator entry points  
+  If a generator has specific preconditions or parameters, note them in this README or in a short comment near the `.mwe2` or `.genmodel`.
 
-By following these guidelines, `maze-module-repository` provides a clean, predictable update site for the MazeGame modules that works well both for local development and for shared distribution.
+- Make it team friendly  
+  Launch configurations and paths should work for all developers with a standard checkout of the repository.
 
+By following these ideas, `maze-module-generator` remains a clear and convenient hub for all model driven code generation in the MazeGame project.
