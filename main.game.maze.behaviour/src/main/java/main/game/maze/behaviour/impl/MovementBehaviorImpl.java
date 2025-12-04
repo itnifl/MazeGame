@@ -469,7 +469,6 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
-		//Overwritten in PartolBehaviorImpl
 	}
 
 	/**

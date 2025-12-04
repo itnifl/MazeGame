@@ -47,6 +47,27 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
     }
 
     /**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public EList<Position> compute(Position target) {
+		// TODO: implement this method
+		//return calculatePath(this.position, target);
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public EList<Position> compute(Position start, Position end) {
+		return calculatePath(start, end);
+	}
+
+	/**
      * @generated NOT
      */
     public EList<Position> calculatePath(Position start, Position end) {
@@ -192,5 +213,21 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuilder result = new StringBuilder(super.toString());
+		result.append(" (distanceMethod: ");
+		result.append(distanceMethod);
+		result.append(')');
+		return result.toString();
 	}
 }

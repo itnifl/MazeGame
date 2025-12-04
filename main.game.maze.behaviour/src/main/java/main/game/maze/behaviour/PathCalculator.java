@@ -47,6 +47,11 @@ public interface PathCalculator extends EObject {
     EList<Position> calculatePath(Position start, Position end);
 
 	/**
+     * @generated NOT
+     */
+	EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target);
+
+	/**
 	 * Sets the value of the '{@link main.game.maze.behaviour.PathCalculator#getDistanceMethod <em>Distance Method</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -63,6 +68,6 @@ public interface PathCalculator extends EObject {
 	 * @model required="true"
 	 * @generated
 	 */
-	EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target);
+	EList<Position> compute(Position target);
 
 } // PathCalculator
