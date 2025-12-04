@@ -54,7 +54,7 @@ You can repeat this process whenever you change the model or the templates.
 
 For automated builds and continuous integration the generator is executed headless through the project
 
-[maze-generator.acceleo-runner]()../maze-generator.acceleo-runner/readme.md)
+(maze-generator.acceleo-runner)[../maze-generator.acceleo-runner/readme.md]
 
 That runner project is an Eclipse plug in with a Maven `pom.xml` that uses Tycho to start Acceleo and write the generated sources into
 
