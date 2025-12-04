@@ -83,6 +83,7 @@ This project prefers JDK 25 and JavaFX 25.
   * ⬇️ OSGi for VS Code (Optional)
   * ⬇️ YAML by Red Hat (Optional)
   * ⬇️ OCL support (Optional)
+  * ⬇️ Makefile Tools (Optional)
 
 Download and install:
 
