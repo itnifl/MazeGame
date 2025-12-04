@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import main.game.maze.mazeworld.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -324,9 +325,9 @@ public class GameController implements Initializable {
                                             doCharacterWanderMove(computerCharacter);
                                         break;
                                         
-                                    case PASSIVE:
-                                        	doCharacterWanderMove(computerCharacter);//doCharacterPatrolMove(computerCharacter);
-                                        break;
+                                    // case PATROL:
+                                    //     	doCharacterPatrolMove(computerCharacter);
+                                    //     break;
                                 
                                     default:
                                         doCharacterWanderMove(computerCharacter);

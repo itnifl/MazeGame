@@ -496,11 +496,14 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	 */
 	@Override
 	public void move() {
+    	System.out.println("DEBUG: move() called");
 
 		if (getPath() == null || getPath().isEmpty()) {
+	        System.out.println("DEBUG: path is null or empty");
 			return;
 		}
 		if (getPosition() == null) {
+        	System.out.println("DEBUG: position is null");
 			return;
 		}
 
@@ -526,7 +529,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			}
 			
 			try {
-				single.triggerEvents();
+				//single.triggerEvents();
 			} catch (Exception ignore) {
 				// Event trigger failure should not stop movement
 			}
@@ -555,22 +558,25 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				try {
 					graph = GameMazeWorld.GetWorld().getNavigationGraph();
 				} catch (Throwable t) {
-					// MazeWorld not initialized
-				}
+				System.out.println("DEBUG: Failed to get GameMazeWorld: " + t.getMessage());
+			}
 
 				if (graph == null) {
+            		System.out.println("DEBUG: graph is null");
 					nextIndex();
 					return;
 				}
 
 				// Snap start and goal to nodes
-				Point2D startPt = new Point2D(
-					getPosition().getPosX(), getPosition().getPosY());
-				Point2D goalPt = new Point2D(
-					target.getPosX(), target.getPosY());
+				Point2D startPt = new Point2D(getPosition().getPosX(), getPosition().getPosY());
+				Point2D goalPt = new Point2D(target.getPosX(), target.getPosY());
+
+				System.out.println("DEBUG: startPt = " + startPt + ", goalPt = " + goalPt);
 
 				MazeNavigationGraph.Node startNode = graph.snapToNode(startPt);
 				MazeNavigationGraph.Node goalNode = graph.snapToNode(goalPt);
+
+				System.out.println("DEBUG: startNode = " + startNode + ", goalNode = " + goalNode);
 
 				if (startNode == null || goalNode == null) {
 					nextIndex();
@@ -579,7 +585,11 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 
 				// Get calculator
 				PathCalculator pc = getPathcalculator();
+        		System.out.println("DEBUG: PathCalculator = " + pc);
+
+
 				if (pc == null) {
+            		System.out.println("DEBUG: PathCalculator is null");
 					nextIndex();
 					return;
 				}
@@ -590,6 +600,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 					(EList<MazeNavigationGraph.Node>) pc.compute(startNode, goalNode);
 
 				if (nodePath == null || nodePath.isEmpty()) {
+            		System.out.println("DEBUG: nodePath is null or empty");
 					nextIndex();
 					return;
 				}
@@ -680,7 +691,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 			currentPos.setPosY(target.getPosY());
 
 			try {
-				targetPoint.triggerEvents();
+				//targetPoint.triggerEvents();
 			} catch (Exception ignore) {
 				// Event trigger failure should not stop movement
 			}
