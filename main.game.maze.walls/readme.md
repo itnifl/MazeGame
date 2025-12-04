@@ -95,7 +95,7 @@ This separation keeps the maze data small and declarative, while the wall module
 ## Adding a new wall type
 
 The recommended workflow for extending the set of walls is:
-
+<br/>
 1. Update the EMF model<br/>
 　　Add a new wall type, material or property in the walls model.<br/>
 　　If you maintain a separate .xmi configuration of instances, add an instance entry there as well.
