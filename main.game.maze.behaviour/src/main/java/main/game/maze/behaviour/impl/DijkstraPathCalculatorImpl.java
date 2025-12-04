@@ -14,6 +14,7 @@ import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.GameMazeWorld;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
@@ -67,41 +68,58 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 
 	@Override
 	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target) {
-		
-		// Initialize cost and origin tracking structures
 		MazeNavigationGraph graph = GameMazeWorld.GetWorld().getNavigationGraph();
-		int[][] accumulatedCosts = new int[graph.getGrid().length][graph.getGrid()[0].length];
-		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[graph.getGrid().length][graph.getGrid()[0].length];
+	
+		int width  = graph.getGrid().length;
+		int height = graph.getGrid()[0].length;
+	
+		int[][] accumulatedCosts = new int[width][height];
+		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[width][height];
 		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
-		for (int x=0; x < graph.getGrid().length; x++) {
-			for (int y=0; y < graph.getGrid()[0].length; y++) {
+	
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				accumulatedCosts[x][y] = Integer.MAX_VALUE;
 				originsNodes[x][y] = null;
 			}
 		}
-
-		// Compute nodes costs
+	
+		// Fix １: Start node må være kostnad null
+		accumulatedCosts[start.getCol()][start.getRow()] = 0;
+	
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
 		queue.add(start);
-		while (queue.isEmpty() == false) {
+	
+		while (!queue.isEmpty()) {
 			MazeNavigationGraph.Node current = queue.poll();
-			for (var node : current.getNeighbors()) {
-				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
+			int baseCost = accumulatedCosts[current.getCol()][current.getRow()];
+	
+			for (MazeNavigationGraph.Node node : current.getNeighbors()) {
+				int newCost = baseCost + 1;
+	
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
-					if (newCost < this.getMaxPathLength()) {
-						accumulatedCosts[node.getCol()][node.getRow()] = (int)newCost;
+					if (newCost < getMaxPathLength()) {
+						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
 						originsNodes[node.getCol()][node.getRow()] = current;
 						queue.add(node);
-					}
-					else {
-						endNodes.add(current);
+					} else {
+						endNodes.add(node);
 					}
 				}
 			}
 		}
-
-		// Reconstruct path
-		return reconstructPath(originsNodes, nearestNode(endNodes, target));
+	
+		// Fix ２: Hvis target er nådd, bruk det direkte
+		MazeNavigationGraph.Node bestTarget = target;
+		if (originsNodes[target.getCol()][target.getRow()] == null && !endNodes.isEmpty()) {
+			bestTarget = nearestNode(endNodes, target);
+		}
+	
+		if (bestTarget == null) {
+			return new BasicEList<>();
+		}
+	
+		return reconstructPath(originsNodes, bestTarget);
 	}
 
 	/**

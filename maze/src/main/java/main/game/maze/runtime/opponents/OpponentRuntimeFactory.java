@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -266,6 +267,14 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
+            // Randomly assign PATROL behavior to ~30% of characters
+            if (ThreadLocalRandom.current(). nextDouble() < 0.50) {
+                characterType. setBehavior(BehaviorType. PATROL);
+                _logger.log(Level.INFO, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
+            } else {
+                _logger.log(Level.INFO, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
+            }
+
             if (characterType instanceof Zombie z) {
                 noOfZombiesSpawned.incrementAndGet();        
                 registerZombieCharacter(gameController, spawnX, spawnY, z);
