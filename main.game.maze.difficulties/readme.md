@@ -1,99 +1,187 @@
 # main.game.maze.difficulties
 
-EMF and OCL based model for game difficulty.  
-Provides the `DifficultyGameData` meta-model, default values, sample XMI instances, and validation through OCL invariants.
+This module defines the difficulty system for MazeGame.  
+It decides what Easy, Normal and Hard actually mean in terms of enemies, pacing, board size, player resources and scoring.
 
-## What you get
+Where other modules describe what objects exist in the game, this module describes how demanding the game should feel on each difficulty level.
 
-• Ecore model and generated EMF code  
-• OCL constraints and derived attributes (via OCL Pivot)  
-• Sample XMI files for smoke testing  
-• JUnit tests that load, validate, and exercise the model
+---
 
+## Purpose
 
-## What you get
+The difficulty module provides a single place to control
 
-• Ecore model and generated code
-• OCL derived attributes and validations
-• Sample XMI for smoke tests
-• JUnit tests that load and validate the model
+- how many and which opponents can appear  
+- how strong, fast or aggressive opponents are  
+- how large or dense the maze is  
+- how generous the game is with lives, time and power ups  
+- how scores and rewards scale with risk  
 
-## Build and test
+By centralising these rules, the game can stay consistent, and you can tune difficulty without rewriting behaviour or maze logic.
 
-```bash
-mvn clean verify
-```
+---
 
-This compiles the bundle and runs the unit tests.
+## Conceptual Structure
 
-## Quick usage in code
+The module is typically built around three layers.
 
-```java
-// Register EMF and XMI
-Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
-    .put("xmi", new XMIResourceFactoryImpl());
-EPackage.Registry.INSTANCE.put(
-    DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
+### Difficulty model
 
-// Load the model
-ResourceSet rs = new ResourceSetImpl();
-URI uri = URI.createFileURI("src/test/resources/difficultiesBasic.xmi");
-Resource r = rs.getResource(uri, true);
-DifficultyGameData data = (DifficultyGameData) r.getContents().get(0);
+An EMF based model describes the structure of a difficulty level.  
+A difficulty entry usually contains information such as
 
-// Validate with Diagnostician
-Diagnostic diag = Diagnostician.INSTANCE.validate(data);
-System.out.println(diag.getMessage());
-```
+- an identifier and display name  
+- minimum and maximum threat or danger level  
+- per opponent type caps, for example how many ghosts or zombies may be active  
+- multipliers for opponent speed, health or damage  
+- maze related parameters such as target board size, corridor density or dead end preference  
+- player related parameters such as lives, hit points or resource caps  
+- scoring multipliers that reward higher difficulty with higher scores  
 
-## Key concepts
+The model is the main source of truth for what a difficulty level is.
 
-• Difficulty profiles such as Easy Normal Hard
-• Enemy counts caps and multipliers
-• A max threat constraint that guards total effective threat
+### Generated and configuration based code
 
-## Where things live
+From the model and accompanying configuration files, the build generates supporting code and constants.  
+This typically includes types or data structures that mirror the difficulty definitions in plain Java so they are easy to use at runtime.
 
-• `model/` Ecore and OCL
-• `src/main/java/` generated and hand written code
-• `src/test/java/` unit tests
-• `src/test/resources/` sample XMI
+Hand written glue code then reads these generated definitions and exposes them as services.
 
-## Requirements
+### Runtime services
 
-• Java 21 or newer
-• Maven
-• EMF and OCL are resolved through the Tycho target in the parent build
+At runtime the rest of the game does not talk to the model directly.  
+Instead it uses a small set of services, for example a DifficultyService, that provide
 
-## Notes
+- the current difficulty object  
+- helper methods for looking up caps and multipliers  
+- convenient accessors for values such as maximum threat or maximum number of a given opponent type  
 
-This bundle is consumed by other game modules at runtime and inside tests.
+This keeps callers simple and avoids spreading model details across the game.
 
-## Key concepts
+---
 
-• Difficulty profiles such as Easy, Normal, Hard
-• Enemy count limits, scaling factors, and multipliers
-• A max-threat style constraint that guards total effective threat over all opponents
-• Default values so XMI instances are usable with minimal configuration
+## Main Responsibilities
 
-## Where things live
+The difficulty module takes responsibility for several related concerns.
 
-• `model/` – Ecore model and OCL definitions
-• `src/main/java/` – generated and hand-written EMF code
-• `src/test/java/` – JUnit tests for loading and validation
-• `src/test/resources/` – sample `.xmi` difficulty configurations
+### Threat and composition limits
 
-## Requirements
+The module defines how dangerous a level is allowed to be.  
+Typical values include
 
-• Java 21 or newer (project root prefers JDK 21+ / 25)
-• Maven
-• EMF and OCL resolved via the Tycho target and local p2 mirror in `releng/local-p2` (when built as part of the MazeGame reactor)
+- global maximum threat for a level  
+- threat contribution per opponent type  
+- caps on how many opponents of each type may be active at once  
 
-## Role in MazeGame
+Generator and opponent spawning code use these numbers to decide when to stop adding enemies and how to mix opponent types so that the total threat remains within the difficulty budget.
 
-This bundle defines the difficulty model used by:
+### Opponent scaling
 
-• `main.game.maze.opponents` for threat and balancing rules
-• The Acceleo generator for producing game code from difficulty configurations
-• The JavaFX game module (`maze`) at runtime through its generated JAR
+Each difficulty defines how opponents are scaled relative to their base configuration.  
+This can include
 
+- speed multipliers  
+- health and damage multipliers  
+- perception or detection radius adjustments  
+- reaction time or cooldown adjustments  
+
+The result is that the same opponent definition can feel very different on Easy and Hard while still using the same core behaviour.
+
+### Maze and environment parameters
+
+Difficulty also has a direct effect on the maze itself.  
+Practically this can mean
+
+- different typical board sizes  
+- more or fewer dead ends  
+- more open areas versus more narrow corridors  
+- density of traps, power ups or special tiles  
+
+The maze generator reads these parameters and builds levels that match the intended difficulty profile.
+
+### Player resources and scoring
+
+Finally, the difficulty module can influence how generous the game is towards the player and how much reward a given performance gives.  
+This commonly covers
+
+- number of lives or continues  
+- amount of starting health or shield  
+- limits for ammunition, keys or other consumables  
+- score multipliers per difficulty  
+- possible bonus rules for completing levels quickly or without taking damage  
+
+This ensures that higher difficulty both feels more demanding and is more rewarding.
+
+---
+
+## Interaction With Other Modules
+
+The difficulties module is connected to several other parts of the system.
+
+- Maze world  
+  It provides preferred board sizes and structural parameters that the maze world and generator use when constructing levels.
+
+- Opponents  
+  It defines caps and multipliers that the opponent module uses when instantiating enemies, so that the same base enemy behaves differently per difficulty.
+
+- Behaviour  
+  It can supply values such as detection range, patrol aggressiveness or chase persistence so that behaviours scale with difficulty.
+
+- User interface  
+  It provides the list of available difficulties, their names and descriptions for menus and selection screens.
+
+The idea is that all these modules ask the difficulty module when they need to know “how hard should this be” rather than each implementing their own local rules.
+
+---
+
+## Choosing And Applying A Difficulty
+
+The typical life cycle for a difficulty selection is
+
+1. The player chooses a difficulty in a menu.  
+2. The game records this as the current difficulty instance.  
+3. When a new level is created, the maze generator, opponent factory and behaviour configuration read values from the current difficulty.  
+4. During the game, systems that need scaled values, such as scoring or resource limits, continue to query the difficulty module.
+
+Because all settings are derived from the current difficulty, switching difficulty simply means pointing the game at another difficulty instance.  
+No further wiring is needed.
+
+---
+
+## Extending The Difficulty System
+
+When you want to add or change a difficulty, the recommended workflow is
+
+1. Update the EMF model and related configuration  
+   Add a new difficulty entry or extend existing ones with new parameters.
+
+2. Regenerate supporting code  
+   Run the relevant generators so that new values become available at runtime.
+
+3. Wire new parameters into the runtime services  
+   Map the new model fields into properties or methods on the difficulty service.
+
+4. Adopt the new parameters in the rest of the game  
+   For example, let the maze generator use a new density value or let the behaviour module read a new aggression factor.
+
+This keeps the difficulty system consistent and ensures that new settings are taken into account in a controlled way.
+
+---
+
+## Design Guidelines
+
+When maintaining this module, a few guidelines help keep it robust and understandable.
+
+- Keep difficulty definitions declarative  
+  They should read like data that describes a profile, not like scripts or procedures.
+
+- Avoid duplicating rules in other modules  
+  If something is truly difficulty dependent, it should live here and be consumed elsewhere.
+
+- Prefer relative scaling over hard coded values  
+  For example, use “base value times multiplier” instead of completely separate numbers per difficulty when possible.
+
+- Document the intent of each parameter  
+  A short comment or description for each field makes tuning easier and reduces the risk of misinterpretation.
+
+By following these ideas, `main dot game dot maze dot difficulties` remains the central and reliable authority for how challenging MazeGame should be on each setting.
