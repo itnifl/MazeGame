@@ -1,133 +1,157 @@
-# maze-generator.runner
+# maze-generator.acceleo-runner
 
-Headless Eclipse/Equinox runner used to execute the Acceleo code generator  
-(`main.game.maze.gen.app`) against the EMF models in the MazeGame project.
+This project contains the headless Acceleo runner used in the Maven / Tycho build for MazeGame.
 
-This bundle provides the **runtime environment** for the generator — it does not
-contain templates itself. Templates and the actual generator logic live in:
-
-- `maze-generator.acceleo-runner`
-
-`maze-generator.runner` exists to *launch* that generator inside an OSGi
-container during the Maven/Tycho build, so the resulting Java sources can be
-produced automatically.
+Where `maze-generator.acceleo` holds the `.mtl` templates and Eclipse plug-in for code generation,  
+`maze-generator.acceleo-runner` is the executable plug-in that starts Acceleo in a non-interactive build and writes the generated sources to the correct locations.
 
 ---
 
-## What it does
+## Purpose
 
-✔ Supplies the Eclipse runtime needed for headless Acceleo execution  
-✔ Declares dependencies on EMF, OCL, Acceleo Engine, and the generator plug-in  
-✔ Provides the Tycho/Maven configuration to run the application  
-✔ Bridges Tycho → Acceleo → generated Java → Maven
+`maze-generator.acceleo-runner` is responsible for:
 
-During the build, Tycho uses this bundle to run the application:
+- loading the EMF models (opponents, difficulties, walls, etc.) in a headless Eclipse runtime  
+- invoking the Acceleo `Generate` module from `maze-generator.acceleo`  
+- writing generated Java sources and helper files into the appropriate `target` folders or target modules  
+- integrating smoothly into the Tycho reactor so generation happens as part of `mvn clean verify`
 
-```
-
-main.game.maze.gen.app
-
-````
-
-registered inside `maze-generator.acceleo-runner`.
-
-The output is written to the generated-sources directory of:
-
-- `maze-module-generator`
-
-which then exposes those sources as a normal Maven artifact for the JavaFX
-game.
+This allows the entire model-to-code generation pipeline to run automatically in CI and on developer machines without manual Eclipse steps.
 
 ---
 
-## Build & run
+## Project contents
 
-From the repo root:
+Typical files in `maze-generator.acceleo-runner` include:
+
+- `pom.xml`  
+  Tycho configuration that declares this as an Eclipse plug-in and sets up the execution phase (usually `generate-sources` or `prepare-package`).
+
+- `META-INF/MANIFEST.MF`  
+  Plug-in metadata declaring dependencies on:
+  - the Acceleo runtime
+  - the EMF model plug-ins (opponents, difficulties, walls)
+  - the `maze-generator.acceleo` plug-in
+
+- `plugin.xml`  
+  Optional extension declarations or application entries used when starting the runner in headless mode.
+
+- A small Java entry point  
+  For example a class that:
+  - sets up the EMF resource set
+  - loads the `.xmi` model resources
+  - calls the Acceleo `Generate` module with the chosen root element
+  - configures the output directories
+
+The generated sources themselves are **not** stored in this project.  
+They are written to `target/generated-sources/acceleo` or into the relevant `main.game.maze.*` modules, depending on configuration.
+
+---
+
+## How it works in the Tycho build
+
+During a full Tycho build of the MazeGame reactor:
+
+1. Tycho builds all required EMF model plug-ins and the `maze-generator.acceleo` plug-in.  
+2. Tycho builds `maze-generator.acceleo-runner`, which depends on those plug-ins.  
+3. At the configured build phase, Tycho launches the runner in an OSGi/Eclipse environment.  
+4. The runner:
+   - locates the model resources (for example `.opponents`, `.difficulties`, `.walls` or `.xmi` files)
+   - runs the Acceleo `Generate` module
+   - writes generated sources to the configured output directories
+5. After generation, Tycho compiles the generated sources together with the hand-written code in the target modules.
+
+This ensures that generated code is always up to date with the current models whenever `mvn clean verify` is run.
+
+---
+
+## Running the runner via Maven
+
+In most cases you do not need to call the runner directly.  
+It is wired into the main multi-module build.
+
+If you want to build just the generator part, you can run (from the repository root):
 
 ```bash
-mvn -pl maze-generator.runner -am clean verify
-````
-
-or run the full reactor:
-
-```bash
-mvn clean verify
+mvn -f maze-generator.acceleo-runner/pom.xml clean verify
 ```
 
-Tycho will automatically:
+This will:
 
-1. Resolve EMF, OCL, and Acceleo from the target platform pointing to
-   `releng/local-p2`
-2. Launch `main.game.maze.gen.app` through this bundle
-3. Write generated Java files into `maze-module-generator`
+* resolve all dependencies (models, Acceleo, EMF, etc.)
+* start the runner as part of the Tycho lifecycle
+* generate and compile the sources
 
-This module **cannot be run directly** using Java or Maven CLI — it must be run
-through Tycho inside the Eclipse runtime it configures.
+Check the `target` folders of the relevant modules (or `target/generated-sources/acceleo`) to verify that files were created.
 
 ---
 
-## Dependencies
+## Configuration aspects
 
-`maze-generator.runner` requires:
+Key configuration points typically found in `maze-generator.acceleo-runner`:
 
-* `maze-generator.acceleo-runner`
-* EMF (`org.eclipse.emf.ecore`, `org.eclipse.emf.common`, `.xmi`)
-* OCL (`org.eclipse.ocl.pivot`)
-* Acceleo Engine (`org.eclipse.acceleo.engine`)
-* Equinox runtime (`org.eclipse.core.runtime`, `org.eclipse.equinox.app`)
+* **Model locations**
+  How and where the runner finds the model instances:
 
-These are resolved from:
+  * through workspace-relative paths
+  * through platform URIs (`platform:/resource/...` or `platform:/plugin/...`)
+  * via manually registered resource factories and URI mappings
 
-* `releng/local-p2`
-* `releng/maze.target`
+* **Output directories**
+  Where the generated sources are written:
 
----
+  * a central `target/generated-sources/acceleo` folder, or
+  * directly into the corresponding `main.game.maze.*` modules
 
-## How it works in the build
+* **Launch class and arguments**
+  The Java class that acts as entry point and the arguments passed to it:
 
-**Simplified pipeline:**
+  * root model URI
+  * output path
+  * optional flags (for example cleaning previous output)
 
-```
-releng/mirror → local-p2
-         ↓
-maze-generator.acceleo-runner (templates)
-         ↓
-maze-generator.runner (runs the app)
-         ↓
-maze-module-generator (collects generated Java)
-         ↓
-maze (JavaFX game uses the generated sources)
-```
-
-This ensures the entire generator runs **fully offline**, reproducibly, with
-constant versions of EMF/OCL/Acceleo.
+Any changes to the models, the generator templates, or the target layout may require updating this configuration.
 
 ---
 
-## Where things live
+## Troubleshooting
 
-• `plugin.xml` — requires Acceleo + EMF + OCL + generator bundle
-• `pom.xml` — Tycho plugin config for `eclipse-run`
-• No templates inside this module — they are in `maze-generator.acceleo-runner`
+Common issues when working with `maze-generator.acceleo-runner`:
+
+* **No files are generated**
+
+  * Check that the runner is actually executed in the Maven phase you expect.
+  * Verify that the model URIs in the runner match the locations of your `.ecore` / `.xmi` files.
+  * Confirm that `maze-generator.acceleo` is on the runtime classpath and the `Generate` module name is correct.
+
+* **Model loading errors**
+
+  * Ensure that all EMF model plug-ins are listed as dependencies in `MANIFEST.MF`.
+  * Register needed resource factories and URI mappings if you use custom file extensions.
+
+* **Compilation errors in generated code**
+
+  * Inspect the generated sources to see which imports or types are missing.
+  * Adjust the Acceleo templates to add required imports or fully qualified names.
+  * Re-run the build after fixes to regenerate the code.
 
 ---
 
-## Requirements
+## When to modify maze-generator.acceleo-runner
 
-• JDK 21 or newer
-• Maven
-• Local p2 mirror (`releng/local-p2`) generated by `releng/mirror`
-• Full Tycho target platform in `releng/maze.target`
+You typically update this project when you:
 
----
+* add a new model that should be processed by Acceleo
+* change where models are stored or how they are loaded
+* change the output structure for generated code
+* rename or restructure Acceleo modules in `maze-generator.acceleo`
 
-## Notes
+In such cases:
 
-* This bundle only executes during the build; it has **no runtime role** in the
-  JavaFX game.
-* If you want to debug the generator, enable Tycho debug logging or run the
-  runner with `-X` via Maven.
-* Any missing EMF/OCL/Acceleo IU in the mirror will cause resolution failure
-  **here first**.
+1. Update the runner’s Java entry point and configuration to reflect the new models or paths.
+2. Adjust `MANIFEST.MF` dependencies so all required plug-ins are available.
+3. Run `mvn clean verify` and verify that generated sources appear as expected.
 
-```
+By keeping the logic for headless generation in `maze-generator.acceleo-runner` and the templates in `maze-generator.acceleo`, the MazeGame project maintains a clean separation between **what** is generated and **how** it is executed in automated builds.
+
+

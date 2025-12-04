@@ -2,6 +2,12 @@
  */
 package main.game.maze.behaviour.impl;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.DijkstraPathCalculator;
 import main.game.maze.behaviour.Position;
@@ -12,6 +18,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import main.game.maze.behaviour.DistanceMethod;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,16 +65,43 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		super();
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
 	@Override
-	public EList<Position> compute(Position target) {
-		var mazeWorld = GameMazeWorld.GetWorld();
-		//TODO: something here	
-		return null;
+	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target) {
+		
+		// Initialize cost and origin tracking structures
+		MazeNavigationGraph graph = GameMazeWorld.GetWorld().getNavigationGraph();
+		int[][] accumulatedCosts = new int[graph.getGrid().length][graph.getGrid()[0].length];
+		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[graph.getGrid().length][graph.getGrid()[0].length];
+		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
+		for (int x=0; x < graph.getGrid().length; x++) {
+			for (int y=0; y < graph.getGrid()[0].length; y++) {
+				accumulatedCosts[x][y] = Integer.MAX_VALUE;
+				originsNodes[x][y] = null;
+			}
+		}
+
+		// Compute nodes costs
+		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
+		queue.add(start);
+		while (queue.isEmpty() == false) {
+			MazeNavigationGraph.Node current = queue.poll();
+			for (var node : current.getNeighbors()) {
+				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
+				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
+					if (newCost < this.getMaxPathLength()) {
+						accumulatedCosts[node.getCol()][node.getRow()] = (int)newCost;
+						originsNodes[node.getCol()][node.getRow()] = current;
+						queue.add(node);
+					}
+					else {
+						endNodes.add(current);
+					}
+				}
+			}
+		}
+
+		// Reconstruct path
+		return reconstructPath(originsNodes, nearestNode(endNodes, target));
 	}
 
 	/**

@@ -158,6 +158,17 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	}
 
 	/**
+	 * Helper to check if the event should fire based on probability. 
+	 * @return true if the event should fire
+	 */
+	protected boolean shouldFire() {
+	    double prob = getProbability();
+	    if (prob <= 0) return false;
+	    if (prob >= 1.0) return true;
+	    return Math.random() < prob;
+	}
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

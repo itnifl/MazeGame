@@ -469,66 +469,85 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
+		//Overwritten in PartolBehaviorImpl
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a HealthEvent to the character.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(HealthEvent healthEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (healthEvent == null) return;
+	    // TODO: implement health effect
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a SpeedEvent to the character. 
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(SpeedEvent speedEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (speedEvent == null) return;
+	    // TODO: implement speed effect
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a TimeEvent — placeholder: could pause movement for a duration.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(TimeEvent timeEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (timeEvent == null) return;
+	    // TODO: implement time-based effect (e.g., stun, slow, pause)
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies an AttackEvent — placeholder: could deal damage or modify attack. 
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(AttackEvent attackEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (attackEvent == null) return;
+	    // TODO: implement attack effect
+	    // For now, no-op placeholder
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Applies a VisionEvent to modify vision range.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void update(VisionEvent visionEvent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    if (visionEvent == null) return;
+	    
+	    try {
+	        double amount = visionEvent. getRadiusAmount();
+	        double percentage = visionEvent.getRadiusPercentage();
+	        
+	        // Apply flat amount to additional vision range
+	        if (amount != 0) {
+	            setAdditionalVisionRange(getAdditionalVisionRange() + amount);
+	        }
+	        
+	        // Apply percentage to multiplier
+	        if (percentage != 0) {
+	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1.0 + percentage));
+	        }
+	    } catch (Exception ignore) {}
 	}
 
 	/**

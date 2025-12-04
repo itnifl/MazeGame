@@ -6,10 +6,13 @@ import main.game.maze.behaviour.AstarPathCalculator;
 import main.game.maze.behaviour.BehaviourPackage;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
@@ -85,6 +88,12 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		maxPathLength = newMaxPathLength;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH, oldMaxPathLength, maxPathLength));
+	}
+
+	@Override
+	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
+		
+		return null;
 	}
 
 	/**

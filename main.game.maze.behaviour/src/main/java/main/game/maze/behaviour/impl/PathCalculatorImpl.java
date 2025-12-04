@@ -1,114 +1,149 @@
-/**
- */
 package main.game.maze.behaviour.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import main.game.maze.behaviour.BehaviourPackage;
-import main.game.maze.behaviour.DistanceMethod;
-import main.game.maze.behaviour.PathCalculator;
+import java.util.List;
 
-import main.game.maze.behaviour.Position;
 import org.eclipse.emf.common.notify.Notification;
-
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-/**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Path Calculator</b></em>'.
- * <!-- end-user-doc -->
- * <p>
- * The following features are implemented:
- * </p>
- * <ul>
- *   <li>{@link main.game.maze.behaviour.impl.PathCalculatorImpl#getDistanceMethod <em>Distance Method</em>}</li>
- * </ul>
- *
- * @generated
- */
+import main.game.maze.behaviour.BehaviourFactory;
+import main.game.maze.behaviour.BehaviourPackage;
+import main.game.maze.behaviour.DistanceMethod;
+import main.game.maze.behaviour.PathCalculator;
+import main.game.maze.behaviour.Position;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
+
 public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container implements PathCalculator {
-	/**
-	 * The default value of the '{@link #getDistanceMethod() <em>Distance Method</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDistanceMethod()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final DistanceMethod DISTANCE_METHOD_EDEFAULT = DistanceMethod.MANHATTAN;
 
-	/**
-	 * The cached value of the '{@link #getDistanceMethod() <em>Distance Method</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDistanceMethod()
-	 * @generated
-	 * @ordered
-	 */
-	protected DistanceMethod distanceMethod = DISTANCE_METHOD_EDEFAULT;
+    protected static final DistanceMethod DISTANCE_METHOD_EDEFAULT = DistanceMethod.MANHATTAN;
+    protected DistanceMethod distanceMethod = DISTANCE_METHOD_EDEFAULT;
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PathCalculatorImpl() {
-		super();
-	}
+    protected PathCalculatorImpl() {
+        super();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EClass eStaticClass() {
-		return BehaviourPackage.Literals.PATH_CALCULATOR;
-	}
+    @Override
+    protected EClass eStaticClass() {
+        return BehaviourPackage.Literals.PATH_CALCULATOR;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public DistanceMethod getDistanceMethod() {
-		return distanceMethod;
-	}
+    @Override
+    public DistanceMethod getDistanceMethod() {
+        return distanceMethod;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setDistanceMethod(DistanceMethod newDistanceMethod) {
-		DistanceMethod oldDistanceMethod = distanceMethod;
-		distanceMethod = newDistanceMethod == null ? DISTANCE_METHOD_EDEFAULT : newDistanceMethod;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATH_CALCULATOR__DISTANCE_METHOD, oldDistanceMethod, distanceMethod));
-	}
+    @Override
+    public void setDistanceMethod(DistanceMethod newDistanceMethod) {
+        DistanceMethod oldDistanceMethod = distanceMethod;
+        distanceMethod = newDistanceMethod == null ? DISTANCE_METHOD_EDEFAULT : newDistanceMethod;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.PATH_CALCULATOR__DISTANCE_METHOD, oldDistanceMethod, distanceMethod));
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EList<Position> compute(Position target) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * @generated NOT
+     */
+    public EList<Position> calculatePath(Position start, Position end) {
+        EList<Position> resultPath = new BasicEList<>();
+        try {
+            GameMazeWorld world = null;
+            try { world = GameMazeWorld.GetWorld(); } catch (Throwable t) { return resultPath; }
+            if (world == null) return resultPath;
+            
+            MazeNavigationGraph graph = world.getNavigationGraph();
+            if (graph == null) return resultPath;
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
+            MazeNavigationGraph.Node startNode = graph.snapToNode(new Point2D(start.getPosX(), start.getPosY()));
+            MazeNavigationGraph.Node endNode = graph.snapToNode(new Point2D(end.getPosX(), end.getPosY()));
+
+            if (startNode == null || endNode == null) return resultPath;
+
+            EList<MazeNavigationGraph.Node> nodePath = compute(startNode, endNode);
+
+            if (nodePath != null) {
+                for (MazeNavigationGraph.Node node : nodePath) {
+                    Position p = BehaviourFactory.eINSTANCE.createPosition();
+                    p.setPosX(node.getX());
+                    p.setPosY(node.getY());
+                    resultPath.add(p);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resultPath;
+    }
+
+    /**
+     * @generated NOT
+     */
+    public EList<MazeNavigationGraph.Node> reconstructPath(MazeNavigationGraph.Node[][] originNodes, MazeNavigationGraph.Node target) {
+        EList<MazeNavigationGraph.Node> path = new BasicEList<>();
+        if (originNodes == null || target == null) return path;
+
+        int cols = originNodes.length;
+        if (cols == 0) return path;
+        int rows = originNodes[0].length;
+
+        // FIX: Start reconstruction from the TARGET itself
+        MazeNavigationGraph.Node curr = target;
+        
+        // Safety loop limit
+        int safety = 0;
+        int max = cols * rows;
+
+        while (curr != null && safety++ < max) {
+            // Add to front of list (reversing the parent chain)
+            path.add(0, curr);
+            
+            // Check bounds
+            if (curr.getCol() >= 0 && curr.getCol() < cols && curr.getRow() >= 0 && curr.getRow() < rows) {
+                MazeNavigationGraph.Node parent = originNodes[curr.getCol()][curr.getRow()];
+                // Prevent self-loops
+                if (parent == curr) break;
+                curr = parent;
+            } else {
+                break;
+            }
+        }
+        return path;
+    }
+
+    /**
+     * @generated NOT
+     */
+    public MazeNavigationGraph.Node nearestNode(List<MazeNavigationGraph.Node> nodes, MazeNavigationGraph.Node target) {
+        if (nodes == null || target == null) return null;
+        MazeNavigationGraph.Node nearestNode = null;
+        double nearestDistance = Double.MAX_VALUE;
+        for (var node : nodes) {
+            double distance = 0;
+            switch (getDistanceMethod()) {
+                case EUCLIDEAN:
+                    distance = Math.sqrt(Math.pow(node.getCol() - target.getCol(), 2) + Math.pow(node.getRow() - target.getRow(), 2));
+                    break;
+                case MANHATTAN:
+                default:
+                    distance = Math.abs(node.getCol() - target.getCol()) + Math.abs(node.getRow() - target.getRow());
+                    break;
+            }
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestNode = node;
+            }
+        }
+        return nearestNode;
+    }
+    
+    // ... eGet, eSet, eUnset, eInvoke ... 
+    // (Keep the standard EMF methods generated at the bottom of your file)
+    
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -118,11 +153,6 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 		return super.eGet(featureID, resolve, coreType);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -133,11 +163,6 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 		super.eSet(featureID, newValue);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
@@ -148,11 +173,6 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 		super.eUnset(featureID);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
@@ -162,34 +182,15 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 		return super.eIsSet(featureID);
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BehaviourPackage.PATH_CALCULATOR___COMPUTE__POSITION:
-				return compute((Position)arguments.get(0));
+				if (arguments.size() == 2 && arguments.get(0) instanceof MazeNavigationGraph.Node) {
+					return compute((MazeNavigationGraph.Node)arguments.get(0), (MazeNavigationGraph.Node)arguments.get(1));
+				}
+				return null;
 		}
 		return super.eInvoke(operationID, arguments);
 	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (distanceMethod: ");
-		result.append(distanceMethod);
-		result.append(')');
-		return result.toString();
-	}
-
-} //PathCalculatorImpl
+}

@@ -8,13 +8,12 @@ import java.util.logging.Logger;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
-import main.game.maze.ai.PatrolMovementController;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
-import javafx.scene.image.Image;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
@@ -66,7 +65,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 }
             }
         };
-        }
+    }
 
     @Override
     public boolean move(boolean force) {
@@ -98,6 +97,13 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
             return hasMoved;
         }
         return false;
+    }
+
+     @Override
+    public void setDirection(Point2D direction) {
+        if (direction != null) {
+            this.setCharacterDirection(direction.getX(), direction.getY(), this.speed);
+        }
     }
 
     public void changeDirection() {

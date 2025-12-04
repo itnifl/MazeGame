@@ -5,6 +5,8 @@ package main.game.maze.behaviour;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Path Calculator</b></em>'.
@@ -40,6 +42,11 @@ public interface PathCalculator extends EObject {
 	DistanceMethod getDistanceMethod();
 
 	/**
+     * @generated NOT
+     */
+    EList<Position> calculatePath(Position start, Position end);
+
+	/**
 	 * Sets the value of the '{@link main.game.maze.behaviour.PathCalculator#getDistanceMethod <em>Distance Method</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -56,6 +63,6 @@ public interface PathCalculator extends EObject {
 	 * @model required="true"
 	 * @generated
 	 */
-	EList<Position> compute(Position target);
+	EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target);
 
 } // PathCalculator

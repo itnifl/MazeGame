@@ -12,7 +12,7 @@ This module builds a p2 repository that contains the Maze Game feature and its E
 From the repository root:
 ```bash
 mvn -pl maze-module-repository -am -DskipTests clean verify
-````
+```
 
 ## Output
 
@@ -23,16 +23,6 @@ maze-module-repository/target/repository/
 ```
 
 ## How others consume it
-
-### Use in Eclipse
-
-1. Open Eclipse.
-2. Add a new software site with:
-
-   ```
-   file:/absolute/path/to/maze-module-repository/target/repository/
-   ```
-3. Install the **Maze Feature** (feature group).
 
 ### Use in Tycho (as a p2 repository)
 

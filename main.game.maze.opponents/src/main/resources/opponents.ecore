@@ -84,6 +84,7 @@
     <eLiterals name="PASSIVE" literal="PASSIVE"/>
     <eLiterals name="WANDER" value="1"/>
     <eLiterals name="AGGRESSIVE" value="2"/>
+    <eLiterals name="PATROL" value="3"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LootTable">
     <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"

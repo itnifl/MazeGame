@@ -3,6 +3,7 @@
 package main.game.maze.behaviour.impl;
 
 import main.game.maze.behaviour.BehaviourPackage;
+import main.game.maze.behaviour.MovementBehavior;
 import main.game.maze.behaviour.TimeEvent;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -159,6 +160,20 @@ public class TimeEventImpl extends CharacterEventImpl implements TimeEvent {
 		result.append(time);
 		result.append(')');
 		return result.toString();
+	}
+
+	/**
+	 * @generated NOT
+	 */
+	@Override
+	public void notifySubscribers() {
+		if (!shouldFire()) return;
+		MovementBehavior sub = getSubscriber();
+		if (sub != null) {
+			try {
+				sub. update(this); // 'this' is TimeEventImpl → resolves to update(TimeEvent)
+			} catch (Exception ignore) {}
+		}
 	}
 
 } //TimeEventImpl
