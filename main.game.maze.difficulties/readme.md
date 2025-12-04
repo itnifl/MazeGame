@@ -184,4 +184,4 @@ When maintaining this module, a few guidelines help keep it robust and understan
 - Document the intent of each parameter  
   A short comment or description for each field makes tuning easier and reduces the risk of misinterpretation.
 
-By following these ideas, `main dot game dot maze dot difficulties` remains the central and reliable authority for how challenging MazeGame should be on each setting.
+By following these ideas, `main.game.maze.difficulties` remains the central and reliable authority for how challenging MazeGame should be on each setting.
