@@ -1,95 +1,89 @@
 # Acceleo in the Maze Game
 
-This document explains exactly how model-to-code generation with **Acceleo** is used in the Maze game, what gets generated, and how it fits into the overall build.
+This document explains how model to code generation with **Acceleo** is used in the Maze game, what gets generated, and how it fits into the overall build.
 
 ---
 
 ## Purpose
 
-Acceleo turns your EMF model into concrete Java classes used by the game.
-In this project, Acceleo reads the **DifficultyGameData** model and produces domain code that the app and tests consume.
+Acceleo turns EMF models into concrete Java classes used by the game.
+
+In this project Acceleo reads difficulty and opponent related models  
+for example the `DifficultyGameData` model  
+and produces domain code that the app and tests consume.
 
 ---
 
 ## Where things live
 
-* **Templates and launcher** → [`maze-generator.acceleo`](./maze-generator.acceleo)
-  Contains the `.mtl` templates and a small headless launcher.
+- **Templates** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
+  Contains the `.mtl` templates and the Acceleo generation logic.
 
-* **Generated sources** → [`mazer-module-generator`](./mazer-module-generator)
-  Receives generated Java sources and builds them into a jar that other modules depend on.
+- **Headless runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
+  Eclipse plug in that starts the Acceleo `Generate` module in a headless runtime.
 
-* **Model input** → [`models/DifficultyGameData.xmi`](./models/DifficultyGameData.xmi)
-  The canonical input file for the generator.
+- **Generated sources** → [`maze-module-generator`](./maze-module-generator)  
+  Receives generated Java sources (for example under `src-gen`) and builds them into a JAR that other modules depend on.
 
-* **Build plumbing** → [`releng`](./releng)
-  Provides the Tycho target and a local p2 mirror so the generator can run headlessly and offline.
+- **Model input** → for example [`models/DifficultyGameData.xmi`](./models/DifficultyGameData.xmi)  
+  Canonical input file(s) for the generator.
+
+- **Build plumbing** → [`releng`](./releng)  
+  Provides the Tycho target, local p2 mirror and helper scripts so the generator can run headless and offline.
 
 ---
 
 ## How generation runs
 
-Generation is performed **headless** during the Maven build by launching an Eclipse runtime with the Acceleo engine.
+Generation is performed **headless** during the Maven or Tycho build by launching an Eclipse runtime with the Acceleo engine.
 
-High-level flow:
+High level flow:
 
-1. Tycho resolves an Eclipse runtime from the local mirror in `releng/local-p2`.
-2. The generator app starts inside that runtime.
-3. The app loads `models/DifficultyGameData.xmi`.
-4. Acceleo templates render Java files.
-5. Files are written into `mazer-module-generator/src/main/java`.
-6. `mazer-module-generator` compiles those sources and publishes a jar that the game uses.
+1. Tycho resolves an Eclipse runtime from the local mirror in `releng/local-p2`.  
+2. `maze-generator.acceleo-runner` starts inside that runtime and invokes the Acceleo `Generate` module from `maze-generator.acceleo`.  
+3. The runner loads the configured model inputs  
+   for example `models/DifficultyGameData.xmi`.  
+4. Acceleo templates render Java files.  
+5. Files are written into `maze-module-generator/src-gen`  
+   or a similar generated sources folder.  
+6. `maze-module-generator` attaches that folder as a source root and compiles the generated classes into a JAR that the game uses.
 
----
-
-## The two launcher classes
-
-* **`HeadlessGeneratorApp.java`**
-  The entry point that Tycho starts inside the Eclipse runtime.
-  Responsibilities:
-
-  * Parse arguments `(inputModelPath, outputSourceDir)`.
-  * Initialize EMF and Acceleo services.
-  * Invoke the template root with the loaded model.
-  * Exit with a nonzero code on failure so the build clearly fails.
-
-* **`RunAcceleo.java`**
-  A small helper that encapsulates “generate from model” logic.
-  Responsibilities:
-
-  * Register EMF packages and resource factories used by the model.
-  * Resolve template modules and call the generated Acceleo Java stubs.
-  * Write files to the output directory while preserving package structure.
-
-These are kept minimal on purpose: all domain logic lives in the `.mtl` templates.
+From the rest of the build this looks like a normal Java dependency: the game module just depends on `maze-module-generator`.
 
 ---
 
 ## Commands you will use
 
-Generate sources and build all dependencies:
+Generate sources and build the generator JAR:
 
 ```bash
-mvn -B -U -e -pl maze-generator.acceleo -am -DskipTests clean verify
+mvn -B -U -e -pl maze-module-generator -am -DskipTests clean verify
 ```
 
-Build the game afterward, using the freshly generated jar:
+Build the game afterward, using the freshly generated JAR:
 
 ```bash
 mvn -B -U -e -pl maze -am -DskipTests=false clean verify
 ```
 
-Quick one-liner to do both from a clean checkout:
+Quick one liner to do both from a clean checkout:
 
 ```bash
-mvn -B -U -e -pl maze-generator.acceleo,maze -am -DskipTests=false clean verify
+mvn -B -U -e -pl maze-module-generator,maze -am -DskipTests=false clean verify
 ```
+
+Depending on your setup you may also run the full reactor and let the generator step be triggered transitively.
 
 ---
 
 ## CI usage
 
-In GitHub Actions, the “Generate and build game” job runs the generator first, then builds the app. This guarantees the `mazer-module-generator` jar matches the current model before tests execute. See the workflow in `.github/workflows`.
+In GitHub Actions the “generate and build game” job runs the generator part first
+(for example by building `maze-module-generator`)
+then builds the app.
+
+This guarantees that the `maze-module-generator` JAR matches the current models and templates before tests execute.
+See the workflow definitions in `.github/workflows`.
 
 ---
 
@@ -97,27 +91,30 @@ In GitHub Actions, the “Generate and build game” job runs the generator firs
 
 Typical outputs include:
 
-* Data classes reflecting difficulty levels and parameters.
-* Utility functions derived from OCL invariants and derived features in the model.
-* Boilerplate to load and validate models at runtime.
+* Data classes reflecting difficulty levels, threat values and parameters.
+* Helper classes derived from model structure and OCL based rules.
+* Boilerplate to load, validate and expose model information at runtime.
 
-Everything lands under `mazer-module-generator/src/main/java`, then `mazer-module-generator` packages it as a jar. The game module declares a dependency on that jar and uses the generated types directly.
+Everything lands under the generated sources folder in `maze-module-generator`
+for example `maze-module-generator/src-gen`.
+`maze-module-generator` then packages these classes into a JAR, and the game module declares a dependency on that JAR and uses the generated types directly.
 
 ---
 
 ## When you change the model or templates
 
-* Edit the Ecore model or the `.mtl` templates.
-* Re-run the generator command shown above.
-* Commit the updated sources in `mazer-module-generator` so collaborators can build without running Acceleo locally.
-* If you want to regenerate automatically in CI only, you can keep local workflows the same and rely on the workflow job to refresh outputs.
+* Edit the Ecore model, XMI model instances or the `.mtl` templates in `maze-generator.acceleo`.
+* Re run the generator build
+  for example `mvn -pl maze-module-generator -am clean verify`.
+* Commit the updated sources in `maze-module-generator` if you intend collaborators to build without running Acceleo locally.
+* If you prefer to regenerate only in CI, you can let the workflow refresh outputs and keep local builds using the committed generated code.
 
 ---
 
 ## Troubleshooting
 
 * **“Cannot resolve … org.eclipse.core.runtime”**
-  Refresh the local mirror and clear Tycho cache:
+  Refresh the local mirror and clear the Tycho cache:
 
   ```powershell
   # Windows PowerShell
@@ -127,20 +124,27 @@ Everything lands under `mazer-module-generator/src/main/java`, then `mazer-modul
   ```
 
 * **Generator runs but no files appear**
-  Check that the launcher arguments point to `models/DifficultyGameData.xmi` and to `mazer-module-generator/src/main/java`, and verify that `HeadlessGeneratorApp` finds your root template.
+  Check that:
+
+  * the runner configuration points at the correct model files
+    for example `models/DifficultyGameData.xmi`
+  * the output folder is a writable directory inside `maze-module-generator`
+    for example `src-gen`
+  * the Acceleo `Generate` module is the one your runner actually calls.
 
 * **Template errors**
-  Acceleo exceptions are surfaced as a build failure from `HeadlessGeneratorApp`. Open the build log to see the exact template and line number.
+  Acceleo exceptions are surfaced as build failures from the headless runner.
+  Open the build log to find the exact template and line number.
 
 ---
 
 ## Why Acceleo here
 
-* Keeps model and code in sync with a single source of truth.
+* Keeps models and generated code in sync with a single source of truth.
 * Encodes mapping rules once in templates, avoiding repetitive boilerplate.
-* Plays well with Tycho and EMF, so it runs the same locally and in CI, online or offline.
+* Integrates cleanly with Tycho, EMF and Maven so it runs the same locally and in CI, online or offline.
 
-If you want to dive into the details, open the module READMEs:
+For more details, see:
 
 * [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner/readme.md)
-* [`mazer-module-generator`](./mazer-module-generator/readme.md)
+* [`maze-module-generator`](./maze-module-generator/readme.md)
