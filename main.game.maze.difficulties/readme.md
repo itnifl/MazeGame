@@ -185,3 +185,43 @@ When maintaining this module, a few guidelines help keep it robust and understan
   A short comment or description for each field makes tuning easier and reduces the risk of misinterpretation.
 
 By following these ideas, `main.game.maze.difficulties` remains the central and reliable authority for how challenging MazeGame should be on each setting.
+
+## OCL constraints and code based constraints
+
+The difficulties module combines model level validation using OCL with runtime checks in Java code.
+The goal is to keep difficulty definitions safe and consistent both at design time and at runtime.
+
+### OCL constraints on the EMF model
+
+The EMF based difficulty model carries a set of OCL invariants that are evaluated whenever the model is validated.
+Typical rules include
+
+* Global threat limits
+  The maximum allowed threat for a difficulty must be non negative and above a configurable minimum.
+
+* Per opponent threat consistency
+  Each opponent entry on a difficulty must have a non negative threat contribution and a cap that is compatible with the global maximum threat.
+
+* Composition rules
+  The sum of all per opponent caps must not exceed what the maximum threat and other limits can realistically support.
+
+* Structural sanity checks
+  All required references such as links to opponent types or difficulty categories must be set, and identifier fields must be unique within the model.
+
+These constraints are usually defined as OCL expressions attached to the corresponding EClasses.
+They are evaluated by the EMF validation framework and are meant to catch configuration errors as early as possible during modelling.
+
+### Code level constraints and guards
+
+In addition to OCL, the runtime services for difficulties enforce a number of code level constraints.
+They act as a second line of defence in case invalid data slips through or is constructed programmatically.
+
+Typical responsibilities of the code based checks include
+
+* Guarding against missing or inconsistent data when looking up caps or multipliers.
+* Enforcing that the threat used by opponent factories never exceeds the configured maximum threat for the current difficulty.
+* Ensuring that unknown opponent types cannot be spawned on a given difficulty.
+* Providing safe default values or clear exceptions when the difficulty configuration is incomplete.
+
+Together, the OCL constraints and the code based guards ensure that a difficulty profile is both well formed as data and safe to use at runtime.
+Model constraints keep the persisted definitions clean, while runtime constraints protect the game from invalid inputs and illegal states.
