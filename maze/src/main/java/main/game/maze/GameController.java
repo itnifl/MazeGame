@@ -36,6 +36,8 @@ import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.difficulties.HardDifficulty;
+import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
@@ -307,14 +309,20 @@ public class GameController implements Initializable {
         double wallLength = StageConstants.WallSegmentLengthPx; // Defined in requirements
         
         // Use WOOD_BASIC as default for now, or fetch from logic if available
-        WallRegistry.WallDefinition defaultWallDef = WallRegistry.get("WOOD_BASIC");
+
+        var wallType = WallRegistry.get("DIRT_BASIC");
+        if(startDifficulty instanceof HardDifficulty) {
+            wallType = WallRegistry.get("STEEL_SOLID");
+        } else if(startDifficulty instanceof NormalDifficulty) {
+            wallType = WallRegistry.get("WOOD_BASIC");
+        }
         
         // Ensure image is loaded
-        Image wallImage = getOrLoadImage(defaultWallDef);
+        Image wallImage = getOrLoadImage(wallType);
 
         for (Vector2D vector : vectors) {
             // Register mapping: Vector -> Graphic/Wall Definition
-            vectorWallMap.put(vector, defaultWallDef);
+            vectorWallMap.put(vector, wallType);
 
             double startX = vector.getStart().getX();
             double startY = vector.getStart().getY();
@@ -496,18 +504,6 @@ public class GameController implements Initializable {
         gameBoard.getChildren().remove(node);
     }
 
-    public void dispose() {
-        if (runComputerCharacters != null) runComputerCharacters.cancel();
-        if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
-
-        if (winarea != null && playerCharacter != null) {
-            playerCharacter.removePositionSubscriber(winarea);
-        }
-        if (playerCharacter != null) {
-            playerCharacter.dispose();
-        }
-    }
-
     public void showInfectionWarning() {
         // Implementation for infection warning
     }
@@ -619,5 +615,17 @@ public class GameController implements Initializable {
     // Accessor for the map if needed by other components
     public Map<Vector2D, WallRegistry.WallDefinition> getVectorWallMap() {
         return vectorWallMap;
+    }
+
+    public void dispose() {
+        if (runComputerCharacters != null) runComputerCharacters.cancel();
+        if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
+
+        if (winarea != null && playerCharacter != null) {
+            playerCharacter.removePositionSubscriber(winarea);
+        }
+        if (playerCharacter != null) {
+            playerCharacter.dispose();
+        }
     }
 }

@@ -3,6 +3,8 @@ package main.game.maze.mazeworld.constants;
 public class StageConstants {
     public final static int BoardMaxX = 800;
     public final static int BoardMaxY = 600;
+    public final static int BoardMaxXMedium = 1100;
+    public final static int BoardMaxYMedium = 800;
     public final static int BoardMaxXLarge = 1400;
     public final static int BoardMaxYLarge = 1000;
     public final static int TouchDistance = 40;
