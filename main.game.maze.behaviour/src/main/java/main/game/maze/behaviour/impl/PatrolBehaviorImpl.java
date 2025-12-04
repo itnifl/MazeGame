@@ -31,6 +31,7 @@ import main.game.maze.behaviour.Position;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
+import main.game.maze.mazeworld.Point2D;
 
 /**
  * <!-- begin-user-doc -->
@@ -563,9 +564,9 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 				}
 
 				// Snap start and goal to nodes
-				javafx.geometry.Point2D startPt = new javafx.geometry.Point2D(
+				Point2D startPt = new Point2D(
 					getPosition().getPosX(), getPosition().getPosY());
-				javafx.geometry.Point2D goalPt = new javafx.geometry.Point2D(
+				Point2D goalPt = new Point2D(
 					target.getPosX(), target.getPosY());
 
 				MazeNavigationGraph.Node startNode = graph.snapToNode(startPt);

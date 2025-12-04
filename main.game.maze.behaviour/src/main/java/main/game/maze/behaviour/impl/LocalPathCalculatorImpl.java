@@ -8,8 +8,7 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
-import javafx.geometry.Point2D;
-import main.game.maze.MazeWorld;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;

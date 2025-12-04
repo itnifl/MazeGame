@@ -14,7 +14,6 @@ import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
-import javafx.scene.image.Image;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
