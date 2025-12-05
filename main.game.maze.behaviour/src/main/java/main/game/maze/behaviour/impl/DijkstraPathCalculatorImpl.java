@@ -68,59 +68,41 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 
 	@Override
 	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target) {
+		
+		// Initialize cost and origin tracking structures
 		MazeNavigationGraph graph = GameMazeWorld.GetWorld().getNavigationGraph();
-	
-		int width  = graph.getGrid().length;
-		int height = graph.getGrid()[0].length;
-	
-		int[][] accumulatedCosts = new int[width][height];
-		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[width][height];
+		int[][] accumulatedCosts = new int[graph.getGrid().length][graph.getGrid()[0].length];
+		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[graph.getGrid().length][graph.getGrid()[0].length];
 		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
-	
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		for (int x=0; x < graph.getGrid().length; x++) {
+			for (int y=0; y < graph.getGrid()[0].length; y++) {
 				accumulatedCosts[x][y] = Integer.MAX_VALUE;
 				originsNodes[x][y] = null;
 			}
 		}
-	
-		accumulatedCosts[start.getCol()][start.getRow()] = 0;
-	
+
+		// Compute nodes costs
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
 		queue.add(start);
-	
-		int maxPath = getMaxPathLength();
-		boolean unlimited = (maxPath <= 0);
-
-		while (!queue.isEmpty()) {
+		while (queue.isEmpty() == false) {
 			MazeNavigationGraph.Node current = queue.poll();
-			int baseCost = accumulatedCosts[current.getCol()][current.getRow()];
-	
-			for (MazeNavigationGraph.Node node : current.getNeighbors()) {
-				int newCost = baseCost + 1;
-	
+			for (var node : current.getNeighbors()) {
+				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
-					if (unlimited || newCost < maxPath) {
-						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
+					if (newCost < this.getMaxPathLength()) {
+						accumulatedCosts[node.getCol()][node.getRow()] = (int)newCost;
 						originsNodes[node.getCol()][node.getRow()] = current;
 						queue.add(node);
-					} else {
-						endNodes.add(node);
+					}
+					else {
+						endNodes.add(current);
 					}
 				}
 			}
 		}
-	
-		MazeNavigationGraph.Node bestTarget = target;
-		if (originsNodes[target.getCol()][target.getRow()] == null && !endNodes.isEmpty()) {
-			bestTarget = nearestNode(endNodes, target);
-		}
-	
-		if (bestTarget == null) {
-			return new BasicEList<>();
-		}
-	
-		return reconstructPath(originsNodes, bestTarget);
+
+		// Reconstruct path
+		return reconstructPath(originsNodes, nearestNode(endNodes, target));
 	}
 	
 	/**
