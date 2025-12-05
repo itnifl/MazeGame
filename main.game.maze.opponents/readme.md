@@ -159,5 +159,5 @@ Following this sequence ensures that new opponents are introduced in a consisten
 When evolving this module it is useful to follow a few guiding principles.
 
 - Keep opponent definitions declarative  
-  Opponents should be data driven.  
-  Behaviour, pathfinding and other
+- Opponents should be data driven.  
+- Behaviour, pathfinding and other.

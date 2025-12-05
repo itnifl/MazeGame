@@ -19,7 +19,7 @@ The actual code generation is executed either inside Eclipse or via the companio
 
 ## What the generator produces
 
-The Acceleo templates in this project generate several kinds of output for MazeGame, for example
+The Acceleo templates in this project generate several kinds of output for MazeGame, for example:
 
 - Java types that mirror the EMF models  
   such as enums, data classes and registries for walls, opponents and difficulties

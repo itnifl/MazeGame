@@ -1,6 +1,7 @@
 # main.game.maze.walls
 
-This module contains the Ecore wall model. The module [maze-generator.acceleo ](../maze-generator.acceleo/readme.md) uses model and its generated together with a corresponding xmi to generate a Wall registry. 
+This module contains the Ecore wall model. The module [maze-generator.acceleo ](../maze-generator.acceleo/readme.md) uses this 
+model and its generated together with a corresponding xmi to generate a Wall registry. 
 It defines what kinds of walls exist in the game, how they look, and how set the parameters related to later character interaction with them.
 
 Typical responsibilities:

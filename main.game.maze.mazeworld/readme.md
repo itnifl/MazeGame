@@ -59,14 +59,17 @@ On top of this grid it builds walls, openings and collision data.
 
 Typical structure
 
-* A two dimensional grid
+* A two dimensional grid. 
+  
   For example a matrix of cells where each cell knows which neighbours it has and on which edges there are walls.
 
 * Wall geometry
+  
   MazeWorld generates line segments or rectangles that represent walls in world space.
   These are used both for drawing and for collision detection.
 
-* Connection to the wall module
+* Connection to the wall module. 
+  
   The properties of walls such as material, health and whether they are breakable come from the main dot game dot maze dot walls module.
   MazeWorld only decides where each wall goes and how it is represented in the level.
 
@@ -81,7 +84,7 @@ With this division of responsibility
 
 Navigation is handled by a graph structure inside this module, often called MazeNavigationGraph or something similar.
 
-Its main tasks
+Its main tasks:
 
 * Create nodes for all reachable cells or positions in the grid
 * Connect nodes with edges wherever movement is allowed
@@ -89,7 +92,7 @@ Its main tasks
 
 Other modules for behaviour can attach path calculators to this graph, for example implementations of Dijkstra or A star like algorithms for patrol, chase and flee behaviours.
 
-The typical flow is
+The typical flow is:
 
 * MazeWorld builds the grid and walls
 * The navigation graph scans this grid and builds a graph
@@ -103,15 +106,19 @@ The typical flow is
 MazeWorld stands in the middle between several parts of the system.
 
 * Wall definitions
+  
   It uses the definitions from the walls module to know which wall type to place where, which image each wall should use and which properties it has.
 
 * Difficulty definitions
+  
   It reads difficulty settings to decide board size, enemy density, wall density and other parameters that shape each level.
 
 * Opponents and behaviour
+  
   Enemy and behaviour modules ask MazeWorld about valid positions, pathfinding, line of sight and collision information.
 
 * User interface and rendering
+  
   The rendering layer asks MazeWorld which cells and walls to draw, where the player is located and where the camera or viewport should be.
 
 This makes MazeWorld the logical centre of the game world while still keeping it independent from any concrete user interface technology.
