@@ -25,6 +25,10 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import java.util.Random;
+import main.game.maze.behaviour.Position;
+import main. game.maze.behaviour.PathCalculator;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Patrol Behavior</b></em>'.
@@ -43,6 +47,15 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @generated
  */
 public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBehavior {
+	
+	// @generated NOT
+	private static final Random rng = new Random();
+	private static final double EPSILON = 0.5; // arrival tolerance
+	private static final long PLACEHOLDER_WAIT_MS = 800L; // placeholder wait time
+	
+	private transient long waitRemainingMs = 0L;
+	private transient long lastTickTime = 0L;
+	
 	/**
 	 * The cached value of the '{@link #getPath() <em>Path</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -278,14 +291,46 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Advances currentIndex to the next patrol point based on the behavior mode.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void nextIndex() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    int size = getPath().size();
+	    if (size == 0) return;
+	    
+	    int cur = getCurrentIndex();
+	    int next;
+	    
+	    PatrolPathBehavior mode = getBehavior();
+	    if (mode == null) mode = PatrolPathBehavior.LOOP;
+	    
+	    switch (mode) {
+	        case LOOP:
+	            next = (cur + 1) % size;
+	            break;
+	        case RANDOM:
+	        	// random point but not the current
+	            if (size == 1) {
+	                next = 0;
+	            } else {
+	                next = rng.nextInt(size);
+	                while (next == cur) {
+	                    next = rng.nextInt(size);
+	                }
+	            }
+	            break;
+	        case BACKWARD:
+	            // cyclic decrement: 2 -> 1 -> 0 -> 2 -> 1 -> ... 
+	            next = (cur - 1 + size) % size;
+	            break;
+	        default:
+	            next = (cur + 1) % size;
+	            break;
+	    }
+	    
+	    setCurrentIndex(next);
 	}
 
 	/**
@@ -436,6 +481,165 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		result.append(behavior);
 		result.append(')');
 		return result.toString();
+	}
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * Performs one movement tick: computes path to current target, moves along it,
+	 * detects arrival, triggers events, and advances to next patrol point. 
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public void move() {
+	    // Sanity checks
+	    if (getPath() == null || getPath().isEmpty()) {
+	        return;
+	    }
+	    if (getPosition() == null) {
+	        return;
+	    }
+	    
+	    // Calculate deltaMs since last tick
+	    long now = System.currentTimeMillis();
+	    long deltaMs = (lastTickTime == 0) ? 60L : (now - lastTickTime);
+	    lastTickTime = now;
+	    
+	    // Handle waiting at patrol point
+	    if (waitRemainingMs > 0) {
+	        waitRemainingMs = Math.max(0, waitRemainingMs - deltaMs);
+	        return; // still waiting, no movement
+	    }
+
+	    // Single-point path: stay in place, trigger events once
+	    if (getPath().size() == 1) {
+	        PatrolPoint single = getPath().get(0);
+	        // Snap to the single point if not already there
+	        Position target = single.getPoint();
+	        if (target != null && distance(getPosition(), target) > EPSILON) {
+	            getPosition().setPosX(target.getPosX());
+	            getPosition().setPosY(target.getPosY());
+	        }
+	        // Trigger events and wait (only once handled by wait timer)
+	        try {
+	            single.triggerEvents();
+	        } catch (Exception ignore) {}
+	        waitRemainingMs = PLACEHOLDER_WAIT_MS;
+	        return;
+	    }
+
+	    // Get current target patrol point
+	    int idx = getCurrentIndex();
+	    if (idx < 0 || idx >= getPath().size()) {
+	        setCurrentIndex(0);
+	        idx = 0;
+	    }
+	    PatrolPoint targetPoint = getPath(). get(idx);
+	    Position target = targetPoint.getPoint();
+ 
+	    if (target == null) {
+	        nextIndex();
+	        return;
+	    }
+
+	    // If nextPositions is empty, compute path to target
+	    if (getNextPositions(). isEmpty()) {
+	        PathCalculator pc = getPathcalculator();
+	        if (pc == null) {
+	            // No path calculator: skip to next index
+	            nextIndex();
+	            return;
+	        }
+	        try {
+	            EList<Position> computed = pc.compute(target);
+	            if (computed == null || computed.isEmpty()) {
+	                // No path found: skip to next index
+	                nextIndex();
+	                return;
+	            }
+	            // Copy computed path to nextPositions
+	            getNextPositions().clear();
+	            for (Position p : computed) {
+	                Position copy = main.game.maze. behaviour.BehaviourFactory.eINSTANCE.createPosition();
+	                copy.setPosX(p.getPosX());
+	                copy.setPosY(p.getPosY());
+	                getNextPositions().add(copy);
+	            }
+	            // Drop first node if equals current position
+	            if (! getNextPositions(). isEmpty() && distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
+	                getNextPositions().remove(0);
+	            }
+	        } catch (Exception ex) {
+	            // On error, skip to next index
+	            nextIndex();
+	            return;
+	        }
+	    }
+
+	    // If still no path, skip to next index
+	    if (getNextPositions().isEmpty()) {
+	        nextIndex();
+	        return;
+	    }
+
+	    // Get movement speed from CharacterType
+	    double movementSpeed = 2.0; // default fallback
+	    try {
+	        if (getCharactertype() != null) {
+	            movementSpeed = getCharactertype().getMovementSpeed();
+	        }
+	    } catch (Exception ignore) {}
+
+	    // Consume movement along the path
+	    double allowed = movementSpeed;
+	    Position currentPos = getPosition();
+
+	    while (allowed > 0 && ! getNextPositions(). isEmpty()) {
+	        Position nextNode = getNextPositions().get(0);
+	        double seg = distance(currentPos, nextNode);
+	        
+	        if (seg <= allowed + EPSILON) {
+	            // Snap to node
+	            currentPos. setPosX(nextNode.getPosX());
+	            currentPos.setPosY(nextNode.getPosY());
+	            getNextPositions().remove(0);
+	            allowed -= seg;
+	        } else {
+	            // Interpolate toward nextNode
+	            double frac = allowed / seg;
+	            double nx = currentPos.getPosX() + (nextNode.getPosX() - currentPos.getPosX()) * frac;
+	            double ny = currentPos. getPosY() + (nextNode.getPosY() - currentPos.getPosY()) * frac;
+	            currentPos. setPosX(nx);
+	            currentPos.setPosY(ny);
+	            allowed = 0;
+	        }
+	    }
+
+	    // Check arrival at target patrol point
+	    if (getNextPositions(). isEmpty() && distance(currentPos, target) <= EPSILON) {
+	        // Snap exactly to target
+	        currentPos.setPosX(target.getPosX());
+	        currentPos.setPosY(target.getPosY());
+
+	        // Trigger patrol point events
+	        try {
+	            targetPoint.triggerEvents();
+	        } catch (Exception ignore) {}
+
+	        // Set wait timer
+	        waitRemainingMs = PLACEHOLDER_WAIT_MS;
+
+	        // Advance to next patrol point
+	        nextIndex();
+	    }
+	}
+
+	// Helper method for Euclidean distance
+	private double distance(Position a, Position b) {
+	    if (a == null || b == null) return Double.MAX_VALUE;
+	    double dx = a.getPosX() - b.getPosX();
+	    double dy = a.getPosY() - b.getPosY();
+	    return Math.hypot(dx, dy);
 	}
 
 } //PatrolBehaviorImpl

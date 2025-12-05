@@ -22,6 +22,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
+import org. eclipse.emf. common.util. BasicEList;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Path Calculator</b></em>'.

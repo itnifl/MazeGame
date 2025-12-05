@@ -12,6 +12,14 @@
   <packaging>jar</packaging>
   <name>maze-module-generator</name>
 
+<dependencies>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.walls</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
         <plugin>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- /maze-generator.acceleo/plugin.xml -->
 <plugin>
-
+  <!-- Opponents + difficulties -->
   <extension
         id="main.game.maze.gen.RunAcceleo"
         point="org.eclipse.core.runtime.applications">
@@ -9,8 +9,19 @@
           cardinality="singleton-global"
           thread="main"
           visible="false">
-      <run
-          class="main.game.maze.gen.HeadlessGeneratorApp"/>
+      <run class="main.game.maze.gen.HeadlessGeneratorApp"/>
+    </application>
+  </extension>
+
+  <!-- Walls -->
+  <extension
+        id="main.game.maze.gen.HeadlessWallsApp"
+        point="org.eclipse.core.runtime.applications">
+    <application
+          cardinality="singleton-global"
+          thread="main"
+          visible="false">
+      <run class="main.game.maze.gen.HeadlessWallsApp"/>
     </application>
   </extension>
 

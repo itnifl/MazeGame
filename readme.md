@@ -71,6 +71,7 @@ This project prefers JDK 25 and JavaFX 25.
   * ⬇️ Maven for Java (Required)
   * ⬇️ Debugger for Java (Required)
   * ⬇️ Test Runner for Java (Required)
+  * ⬇️ Maven Dependency Explorer (Optional)
   * ⬇️ XML by Red Hat (Optional)
   * ⬇️ OSGi for VS Code (Optional)
   * ⬇️ YAML by Red Hat (Optional)

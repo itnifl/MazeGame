@@ -216,5 +216,23 @@ public class SpeedEventImpl extends CharacterEventImpl implements SpeedEvent {
 		result.append(')');
 		return result.toString();
 	}
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * Notifies the subscriber with this SpeedEvent if probability check passes.
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public void notifySubscribers() {
+	    if (!shouldFire()) return;
+	    
+	    MovementBehavior sub = getSubscriber();
+	    if (sub != null) {
+	        try {
+	            sub.update(this);
+	        } catch (Exception ignore) {}
+	    }
+	}
 
 } //SpeedEventImpl

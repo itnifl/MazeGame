@@ -135,14 +135,25 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 
 	/**
 	 * <!-- begin-user-doc -->
+	 * Triggers all events attached to this patrol point.
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public void triggerEvents() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	    EList<CharacterEvent> evts = getEvents();
+	    if (evts == null || evts.isEmpty()) {
+	        return;
+	    }
+	    for (CharacterEvent event : evts) {
+	        if (event != null) {
+	            try {
+	                event. notifySubscribers();
+	            } catch (Exception ignore) {
+	                // Continue with other events even if one fails
+	            }
+	        }
+	    }
 	}
 
 	/**
