@@ -84,12 +84,14 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 			}
 		}
 	
-		// Fix １: Start node må være kostnad null
 		accumulatedCosts[start.getCol()][start.getRow()] = 0;
 	
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
 		queue.add(start);
 	
+		int maxPath = getMaxPathLength();
+		boolean unlimited = (maxPath <= 0);
+
 		while (!queue.isEmpty()) {
 			MazeNavigationGraph.Node current = queue.poll();
 			int baseCost = accumulatedCosts[current.getCol()][current.getRow()];
@@ -98,7 +100,7 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 				int newCost = baseCost + 1;
 	
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
-					if (newCost < getMaxPathLength()) {
+					if (unlimited || newCost < maxPath) {
 						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
 						originsNodes[node.getCol()][node.getRow()] = current;
 						queue.add(node);
@@ -109,7 +111,6 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 			}
 		}
 	
-		// Fix ２: Hvis target er nådd, bruk det direkte
 		MazeNavigationGraph.Node bestTarget = target;
 		if (originsNodes[target.getCol()][target.getRow()] == null && !endNodes.isEmpty()) {
 			bestTarget = nearestNode(endNodes, target);

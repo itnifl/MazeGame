@@ -68,7 +68,7 @@
       <speed>0.8</speed>
       <threatLevel>1.0</threatLevel>
       <attackDamage>2</attackDamage>
-      <behavior>WANDER</behavior>
+      <behavior>PATROL</behavior>
       <ImageBase>/main/game/maze/zombie1-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie1-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/zombie1-right.png</ImageTurnRight>
