@@ -3,6 +3,7 @@
 package main.game.maze.behaviour.impl;
 
 import main.game.maze.behaviour.BehaviourPackage;
+import main.game.maze.behaviour.MovementBehavior;
 import main.game.maze.behaviour.SpeedEvent;
 
 import org.eclipse.emf.common.notify.Notification;

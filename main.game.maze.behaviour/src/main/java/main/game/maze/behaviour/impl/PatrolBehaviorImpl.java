@@ -12,6 +12,7 @@ import main.game.maze.behaviour.PatrolPathBehavior;
 import main.game.maze.behaviour.PatrolPoint;
 
 import main.game.maze.behaviour.PatrolZone;
+
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -26,8 +27,11 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import java.util.Random;
+
 import main.game.maze.behaviour.Position;
 import main. game.maze.behaviour.PathCalculator;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
@@ -551,7 +555,9 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	            return;
 	        }
 	        try {
-	            EList<Position> computed = pc.compute(target);
+				var mazeGraph = GameMazeWorld.GetWorld().getNavigationGraph();
+	            EList<MazeNavigationGraph.Node> computed = pc.compute(mazeGraph.snapToNode(getPosition().toPoint2D()),
+	                                                 mazeGraph.snapToNode(target.toPoint2D()));
 	            if (computed == null || computed.isEmpty()) {
 	                // No path found: skip to next index
 	                nextIndex();
@@ -559,10 +565,10 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	            }
 	            // Copy computed path to nextPositions
 	            getNextPositions().clear();
-	            for (Position p : computed) {
-	                Position copy = main.game.maze. behaviour.BehaviourFactory.eINSTANCE.createPosition();
-	                copy.setPosX(p.getPosX());
-	                copy.setPosY(p.getPosY());
+	            for (MazeNavigationGraph.Node p : computed) {
+	                Position copy = main.game.maze.behaviour.BehaviourFactory.eINSTANCE.createPosition();
+	                copy.setPosX(p.getX());
+	                copy.setPosY(p.getY());
 	                getNextPositions().add(copy);
 	            }
 	            // Drop first node if equals current position
@@ -586,7 +592,7 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 	    double movementSpeed = 2.0; // default fallback
 	    try {
 	        if (getCharactertype() != null) {
-	            movementSpeed = getCharactertype().getMovementSpeed();
+	            movementSpeed = getCharactertype().getSpeed();
 	        }
 	    } catch (Exception ignore) {}
 

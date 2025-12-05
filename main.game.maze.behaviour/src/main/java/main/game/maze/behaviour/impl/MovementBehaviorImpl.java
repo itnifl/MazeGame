@@ -490,17 +490,17 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply flat amount
 	        if (amount != 0) {
-	            int currentHp = ct.getHitPoints();
-	            ct.setHitPoints(currentHp + amount);
+	            int currentHp = ct.getHealth();
+	            ct.setHealth(currentHp + amount);
 	        }
 	        
 	        // Apply percentage (e.g., heal 10% of max HP)
-	        if (percentage != 0) {
-	            int maxHp = ct. getMaxHitPoints();
-	            int currentHp = ct. getHitPoints();
-	            int delta = (int) (maxHp * percentage);
-	            ct.setHitPoints(currentHp + delta);
-	        }
+	        // if (percentage != 0) {
+	        //     int maxHp = ct.getMaxHealth();
+	        //     int currentHp = ct.getHealth();
+	        //     int delta = (int) (maxHp * percentage);
+	        //     ct.setHealth(currentHp + delta);
+	        // }
 	    } catch (Exception ignore) {}
 	}
 
@@ -521,16 +521,16 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        double amount = speedEvent.getSpeedAmount();
 	        double percentage = speedEvent.getSpeedPercentage();
 	        
-	        double currentSpeed = ct. getMovementSpeed();
+	        double currentSpeed = ct.getSpeed();
 	        
 	        // Apply flat amount
 	        if (amount != 0) {
-	            ct.setMovementSpeed(currentSpeed + amount);
+	            ct.setSpeed(currentSpeed + amount);
 	        }
 	        
 	        // Apply percentage multiplier
 	        if (percentage != 0) {
-	            ct.setMovementSpeed(currentSpeed * (1. 0 + percentage));
+	            ct.setSpeed(currentSpeed * (1 + percentage));
 	        }
 	    } catch (Exception ignore) {}
 	}
@@ -582,7 +582,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply percentage to multiplier
 	        if (percentage != 0) {
-	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1. 0 + percentage));
+	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1 + percentage));
 	        }
 	    } catch (Exception ignore) {}
 	}

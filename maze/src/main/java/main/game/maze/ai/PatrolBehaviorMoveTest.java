@@ -1,389 +1,393 @@
-package main.game.maze.ai;
+// package main.game.maze.ai;
 
-import main.game.maze.behaviour.BehaviourFactory;
-import main.game.maze.behaviour.PatrolBehavior;
-import main.game.maze.behaviour.PatrolPathBehavior;
-import main.game.maze.behaviour.PatrolPoint;
-import main.game.maze.behaviour.Position;
-import main.game.maze.behaviour.impl.PathCalculatorImpl;
+// import main.game.maze.behaviour.BehaviourFactory;
+// import main.game.maze.behaviour.PatrolBehavior;
+// import main.game.maze.behaviour.PatrolPathBehavior;
+// import main.game.maze.behaviour.PatrolPoint;
+// import main.game.maze.behaviour.Position;
+// import main.game.maze.behaviour.impl.PathCalculatorImpl;
 
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
+// import org.eclipse.emf.common.util.BasicEList;
+// import org.eclipse.emf.common.util.EList;
 
-/**
- * Test harness for PatrolBehavior. move() logic.
- * 
- * Simulates patrol movement by:
- * 1. Creating a PatrolBehavior with patrol points
- * 2. Using a mock PathCalculator that returns a straight-line path
- * 3. Calling move() repeatedly and printing position each tick
- * 
- * Run this class directly (has a main method). 
- */
-public class PatrolBehaviorMoveTest {
+// import javafx.scene.Node;
+// import main.game.maze.mazeworld.GameMazeWorld;
+// import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
-    // ========== Configuration ==========
-    private static final int TOTAL_TICKS = 300;
-    private static final long TICK_DELAY_MS = 100; // delay between ticks for readability
-    private static final double MOVEMENT_SPEED = 5.0; // distance units per tick
+// /**
+//  * Test harness for PatrolBehavior. move() logic.
+//  * 
+//  * Simulates patrol movement by:
+//  * 1. Creating a PatrolBehavior with patrol points
+//  * 2. Using a mock PathCalculator that returns a straight-line path
+//  * 3. Calling move() repeatedly and printing position each tick
+//  * 
+//  * Run this class directly (has a main method). 
+//  */
+// public class PatrolBehaviorMoveTest {
 
-    public static void main(String[] args) {
-        System.out.println("=== PatrolBehavior Move Test ===\n");
+//     // ========== Configuration ==========
+//     private static final int TOTAL_TICKS = 300;
+//     private static final long TICK_DELAY_MS = 100; // delay between ticks for readability
+//     private static final double MOVEMENT_SPEED = 5.0; // distance units per tick
 
-        // Create patrol points: a triangle path
-        // Point 0: (10, 10)
-        // Point 1: (100, 10)
-        // Point 2: (55, 80)
-        Position p0 = createPosition(10, 10);
-        Position p1 = createPosition(100, 10);
-        Position p2 = createPosition(55, 80);
-        Position p3 = createPosition(100, 50);
-        Position p4 = createPosition(20, 80);
+//     public static void main(String[] args) {
+//         System.out.println("=== PatrolBehavior Move Test ===\n");
 
-        PatrolPoint pp0 = createPatrolPoint(p0);
-        PatrolPoint pp1 = createPatrolPoint(p1);
-        PatrolPoint pp2 = createPatrolPoint(p2);
-        PatrolPoint pp3 = createPatrolPoint(p3);
-        PatrolPoint pp4 = createPatrolPoint(p4);
+//         // Create patrol points: a triangle path
+//         // Point 0: (10, 10)
+//         // Point 1: (100, 10)
+//         // Point 2: (55, 80)
+//         Position p0 = createPosition(10, 10);
+//         Position p1 = createPosition(100, 10);
+//         Position p2 = createPosition(55, 80);
+//         Position p3 = createPosition(100, 50);
+//         Position p4 = createPosition(20, 80);
 
-        // Create PatrolBehavior
-        PatrolBehavior patrol = BehaviourFactory.eINSTANCE.createPatrolBehavior();
-        patrol.getPath().add(pp0);
-        patrol.getPath().add(pp1);
-        patrol.getPath().add(pp2);
-        patrol.getPath().add(pp3);
-        patrol.getPath().add(pp4);
-        patrol.setCurrentIndex(0);
-        patrol.setBehavior(PatrolPathBehavior.LOOP); // Change to LOOP, BACKWARD or RANDOM to test other modes
+//         PatrolPoint pp0 = createPatrolPoint(p0);
+//         PatrolPoint pp1 = createPatrolPoint(p1);
+//         PatrolPoint pp2 = createPatrolPoint(p2);
+//         PatrolPoint pp3 = createPatrolPoint(p3);
+//         PatrolPoint pp4 = createPatrolPoint(p4);
 
-        // Set initial position (start at first patrol point)
-        Position currentPos = createPosition(10, 10);
-        patrol.setPosition(currentPos);
+//         // Create PatrolBehavior
+//         PatrolBehavior patrol = BehaviourFactory.eINSTANCE.createPatrolBehavior();
+//         patrol.getPath().add(pp0);
+//         patrol.getPath().add(pp1);
+//         patrol.getPath().add(pp2);
+//         patrol.getPath().add(pp3);
+//         patrol.getPath().add(pp4);
+//         patrol.setCurrentIndex(0);
+//         patrol.setBehavior(PatrolPathBehavior.LOOP); // Change to LOOP, BACKWARD or RANDOM to test other modes
 
-        // Create and set mock PathCalculator (extends PathCalculatorImpl for EMF compatibility)
-        MockPathCalculator mockCalc = new MockPathCalculator();
-        patrol.setPathcalculator(mockCalc);
+//         // Set initial position (start at first patrol point)
+//         Position currentPos = createPosition(10, 10);
+//         patrol.setPosition(currentPos);
 
-        System.out.println("Patrol Mode: " + patrol.getBehavior());
-        System.out.println("Patrol Points:");
-        for (int i = 0; i < patrol.getPath().size(); i++) {
-            Position pt = patrol.getPath().get(i).getPoint();
-            System.out.printf("  [%d] (%.1f, %.1f)%n", i, pt.getPosX(), pt.getPosY());
-        }
-        System.out.println("\nStarting simulation...\n");
-        System.out.println("Tick | CurrentIndex | Position (x, y)      | Status");
-        System.out.println("-----|--------------|----------------------|--------");
+//         // Create and set mock PathCalculator (extends PathCalculatorImpl for EMF compatibility)
+//         MockPathCalculator mockCalc = new MockPathCalculator();
+//         patrol.setPathcalculator(mockCalc);
 
-        // Create a testable patrol controller that we can step through
-        TestablePatrolBehavior testable = new TestablePatrolBehavior(patrol, MOVEMENT_SPEED, mockCalc);
+//         System.out.println("Patrol Mode: " + patrol.getBehavior());
+//         System.out.println("Patrol Points:");
+//         for (int i = 0; i < patrol.getPath().size(); i++) {
+//             Position pt = patrol.getPath().get(i).getPoint();
+//             System.out.printf("  [%d] (%.1f, %.1f)%n", i, pt.getPosX(), pt.getPosY());
+//         }
+//         System.out.println("\nStarting simulation...\n");
+//         System.out.println("Tick | CurrentIndex | Position (x, y)      | Status");
+//         System.out.println("-----|--------------|----------------------|--------");
 
-        for (int tick = 1; tick <= TOTAL_TICKS; tick++) {
-            String status = testable.tick();
+//         // Create a testable patrol controller that we can step through
+//         TestablePatrolBehavior testable = new TestablePatrolBehavior(patrol, MOVEMENT_SPEED, mockCalc);
 
-            Position pos = patrol.getPosition();
-            int idx = patrol.getCurrentIndex();
+//         for (int tick = 1; tick <= TOTAL_TICKS; tick++) {
+//             String status = testable.tick();
 
-            System.out.printf("%4d | %12d | (%7.2f, %7.2f)   | %s%n",
-                    tick, idx, pos.getPosX(), pos.getPosY(), status);
+//             Position pos = patrol.getPosition();
+//             int idx = patrol.getCurrentIndex();
 
-            // Small delay for readability
-            try {
-                Thread.sleep(TICK_DELAY_MS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
+//             System.out.printf("%4d | %12d | (%7.2f, %7.2f)   | %s%n",
+//                     tick, idx, pos.getPosX(), pos.getPosY(), status);
 
-        System.out.println("\n=== Simulation Complete ===");
-    }
+//             // Small delay for readability
+//             try {
+//                 Thread.sleep(TICK_DELAY_MS);
+//             } catch (InterruptedException e) {
+//                 Thread.currentThread().interrupt();
+//                 break;
+//             }
+//         }
 
-    // ========== Helper Methods ==========
+//         System.out.println("\n=== Simulation Complete ===");
+//     }
 
-    private static Position createPosition(double x, double y) {
-        Position p = BehaviourFactory.eINSTANCE.createPosition();
-        p.setPosX(x);
-        p.setPosY(y);
-        return p;
-    }
+//     // ========== Helper Methods ==========
 
-    private static PatrolPoint createPatrolPoint(Position pos) {
-        PatrolPoint pp = BehaviourFactory.eINSTANCE.createPatrolPoint();
-        pp.setPoint(pos);
-        return pp;
-    }
+//     private static Position createPosition(double x, double y) {
+//         Position p = BehaviourFactory.eINSTANCE.createPosition();
+//         p.setPosX(x);
+//         p.setPosY(y);
+//         return p;
+//     }
 
-    // ========== Mock PathCalculator ==========
+//     private static PatrolPoint createPatrolPoint(Position pos) {
+//         PatrolPoint pp = BehaviourFactory.eINSTANCE.createPatrolPoint();
+//         pp.setPoint(pos);
+//         return pp;
+//     }
 
-    /**
-     * Mock PathCalculator that returns a straight-line path from current position to target.
-     * Extends PathCalculatorImpl so it is compatible with EMF's InternalEObject requirements.
-     */
-    static class MockPathCalculator extends PathCalculatorImpl {
+//     // ========== Mock PathCalculator ==========
 
-        private Position lastKnownPosition = null;
+//     /**
+//      * Mock PathCalculator that returns a straight-line path from current position to target.
+//      * Extends PathCalculatorImpl so it is compatible with EMF's InternalEObject requirements.
+//      */
+//     static class MockPathCalculator extends PathCalculatorImpl {
 
-        public void setLastKnownPosition(Position pos) {
-            this.lastKnownPosition = pos;
-        }
+//         private Position lastKnownPosition = null;
 
-        @Override
-        public EList<Position> compute(Position target) {
-            EList<Position> path = new BasicEList<>();
+//         public void setLastKnownPosition(Position pos) {
+//             this.lastKnownPosition = pos;
+//         }
 
-            if (target == null) {
-                return path;
-            }
+//         @Override
+//         public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
+//             EList<MazeNavigationGraph.Node> path = new BasicEList<>();
 
-            // Use last known position as start
-            Position start = lastKnownPosition;
-            if (start == null) {
-                // Fallback: just return target
-                path.add(copyPosition(target));
-                return path;
-            }
+//             if (target == null) {
+//                 return path;
+//             }
 
-            double dx = target.getPosX() - start.getPosX();
-            double dy = target.getPosY() - start.getPosY();
-            double dist = Math.hypot(dx, dy);
+//             // Use last known position as start
+//             MazeNavigationGraph.Node current = origin;
+//             if (current == null) {
+//                 // Fallback: just return target
+//                 path.add(current);
+//                 return path;
+//             }
 
-            if (dist < 1.0) {
-                // Already at target
-                path.add(copyPosition(target));
-                return path;
-            }
+//             double dx = target.getX() - current.getX();
+//             double dy = target.getY() - current.getY();
+//             double dist = Math.hypot(dx, dy);
 
-            // Generate intermediate points every ~5 units
-            double stepSize = 5.0;
-            int steps = (int) Math.ceil(dist / stepSize);
+//             if (dist < 1.0) {
+//                 // Already at target
+//                 path.add(target);
+//                 return path;
+//             }
 
-            for (int i = 1; i <= steps; i++) {
-                double frac = (double) i / steps;
-                double x = start.getPosX() + dx * frac;
-                double y = start.getPosY() + dy * frac;
-                path.add(createPos(x, y));
-            }
+//             // Generate intermediate points every ~5 units
+//             double stepSize = 5.0;
+//             int steps = (int) Math.ceil(dist / stepSize);
 
-            return path;
-        }
+//             for (int i = 1; i <= steps; i++) {
+//                 double frac = (double) i / steps;
+//                 double x = current.getX() + dx * frac;
+//                 double y = current.getY() + dy * frac;
+//                 path.add(new MazeNavigationGraph.Node());
+//             }
 
-        private Position createPos(double x, double y) {
-            Position p = BehaviourFactory.eINSTANCE.createPosition();
-            p.setPosX(x);
-            p.setPosY(y);
-            return p;
-        }
+//             return path;
+//         }
 
-        private Position copyPosition(Position src) {
-            Position p = BehaviourFactory.eINSTANCE.createPosition();
-            p.setPosX(src.getPosX());
-            p.setPosY(src.getPosY());
-            return p;
-        }
-    }
+//         private Position createPos(double x, double y) {
+//             Position p = BehaviourFactory.eINSTANCE.createPosition();
+//             p.setPosX(x);
+//             p.setPosY(y);
+//             return p;
+//         }
 
-    // ========== Testable Patrol Behavior (simulates move() logic) ==========
+//         private Position copyPosition(Position src) {
+//             Position p = BehaviourFactory.eINSTANCE.createPosition();
+//             p.setPosX(src.getPosX());
+//             p.setPosY(src.getPosY());
+//             return p;
+//         }
+//     }
 
-    /**
-     * Encapsulates the move() logic for testing without modifying PatrolBehaviorImpl.
-     * This mirrors the logic that would go in PatrolBehaviorImpl.move(). 
-     */
-    static class TestablePatrolBehavior {
-        private final PatrolBehavior model;
-        private final double movementSpeed;
-        private final MockPathCalculator mockCalc;
-        private final EList<Position> nextPositions = new BasicEList<>();
-        private final java.util.Random rng = new java.util.Random();
+//     // ========== Testable Patrol Behavior (simulates move() logic) ==========
 
-        private static final double EPSILON = 0.5;
-        private static final long PLACEHOLDER_WAIT_MS = 800L;
-        private static final long TICK_MS = 60L; // simulated tick duration
+//     /**
+//      * Encapsulates the move() logic for testing without modifying PatrolBehaviorImpl.
+//      * This mirrors the logic that would go in PatrolBehaviorImpl.move(). 
+//      */
+//     static class TestablePatrolBehavior {
+//         private final PatrolBehavior model;
+//         private final double movementSpeed;
+//         private final MockPathCalculator mockCalc;
+//         private final EList<Position> nextPositions = new BasicEList<>();
+//         private final java.util.Random rng = new java.util.Random();
 
-        private long waitRemainingMs = 0L;
+//         private static final double EPSILON = 0.5;
+//         private static final long PLACEHOLDER_WAIT_MS = 800L;
+//         private static final long TICK_MS = 60L; // simulated tick duration
 
-        public TestablePatrolBehavior(PatrolBehavior model, double movementSpeed, MockPathCalculator mockCalc) {
-            this.model = model;
-            this.movementSpeed = movementSpeed;
-            this.mockCalc = mockCalc;
-        }
+//         private long waitRemainingMs = 0L;
 
-        /**
-         * Perform one tick.  Returns a status string for display.
-         */
-        public String tick() {
-            // Sanity checks
-            if (model.getPath() == null || model.getPath().isEmpty()) {
-                return "NO_PATH";
-            }
-            if (model.getPosition() == null) {
-                return "NO_POSITION";
-            }
+//         public TestablePatrolBehavior(PatrolBehavior model, double movementSpeed, MockPathCalculator mockCalc) {
+//             this.model = model;
+//             this.movementSpeed = movementSpeed;
+//             this.mockCalc = mockCalc;
+//         }
 
-            // Handle waiting at patrol point
-            if (waitRemainingMs > 0) {
-                waitRemainingMs = Math.max(0, waitRemainingMs - TICK_MS);
-                if (waitRemainingMs > 0) {
-                    return "WAITING (" + waitRemainingMs + "ms left)";
-                } else {
-                    nextPositions.clear();
-                    return "WAIT_DONE";
-                }
-            }
+//         /**
+//          * Perform one tick.  Returns a status string for display.
+//          */
+//         public String tick() {
+//             // Sanity checks
+//             if (model.getPath() == null || model.getPath().isEmpty()) {
+//                 return "NO_PATH";
+//             }
+//             if (model.getPosition() == null) {
+//                 return "NO_POSITION";
+//             }
 
-            // Single-point path: stay in place
-            if (model.getPath().size() == 1) {
-                PatrolPoint single = model.getPath().get(0);
-                Position target = single.getPoint();
-                Position currentPos = model.getPosition();
-                if (target != null && distance(currentPos, target) > EPSILON) {
-                    currentPos.setPosX(target.getPosX());
-                    currentPos.setPosY(target.getPosY());
-                }
-                waitRemainingMs = PLACEHOLDER_WAIT_MS;
-                return "SINGLE_POINT (waiting)";
-            }
+//             // Handle waiting at patrol point
+//             if (waitRemainingMs > 0) {
+//                 waitRemainingMs = Math.max(0, waitRemainingMs - TICK_MS);
+//                 if (waitRemainingMs > 0) {
+//                     return "WAITING (" + waitRemainingMs + "ms left)";
+//                 } else {
+//                     nextPositions.clear();
+//                     return "WAIT_DONE";
+//                 }
+//             }
 
-            // Get current target patrol point
-            int idx = model.getCurrentIndex();
-            if (idx < 0 || idx >= model.getPath().size()) {
-                model.setCurrentIndex(0);
-                idx = 0;
-            }
-            PatrolPoint targetPoint = model.getPath().get(idx);
-            Position target = targetPoint.getPoint();
+//             // Single-point path: stay in place
+//             if (model.getPath().size() == 1) {
+//                 PatrolPoint single = model.getPath().get(0);
+//                 Position target = single.getPoint();
+//                 Position currentPos = model.getPosition();
+//                 if (target != null && distance(currentPos, target) > EPSILON) {
+//                     currentPos.setPosX(target.getPosX());
+//                     currentPos.setPosY(target.getPosY());
+//                 }
+//                 waitRemainingMs = PLACEHOLDER_WAIT_MS;
+//                 return "SINGLE_POINT (waiting)";
+//             }
 
-            if (target == null) {
-                nextIndex();
-                return "NULL_TARGET (skipped)";
-            }
+//             // Get current target patrol point
+//             int idx = model.getCurrentIndex();
+//             if (idx < 0 || idx >= model.getPath().size()) {
+//                 model.setCurrentIndex(0);
+//                 idx = 0;
+//             }
+//             PatrolPoint targetPoint = model.getPath().get(idx);
+//             Position target = targetPoint.getPoint();
 
-            // If nextPositions is empty, compute path to target
-            if (nextPositions.isEmpty()) {
-                // Update mock calculator with current position before computing
-                mockCalc.setLastKnownPosition(model.getPosition());
+//             if (target == null) {
+//                 nextIndex();
+//                 return "NULL_TARGET (skipped)";
+//             }
 
-                try {
-                    EList<Position> computed = mockCalc.compute(target);
-                    if (computed == null || computed.isEmpty()) {
-                        nextIndex();
-                        return "EMPTY_PATH (skipped)";
-                    }
-                    nextPositions.clear();
-                    for (Position p : computed) {
-                        Position copy = BehaviourFactory.eINSTANCE.createPosition();
-                        copy.setPosX(p.getPosX());
-                        copy.setPosY(p.getPosY());
-                        nextPositions.add(copy);
-                    }
-                    // Drop first node if equals current position
-                    if (!nextPositions.isEmpty() &&
-                            distance(model.getPosition(), nextPositions.get(0)) <= EPSILON) {
-                        nextPositions.remove(0);
-                    }
-                } catch (Exception ex) {
-                    nextIndex();
-                    return "PATH_ERROR: " + ex.getMessage();
-                }
-            }
+//             // If nextPositions is empty, compute path to target
+//             if (nextPositions.isEmpty()) {
+//                 // Update mock calculator with current position before computing
+//                 mockCalc.setLastKnownPosition(model.getPosition());
 
-            // If still no path, skip to next index
-            if (nextPositions.isEmpty()) {
-                nextIndex();
-                return "NO_PATH_NODES (skipped)";
-            }
+//                 try {
+//                     EList<Position> computed = mockCalc.compute(target);
+//                     if (computed == null || computed.isEmpty()) {
+//                         nextIndex();
+//                         return "EMPTY_PATH (skipped)";
+//                     }
+//                     nextPositions.clear();
+//                     for (Position p : computed) {
+//                         Position copy = BehaviourFactory.eINSTANCE.createPosition();
+//                         copy.setPosX(p.getPosX());
+//                         copy.setPosY(p.getPosY());
+//                         nextPositions.add(copy);
+//                     }
+//                     // Drop first node if equals current position
+//                     if (!nextPositions.isEmpty() &&
+//                             distance(model.getPosition(), nextPositions.get(0)) <= EPSILON) {
+//                         nextPositions.remove(0);
+//                     }
+//                 } catch (Exception ex) {
+//                     nextIndex();
+//                     return "PATH_ERROR: " + ex.getMessage();
+//                 }
+//             }
 
-            // Consume movement along the path
-            double allowed = movementSpeed;
-            Position currentPos = model.getPosition();
-            boolean moved = false;
+//             // If still no path, skip to next index
+//             if (nextPositions.isEmpty()) {
+//                 nextIndex();
+//                 return "NO_PATH_NODES (skipped)";
+//             }
 
-            while (allowed > 0 && ! nextPositions.isEmpty()) {
-                Position nextNode = nextPositions.get(0);
-                double seg = distance(currentPos, nextNode);
+//             // Consume movement along the path
+//             double allowed = movementSpeed;
+//             Position currentPos = model.getPosition();
+//             boolean moved = false;
 
-                if (seg <= allowed + EPSILON) {
-                    // Snap to node
-                    currentPos.setPosX(nextNode.getPosX());
-                    currentPos.setPosY(nextNode.getPosY());
-                    nextPositions.remove(0);
-                    allowed -= seg;
-                    moved = true;
-                } else {
-                    // Interpolate toward nextNode
-                    double frac = allowed / seg;
-                    double nx = currentPos.getPosX() + (nextNode.getPosX() - currentPos.getPosX()) * frac;
-                    double ny = currentPos.getPosY() + (nextNode.getPosY() - currentPos.getPosY()) * frac;
-                    currentPos.setPosX(nx);
-                    currentPos.setPosY(ny);
-                    allowed = 0;
-                    moved = true;
-                }
-            }
+//             while (allowed > 0 && ! nextPositions.isEmpty()) {
+//                 Position nextNode = nextPositions.get(0);
+//                 double seg = distance(currentPos, nextNode);
 
-            // Check arrival at target patrol point
-            if (nextPositions.isEmpty() && distance(currentPos, target) <= EPSILON) {
-                // Snap exactly to target
-                currentPos.setPosX(target.getPosX());
-                currentPos.setPosY(target.getPosY());
+//                 if (seg <= allowed + EPSILON) {
+//                     // Snap to node
+//                     currentPos.setPosX(nextNode.getPosX());
+//                     currentPos.setPosY(nextNode.getPosY());
+//                     nextPositions.remove(0);
+//                     allowed -= seg;
+//                     moved = true;
+//                 } else {
+//                     // Interpolate toward nextNode
+//                     double frac = allowed / seg;
+//                     double nx = currentPos.getPosX() + (nextNode.getPosX() - currentPos.getPosX()) * frac;
+//                     double ny = currentPos.getPosY() + (nextNode.getPosY() - currentPos.getPosY()) * frac;
+//                     currentPos.setPosX(nx);
+//                     currentPos.setPosY(ny);
+//                     allowed = 0;
+//                     moved = true;
+//                 }
+//             }
 
-                // Set wait timer
-                waitRemainingMs = PLACEHOLDER_WAIT_MS;
+//             // Check arrival at target patrol point
+//             if (nextPositions.isEmpty() && distance(currentPos, target) <= EPSILON) {
+//                 // Snap exactly to target
+//                 currentPos.setPosX(target.getPosX());
+//                 currentPos.setPosY(target.getPosY());
 
-                // Advance to next patrol point
-                int prevIdx = model.getCurrentIndex();
-                nextIndex();
-                int newIdx = model.getCurrentIndex();
+//                 // Set wait timer
+//                 waitRemainingMs = PLACEHOLDER_WAIT_MS;
 
-                return "ARRIVED at point " + prevIdx + " -> next " + newIdx;
-            }
+//                 // Advance to next patrol point
+//                 int prevIdx = model.getCurrentIndex();
+//                 nextIndex();
+//                 int newIdx = model.getCurrentIndex();
 
-            return moved ? "MOVING" : "IDLE";
-        }
+//                 return "ARRIVED at point " + prevIdx + " -> next " + newIdx;
+//             }
 
-        /**
-         * Advances currentIndex based on patrol mode. 
-         */
-        private void nextIndex() {
-            int size = model.getPath().size();
-            if (size == 0) return;
+//             return moved ? "MOVING" : "IDLE";
+//         }
 
-            int cur = model.getCurrentIndex();
-            int next;
+//         /**
+//          * Advances currentIndex based on patrol mode. 
+//          */
+//         private void nextIndex() {
+//             int size = model.getPath().size();
+//             if (size == 0) return;
 
-            PatrolPathBehavior mode = model.getBehavior();
-            if (mode == null) mode = PatrolPathBehavior.LOOP;
+//             int cur = model.getCurrentIndex();
+//             int next;
 
-            switch (mode) {
-                case LOOP:
-                    next = (cur + 1) % size;
-                    break;
-                case RANDOM:
-                    if (size == 1) {
-                        next = 0;
-                    } else {
-                        next = rng.nextInt(size);
-                        while (next == cur) {
-                            next = rng.nextInt(size);
-                        }
-                    }
-                    break;
-                case BACKWARD:
-                    // cyclic decrement: 2 -> 1 -> 0 -> 2 -> 1 -> ...
-                    next = (cur - 1 + size) % size;
-                    break;
-                default:
-                    next = (cur + 1) % size;
-                    break;
-            }
+//             PatrolPathBehavior mode = model.getBehavior();
+//             if (mode == null) mode = PatrolPathBehavior.LOOP;
 
-            model.setCurrentIndex(next);
-        }
+//             switch (mode) {
+//                 case LOOP:
+//                     next = (cur + 1) % size;
+//                     break;
+//                 case RANDOM:
+//                     if (size == 1) {
+//                         next = 0;
+//                     } else {
+//                         next = rng.nextInt(size);
+//                         while (next == cur) {
+//                             next = rng.nextInt(size);
+//                         }
+//                     }
+//                     break;
+//                 case BACKWARD:
+//                     // cyclic decrement: 2 -> 1 -> 0 -> 2 -> 1 -> ...
+//                     next = (cur - 1 + size) % size;
+//                     break;
+//                 default:
+//                     next = (cur + 1) % size;
+//                     break;
+//             }
 
-        private double distance(Position a, Position b) {
-            if (a == null || b == null) return Double.MAX_VALUE;
-            double dx = a.getPosX() - b.getPosX();
-            double dy = a.getPosY() - b.getPosY();
-            return Math.hypot(dx, dy);
-        }
-    }
-}
+//             model.setCurrentIndex(next);
+//         }
+
+//         private double distance(Position a, Position b) {
+//             if (a == null || b == null) return Double.MAX_VALUE;
+//             double dx = a.getPosX() - b.getPosX();
+//             double dy = a.getPosY() - b.getPosY();
+//             return Math.hypot(dx, dy);
+//         }
+//     }
+// }

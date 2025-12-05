@@ -129,6 +129,10 @@ public final class MazeNavigationGraph {
         return grid[c][r];
     }
 
+    public Point2D nodeToPoint2D(Node node) {
+        return new Point2D(node.getX(), node.getY());
+    }
+
     private int clamp(int v, int min, int max) {
         return Math.max(min, Math.min(max, v));
     }

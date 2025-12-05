@@ -165,7 +165,7 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	protected boolean shouldFire() {
 	    double prob = getProbability();
 	    if (prob <= 0) return false;
-	    if (prob >= 1. 0) return true;
+	    if (prob >= 1) return true;
 	    return Math.random() < prob;
 	}
 
