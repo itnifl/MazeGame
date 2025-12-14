@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opponents:OpponentModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:opponents="http://main.game.maze/opponents"
+    name="Balanced Mode"
+    maxThreat="20.0">
+    <name>Classic Zombies</name>
+
+  <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_1</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_2</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_3</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_4</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Ghost">
+      <id>ghost_classic_5</id>
+      <displayName>Ghost Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>5</speed>
+      <threatLevel>1.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/ghost2.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Zombie">
+      <id>zombie_classic</id>
+      <displayName>Classic Zombie</displayName>
+      <enabled>true</enabled>
+      <health>120</health>
+      <speed>0.8</speed>
+      <threatLevel>3.0</threatLevel>
+      <attackDamage>2</attackDamage>
+      <behavior>WANDER</behavior>
+      <ImageBase>/main/game/maze/zombie-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie-down.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie-down.png</ImageTurnDown>
+    </characterTypes>
+
+    <characterTypes xsi:type="opponents:Zombie">            
+      <id>angry_zombie</id>
+      <displayName>Angry Zombie</displayName>
+      <enabled>true</enabled>
+      <health>60</health>
+      <speed>3</speed>
+      <threatLevel>4.0</threatLevel>
+      <attackDamage>4</attackDamage>
+      <behavior>AGGRESSIVE</behavior>
+      <ImageBase>/main/game/maze/zombie2-down.png</ImageBase>
+      <ImageTurnLeft>/main/game/maze/zombie2-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/zombie2-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/zombie2-down.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/zombie2-down.png</ImageTurnDown>
+    </characterTypes>
+</opponents:OpponentModel>
