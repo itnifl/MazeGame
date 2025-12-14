@@ -320,5 +320,5 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 <br/>
 
 ## Contributors
-| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) |
-| :---: | :---: | :---: |
+| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) | [<img src="https://github.com/itnifl.png" width="100px;"/><br /><sub><b>itnifl</b></sub>](https://github.com/itnifl) |
+| :---: | :---: | :---: | :---: |
