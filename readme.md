@@ -85,7 +85,7 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
-* Also see original MDD project status: [project-status/readme.md](project-status/readme.md)
+* Also see original MDD project status for missing work: [project-status/project.status.md](project-status/project.status.md)
 
 ## Prerequisites and setup
 
@@ -273,7 +273,7 @@ See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
 ### project-status
 
 Project and course status notes with scope, milestones, and progress tracking.  
-See: [project-status/readme.md](project-status/project.status.md)
+See: [project-status/project.status.md](project-status/project.status.md)
 
 
 # Utility scripts at the project root
