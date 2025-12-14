@@ -273,7 +273,7 @@ See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
 ### project-status
 
 Project and course status notes with scope, milestones, and progress tracking.  
-See: [project-status/readme.md](project-status/readme.md)
+See: [project-status/readme.md](project-status/project.status.md)
 
 
 # Utility scripts at the project root
