@@ -27,8 +27,8 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Your score will lower for each move you make and the more life you lose.
 * You will get an extra 4 000 in score for reaching the heart.
 * You will lose 4 000 in score for dying.
-* You can press and hold the P key to see the navigation path to your win area, this will lower your score.
-* You can press and hold the O key to see all possible navigation pathsin the game, this will lower your score.
+* You can press and hold the P key to see the navigation path to your win area, this will lower your score (move around a little if it doesn't work at first).
+* You can press and hold the O key to see all possible navigation pathsin the game, this will lower your score (move around a little if it doesn't work at first).
 * Press the H key to show high scores.
 * Press the ESC key to restart the game.
 * You can save your scores when you die or win.
@@ -44,9 +44,10 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 
 ## Bugs
 
-* The Non-player characters sometimes don't start. In such case, restart the game.
-* The application system is not very testable. Unit tests should have been written first.
-* The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game.
+* The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
+* The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
+* Sometimes when compiling and starting the game in VS Code, you will error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Bith debugging and running without debugging will still work.
+* You can pass walls by running into them through the edge.
 
 ## Missing implementations
 
@@ -61,6 +62,8 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Refactor code for code smells
 * Implement stronger algorithms for gameplay and movement
 * Replace `System.out.println` with a logger
+* The application system is not very testable. Unit tests should have been written first. DI Patterns should be implemented.
+* The whole Eclipse MDD model is not implemented (loot items, ranged attacks etc).
 
 ## Sources
 
@@ -70,6 +73,8 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Win game music: [https://www.youtube.com/watch?v=tEFU-oqSNjE](https://www.youtube.com/watch?v=tEFU-oqSNjE)
 * Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
 * Images: [https://opengameart.org/](https://opengameart.org/)
+* A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
+* Also see original MDD project status: [project-status/readme.md](project-status/readme.md)
 
 ## Prerequisites and setup
 
