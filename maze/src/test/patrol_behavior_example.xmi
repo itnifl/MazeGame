@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behaviour:PatrolBehavior xmlns:behaviour="http://main.game.maze/behaviour"> 
+
+	<path time="1000"> 
+		<point posX="2.0" posY="3.0"/> 
+	</path> <path time="1500"> 
+	
+	<point posX="6.0" posY="3.0"/> 
+	</path> <path time="2000"> 
+	
+	<point posX="6.0" posY="6.0"/> 
+	</path> <path time="2500"> 
+	
+	<point posX="2.0" posY="6.0"/> 
+	</path> <path time="3000"> 
+	
+	<point posX="6.0" posY="6.0"/> 
+	</path> 
+</behaviour:PatrolBehavior>

@@ -13,7 +13,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
@@ -22,12 +22,16 @@ public class GhostCharacter extends ComputerCharacter
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
+
+
     public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
         super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));        
         this.ghostModel = model;
+
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+
     }
 
     @Override
@@ -70,7 +74,7 @@ public class GhostCharacter extends ComputerCharacter
 
         @Override
     public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
-        touchTargets.add(touchEntity);
+        touchTargets.remove(touchEntity);
     }
 
     @Override

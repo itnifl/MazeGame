@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diff:DifficultyGameData
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:diff="http://main.game.maze/difficulties">
+
+  <!-- EASY -->
+  <difficulties xmi:id="easy" xsi:type="diff:EasyDifficulty"
+                instantDeath="false"
+                monstersMovementSpeedMultiplier="0.80"
+                monstersDamageMultiplier="0.70"
+                maxThreat="12">
+    <enemyMaxCount>
+      <type>GHOST</type>
+      <maxCount>3</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>ZOMBIE</type>
+      <maxCount>3</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
+    </enemyMaxCount>
+  </difficulties>
+
+  <!-- NORMAL -->
+  <difficulties xmi:id="normal" xsi:type="diff:NormalDifficulty"
+                instantDeath="false"
+                monstersMovementSpeedMultiplier="1.00"
+                monstersDamageMultiplier="1.00"
+                maxThreat="20">
+    <enemyMaxCount>
+      <type>GHOST</type>
+      <maxCount>5</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>ZOMBIE</type>
+      <maxCount>5</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
+    </enemyMaxCount>
+  </difficulties>
+
+  <!-- HARD -->
+  <difficulties xmi:id="hard" xsi:type="diff:HardDifficulty"
+                instantDeath="false"
+                monstersMovementSpeedMultiplier="1.15"
+                monstersDamageMultiplier="1.40"
+                maxThreat="32">
+    <enemyMaxCount>
+      <type>GHOST</type>
+      <maxCount>7</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>ZOMBIE</type>
+      <maxCount>7</maxCount>
+    </enemyMaxCount>
+    <enemyMaxCount>
+      <type>PUMPKINBOMBER</type>
+      <maxCount>0</maxCount>
+    </enemyMaxCount>
+  </difficulties>
+
+  <currentDifficulty 
+    xsi:type="diff:NormalDifficulty"  
+    href="#normal"/>
+</diff:DifficultyGameData>

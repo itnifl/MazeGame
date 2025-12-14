@@ -1,109 +1,328 @@
-# Instructions
-- Reach the heart with the lowest possible moves and highest possible character life left.
-- Your score will lower for each move you make and the more life you loose.
-- You will get extra 4 000 in score for reaching the heart.
-- You will loose 4 000 in score for dying.
-- Hit the H key to show high scores.
-- You will get the chance to save your scores when you die or win.
-- try the game a few times to get to know it.
-<br/><br/>
+# MazeGame
+
+## Index
+
+* 🧩 [project-status](project-status/readme.md)
+* 🧩 [releng](releng/readme.md)
+* 🧩 [main.game.maze.walls](main.game.maze.walls/readme.md)
+* 🧩 [main.game.maze.mazeworld](main.game.maze.mazeworld/readme.md)
+* 🧩 [main.game.maze.behaviour](main.game.maze.behaviour/readme.md)
+* 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
+* 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
+* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
+* 🧩 [maze-feature](maze-feature/readme.md)
+* 🧩 [maze-module-repository](maze-module-repository/readme.md)
+* 🧩 [maze-generator.acceleo-runner](maze-generator.acceleo-runner/readme.md)
+* 🧩 [maze-module-generator](maze-module-generator/readme.md)
+* 🖥️ [maze](maze/readme.md)
+
+Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
+
+## Project Tech stack:
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![JavaFX](https://img.shields.io/badge/JavaFX-%234285F4.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-%23C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
+![Tycho](https://img.shields.io/badge/Tycho-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![Eclipse](https://img.shields.io/badge/Eclipse-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white) <br/>
+![MDD](https://img.shields.io/badge/Model_Driven_Dev-%23555555.svg?style=for-the-badge)
+![Xtext](https://img.shields.io/badge/Xtext-%23F7941E.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![Acceleo](https://img.shields.io/badge/Acceleo-%238CA315.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![Makefile](https://img.shields.io/badge/Makefile-%23A81D33.svg?style=for-the-badge&logo=gnumake&logoColor=white)
+<br/>
+
+## Instructions
+
+* Reach the heart with the lowest possible moves and the highest possible character life left.
+* Your score will lower for each move you make and the more life you lose.
+* You will get an extra 4 000 in score for reaching the heart.
+* You will lose 4 000 in score for dying.
+* You can press and hold the P key to see the navigation path to your win area, this will lower your score (move around a little if it doesn't work at first).
+* You can press and hold the O key to see all possible navigation pathsin the game, this will lower your score (move around a little if it doesn't work at first).
+* Press the H key to show high scores.
+* Press the ESC key to restart the game.
+* You can save your scores when you die or win.
+* Try the game a few times to get to know it.
+
+<br/>
 <img src="./gameDemo1.png" alt="Game Demo Screenshot" width="45%" />
-<br/><br/>
+<br/>
+<img src="./gameDemo2.png" alt="Game Demo Screenshot" width="45%" />
+<br/>
+<img src="./gameDemo3.png" alt="Game Demo Screenshot" width="45%" />
+<br/>
 
-# Bugs
-- If you run several runs at the same time of this game, then the media files in the target directory (target\classes\main\game\maze) will corrupt. They then must be deleted at target\classes\main\game\maze and copied again from resources\main\game\maze to target\classes\main\game\maze.
-- Application system is not very testable, unit tests should have been written first
-- The Action Screens (Win and Game Over) some times bug up or don't show after I added the flash effect on the player when the player gets hurt. This is rare.
+## Bugs
 
-# Missing implementations
-- More music and game sounds
-- Animations must be created (DieAction / HappyAction)
-- More Different characters and more levels
-- Read a maze from SVG for player to play on
-- Automatically create a maze by random hitting a button.
-- Implement a ghost factory that outputs a n numer of ghosts depending of level hardness
-- Highscore screen, Win screen and game over screens need better design.
-- Generally more design
-- A Menu with instructions and setup
-- GameLogic must be separated in GameController
-- Score is kept in base class CharacterActionScreens, this should be refactored. 
-- Implement proper algorithms for gameplay and movement.
-- We need a logger instead of System.out.println
+* The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
+* The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
+* Sometimes when compiling and starting the game in VS Code, you will error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Bith debugging and running without debugging will still work.
+* You can pass walls by running into them through the edge.
 
-# Sources:
-- Background music, western game soundtracks: https://www.youtube.com/watch?v=ccvpPJv9J3E
-- Player Scream sounds: https://www.youtube.com/watch?v=3rlV-whFgXQ
-- Game over sounds: https://www.youtube.com/watch?v=bug1b0fQS8Y
-- Win game music: https://www.youtube.com/watch?v=tEFU-oqSNjE
-- Vector math: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-- Images used in game: https://opengameart.org/
+## Missing implementations
 
-# How to install prerequisites and run this game.
-The code is only tested for running from Visual Studio Code. Download it!
+* More music and game sounds
+* Animations for die action and happy action
+* Different new game actions like shooting and blowing up walls and enemies.
+* Read a maze from SVG for play
+* More and different levels with their own characters and setup
+* Better design for high score, and let high score be affected by the difficulty setting
+* A menu with instructions and game setup, including player profile settings
+* Refactor score handling out of CharacterActionScreens
+* Refactor code for code smells
+* Implement stronger algorithms for gameplay and movement
+* Replace `System.out.println` with a logger
+* The application system is not very testable. Unit tests should have been written first. DI Patterns should be implemented.
+* The whole Eclipse MDD model is not implemented (loot items, ranged attacks etc).
 
-Visual Studio Code is free and can be found here: https://code.visualstudio.com/download
-Extensions are found and installed in the "Extensions" submenu, download and imstall the ones mentioned below.
+## Sources
 
-This game is developed in Visual Studio Code with the following extensions:
-- ⬇️ "Extension Pack for Java" 
-- ⬇️ "Maven for Java" 
-- ⬇️ "Debugger for java"
-- ⬇️ "Test runner for Java"
+* Background music, western game soundtracks: [https://www.youtube.com/watch?v=ccvpPJv9J3E](https://www.youtube.com/watch?v=ccvpPJv9J3E)
+* Player scream sounds: [https://www.youtube.com/watch?v=3rlV-whFgXQ](https://www.youtube.com/watch?v=3rlV-whFgXQ)
+* Game over sounds: [https://www.youtube.com/watch?v=bug1b0fQS8Y](https://www.youtube.com/watch?v=bug1b0fQS8Y)
+* Win game music: [https://www.youtube.com/watch?v=tEFU-oqSNjE](https://www.youtube.com/watch?v=tEFU-oqSNjE)
+* Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
+* Images: [https://opengameart.org/](https://opengameart.org/)
+* A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
+* Also see original MDD project status: [project-status/readme.md](project-status/readme.md)
 
-Download Java 24 SDK to run the game:
-- ⬇️ https://www.oracle.com/java/technologies/downloads/#java24
+## Prerequisites and setup
 
+This project prefers JDK 25 and JavaFX 25.
 
-Download Java FX 21 SDK was used during the development of this game and it is needed to run it:
-- ⬇️ https://gluonhq.com/products/javafx/
+* Visual Studio Code: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
+  Extensions:
 
-Remember set JAVA_HOME, PATH_TO_FX and PATH environment variables, for instance:
-- 🛠️ JAVA_HOME=C:\Program Files\Java\jdk-24
-- 🛠️ PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21
-- 🛠️ PATH+=C:\Program Files\Java\jdk-24\bin
+  * ⬇️ Extension Pack for Java (Required)
+  * ⬇️ Maven for Java (Required)
+  * ⬇️ Debugger for Java (Required)
+  * ⬇️ Test Runner for Java (Required)
+  * ⬇️ Maven Dependency Explorer (Optional)
+  * ⬇️ XML by Red Hat (Optional)
+  * ⬇️ OSGi for VS Code (Optional)
+  * ⬇️ YAML by Red Hat (Optional)
+  * ⬇️ OCL support (Optional)
+  * ⬇️ Makefile Tools (Optional)
 
-``Then:
-***⚡ Finally: In Visual Studio Code select the App.java file and run it.***``
+Download and install:
 
+  * JDK 25: [https://www.oracle.com/java/technologies/downloads/#java25](https://www.oracle.com/java/technologies/downloads/#java25)
+  * JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
+    Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
+  * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
+    - Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
+  * Powershell [Powershell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
+    - Note that Powershell can be installed on Linux and MacOs also.
 
+Environment variables (examples on Windows):
 
-# MazeGame — Miscellaneous documentation
+* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-25`
+* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
+* 🛠️ `PATH+=C:\Program Files\Java\jdk-25\bin`
+* 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
+* 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
 
-## Project Maven Pom Structure
-- **Root pom.xml** (project root)
-  - Type: *aggregator* (packaging `pom`)
-  - Lists modules:
-    ```xml
-    <modules>
-      <module>opponents-module</module>
-      <module>maze</module>
-    </modules>
-    ```
-  - Purpose: orchestrates multi-module build and common properties (Java version, plugin management). Each module represents a folder with each their own pom.xml.
+VS Code Java runtime:
 
-- **opponents-module/pom.xml**
-  - Type: `jar` (module)
-  - Purpose: holds the **EMF opponents metamodel**, generated Java model code and `.xmi` resources. Exports the domain API (`main.game.maze.opponents`) used by the app.
-  - Key parts:
-    - groupId/artifactId/version (coordinates used by other modules), and dependencies.
+* Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
+* Ctrl + Shift + P → “Java: Configure Java Runtime”
+* Under JDKs, add `C:\Program Files\Java\jdk-25` and set it as Default
+* In the same panel, set JDK for Language Server to JDK 21
+* Reload Window
 
-- **maze/pom.xml**
-  - Type: `jar` (application module)
-  - Purpose: actual game/application code. Depends on `opponents-module` to read/load opponent models and use the domain API.
-  - Declares dependency on opponents-module coordinates:
-    ```xml
-    <dependency>
-      <groupId>main.game.maze</groupId>
-      <artifactId>opponents-module</artifactId>
-      <version>1</version>
-    </dependency>
-    ```
+⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
 
 ## Build commands (exact)
-- Build everything and install locally - also runs existing unit tests:
-```bash
-mvn -U -pl :maze-base -am clean package #Run from root: For cleaning up packages in the base maze game installation
-mvn -U clean install #Run from root: To compile all projects and run all unit tests
-mvn test #Run from root: Run all unit tests
-mvn -pl opponents-module -am test #Run from root: Run all unit tests in the opponents-module
+
+```powershell
+# PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build
+
+# 1) start clean so the mirror is rebuilt
+Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
+mvn -f releng/mirror/pom.xml -U verify
+
+# 2) force Tycho to reread the target (clear its p2 cache)
+Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
+
+# 3) full build (Tycho + app)
+mvn -U clean verify
 ```
+
+#### **Fast incremental run**
+```bash
+make build
+```
+
+#### **Mirror only, if needed**
+```bash
+make mirror
+```
+
+Other handy targets:
+
+```bash
+# build only the app module, then full build with tests
+mvn -U -pl :main.game.maze -am clean package
+mvn -U clean install
+
+# run all unit tests
+mvn test
+
+# run unit tests only in main.game.maze.opponents
+mvn -pl main.game.maze.opponents -am test
+
+# Run the JavaFX game (Windows)
+# -> Start in VSCode (CTRl + F5)
+```
+
+### Makefile usage - Windows Powershell
+```
+# Default: toolchain info, update mirror if needed, clear Tycho cache, full build
+.\make.ps1
+
+# Explicit target:
+.\make.ps1 -Target toolchain
+.\make.ps1 -Target mirror
+.\make.ps1 -Target force-mirror
+.\make.ps1 -Target clear-cache
+.\make.ps1 -Target build
+
+```
+
+#### Makefile usage - Other
+```bash
+make force-mirror
+make clear-tycho-cache
+make build
+```
+
+## Debug
+
+Use the script `Run-P2AndBuildCheck.ps1` to run a build and check by reading the logs under releng\test-results.
+
+---
+
+## Modules overview
+
+### releng
+
+Build and release infrastructure, including local p2 mirror, target platform, and helper scripts.  
+See: [releng/readme.md](releng/readme.md)
+
+### main.game.maze.walls
+
+Wall types, materials, and wall registry used by mazes and rendering.  
+See: [main.game.maze.walls/readme.md](main.game.maze.walls/readme.md)
+
+### main.game.maze.mazeworld
+
+Logical maze world with grid, cells, walls in space, navigation graph, and board size handling.  
+See: [main.game.maze.mazeworld/readme.md](main.game.maze.mazeworld/readme.md)
+
+### main.game.maze.behaviour
+
+Movement and decision logic for actors, including behaviours and navigation helpers.  
+See: [main.game.maze.behaviour/readme.md](main.game.maze.behaviour/readme.md)
+
+### main.game.maze.difficulties
+
+Difficulty profiles that define threat budgets, scaling, maze parameters, and player resources.  
+See: [main.game.maze.difficulties/readme.md](main.game.maze.difficulties/readme.md)
+
+### main.game.maze.opponents
+
+Enemy types with base stats, threat values, categories, and factories for runtime opponents.  
+See: [main.game.maze.opponents/readme.md](main.game.maze.opponents/readme.md)
+
+### main.game.maze.comp
+
+Component and configuration DSL for MazeGame, plus the generated language infrastructure.  
+See: [main.game.maze.comp/readme.md](main.game.maze.comp/readme.md)
+
+### maze
+
+JavaFX game client that starts the application, runs the game loop, and renders maze and actors.  
+See: [maze/readme.md](maze/readme.md)
+
+### maze-feature
+
+Eclipse feature that groups the MazeGame plug ins into one installable toolset.  
+See: [maze-feature/readme.md](maze-feature/readme.md)
+
+### maze-module-repository
+
+Eclipse p2 update site that publishes the MazeGame feature for installation and targets.  
+See: [maze-module-repository/readme.md](maze-module-repository/readme.md)
+
+### maze-generator.acceleo
+
+Acceleo templates that turn EMF models into Java code and helper artefacts.  
+See: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md)
+
+### maze-generator.acceleo-runner
+
+Headless Acceleo runner plug in used to execute the templates in an Eclipse runtime.  
+See: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md)
+
+### maze-module-generator
+
+Maven generator module that produces additional Java sources into `src-gen` for MazeGame.  
+See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
+
+### project-status
+
+Project and course status notes with scope, milestones, and progress tracking.  
+See: [project-status/readme.md](project-status/readme.md)
+
+
+# Utility scripts at the project root
+
+This repository includes two helper scripts for packaging the source and for running a repeatable build with diagnostics. Both scripts live in the root of the repo for easy access.
+
+* 📦 **[pack-source.ps1](./tools/pack-source.ps1)**
+* 🧪 **[Run-P2AndBuildCheck.ps1](./Run-P2AndBuildCheck.ps1)**
+
+---
+
+### Run-P2AndBuildCheck.ps1
+
+**What it does**
+Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
+
+**Typical flow**
+
+1. Optionally clears `releng\local-p2` and rebuilds the mirror.
+2. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
+3. Performs a clean verify from the root with tests enabled.
+4. Prints a compact result table and writes the full log under `releng\test-results`.
+
+**Quick start**
+
+```powershell
+# From the repo root
+.\Run-P2AndBuildCheck.ps1
+```
+
+**Parameters**
+
+```powershell
+# Default output folder for logs
+.\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
+
+# You can add other switches if your script supports them, for example:
+# -NoMirror to skip mirroring
+# -NoCacheReset to keep the Tycho cache
+# -SkipTests to run a faster compile only pass
+```
+
+**Outputs**
+
+* A log file named like `p2-and-build-check_yyyyMMdd_HHmmss.log` under the chosen log directory
+* A terminal summary showing step name, status, and a short note
+<br/>
+<br/>
+
+## Contributors
+| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) |
+| :---: | :---: | :---: |

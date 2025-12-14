@@ -23,7 +23,26 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
 
     @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
-        if (nodeBounds.intersects(this.areaGraphics.getBoundsInParent())) {
+
+        // full bounds of the heart image (areaGraphics)
+        Bounds full = this.areaGraphics.getBoundsInParent();
+
+        // compute a centered inner box of width/3 and height/3
+        double innerWidth = full.getWidth() / 3.0;
+        double innerHeight = full.getHeight() / 3.0;
+
+        double innerMinX = full.getMinX() + (full.getWidth() - innerWidth) / 2.0;
+        double innerMinY = full.getMinY() + (full.getHeight() - innerHeight) / 2.0;
+
+        Bounds inner = new javafx.geometry.BoundingBox(
+                innerMinX,
+                innerMinY,
+                innerWidth,
+                innerHeight
+        );
+
+        // intersection now only checks the inner third
+        if (nodeBounds.intersects(inner)) {
             if (entity instanceof PlayerCharacter) {
                 try {
                     this.WinGame();
@@ -34,6 +53,7 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
             }
         }
     }
+
 
     @Override
     public void addPositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {

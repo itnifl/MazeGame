@@ -1,14 +1,14 @@
 package main.game.maze.characters;
-
-import javafx.geometry.Point2D;
+import main.game.maze.mazeworld.Point2D;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import main.game.maze.MazeWorld;
-import main.game.maze.Vector2D;
+import main.game.maze.App;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ISubscribeOnDirection;
-import main.game.maze.constants.StageConstants;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
 
 public class Character  {
@@ -27,7 +27,7 @@ public class Character  {
     private int maxX;
     private int maxY;
 
-    private MazeWorld maze;
+    private GameMazeWorld maze;
 
     public Character(Node characterGraphics, double x, double y) {
         this.directionX = 0;
@@ -39,13 +39,13 @@ public class Character  {
             this.characterPosition.getX(), this.characterPosition.getY(), 
             this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(StageConstants.PlayerCharacterSpeed);
 
-        maze = MazeWorld.GetWorld();
+        maze = GameMazeWorld.GetWorld();
         calculateMaxPositions();
     }
 
     protected void calculateMaxPositions() {
-        maxX = StageConstants.BoardMaxX-characterXYSizeFromPoint;
-        maxY = StageConstants.BoardMaxY-characterXYSizeFromPoint;
+        maxX = App.getBoardMaxX()-characterXYSizeFromPoint;
+        maxY = App.getBoardMaxY()-characterXYSizeFromPoint;
     }
 
     public Node getCharacterGraphics() {

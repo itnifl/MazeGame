@@ -1,6 +1,4 @@
 **/.settings/
-**/.project
-**/.classpath
 
 # OS
 Thumbs.db
@@ -9,21 +7,21 @@ Thumbs.db
 *.class
 scores.txt
 
+# vscode configuration files
+.vscode/
 
 # Maven build output:
 **/target/
-/opponents-module/target
+/main.game.maze.opponents/target
 maze/testScores.txt
 
 
 # Eclipse IDE files (per-project metadata)
 **/.settings/
-**/.project
-**/.classpath
 **/.factorypath
 **/.metadata/
-opponents-module/icons/
-!opponents-module/src/main/resources/icons/
+main.game.maze.opponents/icons/
+!main.game.maze.opponents/src/main/resources/icons/
 
 # Eclipse/IDE caches / temp
 **/.cache/
@@ -34,9 +32,46 @@ opponents-module/icons/
 *.log
 /.idea/
 *.iml
+*.aird
 
-# Generated EMF / plugin build artefacts you don't want in VCS
-**/META-INF/
-**/build.properties
-**/plugin.properties
-**/plugin.xml
+/maze/.m2
+.vscode\settings.json
+/releng/local-p2/plugins
+/releng/local-p2/features
+releng/local-p2/artifacts.jar
+releng/local-p2/content.jar
+
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# IDEs
+# Eclipse / PDE
+.settings/
+.loadpath
+.factorypath
+.recommenders/
+.metadata/
+*.launch
+bin/
+
+# Tycho / p2 artefacts 
+**/.flattened-pom.xml
+**/target/repository/
+**/target/*.repo.zip
+
+# JavaFX packaging (optional)
+dist/
+out/
+
+# Misc temp/backups 
+*.tmp
+*.temp
+~$*
+*.bak
+*.orig
+*.rej
+/releng/local-p2/binary
+releng/local-p2/.mirror.stamp
+/maze-module-generator/src-gen

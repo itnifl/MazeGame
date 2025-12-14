@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.WinGameController;
 import main.game.maze.actions.base.CharacterActionScreens;
@@ -62,7 +63,9 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
                 controller.showDamagePenaltyLabel();
             }
 
+            Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
+            App.applyStandardSize(stage);
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,0 +1,25 @@
+package main.game.maze.mazeworld.constants;
+
+public class StageConstants {
+    public final static int BoardMaxX = 800;
+    public final static int BoardMaxY = 600;
+    public final static int BoardMaxXMedium = 1100;
+    public final static int BoardMaxYMedium = 800;
+    public final static int BoardMaxXLarge = 1400;
+    public final static int BoardMaxYLarge = 1000;
+    public final static int TouchDistance = 40;
+    public final static int PlayerCharacterSpeed = 10;
+    public final static int SpeedReducer = 1;
+    public final static int PlayerCharacterXYSize = 30;
+    public final static int GhostCharacterXYSize = 40;
+    public final static int ZombieCharacterXYSize = 40;
+    public final static int PumpkinBomberCharacterXYSize = 40;
+    public final static int StandardCharacterSpeed = 8;
+    public final static int MaxScore = 10000;
+    public final static int ScoreSubtractFactor = 10;
+    public final static int ScoreDeathPenalty = 4000;
+    public final static int ScoreWinBonus = 4000;
+    public final static int NaviGraphStepSize = 30;
+    public final static int WallSegmentLengthPx = 20;
+    
+}
