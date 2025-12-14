@@ -310,10 +310,6 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 # Default output folder for logs
 .\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
 
-# You can add other switches if your script supports them, for example:
-# -NoMirror to skip mirroring
-# -NoCacheReset to keep the Tycho cache
-# -SkipTests to run a faster compile only pass
 ```
 
 **Outputs**
