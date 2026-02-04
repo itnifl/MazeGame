@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: main.game.maze.dsl.ide;singleton:=true
+Automatic-Module-Name: main.game.maze.dsl.ide
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: main.game.maze.dsl.ide,
+ main.game.maze.dsl.ide.contentassist
+Require-Bundle: main.game.maze.dsl,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide
+Bundle-ActivationPolicy: lazy
+

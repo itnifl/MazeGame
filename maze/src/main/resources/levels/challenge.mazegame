@@ -1,0 +1,166 @@
+/*
+ * Challenge Level Configuration
+ * 
+ * A difficult level with multiple enemy types and complex patrol patterns.
+ */
+game ChallengeLevel {
+
+    difficulty {
+        level hard
+        maxThreat 100
+        instantDeath true
+        speedMultiplier 1.5
+        damageMultiplier 2.0
+        
+        limit zombie max 5
+        limit ghost max 3
+        limit pumpkinbomber max 2
+    }
+
+    // Complex patrol routes
+    patrol OuterPerimeter {
+        visionRange 150.0
+        zone {
+            topLeft (0, 0)
+            width 500
+            height 500
+        }
+        path [
+            (25, 25),
+            (475, 25),
+            (475, 475),
+            (25, 475)
+        ]
+    }
+
+    patrol InnerCross {
+        visionRange 120.0
+        path [
+            (250, 100),
+            (250, 400),
+            (250, 250),
+            (100, 250),
+            (400, 250)
+        ]
+    }
+
+    patrol AmbushPoint {
+        visionRange 200.0
+        path [
+            (300, 300) : 5000 ms,
+            (350, 350) : 1000 ms,
+            (300, 300) : 5000 ms
+        ]
+    }
+
+    // Zombie horde
+    opponent ZombieAlpha {
+        type zombie
+        displayName "Alpha Zombie"
+        health 200
+        speed 1.2
+        threatLevel 25
+        behavior aggressive
+        
+        zombie-stats {
+            attackDamage 20
+            infectionLevel 3
+            resurrectionTime 10000
+        }
+    }
+
+    opponent ZombieBrute {
+        type zombie
+        displayName "Zombie Brute"
+        health 300
+        speed 0.8
+        threatLevel 30
+        behavior patrol
+        patrol OuterPerimeter
+        
+        zombie-stats {
+            attackDamage 35
+            infectionLevel 2
+        }
+    }
+
+    // Ghost squad
+    opponent PhantomStalker {
+        type ghost
+        displayName "Phantom Stalker"
+        health 80
+        speed 2.0
+        threatLevel 20
+        behavior aggressive
+        
+        ghost-stats {
+            attackDamage 10
+            visibilityLevel 30
+            nonTangibilityEnergy 500.0
+        }
+    }
+
+    opponent GhostSentry {
+        type ghost
+        displayName "Ghost Sentry"
+        health 100
+        speed 1.0
+        threatLevel 15
+        behavior patrol
+        patrol InnerCross
+        
+        ghost-stats {
+            visibilityLevel 80
+            nonTangibilityEnergy 300.0
+        }
+    }
+
+    // Ranged threats
+    opponent PumpkinSniper {
+        type pumpkinbomber
+        displayName "Pumpkin Sniper"
+        health 75
+        speed 0.5
+        threatLevel 35
+        behavior patrol
+        patrol AmbushPoint
+        
+        ranged-stats {
+            attackRange 200.0
+            attackCooldown 3000
+            attackDamage 40
+            projectileSpeed 150.0
+            projectileType lob
+            splashRadius 50.0
+        }
+    }
+
+    // Loot for rewards
+    loot-table ChallengeLoot {
+        capacity 20
+        
+        item MegaHealth {
+            type food
+            value 100
+            weight 3
+        }
+        
+        item SmokeBomb {
+            type bomb
+            value 50
+            weight 2
+        }
+        
+        item BearTrap {
+            type trap
+            value 30
+            weight 2
+        }
+        
+        item Sword {
+            type weapon
+            value 75
+            weight 4
+        }
+    }
+}

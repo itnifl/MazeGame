@@ -1,0 +1,180 @@
+/*
+ * MazeGame DSL Grammar
+ * 
+ * This grammar defines a textual DSL for configuring MazeGame levels,
+ * including difficulties, opponents, patrol behaviors, and loot tables.
+ */
+grammar main.game.maze.dsl.MazeDsl with org.eclipse.xtext.common.Terminals
+
+generate mazeDsl "http://www.main.game.maze/dsl/MazeDsl"
+
+/*
+ * Root element - A game configuration containing all game elements
+ */
+GameConfiguration:
+    'game' name=ID '{'
+        (imports+=Import)*
+        (difficulty=DifficultyConfig)?
+        (opponents+=OpponentConfig)*
+        (patrols+=PatrolConfig)*
+        (lootTables+=LootTableConfig)*
+    '}'
+;
+
+/*
+ * Import statement for referencing external XMI files
+ */
+Import:
+    'import' importURI=STRING
+;
+
+/*
+ * Difficulty configuration section
+ */
+DifficultyConfig:
+    'difficulty' '{'
+        'level' level=DifficultyLevel
+        ('instantDeath' instantDeath?='true')?
+        ('speedMultiplier' speedMultiplier=DOUBLE)?
+        ('damageMultiplier' damageMultiplier=DOUBLE)?
+        ('maxThreat' maxThreat=INT)?
+        (enemyLimits+=EnemyLimit)*
+    '}'
+;
+
+enum DifficultyLevel:
+    EASY='easy' | NORMAL='normal' | HARD='hard'
+;
+
+/*
+ * Enemy count limits per type
+ */
+EnemyLimit:
+    'limit' type=EnemyType 'max' maxCount=INT
+;
+
+enum EnemyType:
+    ZOMBIE='zombie' | GHOST='ghost' | PUMPKINBOMBER='pumpkinbomber'
+;
+
+/*
+ * Opponent/Enemy configuration
+ */
+OpponentConfig:
+    'opponent' name=ID '{'
+        'type' type=CharacterTypeEnum
+        ('displayName' displayName=STRING)?
+        ('health' health=INT)?
+        ('speed' speed=DOUBLE)?
+        ('threatLevel' threatLevel=DOUBLE)?
+        ('enabled' enabled=('true'|'false'))?
+        ('behavior' behavior=BehaviorTypeEnum)?
+        (characterSpecifics=CharacterSpecifics)?
+        ('patrol' patrolRef=[PatrolConfig])?
+        ('loot' lootRef=[LootTableConfig])?
+    '}'
+;
+
+enum CharacterTypeEnum:
+    ZOMBIE='zombie' | GHOST='ghost' | PUMPKINBOMBER='pumpkinbomber'
+;
+
+enum BehaviorTypeEnum:
+    PASSIVE='passive' | WANDER='wander' | AGGRESSIVE='aggressive' | PATROL='patrol'
+;
+
+/*
+ * Character-specific attributes (zombie, ghost, or ranged enemy)
+ */
+CharacterSpecifics:
+    ZombieSpecifics | GhostSpecifics | RangedSpecifics
+;
+
+ZombieSpecifics:
+    {ZombieSpecifics}
+    'zombie-stats' '{'
+        ('attackDamage' attackDamage=INT)?
+        ('infectionLevel' infectionLevel=INT)?
+        ('resurrectionTime' resurrectionTime=INT)?
+    '}'
+;
+
+GhostSpecifics:
+    {GhostSpecifics}
+    'ghost-stats' '{'
+        ('attackDamage' attackDamage=INT)?
+        ('visibilityLevel' visibilityLevel=INT)?
+        ('nonTangibilityEnergy' nonTangibilityEnergy=DOUBLE)?
+    '}'
+;
+
+RangedSpecifics:
+    {RangedSpecifics}
+    'ranged-stats' '{'
+        ('attackRange' attackRange=DOUBLE)?
+        ('attackCooldown' attackCooldown=INT)?
+        ('attackDamage' attackDamage=INT)?
+        ('projectileSpeed' projectileSpeed=DOUBLE)?
+        ('projectileType' projectileType=ProjectileTypeEnum)?
+        ('splashRadius' splashRadius=DOUBLE)?
+    '}'
+;
+
+enum ProjectileTypeEnum:
+    STRAIGHT='straight' | LOB='lob' | BEAM='beam'
+;
+
+/*
+ * Patrol path configuration
+ */
+PatrolConfig:
+    'patrol' name=ID '{'
+        ('visionRange' visionRange=DOUBLE)?
+        ('zone' zone=PatrolZoneConfig)?
+        'path' '['
+            waypoints+=Waypoint (',' waypoints+=Waypoint)*
+        ']'
+    '}'
+;
+
+PatrolZoneConfig:
+    'zone' '{'
+        'topLeft' '(' topLeftX=DOUBLE ',' topLeftY=DOUBLE ')'
+        'width' width=DOUBLE
+        'height' height=DOUBLE
+    '}'
+;
+
+Waypoint:
+    '(' x=DOUBLE ',' y=DOUBLE ')' 
+    (':' waitTime=INT 'ms')?
+;
+
+/*
+ * Loot table configuration
+ */
+LootTableConfig:
+    'loot-table' name=ID '{'
+        ('capacity' capacity=INT)?
+        items+=LootItemConfig+
+    '}'
+;
+
+LootItemConfig:
+    'item' name=ID '{'
+        'type' type=LootItemTypeEnum
+        'value' value=INT
+        ('weight' weight=INT)?
+    '}'
+;
+
+enum LootItemTypeEnum:
+    FOOD='food' | BOMB='bomb' | TRAP='trap' | WEAPON='weapon'
+;
+
+/*
+ * Terminal for double values
+ */
+terminal DOUBLE returns ecore::EDouble:
+    INT ('.' INT)?
+;

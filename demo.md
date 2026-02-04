@@ -6,6 +6,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 2. How the **opponent models** behave when validation succeeds or fails.
 3. How the **behaviour / movements model** drives patrol movement and can be validated.
 4. How the **walls model** and Acceleo generated code are wired into the game.
+5. How the **MazeGame DSL** provides a textual syntax for game configuration.
 
 ---
 
@@ -37,6 +38,12 @@ This demo shows how the **models** and the **runtime code** work together in Maz
   * `maze/src/main/resources/xmi/difficulties/difficulties.xmi`
   * `maze/src/main/resources/xmi/opponents/opponentModel.xmi`
   * `main.game.maze.walls/xmi/walls.xmi` (model for wall types and properties)
+
+* DSL configuration files (`.mazegame`):
+
+  * `maze/src/main/resources/levels/tutorial.mazegame`
+  * `maze/src/main/resources/levels/challenge.mazegame`
+  * `maze/src/main/resources/levels/survival.mazegame`
 
 * Sample test models:
 
@@ -541,4 +548,156 @@ Use this as a compact spoken script.
 For the demo you can summarise this as:
 
 > “The same steps you see locally are also run automatically in CI, so generated code, models and the game are always in sync.”
+---
 
+## 9．MazeGame DSL demo
+
+This section demonstrates the **Xtext-based Domain-Specific Language** for game configuration.
+
+### 9．1 What is the MazeGame DSL?
+
+The DSL provides a **human-readable textual syntax** for defining game levels instead of editing raw XMI files.
+
+**Before (XMI):**
+```xml
+<opp:OpponentModel xmi:version="2.0" name="TutorialLevel">
+  <characterTypes xsi:type="opp:Zombie" id="Guard1" health="50" threatLevel="10"/>
+</opp:OpponentModel>
+```
+
+**After (DSL):**
+```
+game TutorialLevel {
+    opponent Guard1 {
+        type zombie
+        health 50
+        threatLevel 10
+    }
+}
+```
+
+### 9．2 DSL project structure
+
+The DSL is implemented across four Eclipse plugin modules:
+
+| Module | Purpose |
+|--------|---------|
+| `main.game.maze.dsl` | Core grammar, parser, validator, generator |
+| `main.game.maze.dsl.ide` | Language server support |
+| `main.game.maze.dsl.ui` | Eclipse editor integration |
+| `main.game.maze.dsl.tests` | Automated tests |
+
+### 9．3 Open and explore a DSL file
+
+1. Open one of the example DSL files:
+   * `maze/src/main/resources/levels/tutorial.mazegame`
+   * `maze/src/main/resources/levels/challenge.mazegame`
+   * `maze/src/main/resources/levels/survival.mazegame`
+
+2. Show the key elements:
+   * **game** declaration with name
+   * **difficulty** block with level, maxThreat, enemy limits
+   * **patrol** definitions with waypoints
+   * **opponent** configurations with type-specific stats
+   * **loot-table** definitions
+
+### 9．4 Demonstrate validation
+
+1. Open `tutorial.mazegame` in an Xtext-enabled editor.
+
+2. Try adding an invalid configuration:
+   ```
+   opponent BadEnemy {
+       type zombie
+       threatLevel 150    // Error: exceeds 100
+   }
+   ```
+
+3. Show that the editor immediately displays an error marker.
+
+4. Use the quick fix (Ctrl+1) to correct the value.
+
+5. Explain the validation rules:
+   * Threat level must be 0-100
+   * Patrol paths need at least 2 waypoints
+   * Character-specific blocks must match character type
+   * Total threat cannot exceed maxThreat
+
+### 9．5 Show code generation output
+
+When a `.mazegame` file is saved, the generator produces:
+
+1. **Java Factory Class** (`*Factory.java`):
+   ```java
+   public class TutorialLevelFactory {
+       public static Zombie createTutorialZombie() { ... }
+       public static PatrolBehavior createEntranceGuardPatrol() { ... }
+       public static Difficulty createDifficulty() { ... }
+       public static List<CharacterType> createAllOpponents() { ... }
+   }
+   ```
+
+2. **XMI Model Instances**:
+   * `tutoriallevel-config.xmi` - Opponents model
+   * `tutoriallevel-difficulty.xmi` - Difficulty settings
+
+### 9．6 DSL syntax overview
+
+Show the key constructs:
+
+```
+game MyLevel {
+    // Difficulty settings
+    difficulty {
+        level easy | normal | hard
+        maxThreat 50
+        limit zombie max 3
+    }
+
+    // Patrol paths
+    patrol GuardRoute {
+        visionRange 100.0
+        path [(0, 0), (100, 0) : 2000 ms, (100, 100)]
+    }
+
+    // Enemy definitions
+    opponent Enemy1 {
+        type zombie | ghost | pumpkinbomber
+        health 100
+        threatLevel 25
+        behavior patrol
+        patrol GuardRoute
+        
+        zombie-stats { attackDamage 15 }
+    }
+
+    // Loot drops
+    loot-table Rewards {
+        item HealthPotion { type food value 25 }
+    }
+}
+```
+
+### 9．7 Run the DSL tests
+
+From the repository root:
+
+```bash
+# Run DSL parsing and validation tests
+mvn -pl main.game.maze.dsl.tests test
+```
+
+Explain the test coverage:
+* **Parsing tests** - Valid syntax is accepted
+* **Validation tests** - Invalid configurations are rejected with proper errors
+* **Generator tests** - Correct Java and XMI output is produced
+
+### 9．8 Key benefits of the DSL
+
+Summarise for the audience:
+
+1. **Readability** - Game designers can understand and edit configurations
+2. **Validation** - Errors are caught immediately in the editor, not at runtime
+3. **Autocomplete** - Content assist suggests valid options
+4. **Integration** - Generates code compatible with existing EMF models
+5. **Documentation** - See [DSL Reference Guide](docs/dsl-reference.md) and [DSL Tutorial](docs/dsl-tutorial.md)

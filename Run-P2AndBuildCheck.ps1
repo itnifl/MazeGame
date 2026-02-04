@@ -109,11 +109,18 @@ Check for these bundles/features in releng\local-p2 and content.xml:
     org.eclipse.ocl
     org.eclipse.ocl.ecore
     org.eclipse.ocl.pivot
+    org.eclipse.xtext
+    org.eclipse.xtext.xbase
+    org.eclipse.xtext.xbase.lib
+    org.eclipse.xtext.util
+    org.eclipse.xtext.ide
+    org.antlr.runtime
   Feature groups:
     org.eclipse.emf.sdk.feature.group
     org.eclipse.ocl.all.sdk.feature.group
     org.eclipse.acceleo.feature.group
     org.eclipse.emf.codegen.feature.group
+    org.eclipse.xtext.sdk.feature.group
 '@
 if ($StartAt -gt 2) {
     Skip-Step -Step $step2 -Cmd $cmdText2
@@ -139,7 +146,15 @@ if ($StartAt -gt 2) {
         "org.eclipse.ocl.all.sdk.feature.group",
         "org.eclipse.acceleo.feature.group",
         #"org.eclipse.acceleo.runtime.feature.group",
-        "org.eclipse.emf.codegen.feature.group"
+        "org.eclipse.emf.codegen.feature.group",
+        # Xtext dependencies (for DSL)
+        "org.eclipse.xtext",
+        "org.eclipse.xtext.xbase",
+        "org.eclipse.xtext.xbase.lib",
+        "org.eclipse.xtext.util",
+        "org.eclipse.xtext.ide",
+        "org.eclipse.xtext.sdk.feature.group",
+        "org.antlr.runtime"
     )
 
     $foundPatterns = @{}
@@ -163,7 +178,14 @@ if ($StartAt -gt 2) {
                 releng\local-p2\features\org.eclipse.ocl.all.sdk_*,
                 releng\local-p2\features\org.eclipse.acceleo_*,
                 releng\local-p2\features\org.eclipse.acceleo.runtime_*,
-                releng\local-p2\features\org.eclipse.emf.codegen_* -ErrorAction SilentlyContinue
+                releng\local-p2\features\org.eclipse.emf.codegen_*,
+                releng\local-p2\plugins\org.eclipse.xtext_*,
+                releng\local-p2\plugins\org.eclipse.xtext.xbase_*,
+                releng\local-p2\plugins\org.eclipse.xtext.xbase.lib_*,
+                releng\local-p2\plugins\org.eclipse.xtext.util_*,
+                releng\local-p2\plugins\org.eclipse.xtext.ide_*,
+                releng\local-p2\features\org.eclipse.xtext.sdk_*,
+                releng\local-p2\plugins\org.antlr.runtime_* -ErrorAction SilentlyContinue
         } 2>&1
 
         # Jar and feature patterns we expect to exist
@@ -181,7 +203,15 @@ if ($StartAt -gt 2) {
             "releng\local-p2\features\org.eclipse.emf.sdk_*",          # org.eclipse.emf.sdk.feature.group
             "releng\local-p2\features\org.eclipse.ocl.all.sdk_*",      # org.eclipse.ocl.all.sdk.feature.group
             "releng\local-p2\features\org.eclipse.acceleo_*",          # org.eclipse.acceleo.feature.group        
-            "releng\local-p2\features\org.eclipse.emf.codegen_*"       # org.eclipse.emf.codegen.feature.group
+            "releng\local-p2\features\org.eclipse.emf.codegen_*",      # org.eclipse.emf.codegen.feature.group
+            # Xtext dependencies (for DSL)
+            "releng\local-p2\plugins\org.eclipse.xtext_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.xbase_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.xbase.lib_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.util_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.ide_*",
+            "releng\local-p2\features\org.eclipse.xtext.sdk_*",        # org.eclipse.xtext.sdk.feature.group
+            "releng\local-p2\plugins\org.antlr.runtime_*"
         )
         foreach ($jp in $jarPaths) {
             if (-not (Get-ChildItem -Path $jp -ErrorAction SilentlyContinue)) { $missingJars += $jp }

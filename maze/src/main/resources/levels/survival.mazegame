@@ -1,0 +1,137 @@
+/*
+ * Survival Mode Configuration
+ * 
+ * Balanced difficulty with waves of enemies.
+ */
+game SurvivalMode {
+
+    difficulty {
+        level normal
+        maxThreat 60
+        speedMultiplier 1.0
+        damageMultiplier 1.0
+        
+        limit zombie max 4
+        limit ghost max 2
+        limit pumpkinbomber max 1
+    }
+
+    // Spawn point patrols
+    patrol NorthSpawn {
+        visionRange 100.0
+        path [
+            (250, 50),
+            (200, 100),
+            (300, 100),
+            (250, 50)
+        ]
+    }
+
+    patrol SouthSpawn {
+        visionRange 100.0
+        path [
+            (250, 450),
+            (200, 400),
+            (300, 400),
+            (250, 450)
+        ]
+    }
+
+    patrol CenterRoam {
+        visionRange 120.0
+        path [
+            (200, 200),
+            (300, 200),
+            (300, 300),
+            (200, 300)
+        ]
+    }
+
+    // Wave 1 enemies
+    opponent ScoutZombie {
+        type zombie
+        displayName "Scout"
+        health 60
+        speed 1.5
+        threatLevel 8
+        behavior patrol
+        patrol NorthSpawn
+        
+        zombie-stats {
+            attackDamage 8
+            infectionLevel 1
+        }
+    }
+
+    opponent RunnerZombie {
+        type zombie
+        displayName "Runner"
+        health 40
+        speed 2.0
+        threatLevel 10
+        behavior aggressive
+        
+        zombie-stats {
+            attackDamage 12
+        }
+    }
+
+    // Wave 2 enemies
+    opponent HauntingSpirit {
+        type ghost
+        displayName "Haunting Spirit"
+        health 70
+        speed 1.3
+        threatLevel 15
+        behavior patrol
+        patrol CenterRoam
+        
+        ghost-stats {
+            visibilityLevel 60
+            nonTangibilityEnergy 250.0
+            attackDamage 8
+        }
+    }
+
+    // Wave 3 enemy
+    opponent Bombardier {
+        type pumpkinbomber
+        displayName "Bombardier"
+        health 100
+        speed 0.7
+        threatLevel 25
+        behavior patrol
+        patrol SouthSpawn
+        
+        ranged-stats {
+            attackRange 150.0
+            attackCooldown 4000
+            attackDamage 25
+            projectileType lob
+            splashRadius 40.0
+        }
+    }
+
+    // Loot drops
+    loot-table SurvivalLoot {
+        capacity 15
+        
+        item SmallHealth {
+            type food
+            value 15
+            weight 1
+        }
+        
+        item MediumHealth {
+            type food
+            value 35
+            weight 2
+        }
+        
+        item FlashBomb {
+            type bomb
+            value 25
+            weight 1
+        }
+    }
+}

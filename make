@@ -1,6 +1,13 @@
 # ─────────────────────────────────────────────────────────
 # MazeGame Makefile (Windows-friendly, uses PowerShell)
 #
+# Modules built:
+#   - main.game.maze.behaviour, difficulties, opponents, walls, mazeworld
+#   - main.game.maze.dsl, dsl.ide, dsl.ui, dsl.tests (Xtext DSL)
+#   - maze-generator.acceleo, maze-generator.acceleo-runner
+#   - maze-module-generator, maze-feature, maze-module-repository
+#   - maze (JavaFX game client)
+#
 # Default:
 #   make          → toolchain info, refresh mirror if needed, clear Tycho cache, full build
 # ─────────────────────────────────────────────────────────

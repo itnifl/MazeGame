@@ -9,6 +9,7 @@
 * 🧩 [main.game.maze.behaviour](main.game.maze.behaviour/readme.md)
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
+* 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
 * 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
@@ -17,6 +18,7 @@
 * 🖥️ [maze](maze/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see: [DSL Reference Guide](docs/dsl-reference.md) for complete DSL documentation
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 
 ## Project Tech stack:
@@ -235,10 +237,11 @@ See: [main.game.maze.difficulties/readme.md](main.game.maze.difficulties/readme.
 Enemy types with base stats, threat values, categories, and factories for runtime opponents.  
 See: [main.game.maze.opponents/readme.md](main.game.maze.opponents/readme.md)
 
-### main.game.maze.comp
+### main.game.maze.dsl
 
-Component and configuration DSL for MazeGame, plus the generated language infrastructure.  
-See: [main.game.maze.comp/readme.md](main.game.maze.comp/readme.md)
+Xtext-based Domain-Specific Language for game configuration. Provides a human-readable textual syntax for defining game levels, opponents, difficulties, patrol behaviors, and loot tables. Generates Java factory classes and XMI model instances.  
+See: [main.game.maze.dsl/readme.md](main.game.maze.dsl/readme.md)  
+Reference: [DSL Reference Guide](docs/dsl-reference.md) | [DSL Tutorial](docs/dsl-tutorial.md)
 
 ### maze
 
