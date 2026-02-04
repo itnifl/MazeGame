@@ -38,7 +38,11 @@
                 </repository>
                 <repository>
                   <url>https://download.eclipse.org/acceleo/updates/releases/3.7</url>
-                </repository>              
+                </repository>
+                <!-- Xtext SDK for DSL support -->
+                <repository>
+                  <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/</url>
+                </repository>
               </source>               
               <ius>
                 <iu><id>org.eclipse.emf.ecore</id></iu>
@@ -58,6 +62,8 @@
                 <iu><id>org.eclipse.emf.codegen.feature.group</id></iu>
                 <iu><id>org.eclipse.equinox.app</id></iu>                
                 <iu><id>org.eclipse.equinox.executable.feature.group</id></iu>
+                <!-- Xtext SDK for DSL support -->
+                <iu><id>org.eclipse.xtext.sdk.feature.group</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>

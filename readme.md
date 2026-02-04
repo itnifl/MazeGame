@@ -199,9 +199,19 @@ make clear-tycho-cache
 make build
 ```
 
-## Debug
+## Debug & Build Verification
 
-Use the script `Run-P2AndBuildCheck.ps1` to run a build and check by reading the logs under releng\test-results.
+Use the script `Run-P2AndBuildCheck.ps1` to run a full build with diagnostics:
+
+```powershell
+# Full build with all steps
+.\Run-P2AndBuildCheck.ps1
+
+# Skip mirror rebuild, start at build step
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
+```
+
+Logs are written to `releng\test-results`.
 
 ---
 
@@ -291,20 +301,24 @@ This repository includes two helper scripts for packaging the source and for run
 ### Run-P2AndBuildCheck.ps1
 
 **What it does**
-Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
+Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Acceleo, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
 
 **Typical flow**
 
 1. Optionally clears `releng\local-p2` and rebuilds the mirror.
-2. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
-3. Performs a clean verify from the root with tests enabled.
-4. Prints a compact result table and writes the full log under `releng\test-results`.
+2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
+3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
+4. Performs a clean verify from the root with tests enabled.
+5. Prints a compact result table and writes the full log under `releng\test-results`.
 
 **Quick start**
 
 ```powershell
-# From the repo root
+# From the repo root - full build
 .\Run-P2AndBuildCheck.ps1
+
+# Skip to build step only (steps 1-3 skipped)
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
 ```
 
 **Parameters**
@@ -313,6 +327,8 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 # Default output folder for logs
 .\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
 
+# Start at a specific step (1=all, 2=skip mirror, 3=skip mirror+verify, 4=build only)
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
 ```
 
 **Outputs**
