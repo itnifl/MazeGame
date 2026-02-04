@@ -107,7 +107,12 @@ The factory is responsible for
 - creating behaviour instances appropriate for a given character type  
 - wiring behaviours with path calculators and navigation services  
 - reading any configuration or parameters needed from difficulty or opponent definitions
+### Generated Support Code
 
+The `maze-module-generator` project produces a `BehaviorDispatcher` class that routes behaviour requests by character type.  
+This generated class provides a consistent API for looking up and dispatching behaviours based on the EMF model definitions.
+
+See `maze-module-generator/src-gen/main/game/maze/generated/BehaviorDispatcher.java`.
 This keeps the rest of the game code small and declarative.  
 For a given opponent type, the game only needs to ask the factory for “its” behaviour instead of manually creating and wiring objects.
 

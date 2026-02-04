@@ -95,9 +95,35 @@ Typical outputs include:
 * Helper classes derived from model structure and OCL based rules.
 * Boilerplate to load, validate and expose model information at runtime.
 
+### Current Generated Files
+
+The following files are currently generated under `maze-module-generator/src-gen/main/game/maze/generated/`:
+
+| File | Purpose | EMF Model Source |
+|------|---------|------------------|
+| `CharacterRegistrar.java` | Registers character types from model | `opponents.ecore` |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers using `getThreatLevel()`/`setThreatLevel()` | `opponents.ecore` |
+| `CharacterGraphicsFactory.java` | Creates sprites using `getImageBase()` | `opponents.ecore` |
+| `BehaviorDispatcher.java` | Dispatches behaviour by character type | `opponents.ecore` |
+| `package-info.java` | Package documentation | — |
+
+**Note:** The generated code uses actual EMF model method names (`getThreatLevel`, `setThreatLevel`, `getImageBase`) from the `CharacterType` interface.
+
 Everything lands under the generated sources folder in `maze-module-generator`
 for example `maze-module-generator/src-gen`.
 `maze-module-generator` then packages these classes into a JAR, and the game module declares a dependency on that JAR and uses the generated types directly.
+
+### Unit Tests
+
+Generated code is validated by JUnit 5 tests in `maze-module-generator/src/test/java/`:
+
+| Test Class | Coverage |
+|------------|----------|
+| `CharacterRegistrarTest.java` | Registration lookup, null handling |
+| `CharacterAttributeSetterTest.java` | Multiplier application, base threat levels |
+| `CharacterGraphicsFactoryTest.java` | Sprite paths, animation frames, scale |
+
+Run tests with: `mvn -pl maze-module-generator test`
 
 ---
 

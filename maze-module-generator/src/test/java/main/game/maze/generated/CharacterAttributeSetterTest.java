@@ -17,44 +17,44 @@ import static org.junit.jupiter.api.Assertions.*;
 class CharacterAttributeSetterTest {
 
     @Nested
-    @DisplayName("getBaseDamage()")
-    class GetBaseDamageTests {
+    @DisplayName("getBaseThreatLevel()")
+    class GetBaseThreatLevelTests {
 
         @Test
-        @DisplayName("should return correct damage for Zombie")
-        void shouldReturnZombieDamage() {
-            assertEquals(10, CharacterAttributeSetter.getBaseDamage("Zombie"),
-                "Zombie base damage should be 10");
+        @DisplayName("should return correct threat level for Zombie")
+        void shouldReturnZombieThreatLevel() {
+            assertEquals(1.0, CharacterAttributeSetter.getBaseThreatLevel("Zombie"), 0.001,
+                "Zombie base threat level should be 1.0");
         }
 
         @Test
-        @DisplayName("should return correct damage for Ghost")
-        void shouldReturnGhostDamage() {
-            assertEquals(5, CharacterAttributeSetter.getBaseDamage("Ghost"),
-                "Ghost base damage should be 5");
+        @DisplayName("should return correct threat level for Ghost")
+        void shouldReturnGhostThreatLevel() {
+            assertEquals(0.5, CharacterAttributeSetter.getBaseThreatLevel("Ghost"), 0.001,
+                "Ghost base threat level should be 0.5");
         }
 
         @Test
-        @DisplayName("should return correct damage for PumpkinBomber")
-        void shouldReturnPumpkinBomberDamage() {
-            assertEquals(15, CharacterAttributeSetter.getBaseDamage("PumpkinBomber"),
-                "PumpkinBomber base damage should be 15");
+        @DisplayName("should return correct threat level for PumpkinBomber")
+        void shouldReturnPumpkinBomberThreatLevel() {
+            assertEquals(1.5, CharacterAttributeSetter.getBaseThreatLevel("PumpkinBomber"), 0.001,
+                "PumpkinBomber base threat level should be 1.5");
         }
 
         @ParameterizedTest
         @ValueSource(strings = {"Unknown", "Dragon", "", "zombie"})
-        @DisplayName("should return 0 for unknown types")
+        @DisplayName("should return 0.0 for unknown types")
         void shouldReturnZeroForUnknownTypes(String typeName) {
-            assertEquals(0, CharacterAttributeSetter.getBaseDamage(typeName),
-                "Unknown type should have 0 damage");
+            assertEquals(0.0, CharacterAttributeSetter.getBaseThreatLevel(typeName), 0.001,
+                "Unknown type should have 0.0 threat level");
         }
 
         @Test
-        @DisplayName("damage values should be positive for known types")
-        void damageValuesShouldBePositive() {
-            assertTrue(CharacterAttributeSetter.getBaseDamage("Zombie") > 0);
-            assertTrue(CharacterAttributeSetter.getBaseDamage("Ghost") > 0);
-            assertTrue(CharacterAttributeSetter.getBaseDamage("PumpkinBomber") > 0);
+        @DisplayName("threat values should be positive for known types")
+        void threatValuesShouldBePositive() {
+            assertTrue(CharacterAttributeSetter.getBaseThreatLevel("Zombie") > 0);
+            assertTrue(CharacterAttributeSetter.getBaseThreatLevel("Ghost") > 0);
+            assertTrue(CharacterAttributeSetter.getBaseThreatLevel("PumpkinBomber") > 0);
         }
     }
 
@@ -106,52 +106,47 @@ class CharacterAttributeSetterTest {
 
         @ParameterizedTest
         @CsvSource({
-            "Zombie, 100, 10",
-            "Ghost, 50, 5",
-            "PumpkinBomber, 75, 15"
+            "Zombie, 100, 1.0",
+            "Ghost, 50, 0.5",
+            "PumpkinBomber, 75, 1.5"
         })
-        @DisplayName("should have balanced health-to-damage ratios")
-        void shouldHaveBalancedRatios(String type, int expectedHealth, int expectedDamage) {
+        @DisplayName("should have balanced health-to-threat ratios")
+        void shouldHaveBalancedRatios(String type, int expectedHealth, double expectedThreat) {
             int health = CharacterAttributeSetter.getBaseHealth(type);
-            int damage = CharacterAttributeSetter.getBaseDamage(type);
+            double threat = CharacterAttributeSetter.getBaseThreatLevel(type);
             
             assertEquals(expectedHealth, health, type + " health mismatch");
-            assertEquals(expectedDamage, damage, type + " damage mismatch");
-            
-            // Validate health/damage ratio is reasonable (between 5 and 20)
-            double ratio = (double) health / damage;
-            assertTrue(ratio >= 5 && ratio <= 20,
-                type + " health/damage ratio should be between 5 and 20, was: " + ratio);
+            assertEquals(expectedThreat, threat, 0.001, type + " threat mismatch");
         }
 
         @Test
-        @DisplayName("Zombie should be tank-like (high health, medium damage)")
+        @DisplayName("Zombie should be tank-like (high health, medium threat)")
         void zombieShouldBeTank() {
             int health = CharacterAttributeSetter.getBaseHealth("Zombie");
-            int damage = CharacterAttributeSetter.getBaseDamage("Zombie");
+            double threat = CharacterAttributeSetter.getBaseThreatLevel("Zombie");
             
             assertTrue(health >= 100, "Zombie should have high health");
-            assertTrue(damage >= 5 && damage <= 15, "Zombie should have medium damage");
+            assertTrue(threat >= 0.5 && threat <= 1.5, "Zombie should have medium threat");
         }
 
         @Test
-        @DisplayName("Ghost should be fragile (low health, low damage)")
+        @DisplayName("Ghost should be fragile (low health, low threat)")
         void ghostShouldBeFragile() {
             int health = CharacterAttributeSetter.getBaseHealth("Ghost");
-            int damage = CharacterAttributeSetter.getBaseDamage("Ghost");
+            double threat = CharacterAttributeSetter.getBaseThreatLevel("Ghost");
             
             assertTrue(health <= 75, "Ghost should have lower health");
-            assertTrue(damage <= 10, "Ghost should have lower damage");
+            assertTrue(threat <= 1.0, "Ghost should have lower threat");
         }
 
         @Test
-        @DisplayName("PumpkinBomber should be glass cannon (medium health, high damage)")
+        @DisplayName("PumpkinBomber should be glass cannon (medium health, high threat)")
         void pumpkinBomberShouldBeGlassCannon() {
             int health = CharacterAttributeSetter.getBaseHealth("PumpkinBomber");
-            int damage = CharacterAttributeSetter.getBaseDamage("PumpkinBomber");
+            double threat = CharacterAttributeSetter.getBaseThreatLevel("PumpkinBomber");
             
             assertTrue(health > 50 && health < 100, "PumpkinBomber should have medium health");
-            assertTrue(damage >= 10, "PumpkinBomber should have higher damage");
+            assertTrue(threat >= 1.0, "PumpkinBomber should have higher threat");
         }
     }
 
@@ -167,8 +162,8 @@ class CharacterAttributeSetterTest {
             for (String type : knownTypes) {
                 assertTrue(CharacterAttributeSetter.getBaseHealth(type) > 0,
                     type + " should have positive health");
-                assertTrue(CharacterAttributeSetter.getBaseDamage(type) > 0,
-                    type + " should have positive damage");
+                assertTrue(CharacterAttributeSetter.getBaseThreatLevel(type) > 0,
+                    type + " should have positive threat level");
             }
         }
 
@@ -179,12 +174,12 @@ class CharacterAttributeSetterTest {
             
             for (String type : knownTypes) {
                 int health = CharacterAttributeSetter.getBaseHealth(type);
-                int damage = CharacterAttributeSetter.getBaseDamage(type);
+                double threat = CharacterAttributeSetter.getBaseThreatLevel(type);
                 
                 assertTrue(health > 0 && health <= 1000,
                     type + " health should be between 1 and 1000");
-                assertTrue(damage > 0 && damage <= 100,
-                    type + " damage should be between 1 and 100");
+                assertTrue(threat > 0 && threat <= 10.0,
+                    type + " threat should be between 0.1 and 10.0");
             }
         }
     }

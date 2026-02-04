@@ -218,20 +218,41 @@ This transforms the project from "uses EMF" to "true model-driven development."
 | **Walls** | `WallCollisionHandler.mtl` | ✅ | `WallCollisionHandler.java` |
 | **Walls** | `WallPropertyAccessor.mtl` | ✅ | `WallPropertyAccessor.java` |
 
+### Generated Code Output
+
+Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`:
+
+| File | Uses EMF Methods | Purpose |
+|------|------------------|----------|
+| `CharacterRegistrar.java` | `eClass().getName()` | Type-safe switch dispatch |
+| `CharacterAttributeSetter.java` | `getThreatLevel()`, `setThreatLevel()` | Difficulty multipliers |
+| `CharacterGraphicsFactory.java` | `getImageBase()` | Sprite factory |
+| `OpponentRegistry.java` | Model iteration | Enemy type listing |
+| `WallRegistry.java` | Model iteration | Wall material listing |
+
+### Unit Tests
+
+| Test Class | Status | Coverage |
+|------------|--------|----------|
+| `CharacterRegistrarTest.java` | ✅ | `isKnownType()`, `getKnownTypes()` |
+| `CharacterAttributeSetterTest.java` | ✅ | `getBaseHealth()`, `getBaseThreatLevel()` |
+| `CharacterGraphicsFactoryTest.java` | ✅ | `getAnimationFrameCount()`, `getSpriteScale()` |
+
 ### Infrastructure Updates
 
 | Component | Status | Description |
 |-----------|--------|-------------|
 | `Generate.mtl` | ✅ | Master entry point updated with imports and entry points for all domains |
-| `MANIFEST.MF` (acceleo) | ✅ | Added `main.game.maze.behaviour` dependency, exported new template packages |
+| `MANIFEST.MF` (acceleo) | ✅ | Added all model plugin dependencies |
 | `MANIFEST.MF` (runner) | ✅ | Added all model plugin dependencies |
+| `pom.xml` (generator) | ✅ | Added JUnit 5, opponents, difficulties dependencies |
 
 ### Remaining Work
 
 | Task | Status | Notes |
 |------|--------|-------|
 | Run generation in Maven build | 🔄 | Requires Acceleo runner configuration |
-| Refactor `OpponentRuntimeFactory.java` | ❌ | Delegate to generated `CharacterRegistrar` |
-| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` |
-| Add `src-gen` to `maze/pom.xml` | ❌ | Include generated sources in compilation |
+| Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
+| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (lower priority) |
+| Add `src-gen` to `maze/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |

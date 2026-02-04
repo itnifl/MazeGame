@@ -108,6 +108,12 @@ Conceptual pipeline:
    runs the Acceleo generation step (via the runner), receives the generated Java sources in `src-gen`,
    and exposes them as a normal Maven JAR.
 
+   Currently generated classes include:
+   - `CharacterRegistrar` — character type registration and lookup
+   - `CharacterAttributeSetter` — difficulty multiplier application
+   - `CharacterGraphicsFactory` — sprite path and animation metadata
+   - `BehaviorDispatcher` — behaviour routing by character type
+
 4. `maze` depends on:
 
    * the EMF model modules (`main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`)
