@@ -1,0 +1,157 @@
+[comment encoding = UTF-8 /]
+[module CharacterGraphicsFactory('http://main.game.maze/opponents')]
+
+[comment]
+  Generates a graphics factory that creates JavaFX nodes for each character type
+  based on the image paths defined in the model.
+[/comment]
+
+[template public generateCharacterGraphicsFactory(model : OpponentModel)]
+[comment @main /]
+[file ('main/game/maze/generated/CharacterGraphicsFactory.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+import main.game.maze.opponents.*;
+
+/**
+ * Generated graphics factory for character sprites.
+ * Creates JavaFX nodes based on image paths defined in the model.
+ * 
+ * @generated from opponents.ecore
+ */
+public final class CharacterGraphicsFactory {
+
+    private static final Logger LOGGER = Logger.getLogger(CharacterGraphicsFactory.class.getName());
+
+    private CharacterGraphicsFactory() { /* utility class */ }
+
+    /**
+     * Creates a graphics node for the given character.
+     * 
+     * @param character the character model
+     * @param size the width/height for the sprite
+     * @return a JavaFX Node representing the character
+     */
+    public static Node createGraphics(CharacterType character, int size) {
+        if (character == null) {
+            return createFallbackGraphics(size, Color.GRAY);
+        }
+
+        String imagePath = character.getImageBase();
+        if (imagePath == null || imagePath.isBlank()) {
+            imagePath = getDefaultImagePath(character);
+        }
+
+        return loadImageOrFallback(imagePath, size, getTypeColor(character));
+    }
+
+    /**
+     * Creates a directional graphics node based on movement direction.
+     * 
+     * @param character the character model
+     * @param direction the movement direction (up, down, left, right)
+     * @param size the width/height for the sprite
+     * @return a JavaFX Node for the directional sprite
+     */
+    public static Node createDirectionalGraphics(CharacterType character, String direction, int size) {
+        if (character == null) {
+            return createFallbackGraphics(size, Color.GRAY);
+        }
+
+        String imagePath = switch (direction.toLowerCase()) {
+            case "up" -> character.getImageTurnUp();
+            case "down" -> character.getImageTurnDown();
+            case "left" -> character.getImageTurnLeft();
+            case "right" -> character.getImageTurnRight();
+            default -> character.getImageBase();
+        };
+
+        if (imagePath == null || imagePath.isBlank()) {
+            imagePath = character.getImageBase();
+        }
+
+        return loadImageOrFallback(imagePath, size, getTypeColor(character));
+    }
+
+    // =========================================================================
+    // Default image paths per character type
+    // =========================================================================
+
+    private static String getDefaultImagePath(CharacterType character) {
+        return switch (character.eClass().getName()) {
+            case "Zombie" -> "/main/game/maze/zombie.png";
+            case "Ghost" -> "/main/game/maze/ghost.png";
+            case "PumpkinBomber" -> "/main/game/maze/pumpkin.png";
+            default -> "/main/game/maze/enemy.png";
+        };
+    }
+
+    private static Color getTypeColor(CharacterType character) {
+        return switch (character.eClass().getName()) {
+            case "Zombie" -> Color.DARKGREEN;
+            case "Ghost" -> Color.LIGHTBLUE;
+            case "PumpkinBomber" -> Color.ORANGE;
+            default -> Color.RED;
+        };
+    }
+
+    // =========================================================================
+    // Image loading utilities
+    // =========================================================================
+
+    private static Node loadImageOrFallback(String imagePath, int size, Color fallbackColor) {
+        try {
+            InputStream is = CharacterGraphicsFactory.class.getResourceAsStream(imagePath);
+            if (is != null) {
+                Image image = new Image(is, size, size, true, true);
+                ImageView view = new ImageView(image);
+                view.setFitWidth(size);
+                view.setFitHeight(size);
+                return view;
+            }
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "Failed to load image: " + imagePath, e);
+        }
+        return createFallbackGraphics(size, fallbackColor);
+    }
+
+    private static Node createFallbackGraphics(int size, Color color) {
+        Rectangle rect = new Rectangle(size, size);
+        rect.setFill(color);
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(2);
+        return rect;
+    }
+
+    // =========================================================================
+    // Character type info (generated from model)
+    // =========================================================================
+
+    /**
+     * Gets sprite size constant for a character type.
+     * @param character the character
+     * @return recommended sprite size in pixels
+     */
+    public static int getRecommendedSize(CharacterType character) {
+        if (character == null) return 32;
+        
+        return switch (character.eClass().getName()) {
+            case "Zombie" -> 40;
+            case "Ghost" -> 35;
+            case "PumpkinBomber" -> 45;
+            default -> 32;
+        };
+    }
+}
+[/file]
+[/template]

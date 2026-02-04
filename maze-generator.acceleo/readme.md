@@ -1,133 +1,357 @@
 # maze-generator.acceleo
 
-This project contains the Acceleo templates that generate Java code and other artefacts from the EMF models used by MazeGame.
+> **Model-Driven Code Generation for MazeGame**
 
-It is the place where we turn models such as opponents, difficulties and walls into concrete Java sources that can be compiled and used at runtime.
-
-Typical inputs
-
-- Walls model and other domain models
-
-Typical outputs
-
-- Generated Java sources under the corresponding `maze-generator.acceleo` modules  
-- Small helper files for inspection or debugging of the model contents
-
-The actual code generation is executed either inside Eclipse or via the companion project `maze-generator.acceleo` in a Tycho Maven build.
+This project uses [Acceleo](https://eclipse.dev/acceleo/) to automatically generate Java code from EMF (Eclipse Modeling Framework) models. Instead of writing repetitive boilerplate code by hand, we define models once and let Acceleo generate the implementation.
 
 ---
 
-## What the generator produces
+## 🎯 What is This Project?
 
-The Acceleo templates in this project generate several kinds of output for MazeGame, for example
+### The Problem It Solves
 
-- Java types that mirror the EMF models  
-  such as enums, data classes and registries for walls, opponents and difficulties
+In game development, you often have many similar types of objects (enemies, walls, difficulty levels) that need:
+- Switch statements to handle each type differently
+- Factory methods to create instances
+- Registration code to track all types
 
-- Runtime configuration helpers  
-  such as registries or lookup tables that are easier to maintain through models
+**Without code generation**, every time you add a new enemy type, you must manually update 5-10 different files. This is error-prone and tedious.
 
-- Optional text files used for debugging or documentation of the model contents
+**With code generation**, you add the new enemy to the model file, run the generator, and all the boilerplate code is created automatically.
 
-Especially, we generate a Wall Registry for different types of Maze Walls: [main.game.maze.walls](../main.game.maze.walls/readme.md)
+### The Value of Model-Driven Engineering (MDE)
 
----
+| Approach | Adding a New Enemy Type |
+|----------|------------------------|
+| **Manual** | Edit `OpponentRuntimeFactory.java`, `CharacterRegistrar.java`, `GraphicsFactory.java`, etc. (5+ files) |
+| **MDE** | Add to `opponents.ecore` model → Run generator → Done! |
 
-## Running the generator in Eclipse
-
-For development and experimentation you can run the Acceleo templates from inside Eclipse.
-
-Typical workflow
-
-1. Open the `.mtl` file that contains the main `Generate` module.
-2. Right click the file and choose
-   `Run As` then `Launch Acceleo Application` or an existing launch configuration.
-3. Select the correct model resource or root element in the launch configuration.
-4. Run the launch.
-   The generator will write files into the output folders configured in the template.
-
-You can repeat this process whenever you change the model or the templates.
+This is called **Model-Driven Engineering** - the model is the single source of truth.
 
 ---
 
-## Running the generator in Maven Tycho
+## 📁 Project Structure
 
-For automated builds and continuous integration the generator is executed headless through the project
+```
+maze-generator.acceleo/
+├── src/main/java/main/game/maze/gen/
+│   ├── templates/
+│   │   ├── Generate.mtl          # Main template for opponents
+│   │   ├── GenerateWalls.mtl     # Template for walls
+│   │   ├── Generate.emtl         # Compiled template (binary)
+│   │   └── GenerateWalls.emtl    # Compiled template (binary)
+│   └── RunAcceleo.java           # Standalone runner class
+├── META-INF/
+│   └── MANIFEST.MF               # Eclipse plugin manifest
+├── plugin.xml                    # Plugin configuration
+└── pom.xml                       # Maven build file
+```
 
-[maze-generator.acceleo-runner](../maze-generator.acceleo-runner/readme.md)
+### Key File Types
 
-That runner project is an Eclipse plug in with a Maven `pom.xml` that uses Tycho to start Acceleo and write the generated sources into
-
-`target/generated sources/acceleo`
-
-During a full Tycho build the sequence is
-
-1. Tycho builds the models and the generator plug in.
-2. The runner plug in is started and invokes the Acceleo templates.
-3. Generated sources are placed under `target/generated sources/acceleo` or under the corresponding module folders, depending on the configuration.
-4. Tycho compiles the generated sources together with hand written code.
-
-If you see an empty `generated sources/acceleo` folder in a Maven build, it usually means that
-
-* the runner has not been configured or wired correctly, or
-* the generator was not pointed at the expected model resources.
-
----
-
-## Customising templates
-
-When you want to change what is generated you do it by editing the `.mtl` templates in this project.
-
-Recommended approach
-
-1. Locate the template that generates the code you want to change
-   for example `GenerateWalls.mtl` or `GenerateOpponents.mtl`.
-
-2. Adjust the Acceleo expressions
-   for example add new fields, change method names or restructure generated classes.
-
-3. Run the generator in Eclipse on a small test model to validate the output.
-
-4. Once you are satisfied, run the headless generator via Maven to regenerate the sources in a clean build.
-
-Remember that generated files are overwritten the next time the generator runs.
-Any custom logic belongs in the templates or in separate hand written classes, not in the generated files.
+| Extension | Purpose |
+|-----------|---------|
+| `.mtl` | **M**odel **T**o **L**anguage - Acceleo template source files |
+| `.emtl` | Compiled Acceleo templates (like `.class` for `.java`) |
+| `.ecore` | EMF model definitions (the "schema" for your data) |
+| `.xmi` | Model instances (actual data conforming to the schema) |
 
 ---
 
-## Adding a new model to the generator
+## 🔧 What Gets Generated
 
-If you introduce a new EMF model and want Acceleo to generate code from it, the high level steps are
+The templates generate Java classes that would otherwise be hand-written boilerplate:
 
-1. Register the new model URI in the main module
-   Extend the `module Generate` declaration with the new namespace URI.
+### From Opponents Model (`opponents.ecore`)
 
-2. Create a new template or extend an existing one
-   Write `.mtl` templates that navigate the new model and produce the desired code.
+| Generated File | Purpose |
+|---------------|---------|
+| `OpponentRegistry.java` | Lists all enemy types with their stats |
+| `CharacterRegistrar.java` | Type-safe switch dispatch for character handling |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type |
+| `CharacterGraphicsFactory.java` | Creates sprites for each character type |
 
-3. Update the runner configuration
-   Ensure the runner plug in knows where to find the new model instances
-   and passes them to the generator on the command line or through EMF resource loading.
+### From Walls Model (`walls.ecore`)
 
-4. Verify output
-   Run the generator both in Eclipse and via Maven to ensure the new model is handled correctly.
+| Generated File | Purpose |
+|---------------|---------|
+| `WallRegistry.java` | Lists all wall material types |
+| `WallMaterialRenderer.java` | Visual properties per material |
+| `WallCollisionHandler.java` | Damage/collision behavior per material |
+
+### Example: Generated Switch Statement
+
+Instead of writing this by hand:
+
+```java
+// ❌ Hand-written - must update for every new enemy
+if (character instanceof Zombie) {
+    handleZombie((Zombie) character);
+} else if (character instanceof Ghost) {
+    handleGhost((Ghost) character);
+} else if (character instanceof PumpkinBomber) {
+    handlePumpkinBomber((PumpkinBomber) character);
+}
+```
+
+The generator creates:
+
+```java
+// ✅ Generated - automatically includes all types from model
+switch (character.eClass().getName()) {
+    case "Zombie" -> handleZombie((Zombie) character);
+    case "Ghost" -> handleGhost((Ghost) character);
+    case "PumpkinBomber" -> handlePumpkinBomber((PumpkinBomber) character);
+    default -> LOGGER.warning("Unknown type: " + typeName);
+}
+```
 
 ---
 
-## Troubleshooting
+## 🚀 How to Run the Generator
 
-Some common issues and hints
+### Option 1: In Eclipse (Interactive)
 
-* No generated files appear
-  Check that the template output paths are correct
-  and that the model root used when launching the generator actually contains the expected elements.
+Best for development and experimenting:
 
-* Headless build fails to load models
-  Verify that the EMF models and their `.ecore` and `.xmi` files are available in the runtime,
-  and that the runner plug in registers any required resource factories.
+1. **Open the template file**
+   - Navigate to `src/main/java/main/game/maze/gen/templates/Generate.mtl`
 
-* Compilation errors in generated code
-  Inspect the generated files to see which types or imports are missing,
-  then adjust the templates or the generator configuration to fix them.
+2. **Run as Acceleo Application**
+   - Right-click the `.mtl` file
+   - Select `Run As` → `Launch Acceleo Application`
+   - Choose or create a launch configuration
 
-By keeping all model to code generation logic in `maze-generator.acceleo` and using `maze-generator.acceleo` for headless execution, the MazeGame project maintains a clean, reproducible and model driven build pipeline.
+3. **Configure the launch**
+   - **Model**: Path to your `.xmi` file (e.g., `maze/src/main/resources/xmi/opponents/opponentModel.xmi`)
+   - **Target Folder**: Where to write output (e.g., `maze-module-generator/src-gen`)
+
+4. **Run and check output**
+   - Generated files appear in the target folder
+   - Check for any errors in the Console view
+
+### Option 2: Via Maven (Automated)
+
+Best for CI/CD and reproducible builds:
+
+```bash
+# From the repository root
+mvn clean verify -DskipTests
+```
+
+The Maven build:
+1. Compiles all EMF models
+2. Builds the `maze-generator.acceleo` plugin
+3. Runs `maze-generator.acceleo-runner` which invokes the templates
+4. Generated sources appear in `maze-module-generator/src-gen/`
+
+---
+
+## 📝 Understanding Acceleo Templates
+
+### Basic Template Anatomy
+
+```mtl
+[comment encoding = UTF-8 /]
+[module Generate('http://main.game.maze/opponents')]    ← Declares which model to use
+
+[template public generate(root : OpponentModel)]        ← Entry point template
+[comment @main /]                                       ← Marks this as the main template
+
+[file ('Output.java', false, 'UTF-8')]                  ← Creates an output file
+package generated;
+
+public class Output {
+    [for (enemy : CharacterType | root.characterTypes)] ← Loop over model elements
+    public static final String [enemy.name/] = "[enemy.displayName/]";
+    [/for]
+}
+[/file]
+
+[/template]
+```
+
+### Key Acceleo Syntax
+
+| Syntax | Meaning | Example |
+|--------|---------|---------|
+| `[for (x : Type | collection)]` | Loop | `[for (e : Enemy | model.enemies)]` |
+| `[x.property/]` | Access property | `[enemy.health/]` |
+| `[if (condition)]` | Conditional | `[if (enemy.health > 100)]` |
+| `[file ('path', ...)]` | Create file | `[file ('Enemy.java', false, 'UTF-8')]` |
+| `[comment text /]` | Comment | `[comment This is ignored /]` |
+
+---
+
+## 🎓 Tutorials and Learning Resources
+
+### Official Acceleo Documentation
+- [Acceleo User Guide](https://wiki.eclipse.org/Acceleo/User_Guide) - Comprehensive official guide
+- [Acceleo Getting Started](https://wiki.eclipse.org/Acceleo/Getting_Started) - Quick start tutorial
+- [Acceleo OCL Reference](https://wiki.eclipse.org/Acceleo/OCL_Operations_Reference) - OCL operations in templates
+
+### EMF (Eclipse Modeling Framework)
+- [EMF Tutorial](https://eclipsesource.com/blogs/tutorials/emf-tutorial/) - Learn EMF basics
+- [EMF Documentation](https://www.eclipse.org/modeling/emf/) - Official EMF site
+- [Ecore Metamodel](https://wiki.eclipse.org/Ecore) - Understanding `.ecore` files
+
+### Video Tutorials
+- [Acceleo Code Generation (YouTube)](https://www.youtube.com/results?search_query=acceleo+code+generation) - Search for tutorials
+- [Model Driven Engineering Basics](https://www.youtube.com/results?search_query=model+driven+engineering+tutorial) - MDE concepts
+
+### Books
+- *Model-Driven Software Engineering in Practice* by Brambilla, Cabot, Wimmer
+- *Eclipse Modeling Framework* by Steinberg et al.
+
+---
+
+## ✏️ Customizing Templates
+
+### Step 1: Locate the Template
+
+Templates are in `src/main/java/main/game/maze/gen/templates/`:
+- `Generate.mtl` - Main opponents/characters template
+- `GenerateWalls.mtl` - Walls material template
+
+### Step 2: Make Changes
+
+Edit the `.mtl` file. For example, to add a new method:
+
+```mtl
+[comment Add this inside the class generation /]
+public static int getTotalEnemyCount() {
+    return [root.characterTypes->size()/];
+}
+```
+
+### Step 3: Recompile the Template
+
+**Important**: After editing `.mtl`, you must recompile it to `.emtl`:
+- In Eclipse: Save the file (auto-compiles with Acceleo builder)
+- Or: Run a full Maven build
+
+### Step 4: Test
+
+1. Run the generator on a test model
+2. Check the generated output for correctness
+3. Commit both `.mtl` and `.emtl` files
+
+---
+
+## ➕ Adding a New Model
+
+To generate code from a new EMF model:
+
+### 1. Register the Model URI
+
+In your `.mtl` template header:
+```mtl
+[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/newmodel')]
+```
+
+### 2. Add Dependency in MANIFEST.MF
+
+```
+Require-Bundle: ...,
+ main.game.maze.newmodel
+```
+
+### 3. Create Templates
+
+Write templates that navigate your new model:
+```mtl
+[template public generateFromNewModel(root : NewModelRoot)]
+[file ('NewOutput.java', false, 'UTF-8')]
+// Generated from NewModel
+[/file]
+[/template]
+```
+
+### 4. Update the Runner
+
+In `maze-generator.acceleo-runner`, ensure your model is loaded and passed to the generator.
+
+---
+
+## 🔍 Troubleshooting
+
+### No Files Generated
+
+**Symptom**: Generator runs but no files appear.
+
+**Solutions**:
+- Check that the model file path is correct
+- Verify the root element type matches the template parameter
+- Look for errors in the Eclipse Console or Maven output
+- Ensure the `.emtl` file exists and is up-to-date
+
+### "Cannot find module" Error
+
+**Symptom**: `Cannot find Acceleo module: /path/Generate.emtl`
+
+**Solutions**:
+- Rebuild the project in Eclipse to compile `.mtl` → `.emtl`
+- Check that `.emtl` is in the classpath
+- Verify the module path in `RunAcceleo.java` matches the actual location
+
+### Compilation Errors in Generated Code
+
+**Symptom**: Generated `.java` files have syntax errors.
+
+**Solutions**:
+- Review the template for missing imports
+- Check that model properties exist and have expected types
+- Use `[protected]` blocks for code that shouldn't be overwritten
+
+### Model Loading Errors
+
+**Symptom**: `Resource not found` or `Unknown package URI`
+
+**Solutions**:
+- Register the EPackage in `RunAcceleo.java`:
+  ```java
+  EPackage.Registry.INSTANCE.put(MyPackage.eNS_URI, MyPackage.eINSTANCE);
+  ```
+- Ensure `.xmi` files reference the correct namespace URI
+
+---
+
+## 📊 Domain Models Overview
+
+| Model | Namespace URI | Contains |
+|-------|--------------|----------|
+| **Opponents** | `http://main.game.maze/opponents` | CharacterType, Zombie, Ghost, PumpkinBomber |
+| **Difficulties** | `http://main.game.maze/difficulties` | Difficulty, EasyDifficulty, NormalDifficulty, HardDifficulty |
+| **Walls** | `http://main.game.maze/walls` | WallMaterial, WallMaterialBaseType (GLASS, DIRT, WOOD, STONE, STEEL) |
+| **Behaviour** | `http://main.game.maze/behaviour` | MovementBehavior, PatrolBehavior, ChaseBehavior, RandomBehavior |
+
+---
+
+## 🔗 Related Projects
+
+- **[Model-Driven Code Generation Plan](../readme-mddcodegeneration.md)** - Comprehensive plan for MDE code generation across all domains
+- [maze-generator.acceleo-runner](../maze-generator.acceleo-runner/readme.md) - Headless runner for Maven builds
+- [maze-module-generator](../maze-module-generator/readme.md) - Contains the generated sources
+- [main.game.maze.opponents](../main.game.maze.opponents/readme.md) - Opponents EMF model
+- [main.game.maze.walls](../main.game.maze.walls/readme.md) - Walls EMF model
+- [main.game.maze.difficulties](../main.game.maze.difficulties/readme.md) - Difficulties EMF model
+
+---
+
+## 📚 Glossary
+
+| Term | Definition |
+|------|------------|
+| **Acceleo** | Eclipse-based code generation framework using templates |
+| **EMF** | Eclipse Modeling Framework - foundation for defining models |
+| **Ecore** | The metamodel used by EMF (like a schema for models) |
+| **XMI** | XML format for storing model instances |
+| **MTL** | Model-to-Text Language - Acceleo's template language |
+| **EMTL** | Compiled (binary) MTL template |
+| **MDE** | Model-Driven Engineering - using models as primary artifacts |
+| **Tycho** | Maven plugin for building Eclipse plugins |
+
+---
+
+*By keeping all model-to-code generation logic in `maze-generator.acceleo`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline.*
+

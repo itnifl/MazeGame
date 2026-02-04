@@ -1,0 +1,171 @@
+[comment encoding = UTF-8 /]
+[module BehaviorDispatcher('http://main.game.maze/behaviour', 'http://main.game.maze/opponents')]
+
+[comment]
+  Generates a behavior dispatcher that routes to the correct movement executor
+  based on MovementBehavior subtype. Adding a new behavior type to the model
+  automatically adds a dispatch case.
+[/comment]
+
+[template public generateBehaviorDispatcher(pkg : ecore::EPackage)]
+[comment @main /]
+[file ('main/game/maze/generated/BehaviorDispatcher.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import main.game.maze.behaviour.*;
+import main.game.maze.opponents.CharacterType;
+
+/**
+ * Generated behavior dispatcher that routes to type-specific executors.
+ * Eliminates instanceof chains for movement behavior handling.
+ * 
+ * @generated from movements.ecore
+ */
+public final class BehaviorDispatcher {
+
+    private static final Logger LOGGER = Logger.getLogger(BehaviorDispatcher.class.getName());
+
+    private BehaviorDispatcher() { /* utility class */ }
+
+    /**
+     * Functional interface for behavior execution.
+     */
+    @FunctionalInterface
+    public interface BehaviorExecutor {
+        void execute(MovementBehavior behavior, double deltaTime);
+    }
+
+    /**
+     * Dispatches movement behavior to the appropriate executor.
+     * 
+     * @param behavior the movement behavior to execute
+     * @param deltaTime time since last update in seconds
+     * @param randomExecutor executor for RandomBehavior
+     * @param patrolExecutor executor for PatrolBehavior
+     * @param chaseExecutor executor for ChaseBehavior
+     */
+    public static void dispatch(
+            MovementBehavior behavior,
+            double deltaTime,
+            BehaviorExecutor randomExecutor,
+            BehaviorExecutor patrolExecutor,
+            BehaviorExecutor chaseExecutor) {
+        
+        if (behavior == null) {
+            LOGGER.warning("Cannot dispatch null behavior");
+            return;
+        }
+
+        String typeName = behavior.eClass().getName();
+        
+        switch (typeName) {
+            case "RandomBehavior" -> {
+                if (randomExecutor != null) randomExecutor.execute(behavior, deltaTime);
+            }
+            case "PatrolBehavior" -> {
+                if (patrolExecutor != null) patrolExecutor.execute(behavior, deltaTime);
+            }
+            case "ChaseBehavior" -> {
+                if (chaseExecutor != null) chaseExecutor.execute(behavior, deltaTime);
+            }
+            default -> LOGGER.log(Level.WARNING, "Unknown behavior type: {0}", typeName);
+        }
+    }
+
+    /**
+     * Simplified dispatch using default executors.
+     */
+    public static void dispatch(MovementBehavior behavior, double deltaTime) {
+        dispatch(behavior, deltaTime,
+            BehaviorDispatcher::executeRandom,
+            BehaviorDispatcher::executePatrol,
+            BehaviorDispatcher::executeChase
+        );
+    }
+
+    // =========================================================================
+    // Default behavior executors
+    // =========================================================================
+
+    private static void executeRandom(MovementBehavior behavior, double deltaTime) {
+        RandomBehavior random = (RandomBehavior) behavior;
+        // Random movement: pick a direction and move
+        LOGGER.log(Level.FINE, "Executing RandomBehavior with regen: {0}/s", random.getRegenPerSecond());
+        behavior.move();
+    }
+
+    private static void executePatrol(MovementBehavior behavior, double deltaTime) {
+        PatrolBehavior patrol = (PatrolBehavior) behavior;
+        // Patrol: follow waypoints
+        int currentIdx = patrol.getCurrentIndex();
+        int pathSize = patrol.getPath().size();
+        
+        LOGGER.log(Level.FINE, "Executing PatrolBehavior at index {0}/{1}", 
+            new Object[]{currentIdx, pathSize});
+        
+        patrol.nextIndex();
+        behavior.move();
+    }
+
+    private static void executeChase(MovementBehavior behavior, double deltaTime) {
+        ChaseBehavior chase = (ChaseBehavior) behavior;
+        // Chase: move toward target position
+        Position target = chase.getRelativePositionTarget();
+        
+        LOGGER.log(Level.FINE, "Executing ChaseBehavior toward ({0}, {1})",
+            new Object[]{target.getPosX(), target.getPosY()});
+        
+        behavior.move();
+    }
+
+    // =========================================================================
+    // Behavior type utilities (generated from model)
+    // =========================================================================
+
+    /**
+     * Gets all known behavior type names.
+     * @return array of behavior type names
+     */
+    public static String['['/][']'/] getKnownBehaviorTypes() {
+        return new String['['/][']'/] {
+            "RandomBehavior",
+            "PatrolBehavior",
+            "ChaseBehavior"
+        };
+    }
+
+    /**
+     * Checks if behavior requires pathfinding.
+     * @param behavior the behavior to check
+     * @return true if behavior uses a PathCalculator
+     */
+    public static boolean requiresPathfinding(MovementBehavior behavior) {
+        if (behavior == null) return false;
+        
+        return switch (behavior.eClass().getName()) {
+            case "PatrolBehavior" -> true;
+            case "ChaseBehavior" -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Gets the PathCalculator from a behavior if it has one.
+     * @param behavior the behavior
+     * @return the PathCalculator or null
+     */
+    public static PathCalculator getPathCalculator(MovementBehavior behavior) {
+        if (behavior == null) return null;
+        
+        return switch (behavior.eClass().getName()) {
+            case "PatrolBehavior" -> ((PatrolBehavior) behavior).getPathcalculator();
+            case "ChaseBehavior" -> ((ChaseBehavior) behavior).getPathcalculator();
+            default -> null;
+        };
+    }
+}
+[/file]
+[/template]

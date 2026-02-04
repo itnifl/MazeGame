@@ -17,6 +17,7 @@
 * 🖥️ [maze](maze/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 
 ## Project Tech stack:

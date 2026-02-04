@@ -1,0 +1,87 @@
+[comment encoding = UTF-8 /]
+[module EnemySpawnLimits('http://main.game.maze/difficulties')]
+
+[comment]
+  Generates enemy spawn limit constants from EnemyMaxCount configurations.
+  These are per-difficulty caps that can be queried at runtime.
+[/comment]
+
+[template public generateEnemySpawnLimits(gameData : DifficultyGameData)]
+[comment @main /]
+[file ('main/game/maze/generated/EnemySpawnLimits.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.EnumMap;
+import java.util.Map;
+import main.game.maze.difficulties.EnemyTypes;
+import main.game.maze.difficulties.Difficulty;
+
+/**
+ * Generated enemy spawn limits per difficulty level.
+ * Provides type-safe access to enemy caps without reflection.
+ * 
+ * @generated from difficulty-module.ecore
+ */
+public final class EnemySpawnLimits {
+
+    private EnemySpawnLimits() { /* utility class */ }
+
+    /**
+     * Gets enemy spawn caps for the given difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @return map of enemy type to maximum count
+     */
+    public static Map<EnemyTypes, Integer> getCaps(Difficulty difficulty) {
+        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
+        
+        if (difficulty == null) {
+            // Default caps when no difficulty set
+            caps.put(EnemyTypes.ZOMBIE, 5);
+            caps.put(EnemyTypes.GHOST, 3);
+            caps.put(EnemyTypes.PUMPKINBOMBER, 2);
+            return caps;
+        }
+        
+        // Populate from difficulty's enemyMaxCount list
+        difficulty.getEnemyMaxCount().forEach(emc -> 
+            caps.put(emc.getType(), Math.max(0, emc.getMaxCount()))
+        );
+        
+        return caps;
+    }
+
+    /**
+     * Gets the total enemy count allowed for this difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @return sum of all enemy caps
+     */
+    public static int getTotalEnemyCount(Difficulty difficulty) {
+        return getCaps(difficulty).values().stream()
+            .mapToInt(Integer::intValue)
+            .sum();
+    }
+
+    /**
+     * Checks if a specific enemy type is allowed at this difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @param type the enemy type to check
+     * @return true if at least one of this type is allowed
+     */
+    public static boolean isEnemyTypeAllowed(Difficulty difficulty, EnemyTypes type) {
+        return getCaps(difficulty).getOrDefault(type, 0) > 0;
+    }
+
+    // =========================================================================
+    // Generated constants for each EnemyType
+    // =========================================================================
+    
+    [for (enumLit : EEnumLiteral | EnemyTypes.oclAsType(ecore::EEnum).eLiterals)]
+    /** Enemy type constant: [enumLit.name/] */
+    public static final EnemyTypes [enumLit.name/] = EnemyTypes.[enumLit.name/];
+    [/for]
+}
+[/file]
+[/template]

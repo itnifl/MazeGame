@@ -1,0 +1,198 @@
+[comment encoding = UTF-8 /]
+[module WallMaterialRenderer('http://main.game.maze/walls')]
+
+[comment]
+  Generates rendering helpers for wall materials based on their
+  base type (Glass, Dirt, Wood, Stone, Steel) and properties.
+[/comment]
+
+[template public generateWallMaterialRenderer(pkg : ecore::EPackage)]
+[comment @main /]
+[file ('main/game/maze/generated/WallMaterialRenderer.java', false, 'UTF-8')]
+package main.game.maze.generated;
+
+import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import main.game.maze.walls.WallMaterial;
+import main.game.maze.walls.WallMaterialBaseType;
+
+/**
+ * Generated renderer for WallMaterial instances.
+ * Maps wall base types to their visual properties.
+ * 
+ * @generated from walls.ecore
+ */
+public final class WallMaterialRenderer {
+
+    private static final Logger LOGGER = Logger.getLogger(WallMaterialRenderer.class.getName());
+    private static final Map<String, Image> imageCache = new HashMap<>();
+
+    private WallMaterialRenderer() { /* utility class */ }
+
+    /**
+     * Gets the base color for a wall material type.
+     * Used for fallback rendering or tinting.
+     * 
+     * @param baseType the wall material base type
+     * @return the base color
+     */
+    public static Color getBaseColor(WallMaterialBaseType baseType) {
+        if (baseType == null) return Color.GRAY;
+        
+        return switch (baseType) {
+            case GLASS -> Color.rgb(200, 230, 255, 0.6); // translucent light blue
+            case DIRT -> Color.rgb(139, 90, 43);         // brown
+            case WOOD -> Color.rgb(160, 82, 45);         // sienna
+            case STONE -> Color.rgb(128, 128, 128);      // gray
+            case STEEL -> Color.rgb(70, 70, 90);         // dark steel blue
+        };
+    }
+
+    /**
+     * Gets the damage overlay color for a material when hit.
+     * 
+     * @param baseType the wall material base type
+     * @return the damage visual color
+     */
+    public static Color getDamageColor(WallMaterialBaseType baseType) {
+        if (baseType == null) return Color.RED;
+        
+        return switch (baseType) {
+            case GLASS -> Color.WHITE;                   // shatter white
+            case DIRT -> Color.rgb(101, 67, 33);         // darker brown
+            case WOOD -> Color.rgb(80, 50, 20);          // scorched
+            case STONE -> Color.rgb(90, 90, 90);         // cracked gray
+            case STEEL -> Color.rgb(255, 140, 0);        // spark orange
+        };
+    }
+
+    /**
+     * Gets the transparency level for a material type.
+     * 
+     * @param baseType the wall material base type
+     * @return opacity from 0.0 (transparent) to 1.0 (opaque)
+     */
+    public static double getOpacity(WallMaterialBaseType baseType) {
+        if (baseType == null) return 1.0;
+        
+        return switch (baseType) {
+            case GLASS -> 0.6;
+            case DIRT -> 1.0;
+            case WOOD -> 1.0;
+            case STONE -> 1.0;
+            case STEEL -> 1.0;
+        };
+    }
+
+    /**
+     * Checks if the material should render with transparency.
+     * 
+     * @param baseType the wall material base type
+     * @return true if material is see-through
+     */
+    public static boolean isTransparent(WallMaterialBaseType baseType) {
+        return baseType == WallMaterialBaseType.GLASS;
+    }
+
+    /**
+     * Gets the break sound effect identifier for a material.
+     * 
+     * @param baseType the wall material base type
+     * @return the sound effect ID
+     */
+    public static String getBreakSound(WallMaterialBaseType baseType) {
+        if (baseType == null) return "wall_generic_break";
+        
+        return switch (baseType) {
+            case GLASS -> "wall_glass_shatter";
+            case DIRT -> "wall_dirt_crumble";
+            case WOOD -> "wall_wood_splinter";
+            case STONE -> "wall_stone_crack";
+            case STEEL -> "wall_steel_dent";
+        };
+    }
+
+    /**
+     * Gets the hit sound effect identifier for a material.
+     * 
+     * @param baseType the wall material base type
+     * @return the sound effect ID
+     */
+    public static String getHitSound(WallMaterialBaseType baseType) {
+        if (baseType == null) return "wall_generic_hit";
+        
+        return switch (baseType) {
+            case GLASS -> "wall_glass_crack";
+            case DIRT -> "wall_dirt_thud";
+            case WOOD -> "wall_wood_knock";
+            case STONE -> "wall_stone_impact";
+            case STEEL -> "wall_steel_clang";
+        };
+    }
+
+    /**
+     * Gets the texture path for a wall material.
+     * Uses the model's baseImage if defined, otherwise default per type.
+     * 
+     * @param material the wall material
+     * @return the texture resource path
+     */
+    public static String getTexturePath(WallMaterial material) {
+        if (material == null) return "/main/game/maze/textures/wall_default.png";
+        
+        String baseImage = material.getBaseImage();
+        if (baseImage != null && !baseImage.isEmpty()) {
+            return baseImage;
+        }
+        
+        return switch (material.getWallBaseType()) {
+            case GLASS -> "/main/game/maze/textures/wall_glass.png";
+            case DIRT -> "/main/game/maze/textures/wall_dirt.png";
+            case WOOD -> "/main/game/maze/textures/wall_wood.png";
+            case STONE -> "/main/game/maze/textures/wall_stone.png";
+            case STEEL -> "/main/game/maze/textures/wall_steel.png";
+        };
+    }
+
+    /**
+     * Loads and caches the image for a wall material.
+     * 
+     * @param material the wall material
+     * @return the JavaFX Image, or null if not loadable
+     */
+    public static Image loadTexture(WallMaterial material) {
+        String path = getTexturePath(material);
+        return imageCache.computeIfAbsent(path, p -> {
+            try {
+                return new Image(WallMaterialRenderer.class.getResourceAsStream(p));
+            } catch (Exception e) {
+                LOGGER.warning("Failed to load wall texture: " + p);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Determines the particle effect type when a wall is damaged.
+     * 
+     * @param baseType the wall material base type
+     * @return particle effect identifier
+     */
+    public static String getDamageParticleEffect(WallMaterialBaseType baseType) {
+        if (baseType == null) return "debris_generic";
+        
+        return switch (baseType) {
+            case GLASS -> "glass_shards";
+            case DIRT -> "dirt_puff";
+            case WOOD -> "wood_splinters";
+            case STONE -> "stone_chips";
+            case STEEL -> "sparks";
+        };
+    }
+}
+[/file]
+[/template]

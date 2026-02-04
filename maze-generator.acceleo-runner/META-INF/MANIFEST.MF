@@ -11,4 +11,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ocl.pivot,
  org.eclipse.acceleo.engine,
- maze-generator.acceleo
+ maze-generator.acceleo,
+ main.game.maze.opponents,
+ main.game.maze.difficulties,
+ main.game.maze.walls
+
