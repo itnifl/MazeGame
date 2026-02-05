@@ -315,17 +315,17 @@ public final class CharacterGraphicsFactory {
     }
 
     private static String getZombieSprite(Zombie zombie) {
-        String img = zombie.getImage();
+        String img = zombie.getImageBase();
         return (img != null && !img.isEmpty()) ? img : "/images/zombie_default.png";
     }
 
     private static String getGhostSprite(Ghost ghost) {
-        String img = ghost.getImage();
+        String img = ghost.getImageBase();
         return (img != null && !img.isEmpty()) ? img : "/images/ghost_default.png";
     }
 
     private static String getPumpkinBomberSprite(PumpkinBomber bomber) {
-        String img = bomber.getImage();
+        String img = bomber.getImageBase();
         return (img != null && !img.isEmpty()) ? img : "/images/pumpkin_bomber_default.png";
     }
 
@@ -335,7 +335,7 @@ public final class CharacterGraphicsFactory {
      */
     public static String['['/][']'/] getAllSpritePaths() {
         return new String['['/][']'/] {
-            [for (enemy : CharacterType | root.characterTypes) separator(',\n            ')]"[if (enemy.image.oclIsUndefined() or enemy.image = '')]/images/default_enemy.png[else][enemy.image/][/if]"[/for]
+            [for (enemy : CharacterType | root.characterTypes) separator(',\n            ')]"[if (enemy.ImageBase.oclIsUndefined() or enemy.ImageBase = '')]/images/default_enemy.png[else][enemy.ImageBase/][/if]"[/for]
         };
     }
 }
