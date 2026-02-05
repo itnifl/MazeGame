@@ -103,7 +103,7 @@ These files are currently generated and tested:
 |---------------|---------|------------------|
 | `CharacterRegistrar.java` | Registers and looks up character types | `eClass().getName()` |
 | `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` |
-| `CharacterGraphicsFactory.java` | Creates sprites for each character type | `getImageBase()` |
+| `CharacterGraphicsFactory.java` | Creates sprites for each character type | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
 | `BehaviorDispatcher.java` | Routes behaviour by character type | `eClass().getName()` |
 | `package-info.java` | Package documentation | — |
 
@@ -349,6 +349,8 @@ character.getImageBase()     // From opponents.ecore
 | `health` | `getHealth()` / `setHealth()` |
 | `attackDamage` | `getAttackDamage()` / `setAttackDamage()` |
 | `speed` | `getSpeed()` / `setSpeed()` |
+| `animationFrameCount` | `getAnimationFrameCount()` / `setAnimationFrameCount()` |
+| `spriteScale` | `getSpriteScale()` / `setSpriteScale()` |
 
 ### Step 2: Write Unit Tests for Generated Code
 
@@ -510,6 +512,8 @@ All enemies share these attributes:
 | `threatLevel` | double | `0.0` | Danger rating (affects difficulty) |
 | `ImageBase` | String | `/main/game/maze/zombie.png` | Main sprite |
 | `ImageTurnLeft/Right/Up/Down` | String | — | Directional sprites |
+| `animationFrameCount` | int | `1` | Number of animation frames |
+| `spriteScale` | double | `1.0` | Sprite scale factor |
 | `behavior` | BehaviorType | `WANDER` | AI behavior pattern |
 
 **BehaviorType Enum**: `PASSIVE`, `WANDER`, `AGGRESSIVE`, `PATROL`
@@ -573,7 +577,7 @@ The `Generate.mtl` template produces:
 | `OpponentRegistry` | Lists all enemies, provides counts | Lines 25-60 |
 | `CharacterRegistrar` | Type-safe switch dispatch for registration | Lines 65-160 |
 | `CharacterAttributeSetter` | Applies difficulty multipliers | Lines 168-250 |
-| `CharacterGraphicsFactory` | Creates sprites from `ImageBase` | Lines 255-300 |
+| `CharacterGraphicsFactory` | Creates sprites from `ImageBase`, `animationFrameCount`, `spriteScale` | Lines 255-300 |
 
 **Example: How CharacterRegistrar eliminates instanceof**
 

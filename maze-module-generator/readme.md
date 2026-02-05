@@ -18,7 +18,7 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 | `WallRegistry.java` | `walls.ecore` | Lists all wall material types |
 | `CharacterRegistrar.java` | `opponents.ecore` | Type-safe switch dispatch for character registration |
 | `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getHealth()`, `getThreatLevel()`, `getSpeed()` |
-| `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()` |
+| `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
 
 ### Key Methods in Generated Code
 
@@ -34,8 +34,8 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 
 **CharacterGraphicsFactory**:
 - `getSpritePath()` - Returns sprite using `getImageBase()` from model
-- `getAnimationFrameCount()` - Returns frame count per type
-- `getSpriteScale()` - Returns scale factor per type
+- `getAnimationFrameCount()` - Returns frame count using `getAnimationFrameCount()` from model
+- `getSpriteScale()` - Returns scale factor using `getSpriteScale()` from model
 
 ---
 

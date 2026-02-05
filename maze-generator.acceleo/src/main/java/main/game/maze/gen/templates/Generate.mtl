@@ -357,35 +357,29 @@ public final class CharacterGraphicsFactory {
 
     /**
      * Gets the animation frame count for a character type.
-     * Note: Frame counts are hardcoded as they are not modeled in opponents.ecore.
-     * To make this model-driven, add an 'animationFrameCount' attribute to CharacterType.
+     * Model-driven: reads animationFrameCount attribute from CharacterType.
      * 
      * @param typeName the character type name
      * @return number of animation frames
      */
     public static int getAnimationFrameCount(String typeName) {
         return switch (typeName) {
-            case "Zombie" -> 4;
-            case "Ghost" -> 6;
-            case "PumpkinBomber" -> 4;
-            default -> 1;
+            [for (enemy : CharacterType | root.characterTypes)]case "[enemy.eClass().name/]" -> [enemy.animationFrameCount/];
+            [/for]default -> 1;
         };
     }
 
     /**
      * Gets the sprite scale factor for a character type.
-     * Note: Scales are hardcoded as they are not modeled in opponents.ecore.
-     * To make this model-driven, add a 'spriteScale' attribute to CharacterType.
+     * Model-driven: reads spriteScale attribute from CharacterType.
      * 
      * @param typeName the character type name
      * @return scale multiplier
      */
     public static double getSpriteScale(String typeName) {
         return switch (typeName) {
-            case "Zombie" -> 1.0;
-            case "Ghost" -> 0.8;
-            case "PumpkinBomber" -> 1.2;
-            default -> 1.0;
+            [for (enemy : CharacterType | root.characterTypes)]case "[enemy.eClass().name/]" -> [enemy.spriteScale/];
+            [/for]default -> 1.0;
         };
     }
 }

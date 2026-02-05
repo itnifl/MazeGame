@@ -109,7 +109,7 @@ We want the **model to drive the code**, not the other way around:
 |--------------------|--------|---------|
 | `CharacterRegistrar.java` | `CharacterType` subtypes | Registration switch |
 | `CharacterAttributeSetter.java` | `CharacterType` + `Difficulty` | Multiplier application |
-| `CharacterGraphicsFactory.java` | Sprite paths | Graphics creation |
+| `CharacterGraphicsFactory.java` | `CharacterType` graphics attrs | Graphics creation (sprite, animation, scale) |
 
 **Value**: Adding `Skeleton` to model auto-generates all factory/registration code.
 
@@ -221,7 +221,7 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 |------|------------------|----------|
 | `CharacterRegistrar.java` | `eClass().getName()` | Type-safe switch dispatch |
 | `CharacterAttributeSetter.java` | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` | Difficulty multipliers |
-| `CharacterGraphicsFactory.java` | `getImageBase()` | Sprite factory |
+| `CharacterGraphicsFactory.java` | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | Sprite factory |
 | `OpponentRegistry.java` | Model iteration | Enemy type listing |
 | `WallRegistry.java` | Model iteration | Wall material listing |
 

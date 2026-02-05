@@ -79,6 +79,8 @@ The following classes are generated from `opponents.ecore` and placed in `maze-m
 **Key EMF model methods used:**
 - `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution
 - `CharacterType.getImageBase()` — base image path for sprites
+- `CharacterType.getAnimationFrameCount()` / `setAnimationFrameCount()` — animation frame count
+- `CharacterType.getSpriteScale()` / `setSpriteScale()` — sprite scale factor
 
 On top of the generated code, hand written runtime code provides
 
