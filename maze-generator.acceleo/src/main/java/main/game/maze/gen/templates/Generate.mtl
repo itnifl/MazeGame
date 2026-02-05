@@ -217,21 +217,21 @@ public final class CharacterAttributeSetter {
     private static void applyZombieMultipliers(Zombie zombie, 
             double healthMult, double damageMult, double speedMult) {
         zombie.setHealth((int) (zombie.getHealth() * healthMult));
-        zombie.setDamage((int) (zombie.getDamage() * damageMult));
+        zombie.setAttackDamage((int) (zombie.getAttackDamage() * damageMult));
         zombie.setSpeed(zombie.getSpeed() * speedMult);
     }
 
     private static void applyGhostMultipliers(Ghost ghost,
             double healthMult, double damageMult, double speedMult) {
         ghost.setHealth((int) (ghost.getHealth() * healthMult));
-        ghost.setDamage((int) (ghost.getDamage() * damageMult));
+        ghost.setAttackDamage((int) (ghost.getAttackDamage() * damageMult));
         ghost.setSpeed(ghost.getSpeed() * speedMult);
     }
 
     private static void applyPumpkinBomberMultipliers(PumpkinBomber bomber,
             double healthMult, double damageMult, double speedMult) {
         bomber.setHealth((int) (bomber.getHealth() * healthMult));
-        bomber.setDamage((int) (bomber.getDamage() * damageMult));
+        bomber.setAttackDamage((int) (bomber.getAttackDamage() * damageMult));
         bomber.setSpeed(bomber.getSpeed() * speedMult);
     }
 
