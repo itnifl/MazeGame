@@ -364,8 +364,16 @@ public final class CharacterGraphicsFactory {
      */
     public static int getAnimationFrameCount(String typeName) {
         return switch (typeName) {
-            [for (enemy : CharacterType | root.characterTypes)]case "[enemy.eClass().name/]" -> [enemy.animationFrameCount/];
-            [/for]default -> 1;
+            [for (enemy : CharacterType | root.characterTypes->filter(Zombie)->asSet())]
+            case "Zombie" -> [enemy.animationFrameCount/];
+            [/for]
+            [for (enemy : CharacterType | root.characterTypes->filter(Ghost)->asSet())]
+            case "Ghost" -> [enemy.animationFrameCount/];
+            [/for]
+            [for (enemy : CharacterType | root.characterTypes->filter(PumpkinBomber)->asSet())]
+            case "PumpkinBomber" -> [enemy.animationFrameCount/];
+            [/for]
+            default -> 1;
         };
     }
 
@@ -378,8 +386,16 @@ public final class CharacterGraphicsFactory {
      */
     public static double getSpriteScale(String typeName) {
         return switch (typeName) {
-            [for (enemy : CharacterType | root.characterTypes)]case "[enemy.eClass().name/]" -> [enemy.spriteScale/];
-            [/for]default -> 1.0;
+            [for (enemy : CharacterType | root.characterTypes->filter(Zombie)->asSet())]
+            case "Zombie" -> [enemy.spriteScale/];
+            [/for]
+            [for (enemy : CharacterType | root.characterTypes->filter(Ghost)->asSet())]
+            case "Ghost" -> [enemy.spriteScale/];
+            [/for]
+            [for (enemy : CharacterType | root.characterTypes->filter(PumpkinBomber)->asSet())]
+            case "PumpkinBomber" -> [enemy.spriteScale/];
+            [/for]
+            default -> 1.0;
         };
     }
 }

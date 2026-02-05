@@ -805,6 +805,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_UP);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_DOWN);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__BEHAVIOR);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ANIMATION_FRAME_COUNT);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__SPRITE_SCALE);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
