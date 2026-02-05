@@ -34,10 +34,13 @@
     <module>maze-module-repository</module>
     <module>maze-generator.acceleo-runner</module>
 
-    <!-- 4: evt. egen generated/jar-modul for spillet -->
+    <!-- 4: Code generator (pure Java, replaces Acceleo) -->
+    <module>maze-generator-java</module>
+
+    <!-- 5: evt. egen generated/jar-modul for spillet -->
     <module>maze-module-generator</module>
 
-    <!-- 5: selve JavaFX-spillet -->
+    <!-- 6: selve JavaFX-spillet -->
     <module>maze</module>    
   </modules>
 

@@ -29,6 +29,11 @@
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
+              
+              <executionEnvironment>JavaSE-21</executionEnvironment>
+              <jvmArgs>
+                <arg>-Dfile.encoding=UTF-8</arg>
+              </jvmArgs>
             </configuration>
           </execution>
           <execution>

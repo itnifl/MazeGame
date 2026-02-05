@@ -2,11 +2,10 @@
 package main.game.maze.gen;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.acceleo.engine.service.AcceleoService;
-import org.eclipse.acceleo.model.mtl.Module;
+import org.eclipse.emf.common.util.BasicMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -14,11 +13,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
-public class RunWallsAcceleo {
+import main.game.maze.gen.templates.GenerateWalls;
 
-    // .emtl ligger på denne klassenpathen i pluginen
-    private static final String MODULE_PATH = "main/game/maze/gen/templates/GenerateWalls"; // uten .emtl
-    private static final String TEMPLATE_NAME = "generate";
+public class RunWallsAcceleo {
 
     public void run(String wallsModelPath, String outDir) throws Exception {
 
@@ -28,13 +25,13 @@ public class RunWallsAcceleo {
           .getExtensionToFactoryMap()
           .put("xmi", new XMIResourceFactoryImpl());
 
-        // 2. Registrer EPackage for veggmodellen
+        // 2. Register EPackage for walls model
         org.eclipse.emf.ecore.EPackage.Registry.INSTANCE.put(
                 main.game.maze.walls.WallsPackage.eNS_URI,
                 main.game.maze.walls.WallsPackage.eINSTANCE
         );
 
-        // 3. Last walls-modellen
+        // 3. Load walls model
         File modelFile = new File(wallsModelPath);
         URI modelURI = URI.createFileURI(modelFile.getAbsolutePath());
         Resource modelRes = rs.getResource(modelURI, true);
@@ -43,16 +40,7 @@ public class RunWallsAcceleo {
         System.out.println("Walls model root: " + root.eClass().getName()
                 + " from " + root.eClass().getEPackage().getNsURI());
 
-        // 4. Last .emtl-modulen fra classpath
-        URL moduleUrl = RunWallsAcceleo.class.getResource("/" + MODULE_PATH + ".emtl");
-        if (moduleUrl == null) {
-            throw new IllegalStateException("Cannot find GenerateWalls.emtl at /" + MODULE_PATH + ".emtl");
-        }
-
-        Resource moduleRes = rs.getResource(URI.createURI(moduleUrl.toString()), true);
-        Module module = (Module) moduleRes.getContents().get(0);
-
-        // 5. Sørg for output-folder
+        // 4. Create output folder
         File outFolder = new File(outDir);
         if (!outFolder.exists()) {
             outFolder.mkdirs();
@@ -60,11 +48,19 @@ public class RunWallsAcceleo {
 
         System.out.println("Generating walls code into: " + outFolder.getAbsolutePath());
 
-        // 6. Kjør Acceleo
-        AcceleoService service = new AcceleoService();
-        service.doGenerate(module, TEMPLATE_NAME, root,
-                Collections.emptyList(), outFolder, null);
-
-        System.out.println("Walls generation done.");
+        // 5. Use GenerateWalls Java API directly (bypasses .emtl requirement)
+        try {
+            GenerateWalls generator = new GenerateWalls();
+            List<Object> arguments = new ArrayList<>();
+            arguments.add(root);
+            
+            // Call doGenerate with a monitor
+            generator.doGenerate(BasicMonitor.toMonitor(new BasicMonitor()));
+            
+            System.out.println("Walls generation done.");
+        } catch (Exception e) {
+            System.err.println("Generation failed: " + e.getMessage());
+            throw e;
+        }
     }
 }

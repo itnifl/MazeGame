@@ -231,8 +231,10 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 | Test Class | Status | Coverage |
 |------------|--------|----------|
 | `CharacterRegistrarTest.java` | ✅ | `isKnownType()`, `getKnownTypes()` |
-| `CharacterAttributeSetterTest.java` | ✅ | `getBaseHealth()`, `getBaseThreatLevel()` |
+| `CharacterAttributeSetterTest.java` | ✅ | `getBaseHealth()`, `getBaseThreatLevel()`, `applyDamageMultiplier()` |
 | `CharacterGraphicsFactoryTest.java` | ✅ | `getAnimationFrameCount()`, `getSpriteScale()` |
+| `WallRegistryTest.java` | ✅ | `get()`, `all()`, wall definitions, model validation |
+| `OpponentRegistryTest.java` | ✅ | `GAME_NAME`, `listEnemies()`, model validation |
 
 ### Infrastructure Updates
 

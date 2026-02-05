@@ -53,7 +53,19 @@
     </dependency>
     <dependency>
         <groupId>org.eclipse.acceleo</groupId>
+        <artifactId>org.eclipse.acceleo.common</artifactId>
+        <version>3.5.1.201409021433</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.acceleo</groupId>
         <artifactId>org.eclipse.acceleo.model</artifactId>
+        <version>3.5.1.201409021433</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.eclipse.acceleo</groupId>
+        <artifactId>org.eclipse.acceleo.parser</artifactId>
         <version>3.5.1.201409021433</version>
         <scope>provided</scope>
     </dependency>

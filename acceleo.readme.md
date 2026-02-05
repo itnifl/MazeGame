@@ -120,8 +120,10 @@ Generated code is validated by JUnit 5 tests in `maze-module-generator/src/test/
 | Test Class | Coverage |
 |------------|----------|
 | `CharacterRegistrarTest.java` | Registration lookup, null handling |
-| `CharacterAttributeSetterTest.java` | Multiplier application, base threat levels |
+| `CharacterAttributeSetterTest.java` | Multiplier application, base threat levels, damage multiplier |
 | `CharacterGraphicsFactoryTest.java` | Sprite paths, animation frames, scale |
+| `WallRegistryTest.java` | Wall material definitions, registry lookups, model validation |
+| `OpponentRegistryTest.java` | Game name constant, enemy listing, model validation |
 
 Run tests with: `mvn -pl maze-module-generator test`
 

@@ -1,0 +1,356 @@
+[comment encoding = UTF-8 /]
+[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/difficulties')/]
+
+[comment @main/]
+[template public generate(root : opponents::OpponentModel)]
+
+[file ('main/game/maze/generated/OpponentRegistry.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+/**
+ * Generated opponent registry with all character types.
+ * @generated from opponents.ecore using Acceleo 4
+ */
+public class OpponentRegistry {
+    public static final String GAME_NAME = "[root.name/]";
+    
+    /**
+     * Lists all registered enemies to stdout.
+     */
+    public static void listEnemies() {
+        [for (enemy : opponents::CharacterType | root.characterTypes)]
+        System.out.println("Enemy: [enemy.displayName/] (Health: [enemy.health/])");
+        [/for]
+    }
+
+    /**
+     * Gets the count of registered enemy types.
+     * @return number of character types in model
+     */
+    public static int getEnemyTypeCount() {
+        return [root.characterTypes->size()/];
+    }
+
+    /**
+     * Gets all enemy type names.
+     * @return array of display names
+     */
+    public static String['['/][']'/] getEnemyTypeNames() {
+        return new String['['/][']'/] {
+            [for (enemy : opponents::CharacterType | root.characterTypes) separator(', ')]"[enemy.displayName/]"[/for]
+        };
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/CharacterRegistrar.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.logging.Logger;
+import main.game.maze.opponents.*;
+
+/**
+ * Generated character registrar that dispatches to type-specific handlers.
+ * @generated from opponents.ecore using Acceleo 4
+ */
+public final class CharacterRegistrar {
+
+    private static final Logger LOGGER = Logger.getLogger(CharacterRegistrar.class.getName());
+
+    private CharacterRegistrar() { /* utility class */ }
+
+    /**
+     * Functional interface for type-specific registration handlers.
+     */
+    @FunctionalInterface
+    public interface RegistrationHandler<T extends CharacterType> {
+        void register(T character);
+    }
+
+    /**
+     * Registers a character using type-specific handling.
+     */
+    public static void register(
+            CharacterType character,
+            RegistrationHandler<Zombie> zombieHandler,
+            RegistrationHandler<Ghost> ghostHandler,
+            RegistrationHandler<PumpkinBomber> pumpkinBomberHandler) {
+        
+        if (character == null) {
+            LOGGER.warning("Attempted to register null character");
+            return;
+        }
+
+        String typeName = character.eClass().getName();
+        
+        switch (typeName) {
+            case "Zombie" -> {
+                if (zombieHandler != null) {
+                    zombieHandler.register((Zombie) character);
+                }
+            }
+            case "Ghost" -> {
+                if (ghostHandler != null) {
+                    ghostHandler.register((Ghost) character);
+                }
+            }
+            case "PumpkinBomber" -> {
+                if (pumpkinBomberHandler != null) {
+                    pumpkinBomberHandler.register((PumpkinBomber) character);
+                }
+            }
+            default -> LOGGER.warning("Unknown character type: " + typeName);
+        }
+    }
+
+    /**
+     * Gets all known character type names from the model.
+     * @return array of type names
+     */
+    public static String['['/][']'/] getKnownTypes() {
+        return new String['['/][']'/] { "Zombie", "Ghost", "PumpkinBomber" };
+    }
+
+    /**
+     * Checks if a type name is known.
+     * @param typeName the type name to check
+     * @return true if known
+     */
+    public static boolean isKnownType(String typeName) {
+        return "Zombie".equals(typeName) || 
+               "Ghost".equals(typeName) || 
+               "PumpkinBomber".equals(typeName);
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/CharacterAttributeSetter.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.logging.Logger;
+import main.game.maze.opponents.*;
+
+/**
+ * Generated attribute setter for applying difficulty multipliers.
+ * @generated from opponents.ecore using Acceleo 4
+ */
+public final class CharacterAttributeSetter {
+
+    private static final Logger LOGGER = Logger.getLogger(CharacterAttributeSetter.class.getName());
+
+    private CharacterAttributeSetter() { /* utility class */ }
+
+    /**
+     * Applies difficulty multipliers to a character.
+     */
+    public static void applyDifficultyMultipliers(
+            CharacterType character,
+            double healthMultiplier,
+            double threatMultiplier,
+            double speedMultiplier) {
+        
+        if (character == null) return;
+
+        String typeName = character.eClass().getName();
+        
+        switch (typeName) {
+            case "Zombie" -> applyZombieMultipliers((Zombie) character, 
+                healthMultiplier, threatMultiplier, speedMultiplier);
+            case "Ghost" -> applyGhostMultipliers((Ghost) character, 
+                healthMultiplier, threatMultiplier, speedMultiplier);
+            case "PumpkinBomber" -> applyPumpkinBomberMultipliers((PumpkinBomber) character, 
+                healthMultiplier, threatMultiplier, speedMultiplier);
+            default -> LOGGER.warning("Unknown character type for multipliers: " + typeName);
+        }
+    }
+
+    private static void applyZombieMultipliers(Zombie zombie, 
+            double healthMult, double threatMult, double speedMult) {
+        zombie.setHealth((int) (zombie.getHealth() * healthMult));
+        zombie.setThreatLevel(zombie.getThreatLevel() * threatMult);
+        zombie.setSpeed(zombie.getSpeed() * speedMult);
+    }
+
+    private static void applyGhostMultipliers(Ghost ghost, 
+            double healthMult, double threatMult, double speedMult) {
+        ghost.setHealth((int) (ghost.getHealth() * healthMult));
+        ghost.setThreatLevel(ghost.getThreatLevel() * threatMult);
+        ghost.setSpeed(ghost.getSpeed() * speedMult);
+    }
+
+    private static void applyPumpkinBomberMultipliers(PumpkinBomber pumpkinBomber, 
+            double healthMult, double threatMult, double speedMult) {
+        pumpkinBomber.setHealth((int) (pumpkinBomber.getHealth() * healthMult));
+        pumpkinBomber.setThreatLevel(pumpkinBomber.getThreatLevel() * threatMult);
+        pumpkinBomber.setSpeed(pumpkinBomber.getSpeed() * speedMult);
+    }
+
+    /**
+     * Gets base damage for a character type.
+     */
+    public static int getBaseDamage(String typeName) {
+        return switch (typeName) {
+            case "Ghost" -> 1;
+            case "Zombie" -> 2;
+            case "PumpkinBomber" -> 10;
+            default -> 0;
+        };
+    }
+
+    /**
+     * Gets the base health for a character type from the model.
+     * Design values: Zombie=tank(100), Ghost=fragile(50), PumpkinBomber=glass-cannon(75).
+     */
+    public static int getBaseHealth(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 100;
+            case "Ghost" -> 50;
+            case "PumpkinBomber" -> 75;
+            default -> 0;
+        };
+    }
+
+    /**
+     * Gets the base threat level for a character type from the model.
+     * Design values: Zombie=standard(1.0), Ghost=low(0.5), PumpkinBomber=high(1.5).
+     */
+    public static double getBaseThreatLevel(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 1.0;
+            case "Ghost" -> 0.5;
+            case "PumpkinBomber" -> 1.5;
+            default -> 0.0;
+        };
+    }
+
+    /**
+     * Applies damage multiplier with instantDeath handling.
+     */
+    public static void applyDamageMultiplier(
+            CharacterType character,
+            double damageMultiplier,
+            boolean instantDeath) {
+        
+        if (character == null) return;
+
+        String typeName = character.eClass().getName();
+        
+        switch (typeName) {
+            case "Zombie" -> applyZombieDamage((Zombie) character, damageMultiplier, instantDeath);
+            case "Ghost" -> applyGhostDamage((Ghost) character, damageMultiplier, instantDeath);
+            case "PumpkinBomber" -> applyPumpkinBomberDamage((PumpkinBomber) character, damageMultiplier, instantDeath);
+            default -> LOGGER.warning("Unknown character type for damage multiplier: " + typeName);
+        }
+    }
+
+    private static void applyZombieDamage(Zombie zombie, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            zombie.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            zombie.setAttackDamage(Math.max(1, (int) Math.round(zombie.getAttackDamage() * multiplier)));
+        }
+    }
+
+    private static void applyGhostDamage(Ghost ghost, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            ghost.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            ghost.setAttackDamage(Math.max(1, (int) Math.round(ghost.getAttackDamage() * multiplier)));
+        }
+    }
+
+    private static void applyPumpkinBomberDamage(PumpkinBomber pumpkinBomber, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            pumpkinBomber.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            pumpkinBomber.setAttackDamage(Math.max(1, (int) Math.round(pumpkinBomber.getAttackDamage() * multiplier)));
+        }
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/CharacterGraphicsFactory.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.logging.Logger;
+import main.game.maze.opponents.*;
+
+/**
+ * Generated factory for character graphics/sprites.
+ * @generated from opponents.ecore using Acceleo 4
+ */
+public final class CharacterGraphicsFactory {
+
+    private static final Logger LOGGER = Logger.getLogger(CharacterGraphicsFactory.class.getName());
+
+    private CharacterGraphicsFactory() { /* utility class */ }
+
+    /**
+     * Gets the sprite image path for a character type.
+     */
+    public static String getSpritePath(CharacterType character) {
+        if (character == null) return "/images/default_enemy.png";
+
+        String typeName = character.eClass().getName();
+        
+        return switch (typeName) {
+            case "Zombie" -> getZombieSprite((Zombie) character);
+            case "Ghost" -> getGhostSprite((Ghost) character);
+            case "PumpkinBomber" -> getPumpkinBomberSprite((PumpkinBomber) character);
+            default -> "/images/default_enemy.png";
+        };
+    }
+
+    private static String getZombieSprite(Zombie zombie) {
+        String img = zombie.getImageBase();
+        return (img != null && !img.isEmpty()) ? img : "/images/zombie_default.png";
+    }
+
+    private static String getGhostSprite(Ghost ghost) {
+        String img = ghost.getImageBase();
+        return (img != null && !img.isEmpty()) ? img : "/images/ghost_default.png";
+    }
+
+    private static String getPumpkinBomberSprite(PumpkinBomber pumpkinBomber) {
+        String img = pumpkinBomber.getImageBase();
+        return (img != null && !img.isEmpty()) ? img : "/images/pumpkinbomber_default.png";
+    }
+
+    /**
+     * Gets all sprite paths defined in the model.
+     */
+    public static String['['/][']'/] getAllSpritePaths() {
+        return new String['['/][']'/] {
+            [for (enemy : opponents::CharacterType | root.characterTypes) separator(',\n            ')]"[if (enemy.imageBase <> null and enemy.imageBase <> '')][enemy.imageBase/][else]/images/default_enemy.png[/if]"[/for]
+        };
+    }
+
+    /**
+     * Gets animation frame count for a character type.
+     * Design values: Zombie=4, Ghost=6(ethereal), PumpkinBomber=4.
+     */
+    public static int getAnimationFrameCount(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 4;
+            case "Ghost" -> 6;
+            case "PumpkinBomber" -> 4;
+            default -> 1;
+        };
+    }
+
+    /**
+     * Gets sprite scale factor for a character type.
+     * Design values: Zombie=1.0(standard), Ghost=0.8(smallest), PumpkinBomber=1.2(largest).
+     */
+    public static double getSpriteScale(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 1.0;
+            case "Ghost" -> 0.8;
+            case "PumpkinBomber" -> 1.2;
+            default -> 1.0;
+        };
+    }
+}
+[/file]
+
+[/template]

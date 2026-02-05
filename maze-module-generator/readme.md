@@ -49,7 +49,9 @@ Comprehensive JUnit 5 tests validate the generated code:
 src/test/java/main/game/maze/generated/
 ├── CharacterRegistrarTest.java      # Tests type registration and lookup
 ├── CharacterAttributeSetterTest.java # Tests stats and multipliers
-└── CharacterGraphicsFactoryTest.java # Tests graphics properties
+├── CharacterGraphicsFactoryTest.java # Tests graphics properties
+├── WallRegistryTest.java             # Tests wall material registry
+└── OpponentRegistryTest.java         # Tests opponent registry
 ```
 
 Run tests with:

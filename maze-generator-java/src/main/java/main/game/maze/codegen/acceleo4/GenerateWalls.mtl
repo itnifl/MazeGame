@@ -1,11 +1,20 @@
+[comment encoding = UTF-8 /]
+[module GenerateWalls('http://main.game.maze/walls')/]
+
+[comment @main/]
+[template public generate(model : walls::WallModel)]
+    [file ('main/game/maze/generated/WallRegistry.java', overwrite, 'UTF-8')]
 package main.game.maze.generated;
 
+import main.game.maze.walls.WallMaterialBaseType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.game.maze.walls.WallMaterialBaseType;
-
+/**
+ * Generated wall registry with all wall materials.
+ * @generated from walls.ecore using Acceleo 4
+ */
 public final class WallRegistry {
 
     public static final class WallDefinition {
@@ -34,33 +43,16 @@ public final class WallRegistry {
     private static final Map<String, WallDefinition> BY_ID = new HashMap<String, WallDefinition>();
 
     static {
+[for (m : walls::WallMaterial | model.materials)]
         register(new WallDefinition(
-            "DIRT_BASIC",
-            "Dirt",
-         WallMaterialBaseType.DIRT
-,
-            true,
-            10,
-            "/main/game/maze/dirtWall.png"
+            "[m.id/]",
+            "[m.displayName/]",
+            WallMaterialBaseType.[m.wallBaseType.toString()/], 
+            [m.breakable/],
+            [m.hitPoints/],
+            "[m.baseImage/]"
         ));
-        register(new WallDefinition(
-            "WOOD_BASIC",
-            "Wood",
-         WallMaterialBaseType.WOOD
-,
-            true,
-            20,
-            "/main/game/maze/woodWall.png"
-        ));
-        register(new WallDefinition(
-            "STEEL_SOLID",
-            "Steel",
-        WallMaterialBaseType.STEEL
-,
-            false,
-            0,
-            "/main/game/maze/steelWall.png"
-        ));
+[/for]
     }
 
     private static void register(WallDefinition def) {
@@ -78,3 +70,5 @@ public final class WallRegistry {
     private WallRegistry() {
     }
 }
+    [/file]
+[/template]
