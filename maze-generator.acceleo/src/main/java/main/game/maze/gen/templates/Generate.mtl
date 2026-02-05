@@ -187,16 +187,17 @@ public final class CharacterAttributeSetter {
 
     /**
      * Applies difficulty multipliers to a character based on its type.
+     * Note: attackDamage is handled separately with instantDeath logic.
      * 
      * @param character the character to modify
      * @param healthMultiplier multiplier for health
-     * @param damageMultiplier multiplier for damage
+     * @param threatMultiplier multiplier for threat level
      * @param speedMultiplier multiplier for speed
      */
     public static void applyDifficultyMultipliers(
             CharacterType character,
             double healthMultiplier,
-            double damageMultiplier,
+            double threatMultiplier,
             double speedMultiplier) {
         
         if (character == null) return;
@@ -205,33 +206,33 @@ public final class CharacterAttributeSetter {
         
         switch (typeName) {
             case "Zombie" -> applyZombieMultipliers((Zombie) character, 
-                healthMultiplier, damageMultiplier, speedMultiplier);
+                healthMultiplier, threatMultiplier, speedMultiplier);
             case "Ghost" -> applyGhostMultipliers((Ghost) character,
-                healthMultiplier, damageMultiplier, speedMultiplier);
+                healthMultiplier, threatMultiplier, speedMultiplier);
             case "PumpkinBomber" -> applyPumpkinBomberMultipliers((PumpkinBomber) character,
-                healthMultiplier, damageMultiplier, speedMultiplier);
+                healthMultiplier, threatMultiplier, speedMultiplier);
             default -> LOGGER.warning("Unknown character type for multipliers: " + typeName);
         }
     }
 
     private static void applyZombieMultipliers(Zombie zombie, 
-            double healthMult, double damageMult, double speedMult) {
+            double healthMult, double threatMult, double speedMult) {
         zombie.setHealth((int) (zombie.getHealth() * healthMult));
-        zombie.setAttackDamage((int) (zombie.getAttackDamage() * damageMult));
+        zombie.setThreatLevel(zombie.getThreatLevel() * threatMult);
         zombie.setSpeed(zombie.getSpeed() * speedMult);
     }
 
     private static void applyGhostMultipliers(Ghost ghost,
-            double healthMult, double damageMult, double speedMult) {
+            double healthMult, double threatMult, double speedMult) {
         ghost.setHealth((int) (ghost.getHealth() * healthMult));
-        ghost.setAttackDamage((int) (ghost.getAttackDamage() * damageMult));
+        ghost.setThreatLevel(ghost.getThreatLevel() * threatMult);
         ghost.setSpeed(ghost.getSpeed() * speedMult);
     }
 
     private static void applyPumpkinBomberMultipliers(PumpkinBomber bomber,
-            double healthMult, double damageMult, double speedMult) {
+            double healthMult, double threatMult, double speedMult) {
         bomber.setHealth((int) (bomber.getHealth() * healthMult));
-        bomber.setAttackDamage((int) (bomber.getAttackDamage() * damageMult));
+        bomber.setThreatLevel(bomber.getThreatLevel() * threatMult);
         bomber.setSpeed(bomber.getSpeed() * speedMult);
     }
 

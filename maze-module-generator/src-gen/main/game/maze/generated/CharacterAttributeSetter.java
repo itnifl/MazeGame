@@ -18,6 +18,7 @@ public final class CharacterAttributeSetter {
 
     /**
      * Applies difficulty multipliers to a character based on its type.
+     * Note: attackDamage is handled separately with instantDeath logic.
      * 
      * @param character the character to modify
      * @param healthMultiplier multiplier for health

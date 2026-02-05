@@ -345,16 +345,17 @@ private static double spawnByTarget(
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
 
-        // Use generated CharacterAttributeSetter for base multipliers (health, threat, speed)
+        // Use generated CharacterAttributeSetter for base multipliers (health, threatLevel, speed)
+        // Note: attackDamage is handled separately below with instantDeath logic
         CharacterAttributeSetter.applyDifficultyMultipliers(
             characterType,
-            1.0,  // health multiplier (keeping original for now)
-            1.0,  // threat multiplier (keeping original for now)
+            1.0,  // health multiplier (keeping original base health)
+            1.0,  // threat multiplier (keeping original threat level)
             speedMultiplierByDifficulty
         );
 
         // Game-specific damage logic with instantDeath handling
-        // This remains hand-written as it's game-specific logic, not model-driven
+        // This remains hand-written as instantDeath requires special Integer.MAX_VALUE logic
         applyDamageMultiplier(characterType, dmgMultiplierByDifficulty, instantDeath);
     }
 
