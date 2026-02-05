@@ -286,6 +286,55 @@ public final class CharacterAttributeSetter {
             default -> 0.0;
         };
     }
+
+    /**
+     * Applies damage multiplier with instantDeath handling.
+     * Generated to eliminate code duplication across character types.
+     * 
+     * @param character the character to modify
+     * @param damageMultiplier multiplier for attack damage
+     * @param instantDeath if true, sets damage to Integer.MAX_VALUE
+     */
+    public static void applyDamageMultiplier(
+            CharacterType character,
+            double damageMultiplier,
+            boolean instantDeath) {
+        
+        if (character == null) return;
+
+        String typeName = character.eClass().getName();
+        
+        switch (typeName) {
+            case "Zombie" -> applyZombieDamage((Zombie) character, damageMultiplier, instantDeath);
+            case "Ghost" -> applyGhostDamage((Ghost) character, damageMultiplier, instantDeath);
+            case "PumpkinBomber" -> applyPumpkinBomberDamage((PumpkinBomber) character, damageMultiplier, instantDeath);
+            default -> LOGGER.warning("Unknown character type for damage multiplier: " + typeName);
+        }
+    }
+
+    private static void applyZombieDamage(Zombie zombie, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            zombie.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            zombie.setAttackDamage(Math.max(1, (int) Math.round(zombie.getAttackDamage() * multiplier)));
+        }
+    }
+
+    private static void applyGhostDamage(Ghost ghost, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            ghost.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            ghost.setAttackDamage(Math.max(1, (int) Math.round(ghost.getAttackDamage() * multiplier)));
+        }
+    }
+
+    private static void applyPumpkinBomberDamage(PumpkinBomber bomber, double multiplier, boolean instantDeath) {
+        if (instantDeath) {
+            bomber.setAttackDamage(Integer.MAX_VALUE);
+        } else {
+            bomber.setAttackDamage(Math.max(1, (int) Math.round(bomber.getAttackDamage() * multiplier)));
+        }
+    }
 }
 [/file]
 

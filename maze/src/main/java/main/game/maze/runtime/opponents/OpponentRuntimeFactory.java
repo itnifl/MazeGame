@@ -354,45 +354,8 @@ private static double spawnByTarget(
             speedMultiplierByDifficulty
         );
 
-        // Game-specific damage logic with instantDeath handling
-        // This remains hand-written as instantDeath requires special Integer.MAX_VALUE logic
-        applyDamageMultiplier(characterType, dmgMultiplierByDifficulty, instantDeath);
-    }
-
-    /**
-     * Applies damage multiplier with instantDeath handling.
-     * Uses CharacterRegistrar for type dispatch.
-     */
-    private static void applyDamageMultiplier(CharacterType characterType, 
-            double dmgMultiplier, boolean instantDeath) {
-        
-        CharacterRegistrar.register(
-            characterType,
-            // Zombie handler
-            z -> {
-                if (instantDeath) {
-                    z.setAttackDamage(Integer.MAX_VALUE);
-                } else {
-                    z.setAttackDamage(Math.max(1, (int) Math.round(z.getAttackDamage() * dmgMultiplier)));
-                }
-            },
-            // Ghost handler
-            g -> {
-                if (instantDeath) {
-                    g.setAttackDamage(Integer.MAX_VALUE);
-                } else {
-                    g.setAttackDamage(Math.max(1, (int) Math.round(g.getAttackDamage() * dmgMultiplier)));
-                }
-            },
-            // PumpkinBomber handler
-            b -> {
-                if (instantDeath) {
-                    b.setAttackDamage(Integer.MAX_VALUE);
-                } else {
-                    b.setAttackDamage(Math.max(1, (int) Math.round(b.getAttackDamage() * dmgMultiplier)));
-                }
-            }
-        );
+        // Use generated method for damage multiplier logic
+        CharacterAttributeSetter.applyDamageMultiplier(characterType, dmgMultiplierByDifficulty, instantDeath);
     }
 
 
