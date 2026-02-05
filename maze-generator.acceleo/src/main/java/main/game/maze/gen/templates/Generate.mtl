@@ -243,8 +243,14 @@ public final class CharacterAttributeSetter {
      */
     public static int getBaseDamage(String typeName) {
         return switch (typeName) {
-            [for (enemy : CharacterType | root.characterTypes)]
-            case "[enemy.eClass().getName()/]" -> [enemy.damage/];
+            [for (enemy : Zombie | root.characterTypes->filter(Zombie))]
+            case "[enemy.eClass().getName()/]" -> [enemy.attackDamage/];
+            [/for]
+            [for (enemy : Ghost | root.characterTypes->filter(Ghost))]
+            case "[enemy.eClass().getName()/]" -> [enemy.attackDamage/];
+            [/for]
+            [for (enemy : RangedEnemy | root.characterTypes->filter(RangedEnemy))]
+            case "[enemy.eClass().getName()/]" -> [enemy.attackDamage/];
             [/for]
             default -> 0;
         };
