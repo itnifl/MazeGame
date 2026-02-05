@@ -825,12 +825,11 @@ public static void dispatch(
 
 ```
 maze-generator.acceleo/src/main/java/main/game/maze/gen/templates/
-├── Generate.mtl              # Main opponents orchestrator
+├── Generate.mtl              # Main opponents orchestrator (generates CharacterRegistrar, CharacterAttributeSetter, CharacterGraphicsFactory)
 ├── GenerateWalls.mtl         # Main walls orchestrator
 ├── opponents/
-│   ├── CharacterRegistrar.mtl
-│   ├── CharacterAttributeSetter.mtl
-│   └── CharacterGraphicsFactory.mtl
+│   ├── CharacterAttributeSetter.mtl   # Modular template (optional, duplicated in Generate.mtl)
+│   └── CharacterGraphicsFactory.mtl   # Modular template (optional, duplicated in Generate.mtl)
 ├── walls/
 │   ├── WallPropertyAccessor.mtl
 │   ├── WallMaterialRenderer.mtl

@@ -137,9 +137,10 @@ maze-generator.acceleo/src/main/java/main/game/maze/gen/templates/
 │   └── PatrolStateMachine.mtl
 │
 └── opponents/
-    ├── CharacterRegistrar.mtl
-    ├── CharacterAttributeSetter.mtl
-    └── CharacterGraphicsFactory.mtl
+    ├── CharacterAttributeSetter.mtl   # Modular (also in Generate.mtl)
+    └── CharacterGraphicsFactory.mtl   # Modular (also in Generate.mtl)
+
+> Note: `CharacterRegistrar` is generated directly in `Generate.mtl` to keep all opponent dispatch logic together.
 ```
 
 ---
@@ -209,7 +210,7 @@ This transforms the project from "uses EMF" to "true model-driven development."
 |--------|----------|--------|-------------------|
 | **Difficulties** | `DifficultyConfigurator.mtl` | ✅ | `DifficultyConfigurator.java` |
 | **Difficulties** | `EnemySpawnLimits.mtl` | ✅ | `EnemySpawnLimits.java` |
-| **Opponents** | `CharacterRegistrar.mtl` | ✅ | `CharacterRegistrar.java` |
+| **Opponents** | `Generate.mtl` (inline) | ✅ | `CharacterRegistrar.java` |
 | **Opponents** | `CharacterAttributeSetter.mtl` | ✅ | `CharacterAttributeSetter.java` |
 | **Opponents** | `CharacterGraphicsFactory.mtl` | ✅ | `CharacterGraphicsFactory.java` |
 | **Behaviour** | `BehaviorDispatcher.mtl` | ✅ | `BehaviorDispatcher.java` |
