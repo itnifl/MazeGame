@@ -17,7 +17,7 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 | `OpponentRegistry.java` | `opponents.ecore` | Lists all enemy types with their stats |
 | `WallRegistry.java` | `walls.ecore` | Lists all wall material types |
 | `CharacterRegistrar.java` | `opponents.ecore` | Type-safe switch dispatch for character registration |
-| `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getThreatLevel()` |
+| `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getHealth()`, `getAttackDamage()`, `getSpeed()`, `getThreatLevel()` |
 | `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()` |
 
 ### Key Methods in Generated Code
@@ -28,9 +28,10 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 - `isKnownType(String)` - Checks if a type is in the model
 
 **CharacterAttributeSetter**:
-- `applyDifficultyMultipliers()` - Applies health/threat/speed multipliers
+- `applyDifficultyMultipliers()` - Applies health/damage/speed multipliers per type
 - `getBaseHealth(String)` - Returns model-defined health per type
 - `getBaseThreatLevel(String)` - Returns model-defined threat level per type
+- `getBaseDamage(String)` - Returns model-defined attack damage per type
 
 **CharacterGraphicsFactory**:
 - `getSpritePath()` - Returns sprite using `getImageBase()` from model

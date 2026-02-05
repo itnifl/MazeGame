@@ -102,12 +102,12 @@ The following files are currently generated under `maze-module-generator/src-gen
 | File | Purpose | EMF Model Source |
 |------|---------|------------------|
 | `CharacterRegistrar.java` | Registers character types from model | `opponents.ecore` |
-| `CharacterAttributeSetter.java` | Applies difficulty multipliers using `getThreatLevel()`/`setThreatLevel()` | `opponents.ecore` |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers using `getHealth()`/`setHealth()`, `getAttackDamage()`/`setAttackDamage()`, `getSpeed()`/`setSpeed()`, `getThreatLevel()` | `opponents.ecore` |
 | `CharacterGraphicsFactory.java` | Creates sprites using `getImageBase()` | `opponents.ecore` |
 | `BehaviorDispatcher.java` | Dispatches behaviour by character type | `opponents.ecore` |
 | `package-info.java` | Package documentation | — |
 
-**Note:** The generated code uses actual EMF model method names (`getThreatLevel`, `setThreatLevel`, `getImageBase`) from the `CharacterType` interface.
+**Note:** The generated code uses actual EMF model method names (`getThreatLevel`, `getAttackDamage`, `getImageBase`, etc.) from the `CharacterType` interface and its subclasses.
 
 Everything lands under the generated sources folder in `maze-module-generator`
 for example `maze-module-generator/src-gen`.

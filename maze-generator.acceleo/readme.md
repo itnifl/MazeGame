@@ -101,10 +101,10 @@ These files are currently generated and tested:
 
 | Generated File | Purpose | EMF Methods Used |
 |---------------|---------|------------------|
-| `CharacterRegistrar.java` | Registers and looks up character types | `getName()`, `getIdentifier()` |
-| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getThreatLevel()`, `setThreatLevel()` |
+| `CharacterRegistrar.java` | Registers and looks up character types | `eClass().getName()` |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getHealth()`, `setHealth()`, `getAttackDamage()`, `setAttackDamage()`, `getSpeed()`, `setSpeed()`, `getThreatLevel()` |
 | `CharacterGraphicsFactory.java` | Creates sprites for each character type | `getImageBase()` |
-| `BehaviorDispatcher.java` | Routes behaviour by character type | `getBehaviourHint()` |
+| `BehaviorDispatcher.java` | Routes behaviour by character type | `eClass().getName()` |
 | `package-info.java` | Package documentation | — |
 
 ### From Opponents Model (`opponents.ecore`)
@@ -347,6 +347,8 @@ character.getImageBase()     // From opponents.ecore
 | `threatLevel` | `getThreatLevel()` / `setThreatLevel()` |
 | `imageBase` | `getImageBase()` |
 | `health` | `getHealth()` / `setHealth()` |
+| `attackDamage` | `getAttackDamage()` / `setAttackDamage()` |
+| `speed` | `getSpeed()` / `setSpeed()` |
 
 ### Step 2: Write Unit Tests for Generated Code
 
