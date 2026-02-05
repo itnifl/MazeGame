@@ -358,11 +358,12 @@ Generated code should be validated with JUnit tests to catch issues early.
 ```java
 @Test
 void testCharacterAttributeSetter() {
-    CharacterAttributeSetter setter = new CharacterAttributeSetter();
-    
     // Test that generated code uses correct EMF methods
-    double baseThreat = setter.getBaseThreatLevel(CharacterType.ZOMBIE);
+    double baseThreat = CharacterAttributeSetter.getBaseThreatLevel("Zombie");
     assertThat(baseThreat).isGreaterThan(0);
+    
+    int baseHealth = CharacterAttributeSetter.getBaseHealth("Ghost");
+    assertThat(baseHealth).isEqualTo(50);
 }
 ```
 
