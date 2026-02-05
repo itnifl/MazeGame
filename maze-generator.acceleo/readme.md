@@ -104,26 +104,35 @@ These files are currently generated and tested:
 | `CharacterRegistrar.java` | Registers and looks up character types | `eClass().getName()` |
 | `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` |
 | `CharacterGraphicsFactory.java` | Creates sprites for each character type | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
-| `BehaviorDispatcher.java` | Routes behaviour by character type | `eClass().getName()` |
-| `package-info.java` | Package documentation | — |
+| `OpponentRegistry.java` | Lists all enemy types with their stats | Model iteration |
+| `WallRegistry.java` | Lists all wall material types | Model iteration |
 
 ### From Opponents Model (`opponents.ecore`)
 
 | Generated File | Purpose | Status |
 |---------------|---------|--------|
-| `CharacterRegistrar.java` | Type-safe switch dispatch for character handling | ✅ Implemented |
-| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | ✅ Implemented |
-| `CharacterGraphicsFactory.java` | Creates sprites for each character type | ✅ Implemented |
-| `BehaviorDispatcher.java` | Routes behaviour requests by type | ✅ Implemented |
-| `OpponentRegistry.java` | Lists all enemy types with their stats | 📋 Planned |
+| `CharacterRegistrar.java` | Type-safe switch dispatch for character handling | ✅ Generated |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | ✅ Generated |
+| `CharacterGraphicsFactory.java` | Creates sprites for each character type | ✅ Generated |
+| `OpponentRegistry.java` | Lists all enemy types with their stats | ✅ Generated |
 
 ### From Walls Model (`walls.ecore`)
 
 | Generated File | Purpose | Status |
 |---------------|---------|--------|
-| `WallRegistry.java` | Lists all wall material types | 📋 Planned |
-| `WallMaterialRenderer.java` | Visual properties per material | 📋 Planned |
-| `WallCollisionHandler.java` | Damage/collision behavior per material | 📋 Planned |
+| `WallRegistry.java` | Lists all wall material types | ✅ Generated |
+
+### Additional Templates (Not Yet Integrated)
+
+| Template File | Purpose | Status |
+|---------------|---------|--------|
+| `DifficultyConfigurator.mtl` | Applies difficulty multipliers without instanceof chains | 📋 Template exists, not integrated |
+| `BehaviorDispatcher.mtl` | Routes behaviour requests by type | 📋 Template exists, not integrated |
+| `WallMaterialRenderer.mtl` | Visual properties per material | 📋 Template exists, not integrated |
+| `WallCollisionHandler.mtl` | Damage/collision behavior per material | 📋 Template exists, not integrated |
+| `WallPropertyAccessor.mtl` | Property access helpers | 📋 Template exists, not integrated |
+| `EnemySpawnLimits.mtl` | Spawn limit configuration | 📋 Template exists, not integrated |
+| `PathCalculatorFactory.mtl` | Path calculation helpers | 📋 Template exists, not integrated |
 
 ### Example: Generated Switch Statement
 

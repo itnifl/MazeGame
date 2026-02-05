@@ -74,7 +74,9 @@ The following classes are generated from `opponents.ecore` and placed in `maze-m
 | `CharacterRegistrar` | Registers and looks up character types by identifier |
 | `CharacterAttributeSetter` | Applies difficulty multipliers to character stats |
 | `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
-| `BehaviorDispatcher` | Routes behaviour requests by character type |
+| `OpponentRegistry` | Lists all enemy types with their stats |
+
+**Note**: Additional templates exist but are not yet integrated (e.g., `BehaviorDispatcher.mtl`).
 
 **Key EMF model methods used:**
 - `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution

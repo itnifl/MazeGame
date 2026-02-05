@@ -20,6 +20,8 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 | `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getHealth()`, `getThreatLevel()`, `getSpeed()` |
 | `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
 
+**Note**: Additional templates exist (`DifficultyConfigurator.mtl`, `BehaviorDispatcher.mtl`, etc.) but are not yet integrated into the build process.
+
 ### Key Methods in Generated Code
 
 **CharacterRegistrar**:

@@ -204,14 +204,15 @@ This transforms the project from "uses EMF" to "true model-driven development."
 
 | Domain | Template | Status | Generated Artifact |
 |--------|----------|--------|-------------------|
-| **Difficulties** | `DifficultyConfigurator.mtl` | ✅ | `DifficultyConfigurator.java` |
-| **Difficulties** | `EnemySpawnLimits.mtl` | ✅ | `EnemySpawnLimits.java` |
-| **Opponents** | `Generate.mtl` | ✅ | `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
-| **Behaviour** | `BehaviorDispatcher.mtl` | ✅ | `BehaviorDispatcher.java` |
-| **Behaviour** | `PathCalculatorFactory.mtl` | ✅ | `PathCalculatorFactory.java` |
-| **Walls** | `WallMaterialRenderer.mtl` | ✅ | `WallMaterialRenderer.java` |
-| **Walls** | `WallCollisionHandler.mtl` | ✅ | `WallCollisionHandler.java` |
-| **Walls** | `WallPropertyAccessor.mtl` | ✅ | `WallPropertyAccessor.java` |
+| **Opponents** | `Generate.mtl` | ✅ | `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java`, `OpponentRegistry.java` |
+| **Walls** | `GenerateWalls.mtl` | ✅ | `WallRegistry.java` |
+| **Difficulties** | `DifficultyConfigurator.mtl` | 📋 | Template exists, not integrated |
+| **Difficulties** | `EnemySpawnLimits.mtl` | 📋 | Template exists, not integrated |
+| **Behaviour** | `BehaviorDispatcher.mtl` | 📋 | Template exists, not integrated |
+| **Behaviour** | `PathCalculatorFactory.mtl` | 📋 | Template exists, not integrated |
+| **Walls** | `WallMaterialRenderer.mtl` | 📋 | Template exists, not integrated |
+| **Walls** | `WallCollisionHandler.mtl` | 📋 | Template exists, not integrated |
+| **Walls** | `WallPropertyAccessor.mtl` | 📋 | Template exists, not integrated |
 
 ### Generated Code Output
 
