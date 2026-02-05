@@ -11,8 +11,6 @@
 [file ('main/game/maze/generated/WallPropertyAccessor.java', false, 'UTF-8')]
 package main.game.maze.generated;
 
-import java.util.Optional;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 import main.game.maze.walls.WallMaterial;
