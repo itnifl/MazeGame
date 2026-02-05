@@ -220,7 +220,7 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 | File | Uses EMF Methods | Purpose |
 |------|------------------|----------|
 | `CharacterRegistrar.java` | `eClass().getName()` | Type-safe switch dispatch |
-| `CharacterAttributeSetter.java` | `getHealth()`, `setHealth()`, `getAttackDamage()`, `setAttackDamage()`, `getSpeed()`, `setSpeed()`, `getThreatLevel()` | Difficulty multipliers |
+| `CharacterAttributeSetter.java` | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` | Difficulty multipliers |
 | `CharacterGraphicsFactory.java` | `getImageBase()` | Sprite factory |
 | `OpponentRegistry.java` | Model iteration | Enemy type listing |
 | `WallRegistry.java` | Model iteration | Wall material listing |

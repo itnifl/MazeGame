@@ -102,7 +102,7 @@ These files are currently generated and tested:
 | Generated File | Purpose | EMF Methods Used |
 |---------------|---------|------------------|
 | `CharacterRegistrar.java` | Registers and looks up character types | `eClass().getName()` |
-| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getHealth()`, `setHealth()`, `getAttackDamage()`, `setAttackDamage()`, `getSpeed()`, `setSpeed()`, `getThreatLevel()` |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers per type | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` |
 | `CharacterGraphicsFactory.java` | Creates sprites for each character type | `getImageBase()` |
 | `BehaviorDispatcher.java` | Routes behaviour by character type | `eClass().getName()` |
 | `package-info.java` | Package documentation | — |
