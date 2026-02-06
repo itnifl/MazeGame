@@ -8,6 +8,14 @@ This project generates Java code from EMF (Eclipse Modeling Framework) models us
 
 ## ⚡ Quick Start
 
+### Prerequisites
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Java** | 21+ | Runtime |
+| **Maven** | 3.9+ | Build system |
+| **VS Code** or **IntelliJ** | Latest | Recommended IDE (see [Tool Recommendations](#-recommended-tools-for-freemarker)) |
+
 ### Generate Code (30 seconds)
 
 ```bash
@@ -18,7 +26,10 @@ mvn -pl maze-module-generator -am clean verify
 ### Verify Generated Output
 
 ```bash
-# Check generated files
+# Check generated files (PowerShell)
+Get-ChildItem maze-module-generator/src-gen/main/game/maze/generated/
+
+# Or on Unix/macOS
 ls maze-module-generator/src-gen/main/game/maze/generated/
 
 # Run tests to validate
@@ -31,6 +42,13 @@ mvn -pl maze-module-generator test
 2. Add your new class extending `CharacterType`
 3. Regenerate: `mvn -pl maze-module-generator -am clean verify`
 4. **Done!** — All registrars, factories, and dispatchers are updated automatically
+
+### Edit a Template
+
+1. Open a `.ftl` file in `src/main/resources/templates/`
+2. Make changes (syntax highlighting available in VS Code/IntelliJ)
+3. Regenerate: `mvn -pl maze-module-generator -am clean verify`
+4. Check output in `maze-module-generator/src-gen/`
 
 ### Key Directories
 
@@ -93,6 +111,195 @@ We initially attempted to migrate from Acceleo 3 to **Acceleo 4**, which promise
 | Learning curve | Steep (OCL) | Low | Low |
 | Debugging | Difficult | Easy | Easy |
 | Community/docs | Small | N/A | Large |
+
+---
+
+## 📊 Detailed Comparison: Acceleo vs FreeMarker
+
+### Feature-by-Feature Comparison
+
+| Feature | Acceleo 3/4 | FreeMarker |
+|---------|-------------|------------|
+| **Template Language** | MTL (Model-to-Text Language) | FTL (FreeMarker Template Language) |
+| **Model Support** | Native EMF integration | Any Java object (incl. EMF via Maps) |
+| **Query Language** | OCL (Object Constraint Language) | Built-in expressions + Java methods |
+| **IDE Support** | Eclipse only | VS Code, IntelliJ, Eclipse, any text editor |
+| **Debugging** | Limited Eclipse debugger | Standard Java debugging |
+| **Error Messages** | Often cryptic | Clear with line numbers |
+| **Hot Reload** | Requires rebuild | Templates loaded at runtime |
+| **Build Integration** | Tycho/p2 required | Standard Maven/Gradle |
+| **License** | EPL (Eclipse) | Apache 2.0 |
+| **Active Development** | Slow (Acceleo 4 incomplete) | Active, stable releases |
+
+### When Would Acceleo Still Be Better?
+
+| Scenario | Recommendation |
+|----------|---------------|
+| Deep EMF integration with OCL constraints | Acceleo (if stable release available) |
+| Eclipse-only development environment | Acceleo |
+| Cross-platform, CI/CD pipelines | **FreeMarker** ✅ |
+| Team with mixed IDE preferences | **FreeMarker** ✅ |
+| Quick prototyping and iteration | **FreeMarker** ✅ |
+| Long-term maintainability | **FreeMarker** ✅ |
+
+### Template Syntax Comparison
+
+**Looping over a collection:**
+
+```
+# Acceleo (MTL)
+[for (enemy : CharacterType | model.characterTypes)]
+    case "[enemy.eClass().name/]": ...
+[/for]
+
+# FreeMarker (FTL)
+<#list enemies as enemy>
+    case "${enemy.typeName}": ...
+</#list>
+```
+
+**Conditional logic:**
+
+```
+# Acceleo (MTL)
+[if (enemy.health > 100)]
+    // high health
+[else]
+    // normal health
+[/if]
+
+# FreeMarker (FTL)
+<#if (enemy.health > 100)>
+    // high health
+<#else>
+    // normal health
+</#if>
+```
+
+**String manipulation:**
+
+```
+# Acceleo (MTL)
+[enemy.name.toUpperFirst()/]
+[enemy.name.toLower()/]
+
+# FreeMarker (FTL)
+${enemy.name?cap_first}
+${enemy.name?lower_case}
+```
+
+---
+
+## 🛠️ Recommended Tools for FreeMarker
+
+### IDE Comparison for FreeMarker Development
+
+| IDE | FreeMarker Support | Recommendation |
+|-----|-------------------|----------------|
+| **VS Code** | ✅ Excellent (via extensions) | ⭐ **Recommended** |
+| **IntelliJ IDEA** | ✅ Built-in (Ultimate) / Plugin (Community) | ⭐ **Recommended** |
+| **Eclipse** | ⚠️ Limited | Not recommended for FreeMarker |
+| **Sublime Text** | ✅ Good (via package) | Acceptable |
+| **Vim/Neovim** | ✅ Good (via plugins) | For experienced users |
+
+### VS Code Setup (Recommended)
+
+**Required Extensions:**
+
+| Extension | Marketplace ID | Purpose |
+|-----------|---------------|---------|
+| **FreeMarker** | `niclasgrunau.freemarker` | Syntax highlighting, snippets |
+| **Java Extension Pack** | `vscjava.vscode-java-pack` | Java development |
+| **XML Tools** | `dotjoshjohnson.xml` | For `.ecore` and `.xmi` files |
+
+**Install via command line:**
+```bash
+code --install-extension niclasgrunau.freemarker
+code --install-extension vscjava.vscode-java-pack
+code --install-extension dotjoshjohnson.xml
+```
+
+**VS Code Features for FreeMarker:**
+- ✅ Syntax highlighting for `.ftl` files
+- ✅ Auto-completion for FreeMarker directives
+- ✅ Bracket matching
+- ✅ Code folding
+- ✅ Integrated terminal for Maven commands
+- ✅ Java debugging for generator code
+
+### IntelliJ IDEA Setup
+
+**For IntelliJ Ultimate:**
+- FreeMarker support is built-in
+- Enable: `Settings → Plugins → Search "FreeMarker"` (should be bundled)
+
+**For IntelliJ Community:**
+- Install: `FreeMarker Support` plugin from JetBrains Marketplace
+
+**IntelliJ Features:**
+- ✅ Syntax highlighting
+- ✅ Auto-completion
+- ✅ Error detection in templates
+- ✅ Refactoring support
+- ✅ Navigation to data model classes
+
+### Eclipse Evaluation for FreeMarker
+
+> **⚠️ Eclipse is NOT recommended for FreeMarker development**
+
+| Aspect | Assessment |
+|--------|------------|
+| **FreeMarker plugin** | ❌ Outdated, unmaintained (last update 2018) |
+| **Syntax highlighting** | ⚠️ Basic, via JBoss Tools (heavyweight) |
+| **Auto-completion** | ❌ Poor or non-existent |
+| **Error detection** | ❌ None |
+| **Template debugging** | ❌ Not supported |
+
+**Why Eclipse Falls Short:**
+1. **No dedicated FreeMarker plugin** — The only option is JBoss Tools, which is a large suite designed for JBoss/WildFly development
+2. **EMF-centric** — Eclipse excels at EMF/Ecore but doesn't integrate FreeMarker with EMF
+3. **Heavy overhead** — Installing JBoss Tools adds significant IDE bloat for minimal FreeMarker benefit
+4. **Irony** — We moved away from Acceleo (Eclipse-based) partly to escape Eclipse dependency, so using Eclipse for FreeMarker defeats the purpose
+
+**If You Must Use Eclipse:**
+1. Install JBoss Tools: `Help → Eclipse Marketplace → Search "JBoss Tools"`
+2. Select only "FreeMarker IDE" component (if available separately)
+3. Expect limited functionality compared to VS Code/IntelliJ
+
+**Recommendation:** Use VS Code or IntelliJ for FreeMarker templates, and Eclipse only for EMF model editing if needed.
+
+### Recommended Development Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  EMF Models (.ecore)          │  FreeMarker Templates (.ftl) │
+│  ─────────────────────────    │  ──────────────────────────  │
+│  Edit in: Eclipse or VS Code  │  Edit in: VS Code or IntelliJ│
+│  (EMF tools available)        │  (Better FreeMarker support) │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Generator Java Code (RunAcceleo.java)                      │
+│  ───────────────────────────────────────                    │
+│  Edit in: VS Code or IntelliJ (standard Java)               │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Build & Test                                               │
+│  ───────────────                                            │
+│  Terminal: mvn -pl maze-module-generator -am clean verify   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Online Tools
+
+| Tool | URL | Purpose |
+|------|-----|---------|
+| **FreeMarker Online Tester** | https://try.freemarker.apache.org/ | Test templates without local setup |
+| **FreeMarker Manual** | https://freemarker.apache.org/docs/ | Official documentation |
+| **FreeMarker Cheat Sheet** | (search online) | Quick reference |
 
 ### What Changed
 

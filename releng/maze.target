@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="67">
+<target name="Maze Target" sequenceNumber="68">
   <locations>
     <location 
         includeAllPlugins="false" includeAllPlatforms="false" 
@@ -21,11 +21,16 @@
       <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
       <unit id="org.eclipse.emf.codegen.feature.group" version="0.0.0"/>      
       
+      <!-- OCL for model validation (required by main.game.maze.opponents, main.game.maze.difficulties) -->
+      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.common" version="0.0.0"/>
+      
       <!-- Equinox for headless applications -->
       <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
       
-      <!-- Note: Acceleo/OCL removed - generators now use FreeMarker (embedded JAR).
-           This simplifies the target platform and removes Eclipse-specific dependencies. -->
+      <!-- Note: Acceleo removed - generators now use FreeMarker (embedded JAR).
+           OCL is still required for EMF model validation constraints. -->
     </location>
   </locations>
 </target>

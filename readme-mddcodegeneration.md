@@ -147,7 +147,7 @@ src-gen/main/game/maze/generated/
 └── WallCollisionHandler.java      ✅ Generated
 ```
 
-**Planned** (templates exist, generators not yet integrated):
+**Planned** (templates and generators not yet created):
 
 ```
 ├── DifficultyConfigurator.java    ❌ Not yet generated
@@ -246,8 +246,8 @@ Currently generated files:
 |--------|-------|--------------|-----------------|-------|
 | Opponents | 4 | 3 (Zombie, Ghost, PumpkinBomber) | 3 | Type dispatch, attribute setters, graphics |
 | Walls | 3 | 5 (Glass, Dirt, Wood, Stone, Steel) | N/A | Registry, renderer, collision |
-| Difficulties | 0 | — | — | *Template exists, generator not integrated* |
-| Behaviour | 0 | — | — | *Template exists, generator not integrated* |
+| Difficulties | 0 | — | — | *Not yet implemented* |
+| Behaviour | 0 | — | — | *Not yet implemented* |
 
 ### Generated Code Output
 
@@ -273,11 +273,6 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing | ❌ Planned |
 | `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation | ❌ Planned |
 | `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation | ❌ Planned |
-| `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management | ❌ Template only |
-| `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation | ❌ Template only |
-| `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing | ❌ Template only |
-| `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation | ❌ Template only |
-| `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation | ❌ Template only |
 
 ### Unit Tests
 
