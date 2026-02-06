@@ -9,7 +9,8 @@
         <!-- Eclipse 2024-12 release (stable, available) -->
         <repository location="https://download.eclipse.org/releases/2024-12/"/>
         <repository location="https://download.eclipse.org/tools/orbit/downloads/latest-R/"/>
-        <repository location="https://download.eclipse.org/acceleo/updates/nightly/latest"/>
+        <!-- Acceleo stable releases (deterministic, reproducible builds) -->
+        <repository location="https://download.eclipse.org/acceleo/updates/releases/"/>
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
