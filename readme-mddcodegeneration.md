@@ -115,28 +115,37 @@ We want the **model to drive the code**, not the other way around:
 
 ---
 
-## Template Structure
+## Template Structure (Acceleo 4)
+
+All Acceleo 4 templates are consolidated in `maze-generator-java`:
 
 ```
-maze-generator.acceleo/src/main/java/main/game/maze/gen/templates/
-├── Generate.mtl                      # Master entry point
-│
-├── walls/
-│   ├── WallMaterialRenderer.mtl
-│   ├── WallCollisionHandler.mtl
-│   └── WallPropertyAccessor.mtl
-│
-├── difficulties/
-│   ├── DifficultyConfigurator.mtl
-│   ├── EnemySpawnLimits.mtl
-│   └── DifficultyConstants.mtl
-│
-├── behaviour/
-│   ├── BehaviorDispatcher.mtl
-│   ├── PathCalculatorFactory.mtl
-│   └── PatrolStateMachine.mtl
+maze-generator-java/src/main/java/main/game/maze/codegen/
+├── AcceleoGeneratorMain.java    # Java launcher for standalone generation
+└── acceleo4/
+    ├── Generate.mtl             # Opponents domain (CharacterRegistrar, etc.)
+    ├── GenerateWalls.mtl        # Walls domain (WallRegistry, Renderer, Collision)
+    ├── GenerateDifficulties.mtl # Difficulties domain (Configurator, SpawnLimits)
+    └── GenerateBehaviour.mtl    # Behaviour domain (Dispatcher, PathFactory)
+```
 
-> Note: All opponent templates (`CharacterRegistrar`, `CharacterAttributeSetter`, `CharacterGraphicsFactory`) are consolidated in `Generate.mtl` to keep dispatch logic together and avoid duplication.
+### Generated Output Structure
+
+```
+src-gen/main/game/maze/generated/
+├── OpponentRegistry.java
+├── CharacterRegistrar.java
+├── CharacterAttributeSetter.java
+├── CharacterGraphicsFactory.java
+├── WallRegistry.java
+├── WallMaterialRenderer.java
+├── WallCollisionHandler.java
+├── DifficultyConfigurator.java
+├── EnemySpawnLimits.java
+├── DifficultyRegistry.java
+├── BehaviorDispatcher.java
+├── PathCalculatorFactory.java
+└── BehaviorRegistry.java
 ```
 
 ---
@@ -200,19 +209,35 @@ This transforms the project from "uses EMF" to "true model-driven development."
 
 ✅ = Implemented | 🔄 = In Progress | ❌ = Not Started
 
+### Acceleo 4 Migration
+
+The project has been migrated from Acceleo 3 to **Acceleo 4**, which provides:
+- Better AQL (Acceleo Query Language) support
+- Improved Java API for standalone generation
+- Modern EMF integration
+- Simplified template syntax
+
+**Acceleo 4 Module Location**: `maze-generator-java/src/main/java/main/game/maze/codegen/acceleo4/`
+
 ### Templates Created
 
-| Domain | Template | Status | Generated Artifact |
+| Domain | Template | Status | Generated Artifacts |
 |--------|----------|--------|-------------------|
-| **Opponents** | `Generate.mtl` | ✅ | `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java`, `OpponentRegistry.java` |
-| **Walls** | `GenerateWalls.mtl` | ✅ | `WallRegistry.java` |
-| **Difficulties** | `DifficultyConfigurator.mtl` | 📋 | Template exists, not integrated |
-| **Difficulties** | `EnemySpawnLimits.mtl` | 📋 | Template exists, not integrated |
-| **Behaviour** | `BehaviorDispatcher.mtl` | 📋 | Template exists, not integrated |
-| **Behaviour** | `PathCalculatorFactory.mtl` | 📋 | Template exists, not integrated |
-| **Walls** | `WallMaterialRenderer.mtl` | 📋 | Template exists, not integrated |
-| **Walls** | `WallCollisionHandler.mtl` | 📋 | Template exists, not integrated |
-| **Walls** | `WallPropertyAccessor.mtl` | 📋 | Template exists, not integrated |
+| **Opponents** | `Generate.mtl` | ✅ | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
+| **Walls** | `GenerateWalls.mtl` | ✅ | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
+| **Difficulties** | `GenerateDifficulties.mtl` | ✅ | `DifficultyConfigurator.java`, `EnemySpawnLimits.java`, `DifficultyRegistry.java` |
+| **Behaviour** | `GenerateBehaviour.mtl` | ✅ | `BehaviorDispatcher.java`, `PathCalculatorFactory.java`, `BehaviorRegistry.java` |
+
+### Generated Code Statistics
+
+Generated files provide comprehensive domain coverage:
+
+| Domain | Files | Switch Cases | Factory Methods | Notes |
+|--------|-------|--------------|-----------------|-------|
+| Opponents | 4 | 3 (Zombie, Ghost, PumpkinBomber) | 3 | Type dispatch, attribute setters, graphics |
+| Walls | 3 | 5 (Glass, Dirt, Wood, Stone, Steel) | N/A | Registry, renderer, collision |
+| Difficulties | 3 | 3 (Easy, Normal, Hard) | 3 | Configuration, spawn limits, factory |
+| Behaviour | 3 | 3 behaviors + 3 path calculators | 8 | Dispatcher, path factory, event factory |
 
 ### Generated Code Output
 
@@ -225,6 +250,14 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 | `CharacterGraphicsFactory.java` | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | Sprite factory |
 | `OpponentRegistry.java` | Model iteration | Enemy type listing |
 | `WallRegistry.java` | Model iteration | Wall material listing |
+| `WallMaterialRenderer.java` | `WallMaterialBaseType` switch | Color, sound, transparency |
+| `WallCollisionHandler.java` | `WallMaterial` attributes | Damage, resistance, effects |
+| `DifficultyConfigurator.java` | `Difficulty` attributes | Settings extraction |
+| `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management |
+| `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation |
+| `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing |
+| `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation |
+| `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation |
 
 ### Unit Tests
 
@@ -240,17 +273,37 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 
 | Component | Status | Description |
 |-----------|--------|-------------|
-| `Generate.mtl` | ✅ | Master entry point updated with imports and entry points for all domains |
-| `MANIFEST.MF` (acceleo) | ✅ | Added all model plugin dependencies |
-| `MANIFEST.MF` (runner) | ✅ | Added all model plugin dependencies |
-| `pom.xml` (generator) | ✅ | Added JUnit 5, opponents, difficulties dependencies |
+| `AcceleoGeneratorMain.java` | ✅ | Acceleo 4 launcher supporting all 4 domains |
+| `MANIFEST.MF` (maze-generator-java) | ✅ | All model plugin dependencies including behaviour |
+| All `.mtl` templates | ✅ | Acceleo 4 syntax with `[module]/` declaration |
 
 ### Remaining Work
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Run generation in Maven build | 🔄 | Requires Acceleo runner configuration |
+| Acceleo 4 migration | ✅ | All templates migrated to Acceleo 4 in `maze-generator-java` |
+| Run generation in Maven build | 🔄 | Use `AcceleoGeneratorMain` with model paths |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
 | Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (lower priority) |
 | Add `src-gen` to `maze/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
+
+---
+
+## Running the Generation
+
+### Command Line
+
+```bash
+# Full generation (all 4 domains)
+java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
+    opponents.xmi walls.xmi difficulties.xmi movements.ecore output-dir/
+
+# Basic generation (opponents + walls only)
+java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
+    opponents.xmi walls.xmi output-dir/
+```
+
+### Maven Integration
+
+Add exec-maven-plugin or use Tycho to invoke `AcceleoGeneratorMain` during the build phase.
