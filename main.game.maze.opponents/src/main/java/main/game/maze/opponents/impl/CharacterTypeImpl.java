@@ -290,6 +290,46 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	protected BehaviorType behavior = BEHAVIOR_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #getAnimationFrameCount() <em>Animation Frame Count</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAnimationFrameCount()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int ANIMATION_FRAME_COUNT_EDEFAULT = 1;
+
+	/**
+	 * The cached value of the '{@link #getAnimationFrameCount() <em>Animation Frame Count</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAnimationFrameCount()
+	 * @generated
+	 * @ordered
+	 */
+	protected int animationFrameCount = ANIMATION_FRAME_COUNT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSpriteScale() <em>Sprite Scale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpriteScale()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final double SPRITE_SCALE_EDEFAULT = 1.0;
+
+	/**
+	 * The cached value of the '{@link #getSpriteScale() <em>Sprite Scale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpriteScale()
+	 * @generated
+	 * @ordered
+	 */
+	protected double spriteScale = SPRITE_SCALE_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -605,6 +645,52 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public int getAnimationFrameCount() {
+		return animationFrameCount;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setAnimationFrameCount(int newAnimationFrameCount) {
+		int oldAnimationFrameCount = animationFrameCount;
+		animationFrameCount = newAnimationFrameCount;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__ANIMATION_FRAME_COUNT, oldAnimationFrameCount, animationFrameCount));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public double getSpriteScale() {
+		return spriteScale;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSpriteScale(double newSpriteScale) {
+		double oldSpriteScale = spriteScale;
+		spriteScale = newSpriteScale;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE, oldSpriteScale, spriteScale));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -633,6 +719,10 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getImageTurnDown();
 			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
 				return getBehavior();
+			case OpponentsPackage.CHARACTER_TYPE__ANIMATION_FRAME_COUNT:
+				return getAnimationFrameCount();
+			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
+				return getSpriteScale();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -680,6 +770,12 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
 				setBehavior((BehaviorType)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__ANIMATION_FRAME_COUNT:
+				setAnimationFrameCount((Integer)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
+				setSpriteScale((Double)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -729,6 +825,12 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
 				setBehavior(BEHAVIOR_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__ANIMATION_FRAME_COUNT:
+				setAnimationFrameCount(ANIMATION_FRAME_COUNT_EDEFAULT);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
+				setSpriteScale(SPRITE_SCALE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -767,6 +869,10 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return IMAGE_TURN_DOWN_EDEFAULT == null ? imageTurnDown != null : !IMAGE_TURN_DOWN_EDEFAULT.equals(imageTurnDown);
 			case OpponentsPackage.CHARACTER_TYPE__BEHAVIOR:
 				return behavior != BEHAVIOR_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__ANIMATION_FRAME_COUNT:
+				return animationFrameCount != ANIMATION_FRAME_COUNT_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
+				return spriteScale != SPRITE_SCALE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -805,6 +911,10 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(imageTurnDown);
 		result.append(", behavior: ");
 		result.append(behavior);
+		result.append(", animationFrameCount: ");
+		result.append(animationFrameCount);
+		result.append(", spriteScale: ");
+		result.append(spriteScale);
 		result.append(')');
 		return result.toString();
 	}

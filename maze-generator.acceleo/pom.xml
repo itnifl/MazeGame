@@ -43,22 +43,8 @@
         <version>2.37.0</version>
         <scope>provided</scope>
     </dependency>
-
-    <!-- Acceleo Engine -->
-    <dependency>
-        <groupId>org.eclipse.acceleo</groupId>
-        <artifactId>org.eclipse.acceleo.engine</artifactId>
-        <version>3.5.1.201409021433</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.eclipse.acceleo</groupId>
-        <artifactId>org.eclipse.acceleo.model</artifactId>
-        <version>3.5.1.201409021433</version>
-        <scope>provided</scope>
-    </dependency>
     
-    <!-- Local Project Dependencies (VS Code usually handles these if in same workspace, but being explicit helps) -->
+    <!-- Local Project Dependencies -->
     <dependency>
         <groupId>main.game.maze</groupId>
         <artifactId>main.game.maze.difficulties</artifactId>
@@ -77,5 +63,43 @@
         <version>1.0.0-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
+    <!-- FreeMarker template engine for true MDD code generation -->
+    <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>2.3.32</version>
+        <scope>compile</scope>
+    </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Copy FreeMarker JAR for embedding in the Eclipse plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <id>copy-freemarker</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.freemarker</groupId>
+                  <artifactId>freemarker</artifactId>
+                  <version>2.3.32</version>
+                  <outputDirectory>${project.basedir}/lib</outputDirectory>
+                  <destFileName>freemarker.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

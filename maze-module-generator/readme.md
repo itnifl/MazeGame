@@ -1,10 +1,65 @@
 # maze-module-generator
 
-`maze-module-generator` is a small Java based generator module in the MazeGame build.
+`maze-module-generator` is a Java-based module that hosts **Model-Driven Code Generation** artifacts for the MazeGame build.
 
-It depends on `main.game.maze.walls` and is wired into the Maven lifecycle so that it can generate additional Java sources into `src-gen` and have them compiled together with the rest of the project.
+It depends on `main.game.maze.walls`, `main.game.maze.opponents`, and `main.game.maze.difficulties`, and is wired into the Maven lifecycle so that generated Java sources in `src-gen` are compiled together with the rest of the project.
 
 The module is packaged as a regular JAR (not an Eclipse plugin) and is meant to run headless as part of `mvn clean verify`.
+
+---
+
+## Generated Code (src-gen)
+
+The following Java classes are generated from EMF models and demonstrate true Model-Driven Engineering:
+
+| File | Source Model | Purpose |
+|------|--------------|----------|
+| `OpponentRegistry.java` | `opponents.ecore` | Lists all enemy types with their stats |
+| `WallRegistry.java` | `walls.ecore` | Lists all wall material types |
+| `CharacterRegistrar.java` | `opponents.ecore` | Type-safe switch dispatch for character registration |
+| `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getHealth()`, `getThreatLevel()`, `getSpeed()` |
+| `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
+| `WallMaterialRenderer.java` | `walls.ecore` | Renders walls by material type |
+| `WallCollisionHandler.java` | `walls.ecore` | Handles wall collision logic |
+
+**Note**: FreeMarker templates are located in `maze-generator.acceleo/src/main/resources/templates/`. The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) use FreeMarker for true model-to-text transformation.
+
+### Key Methods in Generated Code
+
+**CharacterRegistrar**:
+- `register()` - Type-safe character registration with handlers
+- `getKnownTypes()` - Returns all model character types
+- `isKnownType(String)` - Checks if a type is in the model
+
+**CharacterAttributeSetter**:
+- `applyDifficultyMultipliers()` - Applies health/threat/speed multipliers per type
+- `getBaseHealth(String)` - Returns model-defined health per type
+- `getBaseThreatLevel(String)` - Returns model-defined threat level per type
+
+**CharacterGraphicsFactory**:
+- `getSpritePath()` - Returns sprite using `getImageBase()` from model
+- `getAnimationFrameCount()` - Returns frame count using `getAnimationFrameCount()` from model
+- `getSpriteScale()` - Returns scale factor using `getSpriteScale()` from model
+
+---
+
+## Unit Tests
+
+Comprehensive JUnit 5 tests validate the generated code:
+
+```
+src/test/java/main/game/maze/generated/
+├── CharacterRegistrarTest.java      # Tests type registration and lookup
+├── CharacterAttributeSetterTest.java # Tests stats and multipliers
+├── CharacterGraphicsFactoryTest.java # Tests graphics properties
+├── WallRegistryTest.java             # Tests wall material registry
+└── OpponentRegistryTest.java         # Tests opponent registry
+```
+
+Run tests with:
+```bash
+mvn test -f maze-module-generator/pom.xml
+```
 
 ---
 

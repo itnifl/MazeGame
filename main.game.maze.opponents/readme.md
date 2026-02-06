@@ -65,6 +65,25 @@ This usually includes
 - Data classes that expose base stats and threat values in plain Java  
 - Utility code for resolving model based opponents into runtime descriptions
 
+### Generated Files in maze-module-generator
+
+The following classes are generated from `opponents.ecore` and placed in `maze-module-generator/src-gen/main/game/maze/generated/`:
+
+| Class | Purpose |
+|-------|---------|
+| `CharacterRegistrar` | Registers and looks up character types by identifier |
+| `CharacterAttributeSetter` | Applies difficulty multipliers to character stats |
+| `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
+| `OpponentRegistry` | Lists all enemy types with their stats |
+
+**Note**: The build uses FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/opponents/` for code generation.
+
+**Key EMF model methods used:**
+- `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution
+- `CharacterType.getImageBase()` — base image path for sprites
+- `CharacterType.getAnimationFrameCount()` / `setAnimationFrameCount()` — animation frame count
+- `CharacterType.getSpriteScale()` / `setSpriteScale()` — sprite scale factor
+
 On top of the generated code, hand written runtime code provides
 
 - A stable API for other modules such as difficulty, behaviour and maze world  

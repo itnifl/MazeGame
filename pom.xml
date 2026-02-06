@@ -34,10 +34,14 @@
     <module>maze-module-repository</module>
     <module>maze-generator.acceleo-runner</module>
 
-    <!-- 4: evt. egen generated/jar-modul for spillet -->
+    <!-- Note: maze-generator-java removed from build - it contains Acceleo 4 templates
+         that are not used. The build now uses FreeMarker-based generators in 
+         maze-generator.acceleo instead. -->
+
+    <!-- 5: evt. egen generated/jar-modul for spillet -->
     <module>maze-module-generator</module>
 
-    <!-- 5: selve JavaFX-spillet -->
+    <!-- 6: selve JavaFX-spillet -->
     <module>maze</module>    
   </modules>
 

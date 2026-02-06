@@ -1,0 +1,410 @@
+[comment encoding = UTF-8 /]
+[module GenerateWalls('http://main.game.maze/walls')/]
+
+[comment @main/]
+[template public generate(model : walls::WallModel)]
+[file ('main/game/maze/generated/WallRegistry.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import main.game.maze.walls.WallMaterialBaseType;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Generated wall registry with all wall materials.
+ * @generated from walls.ecore using Acceleo 4
+ */
+public final class WallRegistry {
+
+    public static final class WallDefinition {
+        public final String id;
+        public final String displayName;
+        public final WallMaterialBaseType baseType;
+        public final boolean breakable;
+        public final int hitPoints;
+        public final String baseImage;
+
+        public WallDefinition(String id,
+                              String displayName,
+                              WallMaterialBaseType baseType,
+                              boolean breakable,
+                              int hitPoints,
+                              String baseImage) {
+            this.id = id;
+            this.displayName = displayName;
+            this.baseType = baseType;
+            this.breakable = breakable;
+            this.hitPoints = hitPoints;
+            this.baseImage = baseImage;
+        }
+    }
+
+    private static final Map<String, WallDefinition> BY_ID = new HashMap<String, WallDefinition>();
+
+    static {
+[for (m : walls::WallMaterial | model.materials)]
+        register(new WallDefinition(
+            "[m.id/]",
+            "[m.displayName/]",
+            WallMaterialBaseType.[m.wallBaseType.toString()/], 
+            [m.breakable/],
+            [m.hitPoints/],
+            "[m.baseImage/]"
+        ));
+[/for]
+    }
+
+    private static void register(WallDefinition def) {
+        BY_ID.put(def.id, def);
+    }
+
+    public static WallDefinition get(String id) {
+        return BY_ID.get(id);
+    }
+
+    public static Map<String, WallDefinition> all() {
+        return Collections.unmodifiableMap(BY_ID);
+    }
+
+    /**
+     * Gets all known wall material base types.
+     * @return array of base type names
+     */
+    public static String['['/][']'/] getKnownBaseTypes() {
+        return new String['['/][']'/] {
+            "GLASS", "DIRT", "WOOD", "STONE", "STEEL"
+        };
+    }
+
+    /**
+     * Gets the count of registered wall materials.
+     * @return number of wall materials in model
+     */
+    public static int getMaterialCount() {
+        return BY_ID.size();
+    }
+
+    private WallRegistry() {
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/WallMaterialRenderer.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import main.game.maze.walls.WallMaterial;
+import main.game.maze.walls.WallMaterialBaseType;
+
+/**
+ * Generated renderer for WallMaterial instances.
+ * Maps wall base types to their visual properties.
+ * 
+ * @generated from walls.ecore using Acceleo 4
+ */
+public final class WallMaterialRenderer {
+
+    private static final Logger LOGGER = Logger.getLogger(WallMaterialRenderer.class.getName());
+
+    private WallMaterialRenderer() { /* utility class */ }
+
+    /**
+     * RGB color representation.
+     */
+    public record Color(int r, int g, int b, double alpha) {
+        public Color(int r, int g, int b) {
+            this(r, g, b, 1.0);
+        }
+    }
+
+    /**
+     * Gets the base color for a wall material type.
+     * Used for fallback rendering or tinting.
+     * 
+     * @param baseType the wall material base type
+     * @return the base color
+     */
+    public static Color getBaseColor(WallMaterialBaseType baseType) {
+        if (baseType == null) return new Color(128, 128, 128);
+        
+        return switch (baseType) {
+            case GLASS -> new Color(200, 230, 255, 0.6); // translucent light blue
+            case DIRT -> new Color(139, 90, 43);         // brown
+            case WOOD -> new Color(160, 82, 45);         // sienna
+            case STONE -> new Color(128, 128, 128);      // gray
+            case STEEL -> new Color(70, 70, 90);         // dark steel blue
+        };
+    }
+
+    /**
+     * Gets the damage overlay color for a material when hit.
+     * 
+     * @param baseType the wall material base type
+     * @return the damage visual color
+     */
+    public static Color getDamageColor(WallMaterialBaseType baseType) {
+        if (baseType == null) return new Color(255, 0, 0);
+        
+        return switch (baseType) {
+            case GLASS -> new Color(255, 255, 255);      // shatter white
+            case DIRT -> new Color(101, 67, 33);         // darker brown
+            case WOOD -> new Color(80, 50, 20);          // scorched
+            case STONE -> new Color(90, 90, 90);         // cracked gray
+            case STEEL -> new Color(255, 140, 0);        // spark orange
+        };
+    }
+
+    /**
+     * Gets the transparency level for a material type.
+     * 
+     * @param baseType the wall material base type
+     * @return opacity from 0.0 (transparent) to 1.0 (opaque)
+     */
+    public static double getOpacity(WallMaterialBaseType baseType) {
+        if (baseType == null) return 1.0;
+        
+        return switch (baseType) {
+            case GLASS -> 0.6;
+            case DIRT -> 1.0;
+            case WOOD -> 1.0;
+            case STONE -> 1.0;
+            case STEEL -> 1.0;
+        };
+    }
+
+    /**
+     * Checks if the material should render with transparency.
+     * 
+     * @param baseType the wall material base type
+     * @return true if material is see-through
+     */
+    public static boolean isTransparent(WallMaterialBaseType baseType) {
+        return baseType == WallMaterialBaseType.GLASS;
+    }
+
+    /**
+     * Gets the break sound effect identifier for a material.
+     * 
+     * @param baseType the wall material base type
+     * @return the sound effect ID
+     */
+    public static String getBreakSound(WallMaterialBaseType baseType) {
+        if (baseType == null) return "wall_generic_break";
+        
+        return switch (baseType) {
+            case GLASS -> "wall_glass_shatter";
+            case DIRT -> "wall_dirt_crumble";
+            case WOOD -> "wall_wood_splinter";
+            case STONE -> "wall_stone_crack";
+            case STEEL -> "wall_steel_dent";
+        };
+    }
+
+    /**
+     * Gets the hit sound effect identifier for a material.
+     * 
+     * @param baseType the wall material base type
+     * @return the sound effect ID
+     */
+    public static String getHitSound(WallMaterialBaseType baseType) {
+        if (baseType == null) return "wall_generic_hit";
+        
+        return switch (baseType) {
+            case GLASS -> "wall_glass_crack";
+            case DIRT -> "wall_dirt_thud";
+            case WOOD -> "wall_wood_knock";
+            case STONE -> "wall_stone_chip";
+            case STEEL -> "wall_steel_clang";
+        };
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/WallCollisionHandler.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.function.Consumer;
+import java.util.logging.Logger;
+
+import main.game.maze.walls.WallMaterial;
+import main.game.maze.walls.WallMaterialBaseType;
+
+/**
+ * Generated collision handler for wall materials.
+ * Handles damage, destruction, and collision response by material type.
+ * 
+ * @generated from walls.ecore using Acceleo 4
+ */
+public final class WallCollisionHandler {
+
+    private static final Logger LOGGER = Logger.getLogger(WallCollisionHandler.class.getName());
+
+    private WallCollisionHandler() { /* utility class */ }
+
+    /**
+     * Result of a collision with a wall.
+     */
+    public record CollisionResult(
+        boolean wallDestroyed,
+        int damageDealt,
+        int remainingHitPoints,
+        String soundEffect,
+        String particleEffect
+    ) {}
+
+    /**
+     * Handles a collision/attack on a wall material.
+     * 
+     * @param material the wall material being hit
+     * @param incomingDamage the damage amount
+     * @param onDestroyed callback when wall is destroyed (may be null)
+     * @return collision result with effects to apply
+     */
+    public static CollisionResult handleCollision(WallMaterial material, int incomingDamage, 
+                                                   Consumer<WallMaterial> onDestroyed) {
+        if (material == null) {
+            return new CollisionResult(false, 0, 0, "wall_generic_hit", "debris_generic");
+        }
+
+        WallMaterialBaseType baseType = material.getWallBaseType();
+        boolean isBreakable = material.isBreakable();
+        
+        if (!isBreakable) {
+            // Unbreakable wall - no damage dealt
+            return new CollisionResult(
+                false,
+                0,
+                0,
+                getImpactSound(baseType),
+                getImpactParticle(baseType)
+            );
+        }
+
+        // Calculate damage based on material resistance
+        int effectiveDamage = calculateEffectiveDamage(incomingDamage, baseType);
+        int currentHp = material.getHitPoints();
+        int newHp = Math.max(0, currentHp - effectiveDamage);
+        
+        boolean destroyed = newHp <= 0;
+        
+        if (destroyed && onDestroyed != null) {
+            onDestroyed.accept(material);
+        }
+
+        return new CollisionResult(
+            destroyed,
+            effectiveDamage,
+            newHp,
+            destroyed ? getDestroySound(baseType) : getHitSound(baseType),
+            destroyed ? getDestroyParticle(baseType) : getDamageParticle(baseType)
+        );
+    }
+
+    /**
+     * Calculates effective damage after material resistance.
+     * 
+     * @param baseDamage incoming damage amount
+     * @param baseType the material type
+     * @return damage after resistance
+     */
+    public static int calculateEffectiveDamage(int baseDamage, WallMaterialBaseType baseType) {
+        if (baseType == null) return baseDamage;
+        
+        double multiplier = switch (baseType) {
+            case GLASS -> 2.0;   // glass takes double damage
+            case DIRT -> 1.5;    // dirt is weak
+            case WOOD -> 1.0;    // wood is baseline
+            case STONE -> 0.75;  // stone is resistant
+            case STEEL -> 0.5;   // steel is very resistant
+        };
+
+        return (int) Math.ceil(baseDamage * multiplier);
+    }
+
+    /**
+     * Gets the base damage resistance for a material type.
+     * 
+     * @param baseType the material type
+     * @return resistance value (higher = more resistant)
+     */
+    public static int getResistance(WallMaterialBaseType baseType) {
+        if (baseType == null) return 0;
+        
+        return switch (baseType) {
+            case GLASS -> 0;
+            case DIRT -> 1;
+            case WOOD -> 2;
+            case STONE -> 3;
+            case STEEL -> 5;
+        };
+    }
+
+    // Sound effect helpers
+    private static String getImpactSound(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "wall_glass_crack";
+            case DIRT -> "wall_dirt_thud";
+            case WOOD -> "wall_wood_knock";
+            case STONE -> "wall_stone_chip";
+            case STEEL -> "wall_steel_clang";
+        };
+    }
+
+    private static String getHitSound(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "wall_glass_hit";
+            case DIRT -> "wall_dirt_hit";
+            case WOOD -> "wall_wood_hit";
+            case STONE -> "wall_stone_hit";
+            case STEEL -> "wall_steel_hit";
+        };
+    }
+
+    private static String getDestroySound(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "wall_glass_shatter";
+            case DIRT -> "wall_dirt_crumble";
+            case WOOD -> "wall_wood_splinter";
+            case STONE -> "wall_stone_crack";
+            case STEEL -> "wall_steel_collapse";
+        };
+    }
+
+    // Particle effect helpers
+    private static String getImpactParticle(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "particle_spark";
+            case DIRT -> "particle_dust";
+            case WOOD -> "particle_splinter";
+            case STONE -> "particle_chip";
+            case STEEL -> "particle_spark";
+        };
+    }
+
+    private static String getDamageParticle(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "particle_glass_crack";
+            case DIRT -> "particle_dirt_dust";
+            case WOOD -> "particle_wood_chip";
+            case STONE -> "particle_stone_dust";
+            case STEEL -> "particle_steel_spark";
+        };
+    }
+
+    private static String getDestroyParticle(WallMaterialBaseType baseType) {
+        return switch (baseType) {
+            case GLASS -> "particle_glass_shatter";
+            case DIRT -> "particle_dirt_collapse";
+            case WOOD -> "particle_wood_debris";
+            case STONE -> "particle_stone_rubble";
+            case STEEL -> "particle_steel_debris";
+        };
+    }
+}
+[/file]
+
+[/template]

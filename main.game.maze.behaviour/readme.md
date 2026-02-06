@@ -108,8 +108,14 @@ The factory is responsible for
 - wiring behaviours with path calculators and navigation services  
 - reading any configuration or parameters needed from difficulty or opponent definitions
 
+### Future: Generated Support Code
+
+> **Note**: The `BehaviorDispatcher` class is **planned but not yet implemented**.  
+> When created, it will route behaviour requests by character type based on EMF model definitions.  
+> See [readme-mddcodegeneration.md](../readme-mddcodegeneration.md) for the generation roadmap.
+
 This keeps the rest of the game code small and declarative.  
-For a given opponent type, the game only needs to ask the factory for “its” behaviour instead of manually creating and wiring objects.
+For a given opponent type, the game only needs to ask the factory for "its" behaviour instead of manually creating and wiring objects.
 
 ---
 

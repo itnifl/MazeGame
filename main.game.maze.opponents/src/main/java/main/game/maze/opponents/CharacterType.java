@@ -26,6 +26,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnUp <em>Image Turn Up</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getImageTurnDown <em>Image Turn Down</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getAnimationFrameCount <em>Animation Frame Count</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#getSpriteScale <em>Sprite Scale</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -321,5 +323,51 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	void setBehavior(BehaviorType value);
+
+	/**
+	 * Returns the value of the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * The default value is <code>"1"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Animation Frame Count</em>' attribute.
+	 * @see #setAnimationFrameCount(int)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_AnimationFrameCount()
+	 * @model default="1" required="true"
+	 * @generated
+	 */
+	int getAnimationFrameCount();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getAnimationFrameCount <em>Animation Frame Count</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Animation Frame Count</em>' attribute.
+	 * @see #getAnimationFrameCount()
+	 * @generated
+	 */
+	void setAnimationFrameCount(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Sprite Scale</b></em>' attribute.
+	 * The default value is <code>"1.0"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Sprite Scale</em>' attribute.
+	 * @see #setSpriteScale(double)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_SpriteScale()
+	 * @model default="1.0" required="true"
+	 * @generated
+	 */
+	double getSpriteScale();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#getSpriteScale <em>Sprite Scale</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Sprite Scale</em>' attribute.
+	 * @see #getSpriteScale()
+	 * @generated
+	 */
+	void setSpriteScale(double value);
 
 } // CharacterType
