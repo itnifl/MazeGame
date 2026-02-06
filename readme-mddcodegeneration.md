@@ -131,21 +131,28 @@ maze-generator-java/src/main/java/main/game/maze/codegen/
 
 ### Generated Output Structure
 
+Currently generated files (`maze-module-generator/src-gen/main/game/maze/generated/`):
+
 ```
 src-gen/main/game/maze/generated/
-├── OpponentRegistry.java
-├── CharacterRegistrar.java
-├── CharacterAttributeSetter.java
-├── CharacterGraphicsFactory.java
-├── WallRegistry.java
-├── WallMaterialRenderer.java
-├── WallCollisionHandler.java
-├── DifficultyConfigurator.java
-├── EnemySpawnLimits.java
-├── DifficultyRegistry.java
-├── BehaviorDispatcher.java
-├── PathCalculatorFactory.java
-└── BehaviorRegistry.java
+├── OpponentRegistry.java          ✅ Generated
+├── CharacterRegistrar.java        ✅ Generated
+├── CharacterAttributeSetter.java  ✅ Generated
+├── CharacterGraphicsFactory.java  ✅ Generated
+├── WallRegistry.java              ✅ Generated
+├── WallMaterialRenderer.java      ✅ Generated
+└── WallCollisionHandler.java      ✅ Generated
+```
+
+**Planned** (templates exist, generators not yet integrated):
+
+```
+├── DifficultyConfigurator.java    ❌ Not yet generated
+├── EnemySpawnLimits.java          ❌ Not yet generated
+├── DifficultyRegistry.java        ❌ Not yet generated
+├── BehaviorDispatcher.java        ❌ Not yet generated
+├── PathCalculatorFactory.java     ❌ Not yet generated
+└── BehaviorRegistry.java          ❌ Not yet generated
 ```
 
 ---
@@ -221,43 +228,48 @@ The project has been migrated from Acceleo 3 to **Acceleo 4**, which provides:
 
 ### Templates Created
 
-| Domain | Template | Status | Generated Artifacts |
-|--------|----------|--------|-------------------|
-| **Opponents** | `Generate.mtl` | ✅ | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
-| **Walls** | `GenerateWalls.mtl` | ✅ | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
-| **Difficulties** | `GenerateDifficulties.mtl` | ✅ | `DifficultyConfigurator.java`, `EnemySpawnLimits.java`, `DifficultyRegistry.java` |
-| **Behaviour** | `GenerateBehaviour.mtl` | ✅ | `BehaviorDispatcher.java`, `PathCalculatorFactory.java`, `BehaviorRegistry.java` |
+| Domain | Template | Template Status | Generator Status | Generated Artifacts |
+|--------|----------|-----------------|------------------|-------------------|
+| **Opponents** | `Generate.mtl` | ✅ Exists | ✅ `RunAcceleo.java` | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
+| **Walls** | `GenerateWalls.mtl` | ✅ Exists | ✅ `RunWallsAcceleo.java` | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
+| **Difficulties** | `GenerateDifficulties.mtl` | ✅ Exists | ❌ Not integrated | *(none yet)* |
+| **Behaviour** | `GenerateBehaviour.mtl` | ✅ Exists | ❌ Not integrated | *(none yet)* |
 
 ### Generated Code Statistics
 
-Generated files provide comprehensive domain coverage:
+Currently generated files:
 
 | Domain | Files | Switch Cases | Factory Methods | Notes |
 |--------|-------|--------------|-----------------|-------|
 | Opponents | 4 | 3 (Zombie, Ghost, PumpkinBomber) | 3 | Type dispatch, attribute setters, graphics |
 | Walls | 3 | 5 (Glass, Dirt, Wood, Stone, Steel) | N/A | Registry, renderer, collision |
-| Difficulties | 3 | 3 (Easy, Normal, Hard) | 3 | Configuration, spawn limits, factory |
-| Behaviour | 3 | 3 behaviors + 3 path calculators | 8 | Dispatcher, path factory, event factory |
+| Difficulties | 0 | — | — | *Template exists, generator not integrated* |
+| Behaviour | 0 | — | — | *Template exists, generator not integrated* |
 
 ### Generated Code Output
 
-Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`:
+Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 
-| File | Uses EMF Methods | Purpose |
-|------|------------------|----------|
-| `CharacterRegistrar.java` | `eClass().getName()` | Type-safe switch dispatch |
-| `CharacterAttributeSetter.java` | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` | Difficulty multipliers |
-| `CharacterGraphicsFactory.java` | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | Sprite factory |
-| `OpponentRegistry.java` | Model iteration | Enemy type listing |
-| `WallRegistry.java` | Model iteration | Wall material listing |
-| `WallMaterialRenderer.java` | `WallMaterialBaseType` switch | Color, sound, transparency |
-| `WallCollisionHandler.java` | `WallMaterial` attributes | Damage, resistance, effects |
-| `DifficultyConfigurator.java` | `Difficulty` attributes | Settings extraction |
-| `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management |
-| `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation |
-| `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing |
-| `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation |
-| `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation |
+| File | Uses EMF Methods | Purpose | Status |
+|------|------------------|----------|--------|
+| `CharacterRegistrar.java` | `eClass().getName()` | Type-safe switch dispatch | ✅ Generated |
+| `CharacterAttributeSetter.java` | `getHealth()`, `setHealth()`, `getThreatLevel()`, `setThreatLevel()`, `getSpeed()`, `setSpeed()` | Difficulty multipliers | ✅ Generated |
+| `CharacterGraphicsFactory.java` | `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | Sprite factory | ✅ Generated |
+| `OpponentRegistry.java` | Model iteration | Enemy type listing | ✅ Generated |
+| `WallRegistry.java` | Model iteration | Wall material listing | ✅ Generated |
+| `WallMaterialRenderer.java` | `WallMaterialBaseType` switch | Color, sound, transparency | ✅ Generated |
+| `WallCollisionHandler.java` | `WallMaterial` attributes | Damage, resistance, effects | ✅ Generated |
+
+**Planned** (Acceleo 4 templates exist but standalone generators not yet created):
+
+| File | Uses EMF Methods | Purpose | Status |
+|------|------------------|----------|--------|
+| `DifficultyConfigurator.java` | `Difficulty` attributes | Settings extraction | ❌ Template only |
+| `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management | ❌ Template only |
+| `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation | ❌ Template only |
+| `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing | ❌ Template only |
+| `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation | ❌ Template only |
+| `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation | ❌ Template only |
 
 ### Unit Tests
 
@@ -281,10 +293,13 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Acceleo 4 migration | ✅ | All templates migrated to Acceleo 4 in `maze-generator-java` |
-| Run generation in Maven build | 🔄 | Use `AcceleoGeneratorMain` with model paths |
+| Acceleo 4 template migration | ✅ | All 4 domain templates exist in `maze-generator-java` |
+| Opponents generation | ✅ | `RunAcceleo.java` generates 4 files |
+| Walls generation | ✅ | `RunWallsAcceleo.java` generates 3 files |
+| **Difficulties generation** | ❌ | Create `RunDifficultiesAcceleo.java` standalone generator |
+| **Behaviour generation** | ❌ | Create `RunBehaviourAcceleo.java` standalone generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
-| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (lower priority) |
+| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
 | Add `src-gen` to `maze/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
 
