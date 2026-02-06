@@ -259,12 +259,12 @@ See: [maze-module-repository/readme.md](maze-module-repository/readme.md)
 
 ### maze-generator.acceleo
 
-Acceleo templates that turn EMF models into Java code and helper artefacts.  
+FreeMarker templates that turn EMF models into Java code and helper artefacts (name retained for historical reasons).  
 See: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md)
 
 ### maze-generator.acceleo-runner
 
-Headless Acceleo runner plug in used to execute the templates in an Eclipse runtime.  
+Headless runner plug-in that executes FreeMarker-based generators during the Tycho build.  
 See: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md)
 
 ### maze-module-generator
