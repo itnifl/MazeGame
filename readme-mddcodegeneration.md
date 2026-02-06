@@ -35,9 +35,9 @@ We want the **model to drive the code**, not the other way around:
 
 ```
 ┌─────────────────┐         ┌─────────────────┐         ┌─────────────────┐
-│  Ecore Models   │         │  Acceleo        │         │  Generated Java │
+│  Ecore Models   │         │  FreeMarker     │         │  Generated Java │
 │  (.ecore)       │ ──────► │  Templates      │ ──────► │  (src-gen/)     │
-│                 │         │  (.mtl)         │         │                 │
+│                 │         │  (.ftl)         │         │                 │
 └─────────────────┘         └─────────────────┘         └─────────────────┘
 ```
 
@@ -115,18 +115,21 @@ We want the **model to drive the code**, not the other way around:
 
 ---
 
-## Template Structure (Acceleo 4)
+## Template Structure (FreeMarker)
 
-All Acceleo 4 templates are consolidated in `maze-generator-java`:
+All FreeMarker templates are in `maze-generator.acceleo/src/main/resources/templates/`:
 
 ```
-maze-generator-java/src/main/java/main/game/maze/codegen/
-├── AcceleoGeneratorMain.java    # Java launcher for standalone generation
-└── acceleo4/
-    ├── Generate.mtl             # Opponents domain (CharacterRegistrar, etc.)
-    ├── GenerateWalls.mtl        # Walls domain (WallRegistry, Renderer, Collision)
-    ├── GenerateDifficulties.mtl # Difficulties domain (Configurator, SpawnLimits)
-    └── GenerateBehaviour.mtl    # Behaviour domain (Dispatcher, PathFactory)
+maze-generator.acceleo/src/main/resources/templates/
+├── opponents/
+│   ├── OpponentRegistry.ftl          # Enemy type listing
+│   ├── CharacterRegistrar.ftl        # Type dispatch with handlers
+│   ├── CharacterAttributeSetter.ftl  # Difficulty multipliers
+│   └── CharacterGraphicsFactory.ftl  # Sprite/graphics factory
+└── walls/
+    ├── WallRegistry.ftl              # Wall material registry
+    ├── WallMaterialRenderer.ftl      # Color, sound, transparency
+    └── WallCollisionHandler.ftl      # Damage, resistance
 ```
 
 ### Generated Output Structure
@@ -193,11 +196,11 @@ If any manual edits are required after step 2, the generation is incomplete.
 | Aspect | Current State | Target State |
 |--------|---------------|--------------|
 | Model changes | Require manual code updates | Auto-generate code |
-| Acceleo usage | Registry boilerplate | Application logic |
-| Build process | Model + manual sync | Model → generate → compile |
-| Risk of bugs | High (forgotten updates) | Low (single source of truth) |
+| Template engine | FreeMarker (true M2T) | FreeMarker |
+| Build process | Model → FreeMarker → compile | Model → generate → compile |
+| Risk of bugs | Low (templates define structure) | Low (single source of truth) |
 
-This transforms the project from "uses EMF" to "true model-driven development."
+This is **true model-driven development**: templates define the transformation from model to code.
 
 ---
 
@@ -216,24 +219,24 @@ This transforms the project from "uses EMF" to "true model-driven development."
 
 ✅ = Implemented | 🔄 = In Progress | ❌ = Not Started
 
-### Acceleo 4 Migration
+### FreeMarker Template Engine
 
-The project has been migrated from Acceleo 3 to **Acceleo 4**, which provides:
-- Better AQL (Acceleo Query Language) support
-- Improved Java API for standalone generation
-- Modern EMF integration
-- Simplified template syntax
+The project uses **FreeMarker** for true template-driven code generation:
+- Industry-standard template engine (Apache-licensed)
+- Available from Maven Central (no Eclipse runtime dependencies)
+- Clean separation of templates (`.ftl`) and Java logic
+- Model-to-text transformation via data models
 
-**Acceleo 4 Module Location**: `maze-generator-java/src/main/java/main/game/maze/codegen/acceleo4/`
+**Template Location**: `maze-generator.acceleo/src/main/resources/templates/`
 
 ### Templates Created
 
-| Domain | Template | Template Status | Generator Status | Generated Artifacts |
-|--------|----------|-----------------|------------------|-------------------|
-| **Opponents** | `Generate.mtl` | ✅ Exists | ✅ `RunAcceleo.java` | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
-| **Walls** | `GenerateWalls.mtl` | ✅ Exists | ✅ `RunWallsAcceleo.java` | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
-| **Difficulties** | `GenerateDifficulties.mtl` | ✅ Exists | ❌ Not integrated | *(none yet)* |
-| **Behaviour** | `GenerateBehaviour.mtl` | ✅ Exists | ❌ Not integrated | *(none yet)* |
+| Domain | Template | Generator | Generated Artifacts |
+|--------|----------|-----------|-------------------|
+| **Opponents** | `opponents/*.ftl` | ✅ `RunAcceleo.java` | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
+| **Walls** | `walls/*.ftl` | ✅ `RunWallsAcceleo.java` | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
+| **Difficulties** | ❌ Not yet | ❌ Not implemented | *(planned)* |
+| **Behaviour** | ❌ Not yet | ❌ Not implemented | *(planned)* |
 
 ### Generated Code Statistics
 
@@ -260,11 +263,16 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | `WallMaterialRenderer.java` | `WallMaterialBaseType` switch | Color, sound, transparency | ✅ Generated |
 | `WallCollisionHandler.java` | `WallMaterial` attributes | Damage, resistance, effects | ✅ Generated |
 
-**Planned** (Acceleo 4 templates exist but standalone generators not yet created):
+**Planned** (templates to be created):
 
 | File | Uses EMF Methods | Purpose | Status |
 |------|------------------|----------|--------|
-| `DifficultyConfigurator.java` | `Difficulty` attributes | Settings extraction | ❌ Template only |
+| `DifficultyConfigurator.java` | `Difficulty` attributes | Settings extraction | ❌ Planned |
+| `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management | ❌ Planned |
+| `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation | ❌ Planned |
+| `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing | ❌ Planned |
+| `PathCalculatorFactory.java` | `BehaviourFactory` | Algorithm creation | ❌ Planned |
+| `BehaviorRegistry.java` | `BehaviourFactory` | Behavior/event creation | ❌ Planned |
 | `EnemySpawnLimits.java` | `EnemyMaxCount` iteration | Spawn cap management | ❌ Template only |
 | `DifficultyRegistry.java` | `DifficultiesFactory` | Difficulty creation | ❌ Template only |
 | `BehaviorDispatcher.java` | `MovementBehavior` switch | Behavior routing | ❌ Template only |
@@ -285,19 +293,20 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 
 | Component | Status | Description |
 |-----------|--------|-------------|
-| `AcceleoGeneratorMain.java` | ✅ | Acceleo 4 launcher supporting all 4 domains |
-| `MANIFEST.MF` (maze-generator-java) | ✅ | All model plugin dependencies including behaviour |
-| All `.mtl` templates | ✅ | Acceleo 4 syntax with `[module]/` declaration |
+| `RunAcceleo.java` | ✅ | FreeMarker-based opponents generator |
+| `RunWallsAcceleo.java` | ✅ | FreeMarker-based walls generator |
+| `MANIFEST.MF` | ✅ | Embeds FreeMarker JAR, EMF model dependencies |
+| FreeMarker templates | ✅ | `.ftl` templates in `src/main/resources/templates/` |
 
 ### Remaining Work
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Acceleo 4 template migration | ✅ | All 4 domain templates exist in `maze-generator-java` |
-| Opponents generation | ✅ | `RunAcceleo.java` generates 4 files |
-| Walls generation | ✅ | `RunWallsAcceleo.java` generates 3 files |
-| **Difficulties generation** | ❌ | Create `RunDifficultiesAcceleo.java` standalone generator |
-| **Behaviour generation** | ❌ | Create `RunBehaviourAcceleo.java` standalone generator |
+| FreeMarker template engine | ✅ | Embedded in `maze-generator.acceleo` |
+| Opponents generation | ✅ | `RunAcceleo.java` + 4 `.ftl` templates |
+| Walls generation | ✅ | `RunWallsAcceleo.java` + 3 `.ftl` templates |
+| **Difficulties generation** | ❌ | Create templates and generator |
+| **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
 | Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
 | Add `src-gen` to `maze/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
@@ -309,28 +318,33 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 
 ### Build Integration
 
-The build currently uses **standalone Java generators** (`RunAcceleo.java`, `RunWallsAcceleo.java`) that write files directly using `PrintWriter`. These are invoked by `maze-generator.acceleo-runner` during the Tycho build.
+The build uses **FreeMarker-based generators** (`RunAcceleo.java`, `RunWallsAcceleo.java`) that:
+1. Load EMF models from XMI files
+2. Transform EMF objects into template data models
+3. Process `.ftl` templates to generate Java source files
+
+These are invoked by `maze-generator.acceleo-runner` during the Tycho build.
 
 ```bash
 # Full build with generation
 mvn clean verify
 ```
 
-### Acceleo 4 Alternative
+### Template Architecture
 
-Acceleo 4 templates exist in `maze-generator-java` for more sophisticated template-based generation:
-
-```bash
-# Via AcceleoGeneratorMain (if configured)
-java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
-    opponents.xmi walls.xmi difficulties.xmi movements.ecore output-dir/
+```
+EMF Model (.xmi)   ────▶    Java Generator   ────▶   FreeMarker   ────▶   Generated Java
+(source of truth)        (model → Map<>)           (.ftl templates)        (src-gen/)
 ```
 
-**Note**: The Acceleo 4 templates and standalone generators produce equivalent output. The build uses standalone generators for reliability (no Eclipse workspace dependencies).
+Key benefits:
+- **Templates define structure**: Java code layout is in `.ftl` files, easy to modify
+- **Generators define data**: EMF-to-Map transformation in Java, type-safe
+- **Clean separation**: Non-Java developers can edit templates
 
 ### Model Validation
 
-The standalone generators validate models before generation and provide null-safe defaults:
+The FreeMarker generators validate models before generation and provide null-safe defaults:
 
 **Fail-Fast Validation:**
 - Models must have required elements (e.g., at least one `WallMaterial`, non-blank `id` fields)

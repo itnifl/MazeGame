@@ -76,7 +76,7 @@ The following classes are generated from `opponents.ecore` and placed in `maze-m
 | `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
 | `OpponentRegistry` | Lists all enemy types with their stats |
 
-**Note**: Acceleo 4 templates for all 4 domains (opponents, walls, difficulties, behaviour) exist in `maze-generator-java`. The build uses standalone Java generators for reliability.
+**Note**: The build uses FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/opponents/` for code generation.
 
 **Key EMF model methods used:**
 - `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution

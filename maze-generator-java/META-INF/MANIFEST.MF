@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Maze Code Generator (Acceleo 4)
+Bundle-Name: Maze Code Generator (Acceleo 4 Templates)
 Bundle-SymbolicName: maze-generator-java;singleton:=true
 Automatic-Module-Name: maze.generator.java
 Bundle-Version: 1.0.0.qualifier
@@ -9,16 +9,9 @@ Bundle-ClassPath: .
 Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.common;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
- org.eclipse.acceleo.aql;visibility:=reexport,
- org.eclipse.acceleo.query;visibility:=reexport,
- org.eclipse.acceleo.annotations,
  main.game.maze.opponents,
  main.game.maze.walls,
  main.game.maze.difficulties,
  main.game.maze.behaviour
-Import-Package: org.eclipse.acceleo.aql,
- org.eclipse.acceleo.aql.parser,
- org.eclipse.acceleo.query.runtime,
- org.eclipse.acceleo.query.runtime.impl.namespace
 Export-Package: main.game.maze.codegen,
  main.game.maze.codegen.acceleo4

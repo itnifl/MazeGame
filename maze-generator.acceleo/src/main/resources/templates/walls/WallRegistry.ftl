@@ -1,28 +1,27 @@
-[comment encoding = 'UTF-8' /]
-[module GenerateWalls('http://main.game.maze/walls')]
-
-[template public generate(model : WallModel)]
-    [comment @main /]
-    [file ('main/game/maze/generated/WallRegistry.java', false, 'UTF-8')]
 package main.game.maze.generated;
 
+import main.game.maze.walls.WallMaterialBaseType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Generated wall registry with all wall materials.
+ * @generated from walls.ecore via FreeMarker template
+ */
 public final class WallRegistry {
 
     public static final class WallDefinition {
         public final String id;
         public final String displayName;
-        public final String baseType;
+        public final WallMaterialBaseType baseType;
         public final boolean breakable;
         public final int hitPoints;
         public final String baseImage;
 
         public WallDefinition(String id,
                               String displayName,
-                              String baseType,
+                              WallMaterialBaseType baseType,
                               boolean breakable,
                               int hitPoints,
                               String baseImage) {
@@ -38,16 +37,16 @@ public final class WallRegistry {
     private static final Map<String, WallDefinition> BY_ID = new HashMap<String, WallDefinition>();
 
     static {
-[for (m : WallMaterial | model.materials)]
+<#list model.materials as m>
         register(new WallDefinition(
-            "[m.id/]",
-            "[m.displayName/]",
-            "[m.wallBaseType.name()/]", 
-            [m.breakable/],
-            [m.hitPoints/],
-            "[m.baseImage/]"
+            "${m.id?j_string}",
+            "${m.displayName?j_string}",
+            WallMaterialBaseType.${m.baseType},
+            ${m.breakable?c},
+            ${m.hitPoints?c},
+            "${m.baseImage?j_string}"
         ));
-[/for]
+</#list>
     }
 
     private static void register(WallDefinition def) {
@@ -62,8 +61,16 @@ public final class WallRegistry {
         return Collections.unmodifiableMap(BY_ID);
     }
 
+    public static String[] getKnownBaseTypes() {
+        return new String[] {
+            "GLASS", "DIRT", "WOOD", "STONE", "STEEL"
+        };
+    }
+
+    public static int getMaterialCount() {
+        return BY_ID.size();
+    }
+
     private WallRegistry() {
     }
 }
-    [/file]
-[/template]

@@ -1,10 +1,14 @@
-// /maze-generator.acceleo/src/main/game/maze/gen/RunWallsAcceleo.java
+// /maze-generator.acceleo/src/main/java/main/game/maze/gen/RunWallsAcceleo.java
 package main.game.maze.gen;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -13,13 +17,21 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+
 import main.game.maze.walls.WallMaterial;
 import main.game.maze.walls.WallMaterialBaseType;
 import main.game.maze.walls.WallModel;
 import main.game.maze.walls.WallsPackage;
 
 /**
- * Standalone walls code generator - no Acceleo 3 dependencies.
+ * FreeMarker-based walls code generator - true template-driven MDD.
+ * 
+ * Templates are loaded from src/main/resources/templates/walls/ and
+ * the EMF model is transformed into a template data model for processing.
  */
 public class RunWallsAcceleo {
 
@@ -27,6 +39,18 @@ public class RunWallsAcceleo {
     private static final WallMaterialBaseType DEFAULT_BASE_TYPE = WallMaterialBaseType.STEEL;
     private static final String DEFAULT_BASE_IMAGE = "/images/walls/default_wall.png";
     private static final String DEFAULT_DISPLAY_NAME = "Unknown Wall";
+
+    private final Configuration freemarkerConfig;
+
+    public RunWallsAcceleo() {
+        // Configure FreeMarker
+        freemarkerConfig = new Configuration(Configuration.VERSION_2_3_32);
+        freemarkerConfig.setClassLoaderForTemplateLoading(getClass().getClassLoader(), "templates/walls");
+        freemarkerConfig.setDefaultEncoding("UTF-8");
+        freemarkerConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        freemarkerConfig.setLogTemplateExceptions(false);
+        freemarkerConfig.setWrapUncheckedExceptions(true);
+    }
 
     public void run(String wallsModelPath, String outDir) throws Exception {
 
@@ -59,14 +83,15 @@ public class RunWallsAcceleo {
 
         System.out.println("Generating walls code into: " + outFolder.getAbsolutePath());
 
-        // 5. Generate WallRegistry.java directly (standalone, no Acceleo 3)
+        // 5. Generate code using FreeMarker templates
         if (root instanceof WallModel wallModel) {
-            // Validate model before generation
             validateWallModel(wallModel);
+            Map<String, Object> dataModel = buildTemplateDataModel(wallModel);
             
-            generateWallRegistry(wallModel, outFolder);
-            generateWallMaterialRenderer(outFolder);
-            generateWallCollisionHandler(outFolder);
+            generateFromTemplate("WallRegistry.ftl", dataModel, new File(outFolder, "WallRegistry.java"));
+            generateFromTemplate("WallMaterialRenderer.ftl", dataModel, new File(outFolder, "WallMaterialRenderer.java"));
+            generateFromTemplate("WallCollisionHandler.ftl", dataModel, new File(outFolder, "WallCollisionHandler.java"));
+            
             System.out.println("Walls generation done.");
         } else {
             throw new IllegalArgumentException("Expected WallModel, got: " + root.eClass().getName());
@@ -74,8 +99,78 @@ public class RunWallsAcceleo {
     }
 
     /**
+     * Builds the FreeMarker data model from the EMF WallModel.
+     * This transforms the EMF structure into a template-friendly Map structure.
+     */
+    private Map<String, Object> buildTemplateDataModel(WallModel emfModel) {
+        Map<String, Object> model = new HashMap<>();
+        
+        // Materials from the model
+        List<Map<String, Object>> materials = new ArrayList<>();
+        
+        for (WallMaterial m : emfModel.getMaterials()) {
+            Map<String, Object> materialData = new HashMap<>();
+            materialData.put("id", m.getId());
+            materialData.put("displayName", nullSafe(m.getDisplayName(), DEFAULT_DISPLAY_NAME));
+            WallMaterialBaseType baseType = m.getWallBaseType() != null ? m.getWallBaseType() : DEFAULT_BASE_TYPE;
+            materialData.put("baseType", baseType.toString());
+            materialData.put("breakable", m.isBreakable());
+            materialData.put("hitPoints", m.getHitPoints());
+            materialData.put("baseImage", nullSafe(m.getBaseImage(), DEFAULT_BASE_IMAGE));
+            
+            materials.add(materialData);
+        }
+        
+        model.put("materials", materials);
+        
+        // Base types with their rendering/collision properties
+        List<Map<String, Object>> baseTypes = new ArrayList<>();
+        baseTypes.add(createBaseTypeData("GLASS", 200, 230, 255, 0.6, 2.0, 0, "wall_glass_shatter", "wall_glass_crack"));
+        baseTypes.add(createBaseTypeData("DIRT", 139, 90, 43, 1.0, 1.5, 1, "wall_dirt_crumble", "wall_dirt_thud"));
+        baseTypes.add(createBaseTypeData("WOOD", 160, 82, 45, 1.0, 1.0, 2, "wall_wood_splinter", "wall_wood_knock"));
+        baseTypes.add(createBaseTypeData("STONE", 128, 128, 128, 1.0, 0.75, 3, "wall_stone_crack", "wall_stone_chip"));
+        baseTypes.add(createBaseTypeData("STEEL", 70, 70, 90, 1.0, 0.5, 5, "wall_steel_dent", "wall_steel_clang"));
+        
+        model.put("baseTypes", baseTypes);
+        
+        return model;
+    }
+
+    private Map<String, Object> createBaseTypeData(String name, int r, int g, int b, double alpha,
+                                                    double damageMultiplier, int resistance,
+                                                    String breakSound, String hitSound) {
+        Map<String, Object> bt = new HashMap<>();
+        bt.put("name", name);
+        bt.put("colorR", r);
+        bt.put("colorG", g);
+        bt.put("colorB", b);
+        bt.put("alpha", alpha);
+        bt.put("damageMultiplier", damageMultiplier);
+        bt.put("resistance", resistance);
+        bt.put("breakSound", breakSound);
+        bt.put("hitSound", hitSound);
+        return bt;
+    }
+
+    /**
+     * Processes a FreeMarker template and writes the output to a file.
+     */
+    private void generateFromTemplate(String templateName, Map<String, Object> dataModel, File outputFile) 
+            throws IOException, TemplateException {
+        Template template = freemarkerConfig.getTemplate(templateName);
+        
+        // Wrap the data model under "model" key for cleaner template access
+        Map<String, Object> rootModel = new HashMap<>();
+        rootModel.put("model", dataModel);
+        
+        try (Writer out = new FileWriter(outputFile)) {
+            template.process(rootModel, out);
+        }
+        System.out.println("  Generated: " + outputFile.getName());
+    }
+
+    /**
      * Validates the wall model and reports any issues.
-     * Fails fast with clear messages when required fields are missing.
      */
     private void validateWallModel(WallModel model) {
         if (model.getMaterials() == null || model.getMaterials().isEmpty()) {
@@ -119,242 +214,9 @@ public class RunWallsAcceleo {
         }
     }
 
-    private void generateWallRegistry(WallModel model, File outFolder) throws IOException {
-        File outFile = new File(outFolder, "WallRegistry.java");
-        try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-            pw.println("package main.game.maze.generated;");
-            pw.println();
-            pw.println("import main.game.maze.walls.WallMaterialBaseType;");
-            pw.println("import java.util.Collections;");
-            pw.println("import java.util.HashMap;");
-            pw.println("import java.util.Map;");
-            pw.println();
-            pw.println("/**");
-            pw.println(" * Generated wall registry with all wall materials.");
-            pw.println(" * @generated from walls.ecore");
-            pw.println(" */");
-            pw.println("public final class WallRegistry {");
-            pw.println();
-            pw.println("    public static final class WallDefinition {");
-            pw.println("        public final String id;");
-            pw.println("        public final String displayName;");
-            pw.println("        public final WallMaterialBaseType baseType;");
-            pw.println("        public final boolean breakable;");
-            pw.println("        public final int hitPoints;");
-            pw.println("        public final String baseImage;");
-            pw.println();
-            pw.println("        public WallDefinition(String id,");
-            pw.println("                              String displayName,");
-            pw.println("                              WallMaterialBaseType baseType,");
-            pw.println("                              boolean breakable,");
-            pw.println("                              int hitPoints,");
-            pw.println("                              String baseImage) {");
-            pw.println("            this.id = id;");
-            pw.println("            this.displayName = displayName;");
-            pw.println("            this.baseType = baseType;");
-            pw.println("            this.breakable = breakable;");
-            pw.println("            this.hitPoints = hitPoints;");
-            pw.println("            this.baseImage = baseImage;");
-            pw.println("        }");
-            pw.println("    }");
-            pw.println();
-            pw.println("    private static final Map<String, WallDefinition> BY_ID = new HashMap<String, WallDefinition>();");
-            pw.println();
-            pw.println("    static {");
-            
-            for (WallMaterial m : model.getMaterials()) {
-                String id = m.getId();
-                String displayName = nullSafe(m.getDisplayName(), DEFAULT_DISPLAY_NAME);
-                WallMaterialBaseType baseType = m.getWallBaseType() != null 
-                    ? m.getWallBaseType() : DEFAULT_BASE_TYPE;
-                String baseImage = nullSafe(m.getBaseImage(), DEFAULT_BASE_IMAGE);
-                
-                pw.println("        register(new WallDefinition(");
-                pw.println("            \"" + escapeJava(id) + "\",");
-                pw.println("            \"" + escapeJava(displayName) + "\",");
-                pw.println("            WallMaterialBaseType." + baseType.toString() + ",");
-                pw.println("            " + m.isBreakable() + ",");
-                pw.println("            " + m.getHitPoints() + ",");
-                pw.println("            \"" + escapeJava(baseImage) + "\"");
-                pw.println("        ));");
-            }
-            
-            pw.println("    }");
-            pw.println();
-            pw.println("    private static void register(WallDefinition def) {");
-            pw.println("        BY_ID.put(def.id, def);");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static WallDefinition get(String id) {");
-            pw.println("        return BY_ID.get(id);");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static Map<String, WallDefinition> all() {");
-            pw.println("        return Collections.unmodifiableMap(BY_ID);");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static String[] getKnownBaseTypes() {");
-            pw.println("        return new String[] {");
-            pw.println("            \"GLASS\", \"DIRT\", \"WOOD\", \"STONE\", \"STEEL\"");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static int getMaterialCount() {");
-            pw.println("        return BY_ID.size();");
-            pw.println("    }");
-            pw.println();
-            pw.println("    private WallRegistry() {");
-            pw.println("    }");
-            pw.println("}");
-        }
-        System.out.println("  Generated: WallRegistry.java");
-    }
-
-    private void generateWallMaterialRenderer(File outFolder) throws IOException {
-        File outFile = new File(outFolder, "WallMaterialRenderer.java");
-        try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-            pw.println("package main.game.maze.generated;");
-            pw.println();
-            pw.println("import java.util.logging.Logger;");
-            pw.println("import main.game.maze.walls.WallMaterial;");
-            pw.println("import main.game.maze.walls.WallMaterialBaseType;");
-            pw.println();
-            pw.println("/**");
-            pw.println(" * Generated renderer for WallMaterial instances.");
-            pw.println(" * @generated from walls.ecore");
-            pw.println(" */");
-            pw.println("public final class WallMaterialRenderer {");
-            pw.println();
-            pw.println("    private static final Logger LOGGER = Logger.getLogger(WallMaterialRenderer.class.getName());");
-            pw.println();
-            pw.println("    private WallMaterialRenderer() { }");
-            pw.println();
-            pw.println("    public record Color(int r, int g, int b, double alpha) {");
-            pw.println("        public Color(int r, int g, int b) { this(r, g, b, 1.0); }");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static Color getBaseColor(WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return new Color(128, 128, 128);");
-            pw.println("        return switch (baseType) {");
-            pw.println("            case GLASS -> new Color(200, 230, 255, 0.6);");
-            pw.println("            case DIRT -> new Color(139, 90, 43);");
-            pw.println("            case WOOD -> new Color(160, 82, 45);");
-            pw.println("            case STONE -> new Color(128, 128, 128);");
-            pw.println("            case STEEL -> new Color(70, 70, 90);");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static double getOpacity(WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return 1.0;");
-            pw.println("        return switch (baseType) {");
-            pw.println("            case GLASS -> 0.6;");
-            pw.println("            default -> 1.0;");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static boolean isTransparent(WallMaterialBaseType baseType) {");
-            pw.println("        return baseType == WallMaterialBaseType.GLASS;");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static String getBreakSound(WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return \"wall_generic_break\";");
-            pw.println("        return switch (baseType) {");
-            pw.println("            case GLASS -> \"wall_glass_shatter\";");
-            pw.println("            case DIRT -> \"wall_dirt_crumble\";");
-            pw.println("            case WOOD -> \"wall_wood_splinter\";");
-            pw.println("            case STONE -> \"wall_stone_crack\";");
-            pw.println("            case STEEL -> \"wall_steel_dent\";");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static String getHitSound(WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return \"wall_generic_hit\";");
-            pw.println("        return switch (baseType) {");
-            pw.println("            case GLASS -> \"wall_glass_crack\";");
-            pw.println("            case DIRT -> \"wall_dirt_thud\";");
-            pw.println("            case WOOD -> \"wall_wood_knock\";");
-            pw.println("            case STONE -> \"wall_stone_chip\";");
-            pw.println("            case STEEL -> \"wall_steel_clang\";");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println("}");
-        }
-        System.out.println("  Generated: WallMaterialRenderer.java");
-    }
-
-    private void generateWallCollisionHandler(File outFolder) throws IOException {
-        File outFile = new File(outFolder, "WallCollisionHandler.java");
-        try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-            pw.println("package main.game.maze.generated;");
-            pw.println();
-            pw.println("import java.util.function.Consumer;");
-            pw.println("import java.util.logging.Logger;");
-            pw.println("import main.game.maze.walls.WallMaterial;");
-            pw.println("import main.game.maze.walls.WallMaterialBaseType;");
-            pw.println();
-            pw.println("/**");
-            pw.println(" * Generated collision handler for wall materials.");
-            pw.println(" * @generated from walls.ecore");
-            pw.println(" */");
-            pw.println("public final class WallCollisionHandler {");
-            pw.println();
-            pw.println("    private static final Logger LOGGER = Logger.getLogger(WallCollisionHandler.class.getName());");
-            pw.println();
-            pw.println("    private WallCollisionHandler() { }");
-            pw.println();
-            pw.println("    public record CollisionResult(");
-            pw.println("        boolean wallDestroyed,");
-            pw.println("        int damageDealt,");
-            pw.println("        int remainingHitPoints,");
-            pw.println("        String soundEffect,");
-            pw.println("        String particleEffect");
-            pw.println("    ) {}");
-            pw.println();
-            pw.println("    public static int calculateEffectiveDamage(int baseDamage, WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return baseDamage;");
-            pw.println("        double multiplier = switch (baseType) {");
-            pw.println("            case GLASS -> 2.0;");
-            pw.println("            case DIRT -> 1.5;");
-            pw.println("            case WOOD -> 1.0;");
-            pw.println("            case STONE -> 0.75;");
-            pw.println("            case STEEL -> 0.5;");
-            pw.println("        };");
-            pw.println("        return (int) Math.ceil(baseDamage * multiplier);");
-            pw.println("    }");
-            pw.println();
-            pw.println("    public static int getResistance(WallMaterialBaseType baseType) {");
-            pw.println("        if (baseType == null) return 0;");
-            pw.println("        return switch (baseType) {");
-            pw.println("            case GLASS -> 0;");
-            pw.println("            case DIRT -> 1;");
-            pw.println("            case WOOD -> 2;");
-            pw.println("            case STONE -> 3;");
-            pw.println("            case STEEL -> 5;");
-            pw.println("        };");
-            pw.println("    }");
-            pw.println("}");
-        }
-        System.out.println("  Generated: WallCollisionHandler.java");
-    }
-
     // ========== Utility Methods ==========
 
-    /**
-     * Returns the value if non-null and non-blank, otherwise returns the default.
-     */
     private static String nullSafe(String value, String defaultValue) {
         return (value != null && !value.isBlank()) ? value : defaultValue;
-    }
-
-    /**
-     * Escapes special characters for Java string literals.
-     */
-    private static String escapeJava(String s) {
-        if (s == null) return "";
-        return s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
     }
 }

@@ -2,7 +2,7 @@ package main.game.maze.generated;
 
 /**
  * Generated opponent registry with all character types.
- * @generated from opponents.ecore
+ * @generated from opponents.ecore via FreeMarker template
  */
 public class OpponentRegistry {
     public static final String GAME_NAME = "Testing Game";

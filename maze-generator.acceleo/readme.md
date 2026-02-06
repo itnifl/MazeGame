@@ -2,27 +2,119 @@
 
 > **Model-Driven Code Generation for MazeGame**
 
-This project uses [Acceleo](https://eclipse.dev/acceleo/) to automatically generate Java code from EMF (Eclipse Modeling Framework) models. Instead of writing repetitive boilerplate code by hand, we define models once and let Acceleo generate the implementation.
+This project generates Java code from EMF (Eclipse Modeling Framework) models using **FreeMarker** templates. Instead of writing repetitive boilerplate by hand, we define models once and let the generator produce the implementation.
 
 ---
 
 ## ⚡ Quick Start
 
-**Already familiar with the project?** Here's the fast path:
+### Generate Code (30 seconds)
 
 ```bash
-# 1. Make changes to EMF model (e.g., add new character type to opponents.ecore)
-
-# 2. Regenerate code
+# From repository root - regenerate all code from models
 mvn -pl maze-module-generator -am clean verify
-
-# 3. Run tests to validate
-mvn -pl maze-module-generator test
-
-# 4. Check generated output in maze-module-generator/src-gen/
 ```
 
-**New to code generation?** Read the sections below to understand why and how we use it.
+### Verify Generated Output
+
+```bash
+# Check generated files
+ls maze-module-generator/src-gen/main/game/maze/generated/
+
+# Run tests to validate
+mvn -pl maze-module-generator test
+```
+
+### Add a New Enemy Type (5 minutes)
+
+1. Edit `main.game.maze.opponents/src/main/resources/opponents.ecore`
+2. Add your new class extending `CharacterType`
+3. Regenerate: `mvn -pl maze-module-generator -am clean verify`
+4. **Done!** — All registrars, factories, and dispatchers are updated automatically
+
+### Key Directories
+
+| Path | Contains |
+|------|----------|
+| `src/main/resources/templates/` | FreeMarker templates (`.ftl`) |
+| `src/main/java/main/game/maze/gen/` | Generator Java classes |
+| `lib/freemarker.jar` | FreeMarker template engine |
+| `maze-module-generator/src-gen/` | Generated output |
+
+---
+
+## 🔄 Migration Journey: Acceleo → FreeMarker
+
+### Why "acceleo" is Still in the Name
+
+This module was originally designed to use **Acceleo** (Eclipse's M2T framework) for code generation. The name `maze-generator.acceleo` remains for historical compatibility with the build system and documentation.
+
+### The Evolution
+
+| Phase | Template Engine | Status |
+|-------|-----------------|--------|
+| **Phase 1** | Acceleo 3 (Eclipse-based) | ❌ Abandoned — required Eclipse workspace, complex setup |
+| **Phase 2** | Acceleo 4 (standalone) | ❌ Abandoned — unstable releases, missing from stable p2 repos |
+| **Phase 3** | PrintWriter (hardcoded Java) | ❌ Abandoned — not true M2T, templates embedded in Java |
+| **Phase 4** | **FreeMarker** | ✅ **Current** — true templates, no Eclipse dependency |
+
+### Why Acceleo 4 Was Abandoned
+
+We initially attempted to migrate from Acceleo 3 to **Acceleo 4**, which promised standalone execution without Eclipse workspace dependencies. However, we encountered critical blockers:
+
+1. **Missing from Stable Releases**
+   - Acceleo 4 IUs (`org.eclipse.acceleo.aql`, `org.eclipse.acceleo.aql.ide`) were **not available** in Eclipse stable release repositories (2024-03, 2024-06, 2024-09, 2024-12)
+   - Only available in unstable nightly/integration builds (`https://download.eclipse.org/acceleo/updates/nightly/latest/`)
+   - Using nightly builds in production is not viable — they can break without notice
+
+2. **Tycho/p2 Resolution Failures**
+   - Target platform resolution failed when mixing stable Eclipse releases with Acceleo 4 nightly repos
+   - Version conflicts between OCL, EMF, and Acceleo dependencies
+   - Error example: `Cannot resolve project dependencies... org.eclipse.acceleo.aql`
+
+3. **Incomplete Documentation**
+   - Acceleo 4 documentation was sparse and often referenced Acceleo 3 concepts
+   - Standalone execution examples were minimal
+   - Migration guide from Acceleo 3 was incomplete
+
+4. **API Instability**
+   - The Acceleo 4 API changed between nightly builds
+   - Code that worked one week might fail the next
+
+**Decision**: Rather than depend on unstable nightly builds or wait for Acceleo 4 to mature, we chose **FreeMarker** — a battle-tested, Apache-licensed template engine available from Maven Central with excellent documentation.
+
+### Why FreeMarker Won
+
+| Criterion | Acceleo | PrintWriter | FreeMarker |
+|-----------|---------|-------------|------------|
+| True templates | ✅ `.mtl` files | ❌ Java strings | ✅ `.ftl` files |
+| Eclipse dependency | ❌ Required | ✅ None | ✅ None |
+| Maven Central | ❌ Tycho/p2 only | ✅ N/A | ✅ Available |
+| Learning curve | Steep (OCL) | Low | Low |
+| Debugging | Difficult | Easy | Easy |
+| Community/docs | Small | N/A | Large |
+
+### What Changed
+
+- **Templates**: `.mtl` (Acceleo) → `.ftl` (FreeMarker)
+- **Syntax**: `[for (x | collection)]` → `<#list collection as x>`
+- **Output**: `[x.property/]` → `${x.property}`
+- **Location**: Templates now in `src/main/resources/templates/`
+- **Engine**: `freemarker.jar` bundled in `lib/`
+
+### Migration Guide (for existing Acceleo users)
+
+| Acceleo Syntax | FreeMarker Equivalent |
+|----------------|----------------------|
+| `[module name('uri')]` | N/A (handled in Java) |
+| `[template public name(param : Type)]` | N/A (Java method) |
+| `[for (x : Type \| collection)]...[/for]` | `<#list collection as x>...</#list>` |
+| `[x.property/]` | `${x.property}` |
+| `[if (condition)]...[/if]` | `<#if condition>...</#if>` |
+| `[comment text /]` | `<#-- text -->` |
+| `[file ('path', false, 'UTF-8')]` | Java `FileWriter` |
+| `collection->size()` | `${collection?size}` |
+| `string.toUpperCase()` | `${string?upper_case}` |
 
 ---
 
@@ -68,17 +160,27 @@ This is called **Model-Driven Engineering** - the model is the single source of 
 ```
 maze-generator.acceleo/
 ├── src/main/java/main/game/maze/gen/
-│   ├── RunAcceleo.java           # Standalone opponent generator (no Acceleo 3)
-│   └── RunWallsAcceleo.java      # Standalone wall generator (no Acceleo 3)
+│   ├── RunAcceleo.java           # FreeMarker-based opponent generator
+│   └── RunWallsAcceleo.java      # FreeMarker-based wall generator
+├── src/main/resources/templates/
+│   ├── opponents/                 # Opponent templates (.ftl)
+│   │   ├── OpponentRegistry.ftl
+│   │   ├── CharacterRegistrar.ftl
+│   │   ├── CharacterAttributeSetter.ftl
+│   │   └── CharacterGraphicsFactory.ftl
+│   └── walls/                     # Wall templates (.ftl)
+│       ├── WallRegistry.ftl
+│       ├── WallMaterialRenderer.ftl
+│       └── WallCollisionHandler.ftl
+├── lib/
+│   └── freemarker.jar            # FreeMarker template engine
 ├── META-INF/
 │   └── MANIFEST.MF               # Eclipse plugin manifest
 ├── plugin.xml                    # Plugin configuration
 └── pom.xml                       # Maven build file
 ```
 
-**Note**: The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) are now standalone Java code that writes files directly using `PrintWriter`. They load EMF models but do not require the Acceleo 3 engine or Eclipse workspace.
-
-**Acceleo 4 Templates**: For more sophisticated template-based generation, see `maze-generator-java/` which contains Acceleo 4 `.mtl` templates for all 4 domains.
+**Note**: The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) use **FreeMarker** as a true template engine. They load EMF models and process `.ftl` templates to produce Java source files.
 
 ### Key File Types
 
@@ -86,7 +188,7 @@ maze-generator.acceleo/
 |-----------|---------|
 | `.ecore` | EMF model definitions (the "schema" for your data) |
 | `.xmi` | Model instances (actual data conforming to the schema) |
-| `.mtl` | Acceleo 4 template files (in `maze-generator-java`) |
+| `.ftl` | FreeMarker template files (in `src/main/resources/templates/`) |
 
 ---
 
@@ -123,16 +225,19 @@ These files are currently generated and tested:
 | `WallMaterialRenderer.java` | Renders walls by material type | ✅ Generated |
 | `WallCollisionHandler.java` | Handles wall collision logic | ✅ Generated |
 
-### Acceleo 4 Templates (in maze-generator-java)
+### FreeMarker Templates
 
-The following Acceleo 4 templates provide template-based generation for all domains:
+The following FreeMarker templates provide model-to-text generation:
 
 | Template File | Domain | Generated Output |
 |---------------|--------|------------------|
-| `Generate.mtl` | Opponents | CharacterRegistrar, AttributeSetter, GraphicsFactory |
-| `GenerateWalls.mtl` | Walls | WallRegistry, WallMaterialRenderer, WallCollisionHandler |
-| `GenerateDifficulties.mtl` | Difficulties | DifficultyConfigurator, EnemySpawnLimits, DifficultyRegistry |
-| `GenerateBehaviour.mtl` | Behaviour | BehaviorDispatcher, PathCalculatorFactory, BehaviorRegistry |
+| `opponents/OpponentRegistry.ftl` | Opponents | OpponentRegistry.java |
+| `opponents/CharacterRegistrar.ftl` | Opponents | CharacterRegistrar.java |
+| `opponents/CharacterAttributeSetter.ftl` | Opponents | CharacterAttributeSetter.java |
+| `opponents/CharacterGraphicsFactory.ftl` | Opponents | CharacterGraphicsFactory.java |
+| `walls/WallRegistry.ftl` | Walls | WallRegistry.java |
+| `walls/WallMaterialRenderer.ftl` | Walls | WallMaterialRenderer.java |
+| `walls/WallCollisionHandler.ftl` | Walls | WallCollisionHandler.java |
 
 ### Example: Generated Switch Statement
 
@@ -176,54 +281,52 @@ mvn clean verify -DskipTests
 
 The Maven build:
 1. Compiles all EMF models
-2. Builds the `maze-generator.acceleo` plugin with standalone generators
+2. Builds the `maze-generator.acceleo` plugin with FreeMarker generators
 3. Runs `maze-generator.acceleo-runner` which invokes `RunAcceleo` and `RunWallsAcceleo`
 4. Generated sources appear in `maze-module-generator/src-gen/`
 
 ---
 
-## 📝 Understanding Acceleo Templates
+## 📝 Understanding FreeMarker Templates
 
 ### Basic Template Anatomy
 
-```mtl
-[comment encoding = UTF-8 /]
-[module Generate('http://main.game.maze/opponents')]    ← Declares which model to use
+```ftl
+<#-- FreeMarker template for generating Java code -->
+package ${packageName};
 
-[template public generate(root : OpponentModel)]        ← Entry point template
-[comment @main /]                                       ← Marks this as the main template
+import java.util.logging.Logger;
 
-[file ('Output.java', false, 'UTF-8')]                  ← Creates an output file
-package generated;
+/**
+ * Generated from EMF model: ${modelName}
+ */
+public class ${className} {
+    private static final Logger LOGGER = Logger.getLogger(${className}.class.getName());
 
-public class Output {
-    [for (enemy : CharacterType | root.characterTypes)] ← Loop over model elements
-    public static final String [enemy.name/] = "[enemy.displayName/]";
-    [/for]
+    <#list enemies as enemy>                              <#-- Loop over model elements -->
+    public static final String ${enemy.name?upper_case} = "${enemy.displayName}";
+    </#list>
 }
-[/file]
-
-[/template]
 ```
 
-### Key Acceleo Syntax
+### Key FreeMarker Syntax
 
 | Syntax | Meaning | Example |
 |--------|---------|---------|
-| `[for (x : Type | collection)]` | Loop | `[for (e : Enemy | model.enemies)]` |
-| `[x.property/]` | Access property | `[enemy.health/]` |
-| `[if (condition)]` | Conditional | `[if (enemy.health > 100)]` |
-| `[file ('path', ...)]` | Create file | `[file ('Enemy.java', false, 'UTF-8')]` |
-| `[comment text /]` | Comment | `[comment This is ignored /]` |
+| `<#list items as item>` | Loop | `<#list enemies as enemy>` |
+| `${property}` | Output value | `${enemy.health}` |
+| `<#if condition>` | Conditional | `<#if (enemy.health > 100)>` |
+| `${x?upper_case}` | Built-in function | `${enemy.name?upper_case}` |
+| `<#-- text -->` | Comment | `<#-- This is ignored -->` |
 
 ---
 
 ## 🎓 Tutorials and Learning Resources
 
-### Official Acceleo Documentation
-- [Acceleo User Guide](https://wiki.eclipse.org/Acceleo/User_Guide) - Comprehensive official guide
-- [Acceleo Getting Started](https://wiki.eclipse.org/Acceleo/Getting_Started) - Quick start tutorial
-- [Acceleo OCL Reference](https://wiki.eclipse.org/Acceleo/OCL_Operations_Reference) - OCL operations in templates
+### FreeMarker Documentation
+- [FreeMarker Manual](https://freemarker.apache.org/docs/index.html) - Comprehensive official guide
+- [FreeMarker Template Language Reference](https://freemarker.apache.org/docs/ref.html) - Language reference
+- [FreeMarker FAQ](https://freemarker.apache.org/docs/app_faq.html) - Common questions
 
 ### EMF (Eclipse Modeling Framework)
 - [EMF Tutorial](https://eclipsesource.com/blogs/tutorials/emf-tutorial/) - Learn EMF basics
@@ -231,7 +334,7 @@ public class Output {
 - [Ecore Metamodel](https://wiki.eclipse.org/Ecore) - Understanding `.ecore` files
 
 ### Video Tutorials
-- [Acceleo Code Generation (YouTube)](https://www.youtube.com/results?search_query=acceleo+code+generation) - Search for tutorials
+- [FreeMarker Templates (YouTube)](https://www.youtube.com/results?search_query=freemarker+template+tutorial) - Search for tutorials
 - [Model Driven Engineering Basics](https://www.youtube.com/results?search_query=model+driven+engineering+tutorial) - MDE concepts
 
 ### Books
@@ -244,32 +347,28 @@ public class Output {
 
 ### Step 1: Locate the Template
 
-Templates are in `src/main/java/main/game/maze/gen/templates/`:
-- `Generate.mtl` - Main opponents/characters template
-- `GenerateWalls.mtl` - Walls material template
+Templates are in `src/main/resources/templates/`:
+- `opponents/*.ftl` - Opponent templates (OpponentRegistry, CharacterRegistrar, AttributeSetter, GraphicsFactory)
+- `walls/*.ftl` - Walls material templates (WallRegistry, WallMaterialRenderer, WallCollisionHandler)
 
 ### Step 2: Make Changes
 
-Edit the `.mtl` file. For example, to add a new method:
+Edit the `.ftl` file. For example, to add a new method:
 
-```mtl
-[comment Add this inside the class generation /]
+```ftl
+<#-- Add this inside the class generation -->
 public static int getTotalEnemyCount() {
-    return [root.characterTypes->size()/];
+    return ${enemies?size};
 }
 ```
 
-### Step 3: Recompile the Template
+### Step 3: Test
 
-**Important**: After editing `.mtl`, you must recompile it to `.emtl`:
-- In Eclipse: Save the file (auto-compiles with Acceleo builder)
-- Or: Run a full Maven build
+1. Run the generator: `mvn -pl maze-module-generator -am clean verify`
+2. Check the generated output in `maze-module-generator/src-gen/`
+3. Run tests: `mvn -pl maze-module-generator test`
 
-### Step 4: Test
-
-1. Run the generator on a test model
-2. Check the generated output for correctness
-3. Commit both `.mtl` and `.emtl` files
+**Note**: FreeMarker templates don't need pre-compilation - they are processed at runtime.
 
 ---
 
@@ -277,11 +376,11 @@ public static int getTotalEnemyCount() {
 
 To generate code from a new EMF model:
 
-### 1. Register the Model URI
+### 1. Register the EMF Package
 
-In your `.mtl` template header:
-```mtl
-[module Generate('http://main.game.maze/opponents', 'http://main.game.maze/newmodel')]
+In your generator Java class, register the new package:
+```java
+EPackage.Registry.INSTANCE.put(NewModelPackage.eNS_URI, NewModelPackage.eINSTANCE);
 ```
 
 ### 2. Add Dependency in MANIFEST.MF
@@ -293,18 +392,27 @@ Require-Bundle: ...,
 
 ### 3. Create Templates
 
-Write templates that navigate your new model:
-```mtl
-[template public generateFromNewModel(root : NewModelRoot)]
-[file ('NewOutput.java', false, 'UTF-8')]
-// Generated from NewModel
-[/file]
-[/template]
+Write FreeMarker templates that use your model data:
+```ftl
+<#-- NewOutput.ftl -->
+package ${packageName};
+
+/**
+ * Generated from NewModel
+ */
+public class NewOutput {
+    <#list items as item>
+    public static final String ${item.name?upper_case} = "${item.value}";
+    </#list>
+}
 ```
 
-### 4. Update the Runner
+### 4. Update the Generator
 
-In `maze-generator.acceleo-runner`, ensure your model is loaded and passed to the generator.
+In `maze-generator.acceleo`, add a new generator class or update an existing one to:
+1. Load the XMI model file
+2. Transform EMF objects to a FreeMarker data model (Map)
+3. Process the template and write output
 
 ---
 
@@ -406,9 +514,9 @@ CharacterRegistrar.registerAll(this);
 | Pitfall | Symptom | Solution |
 |---------|---------|----------|
 | Wrong method names | `method not found` compilation error | Check EMF interface for actual method names |
-| Missing `.emtl` | `Cannot find Acceleo module` | Rebuild in Eclipse or run Maven build |
+| Missing template | `Template not found` error | Check templates are in `src/main/resources/templates/` |
 | Stale generated code | Tests pass but runtime fails | Delete `src-gen/` and regenerate |
-| Type mismatches | `incompatible types` error | Verify template uses correct EMF types |
+| Type mismatches | `incompatible types` error | Verify data model passes correct types |
 
 ---
 
@@ -420,34 +528,34 @@ CharacterRegistrar.registerAll(this);
 
 **Solutions**:
 - Check that the model file path is correct
-- Verify the root element type matches the template parameter
-- Look for errors in the Eclipse Console or Maven output
-- Ensure the `.emtl` file exists and is up-to-date
+- Verify the root element type matches expected EMF package
+- Look for errors in the Maven output
+- Ensure FreeMarker templates exist in `src/main/resources/templates/`
 
-### "Cannot find module" Error
+### Template Not Found
 
-**Symptom**: `Cannot find Acceleo module: /path/Generate.emtl`
+**Symptom**: `TemplateNotFoundException: Template not found`
 
 **Solutions**:
-- Rebuild the project in Eclipse to compile `.mtl` → `.emtl`
-- Check that `.emtl` is in the classpath
-- Verify the module path in `RunAcceleo.java` matches the actual location
+- Verify templates are in the correct directory under `src/main/resources/templates/`
+- Check the template path in the Java generator code
+- Ensure templates are included in `build.properties` as `bin.includes`
 
 ### Compilation Errors in Generated Code
 
 **Symptom**: Generated `.java` files have syntax errors.
 
 **Solutions**:
-- Review the template for missing imports
-- Check that model properties exist and have expected types
-- Use `[protected]` blocks for code that shouldn't be overwritten
+- Review the FreeMarker template for missing imports
+- Check that data model properties exist and have expected names
+- Verify FreeMarker expressions use correct syntax (e.g., `${property}` not `$property`)
 
 ### Model Loading Errors
 
 **Symptom**: `Resource not found` or `Unknown package URI`
 
 **Solutions**:
-- Register the EPackage in `RunAcceleo.java`:
+- Register the EPackage in the generator:
   ```java
   EPackage.Registry.INSTANCE.put(MyPackage.eNS_URI, MyPackage.eINSTANCE);
   ```
@@ -457,7 +565,7 @@ CharacterRegistrar.registerAll(this);
 
 **Symptom**: Generator fails with `IllegalStateException` about missing required fields.
 
-The standalone generators validate models before generation and fail fast with clear error messages:
+The FreeMarker generators validate models before generation and fail fast with clear error messages:
 
 | Error Message | Cause | Solution |
 |---------------|-------|----------|
@@ -600,27 +708,24 @@ LootTable
 
 #### Generated Code from Opponents
 
-The `Generate.mtl` template produces:
+The FreeMarker templates in `templates/opponents/` produce:
 
-| Generated Class | Purpose | Template Section |
-|-----------------|---------|------------------|
-| `OpponentRegistry` | Lists all enemies, provides counts | Lines 25-60 |
-| `CharacterRegistrar` | Type-safe switch dispatch for registration | Lines 65-160 |
-| `CharacterAttributeSetter` | Applies difficulty multipliers | Lines 168-250 |
-| `CharacterGraphicsFactory` | Creates sprites from `ImageBase`, `animationFrameCount`, `spriteScale` | Lines 255-300 |
+| Generated Class | Template | Purpose |
+|-----------------|----------|----------|
+| `OpponentRegistry` | `OpponentRegistry.ftl` | Lists all enemies, provides counts |
+| `CharacterRegistrar` | `CharacterRegistrar.ftl` | Type-safe switch dispatch for registration |
+| `CharacterAttributeSetter` | `CharacterAttributeSetter.ftl` | Applies difficulty multipliers |
+| `CharacterGraphicsFactory` | `CharacterGraphicsFactory.ftl` | Creates sprites from model attributes |
 
 **Example: How CharacterRegistrar eliminates instanceof**
 
-```mtl
-[comment From Generate.mtl - generates switch cases for each type /]
+```ftl
+<#-- From CharacterRegistrar.ftl - generates switch cases for each type -->
 switch (typeName) {
-    [for (enemy : CharacterType | root.characterTypes->filter(Zombie)->asSet())]
-    case "Zombie" -> zombieHandler.register((Zombie) character);
-    [/for]
-    [for (enemy : CharacterType | root.characterTypes->filter(Ghost)->asSet())]
-    case "Ghost" -> ghostHandler.register((Ghost) character);
-    [/for]
-    ...
+    <#list uniqueEnemies as enemy>
+    case "${enemy.typeName}" -> ${enemy.typeName?uncap_first}Handler.register((${enemy.typeName}) character);
+    </#list>
+    default -> LOGGER.warning("Unknown type: " + typeName);
 }
 ```
 
@@ -662,29 +767,29 @@ The walls model defines maze wall materials with varying durability and visual p
 
 #### Generated Code from Walls
 
-The `GenerateWalls.mtl` template produces:
+The FreeMarker templates in `templates/walls/` produce:
 
-| Generated Class | Purpose |
-|-----------------|---------|
-| `WallRegistry` | Static registry of all wall definitions |
-| `WallMaterialRenderer` | Visual properties per material (planned) |
-| `WallCollisionHandler` | Collision/damage logic per material (planned) |
+| Generated Class | Template | Purpose |
+|-----------------|----------|----------|
+| `WallRegistry` | `WallRegistry.ftl` | Static registry of all wall definitions |
+| `WallMaterialRenderer` | `WallMaterialRenderer.ftl` | Visual properties per material |
+| `WallCollisionHandler` | `WallCollisionHandler.ftl` | Collision/damage logic per material |
 
 **Example: WallRegistry generation**
 
-```mtl
-[comment From GenerateWalls.mtl - loops over all materials /]
+```ftl
+<#-- From WallRegistry.ftl - loops over all materials -->
 static {
-[for (m : WallMaterial | model.materials)]
+    <#list materials as m>
     register(new WallDefinition(
-        "[m.id/]",
-        "[m.displayName/]",
-        "[m.wallBaseType.name()/]", 
-        [m.breakable/],
-        [m.hitPoints/],
-        "[m.baseImage/]"
+        "${m.id}",
+        "${m.displayName}",
+        "${m.wallBaseType}", 
+        ${m.breakable?c},
+        ${m.hitPoints},
+        "${m.baseImage}"
     ));
-[/for]
+    </#list>
 }
 ```
 
@@ -725,7 +830,7 @@ Difficulty (abstract)
 
 #### Generated Code from Difficulties
 
-The `DifficultyConfigurator.mtl` template produces:
+FreeMarker templates can produce (planned):
 
 | Generated Class | Purpose |
 |-----------------|---------|
@@ -733,15 +838,15 @@ The `DifficultyConfigurator.mtl` template produces:
 | `DifficultySettings` | Immutable record of applied settings |
 | `EnemySpawnLimits` | Per-enemy spawn limits by difficulty |
 
-**Example: Difficulty key resolution**
+**Example: Difficulty key resolution (FreeMarker)**
 
-```mtl
-[comment From DifficultyConfigurator.mtl /]
+```ftl
+<#-- Example difficulties template -->
 public static String getDifficultyKey(Difficulty difficulty) {
     return switch (difficulty.eClass().getName()) {
-        [for (diff : Difficulty | gameData.difficulties)]
-        case "[diff.eClass().name/]" -> "[diff.eClass().name.toLower()/]";
-        [/for]
+        <#list difficulties as diff>
+        case "${diff.className}" -> "${diff.className?lower_case}";
+        </#list>
         default -> "normal";
     };
 }
@@ -827,17 +932,17 @@ PathCalculator (abstract)
 
 #### Generated Code from Behaviour
 
-The `BehaviorDispatcher.mtl` template produces:
+FreeMarker templates can produce (planned):
 
 | Generated Class | Purpose |
 |-----------------|---------|
 | `BehaviorDispatcher` | Routes to type-specific movement executors |
 | `PathCalculatorFactory` | Creates path calculators by type |
 
-**Example: BehaviorDispatcher**
+**Example: BehaviorDispatcher (FreeMarker)**
 
-```mtl
-[comment From BehaviorDispatcher.mtl /]
+```ftl
+<#-- Example behaviour template -->
 public static void dispatch(
         MovementBehavior behavior,
         double deltaTime,
@@ -846,9 +951,9 @@ public static void dispatch(
         BehaviorExecutor chaseExecutor) {
     
     switch (behavior.eClass().getName()) {
-        case "RandomBehavior" -> randomExecutor.execute(behavior, deltaTime);
-        case "PatrolBehavior" -> patrolExecutor.execute(behavior, deltaTime);
-        case "ChaseBehavior" -> chaseExecutor.execute(behavior, deltaTime);
+        <#list behaviorTypes as bt>
+        case "${bt.name}" -> ${bt.name?uncap_first}Executor.execute(behavior, deltaTime);
+        </#list>
         default -> LOGGER.warning("Unknown behavior: " + behavior);
     }
 }
@@ -856,24 +961,21 @@ public static void dispatch(
 
 ---
 
-## 🔧 MTL Template Architecture
+## 🔧 FreeMarker Template Architecture
 
 ### Template Organization
 
 ```
-maze-generator.acceleo/src/main/java/main/game/maze/gen/templates/
-├── Generate.mtl              # Opponents orchestrator (CharacterRegistrar, CharacterAttributeSetter, CharacterGraphicsFactory)
-├── GenerateWalls.mtl         # Walls orchestrator
-├── walls/
-│   ├── WallPropertyAccessor.mtl
-│   ├── WallMaterialRenderer.mtl
-│   └── WallCollisionHandler.mtl
-├── difficulties/
-│   ├── DifficultyConfigurator.mtl
-│   └── EnemySpawnLimits.mtl
-└── behaviour/
-    ├── BehaviorDispatcher.mtl
-    └── PathCalculatorFactory.mtl
+maze-generator.acceleo/src/main/resources/templates/
+├── opponents/
+│   ├── OpponentRegistry.ftl           # Lists all enemy types
+│   ├── CharacterRegistrar.ftl         # Type dispatch with handlers
+│   ├── CharacterAttributeSetter.ftl   # Difficulty multipliers
+│   └── CharacterGraphicsFactory.ftl   # Sprite/graphics factory
+└── walls/
+    ├── WallRegistry.ftl               # Wall material registry
+    ├── WallMaterialRenderer.ftl       # Color, sound, transparency
+    └── WallCollisionHandler.ftl       # Damage, resistance
 ```
 
 ### Common Template Patterns
@@ -882,11 +984,11 @@ maze-generator.acceleo/src/main/java/main/game/maze/gen/templates/
 
 Eliminates `instanceof` chains:
 
-```mtl
+```ftl
 switch (typeName) {
-    [for (subtype : EClass | pkg.eClassifiers->filter(EClass)->select(c | c.eSuperTypes->includes(baseClass)))]
-    case "[subtype.name/]" -> handle[subtype.name/](([subtype.name/]) obj);
-    [/for]
+    <#list types as type>
+    case "${type.name}" -> handle${type.name}((${type.name}) obj);
+    </#list>
     default -> handleUnknown(obj);
 }
 ```
@@ -895,15 +997,15 @@ switch (typeName) {
 
 Creates static lookup tables:
 
-```mtl
+```ftl
 static {
-[for (item : SomeType | model.items)]
-    register("[item.id/]", new Definition(
-        [item.property1/],
-        "[item.property2/]",
-        [item.booleanProperty/]
+    <#list items as item>
+    register("${item.id}", new Definition(
+        ${item.property1},
+        "${item.property2}",
+        ${item.booleanProperty?c}
     ));
-[/for]
+    </#list>
 }
 ```
 
@@ -911,18 +1013,25 @@ static {
 
 Exports model values as Java constants:
 
-```mtl
-[for (constant : SomeType | model.constants)]
-public static final [constant.type/] [constant.name.toUpperCase()/] = [constant.value/];
-[/for]
+```ftl
+<#list constants as constant>
+public static final ${constant.type} ${constant.name?upper_case} = ${constant.value};
+</#list>
 ```
 
-### Cross-Model References
+### Generator Architecture
 
-Templates can reference multiple models:
+The Java generators transform EMF models to FreeMarker data models:
 
-```mtl
-[module BehaviorDispatcher('http://main.game.maze/behaviour', 'http://main.game.maze/opponents')]
+```java
+// In RunAcceleo.java
+Map<String, Object> dataModel = new HashMap<>();
+dataModel.put("gameName", model.getName());
+dataModel.put("enemies", transformEnemies(model.getCharacterTypes()));
+dataModel.put("uniqueEnemies", getUniqueEnemyTypes(model));
+
+Template template = cfg.getTemplate("opponents/CharacterRegistrar.ftl");
+template.process(dataModel, writer);
 ```
 
 This allows the behaviour model to access opponent types, enabling constraints like:
@@ -947,14 +1056,15 @@ This allows the behaviour model to access opponent types, enabling constraints l
 
 | Term | Definition |
 |------|------------|
-| **Acceleo** | Eclipse-based code generation framework using templates |
+| **FreeMarker** | Apache template engine for generating text output (HTML, code, etc.) |
 | **EMF** | Eclipse Modeling Framework - foundation for defining models |
 | **Ecore** | The metamodel used by EMF (like a schema for models) |
 | **XMI** | XML format for storing model instances |
-| **MTL** | Model-to-Text Language - Acceleo's template language |
-| **EMTL** | Compiled (binary) MTL template |
+| **FTL** | FreeMarker Template Language - `.ftl` file extension |
 | **MDE** | Model-Driven Engineering - using models as primary artifacts |
+| **M2T** | Model-to-Text transformation (what FreeMarker does) |
 | **Tycho** | Maven plugin for building Eclipse plugins |
+| **Acceleo** | (Historical) Eclipse-based M2T framework - predecessor to current FreeMarker approach |
 
 ---
 
@@ -967,7 +1077,7 @@ Here's the complete workflow for making model-driven changes:
 │  1. PLAN: Decide what to change                                             │
 │     • New enemy type? → Edit opponents.ecore                                │
 │     • New wall material? → Edit walls.ecore                                 │
-│     • New attribute for all types? → Edit .ecore + update .mtl template     │
+│     • New attribute for all types? → Edit .ecore + update .ftl template     │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
@@ -975,7 +1085,7 @@ Here's the complete workflow for making model-driven changes:
 │  2. VERIFY: Check EMF interface methods                                     │
 │     • Open generated interface (e.g., CharacterType.java)                   │
 │     • Note exact method names (getThreatLevel, NOT getDamage)               │
-│     • Update template to use correct method names                           │
+│     • Update FreeMarker template data model if needed                       │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼
@@ -1005,13 +1115,13 @@ Here's the complete workflow for making model-driven changes:
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  6. COMMIT: Save all changes                                                │
 │     • Commit .ecore model changes                                           │
-│     • Commit .mtl and .emtl template files                                  │
-│     • Commit generated src-gen/ files (for builds without Acceleo)          │
+│     • Commit .ftl template files (if modified)                              │
+│     • Commit generated src-gen/ files (for builds without generation)       │
 │     • Commit updated tests                                                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-*By keeping all model-to-code generation logic in `maze-generator.acceleo`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline.*
+*By keeping all model-to-code generation logic in `maze-generator.acceleo`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline using FreeMarker templates.*
 

@@ -2,7 +2,7 @@
 
 This project contains the headless code generation runner used in the Maven / Tycho build for MazeGame.
 
-Where `maze-generator.acceleo` holds the standalone Java generators (`RunAcceleo.java`, `RunWallsAcceleo.java`),  
+Where `maze-generator.acceleo` holds the FreeMarker-based generators (`RunAcceleo.java`, `RunWallsAcceleo.java`),  
 `maze-generator.acceleo-runner` is the executable plug-in that invokes these generators during the build.
 
 ---
@@ -11,14 +11,14 @@ Where `maze-generator.acceleo` holds the standalone Java generators (`RunAcceleo
 
 `maze-generator.acceleo-runner` is responsible for:
 
-- invoking the standalone Java generators from `maze-generator.acceleo` in a headless runtime  
+- invoking the FreeMarker-based generators from `maze-generator.acceleo` in a headless runtime  
 - passing the correct model paths and output directories to the generators  
 - writing generated Java sources into the appropriate `target` folders or target modules  
 - integrating smoothly into the Tycho reactor so generation happens as part of `mvn clean verify`
 
 This allows the entire model-to-code generation pipeline to run automatically in CI and on developer machines without manual Eclipse steps.
 
-**Note**: The generators are now standalone Java code that uses EMF directly — they do not require the Acceleo 3 engine or Eclipse workspace resources.
+**Note**: The generators use FreeMarker templates with EMF models — they provide true model-to-text transformation.
 
 ---
 
@@ -31,16 +31,16 @@ Typical files in `maze-generator.acceleo-runner` include:
 
 - `META-INF/MANIFEST.MF`  
   Plug-in metadata declaring dependencies on:
-  - the Acceleo runtime
+  - the EMF runtime
   - the EMF model plug-ins (opponents, difficulties, walls)
-  - the `maze-generator.acceleo` plug-in
+  - the `maze-generator.acceleo` plug-in (which contains FreeMarker and templates)
 
 - `plugin.xml`  
   Optional extension declarations or application entries used when starting the runner in headless mode.
 
 - A small Java entry point  
   For example a class that:
-  - sets up command-line arguments for the standalone generators
+  - sets up command-line arguments for the FreeMarker generators
   - invokes `RunAcceleo` (for opponents) and `RunWallsAcceleo` (for walls)
   - configures the output directories
 
@@ -58,7 +58,7 @@ During a full Tycho build of the MazeGame reactor:
 3. At the configured build phase, Tycho launches the runner in an OSGi/Eclipse environment.  
 4. The runner:
    - locates the model resources (for example `.opponents`, `.difficulties`, `.walls` or `.xmi` files)
-   - runs the Acceleo `Generate` module
+   - runs the FreeMarker-based generators (`RunAcceleo` and `RunWallsAcceleo`)
    - writes generated sources to the configured output directories
 5. After generation, Tycho compiles the generated sources together with the hand-written code in the target modules.
 
@@ -123,7 +123,7 @@ Common issues when working with `maze-generator.acceleo-runner`:
 
   * Check that the runner is actually executed in the Maven phase you expect.
   * Verify that the model URIs in the runner match the locations of your `.ecore` / `.xmi` files.
-  * Confirm that `maze-generator.acceleo` is on the runtime classpath and the `Generate` module name is correct.
+  * Confirm that `maze-generator.acceleo` is on the runtime classpath and contains the FreeMarker templates.
 
 * **Model loading errors**
 
@@ -133,7 +133,7 @@ Common issues when working with `maze-generator.acceleo-runner`:
 * **Compilation errors in generated code**
 
   * Inspect the generated sources to see which imports or types are missing.
-  * Adjust the Acceleo templates to add required imports or fully qualified names.
+  * Adjust the FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/` to add required imports.
   * Re-run the build after fixes to regenerate the code.
 
 ---
@@ -142,10 +142,10 @@ Common issues when working with `maze-generator.acceleo-runner`:
 
 You typically update this project when you:
 
-* add a new model that should be processed by Acceleo
+* add a new model that should be processed by the FreeMarker generators
 * change where models are stored or how they are loaded
 * change the output structure for generated code
-* rename or restructure Acceleo modules in `maze-generator.acceleo`
+* rename or restructure templates in `maze-generator.acceleo`
 
 In such cases:
 

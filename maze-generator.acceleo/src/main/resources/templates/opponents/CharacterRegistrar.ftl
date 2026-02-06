@@ -20,25 +20,26 @@ public final class CharacterRegistrar {
 
     public static void register(
             CharacterType character,
-            RegistrationHandler<Ghost> ghostHandler,            RegistrationHandler<Zombie> zombieHandler,            RegistrationHandler<PumpkinBomber> pumpkinBomberHandler) {
+<#list model.enemyTypes as type>
+            RegistrationHandler<${type}> ${type?uncap_first}Handler<#sep>,</#sep></#list>) {
         if (character == null) {
             LOGGER.warning("Attempted to register null character");
             return;
         }
         String typeName = character.eClass().getName();
         switch (typeName) {
-            case "Ghost" -> { if (ghostHandler != null) ghostHandler.register((Ghost) character); }
-            case "Zombie" -> { if (zombieHandler != null) zombieHandler.register((Zombie) character); }
-            case "PumpkinBomber" -> { if (pumpkinBomberHandler != null) pumpkinBomberHandler.register((PumpkinBomber) character); }
+<#list model.enemyTypes as type>
+            case "${type}" -> { if (${type?uncap_first}Handler != null) ${type?uncap_first}Handler.register((${type}) character); }
+</#list>
             default -> LOGGER.warning("Unknown character type: " + typeName);
         }
     }
 
     public static String[] getKnownTypes() {
-        return new String[] { "Ghost", "Zombie", "PumpkinBomber" };
+        return new String[] { <#list model.enemyTypes as type>"${type}"<#sep>, </#sep></#list> };
     }
 
     public static boolean isKnownType(String typeName) {
-        return "Ghost".equals(typeName) || "Zombie".equals(typeName) || "PumpkinBomber".equals(typeName);
+        return <#list model.enemyTypes as type>"${type}".equals(typeName)<#sep> || </#sep></#list>;
     }
 }

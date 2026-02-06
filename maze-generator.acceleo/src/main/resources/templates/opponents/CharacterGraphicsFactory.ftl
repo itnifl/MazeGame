@@ -17,42 +17,34 @@ public final class CharacterGraphicsFactory {
         if (character == null) return "/images/default_enemy.png";
         String typeName = character.eClass().getName();
         return switch (typeName) {
-            case "Ghost" -> getGhostSprite((Ghost) character);
-            case "Zombie" -> getZombieSprite((Zombie) character);
-            case "PumpkinBomber" -> getPumpkinBomberSprite((PumpkinBomber) character);
+<#list model.enemyTypes as type>
+            case "${type}" -> get${type}Sprite((${type}) character);
+</#list>
             default -> "/images/default_enemy.png";
         };
     }
 
-    private static String getGhostSprite(Ghost c) {
+<#list model.uniqueEnemies as enemy>
+    private static String get${enemy.type}Sprite(${enemy.type} c) {
         String img = c.getImageBase();
-        return (img != null && !img.isEmpty()) ? img : "/images/ghost_default.png";
+        return (img != null && !img.isEmpty()) ? img : "${enemy.defaultImage?j_string}";
     }
 
-    private static String getZombieSprite(Zombie c) {
-        String img = c.getImageBase();
-        return (img != null && !img.isEmpty()) ? img : "/images/zombie_default.png";
-    }
-
-    private static String getPumpkinBomberSprite(PumpkinBomber c) {
-        String img = c.getImageBase();
-        return (img != null && !img.isEmpty()) ? img : "/images/pumpkinbomber_default.png";
-    }
-
+</#list>
     public static int getAnimationFrameCount(String typeName) {
         return switch (typeName) {
-            case "Ghost" -> 6;
-            case "Zombie" -> 4;
-            case "PumpkinBomber" -> 4;
+<#list model.uniqueEnemies as enemy>
+            case "${enemy.type}" -> ${enemy.animationFrames?c};
+</#list>
             default -> 1;
         };
     }
 
     public static double getSpriteScale(String typeName) {
         return switch (typeName) {
-            case "Ghost" -> 0.8;
-            case "Zombie" -> 1;
-            case "PumpkinBomber" -> 1.2;
+<#list model.uniqueEnemies as enemy>
+            case "${enemy.type}" -> ${enemy.spriteScale?c};
+</#list>
             default -> 1.0;
         };
     }

@@ -3,7 +3,11 @@ package main.game.maze.gen;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -12,37 +16,55 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.difficulties.DifficultiesPackage;
 
 /**
- * Standalone opponents/difficulties code generator - no Acceleo 3 dependencies.
+ * FreeMarker-based opponents code generator - true template-driven MDD.
+ * 
+ * Templates are loaded from src/main/resources/templates/opponents/ and
+ * the EMF model is transformed into a template data model for processing.
  */
 public class RunAcceleo {
 
-  // Default values for null-safety
-  private static final String DEFAULT_GAME_NAME = "MazeGame";
-  private static final String DEFAULT_DISPLAY_NAME = "Unknown Enemy";
-  private static final String DEFAULT_IMAGE_BASE = "/images/default_enemy.png";
+    // Default values for null-safety
+    private static final String DEFAULT_GAME_NAME = "MazeGame";
+    private static final String DEFAULT_DISPLAY_NAME = "Unknown Enemy";
+    private static final String DEFAULT_IMAGE_BASE = "/images/default_enemy.png";
 
-  public static void main(String[] args) throws Exception {
-    if (args.length < 3) {
-        System.out.println("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
-        System.exit(1);
+    private final Configuration freemarkerConfig;
+
+    public RunAcceleo() {
+        // Configure FreeMarker
+        freemarkerConfig = new Configuration(Configuration.VERSION_2_3_32);
+        freemarkerConfig.setClassLoaderForTemplateLoading(getClass().getClassLoader(), "templates/opponents");
+        freemarkerConfig.setDefaultEncoding("UTF-8");
+        freemarkerConfig.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        freemarkerConfig.setLogTemplateExceptions(false);
+        freemarkerConfig.setWrapUncheckedExceptions(true);
     }
 
-    String opponentModelPath = new File(args[0]).getAbsolutePath();
-    String difficultiesPath = new File(args[1]).getAbsolutePath();
-    String outDir = new File(args[2]).getAbsolutePath();
+    public static void main(String[] args) throws Exception {
+        if (args.length < 3) {
+            System.out.println("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
+            System.exit(1);
+        }
 
-    new RunAcceleo().run(opponentModelPath, difficultiesPath, outDir);
-  }
+        String opponentModelPath = new File(args[0]).getAbsolutePath();
+        String difficultiesPath = new File(args[1]).getAbsolutePath();
+        String outDir = new File(args[2]).getAbsolutePath();
 
-  public void run(String opponentModelPath,
-                  String difficultiesPath,
-                  String outDir) throws Exception {
+        new RunAcceleo().run(opponentModelPath, difficultiesPath, outDir);
+    }
+
+    public void run(String opponentModelPath, String difficultiesPath, String outDir) throws Exception {
 
         // 1. Register XMI Factory
         ResourceSet rs = new ResourceSetImpl();
@@ -74,340 +96,163 @@ public class RunAcceleo {
             outFolder.mkdirs();
         }
 
-        // 5. Generate code directly (standalone, no Acceleo 3)
+        // 5. Generate code using FreeMarker templates
         if (root instanceof OpponentModel model) {
-            // Validate model before generation
             validateOpponentModel(model);
+            Map<String, Object> dataModel = buildTemplateDataModel(model);
             
-            generateOpponentRegistry(model, outFolder);
-            generateCharacterRegistrar(model, outFolder);
-            generateCharacterAttributeSetter(model, outFolder);
-            generateCharacterGraphicsFactory(model, outFolder);
+            generateFromTemplate("OpponentRegistry.ftl", dataModel, new File(outFolder, "OpponentRegistry.java"));
+            generateFromTemplate("CharacterRegistrar.ftl", dataModel, new File(outFolder, "CharacterRegistrar.java"));
+            generateFromTemplate("CharacterAttributeSetter.ftl", dataModel, new File(outFolder, "CharacterAttributeSetter.java"));
+            generateFromTemplate("CharacterGraphicsFactory.ftl", dataModel, new File(outFolder, "CharacterGraphicsFactory.java"));
+            
             System.out.println("Opponent generation complete. Output in: " + outFolder.getAbsolutePath());
         } else {
             throw new IllegalArgumentException("Expected OpponentModel, got: " + root.eClass().getName());
         }
-  }
+    }
 
-  /**
-   * Validates the opponent model and reports any issues.
-   * Fails fast with clear messages when required fields are missing.
-   */
-  private void validateOpponentModel(OpponentModel model) {
-      StringBuilder warnings = new StringBuilder();
-      
-      if (model.getName() == null || model.getName().isBlank()) {
-          warnings.append(String.format(
-              "  WARNING: OpponentModel has null/blank 'name', using default: %s%n",
-              DEFAULT_GAME_NAME));
-      }
-      
-      if (model.getCharacterTypes() == null || model.getCharacterTypes().isEmpty()) {
-          System.out.println("WARNING: OpponentModel has no character types. " +
-              "Generated code will have empty registries.");
-      } else {
-          int index = 0;
-          for (CharacterType enemy : model.getCharacterTypes()) {
-              String typeName = enemy.eClass().getName();
-              
-              if (enemy.getDisplayName() == null || enemy.getDisplayName().isBlank()) {
-                  warnings.append(String.format(
-                      "  WARNING: %s at index %d has null/blank displayName, using default: %s%n",
-                      typeName, index, DEFAULT_DISPLAY_NAME));
-              }
-              
-              if (enemy.getImageBase() == null || enemy.getImageBase().isBlank()) {
-                  warnings.append(String.format(
-                      "  WARNING: %s at index %d has null/blank imageBase, using type-specific default%n",
-                      typeName, index));
-              }
-              index++;
-          }
-      }
-      
-      if (warnings.length() > 0) {
-          System.out.println("Model validation warnings:");
-          System.out.print(warnings);
-      }
-  }
+    /**
+     * Builds the FreeMarker data model from the EMF OpponentModel.
+     * This transforms the EMF structure into a template-friendly Map structure.
+     */
+    private Map<String, Object> buildTemplateDataModel(OpponentModel emfModel) {
+        Map<String, Object> model = new HashMap<>();
+        
+        // Game name
+        String gameName = emfModel.getName();
+        model.put("gameName", (gameName != null && !gameName.isBlank()) ? gameName : DEFAULT_GAME_NAME);
+        
+        // Enemy types (unique class names)
+        List<String> enemyTypes = new ArrayList<>();
+        
+        // Enemies with their attributes (all instances)
+        List<Map<String, Object>> enemies = new ArrayList<>();
+        
+        // Unique enemies (one per type, for generating type-specific methods)
+        List<Map<String, Object>> uniqueEnemies = new ArrayList<>();
+        java.util.Set<String> seenTypes = new java.util.HashSet<>();
+        
+        for (CharacterType enemy : emfModel.getCharacterTypes()) {
+            String typeName = enemy.eClass().getName();
+            if (!enemyTypes.contains(typeName)) {
+                enemyTypes.add(typeName);
+            }
+            
+            Map<String, Object> enemyData = new HashMap<>();
+            enemyData.put("type", typeName);
+            enemyData.put("displayName", nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME));
+            enemyData.put("health", enemy.getHealth());
+            enemyData.put("threatLevel", enemy.getThreatLevel());
+            enemyData.put("imageBase", nullSafe(enemy.getImageBase(), DEFAULT_IMAGE_BASE));
+            enemyData.put("defaultImage", getDefaultImage(typeName));
+            enemyData.put("animationFrames", getAnimationFrames(typeName));
+            enemyData.put("spriteScale", getSpriteScale(typeName));
+            
+            enemies.add(enemyData);
+            
+            // Track unique enemies (first occurrence of each type)
+            if (!seenTypes.contains(typeName)) {
+                seenTypes.add(typeName);
+                uniqueEnemies.add(enemyData);
+            }
+        }
+        
+        model.put("enemyTypes", enemyTypes);
+        model.put("enemies", enemies);
+        model.put("uniqueEnemies", uniqueEnemies);
+        
+        return model;
+    }
 
-  private void generateOpponentRegistry(OpponentModel model, File outFolder) throws IOException {
-      File outFile = new File(outFolder, "OpponentRegistry.java");
-      try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-          String gameName = nullSafe(model.getName(), DEFAULT_GAME_NAME);
-          
-          pw.println("package main.game.maze.generated;");
-          pw.println();
-          pw.println("/**");
-          pw.println(" * Generated opponent registry with all character types.");
-          pw.println(" * @generated from opponents.ecore");
-          pw.println(" */");
-          pw.println("public class OpponentRegistry {");
-          pw.println("    public static final String GAME_NAME = \"" + escapeJava(gameName) + "\";");
-          pw.println();
-          pw.println("    public static void listEnemies() {");
-          for (CharacterType enemy : model.getCharacterTypes()) {
-              String displayName = nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME);
-              pw.println("        System.out.println(\"Enemy: " + escapeJava(displayName) + " (Health: " + enemy.getHealth() + ")\");");
-          }
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static int getEnemyTypeCount() {");
-          pw.println("        return " + model.getCharacterTypes().size() + ";");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static String[] getEnemyTypeNames() {");
-          pw.print("        return new String[] { ");
-          boolean first = true;
-          for (CharacterType enemy : model.getCharacterTypes()) {
-              if (!first) pw.print(", ");
-              String displayName = nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME);
-              pw.print("\"" + escapeJava(displayName) + "\"");
-              first = false;
-          }
-          pw.println(" };");
-          pw.println("    }");
-          pw.println("}");
-      }
-      System.out.println("  Generated: OpponentRegistry.java");
-  }
+    /**
+     * Processes a FreeMarker template and writes the output to a file.
+     */
+    private void generateFromTemplate(String templateName, Map<String, Object> dataModel, File outputFile) 
+            throws IOException, TemplateException {
+        Template template = freemarkerConfig.getTemplate(templateName);
+        
+        // Wrap the data model under "model" key for cleaner template access
+        Map<String, Object> rootModel = new HashMap<>();
+        rootModel.put("model", dataModel);
+        
+        try (Writer out = new FileWriter(outputFile)) {
+            template.process(rootModel, out);
+        }
+        System.out.println("  Generated: " + outputFile.getName());
+    }
 
-  private void generateCharacterRegistrar(OpponentModel model, File outFolder) throws IOException {
-      File outFile = new File(outFolder, "CharacterRegistrar.java");
-      try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-          pw.println("package main.game.maze.generated;");
-          pw.println();
-          pw.println("import java.util.logging.Logger;");
-          pw.println("import main.game.maze.opponents.*;");
-          pw.println();
-          pw.println("/**");
-          pw.println(" * Generated character registrar that dispatches to type-specific handlers.");
-          pw.println(" * @generated from opponents.ecore");
-          pw.println(" */");
-          pw.println("public final class CharacterRegistrar {");
-          pw.println();
-          pw.println("    private static final Logger LOGGER = Logger.getLogger(CharacterRegistrar.class.getName());");
-          pw.println();
-          pw.println("    private CharacterRegistrar() { }");
-          pw.println();
-          pw.println("    @FunctionalInterface");
-          pw.println("    public interface RegistrationHandler<T extends CharacterType> {");
-          pw.println("        void register(T character);");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static void register(");
-          pw.println("            CharacterType character,");
-          pw.println("            RegistrationHandler<Zombie> zombieHandler,");
-          pw.println("            RegistrationHandler<Ghost> ghostHandler,");
-          pw.println("            RegistrationHandler<PumpkinBomber> pumpkinBomberHandler) {");
-          pw.println("        if (character == null) {");
-          pw.println("            LOGGER.warning(\"Attempted to register null character\");");
-          pw.println("            return;");
-          pw.println("        }");
-          pw.println("        String typeName = character.eClass().getName();");
-          pw.println("        switch (typeName) {");
-          pw.println("            case \"Zombie\" -> { if (zombieHandler != null) zombieHandler.register((Zombie) character); }");
-          pw.println("            case \"Ghost\" -> { if (ghostHandler != null) ghostHandler.register((Ghost) character); }");
-          pw.println("            case \"PumpkinBomber\" -> { if (pumpkinBomberHandler != null) pumpkinBomberHandler.register((PumpkinBomber) character); }");
-          pw.println("            default -> LOGGER.warning(\"Unknown character type: \" + typeName);");
-          pw.println("        }");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static String[] getKnownTypes() {");
-          pw.println("        return new String[] { \"Zombie\", \"Ghost\", \"PumpkinBomber\" };");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static boolean isKnownType(String typeName) {");
-          pw.println("        return \"Zombie\".equals(typeName) || \"Ghost\".equals(typeName) || \"PumpkinBomber\".equals(typeName);");
-          pw.println("    }");
-          pw.println("}");
-      }
-      System.out.println("  Generated: CharacterRegistrar.java");
-  }
+    /**
+     * Validates the opponent model and reports any issues.
+     */
+    private void validateOpponentModel(OpponentModel model) {
+        StringBuilder warnings = new StringBuilder();
+        
+        if (model.getName() == null || model.getName().isBlank()) {
+            warnings.append(String.format(
+                "  WARNING: OpponentModel has null/blank 'name', using default: %s%n",
+                DEFAULT_GAME_NAME));
+        }
+        
+        if (model.getCharacterTypes() == null || model.getCharacterTypes().isEmpty()) {
+            System.out.println("WARNING: OpponentModel has no character types. " +
+                "Generated code will have empty registries.");
+        } else {
+            int index = 0;
+            for (CharacterType enemy : model.getCharacterTypes()) {
+                String typeName = enemy.eClass().getName();
+                
+                if (enemy.getDisplayName() == null || enemy.getDisplayName().isBlank()) {
+                    warnings.append(String.format(
+                        "  WARNING: %s at index %d has null/blank displayName, using default: %s%n",
+                        typeName, index, DEFAULT_DISPLAY_NAME));
+                }
+                
+                if (enemy.getImageBase() == null || enemy.getImageBase().isBlank()) {
+                    warnings.append(String.format(
+                        "  WARNING: %s at index %d has null/blank imageBase, using type-specific default%n",
+                        typeName, index));
+                }
+                index++;
+            }
+        }
+        
+        if (warnings.length() > 0) {
+            System.out.println("Model validation warnings:");
+            System.out.print(warnings);
+        }
+    }
 
-  private void generateCharacterAttributeSetter(OpponentModel model, File outFolder) throws IOException {
-      File outFile = new File(outFolder, "CharacterAttributeSetter.java");
-      try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-          pw.println("package main.game.maze.generated;");
-          pw.println();
-          pw.println("import java.util.logging.Logger;");
-          pw.println("import main.game.maze.opponents.*;");
-          pw.println();
-          pw.println("/**");
-          pw.println(" * Generated attribute setter for applying difficulty multipliers.");
-          pw.println(" * @generated from opponents.ecore");
-          pw.println(" */");
-          pw.println("public final class CharacterAttributeSetter {");
-          pw.println();
-          pw.println("    private static final Logger LOGGER = Logger.getLogger(CharacterAttributeSetter.class.getName());");
-          pw.println();
-          pw.println("    private CharacterAttributeSetter() { }");
-          pw.println();
-          pw.println("    public static void applyDifficultyMultipliers(");
-          pw.println("            CharacterType character,");
-          pw.println("            double healthMultiplier,");
-          pw.println("            double threatMultiplier,");
-          pw.println("            double speedMultiplier) {");
-          pw.println("        if (character == null) return;");
-          pw.println("        String typeName = character.eClass().getName();");
-          pw.println("        switch (typeName) {");
-          pw.println("            case \"Zombie\" -> applyZombieMultipliers((Zombie) character, healthMultiplier, threatMultiplier, speedMultiplier);");
-          pw.println("            case \"Ghost\" -> applyGhostMultipliers((Ghost) character, healthMultiplier, threatMultiplier, speedMultiplier);");
-          pw.println("            case \"PumpkinBomber\" -> applyPumpkinBomberMultipliers((PumpkinBomber) character, healthMultiplier, threatMultiplier, speedMultiplier);");
-          pw.println("            default -> LOGGER.warning(\"Unknown character type for multipliers: \" + typeName);");
-          pw.println("        }");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyZombieMultipliers(Zombie z, double hm, double tm, double sm) {");
-          pw.println("        z.setHealth((int) (z.getHealth() * hm));");
-          pw.println("        z.setThreatLevel(z.getThreatLevel() * tm);");
-          pw.println("        z.setSpeed(z.getSpeed() * sm);");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyGhostMultipliers(Ghost g, double hm, double tm, double sm) {");
-          pw.println("        g.setHealth((int) (g.getHealth() * hm));");
-          pw.println("        g.setThreatLevel(g.getThreatLevel() * tm);");
-          pw.println("        g.setSpeed(g.getSpeed() * sm);");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyPumpkinBomberMultipliers(PumpkinBomber p, double hm, double tm, double sm) {");
-          pw.println("        p.setHealth((int) (p.getHealth() * hm));");
-          pw.println("        p.setThreatLevel(p.getThreatLevel() * tm);");
-          pw.println("        p.setSpeed(p.getSpeed() * sm);");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static int getBaseHealth(String typeName) {");
-          pw.println("        return switch (typeName) {");
-          pw.println("            case \"Zombie\" -> 100;");
-          pw.println("            case \"Ghost\" -> 50;");
-          pw.println("            case \"PumpkinBomber\" -> 75;");
-          pw.println("            default -> 0;");
-          pw.println("        };");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static double getBaseThreatLevel(String typeName) {");
-          pw.println("        return switch (typeName) {");
-          pw.println("            case \"Zombie\" -> 1.0;");
-          pw.println("            case \"Ghost\" -> 0.5;");
-          pw.println("            case \"PumpkinBomber\" -> 1.5;");
-          pw.println("            default -> 0.0;");
-          pw.println("        };");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static void applyDamageMultiplier(CharacterType character, double damageMultiplier, boolean instantDeath) {");
-          pw.println("        if (character == null) return;");
-          pw.println("        String typeName = character.eClass().getName();");
-          pw.println("        switch (typeName) {");
-          pw.println("            case \"Zombie\" -> applyZombieDamage((Zombie) character, damageMultiplier, instantDeath);");
-          pw.println("            case \"Ghost\" -> applyGhostDamage((Ghost) character, damageMultiplier, instantDeath);");
-          pw.println("            case \"PumpkinBomber\" -> applyPumpkinBomberDamage((PumpkinBomber) character, damageMultiplier, instantDeath);");
-          pw.println("            default -> LOGGER.warning(\"Unknown character type for damage multiplier: \" + typeName);");
-          pw.println("        }");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyZombieDamage(Zombie z, double multiplier, boolean instantDeath) {");
-          pw.println("        if (instantDeath) z.setAttackDamage(Integer.MAX_VALUE);");
-          pw.println("        else z.setAttackDamage(Math.max(1, (int) Math.round(z.getAttackDamage() * multiplier)));");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyGhostDamage(Ghost g, double multiplier, boolean instantDeath) {");
-          pw.println("        if (instantDeath) g.setAttackDamage(Integer.MAX_VALUE);");
-          pw.println("        else g.setAttackDamage(Math.max(1, (int) Math.round(g.getAttackDamage() * multiplier)));");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static void applyPumpkinBomberDamage(PumpkinBomber p, double multiplier, boolean instantDeath) {");
-          pw.println("        if (instantDeath) p.setAttackDamage(Integer.MAX_VALUE);");
-          pw.println("        else p.setAttackDamage(Math.max(1, (int) Math.round(p.getAttackDamage() * multiplier)));");
-          pw.println("    }");
-          pw.println("}");
-      }
-      System.out.println("  Generated: CharacterAttributeSetter.java");
-  }
+    // ========== Utility Methods ==========
 
-  private void generateCharacterGraphicsFactory(OpponentModel model, File outFolder) throws IOException {
-      File outFile = new File(outFolder, "CharacterGraphicsFactory.java");
-      try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
-          pw.println("package main.game.maze.generated;");
-          pw.println();
-          pw.println("import java.util.logging.Logger;");
-          pw.println("import main.game.maze.opponents.*;");
-          pw.println();
-          pw.println("/**");
-          pw.println(" * Generated factory for character graphics/sprites.");
-          pw.println(" * @generated from opponents.ecore");
-          pw.println(" */");
-          pw.println("public final class CharacterGraphicsFactory {");
-          pw.println();
-          pw.println("    private static final Logger LOGGER = Logger.getLogger(CharacterGraphicsFactory.class.getName());");
-          pw.println();
-          pw.println("    private CharacterGraphicsFactory() { }");
-          pw.println();
-          pw.println("    public static String getSpritePath(CharacterType character) {");
-          pw.println("        if (character == null) return \"/images/default_enemy.png\";");
-          pw.println("        String typeName = character.eClass().getName();");
-          pw.println("        return switch (typeName) {");
-          pw.println("            case \"Zombie\" -> getZombieSprite((Zombie) character);");
-          pw.println("            case \"Ghost\" -> getGhostSprite((Ghost) character);");
-          pw.println("            case \"PumpkinBomber\" -> getPumpkinBomberSprite((PumpkinBomber) character);");
-          pw.println("            default -> \"/images/default_enemy.png\";");
-          pw.println("        };");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static String getZombieSprite(Zombie z) {");
-          pw.println("        String img = z.getImageBase();");
-          pw.println("        return (img != null && !img.isEmpty()) ? img : \"/images/zombie_default.png\";");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static String getGhostSprite(Ghost g) {");
-          pw.println("        String img = g.getImageBase();");
-          pw.println("        return (img != null && !img.isEmpty()) ? img : \"/images/ghost_default.png\";");
-          pw.println("    }");
-          pw.println();
-          pw.println("    private static String getPumpkinBomberSprite(PumpkinBomber p) {");
-          pw.println("        String img = p.getImageBase();");
-          pw.println("        return (img != null && !img.isEmpty()) ? img : \"/images/pumpkinbomber_default.png\";");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static int getAnimationFrameCount(String typeName) {");
-          pw.println("        return switch (typeName) {");
-          pw.println("            case \"Zombie\" -> 4;");
-          pw.println("            case \"Ghost\" -> 6;");
-          pw.println("            case \"PumpkinBomber\" -> 4;");
-          pw.println("            default -> 1;");
-          pw.println("        };");
-          pw.println("    }");
-          pw.println();
-          pw.println("    public static double getSpriteScale(String typeName) {");
-          pw.println("        return switch (typeName) {");
-          pw.println("            case \"Zombie\" -> 1.0;");
-          pw.println("            case \"Ghost\" -> 0.8;");
-          pw.println("            case \"PumpkinBomber\" -> 1.2;");
-          pw.println("            default -> 1.0;");
-          pw.println("        };");
-          pw.println("    }");
-          pw.println("}");
-      }
-      System.out.println("  Generated: CharacterGraphicsFactory.java");
-  }
+    private static String nullSafe(String value, String defaultValue) {
+        return (value != null && !value.isBlank()) ? value : defaultValue;
+    }
 
-  // ========== Utility Methods ==========
+    private static String getDefaultImage(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> "/images/zombie_default.png";
+            case "Ghost" -> "/images/ghost_default.png";
+            case "PumpkinBomber" -> "/images/pumpkinbomber_default.png";
+            default -> "/images/default_enemy.png";
+        };
+    }
 
-  /**
-   * Returns the value if non-null and non-blank, otherwise returns the default.
-   */
-  private static String nullSafe(String value, String defaultValue) {
-      return (value != null && !value.isBlank()) ? value : defaultValue;
-  }
+    private static int getAnimationFrames(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 4;
+            case "Ghost" -> 6;
+            case "PumpkinBomber" -> 4;
+            default -> 1;
+        };
+    }
 
-  /**
-   * Escapes special characters for Java string literals.
-   */
-  private static String escapeJava(String s) {
-      if (s == null) return "";
-      return s.replace("\\", "\\\\")
-              .replace("\"", "\\\"")
-              .replace("\n", "\\n")
-              .replace("\r", "\\r")
-              .replace("\t", "\\t");
-  }
+    private static double getSpriteScale(String typeName) {
+        return switch (typeName) {
+            case "Zombie" -> 1.0;
+            case "Ghost" -> 0.8;
+            case "PumpkinBomber" -> 1.2;
+            default -> 1.0;
+        };
+    }
 }

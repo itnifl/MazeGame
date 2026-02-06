@@ -275,15 +275,15 @@ private static double spawnByTarget(
             // Use generated CharacterRegistrar for type-safe dispatch
             CharacterRegistrar.register(
                 characterType,
-                // Zombie handler
-                z -> {
-                    noOfZombiesSpawned.incrementAndGet();        
-                    registerZombieCharacter(gameController, spawnX, spawnY, z);
-                },
                 // Ghost handler
                 g -> {                            
                     noOfGhostsSpawned.incrementAndGet();                    
                     registerGhostCharacter(gameController, spawnX, spawnY, g);
+                },
+                // Zombie handler
+                z -> {
+                    noOfZombiesSpawned.incrementAndGet();        
+                    registerZombieCharacter(gameController, spawnX, spawnY, z);
                 },
                 // PumpkinBomber handler
                 b -> {

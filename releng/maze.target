@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="66">
+<target name="Maze Target" sequenceNumber="67">
   <locations>
     <location 
         includeAllPlugins="false" includeAllPlatforms="false" 
@@ -9,31 +9,23 @@
         <!-- Eclipse 2024-12 release (stable, available) -->
         <repository location="https://download.eclipse.org/releases/2024-12/"/>
         <repository location="https://download.eclipse.org/tools/orbit/downloads/latest-R/"/>
-        <!-- Acceleo stable releases (deterministic, reproducible builds) -->
-        <repository location="https://download.eclipse.org/acceleo/updates/releases/"/>
+      
+      <!-- Eclipse Core Runtime -->
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
+      
+      <!-- EMF Core -->
       <unit id="org.eclipse.emf.ecore" version="0.0.0"/>
       <unit id="org.eclipse.emf.common" version="0.0.0"/>
       <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
-      <unit id="org.eclipse.ocl" version="0.0.0"/>
       <unit id="org.eclipse.emf.codegen.feature.group" version="0.0.0"/>      
+      
+      <!-- Equinox for headless applications -->
       <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
       
-      <!-- Acceleo 3.x (legacy) -->
-      <unit id="org.eclipse.acceleo.common" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.engine" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.model" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.parser" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.profiler" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.traceability" version="0.0.0"/>
-      
-      <!-- Acceleo 4 M2T -->
-      <unit id="org.eclipse.acceleo.aql.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.acceleo.query.feature.group" version="0.0.0"/>
+      <!-- Note: Acceleo/OCL removed - generators now use FreeMarker (embedded JAR).
+           This simplifies the target platform and removes Eclipse-specific dependencies. -->
     </location>
   </locations>
 </target>

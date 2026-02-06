@@ -5,19 +5,13 @@ Bundle-SymbolicName: maze-generator.acceleo;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/freemarker.jar
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.app,
  org.eclipse.emf.ecore,
  org.eclipse.emf.ecore.xmi,
- org.eclipse.ocl.pivot,
- org.eclipse.acceleo.engine,
- org.eclipse.acceleo.parser,
- org.eclipse.acceleo.common,
- org.eclipse.acceleo.model,
  main.game.maze.difficulties,
  main.game.maze.opponents,
  main.game.maze.walls
-Export-Package: main.game.maze.gen,
- main.game.maze.gen.templates
-
+Export-Package: main.game.maze.gen

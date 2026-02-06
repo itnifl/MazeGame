@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Generated wall registry with all wall materials.
- * @generated from walls.ecore
+ * @generated from walls.ecore via FreeMarker template
  */
 public final class WallRegistry {
 
