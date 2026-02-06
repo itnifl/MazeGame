@@ -22,6 +22,11 @@ import main.game.maze.difficulties.DifficultiesPackage;
  */
 public class RunAcceleo {
 
+  // Default values for null-safety
+  private static final String DEFAULT_GAME_NAME = "MazeGame";
+  private static final String DEFAULT_DISPLAY_NAME = "Unknown Enemy";
+  private static final String DEFAULT_IMAGE_BASE = "/images/default_enemy.png";
+
   public static void main(String[] args) throws Exception {
     if (args.length < 3) {
         System.out.println("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
@@ -71,6 +76,9 @@ public class RunAcceleo {
 
         // 5. Generate code directly (standalone, no Acceleo 3)
         if (root instanceof OpponentModel model) {
+            // Validate model before generation
+            validateOpponentModel(model);
+            
             generateOpponentRegistry(model, outFolder);
             generateCharacterRegistrar(model, outFolder);
             generateCharacterAttributeSetter(model, outFolder);
@@ -81,9 +89,53 @@ public class RunAcceleo {
         }
   }
 
+  /**
+   * Validates the opponent model and reports any issues.
+   * Fails fast with clear messages when required fields are missing.
+   */
+  private void validateOpponentModel(OpponentModel model) {
+      StringBuilder warnings = new StringBuilder();
+      
+      if (model.getName() == null || model.getName().isBlank()) {
+          warnings.append(String.format(
+              "  WARNING: OpponentModel has null/blank 'name', using default: %s%n",
+              DEFAULT_GAME_NAME));
+      }
+      
+      if (model.getCharacterTypes() == null || model.getCharacterTypes().isEmpty()) {
+          System.out.println("WARNING: OpponentModel has no character types. " +
+              "Generated code will have empty registries.");
+      } else {
+          int index = 0;
+          for (CharacterType enemy : model.getCharacterTypes()) {
+              String typeName = enemy.eClass().getName();
+              
+              if (enemy.getDisplayName() == null || enemy.getDisplayName().isBlank()) {
+                  warnings.append(String.format(
+                      "  WARNING: %s at index %d has null/blank displayName, using default: %s%n",
+                      typeName, index, DEFAULT_DISPLAY_NAME));
+              }
+              
+              if (enemy.getImageBase() == null || enemy.getImageBase().isBlank()) {
+                  warnings.append(String.format(
+                      "  WARNING: %s at index %d has null/blank imageBase, using type-specific default%n",
+                      typeName, index));
+              }
+              index++;
+          }
+      }
+      
+      if (warnings.length() > 0) {
+          System.out.println("Model validation warnings:");
+          System.out.print(warnings);
+      }
+  }
+
   private void generateOpponentRegistry(OpponentModel model, File outFolder) throws IOException {
       File outFile = new File(outFolder, "OpponentRegistry.java");
       try (PrintWriter pw = new PrintWriter(new FileWriter(outFile))) {
+          String gameName = nullSafe(model.getName(), DEFAULT_GAME_NAME);
+          
           pw.println("package main.game.maze.generated;");
           pw.println();
           pw.println("/**");
@@ -91,11 +143,12 @@ public class RunAcceleo {
           pw.println(" * @generated from opponents.ecore");
           pw.println(" */");
           pw.println("public class OpponentRegistry {");
-          pw.println("    public static final String GAME_NAME = \"" + model.getName() + "\";");
+          pw.println("    public static final String GAME_NAME = \"" + escapeJava(gameName) + "\";");
           pw.println();
           pw.println("    public static void listEnemies() {");
           for (CharacterType enemy : model.getCharacterTypes()) {
-              pw.println("        System.out.println(\"Enemy: " + enemy.getDisplayName() + " (Health: " + enemy.getHealth() + ")\");");
+              String displayName = nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME);
+              pw.println("        System.out.println(\"Enemy: " + escapeJava(displayName) + " (Health: " + enemy.getHealth() + ")\");");
           }
           pw.println("    }");
           pw.println();
@@ -108,7 +161,8 @@ public class RunAcceleo {
           boolean first = true;
           for (CharacterType enemy : model.getCharacterTypes()) {
               if (!first) pw.print(", ");
-              pw.print("\"" + enemy.getDisplayName() + "\"");
+              String displayName = nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME);
+              pw.print("\"" + escapeJava(displayName) + "\"");
               first = false;
           }
           pw.println(" };");
@@ -334,5 +388,26 @@ public class RunAcceleo {
           pw.println("}");
       }
       System.out.println("  Generated: CharacterGraphicsFactory.java");
+  }
+
+  // ========== Utility Methods ==========
+
+  /**
+   * Returns the value if non-null and non-blank, otherwise returns the default.
+   */
+  private static String nullSafe(String value, String defaultValue) {
+      return (value != null && !value.isBlank()) ? value : defaultValue;
+  }
+
+  /**
+   * Escapes special characters for Java string literals.
+   */
+  private static String escapeJava(String s) {
+      if (s == null) return "";
+      return s.replace("\\", "\\\\")
+              .replace("\"", "\\\"")
+              .replace("\n", "\\n")
+              .replace("\r", "\\r")
+              .replace("\t", "\\t");
   }
 }

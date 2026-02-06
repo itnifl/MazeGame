@@ -312,3 +312,21 @@ java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
 ```
 
 **Note**: The Acceleo 4 templates and standalone generators produce equivalent output. The build uses standalone generators for reliability (no Eclipse workspace dependencies).
+
+### Model Validation
+
+The standalone generators validate models before generation and provide null-safe defaults:
+
+**Fail-Fast Validation:**
+- Models must have required elements (e.g., at least one `WallMaterial`, non-blank `id` fields)
+- `IllegalStateException` with clear message if validation fails
+
+**Null-Safe Defaults:**
+| Field | Default Value |
+|-------|---------------|
+| `wallBaseType` | `STEEL` |
+| `baseImage` (walls) | `/images/walls/default_wall.png` |
+| `displayName` | `"Unknown Wall"` or `"Unknown Enemy"` |
+| `model.name` | `"MazeGame"` |
+
+Warnings are printed for fields using defaults, but generation continues. Special characters in model strings are escaped to prevent invalid Java output.

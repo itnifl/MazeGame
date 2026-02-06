@@ -171,6 +171,13 @@ Run tests with: `mvn -pl maze-module-generator test`
   Acceleo exceptions are surfaced as build failures from the headless runner.
   Open the build log to find the exact template and line number.
 
+* **Model validation failures**
+  The standalone generators validate models before generation:
+  - `IllegalStateException` with "null or blank 'id'" → Required field missing in model
+  - Warnings about null `wallBaseType`, `baseImage`, or `displayName` → Non-critical, defaults are used
+  
+  Check the build output for validation warnings that indicate model issues.
+
 ---
 
 ## Why Acceleo here

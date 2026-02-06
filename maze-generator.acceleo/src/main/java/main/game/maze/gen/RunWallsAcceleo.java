@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import main.game.maze.walls.WallMaterial;
+import main.game.maze.walls.WallMaterialBaseType;
 import main.game.maze.walls.WallModel;
 import main.game.maze.walls.WallsPackage;
 
@@ -21,6 +22,11 @@ import main.game.maze.walls.WallsPackage;
  * Standalone walls code generator - no Acceleo 3 dependencies.
  */
 public class RunWallsAcceleo {
+
+    // Default values for null-safety
+    private static final WallMaterialBaseType DEFAULT_BASE_TYPE = WallMaterialBaseType.STEEL;
+    private static final String DEFAULT_BASE_IMAGE = "/images/walls/default_wall.png";
+    private static final String DEFAULT_DISPLAY_NAME = "Unknown Wall";
 
     public void run(String wallsModelPath, String outDir) throws Exception {
 
@@ -55,12 +61,61 @@ public class RunWallsAcceleo {
 
         // 5. Generate WallRegistry.java directly (standalone, no Acceleo 3)
         if (root instanceof WallModel wallModel) {
+            // Validate model before generation
+            validateWallModel(wallModel);
+            
             generateWallRegistry(wallModel, outFolder);
             generateWallMaterialRenderer(outFolder);
             generateWallCollisionHandler(outFolder);
             System.out.println("Walls generation done.");
         } else {
             throw new IllegalArgumentException("Expected WallModel, got: " + root.eClass().getName());
+        }
+    }
+
+    /**
+     * Validates the wall model and reports any issues.
+     * Fails fast with clear messages when required fields are missing.
+     */
+    private void validateWallModel(WallModel model) {
+        if (model.getMaterials() == null || model.getMaterials().isEmpty()) {
+            throw new IllegalStateException("Wall model has no materials defined. " +
+                "At least one WallMaterial is required.");
+        }
+        
+        StringBuilder warnings = new StringBuilder();
+        int index = 0;
+        for (WallMaterial m : model.getMaterials()) {
+            String id = m.getId();
+            if (id == null || id.isBlank()) {
+                throw new IllegalStateException(String.format(
+                    "WallMaterial at index %d has null or blank 'id'. " +
+                    "Every material must have a unique id.", index));
+            }
+            
+            if (m.getWallBaseType() == null) {
+                warnings.append(String.format(
+                    "  WARNING: Material '%s' has null wallBaseType, using default: %s%n",
+                    id, DEFAULT_BASE_TYPE));
+            }
+            
+            if (m.getBaseImage() == null || m.getBaseImage().isBlank()) {
+                warnings.append(String.format(
+                    "  WARNING: Material '%s' has null/blank baseImage, using default: %s%n",
+                    id, DEFAULT_BASE_IMAGE));
+            }
+            
+            if (m.getDisplayName() == null || m.getDisplayName().isBlank()) {
+                warnings.append(String.format(
+                    "  WARNING: Material '%s' has null/blank displayName, using default: %s%n",
+                    id, DEFAULT_DISPLAY_NAME));
+            }
+            index++;
+        }
+        
+        if (warnings.length() > 0) {
+            System.out.println("Model validation warnings:");
+            System.out.print(warnings);
         }
     }
 
@@ -108,13 +163,19 @@ public class RunWallsAcceleo {
             pw.println("    static {");
             
             for (WallMaterial m : model.getMaterials()) {
+                String id = m.getId();
+                String displayName = nullSafe(m.getDisplayName(), DEFAULT_DISPLAY_NAME);
+                WallMaterialBaseType baseType = m.getWallBaseType() != null 
+                    ? m.getWallBaseType() : DEFAULT_BASE_TYPE;
+                String baseImage = nullSafe(m.getBaseImage(), DEFAULT_BASE_IMAGE);
+                
                 pw.println("        register(new WallDefinition(");
-                pw.println("            \"" + m.getId() + "\",");
-                pw.println("            \"" + m.getDisplayName() + "\",");
-                pw.println("            WallMaterialBaseType." + m.getWallBaseType().toString() + ",");
+                pw.println("            \"" + escapeJava(id) + "\",");
+                pw.println("            \"" + escapeJava(displayName) + "\",");
+                pw.println("            WallMaterialBaseType." + baseType.toString() + ",");
                 pw.println("            " + m.isBreakable() + ",");
                 pw.println("            " + m.getHitPoints() + ",");
-                pw.println("            \"" + m.getBaseImage() + "\"");
+                pw.println("            \"" + escapeJava(baseImage) + "\"");
                 pw.println("        ));");
             }
             
@@ -274,5 +335,26 @@ public class RunWallsAcceleo {
             pw.println("}");
         }
         System.out.println("  Generated: WallCollisionHandler.java");
+    }
+
+    // ========== Utility Methods ==========
+
+    /**
+     * Returns the value if non-null and non-blank, otherwise returns the default.
+     */
+    private static String nullSafe(String value, String defaultValue) {
+        return (value != null && !value.isBlank()) ? value : defaultValue;
+    }
+
+    /**
+     * Escapes special characters for Java string literals.
+     */
+    private static String escapeJava(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }

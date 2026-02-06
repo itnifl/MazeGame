@@ -453,6 +453,47 @@ CharacterRegistrar.registerAll(this);
   ```
 - Ensure `.xmi` files reference the correct namespace URI
 
+### Model Validation Errors
+
+**Symptom**: Generator fails with `IllegalStateException` about missing required fields.
+
+The standalone generators validate models before generation and fail fast with clear error messages:
+
+| Error Message | Cause | Solution |
+|---------------|-------|----------|
+| `Wall model has no materials defined` | Empty `WallModel` | Add at least one `WallMaterial` to the model |
+| `WallMaterial at index N has null or blank 'id'` | Missing wall material ID | Set the `id` attribute on all materials |
+| `Expected OpponentModel, got: X` | Wrong model type | Ensure XMI file contains correct root element |
+
+**Warnings** (generation continues with defaults):
+- `Material 'X' has null wallBaseType` → Uses `STEEL` as default
+- `Material 'X' has null/blank baseImage` → Uses `/images/walls/default_wall.png`
+- `Material 'X' has null/blank displayName` → Uses `"Unknown Wall"`
+- `OpponentModel has null/blank 'name'` → Uses `"MazeGame"`
+- `CharacterType has null/blank displayName` → Uses `"Unknown Enemy"`
+
+These warnings appear in build output and indicate the model should be fixed, but generation completes successfully.
+
+### Null-Safety and Default Values
+
+The generators use null-safe defaults to prevent NPEs when model fields are missing:
+
+**Walls Generator (`RunWallsAcceleo.java`):**
+| Field | Default Value |
+|-------|---------------|
+| `wallBaseType` | `WallMaterialBaseType.STEEL` |
+| `baseImage` | `/images/walls/default_wall.png` |
+| `displayName` | `"Unknown Wall"` |
+
+**Opponents Generator (`RunAcceleo.java`):**
+| Field | Default Value |
+|-------|---------------|
+| `model.name` | `"MazeGame"` |
+| `displayName` | `"Unknown Enemy"` |
+| `imageBase` | Type-specific default (e.g., `/images/zombie_default.png`) |
+
+Special characters in model strings are escaped to prevent invalid Java output.
+
 ---
 
 ## 📊 Domain Models Overview
