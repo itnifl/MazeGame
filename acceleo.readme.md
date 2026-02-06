@@ -16,11 +16,14 @@ and produces domain code that the app and tests consume.
 
 ## Where things live
 
-- **Templates** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
-  Contains the `.mtl` templates and the Acceleo generation logic.
+- **Acceleo 4 Templates** → [`maze-generator-java`](./maze-generator-java)  
+  Contains the Acceleo 4 `.mtl` templates for all domains (opponents, walls, difficulties, behaviour).
 
-- **Headless runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
-  Eclipse plug in that starts the Acceleo `Generate` module in a headless runtime.
+- **Standalone Generators** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
+  Contains `RunAcceleo.java` and `RunWallsAcceleo.java` — standalone Java generators that write code directly without requiring an Eclipse workspace.
+
+- **Acceleo Runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
+  Eclipse plug-in that orchestrates generation during the Tycho build.
 
 - **Generated sources** → [`maze-module-generator`](./maze-module-generator)  
   Receives generated Java sources (for example under `src-gen`) and builds them into a JAR that other modules depend on.
@@ -35,20 +38,22 @@ and produces domain code that the app and tests consume.
 
 ## How generation runs
 
-Generation is performed **headless** during the Maven or Tycho build by launching an Eclipse runtime with the Acceleo engine.
+Generation is performed during the Maven/Tycho build using **standalone Java generators** that do not require an Eclipse workspace.
 
 High level flow:
 
-1. Tycho resolves an Eclipse runtime from the local mirror in `releng/local-p2`.  
-2. `maze-generator.acceleo-runner` starts inside that runtime and invokes the Acceleo `Generate` module from `maze-generator.acceleo`.  
-3. The runner loads the configured model inputs  
-   for example `models/DifficultyGameData.xmi`.  
-4. Acceleo templates render Java files.  
-5. Files are written into `maze-module-generator/src-gen`  
-   or a similar generated sources folder.  
-6. `maze-module-generator` attaches that folder as a source root and compiles the generated classes into a JAR that the game uses.
+1. Tycho builds the EMF model plug-ins and the `maze-generator.acceleo` plug-in.  
+2. `maze-generator.acceleo-runner` invokes `RunAcceleo.java` and `RunWallsAcceleo.java` in a headless runtime.  
+3. The standalone generators:
+   - Load the XMI model files (e.g., `opponentModel.xmi`, `walls.xmi`)
+   - Register the EMF packages (OpponentsPackage, WallsPackage, etc.)
+   - Write Java source files directly using `PrintWriter` (no Acceleo 3 engine)
+4. Files are written into the appropriate output directories.  
+5. `maze-module-generator` attaches the generated sources and compiles them into a JAR.
 
 From the rest of the build this looks like a normal Java dependency: the game module just depends on `maze-module-generator`.
+
+**Note**: Acceleo 4 templates exist in `maze-generator-java` for more sophisticated generation scenarios, but the build currently uses the standalone Java generators for reliability.
 
 ---
 
@@ -104,8 +109,10 @@ The following files are currently generated under `maze-module-generator/src-gen
 | `CharacterRegistrar.java` | Registers character types from model | `opponents.ecore` |
 | `CharacterAttributeSetter.java` | Applies difficulty multipliers using `getHealth()`/`setHealth()`, `getThreatLevel()`/`setThreatLevel()`, `getSpeed()`/`setSpeed()` | `opponents.ecore` |
 | `CharacterGraphicsFactory.java` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | `opponents.ecore` |
-| `BehaviorDispatcher.java` | Dispatches behaviour by character type | `opponents.ecore` |
-| `package-info.java` | Package documentation | — |
+| `OpponentRegistry.java` | Lists all enemy types with their stats | `opponents.ecore` |
+| `WallRegistry.java` | Lists all wall material types | `walls.ecore` |
+| `WallMaterialRenderer.java` | Renders walls by material type | `walls.ecore` |
+| `WallCollisionHandler.java` | Handles wall collision logic | `walls.ecore` |
 
 **Note:** The generated code uses actual EMF model method names (`getThreatLevel`, `getImageBase`, `getAnimationFrameCount`, `getSpriteScale`, etc.) from the `CharacterType` interface and its subclasses. Note that `attackDamage` is handled separately in runtime code with `instantDeath` logic, not in the generated multiplier code.
 

@@ -1,9 +1,9 @@
 # maze-generator.acceleo-runner
 
-This project contains the headless Acceleo runner used in the Maven / Tycho build for MazeGame.
+This project contains the headless code generation runner used in the Maven / Tycho build for MazeGame.
 
-Where `maze-generator.acceleo` holds the `.mtl` templates and Eclipse plug-in for code generation,  
-`maze-generator.acceleo-runner` is the executable plug-in that starts Acceleo in a non-interactive build and writes the generated sources to the correct locations.
+Where `maze-generator.acceleo` holds the standalone Java generators (`RunAcceleo.java`, `RunWallsAcceleo.java`),  
+`maze-generator.acceleo-runner` is the executable plug-in that invokes these generators during the build.
 
 ---
 
@@ -11,12 +11,14 @@ Where `maze-generator.acceleo` holds the `.mtl` templates and Eclipse plug-in fo
 
 `maze-generator.acceleo-runner` is responsible for:
 
-- loading the EMF models (opponents, difficulties, walls, etc.) in a headless Eclipse runtime  
-- invoking the Acceleo `Generate` module from `maze-generator.acceleo`  
-- writing generated Java sources and helper files into the appropriate `target` folders or target modules  
+- invoking the standalone Java generators from `maze-generator.acceleo` in a headless runtime  
+- passing the correct model paths and output directories to the generators  
+- writing generated Java sources into the appropriate `target` folders or target modules  
 - integrating smoothly into the Tycho reactor so generation happens as part of `mvn clean verify`
 
 This allows the entire model-to-code generation pipeline to run automatically in CI and on developer machines without manual Eclipse steps.
+
+**Note**: The generators are now standalone Java code that uses EMF directly — they do not require the Acceleo 3 engine or Eclipse workspace resources.
 
 ---
 
@@ -38,9 +40,8 @@ Typical files in `maze-generator.acceleo-runner` include:
 
 - A small Java entry point  
   For example a class that:
-  - sets up the EMF resource set
-  - loads the `.xmi` model resources
-  - calls the Acceleo `Generate` module with the chosen root element
+  - sets up command-line arguments for the standalone generators
+  - invokes `RunAcceleo` (for opponents) and `RunWallsAcceleo` (for walls)
   - configures the output directories
 
 The generated sources themselves are **not** stored in this project.  

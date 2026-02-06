@@ -19,8 +19,10 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 | `CharacterRegistrar.java` | `opponents.ecore` | Type-safe switch dispatch for character registration |
 | `CharacterAttributeSetter.java` | `opponents.ecore` | Applies difficulty multipliers using `getHealth()`, `getThreatLevel()`, `getSpeed()` |
 | `CharacterGraphicsFactory.java` | `opponents.ecore` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` |
+| `WallMaterialRenderer.java` | `walls.ecore` | Renders walls by material type |
+| `WallCollisionHandler.java` | `walls.ecore` | Handles wall collision logic |
 
-**Note**: Additional templates exist (`DifficultyConfigurator.mtl`, `BehaviorDispatcher.mtl`, etc.) but are not yet integrated into the build process.
+**Note**: Acceleo 4 templates for all 4 domains (opponents, walls, difficulties, behaviour) exist in `maze-generator-java`. The build uses standalone Java generators in `maze-generator.acceleo` for reliability.
 
 ### Key Methods in Generated Code
 

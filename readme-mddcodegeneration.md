@@ -292,18 +292,23 @@ Generated files are in `maze-module-generator/src-gen/main/game/maze/generated/`
 
 ## Running the Generation
 
-### Command Line
+### Build Integration
+
+The build currently uses **standalone Java generators** (`RunAcceleo.java`, `RunWallsAcceleo.java`) that write files directly using `PrintWriter`. These are invoked by `maze-generator.acceleo-runner` during the Tycho build.
 
 ```bash
-# Full generation (all 4 domains)
-java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
-    opponents.xmi walls.xmi difficulties.xmi movements.ecore output-dir/
-
-# Basic generation (opponents + walls only)
-java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
-    opponents.xmi walls.xmi output-dir/
+# Full build with generation
+mvn clean verify
 ```
 
-### Maven Integration
+### Acceleo 4 Alternative
 
-Add exec-maven-plugin or use Tycho to invoke `AcceleoGeneratorMain` during the build phase.
+Acceleo 4 templates exist in `maze-generator-java` for more sophisticated template-based generation:
+
+```bash
+# Via AcceleoGeneratorMain (if configured)
+java -cp maze-generator-java.jar main.game.maze.codegen.AcceleoGeneratorMain \
+    opponents.xmi walls.xmi difficulties.xmi movements.ecore output-dir/
+```
+
+**Note**: The Acceleo 4 templates and standalone generators produce equivalent output. The build uses standalone generators for reliability (no Eclipse workspace dependencies).

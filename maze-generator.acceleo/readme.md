@@ -68,26 +68,25 @@ This is called **Model-Driven Engineering** - the model is the single source of 
 ```
 maze-generator.acceleo/
 ├── src/main/java/main/game/maze/gen/
-│   ├── templates/
-│   │   ├── Generate.mtl          # Main template for opponents
-│   │   ├── GenerateWalls.mtl     # Template for walls
-│   │   ├── Generate.emtl         # Compiled template (binary)
-│   │   └── GenerateWalls.emtl    # Compiled template (binary)
-│   └── RunAcceleo.java           # Standalone runner class
+│   ├── RunAcceleo.java           # Standalone opponent generator (no Acceleo 3)
+│   └── RunWallsAcceleo.java      # Standalone wall generator (no Acceleo 3)
 ├── META-INF/
 │   └── MANIFEST.MF               # Eclipse plugin manifest
 ├── plugin.xml                    # Plugin configuration
 └── pom.xml                       # Maven build file
 ```
 
+**Note**: The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) are now standalone Java code that writes files directly using `PrintWriter`. They load EMF models but do not require the Acceleo 3 engine or Eclipse workspace.
+
+**Acceleo 4 Templates**: For more sophisticated template-based generation, see `maze-generator-java/` which contains Acceleo 4 `.mtl` templates for all 4 domains.
+
 ### Key File Types
 
 | Extension | Purpose |
 |-----------|---------|
-| `.mtl` | **M**odel **T**o **L**anguage - Acceleo template source files |
-| `.emtl` | Compiled Acceleo templates (like `.class` for `.java`) |
 | `.ecore` | EMF model definitions (the "schema" for your data) |
 | `.xmi` | Model instances (actual data conforming to the schema) |
+| `.mtl` | Acceleo 4 template files (in `maze-generator-java`) |
 
 ---
 
@@ -121,18 +120,19 @@ These files are currently generated and tested:
 | Generated File | Purpose | Status |
 |---------------|---------|--------|
 | `WallRegistry.java` | Lists all wall material types | ✅ Generated |
+| `WallMaterialRenderer.java` | Renders walls by material type | ✅ Generated |
+| `WallCollisionHandler.java` | Handles wall collision logic | ✅ Generated |
 
-### Additional Templates (Not Yet Integrated)
+### Acceleo 4 Templates (in maze-generator-java)
 
-| Template File | Purpose | Status |
-|---------------|---------|--------|
-| `DifficultyConfigurator.mtl` | Applies difficulty multipliers without instanceof chains | 📋 Template exists, not integrated |
-| `BehaviorDispatcher.mtl` | Routes behaviour requests by type | 📋 Template exists, not integrated |
-| `WallMaterialRenderer.mtl` | Visual properties per material | 📋 Template exists, not integrated |
-| `WallCollisionHandler.mtl` | Damage/collision behavior per material | 📋 Template exists, not integrated |
-| `WallPropertyAccessor.mtl` | Property access helpers | 📋 Template exists, not integrated |
-| `EnemySpawnLimits.mtl` | Spawn limit configuration | 📋 Template exists, not integrated |
-| `PathCalculatorFactory.mtl` | Path calculation helpers | 📋 Template exists, not integrated |
+The following Acceleo 4 templates provide template-based generation for all domains:
+
+| Template File | Domain | Generated Output |
+|---------------|--------|------------------|
+| `Generate.mtl` | Opponents | CharacterRegistrar, AttributeSetter, GraphicsFactory |
+| `GenerateWalls.mtl` | Walls | WallRegistry, WallMaterialRenderer, WallCollisionHandler |
+| `GenerateDifficulties.mtl` | Difficulties | DifficultyConfigurator, EnemySpawnLimits, DifficultyRegistry |
+| `GenerateBehaviour.mtl` | Behaviour | BehaviorDispatcher, PathCalculatorFactory, BehaviorRegistry |
 
 ### Example: Generated Switch Statement
 
@@ -165,27 +165,7 @@ switch (character.eClass().getName()) {
 
 ## 🚀 How to Run the Generator
 
-### Option 1: In Eclipse (Interactive)
-
-Best for development and experimenting:
-
-1. **Open the template file**
-   - Navigate to `src/main/java/main/game/maze/gen/templates/Generate.mtl`
-
-2. **Run as Acceleo Application**
-   - Right-click the `.mtl` file
-   - Select `Run As` → `Launch Acceleo Application`
-   - Choose or create a launch configuration
-
-3. **Configure the launch**
-   - **Model**: Path to your `.xmi` file (e.g., `maze/src/main/resources/xmi/opponents/opponentModel.xmi`)
-   - **Target Folder**: Where to write output (e.g., `maze-module-generator/src-gen`)
-
-4. **Run and check output**
-   - Generated files appear in the target folder
-   - Check for any errors in the Console view
-
-### Option 2: Via Maven (Automated)
+### Option 1: Via Maven (Automated)
 
 Best for CI/CD and reproducible builds:
 
@@ -196,8 +176,8 @@ mvn clean verify -DskipTests
 
 The Maven build:
 1. Compiles all EMF models
-2. Builds the `maze-generator.acceleo` plugin
-3. Runs `maze-generator.acceleo-runner` which invokes the templates
+2. Builds the `maze-generator.acceleo` plugin with standalone generators
+3. Runs `maze-generator.acceleo-runner` which invokes `RunAcceleo` and `RunWallsAcceleo`
 4. Generated sources appear in `maze-module-generator/src-gen/`
 
 ---
