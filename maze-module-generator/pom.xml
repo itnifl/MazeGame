@@ -17,35 +17,7 @@
   </properties>
 
   <dependencies>
-    <!-- Code generator (Acceleo 4 eclipse-plugin, installed to local Maven repo by Tycho) -->
-    <dependency>
-      <groupId>main.game.maze</groupId>
-      <artifactId>maze-generator-java</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <!-- Acceleo 4 runtime (manually installed from P2 to local Maven repo) -->
-    <dependency>
-      <groupId>org.eclipse.acceleo</groupId>
-      <artifactId>org.eclipse.acceleo.aql</artifactId>
-      <version>4.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.acceleo</groupId>
-      <artifactId>org.eclipse.acceleo.query</artifactId>
-      <version>8.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.acceleo</groupId>
-      <artifactId>org.eclipse.acceleo.annotations</artifactId>
-      <version>8.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-      <version>4.13.2</version>
-    </dependency>
-    
+    <!-- EMF model modules (walls, opponents, difficulties) -->
     <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>main.game.maze.walls</artifactId>
@@ -79,29 +51,10 @@
 
   <build>
     <plugins>
-        <!-- Run Java code generator -->
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>3.1.1</version>
-            <executions>
-                <execution>
-                    <id>generate-code</id>
-                    <phase>generate-sources</phase>
-                    <goals><goal>java</goal></goals>
-                    <configuration>
-                        <mainClass>main.game.maze.codegen.AcceleoGeneratorMain</mainClass>
-                        <arguments>
-                            <argument>${project.basedir}/../maze/src/main/resources/xmi/opponents/opponentModel.xmi</argument>
-                            <argument>${project.basedir}/../maze/src/main/resources/xmi/walls/default.walls.xmi</argument>
-                            <argument>${project.basedir}/src-gen</argument>
-                        </arguments>
-                        <includeProjectDependencies>true</includeProjectDependencies>
-                        <includePluginDependencies>false</includePluginDependencies>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
+        <!-- 
+        Note: Code generation is handled by maze-generator.acceleo-runner in the Tycho build.
+        Generated sources in src-gen are committed to the repository.
+        -->
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
