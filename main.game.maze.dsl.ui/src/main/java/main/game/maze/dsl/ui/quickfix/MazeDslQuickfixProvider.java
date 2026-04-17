@@ -23,6 +23,11 @@ import main.game.maze.dsl.validation.MazeDslValidator;
 public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
 
     private static final Pattern PATH_BRACKET_PATTERN = Pattern.compile("path\\s*\\[");
+    
+    /** Pattern to match character-specifics introducer keywords. */
+    private static final Pattern SPECIFICS_PATTERN = Pattern.compile(
+        "(zombie-stats|ghost-stats|ranged-stats)\\s*\\{"
+    );
 
     /**
      * Quick fix for threat level exceeding maximum.
@@ -105,6 +110,8 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
 
     /**
      * Quick fix for mismatched character specifics.
+     * Searches for the specifics introducer keyword (zombie-stats, ghost-stats, ranged-stats)
+     * near the issue offset to precisely target the character-specific block.
      */
     @Fix(MazeDslValidator.MISMATCHED_SPECIFICS)
     public void fixMismatchedSpecifics(final Issue issue, IssueResolutionAcceptor acceptor) {
@@ -119,8 +126,22 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
                     return;
                 }
 
-                int openBrace = text.indexOf('{', issueOffset);
-                if (openBrace < 0) {
+                // Search for specifics keyword near the issue offset
+                Matcher matcher = SPECIFICS_PATTERN.matcher(text);
+                int specificsStart = -1;
+                int openBrace = -1;
+                
+                // Find the specifics block that contains or follows the issue offset
+                while (matcher.find()) {
+                    // Accept if within reasonable distance of issue (e.g., within 200 chars)
+                    if (matcher.start() >= issueOffset - 200 && matcher.start() <= issueOffset + 200) {
+                        specificsStart = matcher.start();
+                        openBrace = matcher.end() - 1; // Position of '{'
+                        break;
+                    }
+                }
+                
+                if (specificsStart < 0 || openBrace < 0) {
                     return;
                 }
 
@@ -143,8 +164,13 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
                     return;
                 }
 
-                int start = issueOffset;
+                // Trim leading whitespace before the keyword
+                int start = specificsStart;
                 while (start > 0 && Character.isWhitespace(text.charAt(start - 1))) {
+                    char ws = text.charAt(start - 1);
+                    if (ws == '\n') {
+                        break; // Keep line structure
+                    }
                     start--;
                 }
 

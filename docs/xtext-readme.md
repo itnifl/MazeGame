@@ -11,11 +11,11 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 ## Important decisions in this repository
 
 - Xtext generated artifacts under `src/main/xtext-gen` and `src/test/xtext-gen` are currently committed in this repository.
-- CI game-focused workflows build a non-DSL module subset, including `maze/`, while skipping DSL modules that depend on generated artifacts.
-- Generation of DSL artifacts is performed via Maven using an MWE2 workflow in the DSL module and is not part of the CI build.
-- Use Java 21 for Xtext generation and reactor builds that include DSL modules.
-- CI currently uses Java 24 for game-focused workflow jobs in `.github/workflows/main.yml` and `.github/workflows/buildtest.yml`.
-   This is intentional for the JavaFX/game path only. DSL generation and full Tycho/Xtext reactor builds must still run on Java 21.
+- CI workflows now include the Maze DSL modules `main.game.maze.dsl`, `main.game.maze.dsl.ide`, `main.game.maze.dsl.ui`, and `main.game.maze.dsl.tests` in the Tycho build step.
+- Generation of DSL artifacts is performed via Maven using an MWE2 workflow in the DSL module. CI validates the DSL modules in the Tycho build step, while local regeneration is still done from the DSL module build.
+- Use Java 21 for Xtext generation and for Tycho/reactor builds that include DSL modules.
+- CI uses Java 24 for the Tycho DSL build step in `.github/workflows/main.yml` and `.github/workflows/buildtest.yml`.
+   Java 24 is used for both DSL and game-focused jobs. The DSL generation and Xtext dependency graph is validated with Java 21 locally.
 - FreeMarker is used for code generation (not Acceleo).
 
 ## Where Xtext lives in the repo
@@ -48,9 +48,9 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 
 This generation is wired in the DSL module build using the MWE2 launcher and runs in generate-sources.
 
-## Why Java 21 here
+## Why Java 21 locally
 
-The DSL generation and Tycho/Xtext dependency graph in this repository is validated with Java 21. Running this flow with newer JDKs can trigger classpath or workflow errors depending on environment state. CI's Java 24 setup is scoped to game-focused jobs and does not replace the Java 21 requirement for DSL generation.
+The DSL generation and Tycho/Xtext dependency graph in this repository is validated with Java 21 locally. CI uses Java 24 for all workflows including DSL builds. Local regeneration of DSL artifacts using MWE2 should be done with Java 21 to ensure consistent results. Once regenerated, commits can be validated by CI with Java 24.
 
 ## What is generated and how it is handled
 
