@@ -10,7 +10,7 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 
 ## Important decisions in this repository
 
-- Xtext generated artifacts are NOT committed. They are generated locally by each developer.
+- Xtext generated artifacts under `src/main/xtext-gen` and `src/test/xtext-gen` are currently committed in this repository.
 - CI only builds the game module (maze/), skipping DSL modules that need generated code.
 - Generation runs from Maven using an MWE2 workflow in the DSL module.
 - Use Java 21 for Xtext generation and reactor builds that include DSL modules.
@@ -52,13 +52,15 @@ This generation is wired in the DSL module build using the MWE2 launcher and run
 
 The DSL generation and Tycho/Xtext dependency graph in this repository is validated with Java 21. Running this flow with newer JDKs can trigger classpath or workflow errors depending on environment state. CI's Java 24 setup is scoped to game-focused jobs and does not replace the Java 21 requirement for DSL generation.
 
-## What is generated and why it is ignored
+## What is generated and how it is handled
 
-Generation creates parser/runtime/editor artifacts under module source trees (for example src-gen and some generated sources under src/main). These are reproducible outputs from grammar and workflow inputs. They are kept out of version control because:
+Generation creates parser/runtime/editor artifacts under module source trees (for example `src-gen` and `src/main/xtext-gen`). These are reproducible outputs from grammar and workflow inputs.
 
-1. They can be regenerated deterministically from the grammar.
-2. CI only builds the game module (maze/) and skips DSL modules that need these artifacts.
-3. This avoids unnecessary churn in code reviews from regenerated files.
+Current repository strategy:
+
+1. Generated Xtext artifacts are committed to keep CI and local builds consistent.
+2. Regenerate when grammar/workflow changes are made.
+3. Review generated diffs together with grammar changes to avoid drift.
 
 ## Changing the DSL safely
 
