@@ -366,7 +366,7 @@ Headless tools such as `maze-generator.freemarker-runner` can load the walls mod
 
 ### 5．3 How `maze-generator.freemarker-runner` uses the walls model
 
-* `maze-generator.freemarker` contains the FreeMarker templates that read walls related model data.
+* `maze-generator.freemarker` contains the FreeMarker templates that read walls-related model data.
 * `maze-generator.freemarker-runner` is the headless Equinox application that:
 
   1．starts in an Eclipse runtime (using the p two repository that contains `main.game.maze.walls_1.0.0.202512041940.jar`),
@@ -392,7 +392,7 @@ Once the FreeMarker runner has written the generated Java sources, the Maven sid
 
 During the Maven build:
 
-1．`maze-module-generator` receives the generated walls related Java sources in `src-gen`.
+1．`maze-module-generator` receives the generated walls-related Java sources in `src-gen`.
 2．Maven compiles both `src` and `src-gen`.
 3．The compiled classes are packaged into:
 
@@ -424,7 +424,7 @@ In `maze/pom.xml` you will find:
 This line is important for two reasons:
 
 1．It tells Maven that the game needs whatever classes were generated from the models.
-These include walls related helpers, as well as any other generated types.
+These include walls-related helpers, as well as any other generated types.
 
 2．It connects the runtime directly to the artifact built from `maze-module-generator`:
 

@@ -99,7 +99,6 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
                 String existing = text.substring(listStart + 1, listEnd).trim();
                 String insertion = existing.isEmpty() ? "(100, 100)" : ", (100, 100)";
                 context.getXtextDocument().replace(listEnd, 0, insertion);
-                }
             }
         );
     }
