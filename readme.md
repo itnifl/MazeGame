@@ -18,7 +18,7 @@
 * 🖥️ [maze](maze/readme.md)
 
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
-Also, see: [DSL Reference Guide](docs/dsl-reference.md) for complete DSL documentation
+Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 
 ## Project Tech stack:
@@ -27,7 +27,8 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 ![Maven](https://img.shields.io/badge/Maven-%23C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![Tycho](https://img.shields.io/badge/Tycho-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![Eclipse](https://img.shields.io/badge/Eclipse-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
-![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white) <br/>
+![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white)
+![JUnit5](https://img.shields.io/badge/JUnit5-%2325A162.svg?style=for-the-badge&logo=junit5&logoColor=white) <br/>
 ![MDD](https://img.shields.io/badge/Model_Driven_Dev-%23555555.svg?style=for-the-badge)
 ![Xtext](https://img.shields.io/badge/Xtext-%23F7941E.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![Acceleo](https://img.shields.io/badge/Acceleo-%238CA315.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
@@ -270,12 +271,12 @@ See: [maze-module-repository/readme.md](maze-module-repository/readme.md)
 
 ### maze-generator.acceleo
 
-Acceleo templates that turn EMF models into Java code and helper artefacts.  
+FreeMarker templates that turn EMF models into Java code and helper artefacts (name retained for historical reasons).  
 See: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md)
 
 ### maze-generator.acceleo-runner
 
-Headless Acceleo runner plug in used to execute the templates in an Eclipse runtime.  
+Headless runner plug-in that executes FreeMarker-based generators during the Tycho build.  
 See: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md)
 
 ### maze-module-generator

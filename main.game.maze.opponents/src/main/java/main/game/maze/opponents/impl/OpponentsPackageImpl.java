@@ -391,6 +391,26 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getCharacterType_AnimationFrameCount() {
+		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCharacterType_SpriteScale() {
+		return (EAttribute)characterTypeEClass.getEStructuralFeatures().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getZombie() {
 		return zombieEClass;
 	}
@@ -785,6 +805,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_UP);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__IMAGE_TURN_DOWN);
 		createEAttribute(characterTypeEClass, CHARACTER_TYPE__BEHAVIOR);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__ANIMATION_FRAME_COUNT);
+		createEAttribute(characterTypeEClass, CHARACTER_TYPE__SPRITE_SCALE);
 
 		zombieEClass = createEClass(ZOMBIE);
 		createEAttribute(zombieEClass, ZOMBIE__ATTACK_DAMAGE);
@@ -888,6 +910,8 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 		initEAttribute(getCharacterType_ImageTurnUp(), ecorePackage.getEString(), "ImageTurnUp", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_ImageTurnDown(), ecorePackage.getEString(), "ImageTurnDown", "/main/game/maze/zombie-up.png", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCharacterType_Behavior(), this.getBehaviorType(), "behavior", "WANDER", 0, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_AnimationFrameCount(), ecorePackage.getEInt(), "animationFrameCount", "1", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCharacterType_SpriteScale(), ecorePackage.getEDouble(), "spriteScale", "1.0", 1, 1, CharacterType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(zombieEClass, Zombie.class, "Zombie", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getZombie_AttackDamage(), ecorePackage.getEInt(), "attackDamage", "10", 1, 1, Zombie.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

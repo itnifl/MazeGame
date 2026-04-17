@@ -16,11 +16,14 @@ and produces domain code that the app and tests consume.
 
 ## Where things live
 
-- **Templates** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
-  Contains the `.mtl` templates and the Acceleo generation logic.
+- **FreeMarker Templates** → [`maze-generator.acceleo/src/main/resources/templates`](./maze-generator.acceleo/src/main/resources/templates)  
+  Contains FreeMarker `.ftl` templates for opponents and walls domains.
 
-- **Headless runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
-  Eclipse plug in that starts the Acceleo `Generate` module in a headless runtime.
+- **Generators** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
+  Contains `RunAcceleo.java` and `RunWallsAcceleo.java` — FreeMarker-based generators that use templates to produce Java code from EMF models.
+
+- **Generator Runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
+  Eclipse plug-in that orchestrates generation during the Tycho build.
 
 - **Generated sources** → [`maze-module-generator`](./maze-module-generator)  
   Receives generated Java sources (for example under `src-gen`) and builds them into a JAR that other modules depend on.
@@ -35,20 +38,23 @@ and produces domain code that the app and tests consume.
 
 ## How generation runs
 
-Generation is performed **headless** during the Maven or Tycho build by launching an Eclipse runtime with the Acceleo engine.
+Generation is performed during the Maven/Tycho build using **FreeMarker-based generators** that read EMF models and produce Java source code from templates.
 
 High level flow:
 
-1. Tycho resolves an Eclipse runtime from the local mirror in `releng/local-p2`.  
-2. `maze-generator.acceleo-runner` starts inside that runtime and invokes the Acceleo `Generate` module from `maze-generator.acceleo`.  
-3. The runner loads the configured model inputs  
-   for example `models/DifficultyGameData.xmi`.  
-4. Acceleo templates render Java files.  
-5. Files are written into `maze-module-generator/src-gen`  
-   or a similar generated sources folder.  
-6. `maze-module-generator` attaches that folder as a source root and compiles the generated classes into a JAR that the game uses.
+1. Tycho builds the EMF model plug-ins and the `maze-generator.acceleo` plug-in.  
+2. `maze-generator.acceleo-runner` invokes `RunAcceleo.java` and `RunWallsAcceleo.java` in a headless runtime.  
+3. The FreeMarker generators:
+   - Load the XMI model files (e.g., `opponentModel.xmi`, `walls.xmi`)
+   - Register the EMF packages (OpponentsPackage, WallsPackage, etc.)
+   - Transform the EMF model data into FreeMarker data models
+   - Process `.ftl` templates to generate Java source files
+4. Files are written into the appropriate output directories.  
+5. `maze-module-generator` attaches the generated sources and compiles them into a JAR.
 
 From the rest of the build this looks like a normal Java dependency: the game module just depends on `maze-module-generator`.
+
+**Note**: The generators use FreeMarker (freemarker.jar) as a true template engine, providing proper model-to-text transformation with separation between templates (.ftl) and Java logic.
 
 ---
 
@@ -95,18 +101,48 @@ Typical outputs include:
 * Helper classes derived from model structure and OCL based rules.
 * Boilerplate to load, validate and expose model information at runtime.
 
+### Current Generated Files
+
+The following files are currently generated under `maze-module-generator/src-gen/main/game/maze/generated/`:
+
+| File | Purpose | EMF Model Source |
+|------|---------|------------------|
+| `CharacterRegistrar.java` | Registers character types from model | `opponents.ecore` |
+| `CharacterAttributeSetter.java` | Applies difficulty multipliers using `getHealth()`/`setHealth()`, `getThreatLevel()`/`setThreatLevel()`, `getSpeed()`/`setSpeed()` | `opponents.ecore` |
+| `CharacterGraphicsFactory.java` | Creates sprites using `getImageBase()`, `getAnimationFrameCount()`, `getSpriteScale()` | `opponents.ecore` |
+| `OpponentRegistry.java` | Lists all enemy types with their stats | `opponents.ecore` |
+| `WallRegistry.java` | Lists all wall material types | `walls.ecore` |
+| `WallMaterialRenderer.java` | Renders walls by material type | `walls.ecore` |
+| `WallCollisionHandler.java` | Handles wall collision logic | `walls.ecore` |
+
+**Note:** The generated code uses actual EMF model method names (`getThreatLevel`, `getImageBase`, `getAnimationFrameCount`, `getSpriteScale`, etc.) from the `CharacterType` interface and its subclasses. Note that `attackDamage` is handled separately in runtime code with `instantDeath` logic, not in the generated multiplier code.
+
 Everything lands under the generated sources folder in `maze-module-generator`
 for example `maze-module-generator/src-gen`.
 `maze-module-generator` then packages these classes into a JAR, and the game module declares a dependency on that JAR and uses the generated types directly.
+
+### Unit Tests
+
+Generated code is validated by JUnit 5 tests in `maze-module-generator/src/test/java/`:
+
+| Test Class | Coverage |
+|------------|----------|
+| `CharacterRegistrarTest.java` | Registration lookup, null handling |
+| `CharacterAttributeSetterTest.java` | Multiplier application, base threat levels, damage multiplier |
+| `CharacterGraphicsFactoryTest.java` | Sprite paths, animation frames, scale |
+| `WallRegistryTest.java` | Wall material definitions, registry lookups, model validation |
+| `OpponentRegistryTest.java` | Game name constant, enemy listing, model validation |
+
+Run tests with: `mvn -pl maze-module-generator test`
 
 ---
 
 ## When you change the model or templates
 
-* Edit the Ecore model, XMI model instances or the `.mtl` templates in `maze-generator.acceleo`.
+* Edit the Ecore model, XMI model instances or the FreeMarker `.ftl` templates in `maze-generator.acceleo/src/main/resources/templates/`.
 * Re run the generator build
   for example `mvn -pl maze-module-generator -am clean verify`.
-* Commit the updated sources in `maze-module-generator` if you intend collaborators to build without running Acceleo locally.
+* Commit the updated sources in `maze-module-generator` if you intend collaborators to build without regenerating locally.
 * If you prefer to regenerate only in CI, you can let the workflow refresh outputs and keep local builds using the committed generated code.
 
 ---
@@ -130,18 +166,26 @@ for example `maze-module-generator/src-gen`.
     for example `models/DifficultyGameData.xmi`
   * the output folder is a writable directory inside `maze-module-generator`
     for example `src-gen`
-  * the Acceleo `Generate` module is the one your runner actually calls.
+  * the FreeMarker templates are present in `maze-generator.acceleo/src/main/resources/templates/`.
 
 * **Template errors**
-  Acceleo exceptions are surfaced as build failures from the headless runner.
+  FreeMarker exceptions are surfaced as build failures from the generator.
   Open the build log to find the exact template and line number.
+
+* **Model validation failures**
+  The FreeMarker generators validate models before generation:
+  - `IllegalStateException` with "null or blank 'id'" → Required field missing in model
+  - Warnings about null `wallBaseType`, `baseImage`, or `displayName` → Non-critical, defaults are used
+  
+  Check the build output for validation warnings that indicate model issues.
 
 ---
 
-## Why Acceleo here
+## Why FreeMarker here
 
 * Keeps models and generated code in sync with a single source of truth.
 * Encodes mapping rules once in templates, avoiding repetitive boilerplate.
+* FreeMarker is a mature, Apache-licensed template engine available from Maven Central.
 * Integrates cleanly with Tycho, EMF and Maven so it runs the same locally and in CI, online or offline.
 
 For more details, see:

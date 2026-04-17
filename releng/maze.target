@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="65">
+<target name="Maze Target" sequenceNumber="68">
   <locations>
     <location 
         includeAllPlugins="false" includeAllPlatforms="false" 
         includeConfigurePhase="true" includeSource="true" 
         type="InstallableUnit">
-        <repository location="https://download.eclipse.org/releases/2025-09/"/>
+        <!-- Eclipse 2024-12 release (stable, available) -->
+        <repository location="https://download.eclipse.org/releases/2024-12/"/>
         <repository location="https://download.eclipse.org/tools/orbit/downloads/latest-R/"/>
+      
+      <!-- Eclipse Core Runtime -->
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>
       <unit id="org.eclipse.equinox.common" version="0.0.0"/>
       <unit id="org.eclipse.core.jobs" version="0.0.0"/>
+      
+      <!-- EMF Core -->
       <unit id="org.eclipse.emf.ecore" version="0.0.0"/>
       <unit id="org.eclipse.emf.common" version="0.0.0"/>
       <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
-      <unit id="org.eclipse.ocl" version="0.0.0"/>
       <unit id="org.eclipse.emf.codegen.feature.group" version="0.0.0"/>      
+      
+      <!-- OCL for model validation (required by main.game.maze.opponents, main.game.maze.difficulties) -->
+      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
+      <unit id="org.eclipse.ocl.common" version="0.0.0"/>
+      
+      <!-- Equinox for headless applications -->
       <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.common" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.engine" version="0.0.0"/>
@@ -38,6 +47,9 @@
       <unit id="org.eclipse.xtext.builder" version="0.0.0"/>
       <unit id="org.eclipse.xtext.testing" version="0.0.0"/>
       <unit id="org.antlr.runtime" version="0.0.0"/>
+      
+      <!-- Note: Acceleo removed - generators now use FreeMarker (embedded JAR).
+           OCL is still required for EMF model validation constraints. -->
     </location>
   </locations>
 </target>

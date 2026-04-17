@@ -260,13 +260,31 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__BEHAVIOR = 12;
 
 	/**
+	 * The feature id for the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__ANIMATION_FRAME_COUNT = 13;
+
+	/**
+	 * The feature id for the '<em><b>Sprite Scale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__SPRITE_SCALE = 14;
+
+	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE_FEATURE_COUNT = 13;
+	int CHARACTER_TYPE_FEATURE_COUNT = 15;
 
 	/**
 	 * The number of operations of the '<em>Character Type</em>' class.
@@ -403,6 +421,24 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZOMBIE__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
+
+	/**
+	 * The feature id for the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__ANIMATION_FRAME_COUNT = CHARACTER_TYPE__ANIMATION_FRAME_COUNT;
+
+	/**
+	 * The feature id for the '<em><b>Sprite Scale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -714,6 +750,24 @@ public interface OpponentsPackage extends EPackage {
 	int GHOST__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
 
 	/**
+	 * The feature id for the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GHOST__ANIMATION_FRAME_COUNT = CHARACTER_TYPE__ANIMATION_FRAME_COUNT;
+
+	/**
+	 * The feature id for the '<em><b>Sprite Scale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GHOST__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
+
+	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -884,6 +938,24 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int RANGED_ENEMY__BEHAVIOR = CHARACTER_TYPE__BEHAVIOR;
+
+	/**
+	 * The feature id for the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__ANIMATION_FRAME_COUNT = CHARACTER_TYPE__ANIMATION_FRAME_COUNT;
+
+	/**
+	 * The feature id for the '<em><b>Sprite Scale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
 
 	/**
 	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
@@ -1128,6 +1200,24 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int PUMPKIN_BOMBER__BEHAVIOR = RANGED_ENEMY__BEHAVIOR;
+
+	/**
+	 * The feature id for the '<em><b>Animation Frame Count</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__ANIMATION_FRAME_COUNT = RANGED_ENEMY__ANIMATION_FRAME_COUNT;
+
+	/**
+	 * The feature id for the '<em><b>Sprite Scale</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__SPRITE_SCALE = RANGED_ENEMY__SPRITE_SCALE;
 
 	/**
 	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
@@ -1495,6 +1585,28 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCharacterType_Behavior();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getAnimationFrameCount <em>Animation Frame Count</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Animation Frame Count</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getAnimationFrameCount()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_AnimationFrameCount();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#getSpriteScale <em>Sprite Scale</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Sprite Scale</em>'.
+	 * @see main.game.maze.opponents.CharacterType#getSpriteScale()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_SpriteScale();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
@@ -2058,6 +2170,22 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHARACTER_TYPE__BEHAVIOR = eINSTANCE.getCharacterType_Behavior();
+
+		/**
+		 * The meta object literal for the '<em><b>Animation Frame Count</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__ANIMATION_FRAME_COUNT = eINSTANCE.getCharacterType_AnimationFrameCount();
+
+		/**
+		 * The meta object literal for the '<em><b>Sprite Scale</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__SPRITE_SCALE = eINSTANCE.getCharacterType_SpriteScale();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.

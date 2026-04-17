@@ -105,8 +105,19 @@ Conceptual pipeline:
    `main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`, `maze-generator.acceleo`, `maze-generator.acceleo-runner`.
 
 3. `maze-module-generator`
-   runs the Acceleo generation step (via the runner), receives the generated Java sources in `src-gen`,
+   runs the FreeMarker-based generators (via the runner), receives the generated Java sources in `src-gen`,
    and exposes them as a normal Maven JAR.
+
+   Currently generated classes include:
+   - `OpponentRegistry` — lists all enemy types with their stats
+   - `CharacterRegistrar` — character type registration and lookup
+   - `CharacterAttributeSetter` — difficulty multiplier application
+   - `CharacterGraphicsFactory` — sprite path and animation metadata
+   - `WallRegistry` — lists all wall material types
+   - `WallMaterialRenderer` — renders walls by material type
+   - `WallCollisionHandler` — handles wall collision logic
+
+   **Note**: FreeMarker templates are located in `maze-generator.acceleo/src/main/resources/templates/`.
 
 4. `maze` depends on:
 
