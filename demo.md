@@ -5,7 +5,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 1. How the **difficulty model** affects the running game.
 2. How the **opponent models** behave when validation succeeds or fails.
 3. How the **behaviour / movements model** drives patrol movement and can be validated.
-4. How the **walls model** and FreeMarker generated code are wired into the game.
+4. How the **walls model** and FreeMarker-generated code are wired into the game.
 5. How the **MazeGame DSL** provides a textual syntax for game configuration.
 
 ---
@@ -329,7 +329,7 @@ This demonstrates that the **behaviour model** is treated similarly to the oppon
 
 ## 5．Walls model and generated code wiring
 
-This section shows how the **walls model** and **FreeMarker generated code** are connected from design time to runtime.
+This section shows how the **walls model** and **FreeMarker-generated code** are connected from design time to runtime.
 
 ### 5．1 The walls model at design time
 
@@ -409,11 +409,11 @@ This JAR is a plain Maven artifact and can be used from the `maze` game module.
 
 ## 6．How `maze-module-generator` is used in the game
 
-The `maze` module declares an explicit dependency on the FreeMarker generated module.
+The `maze` module declares an explicit dependency on the FreeMarker-generated module.
 In `maze/pom.xml` you will find:
 
 ```xml
-<!-- This is our FreeMarker generated module -->
+<!-- This is our FreeMarker-generated module -->
 <dependency>
     <groupId>main.game.maze</groupId>
     <artifactId>maze-module-generator</artifactId>
@@ -514,7 +514,7 @@ Use this as a compact spoken script.
 * Point at the dependency in `maze/pom.xml`:
 
   ```xml
-  <!-- This is our FreeMarker generated module -->
+  <!-- This is our FreeMarker-generated module -->
   <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>maze-module-generator</artifactId>
