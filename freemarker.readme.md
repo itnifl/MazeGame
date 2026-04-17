@@ -1,6 +1,6 @@
 # FreeMarker in the Maze Game
 
-This document explains how model to code generation with **FreeMarker** is used in the Maze game, what gets generated, and how it fits into the overall build.
+This document explains how model-to-code generation with **FreeMarker** is used in the Maze game, what gets generated, and how it fits into the overall build.
 
 ---
 
@@ -8,7 +8,7 @@ This document explains how model to code generation with **FreeMarker** is used 
 
 FreeMarker turns EMF models into concrete Java classes used by the game.
 
-In this project FreeMarker reads difficulty and opponent related models
+In this project FreeMarker reads difficulty and opponent-related models
 for example the `DifficultyGameData` model
 and produces domain code that the app and tests consume.
 

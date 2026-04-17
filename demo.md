@@ -606,10 +606,10 @@ The DSL is implemented across four Eclipse plugin modules:
 1. Open `tutorial.mazegame` in an Xtext-enabled editor.
 
 2. Try adding an invalid configuration:
-     ```text
+   ```text
    opponent BadEnemy {
-       type zombie
-       threatLevel 150    // Error: exceeds 100
+     type zombie
+     threatLevel 150    // Error: exceeds 100
    }
    ```
 
@@ -618,7 +618,7 @@ The DSL is implemented across four Eclipse plugin modules:
 4. Use the quick fix (Ctrl+1) to correct the value.
 
 5. Explain the validation rules:
-   * Threat level must be 0-100
+  * Threat level must be 0-100
    * Patrol paths need at least 2 waypoints
    * Character-specific blocks must match character type
    * Total threat cannot exceed maxThreat
@@ -683,8 +683,8 @@ game MyLevel {
 From the repository root:
 
 ```bash
-# Run DSL parsing and validation tests
-mvn -pl main.game.maze.dsl.tests test
+# Run DSL parsing and validation tests (and required upstream modules)
+mvn -pl main.game.maze.dsl.tests -am test
 ```
 
 Explain the test coverage:

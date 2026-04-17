@@ -5,6 +5,8 @@
  */
 package main.game.maze.dsl.generator;
 
+import java.util.Locale;
+
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.AbstractGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess2;
@@ -24,6 +26,7 @@ public class MazeDslGenerator extends AbstractGenerator {
         for (var content : resource.getContents()) {
             if (content instanceof GameConfiguration) {
                 GameConfiguration game = (GameConfiguration) content;
+                String baseName = toFileName(game.getName());
                 
                 // Generate Java factory class
                 fsa.generateFile(
@@ -33,14 +36,14 @@ public class MazeDslGenerator extends AbstractGenerator {
                 
                 // Generate XMI model instance
                 fsa.generateFile(
-                    "xmi/" + game.getName().toLowerCase() + "-config.xmi",
+                    "xmi/" + baseName + "-config.xmi",
                     generateXmiInstance(game)
                 );
                 
                 // Generate difficulty configuration
                 if (game.getDifficulty() != null) {
                     fsa.generateFile(
-                        "xmi/" + game.getName().toLowerCase() + "-difficulty.xmi",
+                        "xmi/" + baseName + "-difficulty.xmi",
                         generateDifficultyXmi(game)
                     );
                 }
@@ -140,7 +143,7 @@ public class MazeDslGenerator extends AbstractGenerator {
             sb.append("        opponent.setThreatLevel(" + opponent.getThreatLevel() + ");\n");
         }
         if (opponent.getBehavior() != null) {
-            sb.append("        opponent.setBehavior(BehaviorType." + opponent.getBehavior().getName().toUpperCase() + ");\n");
+            sb.append("        opponent.setBehavior(BehaviorType." + toEnumLiteral(opponent.getBehavior().getName()) + ");\n");
         }
         
         // Character-specific settings
@@ -182,7 +185,7 @@ public class MazeDslGenerator extends AbstractGenerator {
                 sb.append("        opponent.setProjectileSpeed(" + rs.getProjectileSpeed() + ");\n");
             }
             if (rs.getProjectileType() != null) {
-                sb.append("        opponent.setProjectileType(ProjectileType." + rs.getProjectileType().getName().toUpperCase() + ");\n");
+                sb.append("        opponent.setProjectileType(ProjectileType." + toEnumLiteral(rs.getProjectileType().getName()) + ");\n");
             }
             if (rs.getSplashRadius() != 0) {
                 sb.append("        opponent.setSplashRadius(" + rs.getSplashRadius() + ");\n");
@@ -264,7 +267,7 @@ public class MazeDslGenerator extends AbstractGenerator {
         for (EnemyLimit limit : difficulty.getEnemyLimits()) {
             sb.append("        {\n");
             sb.append("            EnemyMaxCount count = DifficultiesFactory.eINSTANCE.createEnemyMaxCount();\n");
-            sb.append("            count.setType(EnemyTypes." + limit.getType().getName().toUpperCase() + ");\n");
+            sb.append("            count.setType(EnemyTypes." + toEnumLiteral(limit.getType().getName()) + ");\n");
             sb.append("            count.setMaxCount(" + limit.getMaxCount() + ");\n");
             sb.append("            difficulty.getEnemyMaxCount().add(count);\n");
             sb.append("        }\n");
@@ -308,7 +311,7 @@ public class MazeDslGenerator extends AbstractGenerator {
                 sb.append("\n      threatLevel=\"" + opponent.getThreatLevel() + "\"");
             }
             if (opponent.getBehavior() != null) {
-                sb.append("\n      behavior=\"" + opponent.getBehavior().getName().toUpperCase() + "\"");
+                sb.append("\n      behavior=\"" + toEnumLiteral(opponent.getBehavior().getName()) + "\"");
             }
             
             sb.append("/>\n");
@@ -354,7 +357,7 @@ public class MazeDslGenerator extends AbstractGenerator {
         } else {
             sb.append(">\n");
             for (EnemyLimit limit : diff.getEnemyLimits()) {
-                sb.append("    <enemyMaxCount type=\"" + limit.getType().getName().toUpperCase() + "\" ");
+                sb.append("    <enemyMaxCount type=\"" + toEnumLiteral(limit.getType().getName()) + "\" ");
                 sb.append("maxCount=\"" + limit.getMaxCount() + "\"/>\n");
             }
             sb.append("  </difficulties>\n");
@@ -370,6 +373,14 @@ public class MazeDslGenerator extends AbstractGenerator {
     private String toClassName(String name) {
         if (name == null || name.isEmpty()) return "Unknown";
         return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    private String toFileName(String name) {
+        return toClassName(name).toLowerCase(Locale.ROOT);
+    }
+
+    private String toEnumLiteral(String name) {
+        return name.toUpperCase(Locale.ROOT);
     }
 
     private String getJavaType(CharacterTypeEnum type) {

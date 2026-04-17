@@ -30,11 +30,12 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
 
     public String text(OpponentConfig element) {
         String type = element.getType() != null ? element.getType().getLiteral() : "unknown";
-        return element.getName() + " [" + type + "]";
+        return element.getName() + " (" + type + ")";
     }
 
     public String text(PatrolConfig element) {
-        return "Patrol: " + element.getName();
+        int waypointCount = element.getWaypoints() != null ? element.getWaypoints().size() : 0;
+        return "Patrol: " + element.getName() + " [" + waypointCount + " waypoints]";
     }
 
     public String text(DifficultyConfig element) {
@@ -43,7 +44,8 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
     }
 
     public String text(LootTableConfig element) {
-        return "Loot: " + element.getName();
+        int itemCount = element.getItems() != null ? element.getItems().size() : 0;
+        return "Loot: " + element.getName() + " [" + itemCount + " items]";
     }
 
     public String text(Waypoint element) {

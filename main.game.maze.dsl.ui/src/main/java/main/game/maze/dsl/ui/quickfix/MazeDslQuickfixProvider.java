@@ -54,11 +54,25 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
             "Adds a second waypoint at position (100, 100).", 
             null,
             (element, context) -> {
-                // Find the closing bracket and add a waypoint before it
                 String text = context.getXtextDocument().get();
-                int endPos = text.indexOf("]", issue.getOffset());
-                if (endPos > 0) {
-                    context.getXtextDocument().replace(endPos, 0, ", (100, 100)");
+                int issueOffset = Math.max(0, issue.getOffset());
+                int pathPos = text.indexOf("path [", issueOffset);
+                if (pathPos < 0) {
+                    pathPos = text.lastIndexOf("path [", issueOffset);
+                }
+                if (pathPos < 0) {
+                    return;
+                }
+
+                int listStart = text.indexOf('[', pathPos);
+                int listEnd = text.indexOf(']', listStart);
+                if (listStart < 0 || listEnd < 0) {
+                    return;
+                }
+
+                String existing = text.substring(listStart + 1, listEnd).trim();
+                String insertion = existing.isEmpty() ? "(100, 100)" : ", (100, 100)";
+                context.getXtextDocument().replace(listEnd, 0, insertion);
                 }
             }
         );

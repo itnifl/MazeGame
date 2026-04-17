@@ -1,149 +1,135 @@
-param(
+﻿param(
     [Parameter(Mandatory=$false)]
-    [switch]$TextOutput  # <-- Flagget som endrer output fra Zip til Txt
+    [switch]$TextOutput  # Switches output from Zip to text
 )
 
-# --- Konfigurasjon ---
-$rotMappe = Get-Location
-$zipFilNavn = "ProjectExport.zip"
-$txtFilNavn = "ProjectExport_Combined.txt"
-$tempMappeNavn = "Temp_Staging_Area"
+# Configuration
+$rootFolder = Get-Location
+$zipFileName = "ProjectExport.zip"
+$txtFileName = "ProjectExport_Combined.txt"
+$tempFolderName = "Temp_Staging_Area"
 
-# 1. Mapper som skal inkluderes HELT
-$heltInkluderteMapper = @(
+# 1. Folders to include fully
+$fullyIncludedFolders = @(
     "maze\src",
     "main.game.maze.dsl\src",
     "main.game.maze.dsl.tests\src"
 )
 
-# 2. Søkemønstre
+# 2. Search patterns
 $handlerPattern = "*Handler.java"
 $connectorContentRegex = "implements\s+\w*Connector(\b|<)"
 
-# 3. Global ekskludering
-$excludeRegex = "[\\/](bin|obj|.vs|.git|.idea)[\\/]"
+# 3. Global exclusions
+$excludeRegex = "[\\/](bin|obj|\.vs|\.git|\.idea)[\\/]"
 
-# --- Hjelpefunksjon ---
-function Test-IsNotTempPath {
-    param($Sti)
-    return ($Sti -notmatch $excludeRegex)
+# Helper function
+function Test-IsNotExcludedPath {
+    param($Path)
+    return ($Path -notmatch $excludeRegex)
 }
 
-Write-Host "Starter innsamling av filer..." -ForegroundColor Cyan
-$alleFilerListe = New-Object System.Collections.Generic.List[string]
+Write-Host "Starting file collection..." -ForegroundColor Cyan
+$allFilesList = New-Object System.Collections.Generic.List[string]
 
-# ---------------------------------------------------------
-# STEG 1: Hent ALT fra spesifikke mapper
-# ---------------------------------------------------------
-foreach ($relativSti in $heltInkluderteMapper) {
-    $fullSti = Join-Path $rotMappe $relativSti
-    if (Test-Path $fullSti) {
-        Write-Host "  [1/3] Henter innhold fra '$relativSti'..." -NoNewline
-        $filer = Get-ChildItem -Path $fullSti -Recurse -File -ErrorAction SilentlyContinue | 
-                 Where-Object { Test-IsNotTempPath $_.FullName }
-        foreach ($f in $filer) { $alleFilerListe.Add($f.FullName) }
-        Write-Host " Fant $($filer.Count) filer." -ForegroundColor Green
+# Step 1: Collect all files from specific folders
+foreach ($relativePath in $fullyIncludedFolders) {
+    $fullPath = Join-Path $rootFolder $relativePath
+    if (Test-Path $fullPath) {
+        Write-Host "  [1/3] Collecting content from '$relativePath'..." -NoNewline
+        $files = Get-ChildItem -Path $fullPath -Recurse -File -ErrorAction SilentlyContinue | 
+                 Where-Object { Test-IsNotExcludedPath $_.FullName }
+        foreach ($file in $files) { $allFilesList.Add($file.FullName) }
+        Write-Host " Found $($files.Count) files." -ForegroundColor Green
     }
 }
 
-# ---------------------------------------------------------
-# STEG 2: Finn *Handler.java
-# ---------------------------------------------------------
-Write-Host "  [2/3] Søker etter '$handlerPattern'..." -NoNewline
-$handlerFiler = Get-ChildItem -Path $rotMappe -Recurse -Filter $handlerPattern -File -ErrorAction SilentlyContinue | 
-                Where-Object { Test-IsNotTempPath $_.FullName }
-foreach ($f in $handlerFiler) { $alleFilerListe.Add($f.FullName) }
-Write-Host " Fant $($handlerFiler.Count) filer." -ForegroundColor Green
+# Step 2: Find *Handler.java
+Write-Host "  [2/3] Searching for '$handlerPattern'..." -NoNewline
+$handlerFiles = Get-ChildItem -Path $rootFolder -Recurse -Filter $handlerPattern -File -ErrorAction SilentlyContinue | 
+                Where-Object { Test-IsNotExcludedPath $_.FullName }
+foreach ($file in $handlerFiles) { $allFilesList.Add($file.FullName) }
+Write-Host " Found $($handlerFiles.Count) files." -ForegroundColor Green
 
-# ---------------------------------------------------------
-# STEG 3: Finn .java med Connector-implementasjon
-# ---------------------------------------------------------
-Write-Host "  [3/3] Scanner .java filer etter Connector-implementasjon..." -NoNewline
-$kandidater = Get-ChildItem -Path $rotMappe -Recurse -Filter "*.java" -File -ErrorAction SilentlyContinue | 
-              Where-Object { Test-IsNotTempPath $_.FullName }
+# Step 3: Find .java files implementing Connector
+Write-Host "  [3/3] Scanning .java files for Connector implementation..." -NoNewline
+$candidates = Get-ChildItem -Path $rootFolder -Recurse -Filter "*.java" -File -ErrorAction SilentlyContinue | 
+              Where-Object { Test-IsNotExcludedPath $_.FullName }
 $connectorCount = 0
-foreach ($fil in $kandidater) {
-    if (Select-String -Path $fil.FullName -Pattern $connectorContentRegex -Quiet) {
-        $alleFilerListe.Add($fil.FullName)
+foreach ($file in $candidates) {
+    if (Select-String -Path $file.FullName -Pattern $connectorContentRegex -Quiet) {
+        $allFilesList.Add($file.FullName)
         $connectorCount++
     }
 }
-Write-Host " Fant $connectorCount filer." -ForegroundColor Green
+Write-Host " Found $connectorCount files." -ForegroundColor Green
 
-# ---------------------------------------------------------
-# STEG 4: Fjern duplikater
-# ---------------------------------------------------------
-$unikeFiler = $alleFilerListe | Select-Object -Unique
-if ($unikeFiler.Count -eq 0) { Write-Host "Ingen filer funnet." -ForegroundColor Red; exit }
+# Step 4: Remove duplicates
+$uniqueFiles = $allFilesList | Select-Object -Unique
+if ($uniqueFiles.Count -eq 0) { Write-Host "No files found." -ForegroundColor Red; exit 1 }
 
-Write-Host "`nTotalt antall unike filer: $($unikeFiler.Count)" -ForegroundColor Cyan
+Write-Host "`nTotal unique files: $($uniqueFiles.Count)" -ForegroundColor Cyan
 
-# =========================================================
-# VALG AV OUTPUT FORMAT (ZIP eller TXT)
-# =========================================================
+# Output format selection (ZIP or TXT)
 
-$escapedRot = [regex]::Escape($rotMappe.Path)
+$escapedRoot = [regex]::Escape($rootFolder.Path)
 
 if ($TextOutput) {
-    # -----------------------------------------------------
-    # OPTION A: GENERER TEKSTFIL
-    # -----------------------------------------------------
-    Write-Host "Modus: Tekstfil (-TextOutput er satt)" -ForegroundColor Yellow
-    if (Test-Path $txtFilNavn) { Remove-Item $txtFilNavn -Force }
+    # Option A: Generate text file
+    Write-Host "Mode: Text file (-TextOutput is set)" -ForegroundColor Yellow
+    if (Test-Path $txtFileName) { Remove-Item $txtFileName -Force }
 
-    # Opprett filen
-    New-Item -Path $txtFilNavn -ItemType File | Out-Null
+    # Create output file
+    New-Item -Path $txtFileName -ItemType File | Out-Null
     
-    foreach ($filSti in $unikeFiler) {
-        # Beregn relativ sti
-        $relativSti = $filSti -replace "^$escapedRot\\", ""
+    foreach ($filePath in $uniqueFiles) {
+        # Compute relative path
+        $relativePath = $filePath -replace "^$escapedRoot\\", ""
         
-        # Lag header
+        # Build section header
         $header  = "`n" + ("=" * 80) + "`n"
-        $header += "File: $relativSti`n"
+        $header += "File: $relativePath`n"
         $header += ("=" * 80) + "`n"
         
-        # Hent innhold og skriv til fil
-        Add-Content -Path $txtFilNavn -Value $header -Encoding UTF8
+        # Write header and file content
+        Add-Content -Path $txtFileName -Value $header -Encoding UTF8
         
-        # Sjekk om filen ser ut som tekst før vi leser innholdet
-        # (Siden vi inkluderer alt i src/core, kan det være bilder/dll der)
-        $ext = [System.IO.Path]::GetExtension($filSti).ToLower()
+        # Check if file type looks textual before reading full content
+        # Since broad source trees are included, binary files may appear
+        $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
         if ($ext -match "\.(java|json|xml|txt|md|config|properties|html|js|css|gradle|pom)$") {
-            $innhold = Get-Content -Path $filSti -Raw
-            Add-Content -Path $txtFilNavn -Value $innhold -Encoding UTF8
+            $content = Get-Content -Path $filePath -Raw
+            Add-Content -Path $txtFileName -Value $content -Encoding UTF8
         }
         else {
-            Add-Content -Path $txtFilNavn -Value "[BINARY OR UNSUPPORTED FILE CONTENT SKIPPED]" -Encoding UTF8
+            Add-Content -Path $txtFileName -Value "[BINARY OR UNSUPPORTED FILE CONTENT SKIPPED]" -Encoding UTF8
         }
     }
-    Write-Host "Ferdig! Samlet tekstfil lagret: $txtFilNavn" -ForegroundColor Yellow
+    Write-Host "Done! Combined text file saved: $txtFileName" -ForegroundColor Yellow
 }
 else {
-    # -----------------------------------------------------
-    # OPTION B: GENERER ZIP (Standard)
-    # -----------------------------------------------------
-    Write-Host "Modus: Zip-arkiv (Standard)" -ForegroundColor Yellow
+    # Option B: Generate zip archive (default)
+    Write-Host "Mode: Zip archive (default)" -ForegroundColor Yellow
     
-    $tempMappeSti = Join-Path $rotMappe $tempMappeNavn
-    if (Test-Path $tempMappeSti) { Remove-Item $tempMappeSti -Recurse -Force }
-    New-Item -Path $tempMappeSti -ItemType Directory | Out-Null
+    $tempFolderPath = Join-Path $rootFolder $tempFolderName
+    if (Test-Path $tempFolderPath) { Remove-Item $tempFolderPath -Recurse -Force }
+    New-Item -Path $tempFolderPath -ItemType Directory | Out-Null
 
-    Write-Host "Bygger mappestruktur..." -ForegroundColor Gray
-    foreach ($filSti in $unikeFiler) {
-        $relativSti = $filSti -replace "^$escapedRot\\", ""
-        $destinasjonFil = Join-Path $tempMappeSti $relativSti
-        $destinasjonMappe = Split-Path $destinasjonFil -Parent
+    Write-Host "Building folder structure..." -ForegroundColor Gray
+    foreach ($filePath in $uniqueFiles) {
+        $relativePath = $filePath -replace "^$escapedRoot\\", ""
+        $destinationFile = Join-Path $tempFolderPath $relativePath
+        $destinationFolder = Split-Path $destinationFile -Parent
         
-        if (-not (Test-Path $destinasjonMappe)) {
-            New-Item -Path $destinasjonMappe -ItemType Directory -Force | Out-Null
+        if (-not (Test-Path $destinationFolder)) {
+            New-Item -Path $destinationFolder -ItemType Directory -Force | Out-Null
         }
-        Copy-Item -Path $filSti -Destination $destinasjonFil
+        Copy-Item -Path $filePath -Destination $destinationFile
     }
 
-    if (Test-Path $zipFilNavn) { Remove-Item $zipFilNavn -Force }
-    Compress-Archive -Path "$tempMappeSti\*" -DestinationPath $zipFilNavn
+    if (Test-Path $zipFileName) { Remove-Item $zipFileName -Force }
+    Compress-Archive -Path "$tempFolderPath\*" -DestinationPath $zipFileName
     
-    Remove-Item $tempMappeSti -Recurse -Force
-    Write-Host "Ferdig! Zip lagret: $zipFilNavn" -ForegroundColor Yellow
+    Remove-Item $tempFolderPath -Recurse -Force
+    Write-Host "Done! Zip saved: $zipFileName" -ForegroundColor Yellow
 }

@@ -11,8 +11,8 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 ## Important decisions in this repository
 
 - Xtext generated artifacts under `src/main/xtext-gen` and `src/test/xtext-gen` are currently committed in this repository.
-- CI only builds the game module (maze/), skipping DSL modules that need generated code.
-- Generation runs from Maven using an MWE2 workflow in the DSL module.
+- CI game-focused workflows build a non-DSL module subset, including `maze/`, while skipping DSL modules that depend on generated artifacts.
+- Generation of DSL artifacts is performed via Maven using an MWE2 workflow in the DSL module and is not part of the CI build.
 - Use Java 21 for Xtext generation and reactor builds that include DSL modules.
 - CI currently uses Java 24 for game-focused workflow jobs in `.github/workflows/main.yml` and `.github/workflows/buildtest.yml`.
    This is intentional for the JavaFX/game path only. DSL generation and full Tycho/Xtext reactor builds must still run on Java 21.
@@ -101,5 +101,5 @@ Current repository strategy:
 1. Grammar update done.
 2. Generation succeeds on Java 21.
 3. Root verify succeeds.
-4. No generated artifacts staged (src-gen is in .gitignore).
+4. Stage regenerated tracked Xtext artifacts when they change, such as `src/main/xtext-gen` and `src/test/xtext-gen`; do not stage ignored output folders like `src-gen`.
 5. Documentation updated if syntax or behavior changed.
