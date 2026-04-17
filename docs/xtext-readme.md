@@ -10,7 +10,8 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 
 ## Important decisions in this repository
 
-- Xtext generated artifacts are not committed.
+- Xtext generated artifacts are NOT committed. They are generated locally by each developer.
+- CI only builds the game module (maze/), skipping DSL modules that need generated code.
 - Generation runs from Maven using an MWE2 workflow in the DSL module.
 - Use Java 21 for Xtext generation and reactor builds that include DSL modules.
 - Acceleo is no longer the path for this DSL flow; FreeMarker is used in the broader project direction.
@@ -51,7 +52,11 @@ The DSL generation and Tycho/Xtext dependency graph in this repository is valida
 
 ## What is generated and why it is ignored
 
-Generation creates parser/runtime/editor artifacts under module source trees (for example src-gen and some generated sources under src/main). These are reproducible outputs from grammar and workflow inputs, so they are intentionally ignored in version control in this repository.
+Generation creates parser/runtime/editor artifacts under module source trees (for example src-gen and some generated sources under src/main). These are reproducible outputs from grammar and workflow inputs. They are kept out of version control because:
+
+1. They can be regenerated deterministically from the grammar.
+2. CI only builds the game module (maze/) and skips DSL modules that need these artifacts.
+3. This avoids unnecessary churn in code reviews from regenerated files.
 
 ## Changing the DSL safely
 
@@ -92,5 +97,5 @@ Generation creates parser/runtime/editor artifacts under module source trees (fo
 1. Grammar update done.
 2. Generation succeeds on Java 21.
 3. Root verify succeeds.
-4. No generated artifacts staged for commit.
+4. No generated artifacts staged (src-gen is in .gitignore).
 5. Documentation updated if syntax or behavior changed.

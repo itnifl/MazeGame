@@ -68,6 +68,7 @@ jobs:
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
           mvn -B -U -e \
+            -pl maze \
             -Djavafx.platform=linux \
             -DskipTests=false \
             clean verify

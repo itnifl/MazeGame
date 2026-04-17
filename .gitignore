@@ -74,18 +74,25 @@ out/
 *.rej
 /releng/local-p2/binary
 releng/local-p2/.mirror.stamp
-# Note: src-gen is committed to allow CI builds without running Acceleo
+# Note: src-gen is committed to allow CI builds without running generators
+# This applies to both Acceleo (maze-module-generator) and Xtext DSL modules
 # /maze-module-generator/src-gen
 
-# Xtext generated artifacts (do not commit)
+# Xtext generated artifacts - NOT committed, CI only builds game module (maze/)
+# Regenerate locally with Java 21 after grammar changes:
+#   mvn -f main.game.maze.dsl/pom.xml generate-sources -DskipTests
 main.game.maze.dsl/src-gen/
 main.game.maze.dsl.ide/src-gen/
 main.game.maze.dsl.ui/src-gen/
 main.game.maze.dsl.tests/src-gen/
+
+# Xtext generated sources under src/ trees
 main.game.maze.dsl/src/main/game/
 main.game.maze.dsl.ide/src/main/game/
 main.game.maze.dsl.ui/src/main/game/
 main.game.maze.dsl.tests/src/main/
+
+# Xtext EMF model output
 main.game.maze.dsl/model/
 
 # Temporary download created by Xtext generation in some setups
