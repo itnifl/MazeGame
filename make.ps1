@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all','mirror','force-mirror','build','clear-cache','toolchain')]
+    [ValidateSet('all','mirror','force-mirror','build','build-with-cache','clear-cache','toolchain')]
     [string]$Target = 'all'
 )
 
@@ -16,6 +16,40 @@ $MirrorInputs   = @(
     # add more files here if you want them to trigger a mirror rebuild
 )
 $TychoCache     = Join-Path $env:USERPROFILE '.m2\repository\.cache\tycho'
+$RequiredJavaMajor = 21
+
+function Test-JavaVersion {
+    $javaOutput = & java -version 2>&1 | Out-String
+    if ($javaOutput -match 'version\s+"?(\d+)\.') {
+        $majorVersion = [int]$Matches[1]
+        return $majorVersion
+    }
+    if ($javaOutput -match 'version\s+"?(\d+)"') {
+        $majorVersion = [int]$Matches[1]
+        return $majorVersion
+    }
+    return -1
+}
+
+function Assert-JavaVersion {
+    $currentMajor = Test-JavaVersion
+    if ($currentMajor -eq -1) {
+        throw "Could not determine Java version. Ensure Java is installed and in PATH."
+    }
+    if ($currentMajor -ne $RequiredJavaMajor) {
+        Write-Host ""
+        Write-Host "ERROR: Java $RequiredJavaMajor is required for Xtext/MWE2 generation." -ForegroundColor Red
+        Write-Host "Current version: Java $currentMajor" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "To fix, set JAVA_HOME to Java 21 before running:" -ForegroundColor Cyan
+        Write-Host '  $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"' -ForegroundColor White
+        Write-Host '  $env:Path = "$env:JAVA_HOME\bin;$env:Path"' -ForegroundColor White
+        Write-Host '  .\make.ps1 build-with-cache' -ForegroundColor White
+        Write-Host ""
+        throw "Java version mismatch: found $currentMajor, required $RequiredJavaMajor"
+    }
+    Write-Host "Java version check passed: Java $currentMajor" -ForegroundColor Green
+}
 
 function Show-ToolchainInfo {
     Write-Host "=== Toolchain versions ==="
@@ -131,13 +165,22 @@ switch ($Target) {
 
     'build' {
         Show-ToolchainInfo
+        Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
         Clear-TychoCache
         Invoke-Build
     }
 
+    'build-with-cache' {
+        Show-ToolchainInfo
+        Assert-JavaVersion
+        Invoke-Mirror           # only rebuild if needed
+        Invoke-Build
+    }
+
     'all' {
         Show-ToolchainInfo
+        Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
         Clear-TychoCache
         Invoke-Build

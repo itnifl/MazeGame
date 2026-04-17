@@ -29,16 +29,11 @@
     <module>main.game.maze.opponents</module>
     <module>maze-generator.acceleo</module>
 
-    <!-- 3: Xtext DSL modules (requires MWE2 generation in Eclipse first)
-         To enable DSL modules:
-           1. Import projects into Eclipse with Xtext SDK installed
-           2. Run GenerateMazeDsl.mwe2 as MWE2 Workflow (Right-click → Run As → MWE2 Workflow)
-           3. Uncomment the four DSL modules below
-           4. Rebuild with: mvn clean install -->
-    <!-- <module>main.game.maze.dsl</module>
+    <!-- 3: Xtext DSL modules -->
+    <module>main.game.maze.dsl</module>
     <module>main.game.maze.dsl.ide</module>
     <module>main.game.maze.dsl.ui</module>
-    <module>main.game.maze.dsl.tests</module> -->
+    <module>main.game.maze.dsl.tests</module>
 
     <!-- 4: feature og p2-repo -->
     <module>maze-feature</module>

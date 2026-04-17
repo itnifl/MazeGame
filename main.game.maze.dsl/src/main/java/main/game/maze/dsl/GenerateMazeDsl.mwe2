@@ -1,0 +1,49 @@
+module main.game.maze.dsl.GenerateMazeDsl
+
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
+
+var rootPath = ".."
+var fileEncoding = "UTF-8"
+var lineDelimiter = "\n"
+
+Workflow {
+    component = XtextGenerator {
+        configuration = {
+            project = StandardProjectConfig {
+                baseName = "main.game.maze.dsl"
+                rootPath = rootPath
+                runtimeTest = {
+                    enabled = true
+                }
+                eclipsePlugin = {
+                    enabled = true
+                }
+                eclipsePluginTest = {
+                    enabled = false
+                }
+                genericIde = {
+                    enabled = true
+                }
+                createEclipseMetaData = false
+            }
+            code = {
+                encoding = fileEncoding
+                lineDelimiter = lineDelimiter
+            }
+        }
+        language = StandardLanguage {
+            name = "main.game.maze.dsl.MazeDsl"
+            fileExtensions = "mazegame"
+            serializer = {
+                generateStub = false
+            }
+            validator = {
+                composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+            }
+            generator = {
+                generateXtendStub = false
+            }
+        }
+    }
+}

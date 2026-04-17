@@ -76,3 +76,19 @@ out/
 releng/local-p2/.mirror.stamp
 # Note: src-gen is committed to allow CI builds without running Acceleo
 # /maze-module-generator/src-gen
+
+# Xtext generated artifacts (do not commit)
+main.game.maze.dsl/src-gen/
+main.game.maze.dsl.ide/src-gen/
+main.game.maze.dsl.ui/src-gen/
+main.game.maze.dsl.tests/src-gen/
+main.game.maze.dsl/src/main/game/
+main.game.maze.dsl.ide/src/main/game/
+main.game.maze.dsl.ui/src/main/game/
+main.game.maze.dsl.tests/src/main/
+main.game.maze.dsl/model/
+
+# Temporary download created by Xtext generation in some setups
+.antlr-generator-3.2.0-patch.jar
+
+/temp

@@ -10,6 +10,7 @@
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
+* 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
 * 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
@@ -20,6 +21,7 @@
 Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
 Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
+Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-readme.md)
 
 ## Project Tech stack:
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -137,6 +139,8 @@ VS Code Java runtime:
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
 
 ## Build commands (exact)
+
+Xtext generation and reactor builds that include DSL modules should be run with Java 21 in the shell session.
 
 ```powershell
 # PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build

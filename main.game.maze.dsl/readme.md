@@ -2,6 +2,8 @@
 
 A textual Domain-Specific Language (DSL) for configuring MazeGame levels, opponents, difficulties, and patrol behaviors.
 
+See also the dedicated setup and learning guide: [../docs/xtext-readme.md](../docs/xtext-readme.md)
+
 ## What is a DSL?
 
 A **Domain-Specific Language** is a small, focused programming language designed for a specific task — in our case, configuring game levels. Unlike general-purpose languages (Java, Python), a DSL:
