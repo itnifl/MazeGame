@@ -7,6 +7,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Bundle-Activator: main.game.maze.dsl.ui.internal.DslActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Export-Package: main.game.maze.dsl.ui,
  main.game.maze.dsl.ui.contentassist,

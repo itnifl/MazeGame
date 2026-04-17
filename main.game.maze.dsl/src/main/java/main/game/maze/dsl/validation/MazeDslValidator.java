@@ -23,6 +23,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     public static final String INVALID_SPEED = "invalidSpeed";
     public static final String INSUFFICIENT_WAYPOINTS = "insufficientWaypoints";
     public static final String INVALID_MAX_COUNT = "invalidMaxCount";
+    public static final String INVALID_MAX_THREAT = "invalidMaxThreat";
     public static final String DUPLICATE_OPPONENT_NAME = "duplicateOpponentName";
     public static final String DUPLICATE_PATROL_NAME = "duplicatePatrolName";
     public static final String WAYPOINT_OUTSIDE_ZONE = "waypointOutsideZone";
@@ -76,8 +77,11 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     @Check
     public void checkPatrolWaypoints(PatrolConfig patrol) {
         if (patrol.getWaypoints().size() < 2) {
+            var feature = patrol.getWaypoints().isEmpty()
+                ? MazeDslPackage.Literals.PATROL_CONFIG__NAME
+                : MazeDslPackage.Literals.PATROL_CONFIG__WAYPOINTS;
             warning("Patrol should have at least 2 waypoints for meaningful movement",
-                    MazeDslPackage.Literals.PATROL_CONFIG__WAYPOINTS,
+                    feature,
                     INSUFFICIENT_WAYPOINTS);
         }
     }
@@ -90,7 +94,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
         if (difficulty.getMaxThreat() < 0) {
             error("Max threat cannot be negative",
                   MazeDslPackage.Literals.DIFFICULTY_CONFIG__MAX_THREAT,
-                  INVALID_MAX_COUNT);
+                  INVALID_MAX_THREAT);
         }
     }
 
@@ -201,7 +205,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     public void checkPatrolBehaviorHasRef(OpponentConfig opponent) {
         if (opponent.getBehavior() == BehaviorTypeEnum.PATROL && opponent.getPatrolRef() == null) {
             error("Opponents with patrol behavior must have a patrolRef",
-                  MazeDslPackage.Literals.OPPONENT_CONFIG__BEHAVIOR,
+                  MazeDslPackage.Literals.OPPONENT_CONFIG__PATROL_REF,
                   PATROL_REF_REQUIRED);
         }
     }
@@ -212,7 +216,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     @Check(CheckType.EXPENSIVE)
     public void checkTotalThreatVsMaxThreat(GameConfiguration game) {
         DifficultyConfig diff = game.getDifficulty();
-        if (diff == null || diff.getMaxThreat() == 0) {
+        if (diff == null) {
             return;
         }
 

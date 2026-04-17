@@ -29,7 +29,8 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
     }
 
     public String text(OpponentConfig element) {
-        return element.getName() + " [" + element.getType().getLiteral() + "]";
+        String type = element.getType() != null ? element.getType().getLiteral() : "unknown";
+        return element.getName() + " [" + type + "]";
     }
 
     public String text(PatrolConfig element) {
@@ -37,7 +38,8 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
     }
 
     public String text(DifficultyConfig element) {
-        return "Difficulty: " + element.getLevel().getLiteral();
+        String level = element.getLevel() != null ? element.getLevel().getLiteral() : "unknown";
+        return "Difficulty: " + level;
     }
 
     public String text(LootTableConfig element) {
@@ -49,28 +51,7 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
     }
 
     public String text(EnemyLimit element) {
-        return element.getType().getLiteral() + " max " + element.getMaxCount();
-    }
-
-    // Icons - return icon file names
-    public String image(GameConfiguration element) {
-        return "game.png";
-    }
-
-    public String image(OpponentConfig element) {
-        switch (element.getType()) {
-            case ZOMBIE: return "zombie.png";
-            case GHOST: return "ghost.png";
-            case PUMPKINBOMBER: return "pumpkin.png";
-            default: return "enemy.png";
-        }
-    }
-
-    public String image(PatrolConfig element) {
-        return "patrol.png";
-    }
-
-    public String image(DifficultyConfig element) {
-        return "difficulty.png";
+        String type = element.getType() != null ? element.getType().getLiteral() : "unknown";
+        return type + " max " + element.getMaxCount();
     }
 }

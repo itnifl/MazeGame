@@ -61,9 +61,9 @@
             <configuration>
               <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
               <arguments>
-                <argument>file:/${project.basedir}/src/main/java/main/game/maze/dsl/GenerateMazeDsl.mwe2</argument>
+                <argument>file:${project.basedir}/src/main/java/main/game/maze/dsl/GenerateMazeDsl.mwe2</argument>
                 <argument>-p</argument>
-                <argument>rootPath=/${project.basedir}/..</argument>
+                <argument>rootPath=${project.basedir}/..</argument>
               </arguments>
               <classpathScope>compile</classpathScope>
               <includeProjectDependencies>true</includeProjectDependencies>

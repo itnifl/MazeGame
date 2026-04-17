@@ -52,6 +52,7 @@ Workflow {
                 composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
             }
             generator = {
+                // Keep custom implementations in Java and avoid reintroducing Xtend stubs.
                 generateXtendStub = false
             }
         }

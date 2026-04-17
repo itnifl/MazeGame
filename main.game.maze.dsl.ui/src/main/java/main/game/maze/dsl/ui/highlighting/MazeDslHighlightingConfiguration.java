@@ -6,7 +6,6 @@
 package main.game.maze.dsl.ui.highlighting;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
@@ -38,40 +37,35 @@ public class MazeDslHighlightingConfiguration extends DefaultHighlightingConfigu
 
     private TextStyle gameNameStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(0, 102, 204));  // Blue
         style.setStyle(SWT.BOLD);
         return style;
     }
 
     private TextStyle opponentNameStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(204, 51, 0));  // Red-orange
         style.setStyle(SWT.BOLD);
         return style;
     }
 
     private TextStyle patrolNameStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(0, 153, 76));  // Green
         style.setStyle(SWT.BOLD);
         return style;
     }
 
     private TextStyle numericValueStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(0, 128, 128));  // Teal
         return style;
     }
 
     private TextStyle enumValueStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(128, 0, 128));  // Purple
+        style.setStyle(SWT.ITALIC);
         return style;
     }
 
     private TextStyle crossReferenceStyle() {
         TextStyle style = defaultTextStyle().copy();
-        style.setColor(new RGB(0, 102, 153));  // Dark cyan
         style.setStyle(SWT.ITALIC);
         return style;
     }

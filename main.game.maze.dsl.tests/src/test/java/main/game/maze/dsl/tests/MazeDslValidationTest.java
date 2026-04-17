@@ -166,7 +166,7 @@ public class MazeDslValidationTest {
         );
         validationHelper.assertError(result, 
             MazeDslPackage.Literals.DIFFICULTY_CONFIG,
-            MazeDslValidator.INVALID_MAX_COUNT);
+            MazeDslValidator.INVALID_MAX_THREAT);
     }
 
     @Test
@@ -182,5 +182,43 @@ public class MazeDslValidationTest {
         validationHelper.assertError(result, 
             MazeDslPackage.Literals.ENEMY_LIMIT,
             MazeDslValidator.INVALID_MAX_COUNT);
+    }
+
+    @Test
+    public void testWaypointsInsideZoneDoNotWarn() throws Exception {
+        GameConfiguration result = parseHelper.parse(
+            "game TestLevel {\n" +
+            "    patrol GuardRoute {\n" +
+            "        zone {\n" +
+            "            topLeft (0, 0)\n" +
+            "            width 100\n" +
+            "            height 100\n" +
+            "        }\n" +
+            "        path [(10, 10), (90, 90)]\n" +
+            "    }\n" +
+            "}\n"
+        );
+        validationHelper.assertNoWarnings(result,
+            MazeDslPackage.Literals.PATROL_CONFIG,
+            MazeDslValidator.WAYPOINT_OUTSIDE_ZONE);
+    }
+
+    @Test
+    public void testWaypointOutsideZoneWarns() throws Exception {
+        GameConfiguration result = parseHelper.parse(
+            "game TestLevel {\n" +
+            "    patrol GuardRoute {\n" +
+            "        zone {\n" +
+            "            topLeft (0, 0)\n" +
+            "            width 100\n" +
+            "            height 100\n" +
+            "        }\n" +
+            "        path [(10, 10), (150, 90)]\n" +
+            "    }\n" +
+            "}\n"
+        );
+        validationHelper.assertWarning(result,
+            MazeDslPackage.Literals.PATROL_CONFIG,
+            MazeDslValidator.WAYPOINT_OUTSIDE_ZONE);
     }
 }
