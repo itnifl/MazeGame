@@ -99,3 +99,5 @@ main.game.maze.dsl/model/
 .antlr-generator-3.2.0-patch.jar
 
 /temp
+/ci-logs
+logs.zip
