@@ -31,6 +31,14 @@
             priority="normal">
       </content-type>
    </extension>
+   
+   <!-- 
+        Xtext builder and nature integrations are provided by org.eclipse.xtext.ui.shared.
+        The shared xtextBuilder and xtextNature handle validation, indexing, and IDE services
+        for all Xtext languages. Language-specific builder participation is configured via 
+        IXtextBuilderParticipant binding in the Guice module (AbstractMazeDslUiModule).
+   -->
+   
    <!-- TODO: Implement wizard classes before enabling
    <extension
          point="org.eclipse.ui.newWizards">
