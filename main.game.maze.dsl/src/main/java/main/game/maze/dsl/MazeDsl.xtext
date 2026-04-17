@@ -68,7 +68,7 @@ OpponentConfig:
         ('health' health=SIGNED_INT)?
         ('speed' speed=DOUBLE)?
         ('threatLevel' threatLevel=DOUBLE)?
-        ('enabled' enabled=('true'|'false'))?
+        ('enabled' enabled=ecore::EBoolean)?
         ('behavior' behavior=BehaviorTypeEnum)?
         (characterSpecifics=CharacterSpecifics)?
         ('patrol' patrolRef=[PatrolConfig])?

@@ -82,7 +82,8 @@ public class MazeDslOutlineTreeProvider extends DefaultOutlineTreeProvider {
      * Display text for difficulty.
      */
     protected Object _text(DifficultyConfig difficulty) {
-        return "Difficulty: " + difficulty.getLevel().getLiteral();
+        String level = difficulty.getLevel() != null ? difficulty.getLevel().getLiteral() : "unknown";
+        return "Difficulty: " + level;
     }
 
     /**
