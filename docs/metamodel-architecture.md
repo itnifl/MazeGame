@@ -131,7 +131,7 @@ sequenceDiagram
 ### Example: From DSL to Domain Model
 
 **Input: tutorial.mazegame**
-```
+```text
 game TutorialLevel {
     difficulty {
         level easy
@@ -505,7 +505,7 @@ mvn -U clean verify
 
 The `GenerateMazeDsl.mwe2` file configures Xtext generation:
 
-```
+```xtend
 module main.game.maze.dsl.GenerateMazeDsl
 
 Workflow {

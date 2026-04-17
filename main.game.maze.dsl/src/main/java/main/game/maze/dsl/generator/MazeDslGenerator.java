@@ -400,15 +400,14 @@ public class MazeDslGenerator extends AbstractGenerator {
     }
 
     private String getDifficultyClass(DifficultyLevel level) {
-        switch (level) {
-            case EASY: return "EasyDifficulty";
-            case NORMAL: return "NormalDifficulty";
-            case HARD: return "HardDifficulty";
-            default: return "NormalDifficulty";
-        }
+        return getDifficultyTypeName(level);
     }
 
     private String getDifficultyXsiType(DifficultyLevel level) {
+        return getDifficultyTypeName(level);
+    }
+
+    private String getDifficultyTypeName(DifficultyLevel level) {
         switch (level) {
             case EASY: return "EasyDifficulty";
             case NORMAL: return "NormalDifficulty";

@@ -28,7 +28,7 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 
 ## Documentation Structure
 
-```
+```text
 docs/
 ├── readme.md           # This file
 ├── dsl-reference.md    # Complete DSL syntax reference

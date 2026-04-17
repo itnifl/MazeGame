@@ -20,7 +20,8 @@ and produces domain code that the app and tests consume.
   Contains FreeMarker `.ftl` templates for opponents and walls domains.
 
 - **Generators** → [`maze-generator.freemarker`](./maze-generator.freemarker)
-  Contains `RunFreeMarker.java` and `RunWallsFreeMarker.java` — FreeMarker-based generators that use templates to produce Java code from EMF models.
+  Contains `RunAcceleo.java` and `RunWallsAcceleo.java`.
+  These classes were migrated to FreeMarker internally but retain legacy class filenames for OSGi application compatibility.
 
 - **Generator Runner** → [`maze-generator.freemarker-runner`](./maze-generator.freemarker-runner)
   Eclipse plug-in that orchestrates generation during the Tycho build.
@@ -43,7 +44,7 @@ Generation is performed during the Maven/Tycho build using **FreeMarker-based ge
 High level flow:
 
 1. Tycho builds the EMF model plug-ins and the `maze-generator.freemarker` plug-in.
-2. `maze-generator.freemarker-runner` invokes `RunFreeMarker.java` and `RunWallsFreeMarker.java` in a headless runtime.
+2. `maze-generator.freemarker-runner` invokes `RunAcceleo.java` and `RunWallsAcceleo.java` in a headless runtime.
 3. The FreeMarker generators:
    - Load the XMI model files (e.g., `opponentModel.xmi`, `walls.xmi`)
    - Register the EMF packages (OpponentsPackage, WallsPackage, etc.)

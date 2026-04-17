@@ -14,6 +14,8 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 - CI only builds the game module (maze/), skipping DSL modules that need generated code.
 - Generation runs from Maven using an MWE2 workflow in the DSL module.
 - Use Java 21 for Xtext generation and reactor builds that include DSL modules.
+- CI currently uses Java 24 for game-focused workflow jobs in `.github/workflows/main.yml` and `.github/workflows/buildtest.yml`.
+   This is intentional for the JavaFX/game path only. DSL generation and full Tycho/Xtext reactor builds must still run on Java 21.
 - FreeMarker is used for code generation (not Acceleo).
 
 ## Where Xtext lives in the repo
@@ -48,7 +50,7 @@ This generation is wired in the DSL module build using the MWE2 launcher and run
 
 ## Why Java 21 here
 
-The DSL generation and Tycho/Xtext dependency graph in this repository is validated with Java 21. Running this flow with newer JDKs can trigger classpath or workflow errors depending on environment state.
+The DSL generation and Tycho/Xtext dependency graph in this repository is validated with Java 21. Running this flow with newer JDKs can trigger classpath or workflow errors depending on environment state. CI's Java 24 setup is scoped to game-focused jobs and does not replace the Java 21 requirement for DSL generation.
 
 ## What is generated and why it is ignored
 

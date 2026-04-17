@@ -566,7 +566,7 @@ The DSL provides a **human-readable textual syntax** for defining game levels in
 ```
 
 **After (DSL):**
-```
+```text
 game TutorialLevel {
     opponent Guard1 {
         type zombie
@@ -606,7 +606,7 @@ The DSL is implemented across four Eclipse plugin modules:
 1. Open `tutorial.mazegame` in an Xtext-enabled editor.
 
 2. Try adding an invalid configuration:
-   ```
+     ```text
    opponent BadEnemy {
        type zombie
        threatLevel 150    // Error: exceeds 100
@@ -645,7 +645,7 @@ When a `.mazegame` file is saved, the generator produces:
 
 Show the key constructs:
 
-```
+```text
 game MyLevel {
     // Difficulty settings
     difficulty {

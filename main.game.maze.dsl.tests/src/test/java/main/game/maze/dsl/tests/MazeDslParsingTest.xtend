@@ -21,7 +21,8 @@ class MazeDslParsingTest {
 	@Test
 	def void loadModel() {
 		val result = parseHelper.parse('''
-			Hello Xtext!
+			game MinimalLevel {
+			}
 		''')
 		Assert.assertNotNull(result)
 		val errors = result.eResource.errors
