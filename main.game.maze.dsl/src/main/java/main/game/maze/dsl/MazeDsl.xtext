@@ -68,7 +68,7 @@ OpponentConfig:
         ('health' health=SIGNED_INT)?
         ('speed' speed=DOUBLE)?
         ('threatLevel' threatLevel=DOUBLE)?
-        ('enabled' enabled=ecore::EBoolean)?
+        ('enabled' enabled=BOOLEAN)?
         ('behavior' behavior=BehaviorTypeEnum)?
         (characterSpecifics=CharacterSpecifics)?
         ('patrol' patrolRef=[PatrolConfig])?
@@ -182,4 +182,11 @@ DOUBLE returns ecore::EDouble:
 
 SIGNED_INT returns ecore::EInt:
     ('-')? INT
+;
+
+/*
+ * Datatype rule for boolean values
+ */
+BOOLEAN returns ecore::EBoolean:
+    'true' | 'false'
 ;
