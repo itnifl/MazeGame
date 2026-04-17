@@ -7,7 +7,7 @@ game ChallengeLevel {
 
     difficulty {
         level hard
-        maxThreat 100
+        maxThreat 150
         instantDeath true
         speedMultiplier 1.5
         damageMultiplier 2.0

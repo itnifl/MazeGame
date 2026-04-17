@@ -8,7 +8,6 @@
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="mazegame"
-            icon="icons/dsl.png"
             id="main.game.maze.dsl.MazeDsl"
             name="MazeDsl Editor">
       </editor>
@@ -32,6 +31,7 @@
             priority="normal">
       </content-type>
    </extension>
+   <!-- TODO: Implement wizard classes before enabling
    <extension
          point="org.eclipse.ui.newWizards">
       <category id="main.game.maze.dsl.category" name="MazeGame DSL"/>
@@ -40,8 +40,8 @@
             class="main.game.maze.dsl.ui.MazeDslExecutableExtensionFactory:main.game.maze.dsl.ui.wizard.MazeDslNewProjectWizard"
             id="main.game.maze.dsl.ui.wizard.MazeDslNewProjectWizard"
             name="New MazeGame Configuration"
-            icon="icons/dsl.png"
             project="false">
       </wizard>
    </extension>
+   -->
 </plugin>

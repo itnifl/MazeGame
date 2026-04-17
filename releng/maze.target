@@ -34,10 +34,9 @@
       <unit id="org.eclipse.acceleo.parser" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.profiler" version="0.0.0"/>
       <unit id="org.eclipse.acceleo.traceability" version="0.0.0"/>
-      <!-- Xtext dependencies -->
+      <!-- Xtext dependencies (without Xbase - DSL uses common.Terminals only) -->
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.xtext" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.xbase" version="0.0.0"/>
       <unit id="org.eclipse.xtext.xbase.lib" version="0.0.0"/>
       <unit id="org.eclipse.xtext.util" version="0.0.0"/>
       <unit id="org.eclipse.xtext.ide" version="0.0.0"/>

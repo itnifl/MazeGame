@@ -26,5 +26,4 @@ Require-Bundle: main.game.maze.dsl,
  org.eclipse.xtext.builder,
  org.eclipse.xtext.xbase.lib;bundle-version="2.14.0"
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: main.game.maze.dsl.ui.internal.DslActivator
 

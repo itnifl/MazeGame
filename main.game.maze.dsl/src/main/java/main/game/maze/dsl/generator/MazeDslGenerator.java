@@ -178,6 +178,15 @@ public class MazeDslGenerator extends AbstractGenerator {
             if (rs.getAttackDamage() != 0) {
                 sb.append("        opponent.setAttackDamage(" + rs.getAttackDamage() + ");\n");
             }
+            if (rs.getProjectileSpeed() != 0) {
+                sb.append("        opponent.setProjectileSpeed(" + rs.getProjectileSpeed() + ");\n");
+            }
+            if (rs.getProjectileType() != null) {
+                sb.append("        opponent.setProjectileType(ProjectileType." + rs.getProjectileType().getName().toUpperCase() + ");\n");
+            }
+            if (rs.getSplashRadius() != 0) {
+                sb.append("        opponent.setSplashRadius(" + rs.getSplashRadius() + ");\n");
+            }
         }
         
         sb.append("        return opponent;\n");

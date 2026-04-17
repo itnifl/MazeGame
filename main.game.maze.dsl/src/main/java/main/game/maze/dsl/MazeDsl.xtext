@@ -174,8 +174,8 @@ enum LootItemTypeEnum:
 ;
 
 /*
- * Terminal for double values
+ * Datatype rule for double values (accepts both integers and decimals)
  */
-terminal DOUBLE returns ecore::EDouble:
+DOUBLE returns ecore::EDouble:
     INT ('.' INT)?
 ;

@@ -24,8 +24,10 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     public static final String INSUFFICIENT_WAYPOINTS = "insufficientWaypoints";
     public static final String INVALID_MAX_COUNT = "invalidMaxCount";
     public static final String DUPLICATE_OPPONENT_NAME = "duplicateOpponentName";
+    public static final String DUPLICATE_PATROL_NAME = "duplicatePatrolName";
     public static final String WAYPOINT_OUTSIDE_ZONE = "waypointOutsideZone";
     public static final String MISMATCHED_SPECIFICS = "mismatchedSpecifics";
+    public static final String PATROL_REF_REQUIRED = "patrolRefRequired";
 
     /**
      * Validates that threat level is within acceptable bounds (0-100).
@@ -45,13 +47,12 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     }
 
     /**
-     * Validates that health is positive.
+     * Validates that health is positive (0 means use default).
      */
     @Check
     public void checkHealth(OpponentConfig opponent) {
-        if (opponent.getHealth() <= 0 && opponent.getHealth() != 0) {
-            // Health of 0 means use default
-            error("Health must be positive",
+        if (opponent.getHealth() < 0) {
+            error("Health cannot be negative",
                   MazeDslPackage.Literals.OPPONENT_CONFIG__HEALTH,
                   INVALID_HEALTH);
         }
@@ -188,8 +189,20 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
                 error("Duplicate patrol name: " + patrol.getName(),
                       patrol,
                       MazeDslPackage.Literals.PATROL_CONFIG__NAME,
-                      DUPLICATE_OPPONENT_NAME);
+                      DUPLICATE_PATROL_NAME);
             }
+        }
+    }
+
+    /**
+     * Validates that opponents with patrol behavior have a patrol reference.
+     */
+    @Check
+    public void checkPatrolBehaviorHasRef(OpponentConfig opponent) {
+        if (opponent.getBehavior() == BehaviorEnum.PATROL && opponent.getPatrolRef() == null) {
+            error("Opponents with patrol behavior must have a patrolRef",
+                  MazeDslPackage.Literals.OPPONENT_CONFIG__BEHAVIOR,
+                  PATROL_REF_REQUIRED);
         }
     }
 

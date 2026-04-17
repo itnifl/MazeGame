@@ -1,7 +1,7 @@
 param(
     [string]$LogDirectory = "releng\test-results",
     [ValidateSet(1,2,3,4)]
-    [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1–2, 4=skip 1–3
+    [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1-2, 4=skip 1-3
 )
 
 # Ensure we run from the script dir (repo root assumed)
@@ -43,7 +43,7 @@ function Write-StepResult {
         Summary = $Summary
     }) | Out-Null
 
-    Write-Host ("[{0}] {1} — {2}" -f $Status, $Step, $Summary)
+    Write-Host ("[{0}] {1} - {2}" -f $Status, $Step, $Summary)
 }
 
 function Skip-Step {
@@ -52,8 +52,8 @@ function Skip-Step {
     Write-StepResult -Step $Step -Status "SKIPPED" -CommandText $Cmd -Summary $reason -Output ""
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Step 0 — environment info (always run; cheap and useful)
+# ------------------------------------------------------------------------------
+# Step 0 - environment info (always run; cheap and useful)
 $step0 = "0. Toolchain versions"
 $cmdText0 = @'
 mvn -version
@@ -65,7 +65,7 @@ $output0 = & {
 } 2>&1
 Write-StepResult -Step $step0 -Status "OK" -CommandText $cmdText0 -Summary "Recorded Maven/Java versions." -Output $output0
 
-# Step 1 — rebuild local p2 mirror
+# Step 1 - rebuild local p2 mirror
 $step1   = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
 Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
@@ -94,7 +94,7 @@ if ($StartAt -gt 1) {
     Write-StepResult -Step $step1 -Status $status1 -CommandText $cmdText1 -Summary $summary1 -Output $output1
 }
 
-# Step 2 — verify required bundles and features in local mirror
+# Step 2 - verify required bundles and features in local mirror
 $step2   = "2. Verify required Eclipse bundles and features in local mirror"
 $cmdText2 = @'
 Check for these bundles/features in releng\local-p2 and content.xml:
@@ -283,7 +283,7 @@ if ($StartAt -gt 2) {
     }
 }
 
-# Step 3 — clear Tycho p2 cache
+# Step 3 - clear Tycho p2 cache
 $step3   = "3. Clear Tycho p2 cache"
 $cmdText3 = @'
 Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
@@ -302,7 +302,7 @@ if ($StartAt -gt 3) {
     Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $summary3 -Output $output3
 }
 
-# Step 4 — full Tycho + app build
+# Step 4 - full Tycho + app build
 $step4   = "4. Full build (Tycho + app)"
 $cmdText4 = @'
 mvn -U -DskipTests=false clean verify -e -X
@@ -331,7 +331,7 @@ foreach ($s in $stepSummaries) {
 Write-Host ""
 Write-Host "Overall summary:"
 foreach ($s in $stepSummaries) {
-    Write-Host ("• {0} — {1} — {2}" -f $s.Step, $s.Status, $s.Summary)
+    Write-Host ("* {0} - {1} - {2}" -f $s.Step, $s.Status, $s.Summary)
 }
 Write-Host ""
 Write-Host "Test run finished. Log written to:"
