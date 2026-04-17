@@ -23,7 +23,7 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 |----------|-------------|
 | [Main README](../readme.md) | Project overview and module index |
 | [DSL Module README](../main.game.maze.dsl/readme.md) | DSL project structure and technical details |
-| [Acceleo Guide](../acceleo.readme.md) | Code generation with Acceleo |
+| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
 | [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture |
 
 ## Documentation Structure

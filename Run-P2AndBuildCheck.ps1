@@ -118,7 +118,6 @@ Check for these bundles/features in releng\local-p2 and content.xml:
   Feature groups:
     org.eclipse.emf.sdk.feature.group
     org.eclipse.ocl.all.sdk.feature.group
-    org.eclipse.acceleo.feature.group
     org.eclipse.emf.codegen.feature.group
     org.eclipse.xtext.sdk.feature.group
 '@
@@ -144,8 +143,6 @@ if ($StartAt -gt 2) {
         "org.eclipse.ocl.pivot",
         "org.eclipse.emf.sdk.feature.group",
         "org.eclipse.ocl.all.sdk.feature.group",
-        "org.eclipse.acceleo.feature.group",
-        #"org.eclipse.acceleo.runtime.feature.group",
         "org.eclipse.emf.codegen.feature.group",
         # Xtext dependencies (for DSL)
         "org.eclipse.xtext",
@@ -176,8 +173,6 @@ if ($StartAt -gt 2) {
                 releng\local-p2\plugins\org.eclipse.ocl.pivot_*,
                 releng\local-p2\features\org.eclipse.emf.sdk_*,
                 releng\local-p2\features\org.eclipse.ocl.all.sdk_*,
-                releng\local-p2\features\org.eclipse.acceleo_*,
-                releng\local-p2\features\org.eclipse.acceleo.runtime_*,
                 releng\local-p2\features\org.eclipse.emf.codegen_*,
                 releng\local-p2\plugins\org.eclipse.xtext_*,
                 releng\local-p2\plugins\org.eclipse.xtext.xbase_*,
@@ -202,7 +197,6 @@ if ($StartAt -gt 2) {
             "releng\local-p2\plugins\org.eclipse.ocl.pivot_*",
             "releng\local-p2\features\org.eclipse.emf.sdk_*",          # org.eclipse.emf.sdk.feature.group
             "releng\local-p2\features\org.eclipse.ocl.all.sdk_*",      # org.eclipse.ocl.all.sdk.feature.group
-            "releng\local-p2\features\org.eclipse.acceleo_*",          # org.eclipse.acceleo.feature.group        
             "releng\local-p2\features\org.eclipse.emf.codegen_*",      # org.eclipse.emf.codegen.feature.group
             # Xtext dependencies (for DSL)
             "releng\local-p2\plugins\org.eclipse.xtext_*",

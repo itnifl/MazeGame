@@ -1,6 +1,6 @@
 # The Eclipse modules are consumed in two different “worlds”
 
-1. 🔧 **Eclipse / Tycho world** (EMF, OCL, Acceleo, p2, targets)  
+1. 🔧 **Eclipse / Tycho world** (EMF, OCL, FreeMarker, p2, targets)  
 2. 🎮 **Maze game world** (plain Java / Maven / JavaFX)
 
 The same EMF based code is built as **Eclipse plug-ins** in the first world  
@@ -15,8 +15,8 @@ These modules live in the Eclipse / Tycho world:
 - `main.game.maze.behaviour` → bundle `main.game.maze.behaviour`  
 - `main.game.maze.difficulties` → bundle `main.game.maze.difficulties`  
 - `main.game.maze.opponents` → bundle `main.game.maze.opponents`  
-- `maze-generator.acceleo` → Acceleo templates (no UI, pure generator logic)  
-- `maze-generator.acceleo-runner` → headless Equinox runner that starts Acceleo
+- `maze-generator.freemarker` → FreeMarker templates (no UI, pure generator logic)  
+- `maze-generator.freemarker-runner` → headless Equinox runner that starts FreeMarker
 
 Tycho builds them from the root with:
 
@@ -27,7 +27,7 @@ mvn clean verify
 Tycho:
 
 * reads the **target** definition from `releng` (which points at `releng/local-p2`)
-* resolves EMF, OCL and Acceleo from the local mirror
+* resolves EMF, OCL and FreeMarker from the local mirror
 * compiles the plug-ins as **OSGi bundles** (JARs with `META-INF/MANIFEST.MF`, `Bundle-SymbolicName`, etc.)
 
 After the build you effectively have JARs for:
@@ -35,8 +35,8 @@ After the build you effectively have JARs for:
 * `main.game.maze.behaviour`
 * `main.game.maze.difficulties`
 * `main.game.maze.opponents`
-* `maze-generator.acceleo`
-* `maze-generator.acceleo-runner`
+* `maze-generator.freemarker`
+* `maze-generator.freemarker-runner`
 
 From Tycho’s point of view these are Eclipse plug-ins.
 From Maven’s point of view they are also just normal reactor artifacts.
@@ -99,10 +99,10 @@ import main.game.maze.behaviour.*;
 Conceptual pipeline:
 
 1. `releng/mirror`
-   fills `releng/local-p2` with EMF, OCL, Acceleo and related Eclipse bundles.
+   fills `releng/local-p2` with EMF, OCL and related Eclipse bundles.
 
 2. Tycho builds the Eclipse modules
-   `main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`, `maze-generator.acceleo`, `maze-generator.acceleo-runner`.
+   `main.game.maze.behaviour`, `main.game.maze.difficulties`, `main.game.maze.opponents`, `maze-generator.freemarker`, `maze-generator.freemarker-runner`.
 
 3. `maze-module-generator`
    runs the FreeMarker-based generators (via the runner), receives the generated Java sources in `src-gen`,
@@ -117,7 +117,7 @@ Conceptual pipeline:
    - `WallMaterialRenderer` — renders walls by material type
    - `WallCollisionHandler` — handles wall collision logic
 
-   **Note**: FreeMarker templates are located in `maze-generator.acceleo/src/main/resources/templates/`.
+   **Note**: FreeMarker templates are located in `maze-generator.freemarker/src/main/resources/templates/`.
 
 4. `maze` depends on:
 

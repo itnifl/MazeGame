@@ -14,7 +14,7 @@ This guide explains how Xtext is wired in this repository, how to run it reliabl
 - CI only builds the game module (maze/), skipping DSL modules that need generated code.
 - Generation runs from Maven using an MWE2 workflow in the DSL module.
 - Use Java 21 for Xtext generation and reactor builds that include DSL modules.
-- Acceleo is no longer the path for this DSL flow; FreeMarker is used in the broader project direction.
+- FreeMarker is used for code generation (not Acceleo).
 
 ## Where Xtext lives in the repo
 

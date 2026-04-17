@@ -27,7 +27,7 @@
     <module>main.game.maze.behaviour</module>
     <module>main.game.maze.difficulties</module>
     <module>main.game.maze.opponents</module>
-    <module>maze-generator.acceleo</module>
+    <module>maze-generator.freemarker</module>
 
     <!-- 3: Xtext DSL modules -->
     <module>main.game.maze.dsl</module>
@@ -38,11 +38,11 @@
     <!-- 4: feature og p2-repo -->
     <module>maze-feature</module>
     <module>maze-module-repository</module>
-    <module>maze-generator.acceleo-runner</module>
+    <module>maze-generator.freemarker-runner</module>
 
-    <!-- Note: maze-generator-java removed from build - it contains Acceleo 4 templates
-         that are not used. The build now uses FreeMarker-based generators in 
-         maze-generator.acceleo instead. -->
+    <!-- Note: maze-generator-java removed from build - it contained Acceleo 4 templates
+         that are no longer used. The build now uses FreeMarker-based generators in 
+         maze-generator.freemarker instead. -->
 
     <!-- 5: evt. egen generated/jar-modul for spillet -->
     <module>maze-module-generator</module>

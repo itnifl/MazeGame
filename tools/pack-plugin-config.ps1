@@ -2,7 +2,7 @@
 # Includes ONLY:
 #   - Eclipse plugin files: MANIFEST.MF, plugin.xml, feature.xml, *.product, *.target (incl. maze.target)
 #   - pom.xml
-#   - RunAcceleo.java
+#   - RunAcceleo.java (FreeMarker generator - legacy class name)
 #   - HeadlessGenerator.java / HeadlessGenmerator.java
 #   - *.properties
 #   - *.xml

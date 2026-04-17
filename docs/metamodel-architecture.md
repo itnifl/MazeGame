@@ -562,8 +562,8 @@ Workflow {
 
 | Template Category | Location |
 |-------------------|----------|
-| Opponent templates | `maze-generator.acceleo/src/main/resources/templates/opponents/` |
-| Wall templates | `maze-generator.acceleo/src/main/resources/templates/walls/` |
+| Opponent templates | `maze-generator.freemarker/src/main/resources/templates/opponents/` |
+| Wall templates | `maze-generator.freemarker/src/main/resources/templates/walls/` |
 
 ## Summary
 

@@ -19,7 +19,7 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Generated local p2 repository created by the mirror. Contains `artifacts.jar`, `content.jar`, platform specific executables under `binary/`, and the mirrored plug ins and features.
 
 * `releng/maze.target`
-  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Acceleo, Equinox executable and related dependencies).
+  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Equinox executable and related dependencies).
 
 * `releng/test-results/`
   Log files written by the helper script `Run-P2AndBuildCheck.ps1` when you run full mirror and build checks.
@@ -31,7 +31,7 @@ The local p2 mirror is built from the public Eclipse in this source code reposit
 * core runtime and Equinox bundles
 * EMF runtime and code generation
 * OCL runtime and SDK
-* Acceleo runtime and SDK
+* FreeMarker for code generation (via embedded JAR)
 * Equinox executable feature group
 
 The mirror is written to `releng/local-p2` and can be used for offline builds, for diagnostics, and for verifying that all required units are available in a single place.

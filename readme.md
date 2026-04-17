@@ -11,14 +11,14 @@
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
 * 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
-* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
+* 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
-* 🧩 [maze-generator.acceleo-runner](maze-generator.acceleo-runner/readme.md)
+* 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🖥️ [maze](maze/readme.md)
 
-Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
 Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-readme.md)
@@ -33,7 +33,7 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 ![JUnit5](https://img.shields.io/badge/JUnit5-%2325A162.svg?style=for-the-badge&logo=junit5&logoColor=white) <br/>
 ![MDD](https://img.shields.io/badge/Model_Driven_Dev-%23555555.svg?style=for-the-badge)
 ![Xtext](https://img.shields.io/badge/Xtext-%23F7941E.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
-![Acceleo](https://img.shields.io/badge/Acceleo-%238CA315.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![FreeMarker](https://img.shields.io/badge/FreeMarker-%23E34F26.svg?style=for-the-badge&logo=apache&logoColor=white)
 ![Makefile](https://img.shields.io/badge/Makefile-%23A81D33.svg?style=for-the-badge&logo=gnumake&logoColor=white)
 <br/>
 
@@ -273,15 +273,15 @@ See: [maze-feature/readme.md](maze-feature/readme.md)
 Eclipse p2 update site that publishes the MazeGame feature for installation and targets.  
 See: [maze-module-repository/readme.md](maze-module-repository/readme.md)
 
-### maze-generator.acceleo
+### maze-generator.freemarker
 
-FreeMarker templates that turn EMF models into Java code and helper artefacts (name retained for historical reasons).  
-See: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md)
+FreeMarker templates that turn EMF models into Java code and helper artefacts.
+See: [maze-generator.freemarker/readme.md](maze-generator.freemarker/readme.md)
 
-### maze-generator.acceleo-runner
+### maze-generator.freemarker-runner
 
-Headless runner plug-in that executes FreeMarker-based generators during the Tycho build.  
-See: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md)
+Headless runner plug-in that executes FreeMarker-based generators during the Tycho build.
+See: [maze-generator.freemarker-runner/readme.md](maze-generator.freemarker-runner/readme.md)
 
 ### maze-module-generator
 
@@ -306,7 +306,7 @@ This repository includes two helper scripts for packaging the source and for run
 ### Run-P2AndBuildCheck.ps1
 
 **What it does**
-Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Acceleo, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
+Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
 
 **Typical flow**
 

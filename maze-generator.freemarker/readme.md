@@ -1,4 +1,4 @@
-# maze-generator.acceleo
+# maze-generator.freemarker
 
 > **Model-Driven Code Generation for MazeGame**
 
@@ -63,9 +63,11 @@ mvn -pl maze-module-generator test
 
 ## 🔄 Migration Journey: Acceleo → FreeMarker
 
-### Why "acceleo" is Still in the Name
+### Historical Note
 
-This module was originally designed to use **Acceleo** (Eclipse's M2T framework) for code generation. The name `maze-generator.acceleo` remains for historical compatibility with the build system and documentation.
+This module was originally named `maze-generator.acceleo` and was designed to use **Acceleo** (Eclipse's M2T framework) for code generation. It has been renamed to `maze-generator.freemarker` to reflect the actual template engine in use.
+
+**Note**: Some Java class names (`RunAcceleo`, `RunWallsAcceleo`) retain the legacy naming for OSGi application ID compatibility.
 
 ### The Evolution
 
@@ -365,7 +367,7 @@ This is called **Model-Driven Engineering** - the model is the single source of 
 ## 📁 Project Structure
 
 ```
-maze-generator.acceleo/
+maze-generator.freemarker/
 ├── src/main/java/main/game/maze/gen/
 │   ├── RunAcceleo.java           # FreeMarker-based opponent generator
 │   └── RunWallsAcceleo.java      # FreeMarker-based wall generator
@@ -488,8 +490,8 @@ mvn clean verify -DskipTests
 
 The Maven build:
 1. Compiles all EMF models
-2. Builds the `maze-generator.acceleo` plugin with FreeMarker generators
-3. Runs `maze-generator.acceleo-runner` which invokes `RunAcceleo` and `RunWallsAcceleo`
+2. Builds the `maze-generator.freemarker` plugin with FreeMarker generators
+3. Runs `maze-generator.freemarker-runner` which invokes `RunAcceleo` and `RunWallsAcceleo`
 4. Generated sources appear in `maze-module-generator/src-gen/`
 
 ---
@@ -616,7 +618,7 @@ public class NewOutput {
 
 ### 4. Update the Generator
 
-In `maze-generator.acceleo`, add a new generator class or update an existing one to:
+In `maze-generator.freemarker`, add a new generator class or update an existing one to:
 1. Load the XMI model file
 2. Transform EMF objects to a FreeMarker data model (Map)
 3. Process the template and write output
@@ -1173,7 +1175,7 @@ public static void dispatch(
 ### Template Organization
 
 ```
-maze-generator.acceleo/src/main/resources/templates/
+maze-generator.freemarker/src/main/resources/templates/
 ├── opponents/
 │   ├── OpponentRegistry.ftl           # Lists all enemy types
 │   ├── CharacterRegistrar.ftl         # Type dispatch with handlers
@@ -1250,7 +1252,7 @@ This allows the behaviour model to access opponent types, enabling constraints l
 ## 🔗 Related Projects
 
 - **[Model-Driven Code Generation Plan](../readme-mddcodegeneration.md)** - Comprehensive plan for MDE code generation across all domains
-- [maze-generator.acceleo-runner](../maze-generator.acceleo-runner/readme.md) - Headless runner for Maven builds
+- [maze-generator.freemarker-runner](../maze-generator.freemarker-runner/readme.md) - Headless runner for Maven builds
 - [maze-module-generator](../maze-module-generator/readme.md) - Contains generated sources and **unit tests** for MDE validation
 - [main.game.maze.opponents](../main.game.maze.opponents/readme.md) - Opponents EMF model (`CharacterType`, `Zombie`, `Ghost`, `PumpkinBomber`)
 - [main.game.maze.walls](../main.game.maze.walls/readme.md) - Walls EMF model (`WallMaterial`, `WallMaterialBaseType`)
@@ -1330,5 +1332,5 @@ Here's the complete workflow for making model-driven changes:
 
 ---
 
-*By keeping all model-to-code generation logic in `maze-generator.acceleo`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline using FreeMarker templates.*
+*By keeping all model-to-code generation logic in `maze-generator.freemarker`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline using FreeMarker templates.*
 

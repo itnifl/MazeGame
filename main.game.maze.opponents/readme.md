@@ -76,7 +76,7 @@ The following classes are generated from `opponents.ecore` and placed in `maze-m
 | `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
 | `OpponentRegistry` | Lists all enemy types with their stats |
 
-**Note**: The build uses FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/opponents/` for code generation.
+**Note**: The build uses FreeMarker templates in `maze-generator.freemarker/src/main/resources/templates/opponents/` for code generation.
 
 **Key EMF model methods used:**
 - `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution

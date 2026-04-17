@@ -36,12 +36,13 @@
                 <repository>
                   <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/</url>
                 </repository>
-                <repository>
-                  <url>https://download.eclipse.org/acceleo/updates/releases/3.7</url>
-                </repository>
                 <!-- Xtext SDK for DSL support -->
                 <repository>
                   <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/</url>
+                </repository>
+                <!-- MWE2 for Xtext code generation -->
+                <repository>
+                  <url>https://download.eclipse.org/modeling/emft/mwe/updates/releases/</url>
                 </repository>
               </source>               
               <ius>
@@ -56,7 +57,6 @@
                 <iu><id>org.eclipse.equinox.common</id></iu>
                 <iu><id>org.eclipse.core.jobs</id></iu>
                 <iu><id>org.eclipse.equinox.launcher</id></iu>
-                <iu><id>org.eclipse.acceleo.feature.group</id></iu>
                 <iu><id>org.eclipse.emf.sdk.feature.group</id></iu>
                 <iu><id>org.eclipse.ocl.all.sdk.feature.group</id></iu>                
                 <iu><id>org.eclipse.emf.codegen.feature.group</id></iu>
@@ -64,6 +64,11 @@
                 <iu><id>org.eclipse.equinox.executable.feature.group</id></iu>
                 <!-- Xtext SDK for DSL support -->
                 <iu><id>org.eclipse.xtext.sdk.feature.group</id></iu>
+                <!-- MWE2 for Xtext code generation -->
+                <iu><id>org.eclipse.emf.mwe2.runtime</id></iu>
+                <iu><id>org.eclipse.emf.mwe2.launch</id></iu>
+                <iu><id>org.eclipse.emf.mwe2.lib</id></iu>
+                <iu><id>org.eclipse.emf.mwe2.language.sdk.feature.group</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>

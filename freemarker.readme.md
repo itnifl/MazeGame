@@ -1,28 +1,28 @@
-# Acceleo in the Maze Game
+# FreeMarker in the Maze Game
 
-This document explains how model to code generation with **Acceleo** is used in the Maze game, what gets generated, and how it fits into the overall build.
+This document explains how model to code generation with **FreeMarker** is used in the Maze game, what gets generated, and how it fits into the overall build.
 
 ---
 
 ## Purpose
 
-Acceleo turns EMF models into concrete Java classes used by the game.
+FreeMarker turns EMF models into concrete Java classes used by the game.
 
-In this project Acceleo reads difficulty and opponent related models  
-for example the `DifficultyGameData` model  
+In this project FreeMarker reads difficulty and opponent related models
+for example the `DifficultyGameData` model
 and produces domain code that the app and tests consume.
 
 ---
 
 ## Where things live
 
-- **FreeMarker Templates** → [`maze-generator.acceleo/src/main/resources/templates`](./maze-generator.acceleo/src/main/resources/templates)  
+- **FreeMarker Templates** → [`maze-generator.freemarker/src/main/resources/templates`](./maze-generator.freemarker/src/main/resources/templates)
   Contains FreeMarker `.ftl` templates for opponents and walls domains.
 
-- **Generators** → [`maze-generator.acceleo`](./maze-generator.acceleo)  
-  Contains `RunAcceleo.java` and `RunWallsAcceleo.java` — FreeMarker-based generators that use templates to produce Java code from EMF models.
+- **Generators** → [`maze-generator.freemarker`](./maze-generator.freemarker)
+  Contains `RunFreeMarker.java` and `RunWallsFreeMarker.java` — FreeMarker-based generators that use templates to produce Java code from EMF models.
 
-- **Generator Runner** → [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner)  
+- **Generator Runner** → [`maze-generator.freemarker-runner`](./maze-generator.freemarker-runner)
   Eclipse plug-in that orchestrates generation during the Tycho build.
 
 - **Generated sources** → [`maze-module-generator`](./maze-module-generator)  
@@ -42,8 +42,8 @@ Generation is performed during the Maven/Tycho build using **FreeMarker-based ge
 
 High level flow:
 
-1. Tycho builds the EMF model plug-ins and the `maze-generator.acceleo` plug-in.  
-2. `maze-generator.acceleo-runner` invokes `RunAcceleo.java` and `RunWallsAcceleo.java` in a headless runtime.  
+1. Tycho builds the EMF model plug-ins and the `maze-generator.freemarker` plug-in.
+2. `maze-generator.freemarker-runner` invokes `RunFreeMarker.java` and `RunWallsFreeMarker.java` in a headless runtime.
 3. The FreeMarker generators:
    - Load the XMI model files (e.g., `opponentModel.xmi`, `walls.xmi`)
    - Register the EMF packages (OpponentsPackage, WallsPackage, etc.)
@@ -139,7 +139,7 @@ Run tests with: `mvn -pl maze-module-generator test`
 
 ## When you change the model or templates
 
-* Edit the Ecore model, XMI model instances or the FreeMarker `.ftl` templates in `maze-generator.acceleo/src/main/resources/templates/`.
+* Edit the Ecore model, XMI model instances or the FreeMarker `.ftl` templates in `maze-generator.freemarker/src/main/resources/templates/`.
 * Re run the generator build
   for example `mvn -pl maze-module-generator -am clean verify`.
 * Commit the updated sources in `maze-module-generator` if you intend collaborators to build without regenerating locally.
@@ -166,7 +166,7 @@ Run tests with: `mvn -pl maze-module-generator test`
     for example `models/DifficultyGameData.xmi`
   * the output folder is a writable directory inside `maze-module-generator`
     for example `src-gen`
-  * the FreeMarker templates are present in `maze-generator.acceleo/src/main/resources/templates/`.
+  * the FreeMarker templates are present in `maze-generator.freemarker/src/main/resources/templates/`.
 
 * **Template errors**
   FreeMarker exceptions are surfaced as build failures from the generator.
@@ -190,5 +190,5 @@ Run tests with: `mvn -pl maze-module-generator test`
 
 For more details, see:
 
-* [`maze-generator.acceleo-runner`](./maze-generator.acceleo-runner/readme.md)
+* [`maze-generator.freemarker-runner`](./maze-generator.freemarker-runner/readme.md)
 * [`maze-module-generator`](./maze-module-generator/readme.md)

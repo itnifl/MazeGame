@@ -1,17 +1,19 @@
-# maze-generator.acceleo-runner
+# maze-generator.freemarker-runner
 
 This project contains the headless code generation runner used in the Maven / Tycho build for MazeGame.
 
-Where `maze-generator.acceleo` holds the FreeMarker-based generators (`RunAcceleo.java`, `RunWallsAcceleo.java`),  
-`maze-generator.acceleo-runner` is the executable plug-in that invokes these generators during the build.
+Where `maze-generator.freemarker` holds the FreeMarker-based generators (`RunAcceleo.java`, `RunWallsAcceleo.java`),  
+`maze-generator.freemarker-runner` is the executable plug-in that invokes these generators during the build.
+
+**Note**: The class names `RunAcceleo` and `RunWallsAcceleo` are legacy names; they use FreeMarker internally.
 
 ---
 
 ## Purpose
 
-`maze-generator.acceleo-runner` is responsible for:
+`maze-generator.freemarker-runner` is responsible for:
 
-- invoking the FreeMarker-based generators from `maze-generator.acceleo` in a headless runtime  
+- invoking the FreeMarker-based generators from `maze-generator.freemarker` in a headless runtime  
 - passing the correct model paths and output directories to the generators  
 - writing generated Java sources into the appropriate `target` folders or target modules  
 - integrating smoothly into the Tycho reactor so generation happens as part of `mvn clean verify`
@@ -24,7 +26,7 @@ This allows the entire model-to-code generation pipeline to run automatically in
 
 ## Project contents
 
-Typical files in `maze-generator.acceleo-runner` include:
+Typical files in `maze-generator.freemarker-runner` include:
 
 - `pom.xml`  
   Tycho configuration that declares this as an Eclipse plug-in and sets up the execution phase (usually `generate-sources` or `prepare-package`).
@@ -33,7 +35,7 @@ Typical files in `maze-generator.acceleo-runner` include:
   Plug-in metadata declaring dependencies on:
   - the EMF runtime
   - the EMF model plug-ins (opponents, difficulties, walls)
-  - the `maze-generator.acceleo` plug-in (which contains FreeMarker and templates)
+  - the `maze-generator.freemarker` plug-in (which contains FreeMarker and templates)
 
 - `plugin.xml`  
   Optional extension declarations or application entries used when starting the runner in headless mode.
@@ -53,8 +55,8 @@ They are written to `target/generated-sources/acceleo` or into the relevant `mai
 
 During a full Tycho build of the MazeGame reactor:
 
-1. Tycho builds all required EMF model plug-ins and the `maze-generator.acceleo` plug-in.  
-2. Tycho builds `maze-generator.acceleo-runner`, which depends on those plug-ins.  
+1. Tycho builds all required EMF model plug-ins and the `maze-generator.freemarker` plug-in.  
+2. Tycho builds `maze-generator.freemarker-runner`, which depends on those plug-ins.  
 3. At the configured build phase, Tycho launches the runner in an OSGi/Eclipse environment.  
 4. The runner:
    - locates the model resources (for example `.opponents`, `.difficulties`, `.walls` or `.xmi` files)

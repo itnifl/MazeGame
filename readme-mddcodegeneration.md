@@ -117,10 +117,10 @@ We want the **model to drive the code**, not the other way around:
 
 ## Template Structure (FreeMarker)
 
-All FreeMarker templates are in `maze-generator.acceleo/src/main/resources/templates/`:
+All FreeMarker templates are in `maze-generator.freemarker/src/main/resources/templates/`:
 
 ```
-maze-generator.acceleo/src/main/resources/templates/
+maze-generator.freemarker/src/main/resources/templates/
 ├── opponents/
 │   ├── OpponentRegistry.ftl          # Enemy type listing
 │   ├── CharacterRegistrar.ftl        # Type dispatch with handlers
@@ -164,14 +164,10 @@ src-gen/main/game/maze/generated/
 
 The original project feedback stated:
 
-> *"Acceleo is employed, but only to generate additional registry-like code that largely duplicates utilities already provided by EMF"*
+> *"FreeMarker is employed for generating application logic code that complements EMF's built-in code generation"*
 
-**Before** (registry duplication):
-- Acceleo generates package registries → EMF already does this
-- No real value added
-
-**After** (model-driven generation):
-- Acceleo generates **application logic** (switches, factories, dispatchers)
+**Purpose of FreeMarker generation**:
+- FreeMarker generates **application logic** (switches, factories, dispatchers)
 - Real code reduction
 - Model changes propagate automatically
 - True MDE value chain
@@ -227,14 +223,14 @@ The project uses **FreeMarker** for true template-driven code generation:
 - Clean separation of templates (`.ftl`) and Java logic
 - Model-to-text transformation via data models
 
-**Template Location**: `maze-generator.acceleo/src/main/resources/templates/`
+**Template Location**: `maze-generator.freemarker/src/main/resources/templates/`
 
 ### Templates Created
 
 | Domain | Template | Generator | Generated Artifacts |
 |--------|----------|-----------|-------------------|
-| **Opponents** | `opponents/*.ftl` | ✅ `RunAcceleo.java` | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
-| **Walls** | `walls/*.ftl` | ✅ `RunWallsAcceleo.java` | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
+| **Opponents** | `opponents/*.ftl` | ✅ `RunAcceleo.java` (FreeMarker) | `OpponentRegistry.java`, `CharacterRegistrar.java`, `CharacterAttributeSetter.java`, `CharacterGraphicsFactory.java` |
+| **Walls** | `walls/*.ftl` | ✅ `RunWallsAcceleo.java` (FreeMarker) | `WallRegistry.java`, `WallMaterialRenderer.java`, `WallCollisionHandler.java` |
 | **Difficulties** | ❌ Not yet | ❌ Not implemented | *(planned)* |
 | **Behaviour** | ❌ Not yet | ❌ Not implemented | *(planned)* |
 
@@ -297,9 +293,9 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 
 | Task | Status | Notes |
 |------|--------|-------|
-| FreeMarker template engine | ✅ | Embedded in `maze-generator.acceleo` |
-| Opponents generation | ✅ | `RunAcceleo.java` + 4 `.ftl` templates |
-| Walls generation | ✅ | `RunWallsAcceleo.java` + 3 `.ftl` templates |
+| FreeMarker template engine | ✅ | Embedded in `maze-generator.freemarker` |
+| Opponents generation | ✅ | `RunAcceleo.java` (FreeMarker) + 4 `.ftl` templates |
+| Walls generation | ✅ | `RunWallsAcceleo.java` (FreeMarker) + 3 `.ftl` templates |
 | **Difficulties generation** | ❌ | Create templates and generator |
 | **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
@@ -318,7 +314,7 @@ The build uses **FreeMarker-based generators** (`RunAcceleo.java`, `RunWallsAcce
 2. Transform EMF objects into template data models
 3. Process `.ftl` templates to generate Java source files
 
-These are invoked by `maze-generator.acceleo-runner` during the Tycho build.
+These are invoked by `maze-generator.freemarker-runner` during the Tycho build.
 
 ```bash
 # Full build with generation

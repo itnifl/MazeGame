@@ -22,7 +22,7 @@ The following Java classes are generated from EMF models and demonstrate true Mo
 | `WallMaterialRenderer.java` | `walls.ecore` | Renders walls by material type |
 | `WallCollisionHandler.java` | `walls.ecore` | Handles wall collision logic |
 
-**Note**: FreeMarker templates are located in `maze-generator.acceleo/src/main/resources/templates/`. The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) use FreeMarker for true model-to-text transformation.
+**Note**: FreeMarker templates are located in `maze-generator.freemarker/src/main/resources/templates/`. The generators (`RunAcceleo.java`, `RunWallsAcceleo.java`) use FreeMarker for true model-to-text transformation (the class names are legacy).
 
 ### Key Methods in Generated Code
 

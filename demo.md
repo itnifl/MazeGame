@@ -5,7 +5,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 1. How the **difficulty model** affects the running game.
 2. How the **opponent models** behave when validation succeeds or fails.
 3. How the **behaviour / movements model** drives patrol movement and can be validated.
-4. How the **walls model** and Acceleo generated code are wired into the game.
+4. How the **walls model** and FreeMarker generated code are wired into the game.
 5. How the **MazeGame DSL** provides a textual syntax for game configuration.
 
 ---
@@ -329,7 +329,7 @@ This demonstrates that the **behaviour model** is treated similarly to the oppon
 
 ## 5．Walls model and generated code wiring
 
-This section shows how the **walls model** and **Acceleo generated code** are connected from design time to runtime.
+This section shows how the **walls model** and **FreeMarker generated code** are connected from design time to runtime.
 
 ### 5．1 The walls model at design time
 
@@ -362,29 +362,29 @@ This JAR is:
 * containing the generated EMF model code and runtime support for walls.
 
 Tycho uses this JAR when resolving plug ins in the Eclipse world.
-Headless tools such as `maze-generator.acceleo-runner` can load the walls model through this bundle.
+Headless tools such as `maze-generator.freemarker-runner` can load the walls model through this bundle.
 
-### 5．3 How `maze-generator.acceleo-runner` uses the walls model
+### 5．3 How `maze-generator.freemarker-runner` uses the walls model
 
-* `maze-generator.acceleo` contains the Acceleo templates that read walls related model data.
-* `maze-generator.acceleo-runner` is the headless Equinox application that:
+* `maze-generator.freemarker` contains the FreeMarker templates that read walls related model data.
+* `maze-generator.freemarker-runner` is the headless Equinox application that:
 
   1．starts in an Eclipse runtime (using the p two repository that contains `main.game.maze.walls_1.0.0.202512041940.jar`),
   2．loads EMF models, including `walls.xmi` and its generated Ecore package,
-  3．invokes the Acceleo `Generate` module,
+  3．invokes the FreeMarker `Generate` module,
   4．writes Java sources derived from the walls model into a generated sources folder.
 
 Conceptually:
 
 * `walls.xmi` → EMF model
-* `maze-generator.acceleo` → templates that describe how to turn that model into Java code
-* `maze-generator.acceleo-runner` → headless launcher that runs the templates in the build
+* `maze-generator.freemarker` → templates that describe how to turn that model into Java code
+* `maze-generator.freemarker-runner` → headless launcher that runs the templates in the build
 
 The result from this step is plain Java code that mirrors the walls definitions.
 
 ### 5．4 From generated walls code to the game: `maze-module-generator` and its JAR
 
-Once the Acceleo runner has written the generated Java sources, the Maven side bridge takes over:
+Once the FreeMarker runner has written the generated Java sources, the Maven side bridge takes over:
 
 * The `maze-module-generator` module has a dependency on `main.game.maze.walls` and is configured to include a generated sources folder (for example `src-gen`) as a source directory.
 
@@ -409,11 +409,11 @@ This JAR is a plain Maven artifact and can be used from the `maze` game module.
 
 ## 6．How `maze-module-generator` is used in the game
 
-The `maze` module declares an explicit dependency on the Acceleo generated module.
+The `maze` module declares an explicit dependency on the FreeMarker generated module.
 In `maze/pom.xml` you will find:
 
 ```xml
-<!-- This is our Acceleo generated module -->
+<!-- This is our FreeMarker generated module -->
 <dependency>
     <groupId>main.game.maze</groupId>
     <artifactId>maze-module-generator</artifactId>
@@ -439,7 +439,7 @@ So the runtime flow looks like this:
 * Build time:
 
   * Tycho builds the EMF plug ins and publishes `main.game.maze.walls_1.0.0.202512041940.jar` into the p two repository under `maze-module-repository/target/repository`.
-  * `maze-generator.acceleo-runner` runs Acceleo templates against those models.
+  * `maze-generator.freemarker-runner` runs FreeMarker templates against those models.
   * `maze-module-generator` compiles the generated sources into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 
 * Runtime:
@@ -450,7 +450,7 @@ So the runtime flow looks like this:
 
 In a live demo, you can summarise this as:
 
-> “`walls.xmi` and the other XMI models are turned into Java code by Acceleo.
+> "`walls.xmi` and the other XMI models are turned into Java code by FreeMarker.
 > That code is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 > The `maze` game module imports that JAR through a normal Maven dependency and uses the generated classes at runtime.”
 
@@ -509,12 +509,12 @@ Use this as a compact spoken script.
 
 * Mention that Tycho builds `main.game.maze.walls_1.0.0.202512041940.jar` into the p two repository under `maze-module-repository/target/repository/plugins/`.
 
-* Explain that Acceleo templates run via `maze-generator.acceleo-runner`, and their output is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
+* Explain that FreeMarker templates run via `maze-generator.freemarker-runner`, and their output is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 
 * Point at the dependency in `maze/pom.xml`:
 
   ```xml
-  <!-- This is our Acceleo generated module -->
+  <!-- This is our FreeMarker generated module -->
   <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>maze-module-generator</artifactId>
