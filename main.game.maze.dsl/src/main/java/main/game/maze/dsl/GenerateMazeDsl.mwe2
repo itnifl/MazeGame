@@ -13,17 +13,27 @@ Workflow {
             project = StandardProjectConfig {
                 baseName = "main.game.maze.dsl"
                 rootPath = rootPath
+                runtime = {
+                    src = "${rootPath}/main.game.maze.dsl/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl/src/main/xtext-gen"
+                }
                 runtimeTest = {
                     enabled = true
+                    src = "${rootPath}/main.game.maze.dsl.tests/src/test/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.tests/src/test/xtext-gen"
                 }
                 eclipsePlugin = {
                     enabled = true
+                    src = "${rootPath}/main.game.maze.dsl.ui/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.ui/src/main/xtext-gen"
                 }
                 eclipsePluginTest = {
                     enabled = false
                 }
                 genericIde = {
                     enabled = true
+                    src = "${rootPath}/main.game.maze.dsl.ide/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.ide/src/main/xtext-gen"
                 }
                 createEclipseMetaData = false
             }
