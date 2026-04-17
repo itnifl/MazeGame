@@ -11,13 +11,14 @@ $tempMappeNavn = "Temp_Staging_Area"
 
 # 1. Mapper som skal inkluderes HELT
 $heltInkluderteMapper = @(
-    "src\Core", 
-    "test\FeatureFlags.Tests"
+    "maze\src",
+    "main.game.maze.dsl\src",
+    "main.game.maze.dsl.tests\src"
 )
 
 # 2. Søkemønstre
-$handlerPattern = "*.java"
-$connectorContentRegex = ":\s*IConnector(\b|<)" 
+$handlerPattern = "*Handler.java"
+$connectorContentRegex = "implements\s+\w*Connector(\b|<)"
 
 # 3. Global ekskludering
 $excludeRegex = "[\\/](bin|obj|.vs|.git|.idea)[\\/]"
@@ -46,7 +47,7 @@ foreach ($relativSti in $heltInkluderteMapper) {
 }
 
 # ---------------------------------------------------------
-# STEG 2: Finn *Handler.cs
+# STEG 2: Finn *Handler.java
 # ---------------------------------------------------------
 Write-Host "  [2/3] Søker etter '$handlerPattern'..." -NoNewline
 $handlerFiler = Get-ChildItem -Path $rotMappe -Recurse -Filter $handlerPattern -File -ErrorAction SilentlyContinue | 
@@ -55,10 +56,10 @@ foreach ($f in $handlerFiler) { $alleFilerListe.Add($f.FullName) }
 Write-Host " Fant $($handlerFiler.Count) filer." -ForegroundColor Green
 
 # ---------------------------------------------------------
-# STEG 3: Finn .cs med IConnector-arv
+# STEG 3: Finn .java med Connector-implementasjon
 # ---------------------------------------------------------
-Write-Host "  [3/3] Scanner .cs filer etter ': IConnector'..." -NoNewline
-$kandidater = Get-ChildItem -Path $rotMappe -Recurse -Filter "*.cs" -File -ErrorAction SilentlyContinue | 
+Write-Host "  [3/3] Scanner .java filer etter Connector-implementasjon..." -NoNewline
+$kandidater = Get-ChildItem -Path $rotMappe -Recurse -Filter "*.java" -File -ErrorAction SilentlyContinue | 
               Where-Object { Test-IsNotTempPath $_.FullName }
 $connectorCount = 0
 foreach ($fil in $kandidater) {
@@ -108,7 +109,7 @@ if ($TextOutput) {
         # Sjekk om filen ser ut som tekst før vi leser innholdet
         # (Siden vi inkluderer alt i src/core, kan det være bilder/dll der)
         $ext = [System.IO.Path]::GetExtension($filSti).ToLower()
-        if ($ext -match "\.(cs|json|xml|txt|md|config|csproj|sln|html|js|css|java)$") {
+        if ($ext -match "\.(java|json|xml|txt|md|config|properties|html|js|css|gradle|pom)$") {
             $innhold = Get-Content -Path $filSti -Raw
             Add-Content -Path $txtFilNavn -Value $innhold -Encoding UTF8
         }

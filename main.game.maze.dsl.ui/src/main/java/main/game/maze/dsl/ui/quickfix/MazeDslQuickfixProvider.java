@@ -74,8 +74,47 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
             "Removes the mismatched character-specific configuration block.", 
             null,
             (element, context) -> {
-                // This would need more sophisticated parsing to remove the block
-                // For now, just highlight the issue
+                String text = context.getXtextDocument().get();
+                int issueOffset = issue.getOffset();
+                if (issueOffset < 0 || issueOffset >= text.length()) {
+                    return;
+                }
+
+                int openBrace = text.indexOf('{', issueOffset);
+                if (openBrace < 0) {
+                    return;
+                }
+
+                int depth = 0;
+                int closeBrace = -1;
+                for (int i = openBrace; i < text.length(); i++) {
+                    char ch = text.charAt(i);
+                    if (ch == '{') {
+                        depth++;
+                    } else if (ch == '}') {
+                        depth--;
+                        if (depth == 0) {
+                            closeBrace = i;
+                            break;
+                        }
+                    }
+                }
+
+                if (closeBrace < 0) {
+                    return;
+                }
+
+                int start = issueOffset;
+                while (start > 0 && Character.isWhitespace(text.charAt(start - 1))) {
+                    start--;
+                }
+
+                int end = closeBrace + 1;
+                while (end < text.length() && Character.isWhitespace(text.charAt(end))) {
+                    end++;
+                }
+
+                context.getXtextDocument().replace(start, end - start, "");
             }
         );
     }

@@ -119,14 +119,14 @@ public class MazeDslGenerator extends AbstractGenerator {
         sb.append("    /**\n");
         sb.append("     * Creates a " + opponent.getName() + " opponent.\n");
         if (opponent.getDisplayName() != null) {
-            sb.append("     * Display name: " + opponent.getDisplayName() + "\n");
+            sb.append("     * Display name: " + escapeForJavaComment(opponent.getDisplayName()) + "\n");
         }
         sb.append("     */\n");
         sb.append("    public static " + returnType + " " + methodName + "() {\n");
         sb.append("        " + returnType + " opponent = " + getFactoryCall(opponent.getType()) + ";\n");
         
         if (opponent.getDisplayName() != null) {
-            sb.append("        opponent.setDisplayName(\"" + opponent.getDisplayName() + "\");\n");
+            sb.append("        opponent.setDisplayName(\"" + escapeForJavaString(opponent.getDisplayName()) + "\");\n");
         }
         sb.append("        opponent.setId(\"" + opponent.getName() + "\");\n");
         
@@ -288,15 +288,15 @@ public class MazeDslGenerator extends AbstractGenerator {
         sb.append("    xmlns:xmi=\"http://www.omg.org/XMI\"\n");
         sb.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
         sb.append("    xmlns:opp=\"http://main.game.maze/opponents\"\n");
-        sb.append("    name=\"" + game.getName() + "\">\n");
+        sb.append("    name=\"" + escapeForXmlAttribute(game.getName()) + "\">\n");
         
         for (OpponentConfig opponent : game.getOpponents()) {
             String xsiType = getXsiType(opponent.getType());
             sb.append("  <characterTypes xsi:type=\"opp:" + xsiType + "\"\n");
-            sb.append("      id=\"" + opponent.getName() + "\"");
+            sb.append("      id=\"" + escapeForXmlAttribute(opponent.getName()) + "\"");
             
             if (opponent.getDisplayName() != null) {
-                sb.append("\n      displayName=\"" + opponent.getDisplayName() + "\"");
+                sb.append("\n      displayName=\"" + escapeForXmlAttribute(opponent.getDisplayName()) + "\"");
             }
             if (opponent.getHealth() != 0) {
                 sb.append("\n      health=\"" + opponent.getHealth() + "\"");
@@ -415,5 +415,27 @@ public class MazeDslGenerator extends AbstractGenerator {
             case HARD: return "HardDifficulty";
             default: return "NormalDifficulty";
         }
+    }
+
+    private String escapeForJavaString(String value) {
+        return value
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t");
+    }
+
+    private String escapeForJavaComment(String value) {
+        return value.replace("*/", "*&#47;");
+    }
+
+    private String escapeForXmlAttribute(String value) {
+        return value
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&apos;");
     }
 }

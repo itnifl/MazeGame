@@ -7,4 +7,10 @@
             type="mazegame">
         </parser>
     </extension>
+    <extension point="org.eclipse.xtext.extension_resourceServiceProvider">
+        <resourceServiceProvider
+            class="main.game.maze.dsl.MazeDslExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceServiceProvider"
+            uriExtension="mazegame">
+        </resourceServiceProvider>
+    </extension>
 </plugin>

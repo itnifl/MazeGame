@@ -199,7 +199,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
      */
     @Check
     public void checkPatrolBehaviorHasRef(OpponentConfig opponent) {
-        if (opponent.getBehavior() == BehaviorEnum.PATROL && opponent.getPatrolRef() == null) {
+        if (opponent.getBehavior() == BehaviorTypeEnum.PATROL && opponent.getPatrolRef() == null) {
             error("Opponents with patrol behavior must have a patrolRef",
                   MazeDslPackage.Literals.OPPONENT_CONFIG__BEHAVIOR,
                   PATROL_REF_REQUIRED);

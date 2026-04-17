@@ -38,7 +38,7 @@ DifficultyConfig:
         ('instantDeath' instantDeath?='true')?
         ('speedMultiplier' speedMultiplier=DOUBLE)?
         ('damageMultiplier' damageMultiplier=DOUBLE)?
-        ('maxThreat' maxThreat=INT)?
+        ('maxThreat' maxThreat=SIGNED_INT)?
         (enemyLimits+=EnemyLimit)*
     '}'
 ;
@@ -51,7 +51,7 @@ enum DifficultyLevel:
  * Enemy count limits per type
  */
 EnemyLimit:
-    'limit' type=EnemyType 'max' maxCount=INT
+    'limit' type=EnemyType 'max' maxCount=SIGNED_INT
 ;
 
 enum EnemyType:
@@ -65,7 +65,7 @@ OpponentConfig:
     'opponent' name=ID '{'
         'type' type=CharacterTypeEnum
         ('displayName' displayName=STRING)?
-        ('health' health=INT)?
+        ('health' health=SIGNED_INT)?
         ('speed' speed=DOUBLE)?
         ('threatLevel' threatLevel=DOUBLE)?
         ('enabled' enabled=('true'|'false'))?
@@ -131,7 +131,7 @@ enum ProjectileTypeEnum:
 PatrolConfig:
     'patrol' name=ID '{'
         ('visionRange' visionRange=DOUBLE)?
-        ('zone' zone=PatrolZoneConfig)?
+        (zone=PatrolZoneConfig)?
         'path' '['
             waypoints+=Waypoint (',' waypoints+=Waypoint)*
         ']'
@@ -177,5 +177,9 @@ enum LootItemTypeEnum:
  * Datatype rule for double values (accepts both integers and decimals)
  */
 DOUBLE returns ecore::EDouble:
-    INT ('.' INT)?
+    ('-')? INT ('.' INT)?
+;
+
+SIGNED_INT returns ecore::EInt:
+    ('-')? INT
 ;
