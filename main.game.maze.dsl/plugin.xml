@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-    <extension point="org.eclipse.xtext.extension_resourceServiceProvider">
-        <resourceServiceProvider
-            class="main.game.maze.dsl.MazeDslExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceServiceProvider"
-            uriExtension="mazegame">
-        </resourceServiceProvider>
-    </extension>
+    <!-- Resource service provider is registered via MazeDslStandaloneSetup -->
 </plugin>

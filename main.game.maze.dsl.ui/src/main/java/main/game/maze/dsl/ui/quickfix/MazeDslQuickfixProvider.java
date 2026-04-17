@@ -5,6 +5,9 @@
  */
 package main.game.maze.dsl.ui.quickfix;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider;
 import org.eclipse.xtext.ui.editor.quickfix.Fix;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor;
@@ -18,6 +21,8 @@ import main.game.maze.dsl.validation.MazeDslValidator;
  * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#quick-fixes
  */
 public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
+
+    private static final Pattern PATH_BRACKET_PATTERN = Pattern.compile("path\\s*\\[");
 
     /**
      * Quick fix for threat level exceeding maximum.
@@ -56,17 +61,38 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
             (element, context) -> {
                 String text = context.getXtextDocument().get();
                 int issueOffset = Math.max(0, issue.getOffset());
-                int pathPos = text.indexOf("path [", issueOffset);
-                if (pathPos < 0) {
-                    pathPos = text.lastIndexOf("path [", issueOffset);
+                
+                Matcher matcher = PATH_BRACKET_PATTERN.matcher(text);
+                int pathPos = -1;
+                int bracketPos = -1;
+                
+                while (matcher.find()) {
+                    if (matcher.start() >= issueOffset) {
+                        pathPos = matcher.start();
+                        bracketPos = matcher.end() - 1;
+                        break;
+                    }
                 }
+                
                 if (pathPos < 0) {
+                    matcher.reset();
+                    int lastPathPos = -1;
+                    int lastBracketPos = -1;
+                    while (matcher.find() && matcher.start() < issueOffset) {
+                        lastPathPos = matcher.start();
+                        lastBracketPos = matcher.end() - 1;
+                    }
+                    pathPos = lastPathPos;
+                    bracketPos = lastBracketPos;
+                }
+                
+                if (pathPos < 0 || bracketPos < 0) {
                     return;
                 }
 
-                int listStart = text.indexOf('[', pathPos);
+                int listStart = bracketPos;
                 int listEnd = text.indexOf(']', listStart);
-                if (listStart < 0 || listEnd < 0) {
+                if (listEnd < 0) {
                     return;
                 }
 
