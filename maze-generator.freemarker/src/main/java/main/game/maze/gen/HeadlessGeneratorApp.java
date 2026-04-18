@@ -13,9 +13,9 @@ public class HeadlessGeneratorApp implements IApplication {
   public Object start(IApplicationContext context) throws Exception {
     String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
     
-    if (args == null || args.length < 2) {
+    if (args == null || args.length < 3) {
       System.out.println("Usage: -application main.game.maze.gen.RunAcceleo <input.xmi> <outDir>");
-      return IApplication.EXIT_OK;
+      return Integer.valueOf(1);
     }
 
     String opponentPath = new File(args[0]).getAbsolutePath();
@@ -27,9 +27,13 @@ public class HeadlessGeneratorApp implements IApplication {
     System.out.println("  Difficulty: " + diffPath);
     System.out.println("  Output:    " + outDir);
 
-    new RunAcceleo().run(opponentPath, diffPath, outDir);
-    
-    return IApplication.EXIT_OK;
+    try {
+      new RunAcceleo().run(opponentPath, diffPath, outDir);
+      return IApplication.EXIT_OK;
+    } catch (Throwable t) {
+      t.printStackTrace();
+      return Integer.valueOf(13);
+    }
   }
   @Override public void stop() {}
 }
