@@ -2,7 +2,6 @@
 
 ## Index
 
-* 🧩 [project-status](project-status/readme.md)
 * 🧩 [releng](releng/readme.md)
 * 🧩 [main.game.maze.walls](main.game.maze.walls/readme.md)
 * 🧩 [main.game.maze.mazeworld](main.game.maze.mazeworld/readme.md)
@@ -91,7 +90,6 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 * Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
-* Also see original MDD project status for missing work: [project-status/project.status.md](project-status/project.status.md)
 
 ## Prerequisites and setup
 
@@ -289,11 +287,6 @@ See: [maze-generator.freemarker-runner/readme.md](maze-generator.freemarker-runn
 
 Maven generator module that produces additional Java sources into `src-gen` for MazeGame.  
 See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
-
-### project-status
-
-Project and course status notes with scope, milestones, and progress tracking.  
-See: [project-status/project.status.md](project-status/project.status.md)
 
 
 # Utility scripts at the project root
