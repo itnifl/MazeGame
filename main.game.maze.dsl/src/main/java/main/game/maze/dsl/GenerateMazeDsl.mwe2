@@ -18,7 +18,7 @@ Workflow {
                     srcGen = "${rootPath}/main.game.maze.dsl/src/main/xtext-gen"
                 }
                 runtimeTest = {
-                    enabled = true
+                    enabled = false
                     src = "${rootPath}/main.game.maze.dsl.tests/src/test/java"
                     srcGen = "${rootPath}/main.game.maze.dsl.tests/src/test/xtext-gen"
                 }
