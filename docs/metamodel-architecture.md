@@ -576,3 +576,53 @@ This architecture provides:
 5. **Code Generation**: Automated generation of boilerplate code from model definitions
 
 The Xtext DSL serves as a developer-friendly entry point that ultimately populates the same domain models as direct XMI editing, but with syntax checking, content assist, and validation built into the editing experience.
+
+## Recommended Tools for FreeMarker Development
+
+### IDEs and Editors
+
+| Tool | Description | Link |
+|------|-------------|------|
+| **IntelliJ IDEA** | Built-in FreeMarker support with syntax highlighting and completion | [jetbrains.com/idea](https://www.jetbrains.com/idea/) |
+| **VS Code with FreeMarker extension** | FreeMarker syntax highlighting for VS Code | [marketplace.visualstudio.com](https://marketplace.visualstudio.com/items?itemName=nicholaswilde.vscode-freemarker) |
+| **Eclipse with JBoss Tools** | FreeMarker editor as part of JBoss Tools suite | [tools.jboss.org](https://tools.jboss.org/) |
+
+### FreeMarker Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **FreeMarker Manual** | Official comprehensive documentation | [freemarker.apache.org/docs](https://freemarker.apache.org/docs/index.html) |
+| **Template Language Reference** | Complete directive and built-in reference | [freemarker.apache.org/docs/ref.html](https://freemarker.apache.org/docs/ref.html) |
+| **FreeMarker Online Tester** | Test templates without local setup | [try.freemarker.apache.org](https://try.freemarker.apache.org/) |
+| **GitHub Repository** | Source code and issue tracker | [github.com/apache/freemarker](https://github.com/apache/freemarker) |
+
+### Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **Getting Started Guide** | Quick introduction to FreeMarker basics | [freemarker.apache.org/docs/dgui_quickstart.html](https://freemarker.apache.org/docs/dgui_quickstart.html) |
+| **Template Author's Guide** | In-depth guide for template writers | [freemarker.apache.org/docs/dgui.html](https://freemarker.apache.org/docs/dgui.html) |
+| **Programmer's Guide** | Java API and configuration details | [freemarker.apache.org/docs/pgui.html](https://freemarker.apache.org/docs/pgui.html) |
+| **Baeldung FreeMarker Tutorial** | Practical tutorial with Spring integration | [baeldung.com/freemarker-in-spring-mvc-tutorial](https://www.baeldung.com/freemarker-in-spring-mvc-tutorial) |
+
+### Template Syntax Cheat Sheet
+
+| Syntax | Purpose | Example |
+|--------|---------|---------|
+| `${expr}` | Output expression | `${enemy.name}` |
+| `<#if>` | Conditional | `<#if enemy.health gt 0>` |
+| `<#list>` | Loop | `<#list enemies as e>` |
+| `<#assign>` | Variable assignment | `<#assign total = 0>` |
+| `<#macro>` | Reusable template | `<#macro renderEnemy e>` |
+| `<#include>` | Include another template | `<#include "header.ftl">` |
+
+### Debugging Tips
+
+| Technique | Description |
+|-----------|-------------|
+| **`?c` built-in** | Format numbers for code output (no grouping separators) |
+| **`?j_string`** | Escape for Java string literals |
+| **`?cap_first`** | Capitalize first letter |
+| **`?upper_case`** | Convert to uppercase |
+| **`<#ftl output_format="...">`** | Set output format for auto-escaping |
+

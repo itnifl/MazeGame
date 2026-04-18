@@ -165,21 +165,24 @@ For day to day work on Windows you can use the lightweight helpers in the reposi
 `make.ps1` is a PowerShell script that drives the same four steps described above:
 
 ```powershell
-.\make.ps1                # same as -Target all
+.\make.ps1                       # same as -Target all
 .\make.ps1 -Target mirror        # refresh local p2 mirror if needed
 .\make.ps1 -Target force-mirror  # always rebuild mirror
 .\make.ps1 -Target clear-cache   # clear Tycho p2 cache
-.\make.ps1 -Target build         # full Maven build
+.\make.ps1 -Target build         # full Maven build (clears Tycho cache first)
+.\make.ps1 -Target build-with-cache  # full Maven build (keeps Tycho cache)
 .\make.ps1 -Target toolchain     # show Maven and Java versions
 ```
 
 Behaviour:
 
 * Always changes the current directory to the script location, so you can run it from anywhere.
+* Validates that Java 21 is active before running builds (required for Xtext/MWE2 generation).
 * For `mirror` it checks a stamp file in `releng\local-p2\.mirror.stamp` and only rebuilds the mirror if the inputs (currently `releng\mirror\pom.xml`) are newer or the mirror is missing.
 * `force-mirror` always deletes `releng\local-p2` and reruns `mvn -f releng/mirror/pom.xml -U verify`, then updates the stamp file.
 * `clear-cache` deletes the Tycho cache at `%USERPROFILE%\.m2\repository\.cache\tycho` if it exists.
-* `build` runs `mvn -U -DskipTests=false clean verify` and fails the script if Maven returns a non zero exit code.
+* `build` clears the Tycho cache first, then runs `mvn -U -DskipTests=false clean verify` and fails the script if Maven returns a non zero exit code.
+* `build-with-cache` runs `mvn -U -DskipTests=false clean verify` **without** clearing the Tycho cache, which is faster for incremental builds.
 * `all` combines `toolchain`, `mirror` (with change detection), `clear-cache` and `build`.
 
 The script uses `mvn` by default. If you prefer the Maven wrapper, edit `$Mvn = 'mvn'` in `make.ps1` and change it to `mvnw`.

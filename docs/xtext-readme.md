@@ -103,3 +103,47 @@ Current repository strategy:
 3. Root verify succeeds.
 4. Stage regenerated tracked Xtext artifacts when they change, such as `src/main/xtext-gen` and `src/test/xtext-gen`; do not stage ignored output folders like `src-gen`.
 5. Documentation updated if syntax or behavior changed.
+
+## Recommended Tools for Xtext Development
+
+### IDEs and Editors
+
+| Tool | Description | Link |
+|------|-------------|------|
+| **Eclipse IDE for DSL Developers** | Official IDE with full Xtext support, debugging, and generated editor preview | [eclipse.org/downloads](https://www.eclipse.org/downloads/packages/release/2024-12/r/eclipse-ide-dsl-developers) |
+| **VS Code with Xtext extensions** | Lightweight editor with LSP support for Xtext languages | [code.visualstudio.com](https://code.visualstudio.com/) |
+| **IntelliJ IDEA** | Via Xtext LSP support or third-party plugins | [jetbrains.com/idea](https://www.jetbrains.com/idea/) |
+
+### Xtext Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **Xtext Documentation** | Official documentation covering grammar, validation, scoping, generators | [eclipse.org/Xtext/documentation](https://www.eclipse.org/Xtext/documentation/) |
+| **Xtext Community Forum** | Community support and discussions | [eclipse.org/forums/xtext](https://www.eclipse.org/forums/index.php/f/27/) |
+| **Xtext GitHub** | Source code and issue tracker | [github.com/eclipse/xtext](https://github.com/eclipse/xtext) |
+| **Xtext Examples** | Official example projects | [github.com/eclipse/xtext/tree/main/org.eclipse.xtext.xtext.ui.examples](https://github.com/eclipse/xtext/tree/main/org.eclipse.xtext.xtext.ui.examples) |
+
+### Learning Resources
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| **Xtext 15 Minutes Tutorial** | Quick start guide for creating your first DSL | [eclipse.org/Xtext/documentation/102_domainmodelwalkthrough](https://www.eclipse.org/Xtext/documentation/102_domainmodelwalkthrough.html) |
+| **Implementing Domain-Specific Languages with Xtext and Xtend** | Comprehensive book by Lorenzo Bettini | [packtpub.com](https://www.packtpub.com/product/implementing-domain-specific-languages-with-xtext-and-xtend-second-edition/9781786464965) |
+| **MWE2 Workflow Engine** | Documentation for the workflow configuration | [eclipse.org/Xtext/documentation/306_mwe2](https://www.eclipse.org/Xtext/documentation/306_mwe2.html) |
+| **Xtext Grammar Language** | Complete grammar language reference | [eclipse.org/Xtext/documentation/301_grammarlanguage](https://www.eclipse.org/Xtext/documentation/301_grammarlanguage.html) |
+
+### Debugging and Profiling
+
+| Tool | Description |
+|------|-------------|
+| **Xtext Debug Perspective** | Eclipse perspective for debugging grammar rules and parser |
+| **ANTLR Plugin for Eclipse** | Visualize generated ANTLR grammar and parse trees |
+| **AST View** | Inspect the Abstract Syntax Tree of parsed models |
+
+### Build Tools
+
+| Tool | Description | Link |
+|------|-------------|------|
+| **Maven Tycho** | Build Xtext projects as OSGi bundles | [eclipse.org/tycho](https://eclipse.dev/tycho/) |
+| **Gradle Xtext Plugin** | Alternative build system for Xtext projects | [github.com/xtext/xtext-gradle-plugin](https://github.com/xtext/xtext-gradle-plugin) |
+

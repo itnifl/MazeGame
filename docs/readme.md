@@ -18,6 +18,7 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 |----------|-------------|
 | [DSL Reference Guide](dsl-reference.md) | Complete language reference with all syntax, validation rules, and generation details |
 | [Metamodel Architecture](metamodel-architecture.md) | Technical details about metamodels and the Xtext integration |
+| [MDD Code Generation](mdd-code-generation.md) | Architecture for generating code from models using FreeMarker |
 
 ### Quick Links
 
@@ -32,17 +33,23 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 |----------|-------------|
 | [Main README](../readme.md) | Project overview and module index |
 | [DSL Module README](../main.game.maze.dsl/readme.md) | DSL project structure and technical details |
-| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [DSL IDE Module](../main.game.maze.dsl.ide/readme.md) | Language server support |
+| [DSL UI Module](../main.game.maze.dsl.ui/readme.md) | Eclipse editor integration |
+| [DSL Tests Module](../main.game.maze.dsl.tests/readme.md) | Automated test suite |
 | [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture |
+| [Releng Guide](../releng/readme.md) | Build infrastructure and p2 mirror |
 
 ## Documentation Structure
 
 ```text
 docs/
-├── readme.md           # This file
-├── dsl-reference.md    # Complete DSL syntax reference
-└── dsl-tutorial.md     # Step-by-step tutorial
+├── readme.md                    # This file (documentation index)
+├── dsl-reference.md             # Complete DSL syntax reference
+├── dsl-tutorial.md              # Step-by-step tutorial
+├── metamodel-architecture.md    # Metamodel and Xtext integration
+├── mdd-code-generation.md       # FreeMarker code generation plan
+├── technology-laymans-guide.md  # Simple technology explanations
+└── xtext-readme.md              # Xtext setup and learning guide
 ```
 
 ## Contributing to Documentation

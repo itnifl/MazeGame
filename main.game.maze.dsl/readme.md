@@ -494,4 +494,12 @@ This is the **true MDE approach**: models drive code generation, not the other w
 | [DSL Tutorial](../docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
 | [Xtext Setup Guide](../docs/xtext-readme.md) | Build and development setup for the DSL |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
-| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
+| [MDD Code Generation](../docs/mdd-code-generation.md) | Code generation plan with FreeMarker |
+
+### DSL Module Documentation
+
+| Module | Description |
+|--------|-------------|
+| [DSL IDE Module](../main.game.maze.dsl.ide/readme.md) | Language server support for LSP-compatible editors |
+| [DSL UI Module](../main.game.maze.dsl.ui/readme.md) | Eclipse-specific editor integration |
+| [DSL Tests Module](../main.game.maze.dsl.tests/readme.md) | Automated test suite |

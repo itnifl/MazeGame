@@ -296,7 +296,13 @@ The **FreeMarker printer** ensures every order produces consistent kitchen instr
 ### Reference
 - [DSL Reference Guide](dsl-reference.md) - Complete syntax documentation
 - [Metamodel Architecture](metamodel-architecture.md) - Technical metamodel details
-- [FreeMarker Guide](../freemarker.readme.md) - Template engine details
+- [MDD Code Generation](mdd-code-generation.md) - FreeMarker templates and generation plan
+
+### DSL Modules
+- [DSL Core](../main.game.maze.dsl/readme.md) - Grammar and runtime
+- [DSL IDE](../main.game.maze.dsl.ide/readme.md) - Language server support
+- [DSL UI](../main.game.maze.dsl.ui/readme.md) - Eclipse editor integration
+- [DSL Tests](../main.game.maze.dsl.tests/readme.md) - Test suite
 
 ### Technical
 - [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) - Architecture overview
