@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>jar</packaging>
   <artifactId>main.game.maze.dsl.tests</artifactId>
 
   <properties>
