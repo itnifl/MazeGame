@@ -143,12 +143,10 @@
             <configuration>
                 <scripts>
                     <script>
-                        // Get the parent directory of the current module (which is the project root)
-                        def projectRoot = project.basedir.parentFile.getCanonicalPath()
-                        // Construct the full, normalized path to the local p2 repository
-                        project.properties['p2.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/releng/local-p2'
-                        //file:${maven.multiModuleProjectDirectory}/maze-module-repository/target/repository
-                        project.properties['maze.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/maze-module-repository/target/repository'
+                        // Build canonical file:// URIs that work on both Windows and Unix.
+                        def projectRootDir = project.basedir.parentFile.getCanonicalFile()
+                        project.properties['p2.repo.url'] = new File(projectRootDir, 'releng/local-p2').toURI().toString()
+                        project.properties['maze.repo.url'] = new File(projectRootDir, 'maze-module-repository/target/repository').toURI().toString()
                     </script>
                 </scripts>
             </configuration>
