@@ -13,12 +13,16 @@ import main.game.maze.dsl.ui.highlighting.MazeDslHighlightingConfiguration;
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  * 
- * Currently bound:
- * - IHighlightingConfiguration: Provides color/style scheme for DSL elements
+ * Custom semantic or lexical highlighting bindings should only be added once
+ * a corresponding ISemanticHighlightingCalculator or ITokenToAttributeIdMapper
+ * is implemented to emit the configured highlighting IDs.
  * 
- * Future enhancements:
- * - ISemanticHighlightingCalculator: To assign highlighting IDs to semantic tokens
- * - ITokenToAttributeIdMapper: Alternative approach to map lexical tokens to highlighting IDs
+ * Currently bound:
+ * - IHighlightingConfiguration: Provides color/style scheme for DSL elements (available in preferences)
+ * 
+ * Note: The custom highlighting IDs defined in MazeDslHighlightingConfiguration are currently
+ * only visible in the IDE preferences. To apply them to the editor, implement and bind a
+ * semantic highlighting calculator or token-to-attribute mapper.
  */
 public class MazeDslUiModule extends AbstractMazeDslUiModule {
 

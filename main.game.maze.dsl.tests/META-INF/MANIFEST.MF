@@ -12,7 +12,7 @@ Require-Bundle: main.game.maze.dsl,
  main.game.maze.dsl.ide,
  org.eclipse.xtext.testing,
  org.eclipse.xtext.xbase.testing,
- org.junit.jupiter.api;bundle-version="5.0.0"
+ org.junit.jupiter.api;bundle-version="[5.0.0,6.0.0)"
 Bundle-ActivationPolicy: lazy
 Fragment-Host: main.game.maze.dsl
 
