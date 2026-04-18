@@ -2,6 +2,12 @@
  * MazeGame DSL - Syntax Highlighting Configuration
  * 
  * Defines the colors and styles for DSL syntax highlighting.
+ * 
+ * Note: This configuration defines the highlighting ID scheme and their default styles.
+ * To apply these styles to actual tokens/semantic elements, implement a semantic highlighting
+ * calculator (ISemanticHighlightingCalculator) or token-to-attribute mapper (ITokenToAttributeIdMapper)
+ * and bind it in the UI module. Currently, these styles are available in preferences but not
+ * applied to syntax elements in the editor.
  */
 package main.game.maze.dsl.ui.highlighting;
 

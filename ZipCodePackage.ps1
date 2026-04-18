@@ -21,7 +21,7 @@ $handlerPattern = "*Handler.java"
 $connectorContentRegex = "implements\s+\w*Connector(\b|<)"
 
 # 3. Global exclusions
-$excludeRegex = "[\\/](bin|obj|\.vs|\.git|\.idea)[\\/]"
+$excludeRegex = "[\\/](bin|obj|target|build|out|src-gen|xtext-gen|\.vs|\.git|\.idea)[\\/]"
 
 # Helper function
 function Test-IsNotExcludedPath {
@@ -97,7 +97,9 @@ if ($TextOutput) {
         # Check if file type looks textual before reading full content
         # Since broad source trees are included, binary files may appear
         $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
-        if ($ext -match "\.(java|json|xml|txt|md|config|properties|html|js|css|gradle|pom)$") {
+        $fileName = [System.IO.Path]::GetFileName($filePath).ToLower()
+        # Match common text file extensions and special files like pom.xml, .mf
+        if ($ext -match "\.(java|json|xml|txt|md|config|properties|html|js|css|gradle|xtext|mwe2|yml|yaml|mf|tokens)$" -or $fileName -eq "pom.xml") {
             $content = Get-Content -Path $filePath -Raw
             Add-Content -Path $txtFileName -Value $content -Encoding UTF8
         }
