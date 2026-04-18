@@ -1,0 +1,66 @@
+[INFO] Error stacktraces are turned on.
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for main.game.maze:main.game.maze:jar:1.0.0-SNAPSHOT
+[WARNING] 'dependencies.dependency.systemPath' for org.eclipse.ocl:org.eclipse.ocl:jar should not point at files within the project directory, ${project.basedir}/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar will be unresolvable by dependent projects @ line 63, column 19
+[WARNING] 'dependencies.dependency.systemPath' for org.eclipse.ocl:org.eclipse.ocl.ecore:jar should not point at files within the project directory, ${project.basedir}/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar will be unresolvable by dependent projects @ line 70, column 19
+[WARNING] 'dependencies.dependency.systemPath' for org.eclipse.ocl:org.eclipse.ocl.common:jar should not point at files within the project directory, ${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar will be unresolvable by dependent projects @ line 77, column 19
+[WARNING] 'dependencies.dependency.systemPath' for lpg.runtime:java:jar should not point at files within the project directory, ${project.basedir}/lib/java-2.0.17-v201004271640.jar will be unresolvable by dependent projects @ line 84, column 19
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] Tycho Version:  5.0.0 (0597c3cfc1c8cd89f59323c281f9abf01800baeb)
+[INFO] Tycho Mode:     project
+[INFO] Tycho Builder:  maven
+[INFO] Build Threads:  1
+[INFO] 
+[INFO] ----------------< main.game.maze:maze-module-generator >----------------
+[INFO] Building maze-module-generator 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The POM for org.eclipse.emf:org.eclipse.emf.common:jar:2.38.0 is missing, no dependency information available
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (default) @ maze-module-generator ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:java (generate-code) @ maze-module-generator ---
+=== MazeGame Acceleo 4 Generator ===
+Opponents model: C:\Repos\MazeGame\maze-module-generator\..\maze\src\main\resources\xmi\opponents\opponentModel.xmi
+Walls model: C:\Repos\MazeGame\maze-module-generator\..\maze\src\main\resources\xmi\walls\default.walls.xmi
+Output directory: C:\Repos\MazeGame\maze-module-generator\src-gen
+
+Generating opponent code...
+  Module resolved: Generate (2 elements)
+  Output URI: file:/C:/Repos/MazeGame/maze-module-generator/src-gen/
+  Main templates found: 1
+    - generate (params: 1)
+  Model resource contents: 1
+    Root: OpponentModel (http://main.game.maze/opponents)
+  Generated 0 files in C:\Repos\MazeGame\maze-module-generator\src-gen\main\game\maze\generated
+  ✓ OpponentRegistry.java
+  ✓ CharacterRegistrar.java
+  ✓ CharacterAttributeSetter.java
+  ✓ CharacterGraphicsFactory.java
+Generating wall code...
+  Module resolved: GenerateWalls (2 elements)
+  Output URI: file:/C:/Repos/MazeGame/maze-module-generator/src-gen/
+  Main templates found: 1
+    - generate (params: 1)
+  Model resource contents: 1
+    Root: WallModel (http://main.game.maze/walls)
+  Generated 0 files in C:\Repos\MazeGame\maze-module-generator\src-gen\main\game\maze\generated
+  ✓ WallRegistry.java
+
+✓ Code generation complete!
+[INFO] 
+[INFO] --- build-helper:3.5.0:add-source (add-generated) @ maze-module-generator ---
+[INFO] Source directory: C:\Repos\MazeGame\maze-module-generator\src-gen added.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.535 s
+[INFO] Finished at: 2026-02-06T09:28:55+01:00
+[INFO] ------------------------------------------------------------------------

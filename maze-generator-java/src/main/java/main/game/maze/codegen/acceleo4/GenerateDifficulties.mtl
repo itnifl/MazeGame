@@ -1,0 +1,272 @@
+[comment encoding = UTF-8 /]
+[module GenerateDifficulties('http://main.game.maze/difficulties')/]
+
+[comment @main/]
+[template public generate(gameData : difficulties::DifficultyGameData)]
+
+[file ('main/game/maze/generated/DifficultyConfigurator.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import main.game.maze.difficulties.*;
+
+/**
+ * Generated configurator for difficulty settings.
+ * Eliminates instanceof chains by using switch on difficulty class name.
+ * 
+ * @generated from difficulty-module.ecore using Acceleo 4
+ */
+public final class DifficultyConfigurator {
+
+    private DifficultyConfigurator() { /* utility class */ }
+
+    /**
+     * Applies difficulty multipliers to game settings.
+     * 
+     * @param difficulty the active difficulty instance
+     * @return a DifficultySettings record with all multipliers
+     */
+    public static DifficultySettings configure(Difficulty difficulty) {
+        if (difficulty == null) {
+            return DifficultySettings.DEFAULT;
+        }
+        
+        return new DifficultySettings(
+            difficulty.getMaxThreat(),
+            difficulty.getMonstersMovementSpeedMultiplier(),
+            difficulty.getMonstersDamageMultiplier(),
+            difficulty.isInstantDeath(),
+            difficulty.eClass().getName()
+        );
+    }
+
+    /**
+     * Gets the difficulty key (lowercase class name) for profile resolution.
+     * 
+     * @param difficulty the difficulty instance
+     * @return lowercase key like "easy", "normal", "hard"
+     */
+    public static String getDifficultyKey(Difficulty difficulty) {
+        if (difficulty == null) {
+            return "normal";
+        }
+        return switch (difficulty.eClass().getName()) {
+            [for (diff : difficulties::Difficulty | gameData.difficulties)]
+            case "[diff.eClass().name/]" -> "[diff.eClass().name.toLower()/]";
+            [/for]
+            default -> "normal";
+        };
+    }
+
+    /**
+     * Gets all known difficulty type names from the model.
+     * @return array of difficulty type names
+     */
+    public static String['['/][']'/] getKnownDifficultyTypes() {
+        return new String['['/][']'/] {
+            [for (diff : difficulties::Difficulty | gameData.difficulties) separator(', ')]"[diff.eClass().name/]"[/for]
+        };
+    }
+
+    /**
+     * Gets the difficulty count defined in the model.
+     * @return number of difficulty levels
+     */
+    public static int getDifficultyCount() {
+        return [gameData.difficulties->size()/];
+    }
+
+    /**
+     * Checks if a difficulty type name is known.
+     * @param typeName the type name to check
+     * @return true if known
+     */
+    public static boolean isKnownDifficultyType(String typeName) {
+        return switch (typeName) {
+            [for (diff : difficulties::Difficulty | gameData.difficulties)]
+            case "[diff.eClass().name/]" -> true;
+            [/for]
+            default -> false;
+        };
+    }
+
+    /**
+     * Immutable record holding all difficulty settings.
+     */
+    public record DifficultySettings(
+        int maxThreat,
+        double speedMultiplier,
+        double damageMultiplier,
+        boolean instantDeath,
+        String difficultyName
+    ) {
+        public static final DifficultySettings DEFAULT = new DifficultySettings(
+            20, 1.0, 1.0, false, "Normal"
+        );
+    }
+}
+[/file]
+
+[file ('main/game/maze/generated/EnemySpawnLimits.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.EnumMap;
+import java.util.Map;
+import main.game.maze.difficulties.EnemyTypes;
+import main.game.maze.difficulties.Difficulty;
+
+/**
+ * Generated enemy spawn limits per difficulty level.
+ * Provides type-safe access to enemy caps without reflection.
+ * 
+ * @generated from difficulty-module.ecore using Acceleo 4
+ */
+public final class EnemySpawnLimits {
+
+    private EnemySpawnLimits() { /* utility class */ }
+
+    /**
+     * Gets enemy spawn caps for the given difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @return map of enemy type to maximum count
+     */
+    public static Map<EnemyTypes, Integer> getCaps(Difficulty difficulty) {
+        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
+        
+        if (difficulty == null) {
+            // Default caps when no difficulty set
+            caps.put(EnemyTypes.ZOMBIE, 5);
+            caps.put(EnemyTypes.GHOST, 3);
+            caps.put(EnemyTypes.PUMPKINBOMBER, 2);
+            return caps;
+        }
+        
+        // Populate from difficulty's enemyMaxCount list
+        difficulty.getEnemyMaxCount().forEach(emc -> 
+            caps.put(emc.getType(), Math.max(0, emc.getMaxCount()))
+        );
+        
+        return caps;
+    }
+
+    /**
+     * Gets the total enemy count allowed for this difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @return sum of all enemy caps
+     */
+    public static int getTotalEnemyCount(Difficulty difficulty) {
+        return getCaps(difficulty).values().stream()
+            .mapToInt(Integer::intValue)
+            .sum();
+    }
+
+    /**
+     * Checks if a specific enemy type is allowed at this difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @param type the enemy type to check
+     * @return true if at least one of this type is allowed
+     */
+    public static boolean isEnemyTypeAllowed(Difficulty difficulty, EnemyTypes type) {
+        return getCaps(difficulty).getOrDefault(type, 0) > 0;
+    }
+
+    /**
+     * Gets max count for a specific enemy type at the given difficulty.
+     * 
+     * @param difficulty the active difficulty
+     * @param type the enemy type
+     * @return maximum spawn count, 0 if not allowed
+     */
+    public static int getMaxCount(Difficulty difficulty, EnemyTypes type) {
+        return getCaps(difficulty).getOrDefault(type, 0);
+    }
+
+    // Enemy type constants for convenience
+    public static final EnemyTypes ZOMBIE = EnemyTypes.ZOMBIE;
+    public static final EnemyTypes GHOST = EnemyTypes.GHOST;
+    public static final EnemyTypes PUMPKINBOMBER = EnemyTypes.PUMPKINBOMBER;
+}
+[/file]
+
+[file ('main/game/maze/generated/DifficultyRegistry.java', overwrite, 'UTF-8')]
+package main.game.maze.generated;
+
+import java.util.logging.Logger;
+import main.game.maze.difficulties.*;
+
+/**
+ * Generated difficulty registry with factory methods.
+ * @generated from difficulty-module.ecore using Acceleo 4
+ */
+public final class DifficultyRegistry {
+
+    private static final Logger LOGGER = Logger.getLogger(DifficultyRegistry.class.getName());
+
+    private DifficultyRegistry() { /* utility class */ }
+
+    /**
+     * Creates a difficulty instance by type name.
+     * @param typeName the difficulty type name (e.g., "EasyDifficulty")
+     * @return new difficulty instance or null if unknown
+     */
+    public static Difficulty createByName(String typeName) {
+        if (typeName == null) return null;
+        
+        return switch (typeName) {
+            case "EasyDifficulty" -> DifficultiesFactory.eINSTANCE.createEasyDifficulty();
+            case "NormalDifficulty" -> DifficultiesFactory.eINSTANCE.createNormalDifficulty();
+            case "HardDifficulty" -> DifficultiesFactory.eINSTANCE.createHardDifficulty();
+            default -> {
+                LOGGER.warning("Unknown difficulty type: " + typeName);
+                yield null;
+            }
+        };
+    }
+
+    /**
+     * Configures default multipliers for a difficulty based on type.
+     * @param difficulty the difficulty to configure
+     */
+    public static void configureDefaults(Difficulty difficulty) {
+        if (difficulty == null) return;
+        
+        switch (difficulty.eClass().getName()) {
+            case "EasyDifficulty" -> {
+                difficulty.setMonstersMovementSpeedMultiplier(0.8);
+                difficulty.setMonstersDamageMultiplier(0.5);
+                difficulty.setMaxThreat(15);
+                difficulty.setInstantDeath(false);
+            }
+            case "NormalDifficulty" -> {
+                difficulty.setMonstersMovementSpeedMultiplier(1.0);
+                difficulty.setMonstersDamageMultiplier(1.0);
+                difficulty.setMaxThreat(20);
+                difficulty.setInstantDeath(false);
+            }
+            case "HardDifficulty" -> {
+                difficulty.setMonstersMovementSpeedMultiplier(1.5);
+                difficulty.setMonstersDamageMultiplier(2.0);
+                difficulty.setMaxThreat(30);
+                difficulty.setInstantDeath(true);
+            }
+            default -> LOGGER.warning("Unknown difficulty type for defaults: " + difficulty.eClass().getName());
+        }
+    }
+
+    /**
+     * Gets all difficulty type names.
+     * @return array of type names
+     */
+    public static String['['/][']'/] getAllDifficultyTypes() {
+        return new String['['/][']'/] {
+            "EasyDifficulty",
+            "NormalDifficulty",
+            "HardDifficulty"
+        };
+    }
+}
+[/file]
+
+[/template]

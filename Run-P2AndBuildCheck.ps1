@@ -1,7 +1,7 @@
 param(
     [string]$LogDirectory = "releng\test-results",
     [ValidateSet(1,2,3,4)]
-    [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1–2, 4=skip 1–3
+    [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1-2, 4=skip 1-3
 )
 
 # Ensure we run from the script dir (repo root assumed)
@@ -43,7 +43,7 @@ function Write-StepResult {
         Summary = $Summary
     }) | Out-Null
 
-    Write-Host ("[{0}] {1} — {2}" -f $Status, $Step, $Summary)
+    Write-Host ("[{0}] {1} - {2}" -f $Status, $Step, $Summary)
 }
 
 function Skip-Step {
@@ -52,8 +52,8 @@ function Skip-Step {
     Write-StepResult -Step $Step -Status "SKIPPED" -CommandText $Cmd -Summary $reason -Output ""
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Step 0 — environment info (always run; cheap and useful)
+# ------------------------------------------------------------------------------
+# Step 0 - environment info (always run; cheap and useful)
 $step0 = "0. Toolchain versions"
 $cmdText0 = @'
 mvn -version
@@ -65,7 +65,7 @@ $output0 = & {
 } 2>&1
 Write-StepResult -Step $step0 -Status "OK" -CommandText $cmdText0 -Summary "Recorded Maven/Java versions." -Output $output0
 
-# Step 1 — rebuild local p2 mirror
+# Step 1 - rebuild local p2 mirror
 $step1   = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
 Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
@@ -94,7 +94,7 @@ if ($StartAt -gt 1) {
     Write-StepResult -Step $step1 -Status $status1 -CommandText $cmdText1 -Summary $summary1 -Output $output1
 }
 
-# Step 2 — verify required bundles and features in local mirror
+# Step 2 - verify required bundles and features in local mirror
 $step2   = "2. Verify required Eclipse bundles and features in local mirror"
 $cmdText2 = @'
 Check for these bundles/features in releng\local-p2 and content.xml:
@@ -109,11 +109,17 @@ Check for these bundles/features in releng\local-p2 and content.xml:
     org.eclipse.ocl
     org.eclipse.ocl.ecore
     org.eclipse.ocl.pivot
+    org.eclipse.xtext
+    org.eclipse.xtext.xbase
+    org.eclipse.xtext.xbase.lib
+    org.eclipse.xtext.util
+    org.eclipse.xtext.ide
+    org.antlr.runtime
   Feature groups:
     org.eclipse.emf.sdk.feature.group
     org.eclipse.ocl.all.sdk.feature.group
-    org.eclipse.acceleo.feature.group
     org.eclipse.emf.codegen.feature.group
+    org.eclipse.xtext.sdk.feature.group
 '@
 if ($StartAt -gt 2) {
     Skip-Step -Step $step2 -Cmd $cmdText2
@@ -137,9 +143,15 @@ if ($StartAt -gt 2) {
         "org.eclipse.ocl.pivot",
         "org.eclipse.emf.sdk.feature.group",
         "org.eclipse.ocl.all.sdk.feature.group",
-        "org.eclipse.acceleo.feature.group",
-        #"org.eclipse.acceleo.runtime.feature.group",
-        "org.eclipse.emf.codegen.feature.group"
+        "org.eclipse.emf.codegen.feature.group",
+        # Xtext dependencies (for DSL)
+        "org.eclipse.xtext",
+        "org.eclipse.xtext.xbase",
+        "org.eclipse.xtext.xbase.lib",
+        "org.eclipse.xtext.util",
+        "org.eclipse.xtext.ide",
+        "org.eclipse.xtext.sdk.feature.group",
+        "org.antlr.runtime"
     )
 
     $foundPatterns = @{}
@@ -161,9 +173,14 @@ if ($StartAt -gt 2) {
                 releng\local-p2\plugins\org.eclipse.ocl.pivot_*,
                 releng\local-p2\features\org.eclipse.emf.sdk_*,
                 releng\local-p2\features\org.eclipse.ocl.all.sdk_*,
-                releng\local-p2\features\org.eclipse.acceleo_*,
-                releng\local-p2\features\org.eclipse.acceleo.runtime_*,
-                releng\local-p2\features\org.eclipse.emf.codegen_* -ErrorAction SilentlyContinue
+                releng\local-p2\features\org.eclipse.emf.codegen_*,
+                releng\local-p2\plugins\org.eclipse.xtext_*,
+                releng\local-p2\plugins\org.eclipse.xtext.xbase_*,
+                releng\local-p2\plugins\org.eclipse.xtext.xbase.lib_*,
+                releng\local-p2\plugins\org.eclipse.xtext.util_*,
+                releng\local-p2\plugins\org.eclipse.xtext.ide_*,
+                releng\local-p2\features\org.eclipse.xtext.sdk_*,
+                releng\local-p2\plugins\org.antlr.runtime_* -ErrorAction SilentlyContinue
         } 2>&1
 
         # Jar and feature patterns we expect to exist
@@ -180,8 +197,15 @@ if ($StartAt -gt 2) {
             "releng\local-p2\plugins\org.eclipse.ocl.pivot_*",
             "releng\local-p2\features\org.eclipse.emf.sdk_*",          # org.eclipse.emf.sdk.feature.group
             "releng\local-p2\features\org.eclipse.ocl.all.sdk_*",      # org.eclipse.ocl.all.sdk.feature.group
-            "releng\local-p2\features\org.eclipse.acceleo_*",          # org.eclipse.acceleo.feature.group        
-            "releng\local-p2\features\org.eclipse.emf.codegen_*"       # org.eclipse.emf.codegen.feature.group
+            "releng\local-p2\features\org.eclipse.emf.codegen_*",      # org.eclipse.emf.codegen.feature.group
+            # Xtext dependencies (for DSL)
+            "releng\local-p2\plugins\org.eclipse.xtext_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.xbase_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.xbase.lib_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.util_*",
+            "releng\local-p2\plugins\org.eclipse.xtext.ide_*",
+            "releng\local-p2\features\org.eclipse.xtext.sdk_*",        # org.eclipse.xtext.sdk.feature.group
+            "releng\local-p2\plugins\org.antlr.runtime_*"
         )
         foreach ($jp in $jarPaths) {
             if (-not (Get-ChildItem -Path $jp -ErrorAction SilentlyContinue)) { $missingJars += $jp }
@@ -253,7 +277,7 @@ if ($StartAt -gt 2) {
     }
 }
 
-# Step 3 — clear Tycho p2 cache
+# Step 3 - clear Tycho p2 cache
 $step3   = "3. Clear Tycho p2 cache"
 $cmdText3 = @'
 Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
@@ -272,7 +296,7 @@ if ($StartAt -gt 3) {
     Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $summary3 -Output $output3
 }
 
-# Step 4 — full Tycho + app build
+# Step 4 - full Tycho + app build
 $step4   = "4. Full build (Tycho + app)"
 $cmdText4 = @'
 mvn -U -DskipTests=false clean verify -e -X
@@ -301,7 +325,7 @@ foreach ($s in $stepSummaries) {
 Write-Host ""
 Write-Host "Overall summary:"
 foreach ($s in $stepSummaries) {
-    Write-Host ("• {0} — {1} — {2}" -f $s.Step, $s.Status, $s.Summary)
+    Write-Host ("* {0} - {1} - {2}" -f $s.Step, $s.Status, $s.Summary)
 }
 Write-Host ""
 Write-Host "Test run finished. Log written to:"

@@ -225,3 +225,15 @@ Typical responsibilities of the code based checks include
 
 Together, the OCL constraints and the code based guards ensure that a difficulty profile is both well formed as data and safe to use at runtime.
 Model constraints keep the persisted definitions clean, while runtime constraints protect the game from invalid inputs and illegal states.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Opponents Module](../main.game.maze.opponents/readme.md) | Opponent definitions and threat values |
+| [Demo Guide](../demo.md) | Demonstration of difficulty effects in the game |

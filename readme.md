@@ -2,22 +2,26 @@
 
 ## Index
 
-* 🧩 [project-status](project-status/readme.md)
 * 🧩 [releng](releng/readme.md)
 * 🧩 [main.game.maze.walls](main.game.maze.walls/readme.md)
 * 🧩 [main.game.maze.mazeworld](main.game.maze.mazeworld/readme.md)
 * 🧩 [main.game.maze.behaviour](main.game.maze.behaviour/readme.md)
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
-* 🧩 [maze-generator.acceleo](maze-generator.acceleo/readme.md)
+* 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
+* 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
+* 📚 [Technology Layman's Guide](docs/technology-laymans-guide.md) - **Simple explanations of Xtext, metamodels, and FreeMarker**
+* 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
-* 🧩 [maze-generator.acceleo-runner](maze-generator.acceleo-runner/readme.md)
+* 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🖥️ [maze](maze/readme.md)
 
-Also, see: [Acceleo](acceleo.readme.md) in the Maze Game
+Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
+Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
+Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-readme.md)
 
 ## Project Tech stack:
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -25,10 +29,11 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 ![Maven](https://img.shields.io/badge/Maven-%23C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![Tycho](https://img.shields.io/badge/Tycho-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![Eclipse](https://img.shields.io/badge/Eclipse-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
-![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white) <br/>
+![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white)
+![JUnit5](https://img.shields.io/badge/JUnit5-%2325A162.svg?style=for-the-badge&logo=junit5&logoColor=white) <br/>
 ![MDD](https://img.shields.io/badge/Model_Driven_Dev-%23555555.svg?style=for-the-badge)
 ![Xtext](https://img.shields.io/badge/Xtext-%23F7941E.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
-![Acceleo](https://img.shields.io/badge/Acceleo-%238CA315.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
+![FreeMarker](https://img.shields.io/badge/FreeMarker-%23E34F26.svg?style=for-the-badge&logo=apache&logoColor=white)
 ![Makefile](https://img.shields.io/badge/Makefile-%23A81D33.svg?style=for-the-badge&logo=gnumake&logoColor=white)
 <br/>
 
@@ -85,11 +90,11 @@ Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in t
 * Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
-* Also see original MDD project status: [project-status/readme.md](project-status/readme.md)
 
 ## Prerequisites and setup
 
-This project prefers JDK 25 and JavaFX 25.
+This project requires JDK 21 for full builds (Xtext generation + Tycho reactor).
+JavaFX 25 may be used for running the game only.
 
 * Visual Studio Code: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
   Extensions:
@@ -107,8 +112,8 @@ This project prefers JDK 25 and JavaFX 25.
 
 Download and install:
 
-  * JDK 25: [https://www.oracle.com/java/technologies/downloads/#java25](https://www.oracle.com/java/technologies/downloads/#java25)
-  * JavaFX 25 SDK: [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
+  * JDK 21: [https://www.oracle.com/java/technologies/downloads/#java21](https://www.oracle.com/java/technologies/downloads/#java21)
+  * JavaFX 25 SDK (optional for game runtime): [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
     Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
   * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
     - Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
@@ -117,9 +122,9 @@ Download and install:
 
 Environment variables (examples on Windows):
 
-* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-25`
+* 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-21`
 * 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
-* 🛠️ `PATH+=C:\Program Files\Java\jdk-25\bin`
+* 🛠️ `PATH+=C:\Program Files\Java\jdk-21\bin`
 * 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
 * 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
 
@@ -127,13 +132,15 @@ VS Code Java runtime:
 
 * Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
 * Ctrl + Shift + P → “Java: Configure Java Runtime”
-* Under JDKs, add `C:\Program Files\Java\jdk-25` and set it as Default
-* In the same panel, set JDK for Language Server to JDK 21
+* Under JDKs, add `C:\Program Files\Java\jdk-21` and set it as Default for build tasks
+* If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
 
 ## Build commands (exact)
+
+Xtext generation and reactor builds that include DSL modules should be run with Java 21 in the shell session.
 
 ```powershell
 # PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build
@@ -197,9 +204,19 @@ make clear-tycho-cache
 make build
 ```
 
-## Debug
+## Debug & Build Verification
 
-Use the script `Run-P2AndBuildCheck.ps1` to run a build and check by reading the logs under releng\test-results.
+Use the script `Run-P2AndBuildCheck.ps1` to run a full build with diagnostics:
+
+```powershell
+# Full build with all steps
+.\Run-P2AndBuildCheck.ps1
+
+# Skip mirror rebuild, start at build step
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
+```
+
+Logs are written to `releng\test-results`.
 
 ---
 
@@ -235,10 +252,11 @@ See: [main.game.maze.difficulties/readme.md](main.game.maze.difficulties/readme.
 Enemy types with base stats, threat values, categories, and factories for runtime opponents.  
 See: [main.game.maze.opponents/readme.md](main.game.maze.opponents/readme.md)
 
-### main.game.maze.comp
+### main.game.maze.dsl
 
-Component and configuration DSL for MazeGame, plus the generated language infrastructure.  
-See: [main.game.maze.comp/readme.md](main.game.maze.comp/readme.md)
+Xtext-based Domain-Specific Language for game configuration. Provides a human-readable textual syntax for defining game levels, opponents, difficulties, patrol behaviors, and loot tables. Generates Java factory classes and XMI model instances.  
+See: [main.game.maze.dsl/readme.md](main.game.maze.dsl/readme.md)  
+Reference: [DSL Reference Guide](docs/dsl-reference.md) | [DSL Tutorial](docs/dsl-tutorial.md)
 
 ### maze
 
@@ -255,25 +273,20 @@ See: [maze-feature/readme.md](maze-feature/readme.md)
 Eclipse p2 update site that publishes the MazeGame feature for installation and targets.  
 See: [maze-module-repository/readme.md](maze-module-repository/readme.md)
 
-### maze-generator.acceleo
+### maze-generator.freemarker
 
-Acceleo templates that turn EMF models into Java code and helper artefacts.  
-See: [maze-generator.acceleo/readme.md](maze-generator.acceleo/readme.md)
+FreeMarker templates that turn EMF models into Java code and helper artefacts.
+See: [maze-generator.freemarker/readme.md](maze-generator.freemarker/readme.md)
 
-### maze-generator.acceleo-runner
+### maze-generator.freemarker-runner
 
-Headless Acceleo runner plug in used to execute the templates in an Eclipse runtime.  
-See: [maze-generator.acceleo-runner/readme.md](maze-generator.acceleo-runner/readme.md)
+Headless runner plug-in that executes FreeMarker-based generators during the Tycho build.
+See: [maze-generator.freemarker-runner/readme.md](maze-generator.freemarker-runner/readme.md)
 
 ### maze-module-generator
 
 Maven generator module that produces additional Java sources into `src-gen` for MazeGame.  
 See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
-
-### project-status
-
-Project and course status notes with scope, milestones, and progress tracking.  
-See: [project-status/readme.md](project-status/readme.md)
 
 
 # Utility scripts at the project root
@@ -288,20 +301,24 @@ This repository includes two helper scripts for packaging the source and for run
 ### Run-P2AndBuildCheck.ps1
 
 **What it does**
-Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
+Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
 
 **Typical flow**
 
 1. Optionally clears `releng\local-p2` and rebuilds the mirror.
-2. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
-3. Performs a clean verify from the root with tests enabled.
-4. Prints a compact result table and writes the full log under `releng\test-results`.
+2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
+3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
+4. Performs a clean verify from the root with tests enabled.
+5. Prints a compact result table and writes the full log under `releng\test-results`.
 
 **Quick start**
 
 ```powershell
-# From the repo root
+# From the repo root - full build
 .\Run-P2AndBuildCheck.ps1
+
+# Skip to build step only (steps 1-3 skipped)
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
 ```
 
 **Parameters**
@@ -310,6 +327,8 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 # Default output folder for logs
 .\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
 
+# Start at a specific step (1=all, 2=skip mirror, 3=skip mirror+verify, 4=build only)
+.\Run-P2AndBuildCheck.ps1 -StartAt 4
 ```
 
 **Outputs**
@@ -320,5 +339,5 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 <br/>
 
 ## Contributors
-| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) |
-| :---: | :---: | :---: |
+| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) | [<img src="https://github.com/itnifl.png" width="100px;"/><br /><sub><b>itnifl</b></sub>](https://github.com/itnifl) |
+| :---: | :---: | :---: | :---: |

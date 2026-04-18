@@ -1,0 +1,160 @@
+<!-- maze-generator.runner/pom.xml -->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>maze-generator.acceleo-runner</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-eclipse-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <executions>
+         <execution>
+            <id>run-acceleo-walls</id>
+            <phase>generate-sources</phase>
+            <goals><goal>eclipse-run</goal></goals>
+            <configuration>
+              <applicationArgs>
+                <arg>-application</arg>
+                <arg>maze-generator.acceleo.main.game.maze.gen.HeadlessWallsApp</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
+              </applicationArgs>
+              
+              <executionEnvironment>JavaSE-21</executionEnvironment>
+              <jvmArgs>
+                <arg>-Dfile.encoding=UTF-8</arg>
+              </jvmArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-acceleo</id>
+            <phase>generate-sources</phase>
+            <goals><goal>eclipse-run</goal></goals>
+            <configuration>
+              <applicationArgs>
+                <arg>-application</arg>
+                <arg>maze-generator.acceleo.main.game.maze.gen.RunAcceleo</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
+              </applicationArgs>
+              
+
+              <executionEnvironment>JavaSE-21</executionEnvironment>
+              <jvmArgs>
+                <arg>-Dfile.encoding=UTF-8</arg>
+              </jvmArgs>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <dependencies>
+                <!-- Standard Eclipse Dependencies -->
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.osgi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.equinox.app</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.core.runtime</artifactId></dependency>
+                
+                <!-- EMF Dependencies -->
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.ecore.xmi</artifactId></dependency>
+                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.emf.common</artifactId></dependency>
+
+                <!-- FreeMarker-based Generator -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>maze-generator.acceleo</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+
+                <!-- Domain Models -->
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.difficulties</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.opponents</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.mazeworld</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.walls</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+                <dependency>
+                    <type>eclipse-plugin</type>
+                    <artifactId>main.game.maze.behaviour</artifactId>
+                    <version>0.0.0</version>
+                </dependency>
+            </dependencies>
+              <repositories>
+                <repository>
+                  <id>local-p2</id>
+                  <layout>p2</layout>
+                  <url>${p2.repo.url}</url>
+                </repository>
+                 <repository>
+                  <id>maze-repo</id>
+                  <layout>p2</layout>
+                  <url>${maze.repo.url}</url>
+                </repository>
+              </repositories>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>3.0.2</version>
+        <dependencies>
+          <dependency>
+              <groupId>org.apache.groovy</groupId>
+              <artifactId>groovy</artifactId>
+              <version>4.0.15</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
+            <version>4.0.15</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>normalize-p2-repo-path</id>
+            <phase>initialize</phase>
+            <goals>
+                <goal>execute</goal>
+            </goals>
+            <configuration>
+                <scripts>
+                    <script>
+                        // Get the parent directory of the current module (which is the project root)
+                        def projectRoot = project.basedir.parentFile.getCanonicalPath()
+                        // Construct the full, normalized path to the local p2 repository
+                        project.properties['p2.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/releng/local-p2'
+                        //file:${maven.multiModuleProjectDirectory}/maze-module-repository/target/repository
+                        project.properties['maze.repo.url'] = 'file:' + projectRoot.replace('\\', '/') + '/maze-module-repository/target/repository'
+                    </script>
+                </scripts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>        
+    </plugins>
+  </build>
+</project>

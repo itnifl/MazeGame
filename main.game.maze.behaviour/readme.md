@@ -108,8 +108,14 @@ The factory is responsible for
 - wiring behaviours with path calculators and navigation services  
 - reading any configuration or parameters needed from difficulty or opponent definitions
 
+### Future: Generated Support Code
+
+> **Note**: The `BehaviorDispatcher` class is **planned but not yet implemented**.  
+> When created, it will route behaviour requests by character type based on EMF model definitions.  
+> See [readme-mddcodegeneration.md](../readme-mddcodegeneration.md) for the generation roadmap.
+
 This keeps the rest of the game code small and declarative.  
-For a given opponent type, the game only needs to ask the factory for “its” behaviour instead of manually creating and wiring objects.
+For a given opponent type, the game only needs to ask the factory for "its" behaviour instead of manually creating and wiring objects.
 
 ---
 
@@ -154,3 +160,15 @@ Recommended practices
   Behaviour methods should clearly state what they read and what they modify, which makes reasoning about them easier.
 
 By keeping these goals in mind, `main.game.maze.behaviour` remains a clear and reliable foundation for all movement and decision making in MazeGame.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Maze World Module](../main.game.maze.mazeworld/readme.md) | Navigation graph and maze structure |
+| [Opponents Module](../main.game.maze.opponents/readme.md) | Opponent definitions and runtime factory |

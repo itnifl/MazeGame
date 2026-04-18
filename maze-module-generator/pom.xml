@@ -12,33 +12,85 @@
   <packaging>jar</packaging>
   <name>maze-module-generator</name>
 
-<dependencies>
+  <properties>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+  </properties>
+
+  <dependencies>
+    <!-- EMF model modules (walls, opponents, difficulties) -->
     <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>main.game.maze.walls</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.opponents</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.difficulties</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
     <plugins>
+        <!-- 
+        Note: Code generation is handled by maze-generator.acceleo-runner in the Tycho build.
+        Generated sources in src-gen are committed to the repository.
+        -->
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <version>3.5.0</version>
             <executions>
                 <execution>
-                <id>add-generated</id>
-                <phase>generate-sources</phase>
-                <goals><goal>add-source</goal></goals>
-                <configuration>
-                    <sources>
-                    <source>src-gen</source>
-                    </sources>
-                </configuration>
+                    <id>add-generated</id>
+                    <phase>generate-sources</phase>
+                    <goals><goal>add-source</goal></goals>
+                    <configuration>
+                        <sources>
+                            <source>src-gen</source>
+                        </sources>
+                    </configuration>
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.5</version>
+            <configuration>
+                <includes>
+                    <include>**/*Test.java</include>
+                </includes>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.12.1</version>
+            <configuration>
+                <source>17</source>
+                <target>17</target>
+            </configuration>
+        </plugin>
     </plugins>
-    </build>
+  </build>
 </project>

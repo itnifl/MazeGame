@@ -5,7 +5,8 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 1. How the **difficulty model** affects the running game.
 2. How the **opponent models** behave when validation succeeds or fails.
 3. How the **behaviour / movements model** drives patrol movement and can be validated.
-4. How the **walls model** and Acceleo generated code are wired into the game.
+4. How the **walls model** and FreeMarker-generated code are wired into the game.
+5. How the **MazeGame DSL** provides a textual syntax for game configuration.
 
 ---
 
@@ -37,6 +38,12 @@ This demo shows how the **models** and the **runtime code** work together in Maz
   * `maze/src/main/resources/xmi/difficulties/difficulties.xmi`
   * `maze/src/main/resources/xmi/opponents/opponentModel.xmi`
   * `main.game.maze.walls/xmi/walls.xmi` (model for wall types and properties)
+
+* DSL configuration files (`.mazegame`):
+
+  * `maze/src/main/resources/levels/tutorial.mazegame`
+  * `maze/src/main/resources/levels/challenge.mazegame`
+  * `maze/src/main/resources/levels/survival.mazegame`
 
 * Sample test models:
 
@@ -322,7 +329,7 @@ This demonstrates that the **behaviour model** is treated similarly to the oppon
 
 ## 5．Walls model and generated code wiring
 
-This section shows how the **walls model** and **Acceleo generated code** are connected from design time to runtime.
+This section shows how the **walls model** and **FreeMarker-generated code** are connected from design time to runtime.
 
 ### 5．1 The walls model at design time
 
@@ -355,29 +362,29 @@ This JAR is:
 * containing the generated EMF model code and runtime support for walls.
 
 Tycho uses this JAR when resolving plug ins in the Eclipse world.
-Headless tools such as `maze-generator.acceleo-runner` can load the walls model through this bundle.
+Headless tools such as `maze-generator.freemarker-runner` can load the walls model through this bundle.
 
-### 5．3 How `maze-generator.acceleo-runner` uses the walls model
+### 5．3 How `maze-generator.freemarker-runner` uses the walls model
 
-* `maze-generator.acceleo` contains the Acceleo templates that read walls related model data.
-* `maze-generator.acceleo-runner` is the headless Equinox application that:
+* `maze-generator.freemarker` contains the FreeMarker templates that read walls-related model data.
+* `maze-generator.freemarker-runner` is the headless Equinox application that:
 
   1．starts in an Eclipse runtime (using the p two repository that contains `main.game.maze.walls_1.0.0.202512041940.jar`),
   2．loads EMF models, including `walls.xmi` and its generated Ecore package,
-  3．invokes the Acceleo `Generate` module,
+  3．invokes the FreeMarker `Generate` module,
   4．writes Java sources derived from the walls model into a generated sources folder.
 
 Conceptually:
 
 * `walls.xmi` → EMF model
-* `maze-generator.acceleo` → templates that describe how to turn that model into Java code
-* `maze-generator.acceleo-runner` → headless launcher that runs the templates in the build
+* `maze-generator.freemarker` → templates that describe how to turn that model into Java code
+* `maze-generator.freemarker-runner` → headless launcher that runs the templates in the build
 
 The result from this step is plain Java code that mirrors the walls definitions.
 
 ### 5．4 From generated walls code to the game: `maze-module-generator` and its JAR
 
-Once the Acceleo runner has written the generated Java sources, the Maven side bridge takes over:
+Once the FreeMarker runner has written the generated Java sources, the Maven side bridge takes over:
 
 * The `maze-module-generator` module has a dependency on `main.game.maze.walls` and is configured to include a generated sources folder (for example `src-gen`) as a source directory.
 
@@ -385,7 +392,7 @@ Once the Acceleo runner has written the generated Java sources, the Maven side b
 
 During the Maven build:
 
-1．`maze-module-generator` receives the generated walls related Java sources in `src-gen`.
+1．`maze-module-generator` receives the generated walls-related Java sources in `src-gen`.
 2．Maven compiles both `src` and `src-gen`.
 3．The compiled classes are packaged into:
 
@@ -402,11 +409,11 @@ This JAR is a plain Maven artifact and can be used from the `maze` game module.
 
 ## 6．How `maze-module-generator` is used in the game
 
-The `maze` module declares an explicit dependency on the Acceleo generated module.
+The `maze` module declares an explicit dependency on the FreeMarker-generated module.
 In `maze/pom.xml` you will find:
 
 ```xml
-<!-- This is our Acceleo generated module -->
+<!-- This is our FreeMarker-generated module -->
 <dependency>
     <groupId>main.game.maze</groupId>
     <artifactId>maze-module-generator</artifactId>
@@ -417,7 +424,7 @@ In `maze/pom.xml` you will find:
 This line is important for two reasons:
 
 1．It tells Maven that the game needs whatever classes were generated from the models.
-These include walls related helpers, as well as any other generated types.
+These include walls-related helpers, as well as any other generated types.
 
 2．It connects the runtime directly to the artifact built from `maze-module-generator`:
 
@@ -432,7 +439,7 @@ So the runtime flow looks like this:
 * Build time:
 
   * Tycho builds the EMF plug ins and publishes `main.game.maze.walls_1.0.0.202512041940.jar` into the p two repository under `maze-module-repository/target/repository`.
-  * `maze-generator.acceleo-runner` runs Acceleo templates against those models.
+  * `maze-generator.freemarker-runner` runs FreeMarker templates against those models.
   * `maze-module-generator` compiles the generated sources into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 
 * Runtime:
@@ -443,7 +450,7 @@ So the runtime flow looks like this:
 
 In a live demo, you can summarise this as:
 
-> “`walls.xmi` and the other XMI models are turned into Java code by Acceleo.
+> "`walls.xmi` and the other XMI models are turned into Java code by FreeMarker.
 > That code is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 > The `maze` game module imports that JAR through a normal Maven dependency and uses the generated classes at runtime.”
 
@@ -502,12 +509,12 @@ Use this as a compact spoken script.
 
 * Mention that Tycho builds `main.game.maze.walls_1.0.0.202512041940.jar` into the p two repository under `maze-module-repository/target/repository/plugins/`.
 
-* Explain that Acceleo templates run via `maze-generator.acceleo-runner`, and their output is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
+* Explain that FreeMarker templates run via `maze-generator.freemarker-runner`, and their output is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 
 * Point at the dependency in `maze/pom.xml`:
 
   ```xml
-  <!-- This is our Acceleo generated module -->
+  <!-- This is our FreeMarker-generated module -->
   <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>maze-module-generator</artifactId>
@@ -541,4 +548,169 @@ Use this as a compact spoken script.
 For the demo you can summarise this as:
 
 > “The same steps you see locally are also run automatically in CI, so generated code, models and the game are always in sync.”
+---
 
+## 9．MazeGame DSL demo
+
+This section demonstrates the **Xtext-based Domain-Specific Language** for game configuration.
+
+### 9．1 What is the MazeGame DSL?
+
+The DSL provides a **human-readable textual syntax** for defining game levels instead of editing raw XMI files.
+
+**Before (XMI):**
+```xml
+<opp:OpponentModel xmi:version="2.0" name="TutorialLevel">
+  <characterTypes xsi:type="opp:Zombie" id="Guard1" health="50" threatLevel="10"/>
+</opp:OpponentModel>
+```
+
+**After (DSL):**
+```text
+game TutorialLevel {
+    opponent Guard1 {
+        type zombie
+        health 50
+        threatLevel 10
+    }
+}
+```
+
+### 9．2 DSL project structure
+
+The DSL is implemented across four Eclipse plugin modules:
+
+| Module | Purpose |
+|--------|---------|
+| `main.game.maze.dsl` | Core grammar, parser, validator, generator |
+| `main.game.maze.dsl.ide` | Language server support |
+| `main.game.maze.dsl.ui` | Eclipse editor integration |
+| `main.game.maze.dsl.tests` | Automated tests |
+
+### 9．3 Open and explore a DSL file
+
+1. Open one of the example DSL files:
+   * `maze/src/main/resources/levels/tutorial.mazegame`
+   * `maze/src/main/resources/levels/challenge.mazegame`
+   * `maze/src/main/resources/levels/survival.mazegame`
+
+2. Show the key elements:
+   * **game** declaration with name
+   * **difficulty** block with level, maxThreat, enemy limits
+   * **patrol** definitions with waypoints
+   * **opponent** configurations with type-specific stats
+   * **loot-table** definitions
+
+### 9．4 Demonstrate validation
+
+1. Open `tutorial.mazegame` in an Xtext-enabled editor.
+
+2. Try adding an invalid configuration:
+   ```text
+   opponent BadEnemy {
+     type zombie
+     threatLevel 150    // Error: exceeds 100
+   }
+   ```
+
+3. Show that the editor immediately displays an error marker.
+
+4. Use the quick fix (Ctrl+1) to correct the value.
+
+5. Explain the validation rules:
+  * Threat level must be 0-100
+   * Patrol paths need at least 2 waypoints
+   * Character-specific blocks must match character type
+   * Total threat cannot exceed maxThreat
+
+### 9．5 Show code generation output
+
+When a `.mazegame` file is saved, the generator produces:
+
+1. **Java Factory Class** (`*Factory.java`):
+   ```java
+   public class TutorialLevelFactory {
+       public static Zombie createTutorialZombie() { ... }
+       public static PatrolBehavior createEntranceGuardPatrol() { ... }
+       public static Difficulty createDifficulty() { ... }
+       public static List<CharacterType> createAllOpponents() { ... }
+   }
+   ```
+
+2. **XMI Model Instances**:
+   * `tutoriallevel-config.xmi` - Opponents model
+   * `tutoriallevel-difficulty.xmi` - Difficulty settings
+
+### 9．6 DSL syntax overview
+
+Show the key constructs:
+
+```text
+game MyLevel {
+    // Difficulty settings
+    difficulty {
+        level easy | normal | hard
+        maxThreat 50
+        limit zombie max 3
+    }
+
+    // Patrol paths
+    patrol GuardRoute {
+        visionRange 100.0
+        path [(0, 0), (100, 0) : 2000 ms, (100, 100)]
+    }
+
+    // Enemy definitions
+    opponent Enemy1 {
+        type zombie | ghost | pumpkinbomber
+        health 100
+        threatLevel 25
+        behavior patrol
+        patrol GuardRoute
+        
+        zombie-stats { attackDamage 15 }
+    }
+
+    // Loot drops
+    loot-table Rewards {
+        item HealthPotion { type food value 25 }
+    }
+}
+```
+
+### 9．7 Run the DSL tests
+
+From the repository root:
+
+```bash
+# Run DSL parsing and validation tests (and required upstream modules)
+mvn -pl main.game.maze.dsl.tests -am test
+```
+
+Explain the test coverage:
+* **Parsing tests** - Valid syntax is accepted
+* **Validation tests** - Invalid configurations are rejected with proper errors
+* **Generator tests** - Correct Java and XMI output is produced
+
+### 9．8 Key benefits of the DSL
+
+Summarise for the audience:
+
+1. **Readability** - Game designers can understand and edit configurations
+2. **Validation** - Errors are caught immediately in the editor, not at runtime
+3. **Autocomplete** - Content assist suggests valid options
+4. **Integration** - Generates code compatible with existing EMF models
+5. **Documentation** - See [DSL Reference Guide](docs/dsl-reference.md) and [DSL Tutorial](docs/dsl-tutorial.md)
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of Xtext, metamodels, and FreeMarker in everyday terms |
+| [DSL Reference Guide](docs/dsl-reference.md) | Complete syntax reference for MazeDsl |
+| [DSL Tutorial](docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [FreeMarker Guide](freemarker.readme.md) | Code generation with FreeMarker |
+| [Xtext Setup Guide](docs/xtext-readme.md) | Build and development setup for the DSL |
+| [Main README](readme.md) | Project overview and module index |

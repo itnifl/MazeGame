@@ -27,7 +27,7 @@ jobs:
       - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze,maze-feature,maze-module-repository,maze-generator.acceleo,maze-generator.acceleo-runner,maze-module-generator \
+            -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze \
             -am \
             -DskipTests=true \
             clean verify
@@ -38,6 +38,8 @@ jobs:
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
           mvn -B -U -e \
+            -pl maze \
+            -am \
             -Djavafx.platform=linux \
             -DskipTests=false \
             clean verify

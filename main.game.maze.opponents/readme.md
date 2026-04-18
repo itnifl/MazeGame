@@ -65,6 +65,25 @@ This usually includes
 - Data classes that expose base stats and threat values in plain Java  
 - Utility code for resolving model based opponents into runtime descriptions
 
+### Generated Files in maze-module-generator
+
+The following classes are generated from `opponents.ecore` and placed in `maze-module-generator/src-gen/main/game/maze/generated/`:
+
+| Class | Purpose |
+|-------|---------|
+| `CharacterRegistrar` | Registers and looks up character types by identifier |
+| `CharacterAttributeSetter` | Applies difficulty multipliers to character stats |
+| `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
+| `OpponentRegistry` | Lists all enemy types with their stats |
+
+**Note**: The build uses FreeMarker templates in `maze-generator.freemarker/src/main/resources/templates/opponents/` for code generation.
+
+**Key EMF model methods used:**
+- `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution
+- `CharacterType.getImageBase()` — base image path for sprites
+- `CharacterType.getAnimationFrameCount()` / `setAnimationFrameCount()` — animation frame count
+- `CharacterType.getSpriteScale()` / `setSpriteScale()` — sprite scale factor
+
 On top of the generated code, hand written runtime code provides
 
 - A stable API for other modules such as difficulty, behaviour and maze world  
@@ -161,3 +180,15 @@ When evolving this module it is useful to follow a few guiding principles.
 - Keep opponent definitions declarative  
   Opponents should be data driven.  
   Behaviour, pathfinding and other
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels and code generation in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

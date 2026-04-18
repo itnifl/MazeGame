@@ -139,3 +139,15 @@ When working on the `maze` module:
 - prefer calling services from the other modules instead of hard coding values
 
 By following these ideas, `maze` stays a thin, clear and maintainable game client for the MazeGame project.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
+| [Demo Guide](../demo.md) | How to demonstrate the game and its features |
+| [DSL Tutorial](../docs/dsl-tutorial.md) | Creating game levels with the DSL |
+| [Main README](../readme.md) | Project overview and module index |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code |

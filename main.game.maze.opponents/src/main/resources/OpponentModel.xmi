@@ -10,10 +10,14 @@
       xsi:type="opp:Zombie"
       id="1"
       displayName="TestZombie1"
-      threatLevel="10.0"/>
+      threatLevel="10.0"
+      animationFrameCount="4"
+      spriteScale="1.0"/>
   <characterTypes
       xsi:type="opp:Zombie"
       id="2"
       displayName="TestZombie2"
-      threatLevel="9.0"/>
+      threatLevel="9.0"
+      animationFrameCount="4"
+      spriteScale="1.0"/>
 </opp:OpponentModel>

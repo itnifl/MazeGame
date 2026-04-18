@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="main.game.maze.dsl.ui.MazeDslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            default="true"
+            extensions="mazegame"
+            id="main.game.maze.dsl.MazeDsl"
+            name="MazeDsl Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="main.game.maze.dsl.ui.MazeDslExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
+         <activeWhen>
+            <reference definitionId="main.game.maze.dsl.MazeDsl.Editor.opened"/>
+         </activeWhen>
+      </handler>
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="mazegame"
+            id="main.game.maze.dsl.MazeDsl.contenttype"
+            name="MazeDsl File"
+            priority="normal">
+      </content-type>
+   </extension>
+   
+   <!-- 
+        Xtext builder and nature integrations are provided by org.eclipse.xtext.ui.shared.
+        The shared xtextBuilder and xtextNature handle validation, indexing, and IDE services
+        for all Xtext languages. Language-specific builder participation is configured via 
+        IXtextBuilderParticipant binding in the Guice module (AbstractMazeDslUiModule).
+   -->
+   
+   <!-- TODO: Implement wizard classes before enabling
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category id="main.game.maze.dsl.category" name="MazeGame DSL"/>
+      <wizard
+            category="main.game.maze.dsl.category"
+            class="main.game.maze.dsl.ui.MazeDslExecutableExtensionFactory:main.game.maze.dsl.ui.wizard.MazeDslNewProjectWizard"
+            id="main.game.maze.dsl.ui.wizard.MazeDslNewProjectWizard"
+            name="New MazeGame Configuration"
+            project="false">
+      </wizard>
+   </extension>
+   -->
+</plugin>

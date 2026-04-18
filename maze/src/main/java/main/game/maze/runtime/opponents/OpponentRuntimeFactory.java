@@ -28,6 +28,8 @@ import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
+import main.game.maze.generated.CharacterRegistrar;
+import main.game.maze.generated.CharacterAttributeSetter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
@@ -258,6 +260,10 @@ private static double spawnByTarget(
 
 
 
+    /**
+     * Delegates character registration to the generated CharacterRegistrar.
+     * This eliminates manual instanceof chains - the generated code handles dispatch.
+     */
     private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
             AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned, AtomicInteger noOfPumpkinBombersSpawned) {
                 
@@ -266,18 +272,25 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
-            if (characterType instanceof Zombie z) {
-                noOfZombiesSpawned.incrementAndGet();        
-                registerZombieCharacter(gameController, spawnX, spawnY, z);
-            } else if (characterType instanceof Ghost g) {                            
-                noOfGhostsSpawned.incrementAndGet();                    
-                registerGhostCharacter(gameController, spawnX, spawnY, g);
-            }  else if (characterType instanceof PumpkinBomber b) {
-                noOfPumpkinBombersSpawned.incrementAndGet();
-                registerPumpkinBomberCharacter(gameController, spawnX, spawnY, b);
-            } else {
-                _logger.log(Level.FINER, "Skipping unsupported character type: {0}", characterType.getClass().getName());
-            }
+            // Use generated CharacterRegistrar for type-safe dispatch
+            CharacterRegistrar.register(
+                characterType,
+                // Ghost handler
+                g -> {                            
+                    noOfGhostsSpawned.incrementAndGet();                    
+                    registerGhostCharacter(gameController, spawnX, spawnY, g);
+                },
+                // Zombie handler
+                z -> {
+                    noOfZombiesSpawned.incrementAndGet();        
+                    registerZombieCharacter(gameController, spawnX, spawnY, z);
+                },
+                // PumpkinBomber handler
+                b -> {
+                    noOfPumpkinBombersSpawned.incrementAndGet();
+                    registerPumpkinBomberCharacter(gameController, spawnX, spawnY, b);
+                }
+            );
     }
 
     private static void registerPumpkinBomberCharacter(GameController gameController, double spawnX, double spawnY,
@@ -324,31 +337,25 @@ private static double spawnByTarget(
         });
     }
 
+    /**
+     * Applies difficulty multipliers to character attributes.
+     * Delegates base multipliers to generated CharacterAttributeSetter,
+     * then applies game-specific damage/instantDeath logic.
+     */
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
 
-        characterType.setSpeed(characterType.getSpeed() * speedMultiplierByDifficulty);
+        // Use generated CharacterAttributeSetter for base multipliers (health, threatLevel, speed)
+        // Note: attackDamage is handled separately below with instantDeath logic
+        CharacterAttributeSetter.applyDifficultyMultipliers(
+            characterType,
+            1.0,  // health multiplier (keeping original base health)
+            1.0,  // threat multiplier (keeping original threat level)
+            speedMultiplierByDifficulty
+        );
 
-        if (characterType instanceof Zombie z) {
-          if (instantDeath) {
-                z.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof Ghost g) {
-            if (instantDeath) {
-                g.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof PumpkinBomber b) {
-            if (instantDeath) {
-                b.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                b.setAttackDamage(Math.max(1, (int)Math.round(b.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        }
-        
+        // Use generated method for damage multiplier logic
+        CharacterAttributeSetter.applyDamageMultiplier(characterType, dmgMultiplierByDifficulty, instantDeath);
     }
 
 
