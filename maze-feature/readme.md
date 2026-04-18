@@ -78,5 +78,17 @@ When maintaining this project, keep these ideas in mind.
   The label, description and provider text are shown in the Eclipse installation dialogs  
   and should make it obvious what MazeGame offers.
 
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
+| [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
+| [Releng Documentation](../releng/readme.md) | Build infrastructure and target platform |
+| [Repository Module](../maze-module-repository/readme.md) | P2 update site |
+| [Main README](../readme.md) | Project overview and module index |
+
 By doing this, the `maze feature` project remains a clear and stable entry point  
 for installing and distributing the MazeGame plug ins through Eclipse and Tycho.

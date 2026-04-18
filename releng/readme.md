@@ -19,7 +19,7 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Generated local p2 repository created by the mirror. Contains `artifacts.jar`, `content.jar`, platform specific executables under `binary/`, and the mirrored plug ins and features.
 
 * `releng/maze.target`
-  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Acceleo, Equinox executable and related dependencies).
+  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Equinox executable and related dependencies).
 
 * `releng/test-results/`
   Log files written by the helper script `Run-P2AndBuildCheck.ps1` when you run full mirror and build checks.
@@ -31,7 +31,7 @@ The local p2 mirror is built from the public Eclipse in this source code reposit
 * core runtime and Equinox bundles
 * EMF runtime and code generation
 * OCL runtime and SDK
-* Acceleo runtime and SDK
+* FreeMarker for code generation (via embedded JAR)
 * Equinox executable feature group
 
 The mirror is written to `releng/local-p2` and can be used for offline builds, for diagnostics, and for verifying that all required units are available in a single place.
@@ -78,6 +78,18 @@ You can also open `releng/maze.target` inside Eclipse to use the same platform f
 
 1. In Eclipse, use "File → Open File…" and select `releng/maze.target`, or
 2. Import it as a target definition and activate it in the Target Platform preferences.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the build technologies in everyday terms |
+| [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
+| [Main README](../readme.md) | Project overview and module index |
+| [Feature Module](../maze-feature/readme.md) | Eclipse feature packaging |
+| [Repository Module](../maze-module-repository/readme.md) | P2 update site |
 
 NB! This setup is not thoroughly tested, as we used Visual Studio Code a lot.
 
@@ -153,21 +165,24 @@ For day to day work on Windows you can use the lightweight helpers in the reposi
 `make.ps1` is a PowerShell script that drives the same four steps described above:
 
 ```powershell
-.\make.ps1                # same as -Target all
+.\make.ps1                       # same as -Target all
 .\make.ps1 -Target mirror        # refresh local p2 mirror if needed
 .\make.ps1 -Target force-mirror  # always rebuild mirror
 .\make.ps1 -Target clear-cache   # clear Tycho p2 cache
-.\make.ps1 -Target build         # full Maven build
+.\make.ps1 -Target build         # full Maven build (clears Tycho cache first)
+.\make.ps1 -Target build-with-cache  # full Maven build (keeps Tycho cache)
 .\make.ps1 -Target toolchain     # show Maven and Java versions
 ```
 
 Behaviour:
 
 * Always changes the current directory to the script location, so you can run it from anywhere.
+* Validates that Java 21 is active before running builds (required for Xtext/MWE2 generation).
 * For `mirror` it checks a stamp file in `releng\local-p2\.mirror.stamp` and only rebuilds the mirror if the inputs (currently `releng\mirror\pom.xml`) are newer or the mirror is missing.
 * `force-mirror` always deletes `releng\local-p2` and reruns `mvn -f releng/mirror/pom.xml -U verify`, then updates the stamp file.
 * `clear-cache` deletes the Tycho cache at `%USERPROFILE%\.m2\repository\.cache\tycho` if it exists.
-* `build` runs `mvn -U -DskipTests=false clean verify` and fails the script if Maven returns a non zero exit code.
+* `build` clears the Tycho cache first, then runs `mvn -U -DskipTests=false clean verify` and fails the script if Maven returns a non zero exit code.
+* `build-with-cache` runs `mvn -U -DskipTests=false clean verify` **without** clearing the Tycho cache, which is faster for incremental builds.
 * `all` combines `toolchain`, `mirror` (with change detection), `clear-cache` and `build`.
 
 The script uses `mvn` by default. If you prefer the Maven wrapper, edit `$Mvn = 'mvn'` in `make.ps1` and change it to `mvnw`.

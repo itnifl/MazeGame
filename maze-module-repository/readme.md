@@ -73,7 +73,7 @@ If you manage repositories via the Tycho target configuration, reference the sit
 
 releng (target and mirror) --> provides input repositories for Tycho resolution
 
-maze-generator.acceleo-runner --> writes sources --> [mazer-module-generator jar] --> used by [maze app]
+maze-generator.freemarker-runner --> writes sources --> [mazer-module-generator jar] --> used by [maze app]
 ```
 
 ### Who consumes the repository
@@ -103,3 +103,15 @@ mvn -pl maze-module-repository clean
   mvn -pl maze-module-repository -am clean verify
   ```
 * In CI, you can upload the `maze-module-repository/target/repository/` folder as an artifact for other jobs to consume.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
+| [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
+| [Releng Documentation](../releng/readme.md) | Build infrastructure and target platform |
+| [Feature Module](../maze-feature/readme.md) | Eclipse feature packaging |
+| [Main README](../readme.md) | Project overview and module index |

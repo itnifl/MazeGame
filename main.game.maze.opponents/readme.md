@@ -76,7 +76,7 @@ The following classes are generated from `opponents.ecore` and placed in `maze-m
 | `CharacterGraphicsFactory` | Provides sprite paths and animation metadata |
 | `OpponentRegistry` | Lists all enemy types with their stats |
 
-**Note**: The build uses FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/opponents/` for code generation.
+**Note**: The build uses FreeMarker templates in `maze-generator.freemarker/src/main/resources/templates/opponents/` for code generation.
 
 **Key EMF model methods used:**
 - `CharacterType.getThreatLevel()` / `setThreatLevel()` — threat contribution
@@ -180,3 +180,15 @@ When evolving this module it is useful to follow a few guiding principles.
 - Keep opponent definitions declarative  
   Opponents should be data driven.  
   Behaviour, pathfinding and other
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels and code generation in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

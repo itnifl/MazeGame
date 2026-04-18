@@ -160,3 +160,15 @@ Recommended practices
   Behaviour methods should clearly state what they read and what they modify, which makes reasoning about them easier.
 
 By keeping these goals in mind, `main.game.maze.behaviour` remains a clear and reliable foundation for all movement and decision making in MazeGame.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Maze World Module](../main.game.maze.mazeworld/readme.md) | Navigation graph and maze structure |
+| [Opponents Module](../main.game.maze.opponents/readme.md) | Opponent definitions and runtime factory |

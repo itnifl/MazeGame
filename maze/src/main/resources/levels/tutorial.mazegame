@@ -1,0 +1,91 @@
+/*
+ * Tutorial Level Configuration
+ * 
+ * A simple introductory level with minimal enemies and easy difficulty.
+ * This file demonstrates the basic MazeGame DSL syntax.
+ */
+game TutorialLevel {
+
+    // Difficulty settings for the tutorial
+    difficulty {
+        level easy
+        maxThreat 30
+        speedMultiplier 0.8
+        damageMultiplier 0.5
+        
+        // Limit enemy spawns
+        limit zombie max 2
+        limit ghost max 1
+    }
+
+    // Define patrol routes
+    patrol EntranceGuard {
+        visionRange 80.0
+        path [
+            (50, 50),
+            (150, 50),
+            (150, 150),
+            (50, 150)
+        ]
+    }
+
+    patrol HallwayPatrol {
+        visionRange 100.0
+        zone {
+            topLeft (0, 200)
+            width 300
+            height 100
+        }
+        path [
+            (10, 250) : 2000 ms,
+            (290, 250) : 2000 ms
+        ]
+    }
+
+    // Define opponents
+    opponent TutorialZombie {
+        type zombie
+        displayName "Slow Zombie"
+        health 50
+        speed 0.5
+        threatLevel 10
+        behavior patrol
+        patrol EntranceGuard
+        
+        zombie-stats {
+            attackDamage 5
+            infectionLevel 1
+        }
+    }
+
+    opponent TutorialGhost {
+        type ghost
+        displayName "Friendly Ghost"
+        health 30
+        speed 0.7
+        threatLevel 15
+        behavior wander
+        
+        ghost-stats {
+            visibilityLevel 50
+            nonTangibilityEnergy 200.0
+        }
+    }
+
+    // Loot tables
+    loot-table TutorialLoot {
+        capacity 5
+        
+        item HealthPotion {
+            type food
+            value 25
+            weight 1
+        }
+        
+        item SpeedBoost {
+            type food
+            value 10
+            weight 1
+        }
+    }
+}

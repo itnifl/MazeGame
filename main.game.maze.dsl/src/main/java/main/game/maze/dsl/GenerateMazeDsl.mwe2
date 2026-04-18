@@ -1,0 +1,60 @@
+module main.game.maze.dsl.GenerateMazeDsl
+
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
+
+var rootPath = ".."
+var fileEncoding = "UTF-8"
+var lineDelimiter = "\n"
+
+Workflow {
+    component = XtextGenerator {
+        configuration = {
+            project = StandardProjectConfig {
+                baseName = "main.game.maze.dsl"
+                rootPath = rootPath
+                runtime = {
+                    src = "${rootPath}/main.game.maze.dsl/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl/src/main/xtext-gen"
+                }
+                runtimeTest = {
+                    enabled = false
+                    src = "${rootPath}/main.game.maze.dsl.tests/src/test/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.tests/src/test/xtext-gen"
+                }
+                eclipsePlugin = {
+                    enabled = true
+                    src = "${rootPath}/main.game.maze.dsl.ui/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.ui/src/main/xtext-gen"
+                }
+                eclipsePluginTest = {
+                    enabled = false
+                }
+                genericIde = {
+                    enabled = true
+                    src = "${rootPath}/main.game.maze.dsl.ide/src/main/java"
+                    srcGen = "${rootPath}/main.game.maze.dsl.ide/src/main/xtext-gen"
+                }
+                createEclipseMetaData = false
+            }
+            code = {
+                encoding = fileEncoding
+                lineDelimiter = lineDelimiter
+            }
+        }
+        language = StandardLanguage {
+            name = "main.game.maze.dsl.MazeDsl"
+            fileExtensions = "mazegame"
+            serializer = {
+                generateStub = false
+            }
+            validator = {
+                composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+            }
+            generator = {
+                // Keep custom implementations in Java and avoid reintroducing Xtend stubs.
+                generateXtendStub = false
+            }
+        }
+    }
+}
