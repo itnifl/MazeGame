@@ -104,7 +104,7 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 
 	@Override
 	public void setHeuristicMethod(DistanceMethod value) {
-		heuristicMethod = value;
+		heuristicMethod = value == null ? DistanceMethod.MANHATTAN : value;
 	}
 
 	@Override
@@ -125,6 +125,10 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 
 	@Override
 	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target) {
+		if (start == null || target == null) {
+			return new org.eclipse.emf.common.util.BasicEList<>();
+		}
+
 		// Initialize cost and origin tracking structures
 		MazeNavigationGraph graph = GameMazeWorld.GetWorld().getNavigationGraph();
 		double[][] accumulatedCosts = new double[graph.getGrid().length][graph.getGrid()[0].length];
@@ -136,6 +140,7 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 				originsNodes[x][y] = null;
 			}
 		}
+		accumulatedCosts[start.getCol()][start.getRow()] = 0;
 
 		// Compute nodes costs
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
@@ -143,11 +148,14 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		while (queue.isEmpty() == false) {
 			var current = queue.poll();
 			for (var node : current.getNeighbors()) {
-				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1 + heuristicDistance(node, target);
+				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
 					if (newCost < this.getMaxPathLength()) {
 						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
 						originsNodes[node.getCol()][node.getRow()] = current;
+						if (node == target) {
+							return reconstructPath(originsNodes, target);
+						}
 						queue.add(node);
 					}
 					else {

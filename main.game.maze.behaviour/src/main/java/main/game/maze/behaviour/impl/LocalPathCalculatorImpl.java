@@ -11,12 +11,8 @@ import org.eclipse.emf.ecore.EClass;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
-import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
-import main.game.maze.mazeworld.service.MazeNavigationGraphService;
-
-import org.eclipse.emf.common.util.EList;
 
 
 /**
@@ -49,11 +45,17 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 	@Override
 	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
 		EList<MazeNavigationGraph.Node> path = new org.eclipse.emf.common.util.BasicEList<>();
+		if (origin == null || target == null) {
+			return path;
+		}
 		if (origin.getCol() == target.getCol() && origin.getRow() == target.getRow()) {
 			path.add(origin);
 			return path;
 		}
-		path.add(nearestNode(origin.getNeighbors(), target));
+		MazeNavigationGraph.Node nearest = nearestNode(origin.getNeighbors(), target);
+		if (nearest != null) {
+			path.add(nearest);
+		}
 		return path;
 	}
 	

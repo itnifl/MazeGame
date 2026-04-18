@@ -547,12 +547,6 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
                     if (!getNextPositions().isEmpty() && distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
                         getNextPositions().remove(0);
                     }
-                } else {
-                    // Fallback: Just move directly towards target if no path found (ignoring walls)
-                    Position direct = BehaviourFactory.eINSTANCE.createPosition();
-                    direct.setPosX(target.getPosX());
-                    direct.setPosY(target.getPosY());
-                    getNextPositions().add(direct);
                 }
             }
         }
