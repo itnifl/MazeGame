@@ -348,8 +348,8 @@ private static double spawnByTarget(
 
     /**
      * Applies difficulty multipliers to character attributes.
-     * Delegates base multipliers to generated CharacterAttributeSetter,
-     * then applies game-specific damage/instantDeath logic.
+     * Scales speed by the given multiplier and applies damage multiplier
+     * or instant death depending on difficulty configuration.
      */
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
