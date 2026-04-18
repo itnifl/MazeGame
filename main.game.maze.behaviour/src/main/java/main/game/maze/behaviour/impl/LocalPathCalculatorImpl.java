@@ -11,8 +11,13 @@ import org.eclipse.emf.ecore.EClass;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
+import main.game.maze.mazeworld.service.MazeNavigationGraphService;
+
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -40,6 +45,18 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 		super();
 	}
 
+
+	@Override
+	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
+		EList<MazeNavigationGraph.Node> path = new org.eclipse.emf.common.util.BasicEList<>();
+		if (origin.getCol() == target.getCol() && origin.getRow() == target.getRow()) {
+			path.add(origin);
+			return path;
+		}
+		path.add(nearestNode(origin.getNeighbors(), target));
+		return path;
+	}
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -50,10 +67,35 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 		return BehaviourPackage.Literals.LOCAL_PATH_CALCULATOR;
 	}
 
-	@Override
-	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node origin, MazeNavigationGraph.Node target) {
-		
-		return null;
+	/**
+	 * Sets the current position of the character.
+	 * Must be called before compute() to provide the starting point.
+	 *
+	 * @param position the current position
+	 * @generated NOT
+	 */
+	public void setCurrentPosition(Position position) {
+		this.currentPosition = position;
 	}
 
+	/**
+	 * Gets the current position.
+	 *
+	 * @return the current position
+	 * @generated NOT
+	 */
+	public Position getCurrentPosition() {
+		return currentPosition;
+	}
+
+	/**
+	 * Creates a copy of a Position.
+	 * @generated NOT
+	 */
+	private Position copyPosition(Position src) {
+		Position p = BehaviourFactory.eINSTANCE.createPosition();
+		p.setPosX(src.getPosX());
+		p.setPosY(src.getPosY());
+		return p;
+	}
 } //LocalPathCalculatorImpl

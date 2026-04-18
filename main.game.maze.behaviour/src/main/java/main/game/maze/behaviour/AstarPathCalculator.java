@@ -2,6 +2,8 @@
  */
 package main.game.maze.behaviour;
 
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -45,5 +47,11 @@ public interface AstarPathCalculator extends PathCalculator {
 	 * @generated
 	 */
 	void setMaxPathLength(int value);
+
+	DistanceMethod getHeuristicMethod();
+
+	void setHeuristicMethod(DistanceMethod value);
+
+	double heuristicDistance(MazeNavigationGraph.Node node, MazeNavigationGraph.Node target);
 
 } // AstarPathCalculator

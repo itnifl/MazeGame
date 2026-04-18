@@ -481,8 +481,28 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void update(HealthEvent healthEvent) {
 	    if (healthEvent == null) return;
-	    // TODO: implement health effect
-	    // For now, no-op placeholder
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        int amount = healthEvent.getHealthAmount();
+	        double percentage = healthEvent.getHealthPercentage();
+	        
+	        // Apply flat amount
+	        if (amount != 0) {
+	            int currentHp = ct.getHealth();
+	            ct.setHealth(currentHp + amount);
+	        }
+	        
+	        // Apply percentage (e.g., heal 10% of max HP)
+	        // if (percentage != 0) {
+	        //     int maxHp = ct.getMaxHealth();
+	        //     int currentHp = ct.getHealth();
+	        //     int delta = (int) (maxHp * percentage);
+	        //     ct.setHealth(currentHp + delta);
+	        // }
+	    } catch (Exception ignore) {}
 	}
 
 	/**
@@ -494,8 +514,26 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void update(SpeedEvent speedEvent) {
 	    if (speedEvent == null) return;
-	    // TODO: implement speed effect
-	    // For now, no-op placeholder
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        double amount = speedEvent.getSpeedAmount();
+	        double percentage = speedEvent.getSpeedPercentage();
+	        
+	        double currentSpeed = ct.getSpeed();
+	        
+	        // Apply flat amount
+	        if (amount != 0) {
+	            ct.setSpeed(currentSpeed + amount);
+	        }
+	        
+	        // Apply percentage multiplier
+	        if (percentage != 0) {
+	            ct.setSpeed(currentSpeed * (1 + percentage));
+	        }
+	    } catch (Exception ignore) {}
 	}
 
 	/**
@@ -545,7 +583,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply percentage to multiplier
 	        if (percentage != 0) {
-	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1.0 + percentage));
+	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1 + percentage));
 	        }
 	    } catch (Exception ignore) {}
 	}

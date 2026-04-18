@@ -134,6 +134,39 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
         return path;
     }
 
+	/** Finds the nearest node in the list to a target
+	 * @param nodes List of nodes to evaluate
+	 * @param target Node to compare distance with
+	 * @return Nearest node in the list to target
+	 */
+	public MazeNavigationGraph.Node nearestNode(List<MazeNavigationGraph.Node> nodes, MazeNavigationGraph.Node target) {
+		MazeNavigationGraph.Node nearestNode = null;
+		double nearestDistance = Double.MAX_VALUE;
+		for (var node : nodes) {
+			double distance = 0;
+			switch (getDistanceMethod()) {
+				case DistanceMethod.EUCLIDEAN:
+					distance = Math.sqrt(Math.pow(node.getCol()-target.getCol(), 2) + Math.pow(node.getRow()-target.getRow(), 2));
+					break;
+				case DistanceMethod.MANHATTAN: {
+					distance = Math.abs(node.getCol()-target.getCol()) + Math.abs(node.getRow()-target.getRow());
+				}
+				default:
+					throw new AssertionError();
+			}
+			if (distance < nearestDistance) {
+				nearestDistance = distance;
+				nearestNode = node;
+			}
+		}
+		return nearestNode;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
     /**
      * @generated NOT
      */
