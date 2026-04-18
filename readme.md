@@ -11,6 +11,7 @@
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
 * 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
+* 📚 [Technology Layman's Guide](docs/technology-laymans-guide.md) - **Simple explanations of Xtext, metamodels, and FreeMarker**
 * 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
 * 🧩 [maze-feature](maze-feature/readme.md)
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)

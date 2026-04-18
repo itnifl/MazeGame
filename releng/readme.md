@@ -79,6 +79,18 @@ You can also open `releng/maze.target` inside Eclipse to use the same platform f
 1. In Eclipse, use "File → Open File…" and select `releng/maze.target`, or
 2. Import it as a target definition and activate it in the Target Platform preferences.
 
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the build technologies in everyday terms |
+| [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
+| [Main README](../readme.md) | Project overview and module index |
+| [Feature Module](../maze-feature/readme.md) | Eclipse feature packaging |
+| [Repository Module](../maze-module-repository/readme.md) | P2 update site |
+
 NB! This setup is not thoroughly tested, as we used Visual Studio Code a lot.
 
 ## Helper script `Run-P2AndBuildCheck.ps1` (Windows)

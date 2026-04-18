@@ -1334,3 +1334,14 @@ Here's the complete workflow for making model-driven changes:
 
 *By keeping all model-to-code generation logic in `maze-generator.freemarker`, the MazeGame project maintains a clean, reproducible, and model-driven build pipeline using FreeMarker templates.*
 
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of FreeMarker and MDD concepts in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [DSL Reference Guide](../docs/dsl-reference.md) | MazeGame DSL syntax documentation |
+| [FreeMarker Runner](../maze-generator.freemarker-runner/readme.md) | Headless runner for Maven builds |

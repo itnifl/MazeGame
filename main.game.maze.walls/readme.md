@@ -137,4 +137,14 @@ This module is intended to be lightweight.
 
 This makes it easy to reuse the wall definitions in tests, headless maze generators or future tools without bringing in the full game runtime.
 
+---
 
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels and code generation in everyday terms |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
+| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
+| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

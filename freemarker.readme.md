@@ -193,3 +193,14 @@ For more details, see:
 
 * [`maze-generator.freemarker-runner`](./maze-generator.freemarker-runner/readme.md)
 * [`maze-module-generator`](./maze-module-generator/readme.md)
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of FreeMarker in layman terms |
+| [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Metamodel Architecture](docs/metamodel-architecture.md) | How metamodels and Xtext work together |
+| [DSL Reference Guide](docs/dsl-reference.md) | MazeGame DSL syntax documentation |

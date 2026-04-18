@@ -701,3 +701,16 @@ Summarise for the audience:
 3. **Autocomplete** - Content assist suggests valid options
 4. **Integration** - Generates code compatible with existing EMF models
 5. **Documentation** - See [DSL Reference Guide](docs/dsl-reference.md) and [DSL Tutorial](docs/dsl-tutorial.md)
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of Xtext, metamodels, and FreeMarker in everyday terms |
+| [DSL Reference Guide](docs/dsl-reference.md) | Complete syntax reference for MazeDsl |
+| [DSL Tutorial](docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [FreeMarker Guide](freemarker.readme.md) | Code generation with FreeMarker |
+| [Xtext Setup Guide](docs/xtext-readme.md) | Build and development setup for the DSL |
+| [Main README](readme.md) | Project overview and module index |

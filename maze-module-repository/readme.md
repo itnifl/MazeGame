@@ -103,3 +103,15 @@ mvn -pl maze-module-repository clean
   mvn -pl maze-module-repository -am clean verify
   ```
 * In CI, you can upload the `maze-module-repository/target/repository/` folder as an artifact for other jobs to consume.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
+| [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
+| [Releng Documentation](../releng/readme.md) | Build infrastructure and target platform |
+| [Feature Module](../maze-feature/readme.md) | Eclipse feature packaging |
+| [Main README](../readme.md) | Project overview and module index |

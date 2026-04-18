@@ -350,3 +350,16 @@ The FreeMarker generators validate models before generation and provide null-saf
 | `model.name` | `"MazeGame"` |
 
 Warnings are printed for fields using defaults, but generation continues. Special characters in model strings are escaped to prevent invalid Java output.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of MDD concepts in everyday terms |
+| [FreeMarker Guide](freemarker.readme.md) | Detailed FreeMarker usage in this project |
+| [Metamodel Architecture](docs/metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
+| [DSL Reference Guide](docs/dsl-reference.md) | MazeGame DSL syntax documentation |
+| [DSL Tutorial](docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [Generated Code Module](maze-module-generator/readme.md) | Documentation for the generated code module |

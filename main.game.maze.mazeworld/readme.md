@@ -150,3 +150,15 @@ When you extend or refactor this module, keeping a few principles in mind helps 
   Changes in board size, scaling or margins should be made in the constants in this module rather than scattered throughout the code base.
 
 Following these ideas helps main dot game dot maze dot mazeworld remain a stable and understandable foundation for the logical game world of MazeGame.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
+| [Walls Module](../main.game.maze.walls/readme.md) | Wall definitions and properties |
+| [Behaviour Module](../main.game.maze.behaviour/readme.md) | Movement and pathfinding logic |
+| [Difficulties Module](../main.game.maze.difficulties/readme.md) | Board size and density parameters |
+| [Game Module](../maze/readme.md) | Main game application |

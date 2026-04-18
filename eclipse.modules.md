@@ -128,3 +128,14 @@ Conceptual pipeline:
 So the **Eclipse modules are consumed by the Maze game simply as Maven dependencies**.
 Tycho and p2 ensure the plug-ins and generator exist and are consistent in the build world,
 while Maven makes sure the game sees them as plain Java libraries in the runtime world.
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
+| [FreeMarker Guide](freemarker.readme.md) | Detailed FreeMarker usage in this project |
+| [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Releng Documentation](releng/readme.md) | Build infrastructure and target platform |

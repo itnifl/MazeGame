@@ -481,3 +481,17 @@ This is the **true MDE approach**: models drive code generation, not the other w
 - 📄 [DSL Reference Guide](../docs/dsl-reference.md) — Complete syntax reference for MazeDsl
 - 📄 [DSL Tutorial](../docs/dsl-tutorial.md) — Step-by-step guide to creating game levels
 - 📄 [Project Demo](../demo.md) — Demonstration script showing the DSL in action
+- 📄 [Technology Layman's Guide](../docs/technology-laymans-guide.md) — Simple explanation of Xtext, metamodels, and FreeMarker
+
+---
+
+## Related Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of Xtext, metamodels, and FreeMarker in everyday terms |
+| [DSL Reference Guide](../docs/dsl-reference.md) | Complete syntax reference for MazeDsl |
+| [DSL Tutorial](../docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [Xtext Setup Guide](../docs/xtext-readme.md) | Build and development setup for the DSL |
+| [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
+| [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
