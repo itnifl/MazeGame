@@ -8,7 +8,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-  <packaging>jar</packaging>
+  <packaging>eclipse-plugin</packaging>
   <artifactId>main.game.maze.dsl.tests</artifactId>
 
   <properties>
@@ -39,9 +39,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho.version}</version>
         <configuration>
           <includes>
             <include>**/*Test.java</include>
