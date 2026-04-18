@@ -7,9 +7,8 @@
   <plugin id="main.game.maze.difficulties" version="0.0.0" unpack="false"/>
   <plugin id="main.game.maze.opponents"    version="0.0.0" unpack="false"/>
   <plugin id="maze-generator.acceleo"      version="0.0.0" unpack="false"/>
-  <!-- Xtext DSL plugins (requires MWE2 generation in Eclipse first)
-       Uncomment after running GenerateMazeDsl.mwe2 and enabling DSL modules in pom.xml -->
-  <!-- <plugin id="main.game.maze.dsl"          version="0.0.0" unpack="false"/>
+  <!-- Xtext DSL plugins -->
+  <plugin id="main.game.maze.dsl"          version="0.0.0" unpack="false"/>
   <plugin id="main.game.maze.dsl.ide"      version="0.0.0" unpack="false"/>
-  <plugin id="main.game.maze.dsl.ui"       version="0.0.0" unpack="false"/> -->
+  <plugin id="main.game.maze.dsl.ui"       version="0.0.0" unpack="false"/>
 </feature>
