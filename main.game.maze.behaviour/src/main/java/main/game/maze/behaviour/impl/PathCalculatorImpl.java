@@ -53,18 +53,36 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
         EList<Position> resultPath = new BasicEList<>();
         try {
             GameMazeWorld world = null;
-            try { world = GameMazeWorld.GetWorld(); } catch (Throwable t) { return resultPath; }
-            if (world == null) return resultPath;
+            try { world = GameMazeWorld.GetWorld(); } catch (Throwable t) {
+                System.err.println("DEBUG calculatePath: Failed to get world");
+                return resultPath; 
+            }
+            if (world == null) {
+                System.err.println("DEBUG calculatePath: world is NULL");
+                return resultPath;
+            }
             
             MazeNavigationGraph graph = world.getNavigationGraph();
-            if (graph == null) return resultPath;
+            if (graph == null) {
+                System.err.println("DEBUG calculatePath: graph is NULL");
+                return resultPath;
+            }
 
             MazeNavigationGraph.Node startNode = graph.snapToNode(new Point2D(start.getPosX(), start.getPosY()));
             MazeNavigationGraph.Node endNode = graph.snapToNode(new Point2D(end.getPosX(), end.getPosY()));
 
-            if (startNode == null || endNode == null) return resultPath;
+            System.out.println("DEBUG calculatePath: startNode = " + (startNode == null ? "NULL" : "(" + startNode.getCol() + "," + startNode.getRow() + ")"));
+            System.out.println("DEBUG calculatePath: endNode = " + (endNode == null ? "NULL" : "(" + endNode.getCol() + "," + endNode.getRow() + ")"));
+
+
+            if (startNode == null || endNode == null) {
+                System.err.println("DEBUG calculatePath: snapToNode failed!");
+                return resultPath;
+            }
 
             EList<MazeNavigationGraph.Node> nodePath = compute(startNode, endNode);
+
+            System.out.println("DEBUG calculatePath: compute() returned " + (nodePath == null ? "NULL" : "size=" + nodePath.size()));
 
             if (nodePath != null) {
                 for (MazeNavigationGraph.Node node : nodePath) {
@@ -75,6 +93,7 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
                 }
             }
         } catch (Exception e) {
+            System.err.println("DEBUG calculatePath: Exception!");
             e.printStackTrace();
         }
         return resultPath;

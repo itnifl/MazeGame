@@ -68,14 +68,17 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 
 	@Override
 	public EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target) {
-		
-		// Initialize cost and origin tracking structures
 		MazeNavigationGraph graph = GameMazeWorld.GetWorld().getNavigationGraph();
-		int[][] accumulatedCosts = new int[graph.getGrid().length][graph.getGrid()[0].length];
-		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[graph.getGrid().length][graph.getGrid()[0].length];
+	
+		int width  = graph.getGrid().length;
+		int height = graph.getGrid()[0].length;
+	
+		int[][] accumulatedCosts = new int[width][height];
+		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[width][height];
 		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
-		for (int x=0; x < graph.getGrid().length; x++) {
-			for (int y=0; y < graph.getGrid()[0].length; y++) {
+	
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				accumulatedCosts[x][y] = Integer.MAX_VALUE;
 				originsNodes[x][y] = null;
 			}

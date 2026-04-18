@@ -532,14 +532,23 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
             
             // Try to calculate path
             PathCalculator pc = getPathcalculator();
+			if (pc == null) System.err.println("DEBUG: PathCalculator is NULL!");
             if (pc != null) {
                 // Use the bridge method we added to PathCalculator
                 // This handles the conversion from Position -> Node -> Position
+				System.out.println("DEBUG: Calling calculatePath from (" + getPosition().getPosX() + "," + getPosition().getPosY() + ") to (" +target.getPosX() + "," + target.getPosY() + ")");
                 EList<Position> calculatedPath = pc.calculatePath(getPosition(), target);
-                
+                System.out.println("DEBUG: calculatePath returned: " + (calculatedPath == null ? "NULL" : "size=" + calculatedPath.size()));
                 if (calculatedPath != null && !calculatedPath.isEmpty()) {
                     getNextPositions().addAll(calculatedPath);
-                    
+					System.out.println("DEBUG PATROL: Got path with " + calculatedPath.size() + " steps");
+
+                    // Show first few waypoints
+					for (int i = 0; i < Math. min(3, getNextPositions().size()); i++) {
+						Position p = getNextPositions().get(i);
+						System.out.println("  Step " + i + ": (" + p.getPosX() + ", " + p.getPosY() + ")");
+					}
+
                     // Optimization: Remove the first point if it is the current position
                     if (!getNextPositions().isEmpty() && distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
                         getNextPositions().remove(0);
@@ -555,10 +564,10 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
                     // This prevents "stuck" behavior in broken maps, but strictly for the test, 
                     // we want the calculator to work. 
                     // Uncomment below to force movement:
-                    // Position direct = BehaviourFactory.eINSTANCE.createPosition();
-                    // direct.setPosX(target.getPosX());
-                    // direct.setPosY(target.getPosY());
-                    // getNextPositions().add(direct);
+                    Position direct = BehaviourFactory.eINSTANCE.createPosition();
+                    direct.setPosX(target.getPosX());
+                    direct.setPosY(target.getPosY());
+                    getNextPositions().add(direct);
                 }
             }
         }
