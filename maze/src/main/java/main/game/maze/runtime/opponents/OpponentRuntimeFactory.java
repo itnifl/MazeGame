@@ -30,7 +30,6 @@ import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.generated.CharacterRegistrar;
-import main.game.maze.generated.CharacterAttributeSetter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
