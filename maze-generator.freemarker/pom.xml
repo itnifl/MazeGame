@@ -74,6 +74,18 @@
 
   <build>
     <plugins>
+      <!-- Configure Tycho compiler to allow access to required bundles -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-warn:-discouraged,forbidden</arg>
+            <arg>-err:-discouraged,forbidden</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
       <!-- Copy FreeMarker JAR for embedding in the Eclipse plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

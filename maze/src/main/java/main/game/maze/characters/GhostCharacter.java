@@ -2,6 +2,7 @@ package main.game.maze.characters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -18,6 +19,7 @@ import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, INonTangientMazeGameCharacter,  IHaveModel<Ghost> {
+    private static final Logger LOGGER = Logger.getLogger(GhostCharacter.class.getName());
     private final Ghost ghostModel;
 
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
@@ -61,7 +63,7 @@ public class GhostCharacter extends ComputerCharacter
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
-                System.out.println("Ghost is intersecting with " + canDieEntity);
+                LOGGER.fine("Ghost is intersecting with " + canDieEntity);
                 canDieEntity.subtractHitPoints(getDamage());
             }
         }

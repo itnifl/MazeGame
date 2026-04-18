@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -34,6 +36,8 @@ import main.game.maze.difficulties.DifficultiesPackage;
  */
 public class RunAcceleo {
 
+    private static final Logger LOGGER = Logger.getLogger(RunAcceleo.class.getName());
+
     // Default values for null-safety
     private static final String DEFAULT_GAME_NAME = "MazeGame";
     private static final String DEFAULT_DISPLAY_NAME = "Unknown Enemy";
@@ -53,7 +57,7 @@ public class RunAcceleo {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
-            System.out.println("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
+            LOGGER.severe("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
             System.exit(1);
         }
 
@@ -85,11 +89,6 @@ public class RunAcceleo {
         Resource oppRes = rs.getResource(URI.createFileURI(new File(opponentModelPath).getAbsolutePath()), true);
         EObject root = oppRes.getContents().get(0);
 
-        System.out.println("DEBUG: Loaded XMI Root Object");
-        System.out.println("Type: " + root.eClass().getName());
-        System.out.println("Package: " + root.eClass().getEPackage().getNsURI());
-        System.out.println("==========================================");
-
         // 4. Create output folder
         File outFolder = new File(outDir, "main/game/maze/generated");
         if (!outFolder.exists()) {
@@ -106,7 +105,7 @@ public class RunAcceleo {
             generateFromTemplate("CharacterAttributeSetter.ftl", dataModel, new File(outFolder, "CharacterAttributeSetter.java"));
             generateFromTemplate("CharacterGraphicsFactory.ftl", dataModel, new File(outFolder, "CharacterGraphicsFactory.java"));
             
-            System.out.println("Opponent generation complete. Output in: " + outFolder.getAbsolutePath());
+            LOGGER.info("Opponent generation complete. Output in: " + outFolder.getAbsolutePath());
         } else {
             throw new IllegalArgumentException("Expected OpponentModel, got: " + root.eClass().getName());
         }
@@ -179,7 +178,7 @@ public class RunAcceleo {
         try (Writer out = new FileWriter(outputFile)) {
             template.process(rootModel, out);
         }
-        System.out.println("  Generated: " + outputFile.getName());
+        LOGGER.fine("Generated: " + outputFile.getName());
     }
 
     /**
@@ -195,8 +194,7 @@ public class RunAcceleo {
         }
         
         if (model.getCharacterTypes() == null || model.getCharacterTypes().isEmpty()) {
-            System.out.println("WARNING: OpponentModel has no character types. " +
-                "Generated code will have empty registries.");
+            LOGGER.warning("OpponentModel has no character types. Generated code will have empty registries.");
         } else {
             int index = 0;
             for (CharacterType enemy : model.getCharacterTypes()) {
@@ -218,8 +216,7 @@ public class RunAcceleo {
         }
         
         if (warnings.length() > 0) {
-            System.out.println("Model validation warnings:");
-            System.out.print(warnings);
+            LOGGER.log(Level.WARNING, "Model validation warnings:\n{0}", warnings);
         }
     }
 

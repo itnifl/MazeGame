@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
 
+    private static final Logger LOGGER = Logger.getLogger(PlayerCharacter.class.getName());
     private AtomicInteger hitPoints = new AtomicInteger(100);
     private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
@@ -154,7 +156,7 @@ public class PlayerCharacter extends Character
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanKill) {
                 var canKillEntity = (ICanKill) entity;
-                System.out.println("Player is intersecting with " + canKillEntity);
+                LOGGER.fine("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
                 this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
                 doStandardScreamSound();

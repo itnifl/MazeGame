@@ -3,6 +3,7 @@ package main.game.maze.characters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -25,6 +26,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 public class ZombieCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<Zombie> {
 
+    private static final Logger LOGGER = Logger.getLogger(ZombieCharacter.class.getName());
     private final Zombie zombieModel;
     private AtomicInteger hitPoints;
     private MediaPlayer screamMediaPlayer;    
@@ -100,7 +102,7 @@ public class ZombieCharacter extends ComputerCharacter
         if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
-                System.out.println("Zombie is intersecting with " + canDieEntity);
+                LOGGER.fine("Zombie is intersecting with " + canDieEntity);
                 canDieEntity.subtractHitPoints(getDamage());                
             }
             if(screamMediaPlayer == null || screamMediaPlayer.getStatus() != Status.PLAYING) {

@@ -272,12 +272,13 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
-            // Randomly assign PATROL behavior to ~30% of characters
-            if (ThreadLocalRandom.current(). nextDouble() < 0.50) {
-                characterType. setBehavior(BehaviorType. PATROL);
-                _logger.log(Level.INFO, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
+            // Randomly assign PATROL behavior to ~50% of characters
+            if (ThreadLocalRandom.current().nextDouble() < 0.50) {
+                characterType.setBehavior(BehaviorType.PATROL);
+                _logger.log(Level.FINE, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
             } else {
-                _logger.log(Level.INFO, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
+                characterType.setBehavior(BehaviorType.WANDER);
+                _logger.log(Level.FINE, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
             }
 
             // Use generated CharacterRegistrar for type-safe dispatch

@@ -14,7 +14,6 @@ import main.game.maze.behaviour.Position;
 import main.game.maze.mazeworld.GameMazeWorld;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 

@@ -25,7 +25,7 @@
       <ImageTurnRight>/main/game/maze/ghost1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost1.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/ghost1.png</ImageTurnDown>
-      <nonTangibilityEnergy>600000.0</nonTangibilityEnergy>
+      <nonTangibilityEnergy>100.0</nonTangibilityEnergy>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">

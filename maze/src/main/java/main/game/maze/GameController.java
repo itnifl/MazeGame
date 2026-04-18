@@ -54,7 +54,12 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GameController implements Initializable {
+    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+
     @FXML
     private AnchorPane root;
     @FXML
@@ -181,7 +186,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void handleMouseClicked(MouseEvent event) {
-        System.out.println("Game has been clicked");
+        LOGGER.fine("Game has been clicked");
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
     }
 
@@ -322,10 +327,10 @@ public class GameController implements Initializable {
                 
                 gameBoard.setBackground(new Background(bi));
             } else {
-                System.err.println("Could not find background image: " + bgImageName);
+                LOGGER.warning("Could not find background image: " + bgImageName);
             }
         } catch (Exception e) {
-            System.err.println("Error loading background: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error loading background", e);
         }
     }
 
@@ -418,7 +423,7 @@ public class GameController implements Initializable {
                 if (url != null) {
                     wallImageCache.put(def.id, new Image(url.toExternalForm()));
                 } else {
-                    System.err.println("Could not find wall image: " + def.baseImage);
+                    LOGGER.warning("Could not find wall image: " + def.baseImage);
                     return null;
                 }
             } catch (Exception e) {
@@ -461,7 +466,7 @@ public class GameController implements Initializable {
                         Thread.sleep(60);
                     } while (true);
                 } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    LOGGER.log(Level.SEVERE, "Error in computer character movement loop", ex);
                     throw ex;
                 }
             }
@@ -507,9 +512,10 @@ public class GameController implements Initializable {
             final int maxRandomValue = 10;
             final double randomTangientMoveThreshold = 7;
 
-            if(nonTangient && energy <= 1000) { 
-                nontangientcc.setCharacterOpacity(noneOpacityValue-(energy/maxEnergy)+minOpacityValue);     
-                nontangientcc.setNonTangientEnergy(energy-energyDecreaseValue);   
+            if(nonTangient) {
+                var opacityEnergy = Math.min(maxEnergy, Math.max(0d, energy));
+                nontangientcc.setCharacterOpacity(noneOpacityValue-(opacityEnergy/maxEnergy)+minOpacityValue);
+                nontangientcc.setNonTangientEnergy(Math.max(0d, energy-energyDecreaseValue));
             } 
 
             if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {

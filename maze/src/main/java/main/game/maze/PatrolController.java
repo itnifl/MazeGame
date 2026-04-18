@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.DijkstraPathCalculator;
@@ -18,6 +20,8 @@ import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 public class PatrolController {
+
+    private static final Logger LOGGER = Logger.getLogger(PatrolController.class.getName());
 
     // Cache to hold the stateful Behavior for each character, as we are manually instantiating them.
     // WeakHashMap ensures cleanup when characters are removed/garbage collected.
@@ -130,7 +134,7 @@ public class PatrolController {
             patrol.setPathcalculator(dijkstra);
 
         } catch (Exception e) {
-            System.err.println("Failed to init patrol route: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to init patrol route", e);
         }
     }
 }
