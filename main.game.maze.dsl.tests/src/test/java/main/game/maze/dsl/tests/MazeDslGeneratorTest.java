@@ -7,6 +7,7 @@ package main.game.maze.dsl.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.eclipse.xtext.generator.GeneratorContext;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.extensions.InjectionExtension;
@@ -45,7 +46,7 @@ public class MazeDslGeneratorTest {
         );
         
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, new GeneratorContext());
         
         // Check that factory class was generated
         assertTrue(fsa.getTextFiles().containsKey(
@@ -58,7 +59,8 @@ public class MazeDslGeneratorTest {
         assertTrue(content.contains("public class TestLevelFactory"));
         assertTrue(content.contains("createEnemy1"));
         assertTrue(content.contains("setHealth(100)"));
-        assertTrue(content.contains("setThreatLevel(25)"));
+        // threatLevel is a DOUBLE, so 25 becomes 25.0 in the generated code
+        assertTrue(content.contains("setThreatLevel(25.0)"));
     }
 
     @Test
@@ -73,7 +75,7 @@ public class MazeDslGeneratorTest {
         );
         
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, new GeneratorContext());
         
         // Check that XMI was generated
         assertTrue(fsa.getTextFiles().containsKey(
@@ -102,7 +104,7 @@ public class MazeDslGeneratorTest {
         );
         
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, new GeneratorContext());
         
         // Check that difficulty XMI was generated
         assertTrue(fsa.getTextFiles().containsKey(
@@ -129,7 +131,7 @@ public class MazeDslGeneratorTest {
         );
         
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, new GeneratorContext());
         
         String content = fsa.getTextFiles().get(
             "DEFAULT_OUTPUTmain/game/maze/generated/TestLevelFactory.java").toString();
@@ -153,7 +155,7 @@ public class MazeDslGeneratorTest {
         );
         
         InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-        generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, new GeneratorContext());
         
         String content = fsa.getTextFiles().get(
             "DEFAULT_OUTPUTmain/game/maze/generated/TestLevelFactory.java").toString();

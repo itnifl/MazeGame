@@ -164,11 +164,13 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
                     return;
                 }
 
-                // Trim leading whitespace before the keyword
+                // Trim leading whitespace, but preserve separation from preceding tokens
                 int start = specificsStart;
+                boolean foundNewline = false;
                 while (start > 0 && Character.isWhitespace(text.charAt(start - 1))) {
                     char ws = text.charAt(start - 1);
                     if (ws == '\n') {
+                        foundNewline = true;
                         break; // Keep line structure
                     }
                     start--;
@@ -179,7 +181,15 @@ public class MazeDslQuickfixProvider extends DefaultQuickfixProvider {
                     end++;
                 }
 
-                context.getXtextDocument().replace(start, end - start, "");
+                // Determine replacement: preserve at least one space if on same line as preceding token
+                String replacement = "";
+                if (!foundNewline && start > 0 && !Character.isWhitespace(text.charAt(start - 1))) {
+                    // There's a non-whitespace character directly before our start position
+                    // and we haven't reached a newline, so preserve one space to avoid token merging
+                    replacement = " ";
+                }
+
+                context.getXtextDocument().replace(start, end - start, replacement);
             }
         );
     }
