@@ -74,8 +74,6 @@
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.common</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.ecore</artifactId></dependency>
                 <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.pivot</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.xtext.base</artifactId></dependency>
-                <dependency><type>eclipse-plugin</type><artifactId>org.eclipse.ocl.xtext.essentialocl</artifactId></dependency>
 
                 <!-- FreeMarker-based Generator -->
                 <dependency>
