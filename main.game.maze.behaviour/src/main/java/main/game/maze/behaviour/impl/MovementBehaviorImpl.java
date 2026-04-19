@@ -489,19 +489,21 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        int amount = healthEvent.getHealthAmount();
 	        double percentage = healthEvent.getHealthPercentage();
 	        
-	        // Apply flat amount
+	        int currentHp = ct.getHealth();
+	        int newHp = currentHp;
+	        
+	        // Apply flat amount first
 	        if (amount != 0) {
-	            int currentHp = ct.getHealth();
-	            ct.setHealth(currentHp + amount);
+	            newHp += amount;
 	        }
 	        
-	        // Apply percentage (e.g., heal 10% of max HP)
-	        // if (percentage != 0) {
-	        //     int maxHp = ct.getMaxHealth();
-	        //     int currentHp = ct.getHealth();
-	        //     int delta = (int) (maxHp * percentage);
-	        //     ct.setHealth(currentHp + delta);
-	        // }
+	        // Apply percentage based on current HP (no maxHealth available in model)
+	        if (percentage != 0) {
+	            int delta = (int) (currentHp * percentage);
+	            newHp += delta;
+	        }
+	        
+	        ct.setHealth(Math.max(0, newHp));
 	    } catch (Exception ignore) {}
 	}
 
@@ -522,17 +524,19 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        double amount = speedEvent.getSpeedAmount();
 	        double percentage = speedEvent.getSpeedPercentage();
 	        
-	        double currentSpeed = ct.getSpeed();
+	        double newSpeed = ct.getSpeed();
 	        
-	        // Apply flat amount
+	        // Apply flat amount first
 	        if (amount != 0) {
-	            ct.setSpeed(currentSpeed + amount);
+	            newSpeed += amount;
 	        }
 	        
-	        // Apply percentage multiplier
+	        // Apply percentage multiplier to the updated speed
 	        if (percentage != 0) {
-	            ct.setSpeed(currentSpeed * (1 + percentage));
+	            newSpeed *= (1 + percentage);
 	        }
+	        
+	        ct.setSpeed(newSpeed);
 	    } catch (Exception ignore) {}
 	}
 

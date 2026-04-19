@@ -26,8 +26,6 @@ import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import main.game.maze.mazeworld.Point2D;
-import main.game.maze.mazeworld.GameMazeWorld;
-import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 /**
  * <!-- begin-user-doc -->
