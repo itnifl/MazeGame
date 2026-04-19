@@ -14,5 +14,7 @@ Export-Package: main.game.maze.behaviour,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
- main.game.maze.mazeworld
+ main.game.maze.mazeworld,
+ main.game.maze.opponents,
+ main.game.maze.difficulties
 Bundle-ActivationPolicy: lazy
