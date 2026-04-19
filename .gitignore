@@ -98,7 +98,13 @@ main.game.maze.dsl/model/
 # Temporary download created by Xtext generation in some setups
 .antlr-generator-3.2.0-patch.jar
 
-/temp
-/ci-logs
-logs.zip
-/run214_logs
+# All temporary files go in /temp folder
+/temp/
+
+# Legacy temp file locations (prefer /temp/)
+/ci-logs/
+*.log
+*.zip
+/run*_logs/
+*_runs.json
+build.log
