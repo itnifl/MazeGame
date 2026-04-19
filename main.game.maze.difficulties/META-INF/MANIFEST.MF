@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.eclipse.emf.common;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.ocl.pivot;resolution:=optional
-Export-Package: main.game.maze.difficulties,
- main.game.maze.difficulties.impl,
- main.game.maze.difficulties.util
+Export-Package: main.game.maze.difficulties;x-friends:="main.game.maze.behaviour,main.game.maze.opponents",
+ main.game.maze.difficulties.impl;x-friends:="main.game.maze.behaviour,main.game.maze.opponents",
+ main.game.maze.difficulties.util;x-friends:="main.game.maze.behaviour,main.game.maze.opponents"
 Bundle-ActivationPolicy: lazy

@@ -8,6 +8,6 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-21
-Export-Package: main.game.maze.mazeworld
+Export-Package: main.game.maze.mazeworld;x-friends:="main.game.maze.behaviour"
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime
