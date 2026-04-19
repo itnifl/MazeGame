@@ -262,6 +262,12 @@
         <details key="documentation" value="When computing the A* algorithm, a maximum of maxIterations iterations are performed. If the character has not been found, the character will take the direction of the nearest of the last iterations points."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="heuristicMethod" lowerBound="1"
+        eType="#//DistanceMethod" defaultValueLiteral="MANHATTAN">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The distance method used for heuristic calculation in the A* algorithm."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalPathCalculator" eSuperTypes="#//PathCalculator"/>
   <eClassifiers xsi:type="ecore:EEnum" name="DistanceMethod">

@@ -53,7 +53,26 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 	 * @ordered
 	 */
 	protected int maxPathLength = MAX_PATH_LENGTH_EDEFAULT;
-	protected DistanceMethod heuristicMethod = DistanceMethod.MANHATTAN;
+
+	/**
+	 * The default value of the '{@link #getHeuristicMethod() <em>Heuristic Method</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHeuristicMethod()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final DistanceMethod HEURISTIC_METHOD_EDEFAULT = DistanceMethod.MANHATTAN;
+
+	/**
+	 * The cached value of the '{@link #getHeuristicMethod() <em>Heuristic Method</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHeuristicMethod()
+	 * @generated
+	 * @ordered
+	 */
+	protected DistanceMethod heuristicMethod = HEURISTIC_METHOD_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -180,6 +199,8 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		switch (featureID) {
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH:
 				return getMaxPathLength();
+			case BehaviourPackage.ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD:
+				return getHeuristicMethod();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -194,6 +215,9 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		switch (featureID) {
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH:
 				setMaxPathLength((Integer)newValue);
+				return;
+			case BehaviourPackage.ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD:
+				setHeuristicMethod((DistanceMethod)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -210,6 +234,9 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH:
 				setMaxPathLength(MAX_PATH_LENGTH_EDEFAULT);
 				return;
+			case BehaviourPackage.ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD:
+				setHeuristicMethod(HEURISTIC_METHOD_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -224,6 +251,8 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		switch (featureID) {
 			case BehaviourPackage.ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH:
 				return maxPathLength != MAX_PATH_LENGTH_EDEFAULT;
+			case BehaviourPackage.ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD:
+				return heuristicMethod != HEURISTIC_METHOD_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -240,6 +269,8 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (maxPathLength: ");
 		result.append(maxPathLength);
+		result.append(", heuristicMethod: ");
+		result.append(heuristicMethod);
 		result.append(')');
 		return result.toString();
 	}

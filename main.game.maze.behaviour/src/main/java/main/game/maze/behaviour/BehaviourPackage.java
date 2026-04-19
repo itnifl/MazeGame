@@ -1231,13 +1231,22 @@ public interface BehaviourPackage extends EPackage {
 	int ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH = PATH_CALCULATOR_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Heuristic Method</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD = PATH_CALCULATOR_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Astar Path Calculator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ASTAR_PATH_CALCULATOR_FEATURE_COUNT = PATH_CALCULATOR_FEATURE_COUNT + 1;
+	int ASTAR_PATH_CALCULATOR_FEATURE_COUNT = PATH_CALCULATOR_FEATURE_COUNT + 2;
 
 	/**
 	 * The operation id for the '<em>Compute</em>' operation.
@@ -2172,6 +2181,17 @@ public interface BehaviourPackage extends EPackage {
 	EAttribute getAstarPathCalculator_MaxPathLength();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.behaviour.AstarPathCalculator#getHeuristicMethod <em>Heuristic Method</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Heuristic Method</em>'.
+	 * @see main.game.maze.behaviour.AstarPathCalculator#getHeuristicMethod()
+	 * @see #getAstarPathCalculator()
+	 * @generated
+	 */
+	EAttribute getAstarPathCalculator_HeuristicMethod();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.behaviour.LocalPathCalculator <em>Local Path Calculator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2867,6 +2887,14 @@ public interface BehaviourPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH = eINSTANCE.getAstarPathCalculator_MaxPathLength();
+
+		/**
+		 * The meta object literal for the '<em><b>Heuristic Method</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD = eINSTANCE.getAstarPathCalculator_HeuristicMethod();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.behaviour.impl.LocalPathCalculatorImpl <em>Local Path Calculator</em>}' class.
