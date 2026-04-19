@@ -143,7 +143,7 @@ public class RunAcceleo {
             enemyData.put("displayName", nullSafe(stringFeature(enemy, "displayName"), DEFAULT_DISPLAY_NAME));
             enemyData.put("health", numberFeature(enemy, "health", Integer.valueOf(0)).intValue());
             enemyData.put("threatLevel", numberFeature(enemy, "threatLevel", Double.valueOf(0.0)).doubleValue());
-            enemyData.put("imageBase", nullSafe(stringFeature(enemy, "imageBase"), DEFAULT_IMAGE_BASE));
+            enemyData.put("imageBase", nullSafe(stringFeature(enemy, "ImageBase"), DEFAULT_IMAGE_BASE));
             enemyData.put("defaultImage", getDefaultImage(typeName));
             enemyData.put("animationFrames", getAnimationFrames(typeName));
             enemyData.put("spriteScale", getSpriteScale(typeName));
@@ -209,10 +209,10 @@ public class RunAcceleo {
                         typeName, index, DEFAULT_DISPLAY_NAME));
                 }
                 
-                String imageBase = stringFeature(enemy, "imageBase");
+                String imageBase = stringFeature(enemy, "ImageBase");
                 if (imageBase == null || imageBase.isBlank()) {
                     warnings.append(String.format(
-                        "  WARNING: %s at index %d has null/blank imageBase, using type-specific default%n",
+                        "  WARNING: %s at index %d has null/blank ImageBase, using type-specific default%n",
                         typeName, index));
                 }
                 index++;

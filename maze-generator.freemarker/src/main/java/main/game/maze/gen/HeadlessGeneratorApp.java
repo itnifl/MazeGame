@@ -14,7 +14,7 @@ public class HeadlessGeneratorApp implements IApplication {
     String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
     
     if (args == null || args.length < 3) {
-      System.out.println("Usage: -application main.game.maze.gen.RunAcceleo <input.xmi> <outDir>");
+      System.out.println("Usage: -application main.game.maze.gen.RunAcceleo <opponents.xmi> <difficulties.xmi> <outDir>");
       return Integer.valueOf(1);
     }
 

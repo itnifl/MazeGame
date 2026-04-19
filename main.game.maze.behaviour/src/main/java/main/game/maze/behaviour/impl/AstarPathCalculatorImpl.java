@@ -5,9 +5,10 @@ package main.game.maze.behaviour.impl;
 import main.game.maze.behaviour.AstarPathCalculator;
 import main.game.maze.behaviour.BehaviourPackage;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.PriorityQueue;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
@@ -155,36 +156,44 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
 		for (int x=0; x < graph.getGrid().length; x++) {
 			for (int y=0; y < graph.getGrid()[0].length; y++) {
-				accumulatedCosts[x][y] = Integer.MAX_VALUE;
+				accumulatedCosts[x][y] = Double.MAX_VALUE;
 				originsNodes[x][y] = null;
 			}
 		}
 		accumulatedCosts[start.getCol()][start.getRow()] = 0;
 
-		// Compute nodes costs
-		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
-		queue.add(start);
-		while (queue.isEmpty() == false) {
-			var current = queue.poll();
-			for (var node : current.getNeighbors()) {
-				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
-				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
-					if (newCost < this.getMaxPathLength()) {
-						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
-						originsNodes[node.getCol()][node.getRow()] = current;
-						if (node == target) {
-							return reconstructPath(originsNodes, target);
-						}
-						queue.add(node);
-					}
-					else {
+		// Use priority queue ordered by f(n) = g(n) + h(n) for A* search
+		PriorityQueue<MazeNavigationGraph.Node> openSet = new PriorityQueue<>(
+			Comparator.comparingDouble(node -> 
+				accumulatedCosts[node.getCol()][node.getRow()] + heuristicDistance(node, target))
+		);
+		openSet.add(start);
+		
+		while (!openSet.isEmpty()) {
+			var current = openSet.poll();
+			
+			// Target reached
+			if (current == target) {
+				return reconstructPath(originsNodes, target);
+			}
+			
+			for (var neighbor : current.getNeighbors()) {
+				double tentativeG = accumulatedCosts[current.getCol()][current.getRow()] + 1;
+				if (tentativeG < accumulatedCosts[neighbor.getCol()][neighbor.getRow()]) {
+					if (tentativeG < this.getMaxPathLength()) {
+						originsNodes[neighbor.getCol()][neighbor.getRow()] = current;
+						accumulatedCosts[neighbor.getCol()][neighbor.getRow()] = tentativeG;
+						// Re-add to update priority (standard A* approach)
+						openSet.remove(neighbor);
+						openSet.add(neighbor);
+					} else {
 						endNodes.add(current);
 					}
 				}
 			}
 		}
 
-		// Reconstruct path
+		// Reconstruct path to nearest reachable node if target not found
 		var targetNode = nearestNode(endNodes, target);
 		return reconstructPath(originsNodes, targetNode);
 	}

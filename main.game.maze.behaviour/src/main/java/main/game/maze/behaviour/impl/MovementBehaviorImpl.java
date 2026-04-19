@@ -499,7 +499,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply percentage based on current HP (no maxHealth available in model)
 	        if (percentage != 0) {
-	            int delta = (int) (currentHp * percentage);
+	            int delta = (int) (currentHp * (percentage / 100.0));
 	            newHp += delta;
 	        }
 	        
@@ -533,7 +533,7 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	        
 	        // Apply percentage multiplier to the updated speed
 	        if (percentage != 0) {
-	            newSpeed *= (1 + percentage);
+	            newSpeed *= (1 + (percentage / 100.0));
 	        }
 	        
 	        ct.setSpeed(newSpeed);
