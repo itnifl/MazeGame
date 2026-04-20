@@ -554,16 +554,34 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterPatrolMove(IMovingComputerCharacter computerCharacter) {
+        // Check if character is in wander fallback mode
+        if (PatrolController.isInWanderFallback(computerCharacter)) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter); //If there is a wall in the way to the point, we adjust to next best possible. If the point is reached, we go to next
+        
+        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter);
+        
+        // If no valid patrol direction, enter wander fallback
+        if (direction == null) {
+            PatrolController.triggerWanderFallback(computerCharacter);
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        
         computerCharacter.setDirection(direction);
         var successfulMove = computerCharacter.move(nonTangient);
         
+        // If move failed, enter wander fallback to get unstuck
         if (!successfulMove) {
+            PatrolController.triggerWanderFallback(computerCharacter);
             computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
         }
     }
 

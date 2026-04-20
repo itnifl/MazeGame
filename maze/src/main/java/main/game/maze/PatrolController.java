@@ -22,17 +22,43 @@ import main.game.maze.mazeworld.service.MazeNavigationGraph;
 public class PatrolController {
 
     private static final Logger LOGGER = Logger.getLogger(PatrolController.class.getName());
+    private static final int WANDER_FALLBACK_TICKS = 60;
 
     // Cache to hold the stateful Behavior for each character, as we are manually instantiating them.
     // WeakHashMap ensures cleanup when characters are removed/garbage collected.
     private static final Map<IMovingComputerCharacter, PatrolBehavior> behaviorCache = new WeakHashMap<>();
+    
+    // Track remaining wander ticks when patrol fails
+    private static final Map<IMovingComputerCharacter, Integer> wanderTicksRemaining = new WeakHashMap<>();
+
+    /**
+     * Checks if the character is currently in wander fallback mode.
+     * If so, decrements the counter and returns true.
+     */
+    public static boolean isInWanderFallback(IMovingComputerCharacter character) {
+        Integer remaining = wanderTicksRemaining.get(character);
+        if (remaining != null && remaining > 0) {
+            wanderTicksRemaining.put(character, remaining - 1);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Triggers wander fallback mode for the specified number of ticks.
+     */
+    public static void triggerWanderFallback(IMovingComputerCharacter character) {
+        wanderTicksRemaining.put(character, WANDER_FALLBACK_TICKS);
+        LOGGER.fine("Character entered wander fallback for " + WANDER_FALLBACK_TICKS + " ticks");
+    }
 
     /**
      * Calculates the direction (Unit Vector) the character should move to reach the next step.
+     * Returns null if no valid direction could be calculated (caller should use wander).
      */
     public static Point2D getDirectionToNextPatrolPoint(IMovingComputerCharacter computerCharacter) {
         if (!(computerCharacter instanceof ComputerCharacter cc)) {
-            return new Point2D(0, 0);
+            return null;
         }
 
         try {
@@ -81,10 +107,10 @@ public class PatrolController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error calculating patrol direction", e);
         }
 
-        return new Point2D(0, 0);
+        return null;  // No valid direction - caller should use wander fallback
     }
 
     private static void initializePatrolRoute(PatrolBehavior patrol) {

@@ -2,6 +2,8 @@ package main.game.maze.actions;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -27,6 +29,15 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
     @Override
     public void AddDeathNotification(ICanDie mortalEntity) {
+        // Ensure FX operations run on the FX application thread
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> handleGameOver(mortalEntity));
+        } else {
+            handleGameOver(mortalEntity);
+        }
+    }
+
+    private void handleGameOver(ICanDie mortalEntity) {
         // Stop movement loop immediately to prevent race conditions
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();

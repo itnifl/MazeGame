@@ -125,12 +125,18 @@ public class PlayerCharacter extends Character
         });
 
         if (hitPoints.get() <= 0) {
-            Platform.runLater(() -> {
-                PlayDieAnimation();
-                for (var subscriber : new ArrayList<>(deathSubscribers)) {
-                    subscriber.AddDeathNotification(this);
-                }
-            });
+            // Animation needs FX thread
+            try {
+                Platform.runLater(this::PlayDieAnimation);
+            } catch (IllegalStateException e) {
+                // FX toolkit not initialized (test environment) - skip animation
+            }
+            
+            // Notify subscribers synchronously (they can use Platform.runLater if needed)
+            var subscribersCopy = new ArrayList<>(deathSubscribers);
+            for (var subscriber : subscribersCopy) {
+                subscriber.AddDeathNotification(this);
+            }
         }
     }
 
