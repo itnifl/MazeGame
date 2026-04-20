@@ -122,9 +122,18 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 		return heuristicMethod;
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
 	@Override
 	public void setHeuristicMethod(DistanceMethod value) {
-		heuristicMethod = value == null ? DistanceMethod.MANHATTAN : value;
+		DistanceMethod newHeuristicMethod = value == null ? HEURISTIC_METHOD_EDEFAULT : value;
+		DistanceMethod oldHeuristicMethod = heuristicMethod;
+		heuristicMethod = newHeuristicMethod;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BehaviourPackage.ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD, oldHeuristicMethod, heuristicMethod));
 	}
 
 	@Override

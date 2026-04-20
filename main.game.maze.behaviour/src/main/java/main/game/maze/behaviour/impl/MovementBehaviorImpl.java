@@ -585,9 +585,9 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	            setAdditionalVisionRange(getAdditionalVisionRange() + amount);
 	        }
 	        
-	        // Apply percentage to multiplier
-	        if (percentage != 0) {
-	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1 + percentage));
+        // Apply percentage to multiplier (percentage is 0-100 scale)
+        if (percentage != 0) {
+            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1 + percentage / 100.0));
 	        }
 	    } catch (Exception ignore) {}
 	}
