@@ -98,9 +98,11 @@
           <configuration>
             <compilerArgs>
               <arg>-warn:-discouraged,forbidden</arg>
+              <arg>-err:-discouraged,forbidden</arg>
             </compilerArgs>
             <showWarnings>true</showWarnings>
-            <useProjectSettings>false</useProjectSettings>
+            <useProjectSettings>true</useProjectSettings>
+            <requireJavaPackageImports>false</requireJavaPackageImports>
           </configuration>
         </plugin>
       </plugins>
