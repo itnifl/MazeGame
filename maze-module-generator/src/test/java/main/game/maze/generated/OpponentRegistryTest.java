@@ -1,11 +1,19 @@
 package main.game.maze.generated;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +23,51 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DisplayName("OpponentRegistry Tests")
 class OpponentRegistryTest {
+
+    /**
+     * Helper to capture output from both System.out and Logger.
+     * Works with both old generated code (System.out) and new (Logger).
+     */
+    static class OutputCapture {
+        private final ByteArrayOutputStream sysOutStream = new ByteArrayOutputStream();
+        private final PrintStream originalOut = System.out;
+        private final List<String> logMessages = new ArrayList<>();
+        private final Logger logger = Logger.getLogger(OpponentRegistry.class.getName());
+        private Handler logHandler;
+
+        void start() {
+            System.setOut(new PrintStream(sysOutStream));
+            logHandler = new Handler() {
+                @Override
+                public void publish(LogRecord record) {
+                    logMessages.add(record.getMessage());
+                }
+                @Override
+                public void flush() {}
+                @Override
+                public void close() throws SecurityException {}
+            };
+            logHandler.setLevel(Level.ALL);
+            logger.addHandler(logHandler);
+            logger.setLevel(Level.ALL);
+        }
+
+        void stop() {
+            System.setOut(originalOut);
+            if (logHandler != null) {
+                logger.removeHandler(logHandler);
+            }
+        }
+
+        String getOutput() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(sysOutStream.toString());
+            for (String msg : logMessages) {
+                sb.append(msg).append("\n");
+            }
+            return sb.toString();
+        }
+    }
 
     @Nested
     @DisplayName("GAME_NAME constant")
@@ -54,76 +107,68 @@ class OpponentRegistryTest {
         }
 
         @Test
-        @DisplayName("should output to System.out")
-        void shouldOutputToSystemOut() {
-            // Capture System.out
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PrintStream originalOut = System.out;
-            System.setOut(new PrintStream(outputStream));
+        @DisplayName("should output enemy information")
+        void shouldOutputToSystemOutOrLogger() {
+            OutputCapture capture = new OutputCapture();
+            capture.start();
             
             try {
                 OpponentRegistry.listEnemies();
-                String output = outputStream.toString();
+                String output = capture.getOutput();
                 
                 assertFalse(output.isEmpty(), "Should produce output");
                 assertTrue(output.contains("Enemy:"), "Output should contain 'Enemy:' prefix");
             } finally {
-                // Restore original System.out
-                System.setOut(originalOut);
+                capture.stop();
             }
         }
 
         @Test
         @DisplayName("should list enemy types from the model")
         void shouldListEnemyTypesFromModel() {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PrintStream originalOut = System.out;
-            System.setOut(new PrintStream(outputStream));
+            OutputCapture capture = new OutputCapture();
+            capture.start();
             
             try {
                 OpponentRegistry.listEnemies();
-                String output = outputStream.toString();
+                String output = capture.getOutput();
                 
-                // Based on the generated code, check for expected enemy types
                 assertTrue(output.contains("Zombie"), "Should list Zombie enemies");
                 assertTrue(output.contains("Ghost"), "Should list Ghost enemies");
                 assertTrue(output.contains("Pumpkin Bomber"), "Should list Pumpkin Bomber enemies");
             } finally {
-                System.setOut(originalOut);
+                capture.stop();
             }
         }
 
         @Test
         @DisplayName("should include health information for enemies")
         void shouldIncludeHealthInformation() {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PrintStream originalOut = System.out;
-            System.setOut(new PrintStream(outputStream));
+            OutputCapture capture = new OutputCapture();
+            capture.start();
             
             try {
                 OpponentRegistry.listEnemies();
-                String output = outputStream.toString();
+                String output = capture.getOutput();
                 
                 assertTrue(output.contains("Health:"), "Should include health information");
                 assertTrue(output.matches("(?s).*Health:\\s*\\d+.*"), 
                     "Health should be followed by a number");
             } finally {
-                System.setOut(originalOut);
+                capture.stop();
             }
         }
 
         @Test
         @DisplayName("should output multiple enemy entries")
         void shouldOutputMultipleEnemyEntries() {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PrintStream originalOut = System.out;
-            System.setOut(new PrintStream(outputStream));
+            OutputCapture capture = new OutputCapture();
+            capture.start();
             
             try {
                 OpponentRegistry.listEnemies();
-                String output = outputStream.toString();
+                String output = capture.getOutput();
                 
-                // Count occurrences of "Enemy:" prefix
                 int enemyCount = 0;
                 String[] lines = output.split("\n");
                 for (String line : lines) {
@@ -134,7 +179,7 @@ class OpponentRegistryTest {
                 
                 assertTrue(enemyCount > 0, "Should list at least one enemy");
             } finally {
-                System.setOut(originalOut);
+                capture.stop();
             }
         }
     }
@@ -184,23 +229,25 @@ class OpponentRegistryTest {
         @Test
         @DisplayName("generated code should be deterministic")
         void generatedCodeShouldBeDeterministic() {
-            // Call listEnemies twice and verify output is identical
-            ByteArrayOutputStream output1 = new ByteArrayOutputStream();
-            ByteArrayOutputStream output2 = new ByteArrayOutputStream();
-            PrintStream originalOut = System.out;
+            OutputCapture capture1 = new OutputCapture();
+            OutputCapture capture2 = new OutputCapture();
             
+            capture1.start();
             try {
-                System.setOut(new PrintStream(output1));
                 OpponentRegistry.listEnemies();
-                
-                System.setOut(new PrintStream(output2));
-                OpponentRegistry.listEnemies();
-                
-                assertEquals(output1.toString(), output2.toString(),
-                    "Multiple calls should produce identical output");
             } finally {
-                System.setOut(originalOut);
+                capture1.stop();
             }
+            
+            capture2.start();
+            try {
+                OpponentRegistry.listEnemies();
+            } finally {
+                capture2.stop();
+            }
+            
+            assertEquals(capture1.getOutput(), capture2.getOutput(),
+                "Multiple calls should produce identical output");
         }
     }
 }

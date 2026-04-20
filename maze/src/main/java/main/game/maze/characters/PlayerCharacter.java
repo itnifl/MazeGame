@@ -1,10 +1,12 @@
 package main.game.maze.characters;
 
+import javafx.application.Platform;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -35,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
 
+    private static final Logger LOGGER = Logger.getLogger(PlayerCharacter.class.getName());
     private AtomicInteger hitPoints = new AtomicInteger(100);
     private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
@@ -102,25 +105,37 @@ public class PlayerCharacter extends Character
     @Override
     public void setHitPoints(int hp) {
         hitPoints = new AtomicInteger(hp);
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
 
         if (hitPoints.get() <= 0) {
-            PlayDieAnimation();
-            for (var subscribers : deathSubscribers) {
-                subscribers.AddDeathNotification(this);
+            // Animation needs FX thread
+            try {
+                Platform.runLater(this::PlayDieAnimation);
+            } catch (IllegalStateException e) {
+                // FX toolkit not initialized (test environment) - skip animation
+            }
+            
+            // Notify subscribers synchronously (they can use Platform.runLater if needed)
+            var subscribersCopy = new ArrayList<>(deathSubscribers);
+            for (var subscriber : subscribersCopy) {
+                subscriber.AddDeathNotification(this);
             }
         }
     }
@@ -128,10 +143,12 @@ public class PlayerCharacter extends Character
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
     }
 
     @Override
@@ -151,10 +168,14 @@ public class PlayerCharacter extends Character
 
     @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
-        if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
+        var graphics = this.getCharacterGraphics();
+        if (graphics == null) {
+            return;  // Player removed (game over), skip evaluation
+        }
+        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
             if (entity instanceof ICanKill) {
                 var canKillEntity = (ICanKill) entity;
-                System.out.println("Player is intersecting with " + canKillEntity);
+                LOGGER.fine("Player is intersecting with " + canKillEntity);
                 this.subtractHitPoints(canKillEntity.getDamage());
                 this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
                 doStandardScreamSound();

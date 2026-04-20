@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Temurin JDK 24
+      - name: Set up Temurin JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 24
+          java-version: 21
           cache: maven
 
       - name: Install Xvfb (headless JavaFX)

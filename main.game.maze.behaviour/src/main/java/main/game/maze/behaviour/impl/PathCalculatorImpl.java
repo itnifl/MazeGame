@@ -2,6 +2,8 @@ package main.game.maze.behaviour.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.BasicEList;
@@ -20,6 +22,8 @@ import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.service.MazeNavigationGraph;
 
 public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container implements PathCalculator {
+
+    private static final Logger LOGGER = Logger.getLogger(PathCalculatorImpl.class.getName());
 
     protected static final DistanceMethod DISTANCE_METHOD_EDEFAULT = DistanceMethod.MANHATTAN;
     protected DistanceMethod distanceMethod = DISTANCE_METHOD_EDEFAULT;
@@ -53,20 +57,39 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
         EList<Position> resultPath = new BasicEList<>();
         try {
             GameMazeWorld world = null;
-            try { world = GameMazeWorld.GetWorld(); } catch (Throwable t) { return resultPath; }
-            if (world == null) return resultPath;
+            try { 
+                world = GameMazeWorld.GetWorld(); 
+            } catch (Throwable t) {
+                LOGGER.log(Level.FINE, "GameMazeWorld not available for path calculation", t);
+                return resultPath; 
+            }
+            if (world == null) {
+                LOGGER.fine("GameMazeWorld is null, cannot calculate path");
+                return resultPath;
+            }
             
             MazeNavigationGraph graph = world.getNavigationGraph();
-            if (graph == null) return resultPath;
+            if (graph == null) {
+                LOGGER.fine("Navigation graph is null, cannot calculate path");
+                return resultPath;
+            }
 
             MazeNavigationGraph.Node startNode = graph.snapToNode(new Point2D(start.getPosX(), start.getPosY()));
             MazeNavigationGraph.Node endNode = graph.snapToNode(new Point2D(end.getPosX(), end.getPosY()));
 
-            if (startNode == null || endNode == null) return resultPath;
+            if (startNode == null || endNode == null) {
+                LOGGER.log(Level.FINE, "Failed to snap positions to nodes: start={0}, end={1}", 
+                    new Object[]{startNode, endNode});
+                return resultPath;
+            }
+
+            LOGGER.log(Level.FINER, "Computing path from ({0},{1}) to ({2},{3})",
+                new Object[]{startNode.getCol(), startNode.getRow(), endNode.getCol(), endNode.getRow()});
 
             EList<MazeNavigationGraph.Node> nodePath = compute(startNode, endNode);
 
             if (nodePath != null) {
+                LOGGER.log(Level.FINER, "Path computed with {0} nodes", nodePath.size());
                 for (MazeNavigationGraph.Node node : nodePath) {
                     Position p = BehaviourFactory.eINSTANCE.createPosition();
                     p.setPosX(node.getX());
@@ -75,7 +98,7 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Error during path calculation", e);
         }
         return resultPath;
     }
@@ -85,7 +108,10 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
      */
     public EList<MazeNavigationGraph.Node> reconstructPath(MazeNavigationGraph.Node[][] originNodes, MazeNavigationGraph.Node target) {
         EList<MazeNavigationGraph.Node> path = new BasicEList<>();
-        if (originNodes == null || target == null) return path;
+        if (originNodes == null || target == null) {
+            LOGGER.fine("Cannot reconstruct path: originNodes or target is null");
+            return path;
+        }
 
         int cols = originNodes.length;
         if (cols == 0) return path;
@@ -115,11 +141,19 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
         return path;
     }
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
     /**
      * @generated NOT
      */
     public MazeNavigationGraph.Node nearestNode(List<MazeNavigationGraph.Node> nodes, MazeNavigationGraph.Node target) {
-        if (nodes == null || target == null) return null;
+        if (nodes == null || target == null) {
+            LOGGER.fine("Cannot find nearest node: nodes list or target is null");
+            return null;
+        }
         MazeNavigationGraph.Node nearestNode = null;
         double nearestDistance = Double.MAX_VALUE;
         for (var node : nodes) {

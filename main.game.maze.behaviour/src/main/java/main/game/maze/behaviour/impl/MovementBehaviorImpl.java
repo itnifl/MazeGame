@@ -481,8 +481,30 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void update(HealthEvent healthEvent) {
 	    if (healthEvent == null) return;
-	    // TODO: implement health effect
-	    // For now, no-op placeholder
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        int amount = healthEvent.getHealthAmount();
+	        double percentage = healthEvent.getHealthPercentage();
+	        
+	        int currentHp = ct.getHealth();
+	        int newHp = currentHp;
+	        
+	        // Apply flat amount first
+	        if (amount != 0) {
+	            newHp += amount;
+	        }
+	        
+	        // Apply percentage based on current HP (no maxHealth available in model)
+	        if (percentage != 0) {
+	            int delta = (int) (currentHp * (percentage / 100.0));
+	            newHp += delta;
+	        }
+	        
+	        ct.setHealth(Math.max(0, newHp));
+	    } catch (Exception ignore) {}
 	}
 
 	/**
@@ -494,8 +516,28 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	@Override
 	public void update(SpeedEvent speedEvent) {
 	    if (speedEvent == null) return;
-	    // TODO: implement speed effect
-	    // For now, no-op placeholder
+	    
+	    CharacterType ct = getCharactertype();
+	    if (ct == null) return;
+	    
+	    try {
+	        double amount = speedEvent.getSpeedAmount();
+	        double percentage = speedEvent.getSpeedPercentage();
+	        
+	        double newSpeed = ct.getSpeed();
+	        
+	        // Apply flat amount first
+	        if (amount != 0) {
+	            newSpeed += amount;
+	        }
+	        
+	        // Apply percentage multiplier to the updated speed
+	        if (percentage != 0) {
+	            newSpeed *= (1 + (percentage / 100.0));
+	        }
+	        
+	        ct.setSpeed(newSpeed);
+	    } catch (Exception ignore) {}
 	}
 
 	/**
@@ -543,9 +585,9 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	            setAdditionalVisionRange(getAdditionalVisionRange() + amount);
 	        }
 	        
-	        // Apply percentage to multiplier
-	        if (percentage != 0) {
-	            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1.0 + percentage));
+        // Apply percentage to multiplier (percentage is 0-100 scale)
+        if (percentage != 0) {
+            setVisionRangeMultiplier(getVisionRangeMultiplier() * (1 + percentage / 100.0));
 	        }
 	    } catch (Exception ignore) {}
 	}

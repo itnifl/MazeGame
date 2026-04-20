@@ -10,6 +10,7 @@ import main.game.maze.behaviour.PatrolBehavior;
 import main.game.maze.behaviour.PatrolPathBehavior;
 import main.game.maze.behaviour.PatrolPoint;
 import main.game.maze.behaviour.PatrolZone;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
@@ -19,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import java.util.Random;
+
 import main.game.maze.behaviour.Position;
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.mazeworld.GameMazeWorld;
@@ -536,29 +538,13 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
                 // Use the bridge method we added to PathCalculator
                 // This handles the conversion from Position -> Node -> Position
                 EList<Position> calculatedPath = pc.calculatePath(getPosition(), target);
-                
                 if (calculatedPath != null && !calculatedPath.isEmpty()) {
                     getNextPositions().addAll(calculatedPath);
-                    
+
                     // Optimization: Remove the first point if it is the current position
                     if (!getNextPositions().isEmpty() && distance(getPosition(), getNextPositions().get(0)) <= EPSILON) {
                         getNextPositions().remove(0);
                     }
-                } else {
-                    // CALCULATION FAILED. 
-                    // This is likely where your test fails.
-                    // If simple straight line is valid (no walls), we could force it?
-                    // For now, we print debug info.
-                    System.err.println("DEBUG: Failed to find path from " + getPosition() + " to " + target);
-                    
-                    // Fallback: Just move directly towards target if no path found (ignoring walls)
-                    // This prevents "stuck" behavior in broken maps, but strictly for the test, 
-                    // we want the calculator to work. 
-                    // Uncomment below to force movement:
-                    // Position direct = BehaviourFactory.eINSTANCE.createPosition();
-                    // direct.setPosX(target.getPosX());
-                    // direct.setPosY(target.getPosY());
-                    // getNextPositions().add(direct);
                 }
             }
         }

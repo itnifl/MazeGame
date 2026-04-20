@@ -91,6 +91,20 @@
           <artifactId>target-platform-configuration</artifactId>
           <version>${tycho.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.eclipse.tycho</groupId>
+          <artifactId>tycho-compiler-plugin</artifactId>
+          <version>${tycho.version}</version>
+          <configuration>
+            <compilerArgs>
+              <arg>-warn:-discouraged,forbidden</arg>
+              <arg>-err:-discouraged,forbidden</arg>
+            </compilerArgs>
+            <showWarnings>true</showWarnings>
+            <useProjectSettings>true</useProjectSettings>
+            <requireJavaPackageImports>false</requireJavaPackageImports>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>   

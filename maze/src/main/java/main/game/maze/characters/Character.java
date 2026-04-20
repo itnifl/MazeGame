@@ -85,12 +85,19 @@ public class Character  {
         return directionY;
     }
 
-    /*
-    * Is character touching any vector?
-    */
+    /**
+     * Checks if the character's current direction vector intersects any maze wall.
+     * @return true if touching a wall, false otherwise (also false if maze not initialized)
+     */
     protected boolean isTouchingVector() {
-        // Loop through all the vectors in the maze and check the distance 
-        for (Vector2D vector : maze.getMazeVectors()) {
+        if (maze == null) {
+            return false;  // Allow movement if maze not yet initialized
+        }
+        var vectors = maze.getMazeVectors();
+        if (vectors == null) {
+            return false;
+        }
+        for (Vector2D vector : vectors) {
             if (characterDirection.doIntersect(vector, characterXYSizeFromPoint)) {
                 return true;
             }
@@ -152,6 +159,7 @@ public class Character  {
     }
 
     private boolean moveCharacterRight(double speed, boolean force) {
+        if (characterGraphics == null) return false;
         double newX = characterGraphics.getLayoutX() + speed;
         if (newX < maxX && (force || !isTouchingVector())) {
             characterGraphics.setLayoutX(newX);
@@ -162,6 +170,7 @@ public class Character  {
     }
 
     private boolean moveCharacterLeft(double speed, boolean force) {
+        if (characterGraphics == null) return false;
         double newX = characterGraphics.getLayoutX() - speed;
         if (newX >= 0 && (force || !isTouchingVector())) {
             characterGraphics.setLayoutX(newX);
@@ -172,6 +181,7 @@ public class Character  {
     }
 
     private boolean moveCharacterDown(double speed, boolean force) {
+        if (characterGraphics == null) return false;
         double newY = characterGraphics.getLayoutY() + speed;
         if (newY < maxY && (force || !isTouchingVector())) {
             characterGraphics.setLayoutY(newY);
@@ -182,6 +192,7 @@ public class Character  {
     }
 
     private boolean moveCharacterUp(double speed, boolean force) {
+        if (characterGraphics == null) return false;
         double newY = characterGraphics.getLayoutY() - speed;
         if (newY >= 0 && (force || !isTouchingVector())) {
             characterGraphics.setLayoutY(newY);
@@ -211,6 +222,9 @@ public class Character  {
 
         // remove graphics from scene graph and clear effects
         Node gfx = characterGraphics;
+        characterGraphics = null;  // null immediately to stop movement methods
+        maze = null;
+        
         if (gfx != null) {
             Runnable remove = () -> {
                 try {
@@ -227,10 +241,6 @@ public class Character  {
                 javafx.application.Platform.runLater(remove);
             }
         }
-
-        // help GC
-        characterGraphics = null;
-        maze = null;
     }
 }
 

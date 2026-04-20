@@ -8,13 +8,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
+Eclipse-ExtensibleAPI: true
+Eclipse-RegisterBuddy: org.eclipse.emf.ecore
 Require-Bundle: main.game.maze.difficulties,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.common;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
- org.eclipse.ocl.pivot;visibility:=reexport,
- org.eclipse.ocl.ecore;visibility:=reexport
-Export-Package: main.game.maze.opponents, 
+ org.eclipse.ocl.pivot;resolution:=optional,
+ org.eclipse.ocl.ecore;resolution:=optional
+Export-Package: main.game.maze.opponents,
  main.game.maze.opponents.constants,
  main.game.maze.opponents.impl,
  main.game.maze.opponents.util

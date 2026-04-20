@@ -15,7 +15,7 @@ public class HeadlessWallsApp implements IApplication {
 
         if (args == null || args.length < 2) {
             System.out.println("Usage: -application ...HeadlessWallsApp <wallsModel.xmi> <outDir>");
-            return IApplication.EXIT_OK;
+            return Integer.valueOf(1);
         }
 
         String wallsPath = new File(args[0]).getAbsolutePath();
@@ -24,8 +24,13 @@ public class HeadlessWallsApp implements IApplication {
         System.out.println("Walls model: " + wallsPath);
         System.out.println("Output dir:  " + outDir);
 
-        new RunWallsAcceleo().run(wallsPath, outDir);
-        return IApplication.EXIT_OK;
+        try {
+            new RunWallsAcceleo().run(wallsPath, outDir);
+            return IApplication.EXIT_OK;
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return Integer.valueOf(13);
+        }
     }
 
     @Override

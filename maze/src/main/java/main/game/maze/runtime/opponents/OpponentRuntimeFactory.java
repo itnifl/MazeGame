@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -29,7 +30,6 @@ import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.generated.CharacterRegistrar;
-import main.game.maze.generated.CharacterAttributeSetter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
@@ -272,6 +272,15 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
+            // Randomly assign PATROL behavior to ~50% of characters
+            if (ThreadLocalRandom.current().nextDouble() < 0.50) {
+                characterType.setBehavior(BehaviorType.PATROL);
+                _logger.log(Level.FINE, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
+            } else {
+                characterType.setBehavior(BehaviorType.WANDER);
+                _logger.log(Level.FINE, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
+            }
+
             // Use generated CharacterRegistrar for type-safe dispatch
             CharacterRegistrar.register(
                 characterType,
@@ -339,23 +348,34 @@ private static double spawnByTarget(
 
     /**
      * Applies difficulty multipliers to character attributes.
-     * Delegates base multipliers to generated CharacterAttributeSetter,
-     * then applies game-specific damage/instantDeath logic.
+     * Scales speed by the given multiplier and applies damage multiplier
+     * or instant death depending on difficulty configuration.
      */
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
 
-        // Use generated CharacterAttributeSetter for base multipliers (health, threatLevel, speed)
-        // Note: attackDamage is handled separately below with instantDeath logic
-        CharacterAttributeSetter.applyDifficultyMultipliers(
-            characterType,
-            1.0,  // health multiplier (keeping original base health)
-            1.0,  // threat multiplier (keeping original threat level)
-            speedMultiplierByDifficulty
-        );
+        characterType.setSpeed(characterType.getSpeed() * speedMultiplierByDifficulty);
 
-        // Use generated method for damage multiplier logic
-        CharacterAttributeSetter.applyDamageMultiplier(characterType, dmgMultiplierByDifficulty, instantDeath);
+        if (characterType instanceof Zombie z) {
+          if (instantDeath) {
+                z.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
+        } else if (characterType instanceof Ghost g) {
+            if (instantDeath) {
+                g.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
+        } else if (characterType instanceof PumpkinBomber b) {
+            if (instantDeath) {
+                b.setAttackDamage(Integer.MAX_VALUE);
+            } else {
+                b.setAttackDamage(Math.max(1, (int)Math.round(b.getAttackDamage() * dmgMultiplierByDifficulty)));
+            }
+        }
+        
     }
 
 

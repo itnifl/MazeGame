@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -34,6 +36,8 @@ import main.game.maze.walls.WallsPackage;
  * the EMF model is transformed into a template data model for processing.
  */
 public class RunWallsAcceleo {
+
+    private static final Logger LOGGER = Logger.getLogger(RunWallsAcceleo.class.getName());
 
     // Default values for null-safety
     private static final WallMaterialBaseType DEFAULT_BASE_TYPE = WallMaterialBaseType.STEEL;
@@ -72,7 +76,7 @@ public class RunWallsAcceleo {
         Resource modelRes = rs.getResource(modelURI, true);
         EObject root = modelRes.getContents().get(0);
 
-        System.out.println("Walls model root: " + root.eClass().getName()
+        LOGGER.fine("Walls model root: " + root.eClass().getName()
                 + " from " + root.eClass().getEPackage().getNsURI());
 
         // 4. Create output folder
@@ -81,7 +85,7 @@ public class RunWallsAcceleo {
             outFolder.mkdirs();
         }
 
-        System.out.println("Generating walls code into: " + outFolder.getAbsolutePath());
+        LOGGER.info("Generating walls code into: " + outFolder.getAbsolutePath());
 
         // 5. Generate code using FreeMarker templates
         if (root instanceof WallModel wallModel) {
@@ -92,7 +96,7 @@ public class RunWallsAcceleo {
             generateFromTemplate("WallMaterialRenderer.ftl", dataModel, new File(outFolder, "WallMaterialRenderer.java"));
             generateFromTemplate("WallCollisionHandler.ftl", dataModel, new File(outFolder, "WallCollisionHandler.java"));
             
-            System.out.println("Walls generation done.");
+            LOGGER.info("Walls generation done.");
         } else {
             throw new IllegalArgumentException("Expected WallModel, got: " + root.eClass().getName());
         }
@@ -166,7 +170,7 @@ public class RunWallsAcceleo {
         try (Writer out = new FileWriter(outputFile)) {
             template.process(rootModel, out);
         }
-        System.out.println("  Generated: " + outputFile.getName());
+        LOGGER.fine("Generated: " + outputFile.getName());
     }
 
     /**
@@ -209,8 +213,7 @@ public class RunWallsAcceleo {
         }
         
         if (warnings.length() > 0) {
-            System.out.println("Model validation warnings:");
-            System.out.print(warnings);
+            LOGGER.log(Level.WARNING, "Model validation warnings:\n{0}", warnings);
         }
     }
 

@@ -1,15 +1,18 @@
 package main.game.maze.generated;
 
+import java.util.logging.Logger;
+
 /**
  * Generated opponent registry with all character types.
  * @generated from opponents.ecore via FreeMarker template
  */
 public class OpponentRegistry {
+    private static final Logger LOGGER = Logger.getLogger(OpponentRegistry.class.getName());
     public static final String GAME_NAME = "${model.gameName?j_string}";
 
     public static void listEnemies() {
 <#list model.enemies as enemy>
-        System.out.println("Enemy: ${enemy.displayName?j_string} (Health: ${enemy.health?c})");
+        LOGGER.info("Enemy: ${enemy.displayName?j_string} (Health: ${enemy.health?c})");
 </#list>
     }
 

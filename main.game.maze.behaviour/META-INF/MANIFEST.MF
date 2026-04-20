@@ -8,11 +8,15 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Eclipse-ExtensibleAPI: true
+Eclipse-RegisterBuddy: org.eclipse.emf.ecore
 Export-Package: main.game.maze.behaviour,
  main.game.maze.behaviour.impl,
  main.game.maze.behaviour.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
- main.game.maze.mazeworld
+ main.game.maze.mazeworld;visibility:=reexport,
+ main.game.maze.opponents;visibility:=reexport,
+ main.game.maze.difficulties;visibility:=reexport
 Bundle-ActivationPolicy: lazy

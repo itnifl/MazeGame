@@ -2,13 +2,17 @@ package main.game.maze;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -54,7 +58,12 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class GameController implements Initializable {
+    private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+
     @FXML
     private AnchorPane root;
     @FXML
@@ -78,7 +87,7 @@ public class GameController implements Initializable {
     private WinGameAction winGameAction;
     private WinArea winarea;
     private Thread runComputerCharactersThread;
-    private final List<IMovingComputerCharacter> allComputerCharacters = new ArrayList<>();
+    private final List<IMovingComputerCharacter> allComputerCharacters = new CopyOnWriteArrayList<>();
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
     private Canvas pathCanvas;
     private Canvas treeCanvas;
@@ -90,6 +99,12 @@ public class GameController implements Initializable {
     private final Map<Vector2D, WallRegistry.WallDefinition> vectorWallMap = new HashMap<>();
     // Cache for loaded images to avoid IO lag during draw
     private final Map<String, Image> wallImageCache = new HashMap<>();
+
+    // Key state tracking for smooth movement
+    private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
+    private AnimationTimer movementTimer;
+    private long lastMoveTime = 0;
+    private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -104,6 +119,7 @@ public class GameController implements Initializable {
     
     @FXML
     private void handleKeyReleased(KeyEvent event) {
+        pressedKeys.remove(event.getCode());
         if (event.getCode() == KeyCode.P) {
             clearNavigationPath();
         } else if (event.getCode() == KeyCode.O) {
@@ -113,19 +129,17 @@ public class GameController implements Initializable {
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
-        switch (event.getCode()) {
-            case UP:
-                movePlayerUp();
-                break;
-            case DOWN:
-                movePlayerDown();
-                break;
-            case LEFT:
-                movePlayerLeft();
-                break;
-            case RIGHT:
-                movePlayerRight();
-                break;
+        KeyCode code = event.getCode();
+        
+        // Track movement keys for continuous movement
+        if (code == KeyCode.UP || code == KeyCode.DOWN || 
+            code == KeyCode.LEFT || code == KeyCode.RIGHT) {
+            pressedKeys.add(code);
+            return;  // Movement handled by AnimationTimer
+        }
+        
+        // Handle instant action keys
+        switch (code) {
             case H:
                 showHighScore();
                 break;
@@ -137,11 +151,10 @@ public class GameController implements Initializable {
                 break;
             case O: 
                 showSpanningTree();
-            break;
+                break;
             default:
                 break;
         }
-        updateDebugLabels();
     }
 
     private void updateDebugLabels() {
@@ -181,7 +194,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void handleMouseClicked(MouseEvent event) {
-        System.out.println("Game has been clicked");
+        LOGGER.fine("Game has been clicked");
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
     }
 
@@ -204,7 +217,7 @@ public class GameController implements Initializable {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
             if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
-            }            
+            }
         }
     }
 
@@ -212,7 +225,7 @@ public class GameController implements Initializable {
         for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
             if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
-            }            
+            }
         }
     }
 
@@ -299,6 +312,51 @@ public class GameController implements Initializable {
 
         gameBoard.setFocusTraversable(true);
         gameBoard.requestFocus();
+        
+        startMovementTimer();
+    }
+
+    private void startMovementTimer() {
+        if (movementTimer != null) {
+            movementTimer.stop();
+        }
+        lastMoveTime = 0;
+        movementTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) {
+                    return;
+                }
+                
+                // Throttle movement to avoid being too fast
+                if (now - lastMoveTime < MOVE_INTERVAL_NANOS) {
+                    return;
+                }
+                lastMoveTime = now;
+                
+                boolean moved = false;
+                if (pressedKeys.contains(KeyCode.UP)) {
+                    movePlayerUp();
+                    moved = true;
+                }
+                if (pressedKeys.contains(KeyCode.DOWN)) {
+                    movePlayerDown();
+                    moved = true;
+                }
+                if (pressedKeys.contains(KeyCode.LEFT)) {
+                    movePlayerLeft();
+                    moved = true;
+                }
+                if (pressedKeys.contains(KeyCode.RIGHT)) {
+                    movePlayerRight();
+                    moved = true;
+                }
+                if (moved) {
+                    updateDebugLabels();
+                }
+            }
+        };
+        movementTimer.start();
     }
 
     private void updateBoardBackground() {
@@ -322,10 +380,10 @@ public class GameController implements Initializable {
                 
                 gameBoard.setBackground(new Background(bi));
             } else {
-                System.err.println("Could not find background image: " + bgImageName);
+                LOGGER.warning("Could not find background image: " + bgImageName);
             }
         } catch (Exception e) {
-            System.err.println("Error loading background: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Error loading background", e);
         }
     }
 
@@ -418,7 +476,7 @@ public class GameController implements Initializable {
                 if (url != null) {
                     wallImageCache.put(def.id, new Image(url.toExternalForm()));
                 } else {
-                    System.err.println("Could not find wall image: " + def.baseImage);
+                    LOGGER.warning("Could not find wall image: " + def.baseImage);
                     return null;
                 }
             } catch (Exception e) {
@@ -442,26 +500,39 @@ public class GameController implements Initializable {
             protected Boolean call() throws Exception {
                 try {
                     do {
+                        if (isCancelled()) {
+                            return false;
+                        }
                         for (var computerCharacter : allComputerCharacters) {
-                            if(computerCharacter instanceof ComputerCharacter cc) {
-                                BehaviorType characterBehavior = cc.getCharacterBehaviour();
-                                switch (characterBehavior) {
-                                    case WANDER:
+                            if (isCancelled()) {
+                                return false;
+                            }
+                            try {
+                                if(computerCharacter instanceof ComputerCharacter cc) {
+                                    BehaviorType characterBehavior = cc.getCharacterBehaviour();
+                                    switch (characterBehavior) {
+                                        case WANDER:
                                             doCharacterWanderMove(computerCharacter);
-                                        break;
-                                    case PATROL:
-                                        	doCharacterPatrolMove(computerCharacter);
-                                        break;
-                                    default:
-                                        doCharacterWanderMove(computerCharacter);
-                                        break;
-                                }                                                            
-                            }                            
+                                            break;
+                                        case PATROL:
+                                            doCharacterPatrolMove(computerCharacter);
+                                            break;
+                                        default:
+                                            doCharacterWanderMove(computerCharacter);
+                                            break;
+                                    }
+                                }
+                            } catch (Exception charEx) {
+                                LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, charEx);
+                            }
                         }
                         Thread.sleep(60);
                     } while (true);
+                } catch (InterruptedException ie) {
+                    LOGGER.fine("Computer character movement loop interrupted");
+                    return false;
                 } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    LOGGER.log(Level.SEVERE, "Error in computer character movement loop", ex);
                     throw ex;
                 }
             }
@@ -473,7 +544,7 @@ public class GameController implements Initializable {
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = doNonTangientEnergyCalculation(nontangientcc);                                     
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
         var successfulMove = computerCharacter.move(nonTangient);
@@ -483,16 +554,34 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterPatrolMove(IMovingComputerCharacter computerCharacter) {
+        // Check if character is in wander fallback mode
+        if (PatrolController.isInWanderFallback(computerCharacter)) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = doNonTangientEnergyCalculation(nontangientcc);                                     
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter); //If there is a wall in the way to the point, we adjust to next best possible. If the point is reached, we go to next
+        
+        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter);
+        
+        // If no valid patrol direction, enter wander fallback
+        if (direction == null) {
+            PatrolController.triggerWanderFallback(computerCharacter);
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        
         computerCharacter.setDirection(direction);
         var successfulMove = computerCharacter.move(nonTangient);
         
+        // If move failed, enter wander fallback to get unstuck
         if (!successfulMove) {
+            PatrolController.triggerWanderFallback(computerCharacter);
             computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
         }
     }
 
@@ -507,9 +596,10 @@ public class GameController implements Initializable {
             final int maxRandomValue = 10;
             final double randomTangientMoveThreshold = 7;
 
-            if(nonTangient) { 
-                nontangientcc.setCharacterOpacity(noneOpacityValue-(energy/maxEnergy)+minOpacityValue);     
-                nontangientcc.setNonTangientEnergy(energy-energyDecreaseValue);   
+            if(nonTangient) {
+                var opacityEnergy = Math.min(maxEnergy, Math.max(0d, energy));
+                nontangientcc.setCharacterOpacity(noneOpacityValue-(opacityEnergy/maxEnergy)+minOpacityValue);
+                nontangientcc.setNonTangientEnergy(Math.max(0d, energy-energyDecreaseValue));
             } 
 
             if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {
@@ -654,15 +744,37 @@ public class GameController implements Initializable {
         return vectorWallMap;
     }
 
-    public void dispose() {
+    /**
+     * Stops the computer character movement loop without cleaning up nodes.
+     * Call this before screen transitions to prevent race conditions.
+     */
+    public void stopComputerCharacters() {
+        if (movementTimer != null) {
+            movementTimer.stop();
+            movementTimer = null;
+        }
+        pressedKeys.clear();
         if (runComputerCharacters != null) runComputerCharacters.cancel();
         if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
+    }
+
+    public void dispose() {
+        stopComputerCharacters();
+
+        // Dispose all computer characters
+        for (var cc : allComputerCharacters) {
+            if (cc instanceof ComputerCharacter computerChar) {
+                computerChar.dispose();
+            }
+        }
+        allComputerCharacters.clear();
 
         if (winarea != null && playerCharacter != null) {
             playerCharacter.removePositionSubscriber(winarea);
         }
         if (playerCharacter != null) {
             playerCharacter.dispose();
+            playerCharacter = null;
         }
     }
 }

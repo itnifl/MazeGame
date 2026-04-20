@@ -12,6 +12,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import main.game.maze.mazeworld.Point2D;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Position</b></em>'.
@@ -216,6 +218,11 @@ public class PositionImpl extends MinimalEObjectImpl.Container implements Positi
 		result.append(posY);
 		result.append(')');
 		return result.toString();
+	}
+
+	@Override
+	public Point2D toPoint2D() {
+		return new Point2D(posX, posY);
 	}
 
 } //PositionImpl

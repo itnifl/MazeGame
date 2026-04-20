@@ -733,6 +733,16 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getAstarPathCalculator_HeuristicMethod() {
+		return (EAttribute)astarPathCalculatorEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getLocalPathCalculator() {
 		return localPathCalculatorEClass;
 	}
@@ -1086,6 +1096,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 
 		astarPathCalculatorEClass = createEClass(ASTAR_PATH_CALCULATOR);
 		createEAttribute(astarPathCalculatorEClass, ASTAR_PATH_CALCULATOR__MAX_PATH_LENGTH);
+		createEAttribute(astarPathCalculatorEClass, ASTAR_PATH_CALCULATOR__HEURISTIC_METHOD);
 
 		localPathCalculatorEClass = createEClass(LOCAL_PATH_CALCULATOR);
 
@@ -1239,6 +1250,7 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 
 		initEClass(astarPathCalculatorEClass, AstarPathCalculator.class, "AstarPathCalculator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAstarPathCalculator_MaxPathLength(), ecorePackage.getEInt(), "maxPathLength", null, 1, 1, AstarPathCalculator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAstarPathCalculator_HeuristicMethod(), this.getDistanceMethod(), "heuristicMethod", "MANHATTAN", 1, 1, AstarPathCalculator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(localPathCalculatorEClass, LocalPathCalculator.class, "LocalPathCalculator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

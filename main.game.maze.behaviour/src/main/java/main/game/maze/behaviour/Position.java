@@ -4,6 +4,8 @@ package main.game.maze.behaviour;
 
 import org.eclipse.emf.ecore.EObject;
 
+import main.game.maze.mazeworld.Point2D;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Position</b></em>'.
@@ -66,5 +68,7 @@ public interface Position extends EObject {
 	 * @generated
 	 */
 	void setPosY(double value);
+
+	Point2D toPoint2D();
 
 } // Position

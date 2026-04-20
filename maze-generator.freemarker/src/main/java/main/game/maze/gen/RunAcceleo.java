@@ -8,9 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -22,7 +25,6 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import main.game.maze.opponents.CharacterType;
-import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.difficulties.DifficultiesPackage;
 
@@ -33,6 +35,8 @@ import main.game.maze.difficulties.DifficultiesPackage;
  * the EMF model is transformed into a template data model for processing.
  */
 public class RunAcceleo {
+
+    private static final Logger LOGGER = Logger.getLogger(RunAcceleo.class.getName());
 
     // Default values for null-safety
     private static final String DEFAULT_GAME_NAME = "MazeGame";
@@ -53,7 +57,7 @@ public class RunAcceleo {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 3) {
-            System.out.println("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
+            LOGGER.severe("Usage: RunAcceleo <opponentModel.xmi> <difficulties.xmi> <outDir>");
             System.exit(1);
         }
 
@@ -85,11 +89,6 @@ public class RunAcceleo {
         Resource oppRes = rs.getResource(URI.createFileURI(new File(opponentModelPath).getAbsolutePath()), true);
         EObject root = oppRes.getContents().get(0);
 
-        System.out.println("DEBUG: Loaded XMI Root Object");
-        System.out.println("Type: " + root.eClass().getName());
-        System.out.println("Package: " + root.eClass().getEPackage().getNsURI());
-        System.out.println("==========================================");
-
         // 4. Create output folder
         File outFolder = new File(outDir, "main/game/maze/generated");
         if (!outFolder.exists()) {
@@ -97,30 +96,30 @@ public class RunAcceleo {
         }
 
         // 5. Generate code using FreeMarker templates
-        if (root instanceof OpponentModel model) {
-            validateOpponentModel(model);
-            Map<String, Object> dataModel = buildTemplateDataModel(model);
-            
-            generateFromTemplate("OpponentRegistry.ftl", dataModel, new File(outFolder, "OpponentRegistry.java"));
-            generateFromTemplate("CharacterRegistrar.ftl", dataModel, new File(outFolder, "CharacterRegistrar.java"));
-            generateFromTemplate("CharacterAttributeSetter.ftl", dataModel, new File(outFolder, "CharacterAttributeSetter.java"));
-            generateFromTemplate("CharacterGraphicsFactory.ftl", dataModel, new File(outFolder, "CharacterGraphicsFactory.java"));
-            
-            System.out.println("Opponent generation complete. Output in: " + outFolder.getAbsolutePath());
-        } else {
+        if (!"OpponentModel".equals(root.eClass().getName())) {
             throw new IllegalArgumentException("Expected OpponentModel, got: " + root.eClass().getName());
         }
+
+        validateOpponentModel(root);
+        Map<String, Object> dataModel = buildTemplateDataModel(root);
+
+        generateFromTemplate("OpponentRegistry.ftl", dataModel, new File(outFolder, "OpponentRegistry.java"));
+        generateFromTemplate("CharacterRegistrar.ftl", dataModel, new File(outFolder, "CharacterRegistrar.java"));
+        generateFromTemplate("CharacterAttributeSetter.ftl", dataModel, new File(outFolder, "CharacterAttributeSetter.java"));
+        generateFromTemplate("CharacterGraphicsFactory.ftl", dataModel, new File(outFolder, "CharacterGraphicsFactory.java"));
+
+        LOGGER.info("Opponent generation complete. Output in: " + outFolder.getAbsolutePath());
     }
 
     /**
      * Builds the FreeMarker data model from the EMF OpponentModel.
      * This transforms the EMF structure into a template-friendly Map structure.
      */
-    private Map<String, Object> buildTemplateDataModel(OpponentModel emfModel) {
+    private Map<String, Object> buildTemplateDataModel(EObject emfModel) {
         Map<String, Object> model = new HashMap<>();
         
         // Game name
-        String gameName = emfModel.getName();
+        String gameName = stringFeature(emfModel, "name");
         model.put("gameName", (gameName != null && !gameName.isBlank()) ? gameName : DEFAULT_GAME_NAME);
         
         // Enemy types (unique class names)
@@ -133,7 +132,7 @@ public class RunAcceleo {
         List<Map<String, Object>> uniqueEnemies = new ArrayList<>();
         java.util.Set<String> seenTypes = new java.util.HashSet<>();
         
-        for (CharacterType enemy : emfModel.getCharacterTypes()) {
+        for (EObject enemy : listFeature(emfModel, "characterTypes")) {
             String typeName = enemy.eClass().getName();
             if (!enemyTypes.contains(typeName)) {
                 enemyTypes.add(typeName);
@@ -141,10 +140,10 @@ public class RunAcceleo {
             
             Map<String, Object> enemyData = new HashMap<>();
             enemyData.put("type", typeName);
-            enemyData.put("displayName", nullSafe(enemy.getDisplayName(), DEFAULT_DISPLAY_NAME));
-            enemyData.put("health", enemy.getHealth());
-            enemyData.put("threatLevel", enemy.getThreatLevel());
-            enemyData.put("imageBase", nullSafe(enemy.getImageBase(), DEFAULT_IMAGE_BASE));
+            enemyData.put("displayName", nullSafe(stringFeature(enemy, "displayName"), DEFAULT_DISPLAY_NAME));
+            enemyData.put("health", numberFeature(enemy, "health", Integer.valueOf(0)).intValue());
+            enemyData.put("threatLevel", numberFeature(enemy, "threatLevel", Double.valueOf(0.0)).doubleValue());
+            enemyData.put("imageBase", nullSafe(stringFeature(enemy, "ImageBase"), DEFAULT_IMAGE_BASE));
             enemyData.put("defaultImage", getDefaultImage(typeName));
             enemyData.put("animationFrames", getAnimationFrames(typeName));
             enemyData.put("spriteScale", getSpriteScale(typeName));
@@ -179,38 +178,41 @@ public class RunAcceleo {
         try (Writer out = new FileWriter(outputFile)) {
             template.process(rootModel, out);
         }
-        System.out.println("  Generated: " + outputFile.getName());
+        LOGGER.fine("Generated: " + outputFile.getName());
     }
 
     /**
      * Validates the opponent model and reports any issues.
      */
-    private void validateOpponentModel(OpponentModel model) {
+    private void validateOpponentModel(EObject model) {
         StringBuilder warnings = new StringBuilder();
         
-        if (model.getName() == null || model.getName().isBlank()) {
+        String modelName = stringFeature(model, "name");
+        if (modelName == null || modelName.isBlank()) {
             warnings.append(String.format(
                 "  WARNING: OpponentModel has null/blank 'name', using default: %s%n",
                 DEFAULT_GAME_NAME));
         }
         
-        if (model.getCharacterTypes() == null || model.getCharacterTypes().isEmpty()) {
-            System.out.println("WARNING: OpponentModel has no character types. " +
-                "Generated code will have empty registries.");
+        List<EObject> characters = listFeature(model, "characterTypes");
+        if (characters.isEmpty()) {
+            LOGGER.warning("OpponentModel has no character types. Generated code will have empty registries.");
         } else {
             int index = 0;
-            for (CharacterType enemy : model.getCharacterTypes()) {
+            for (EObject enemy : characters) {
                 String typeName = enemy.eClass().getName();
                 
-                if (enemy.getDisplayName() == null || enemy.getDisplayName().isBlank()) {
+                String displayName = stringFeature(enemy, "displayName");
+                if (displayName == null || displayName.isBlank()) {
                     warnings.append(String.format(
                         "  WARNING: %s at index %d has null/blank displayName, using default: %s%n",
                         typeName, index, DEFAULT_DISPLAY_NAME));
                 }
                 
-                if (enemy.getImageBase() == null || enemy.getImageBase().isBlank()) {
+                String imageBase = stringFeature(enemy, "ImageBase");
+                if (imageBase == null || imageBase.isBlank()) {
                     warnings.append(String.format(
-                        "  WARNING: %s at index %d has null/blank imageBase, using type-specific default%n",
+                        "  WARNING: %s at index %d has null/blank ImageBase, using type-specific default%n",
                         typeName, index));
                 }
                 index++;
@@ -218,8 +220,7 @@ public class RunAcceleo {
         }
         
         if (warnings.length() > 0) {
-            System.out.println("Model validation warnings:");
-            System.out.print(warnings);
+            LOGGER.log(Level.WARNING, "Model validation warnings:\n{0}", warnings);
         }
     }
 
@@ -227,6 +228,33 @@ public class RunAcceleo {
 
     private static String nullSafe(String value, String defaultValue) {
         return (value != null && !value.isBlank()) ? value : defaultValue;
+    }
+
+    private static String stringFeature(EObject obj, String featureName) {
+        Object value = featureValue(obj, featureName);
+        return value instanceof String ? (String) value : null;
+    }
+
+    private static Number numberFeature(EObject obj, String featureName, Number defaultValue) {
+        Object value = featureValue(obj, featureName);
+        return value instanceof Number ? (Number) value : defaultValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<EObject> listFeature(EObject obj, String featureName) {
+        Object value = featureValue(obj, featureName);
+        return value instanceof List<?> ? (List<EObject>) value : List.of();
+    }
+
+    private static Object featureValue(EObject obj, String featureName) {
+        if (obj == null) {
+            return null;
+        }
+        EStructuralFeature feature = obj.eClass().getEStructuralFeature(featureName);
+        if (feature == null) {
+            return null;
+        }
+        return obj.eGet(feature);
     }
 
     private static String getDefaultImage(String typeName) {

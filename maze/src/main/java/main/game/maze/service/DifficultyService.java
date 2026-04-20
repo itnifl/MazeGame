@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
@@ -20,6 +21,7 @@ import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.DifficultyGameData;
 
 public final class DifficultyService {
+    private static final Logger LOGGER = Logger.getLogger(DifficultyService.class.getName());
     private static final String DIFFICULTIES_XMI = "/xmi/difficulties/difficulties.xmi";
     private final DifficultyGameData data;
 
@@ -61,7 +63,7 @@ public final class DifficultyService {
 
         // Sanity: should print false/true
         var ref = DifficultiesPackage.Literals.DIFFICULTY_GAME_DATA__CURRENT_DIFFICULTY;
-        System.out.println("currentDifficulty containment=" + ref.isContainment()
+        LOGGER.fine("currentDifficulty containment=" + ref.isContainment()
                 + ", resolveProxies=" + ref.isResolveProxies()
                 + ", nsURI=" + DifficultiesPackage.eNS_URI);
     }

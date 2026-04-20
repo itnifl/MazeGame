@@ -2,6 +2,8 @@ package main.game.maze.areas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -11,6 +13,7 @@ import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 
 public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
+    private static final Logger LOGGER = Logger.getLogger(WinArea.class.getName());
     private Node areaGraphics;
     private List<ICanSubscribeAndNotifyPosition> winTargets = new ArrayList<ICanSubscribeAndNotifyPosition>();
     private WinGameAction winGameAction;
@@ -47,8 +50,7 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
                 try {
                     this.WinGame();
                 } catch (Exception e) {
-                    System.out.println(e);
-                    System.out.println(e.getStackTrace());
+                    LOGGER.log(Level.SEVERE, "Error during WinGame", e);
                 }
             }
         }
