@@ -3,7 +3,6 @@
 package main.game.maze.behaviour.impl;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import main.game.maze.behaviour.BehaviourPackage;
@@ -70,7 +69,6 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	
 		int[][] accumulatedCosts = new int[width][height];
 		MazeNavigationGraph.Node[][] originsNodes = new MazeNavigationGraph.Node[width][height];
-		List<MazeNavigationGraph.Node> endNodes = new LinkedList<>();
 	
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -82,29 +80,35 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 		// Initialize start node cost to 0
 		accumulatedCosts[start.getCol()][start.getRow()] = 0;
 
-		// Compute nodes costs
+		// Compute nodes costs using BFS/Dijkstra
 		Queue<MazeNavigationGraph.Node> queue = new LinkedList<>();
 		queue.add(start);
-		while (queue.isEmpty() == false) {
+		boolean foundTarget = false;
+		
+		while (!queue.isEmpty() && !foundTarget) {
 			var current = queue.poll();
+			
+			// Check if we reached the target
+			if (current.getCol() == target.getCol() && current.getRow() == target.getRow()) {
+				foundTarget = true;
+				break;
+			}
+			
 			for (var node : current.getNeighbors()) {
-				double newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
+				int newCost = accumulatedCosts[current.getCol()][current.getRow()] + 1;
 				if (newCost < accumulatedCosts[node.getCol()][node.getRow()]) {
-					if (newCost < this.getMaxPathLength()) {
-						accumulatedCosts[node.getCol()][node.getRow()] = (int)newCost;
+					int maxPath = this.getMaxPathLength();
+					if (maxPath <= 0 || newCost < maxPath) {
+						accumulatedCosts[node.getCol()][node.getRow()] = newCost;
 						originsNodes[node.getCol()][node.getRow()] = current;
 						queue.add(node);
-					}
-					else {
-						endNodes.add(current);
 					}
 				}
 			}
 		}
 
-		// Reconstruct path
-		var targetNode = nearestNode(endNodes, target);
-		return reconstructPath(originsNodes, targetNode);
+		// Reconstruct path from start to target
+		return reconstructPath(originsNodes, target);
 	}
 	
 	/**

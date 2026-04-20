@@ -64,6 +64,9 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 }
             }
         };
+        
+        // Initialize with a random direction to avoid zero-length vector (NaN issues)
+        changeDirection();
     }
 
     @Override
@@ -107,19 +110,20 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
 
     public void changeDirection() {
         var rand = new Random();
-        var direction = rand.nextInt(3);
+        var direction = rand.nextInt(4);  // 0=right, 1=down, 2=up, 3=left
 
-        if(this.getDirectionX() > 0 && direction == 0) {
-            direction = 3;
+        // Avoid reversing direction (bouncing back and forth)
+        if(this.getDirectionX() > 0 && direction == 3) {  // moving right, don't go left
+            direction = rand.nextInt(3);  // pick from 0,1,2 instead
         }
-        else if(this.getDirectionX() < 0 && direction == 3) {
-            direction = 0;
+        else if(this.getDirectionX() < 0 && direction == 0) {  // moving left, don't go right
+            direction = 1 + rand.nextInt(3);  // pick from 1,2,3 instead
         }
-        else if(this.getDirectionY() > 0 && direction == 1) {
-            direction = 2;
+        else if(this.getDirectionY() > 0 && direction == 2) {  // moving down, don't go up
+            direction = rand.nextBoolean() ? 0 : (rand.nextBoolean() ? 1 : 3);  // pick 0,1,3
         }
-        else if(this.getDirectionY() < 0 && direction == 2) {
-            direction = 1;
+        else if(this.getDirectionY() < 0 && direction == 1) {  // moving up, don't go down
+            direction = rand.nextBoolean() ? 0 : (rand.nextBoolean() ? 2 : 3);  // pick 0,2,3
         }
 
 

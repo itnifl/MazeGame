@@ -27,6 +27,11 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
 
     @Override
     public void WinGame() {
+        // Stop movement loop immediately to prevent race conditions
+        if (App.gameController != null) {
+            App.gameController.stopComputerCharacters();
+        }
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.WinGameScreen));
 
         runnableOnWin.run();
@@ -66,6 +71,12 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
             Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
             App.applyStandardSize(stage);
+
+            // Dispose AFTER switching screens to avoid scene graph corruption
+            if (App.gameController != null) {
+                App.gameController.dispose();
+                App.gameController = null;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

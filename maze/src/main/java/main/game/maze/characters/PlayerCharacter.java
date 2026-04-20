@@ -1,5 +1,6 @@
 package main.game.maze.characters;
 
+import javafx.application.Platform;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,36 +105,44 @@ public class PlayerCharacter extends Character
     @Override
     public void setHitPoints(int hp) {
         hitPoints = new AtomicInteger(hp);
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
 
         if (hitPoints.get() <= 0) {
-            PlayDieAnimation();
-            for (var subscribers : deathSubscribers) {
-                subscribers.AddDeathNotification(this);
-            }
+            Platform.runLater(() -> {
+                PlayDieAnimation();
+                for (var subscriber : new ArrayList<>(deathSubscribers)) {
+                    subscriber.AddDeathNotification(this);
+                }
+            });
         }
     }
 
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null)
-                hpBar.setProgress(hitPoints.get() / 100.0);
-        }
+        Platform.runLater(() -> {
+            synchronized (lockObjectForHpbar) {
+                if (hpBar != null)
+                    hpBar.setProgress(hitPoints.get() / 100.0);
+            }
+        });
     }
 
     @Override
@@ -153,7 +162,11 @@ public class PlayerCharacter extends Character
 
     @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
-        if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
+        var graphics = this.getCharacterGraphics();
+        if (graphics == null) {
+            return;  // Player removed (game over), skip evaluation
+        }
+        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
             if (entity instanceof ICanKill) {
                 var canKillEntity = (ICanKill) entity;
                 LOGGER.fine("Player is intersecting with " + canKillEntity);
