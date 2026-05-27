@@ -20,6 +20,32 @@ LOCAL_P2_DIR      := releng\local-p2
 MIRROR_STAMP      := $(LOCAL_P2_DIR)\.mirror.stamp
 TYCHO_CACHE_WIN   := $(USERPROFILE)\.m2\repository\.cache\tycho
 
+# Prefer JDK 21 if installed (Windows)
+JAVA21_SELECT = $$javaHomeCandidates = @(); \
+	if ($$env:JAVA_HOME) { $$javaHomeCandidates += $$env:JAVA_HOME }; \
+	$$javaHomeCandidates += @('C:\Program Files\Java\jdk-21','C:\Program Files\Eclipse Adoptium\jdk-21*','C:\Program Files\Microsoft\jdk-21*'); \
+	$$resolvedHomes = @(); \
+	foreach ($$candidate in $$javaHomeCandidates) { \
+		if ($$candidate.Contains('*')) { $$resolvedHomes += (Get-ChildItem -Path $$candidate -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -ExpandProperty FullName) } \
+		elseif (Test-Path $$candidate) { $$resolvedHomes += $$candidate } \
+	}; \
+	$$selected = $$null; \
+	foreach ($$javaHomePath in ($$resolvedHomes | Select-Object -Unique)) { \
+		$$javaExe = Join-Path $$javaHomePath 'bin\\java.exe'; \
+		if (Test-Path $$javaExe) { \
+			$$javaOut = & $$javaExe -version 2>&1 | Out-String; \
+			if ($$javaOut -match 'version\s+"?(21)\.?' -or $$javaOut -match 'version\s+"?(21)"') { $$selected = $$javaHomePath; break } \
+		} \
+	}; \
+	if ($$selected) { \
+		$$env:JAVA_HOME = $$selected; \
+		$$javaBin = Join-Path $$selected 'bin'; \
+		if (-not (($$env:Path -split ';') -contains $$javaBin)) { $$env:Path = "$$javaBin;$$env:Path" }; \
+		Write-Host "Using Java 21 from $$selected" \
+	} else { \
+		Write-Warning 'Java 21 not found in common install locations. Using current PATH java.' \
+	}
+
 # Files that, when changed, should trigger a mirror rebuild
 MIRROR_INPUTS := releng/mirror/pom.xml
 
@@ -34,9 +60,9 @@ all: toolchain-info mirror clear-tycho-cache build
 
 toolchain-info:
 	@echo === Toolchain versions ===
-	@$(MVN) -version || true
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -version"
 	@echo.
-	@java -version || true
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & java -version"
 	@echo ==========================
 
 # ─────────────────────────────────────────────────────────
@@ -48,14 +74,14 @@ mirror: $(MIRROR_STAMP)
 $(MIRROR_STAMP): $(MIRROR_INPUTS)
 	@echo === Rebuilding local p2 mirror ===
 	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(LOCAL_P2_DIR)') { Remove-Item -Recurse -Force '$(LOCAL_P2_DIR)' }"
-	@$(MVN) -f releng/mirror/pom.xml -U verify
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -f releng/mirror/pom.xml -U verify"
 	@powershell -NoLogo -NoProfile -Command "if (-not (Test-Path '$(LOCAL_P2_DIR)')) { New-Item -ItemType Directory -Path '$(LOCAL_P2_DIR)' | Out-Null } ; New-Item -ItemType File -Path '$(MIRROR_STAMP)' -Force | Out-Null"
 	@echo === Mirror built and stamp updated ===
 
 force-mirror:
 	@echo === Force rebuild of local p2 mirror ===
 	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(LOCAL_P2_DIR)') { Remove-Item -Recurse -Force '$(LOCAL_P2_DIR)' }"
-	@$(MVN) -f releng/mirror/pom.xml -U verify
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -f releng/mirror/pom.xml -U verify"
 	@powershell -NoLogo -NoProfile -Command "if (-not (Test-Path '$(LOCAL_P2_DIR)')) { New-Item -ItemType Directory -Path '$(LOCAL_P2_DIR)' | Out-Null } ; New-Item -ItemType File -Path '$(MIRROR_STAMP)' -Force | Out-Null"
 	@echo === Force mirror rebuild completed ===
 
@@ -79,5 +105,5 @@ clear-tycho-cache:
 
 build:
 	@echo === Running full build: mvn -U -DskipTests=false clean verify ===
-	@$(MVN) -U -DskipTests=false clean verify
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -U -DskipTests=false clean verify"
 	@echo === Build finished ===

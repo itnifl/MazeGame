@@ -18,6 +18,60 @@ $MirrorInputs   = @(
 $TychoCache     = Join-Path $env:USERPROFILE '.m2\repository\.cache\tycho'
 $RequiredJavaMajor = 21
 
+function Get-JavaMajorFromExecutable([string]$javaExe) {
+    if (-not (Test-Path $javaExe)) { return -1 }
+    $javaOutput = & $javaExe -version 2>&1 | Out-String
+    if ($javaOutput -match 'version\s+"?(\d+)\.') {
+        return [int]$Matches[1]
+    }
+    if ($javaOutput -match 'version\s+"?(\d+)"') {
+        return [int]$Matches[1]
+    }
+    return -1
+}
+
+function Use-Java21IfAvailable {
+    $javaHomeCandidates = @()
+
+    if ($env:JAVA_HOME) {
+        $javaHomeCandidates += $env:JAVA_HOME
+    }
+
+    $javaHomeCandidates += @(
+        'C:\Program Files\Java\jdk-21',
+        'C:\Program Files\Eclipse Adoptium\jdk-21*',
+        'C:\Program Files\Microsoft\jdk-21*'
+    )
+
+    $resolvedHomes = @()
+    foreach ($candidate in $javaHomeCandidates) {
+        if ($candidate.Contains('*')) {
+            $matched = Get-ChildItem -Path $candidate -Directory -ErrorAction SilentlyContinue |
+                Sort-Object Name -Descending |
+                Select-Object -ExpandProperty FullName
+            $resolvedHomes += $matched
+        } elseif (Test-Path $candidate) {
+            $resolvedHomes += $candidate
+        }
+    }
+
+    foreach ($javaHomePath in $resolvedHomes | Select-Object -Unique) {
+        $javaExe = Join-Path $javaHomePath 'bin\\java.exe'
+        $major = Get-JavaMajorFromExecutable $javaExe
+        if ($major -eq $RequiredJavaMajor) {
+            $env:JAVA_HOME = $javaHomePath
+            if (-not (($env:Path -split ';') -contains (Join-Path $javaHomePath 'bin'))) {
+                $env:Path = "$(Join-Path $javaHomePath 'bin');$env:Path"
+            }
+            Write-Host "Using Java $RequiredJavaMajor from $javaHomePath" -ForegroundColor Green
+            return $true
+        }
+    }
+
+    Write-Warning "Java $RequiredJavaMajor not found in common install locations. Using current PATH java."
+    return $false
+}
+
 function Test-JavaVersion {
     $javaOutput = & java -version 2>&1 | Out-String
     if ($javaOutput -match 'version\s+"?(\d+)\.') {
@@ -146,15 +200,18 @@ function Invoke-Build {
 
 switch ($Target) {
     'toolchain' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
     }
 
     'mirror' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
         Invoke-Mirror
     }
 
     'force-mirror' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
         Invoke-Mirror -Force
     }
@@ -164,6 +221,7 @@ switch ($Target) {
     }
 
     'build' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
@@ -172,6 +230,7 @@ switch ($Target) {
     }
 
     'build-with-cache' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
@@ -179,6 +238,7 @@ switch ($Target) {
     }
 
     'all' {
+        Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed

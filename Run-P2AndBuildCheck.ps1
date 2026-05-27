@@ -15,6 +15,59 @@ $logFile   = Join-Path $LogDirectory "p2-and-build-check_$timestamp.log"
 
 $stepSummaries = New-Object System.Collections.Generic.List[object]
 
+function Get-JavaMajorFromExecutable {
+    param([string]$JavaExe)
+    if (-not (Test-Path $JavaExe)) { return -1 }
+    $javaOutput = & $JavaExe -version 2>&1 | Out-String
+    if ($javaOutput -match 'version\s+"?(\d+)\.') { return [int]$Matches[1] }
+    if ($javaOutput -match 'version\s+"?(\d+)"') { return [int]$Matches[1] }
+    return -1
+}
+
+function Use-Java21IfAvailable {
+    $requiredJavaMajor = 21
+    $javaHomeCandidates = @()
+
+    if ($env:JAVA_HOME) {
+        $javaHomeCandidates += $env:JAVA_HOME
+    }
+
+    $javaHomeCandidates += @(
+        'C:\Program Files\Java\jdk-21',
+        'C:\Program Files\Eclipse Adoptium\jdk-21*',
+        'C:\Program Files\Microsoft\jdk-21*'
+    )
+
+    $resolvedHomes = @()
+    foreach ($candidate in $javaHomeCandidates) {
+        if ($candidate.Contains('*')) {
+            $matched = Get-ChildItem -Path $candidate -Directory -ErrorAction SilentlyContinue |
+                Sort-Object Name -Descending |
+                Select-Object -ExpandProperty FullName
+            $resolvedHomes += $matched
+        }
+        elseif (Test-Path $candidate) {
+            $resolvedHomes += $candidate
+        }
+    }
+
+    foreach ($javaHomePath in ($resolvedHomes | Select-Object -Unique)) {
+        $javaExe = Join-Path $javaHomePath 'bin\java.exe'
+        $major = Get-JavaMajorFromExecutable -JavaExe $javaExe
+        if ($major -eq $requiredJavaMajor) {
+            $env:JAVA_HOME = $javaHomePath
+            $javaBinPath = Join-Path $javaHomePath 'bin'
+            if (-not (($env:Path -split ';') -contains $javaBinPath)) {
+                $env:Path = "$javaBinPath;$env:Path"
+            }
+            Write-Host "Using Java $requiredJavaMajor from $javaHomePath" -ForegroundColor Green
+            return
+        }
+    }
+
+    Write-Warning "Java $requiredJavaMajor not found in common install locations. Using current PATH java."
+}
+
 function Write-StepResult {
     param(
         [string]$Step,
@@ -51,6 +104,8 @@ function Skip-Step {
     $reason = "Skipped by -StartAt=$StartAt."
     Write-StepResult -Step $Step -Status "SKIPPED" -CommandText $Cmd -Summary $reason -Output ""
 }
+
+Use-Java21IfAvailable
 
 # ------------------------------------------------------------------------------
 # Step 0 - environment info (always run; cheap and useful)
