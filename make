@@ -34,16 +34,16 @@ JAVA21_SELECT = $$javaHomeCandidates = @(); \
 		$$javaExe = Join-Path $$javaHomePath 'bin\\java.exe'; \
 		if (Test-Path $$javaExe) { \
 			$$javaOut = & $$javaExe -version 2>&1 | Out-String; \
-			if ($$javaOut -match 'version\s+"?(21)\.?' -or $$javaOut -match 'version\s+"?(21)"') { $$selected = $$javaHomePath; break } \
+			if ($$javaOut -match 'version[^0-9]+(21)') { $$selected = $$javaHomePath; break } \
 		} \
 	}; \
 	if ($$selected) { \
 		$$env:JAVA_HOME = $$selected; \
 		$$javaBin = Join-Path $$selected 'bin'; \
-		if (-not (($$env:Path -split ';') -contains $$javaBin)) { $$env:Path = "$$javaBin;$$env:Path" }; \
-		Write-Host "Using Java 21 from $$selected" \
+		if (-not (($$env:Path -split ';') -contains $$javaBin)) { $$env:Path = $$javaBin + ';' + $$env:Path }; \
+		Write-Host ('Using Java 21 from ' + $$selected) \
 	} else { \
-		Write-Warning 'Java 21 not found in common install locations. Using current PATH java.' \
+		Write-Error 'Java 21 not found. Build requires Java 21. Aborting.'; exit 1 \
 	}
 
 # Files that, when changed, should trigger a mirror rebuild

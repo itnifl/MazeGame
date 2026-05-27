@@ -107,6 +107,13 @@ function Skip-Step {
 
 Use-Java21IfAvailable
 
+$_activeJavaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\java.exe' } else { (Get-Command java -ErrorAction SilentlyContinue).Source }
+$_activeJavaMajor = Get-JavaMajorFromExecutable -JavaExe $_activeJavaExe
+if ($_activeJavaMajor -ne 21) {
+    Write-Error "Java 21 is required but active Java is version $_activeJavaMajor. Aborting."
+    exit 1
+}
+
 # ------------------------------------------------------------------------------
 # Step 0 - environment info (always run; cheap and useful)
 $step0 = "0. Toolchain versions"
