@@ -21,11 +21,11 @@
               <includeOptional>true</includeOptional>
               <includeNonGreedy>true</includeNonGreedy>
               <source>
-                <!-- <repository>
-                  <url>https://download.eclipse.org/releases/2024-09</url>
-                </repository> -->
                 <repository>
-                  <url>https://download.eclipse.org/tools/orbit/downloads/latest-R/</url>
+                  <url>https://download.eclipse.org/releases/2024-09/</url>
+                </repository>
+                <repository>
+                  <url>https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.33.0/</url>
                 </repository>  
                 <repository>
                   <url>https://download.eclipse.org/eclipse/updates/4.33/</url>
@@ -36,9 +36,9 @@
                 <repository>
                   <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/</url>
                 </repository>
-                <!-- Xtext SDK for DSL support -->
+                <!-- Xtext SDK for DSL support (pinned to 2.42.0 to match Eclipse 4.33 platform) -->
                 <repository>
-                  <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/</url>
+                  <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.42.0/</url>
                 </repository>
                 <!-- MWE2 for Xtext code generation -->
                 <repository>
@@ -49,6 +49,11 @@
                 <iu><id>org.eclipse.emf.ecore</id></iu>
                 <iu><id>org.eclipse.emf.common</id></iu>
                 <iu><id>org.eclipse.emf.ecore.xmi</id></iu>
+                <iu><id>org.eclipse.emf.codegen.ecore</id></iu>
+                <iu><id>org.eclipse.emf.common.ui</id></iu>
+                <iu><id>org.eclipse.emf.edit</id></iu>
+                <iu><id>org.eclipse.emf.edit.ui</id></iu>
+                <iu><id>org.eclipse.emf.ecore.editor</id></iu>
                 <iu><id>org.eclipse.ocl.pivot</id></iu>
                 <iu><id>org.eclipse.ocl</id></iu>
                 <iu><id>org.eclipse.ocl.ecore</id></iu>
@@ -57,18 +62,32 @@
                 <iu><id>org.eclipse.equinox.common</id></iu>
                 <iu><id>org.eclipse.core.jobs</id></iu>
                 <iu><id>org.eclipse.equinox.launcher</id></iu>
-                <iu><id>org.eclipse.emf.sdk.feature.group</id></iu>
                 <iu><id>org.eclipse.ocl.all.sdk.feature.group</id></iu>                
-                <iu><id>org.eclipse.emf.codegen.feature.group</id></iu>
                 <iu><id>org.eclipse.equinox.app</id></iu>                
                 <iu><id>org.eclipse.equinox.executable.feature.group</id></iu>
-                <!-- Xtext SDK for DSL support -->
-                <iu><id>org.eclipse.xtext.sdk.feature.group</id></iu>
+                <!-- Xtext bundles required by the DSL modules and tests -->
+                <iu><id>org.eclipse.xtext</id></iu>
+                <iu><id>org.eclipse.xtext.xbase</id></iu>
+                <iu><id>org.eclipse.xtext.common.types</id></iu>
+                <iu><id>org.eclipse.xtext.xbase.lib</id></iu>
+                <iu><id>org.eclipse.xtext.util</id></iu>
+                <iu><id>org.eclipse.xtext.ide</id></iu>
+                <iu><id>org.eclipse.xtext.ui</id></iu>
+                <iu><id>org.eclipse.xtext.ui.shared</id></iu>
+                <iu><id>org.eclipse.xtext.builder</id></iu>
+                <iu><id>org.eclipse.xtext.testing</id></iu>
+                <iu><id>org.eclipse.xtext.xbase.testing</id></iu>
                 <!-- MWE2 for Xtext code generation -->
                 <iu><id>org.eclipse.emf.mwe2.runtime</id></iu>
                 <iu><id>org.eclipse.emf.mwe2.launch</id></iu>
                 <iu><id>org.eclipse.emf.mwe2.lib</id></iu>
                 <iu><id>org.eclipse.emf.mwe2.language.sdk.feature.group</id></iu>
+                <!-- JUnit 5 platform suite (required by Tycho surefire for junit5 provider) -->
+                <iu><id>junit-platform-suite-engine</id></iu>
+                <iu><id>junit-platform-suite-api</id></iu>
+                <iu><id>junit-platform-suite-commons</id></iu>
+                <!-- JUnit Vintage engine (Tycho 5 surefire junit5vintage provider requires this) -->
+                <iu><id>junit-vintage-engine</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>

@@ -34,7 +34,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getThreatLevel <em>Threat Level</em>}</li>
- *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getEnabled <em>Enabled</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getCharacterSpecifics <em>Character Specifics</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.OpponentConfigImpl#getPatrolRef <em>Patrol Ref</em>}</li>
@@ -166,24 +166,24 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
   protected double threatLevel = THREAT_LEVEL_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEnabled() <em>Enabled</em>}' attribute.
+   * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEnabled()
+   * @see #isEnabled()
    * @generated
    * @ordered
    */
-  protected static final String ENABLED_EDEFAULT = null;
+  protected static final boolean ENABLED_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #getEnabled() <em>Enabled</em>}' attribute.
+   * The cached value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEnabled()
+   * @see #isEnabled()
    * @generated
    * @ordered
    */
-  protected String enabled = ENABLED_EDEFAULT;
+  protected boolean enabled = ENABLED_EDEFAULT;
 
   /**
    * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
@@ -412,7 +412,7 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
-  public String getEnabled()
+  public boolean isEnabled()
   {
     return enabled;
   }
@@ -423,9 +423,9 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
-  public void setEnabled(String newEnabled)
+  public void setEnabled(boolean newEnabled)
   {
-    String oldEnabled = enabled;
+    boolean oldEnabled = enabled;
     enabled = newEnabled;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.OPPONENT_CONFIG__ENABLED, oldEnabled, enabled));
@@ -635,7 +635,7 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
       case MazeDslPackage.OPPONENT_CONFIG__THREAT_LEVEL:
         return getThreatLevel();
       case MazeDslPackage.OPPONENT_CONFIG__ENABLED:
-        return getEnabled();
+        return isEnabled();
       case MazeDslPackage.OPPONENT_CONFIG__BEHAVIOR:
         return getBehavior();
       case MazeDslPackage.OPPONENT_CONFIG__CHARACTER_SPECIFICS:
@@ -679,7 +679,7 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
         setThreatLevel((Double)newValue);
         return;
       case MazeDslPackage.OPPONENT_CONFIG__ENABLED:
-        setEnabled((String)newValue);
+        setEnabled((Boolean)newValue);
         return;
       case MazeDslPackage.OPPONENT_CONFIG__BEHAVIOR:
         setBehavior((BehaviorTypeEnum)newValue);
@@ -767,7 +767,7 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
       case MazeDslPackage.OPPONENT_CONFIG__THREAT_LEVEL:
         return threatLevel != THREAT_LEVEL_EDEFAULT;
       case MazeDslPackage.OPPONENT_CONFIG__ENABLED:
-        return ENABLED_EDEFAULT == null ? enabled != null : !ENABLED_EDEFAULT.equals(enabled);
+        return enabled != ENABLED_EDEFAULT;
       case MazeDslPackage.OPPONENT_CONFIG__BEHAVIOR:
         return behavior != BEHAVIOR_EDEFAULT;
       case MazeDslPackage.OPPONENT_CONFIG__CHARACTER_SPECIFICS:

@@ -7,14 +7,15 @@ package main.game.maze.dsl.tests;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.eclipse.xtext.testing.InjectWith;
-import org.eclipse.xtext.testing.extensions.InjectionExtension;
+import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.testing.validation.ValidationTestHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 import main.game.maze.dsl.mazeDsl.*;
 import main.game.maze.dsl.validation.MazeDslValidator;
@@ -22,15 +23,19 @@ import main.game.maze.dsl.validation.MazeDslValidator;
 /**
  * Tests for MazeDsl validation rules.
  */
-@ExtendWith(InjectionExtension.class)
-@InjectWith(MazeDslInjectorProvider.class)
 public class MazeDslValidationTest {
 
-    @Inject
     private ParseHelper<GameConfiguration> parseHelper;
-    
-    @Inject
+
     private ValidationTestHelper validationHelper;
+
+    @BeforeEach
+    public void setUp() {
+        IInjectorProvider provider = new MazeDslInjectorProvider();
+        Injector injector = provider.getInjector();
+        parseHelper = injector.getInstance(Key.get(new TypeLiteral<ParseHelper<GameConfiguration>>() {}));
+        validationHelper = injector.getInstance(ValidationTestHelper.class);
+    }
 
     @Test
     public void testValidThreatLevel() throws Exception {

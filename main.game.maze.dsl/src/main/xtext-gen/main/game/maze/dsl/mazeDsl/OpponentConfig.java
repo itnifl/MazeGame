@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getHealth <em>Health</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getThreatLevel <em>Threat Level</em>}</li>
- *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getEnabled <em>Enabled</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getCharacterSpecifics <em>Character Specifics</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getPatrolRef <em>Patrol Ref</em>}</li>
@@ -173,22 +173,22 @@ public interface OpponentConfig extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Enabled</em>' attribute.
-   * @see #setEnabled(String)
+   * @see #setEnabled(boolean)
    * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getOpponentConfig_Enabled()
    * @model
    * @generated
    */
-  String getEnabled();
+  boolean isEnabled();
 
   /**
-   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getEnabled <em>Enabled</em>}' attribute.
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.OpponentConfig#isEnabled <em>Enabled</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Enabled</em>' attribute.
-   * @see #getEnabled()
+   * @see #isEnabled()
    * @generated
    */
-  void setEnabled(String value);
+  void setEnabled(boolean value);
 
   /**
    * Returns the value of the '<em><b>Behavior</b></em>' attribute.

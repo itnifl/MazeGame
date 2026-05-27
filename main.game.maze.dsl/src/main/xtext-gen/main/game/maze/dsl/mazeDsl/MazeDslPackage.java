@@ -1180,11 +1180,11 @@ public interface MazeDslPackage extends EPackage
   EAttribute getOpponentConfig_ThreatLevel();
 
   /**
-   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.OpponentConfig#getEnabled <em>Enabled</em>}'.
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.OpponentConfig#isEnabled <em>Enabled</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Enabled</em>'.
-   * @see main.game.maze.dsl.mazeDsl.OpponentConfig#getEnabled()
+   * @see main.game.maze.dsl.mazeDsl.OpponentConfig#isEnabled()
    * @see #getOpponentConfig()
    * @generated
    */

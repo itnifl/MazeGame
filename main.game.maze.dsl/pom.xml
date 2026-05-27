@@ -51,7 +51,11 @@
             <configuration>
               <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
               <arguments>
-                <argument>file:${project.basedir}/src/main/java/main/game/maze/dsl/GenerateMazeDsl.mwe2</argument>
+                <!-- Plain relative path (no file: scheme) resolved from repo root where mvn is invoked.
+                     file: URIs are incompatible with XtextResourceSet factory lookup.
+                     exec:java does not change JVM working directory, so this resolves correctly
+                     when mvn is run from the repository root. -->
+                <argument>main.game.maze.dsl/src/main/java/main/game/maze/dsl/GenerateMazeDsl.mwe2</argument>
                 <argument>-p</argument>
                 <argument>rootPath=${project.basedir}/..</argument>
               </arguments>
@@ -65,6 +69,11 @@
           <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.mwe2.launch</artifactId>
+            <version>2.16.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.mwe2.language</artifactId>
             <version>2.16.0</version>
           </dependency>
           <dependency>

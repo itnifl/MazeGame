@@ -31,8 +31,8 @@ public class MazeDslParser extends AbstractContentAssistParser {
 		}
 		
 		private static void init(ImmutableMap.Builder<AbstractElement, String> builder, MazeDslGrammarAccess grammarAccess) {
-			builder.put(grammarAccess.getOpponentConfigAccess().getEnabledAlternatives_9_1_0(), "rule__OpponentConfig__EnabledAlternatives_9_1_0");
 			builder.put(grammarAccess.getCharacterSpecificsAccess().getAlternatives(), "rule__CharacterSpecifics__Alternatives");
+			builder.put(grammarAccess.getBOOLEANAccess().getAlternatives(), "rule__BOOLEAN__Alternatives");
 			builder.put(grammarAccess.getDifficultyLevelAccess().getAlternatives(), "rule__DifficultyLevel__Alternatives");
 			builder.put(grammarAccess.getEnemyTypeAccess().getAlternatives(), "rule__EnemyType__Alternatives");
 			builder.put(grammarAccess.getCharacterTypeEnumAccess().getAlternatives(), "rule__CharacterTypeEnum__Alternatives");
@@ -73,7 +73,6 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getRangedSpecificsAccess().getGroup_8(), "rule__RangedSpecifics__Group_8__0");
 			builder.put(grammarAccess.getPatrolConfigAccess().getGroup(), "rule__PatrolConfig__Group__0");
 			builder.put(grammarAccess.getPatrolConfigAccess().getGroup_3(), "rule__PatrolConfig__Group_3__0");
-			builder.put(grammarAccess.getPatrolConfigAccess().getGroup_4(), "rule__PatrolConfig__Group_4__0");
 			builder.put(grammarAccess.getPatrolConfigAccess().getGroup_8(), "rule__PatrolConfig__Group_8__0");
 			builder.put(grammarAccess.getPatrolZoneConfigAccess().getGroup(), "rule__PatrolZoneConfig__Group__0");
 			builder.put(grammarAccess.getWaypointAccess().getGroup(), "rule__Waypoint__Group__0");
@@ -83,7 +82,8 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLootItemConfigAccess().getGroup(), "rule__LootItemConfig__Group__0");
 			builder.put(grammarAccess.getLootItemConfigAccess().getGroup_7(), "rule__LootItemConfig__Group_7__0");
 			builder.put(grammarAccess.getDOUBLEAccess().getGroup(), "rule__DOUBLE__Group__0");
-			builder.put(grammarAccess.getDOUBLEAccess().getGroup_1(), "rule__DOUBLE__Group_1__0");
+			builder.put(grammarAccess.getDOUBLEAccess().getGroup_2(), "rule__DOUBLE__Group_2__0");
+			builder.put(grammarAccess.getSIGNED_INTAccess().getGroup(), "rule__SIGNED_INT__Group__0");
 			builder.put(grammarAccess.getGameConfigurationAccess().getNameAssignment_1(), "rule__GameConfiguration__NameAssignment_1");
 			builder.put(grammarAccess.getGameConfigurationAccess().getImportsAssignment_3(), "rule__GameConfiguration__ImportsAssignment_3");
 			builder.put(grammarAccess.getGameConfigurationAccess().getDifficultyAssignment_4(), "rule__GameConfiguration__DifficultyAssignment_4");
@@ -124,7 +124,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getRangedSpecificsAccess().getSplashRadiusAssignment_8_1(), "rule__RangedSpecifics__SplashRadiusAssignment_8_1");
 			builder.put(grammarAccess.getPatrolConfigAccess().getNameAssignment_1(), "rule__PatrolConfig__NameAssignment_1");
 			builder.put(grammarAccess.getPatrolConfigAccess().getVisionRangeAssignment_3_1(), "rule__PatrolConfig__VisionRangeAssignment_3_1");
-			builder.put(grammarAccess.getPatrolConfigAccess().getZoneAssignment_4_1(), "rule__PatrolConfig__ZoneAssignment_4_1");
+			builder.put(grammarAccess.getPatrolConfigAccess().getZoneAssignment_4(), "rule__PatrolConfig__ZoneAssignment_4");
 			builder.put(grammarAccess.getPatrolConfigAccess().getWaypointsAssignment_7(), "rule__PatrolConfig__WaypointsAssignment_7");
 			builder.put(grammarAccess.getPatrolConfigAccess().getWaypointsAssignment_8_1(), "rule__PatrolConfig__WaypointsAssignment_8_1");
 			builder.put(grammarAccess.getPatrolZoneConfigAccess().getTopLeftXAssignment_4(), "rule__PatrolZoneConfig__TopLeftXAssignment_4");
