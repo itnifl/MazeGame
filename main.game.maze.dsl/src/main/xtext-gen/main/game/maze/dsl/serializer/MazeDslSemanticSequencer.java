@@ -99,7 +99,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         instantDeath?='true'? 
 	 *         speedMultiplier=DOUBLE? 
 	 *         damageMultiplier=DOUBLE? 
-	 *         maxThreat=INT? 
+	 *         maxThreat=SIGNED_INT? 
 	 *         enemyLimits+=EnemyLimit*
 	 *     )
 	 * </pre>
@@ -115,7 +115,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     EnemyLimit returns EnemyLimit
 	 *
 	 * Constraint:
-	 *     (type=EnemyType maxCount=INT)
+	 *     (type=EnemyType maxCount=SIGNED_INT)
 	 * </pre>
 	 */
 	protected void sequence_EnemyLimit(ISerializationContext context, EnemyLimit semanticObject) {
@@ -127,7 +127,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getEnemyLimitAccess().getTypeEnemyTypeEnumRuleCall_1_0(), semanticObject.getType());
-		feeder.accept(grammarAccess.getEnemyLimitAccess().getMaxCountINTTerminalRuleCall_3_0(), semanticObject.getMaxCount());
+		feeder.accept(grammarAccess.getEnemyLimitAccess().getMaxCountSIGNED_INTParserRuleCall_3_0(), semanticObject.getMaxCount());
 		feeder.finish();
 	}
 	
@@ -226,10 +226,10 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         name=ID 
 	 *         type=CharacterTypeEnum 
 	 *         displayName=STRING? 
-	 *         health=INT? 
+	 *         health=SIGNED_INT? 
 	 *         speed=DOUBLE? 
 	 *         threatLevel=DOUBLE? 
-	 *         (enabled='true' | enabled='false')? 
+	 *         enabled=BOOLEAN? 
 	 *         behavior=BehaviorTypeEnum? 
 	 *         characterSpecifics=CharacterSpecifics? 
 	 *         patrolRef=[PatrolConfig|ID]? 

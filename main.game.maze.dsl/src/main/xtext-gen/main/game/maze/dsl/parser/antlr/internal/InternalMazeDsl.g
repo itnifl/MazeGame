@@ -370,19 +370,20 @@ ruleDifficultyConfig returns [EObject current=null]
 			}
 			(
 				(
-					lv_maxThreat_11_0=RULE_INT
 					{
-						newLeafNode(lv_maxThreat_11_0, grammarAccess.getDifficultyConfigAccess().getMaxThreatINTTerminalRuleCall_7_1_0());
+						newCompositeNode(grammarAccess.getDifficultyConfigAccess().getMaxThreatSIGNED_INTParserRuleCall_7_1_0());
 					}
+					lv_maxThreat_11_0=ruleSIGNED_INT
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getDifficultyConfigRule());
+							$current = createModelElementForParent(grammarAccess.getDifficultyConfigRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
 							"maxThreat",
 							lv_maxThreat_11_0,
-							"org.eclipse.xtext.common.Terminals.INT");
+							"main.game.maze.dsl.MazeDsl.SIGNED_INT");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -458,19 +459,20 @@ ruleEnemyLimit returns [EObject current=null]
 		}
 		(
 			(
-				lv_maxCount_3_0=RULE_INT
 				{
-					newLeafNode(lv_maxCount_3_0, grammarAccess.getEnemyLimitAccess().getMaxCountINTTerminalRuleCall_3_0());
+					newCompositeNode(grammarAccess.getEnemyLimitAccess().getMaxCountSIGNED_INTParserRuleCall_3_0());
 				}
+				lv_maxCount_3_0=ruleSIGNED_INT
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getEnemyLimitRule());
+						$current = createModelElementForParent(grammarAccess.getEnemyLimitRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"maxCount",
 						lv_maxCount_3_0,
-						"org.eclipse.xtext.common.Terminals.INT");
+						"main.game.maze.dsl.MazeDsl.SIGNED_INT");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -573,19 +575,20 @@ ruleOpponentConfig returns [EObject current=null]
 			}
 			(
 				(
-					lv_health_8_0=RULE_INT
 					{
-						newLeafNode(lv_health_8_0, grammarAccess.getOpponentConfigAccess().getHealthINTTerminalRuleCall_6_1_0());
+						newCompositeNode(grammarAccess.getOpponentConfigAccess().getHealthSIGNED_INTParserRuleCall_6_1_0());
 					}
+					lv_health_8_0=ruleSIGNED_INT
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getOpponentConfigRule());
+							$current = createModelElementForParent(grammarAccess.getOpponentConfigRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
 							"health",
 							lv_health_8_0,
-							"org.eclipse.xtext.common.Terminals.INT");
+							"main.game.maze.dsl.MazeDsl.SIGNED_INT");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -647,29 +650,21 @@ ruleOpponentConfig returns [EObject current=null]
 			}
 			(
 				(
-					(
-						lv_enabled_14_1='true'
-						{
-							newLeafNode(lv_enabled_14_1, grammarAccess.getOpponentConfigAccess().getEnabledTrueKeyword_9_1_0_0());
+					{
+						newCompositeNode(grammarAccess.getOpponentConfigAccess().getEnabledBOOLEANParserRuleCall_9_1_0());
+					}
+					lv_enabled_14_0=ruleBOOLEAN
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getOpponentConfigRule());
 						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getOpponentConfigRule());
-							}
-							setWithLastConsumed($current, "enabled", lv_enabled_14_1, null);
-						}
-						    |
-						lv_enabled_14_2='false'
-						{
-							newLeafNode(lv_enabled_14_2, grammarAccess.getOpponentConfigAccess().getEnabledFalseKeyword_9_1_0_1());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getOpponentConfigRule());
-							}
-							setWithLastConsumed($current, "enabled", lv_enabled_14_2, null);
-						}
-					)
+						set(
+							$current,
+							"enabled",
+							lv_enabled_14_0,
+							"main.game.maze.dsl.MazeDsl.BOOLEAN");
+						afterParserOrEnumRuleCall();
+					}
 				)
 			)
 		)?
@@ -1282,44 +1277,38 @@ rulePatrolConfig returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_5='zone'
-			{
-				newLeafNode(otherlv_5, grammarAccess.getPatrolConfigAccess().getZoneKeyword_4_0());
-			}
 			(
-				(
-					{
-						newCompositeNode(grammarAccess.getPatrolConfigAccess().getZonePatrolZoneConfigParserRuleCall_4_1_0());
+				{
+					newCompositeNode(grammarAccess.getPatrolConfigAccess().getZonePatrolZoneConfigParserRuleCall_4_0());
+				}
+				lv_zone_5_0=rulePatrolZoneConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getPatrolConfigRule());
 					}
-					lv_zone_6_0=rulePatrolZoneConfig
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getPatrolConfigRule());
-						}
-						set(
-							$current,
-							"zone",
-							lv_zone_6_0,
-							"main.game.maze.dsl.MazeDsl.PatrolZoneConfig");
-						afterParserOrEnumRuleCall();
-					}
-				)
+					set(
+						$current,
+						"zone",
+						lv_zone_5_0,
+						"main.game.maze.dsl.MazeDsl.PatrolZoneConfig");
+					afterParserOrEnumRuleCall();
+				}
 			)
 		)?
-		otherlv_7='path'
+		otherlv_6='path'
 		{
-			newLeafNode(otherlv_7, grammarAccess.getPatrolConfigAccess().getPathKeyword_5());
+			newLeafNode(otherlv_6, grammarAccess.getPatrolConfigAccess().getPathKeyword_5());
 		}
-		otherlv_8='['
+		otherlv_7='['
 		{
-			newLeafNode(otherlv_8, grammarAccess.getPatrolConfigAccess().getLeftSquareBracketKeyword_6());
+			newLeafNode(otherlv_7, grammarAccess.getPatrolConfigAccess().getLeftSquareBracketKeyword_6());
 		}
 		(
 			(
 				{
 					newCompositeNode(grammarAccess.getPatrolConfigAccess().getWaypointsWaypointParserRuleCall_7_0());
 				}
-				lv_waypoints_9_0=ruleWaypoint
+				lv_waypoints_8_0=ruleWaypoint
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getPatrolConfigRule());
@@ -1327,23 +1316,23 @@ rulePatrolConfig returns [EObject current=null]
 					add(
 						$current,
 						"waypoints",
-						lv_waypoints_9_0,
+						lv_waypoints_8_0,
 						"main.game.maze.dsl.MazeDsl.Waypoint");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
 		(
-			otherlv_10=','
+			otherlv_9=','
 			{
-				newLeafNode(otherlv_10, grammarAccess.getPatrolConfigAccess().getCommaKeyword_8_0());
+				newLeafNode(otherlv_9, grammarAccess.getPatrolConfigAccess().getCommaKeyword_8_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getPatrolConfigAccess().getWaypointsWaypointParserRuleCall_8_1_0());
 					}
-					lv_waypoints_11_0=ruleWaypoint
+					lv_waypoints_10_0=ruleWaypoint
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getPatrolConfigRule());
@@ -1351,20 +1340,20 @@ rulePatrolConfig returns [EObject current=null]
 						add(
 							$current,
 							"waypoints",
-							lv_waypoints_11_0,
+							lv_waypoints_10_0,
 							"main.game.maze.dsl.MazeDsl.Waypoint");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)*
-		otherlv_12=']'
+		otherlv_11=']'
 		{
-			newLeafNode(otherlv_12, grammarAccess.getPatrolConfigAccess().getRightSquareBracketKeyword_9());
+			newLeafNode(otherlv_11, grammarAccess.getPatrolConfigAccess().getRightSquareBracketKeyword_9());
 		}
-		otherlv_13='}'
+		otherlv_12='}'
 		{
-			newLeafNode(otherlv_13, grammarAccess.getPatrolConfigAccess().getRightCurlyBracketKeyword_10());
+			newLeafNode(otherlv_12, grammarAccess.getPatrolConfigAccess().getRightCurlyBracketKeyword_10());
 		}
 	)
 ;
@@ -1823,27 +1812,97 @@ ruleDOUBLE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 	leaveRule();
 }:
 	(
-		this_INT_0=RULE_INT
+		(
+			kw='-'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getDOUBLEAccess().getHyphenMinusKeyword_0());
+			}
+		)?
+		this_INT_1=RULE_INT
 		{
-			$current.merge(this_INT_0);
+			$current.merge(this_INT_1);
 		}
 		{
-			newLeafNode(this_INT_0, grammarAccess.getDOUBLEAccess().getINTTerminalRuleCall_0());
+			newLeafNode(this_INT_1, grammarAccess.getDOUBLEAccess().getINTTerminalRuleCall_1());
 		}
 		(
 			kw='.'
 			{
 				$current.merge(kw);
-				newLeafNode(kw, grammarAccess.getDOUBLEAccess().getFullStopKeyword_1_0());
+				newLeafNode(kw, grammarAccess.getDOUBLEAccess().getFullStopKeyword_2_0());
 			}
-			this_INT_2=RULE_INT
+			this_INT_3=RULE_INT
 			{
-				$current.merge(this_INT_2);
+				$current.merge(this_INT_3);
 			}
 			{
-				newLeafNode(this_INT_2, grammarAccess.getDOUBLEAccess().getINTTerminalRuleCall_1_1());
+				newLeafNode(this_INT_3, grammarAccess.getDOUBLEAccess().getINTTerminalRuleCall_2_1());
 			}
 		)?
+	)
+;
+
+// Entry rule entryRuleSIGNED_INT
+entryRuleSIGNED_INT returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getSIGNED_INTRule()); }
+	iv_ruleSIGNED_INT=ruleSIGNED_INT
+	{ $current=$iv_ruleSIGNED_INT.current.getText(); }
+	EOF;
+
+// Rule SIGNED_INT
+ruleSIGNED_INT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			kw='-'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getSIGNED_INTAccess().getHyphenMinusKeyword_0());
+			}
+		)?
+		this_INT_1=RULE_INT
+		{
+			$current.merge(this_INT_1);
+		}
+		{
+			newLeafNode(this_INT_1, grammarAccess.getSIGNED_INTAccess().getINTTerminalRuleCall_1());
+		}
+	)
+;
+
+// Entry rule entryRuleBOOLEAN
+entryRuleBOOLEAN returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getBOOLEANRule()); }
+	iv_ruleBOOLEAN=ruleBOOLEAN
+	{ $current=$iv_ruleBOOLEAN.current.getText(); }
+	EOF;
+
+// Rule BOOLEAN
+ruleBOOLEAN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw='true'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getBOOLEANAccess().getTrueKeyword_0());
+		}
+		    |
+		kw='false'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getBOOLEANAccess().getFalseKeyword_1());
+		}
 	)
 ;
 

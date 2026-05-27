@@ -163,7 +163,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cMaxThreatKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cMaxThreatAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
-		private final RuleCall cMaxThreatINTTerminalRuleCall_7_1_0 = (RuleCall)cMaxThreatAssignment_7_1.eContents().get(0);
+		private final RuleCall cMaxThreatSIGNED_INTParserRuleCall_7_1_0 = (RuleCall)cMaxThreatAssignment_7_1.eContents().get(0);
 		private final Assignment cEnemyLimitsAssignment_8 = (Assignment)cGroup.eContents().get(8);
 		private final RuleCall cEnemyLimitsEnemyLimitParserRuleCall_8_0 = (RuleCall)cEnemyLimitsAssignment_8.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_9 = (Keyword)cGroup.eContents().get(9);
@@ -177,7 +177,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        ('instantDeath' instantDeath?='true')?
 		//        ('speedMultiplier' speedMultiplier=DOUBLE)?
 		//        ('damageMultiplier' damageMultiplier=DOUBLE)?
-		//        ('maxThreat' maxThreat=INT)?
+		//        ('maxThreat' maxThreat=SIGNED_INT)?
 		//        (enemyLimits+=EnemyLimit)*
 		//    '}'
 		//;
@@ -188,7 +188,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    ('instantDeath' instantDeath?='true')?
 		//    ('speedMultiplier' speedMultiplier=DOUBLE)?
 		//    ('damageMultiplier' damageMultiplier=DOUBLE)?
-		//    ('maxThreat' maxThreat=INT)?
+		//    ('maxThreat' maxThreat=SIGNED_INT)?
 		//    (enemyLimits+=EnemyLimit)*
 		//'}'
 		public Group getGroup() { return cGroup; }
@@ -244,17 +244,17 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//DOUBLE
 		public RuleCall getDamageMultiplierDOUBLEParserRuleCall_6_1_0() { return cDamageMultiplierDOUBLEParserRuleCall_6_1_0; }
 		
-		//('maxThreat' maxThreat=INT)?
+		//('maxThreat' maxThreat=SIGNED_INT)?
 		public Group getGroup_7() { return cGroup_7; }
 		
 		//'maxThreat'
 		public Keyword getMaxThreatKeyword_7_0() { return cMaxThreatKeyword_7_0; }
 		
-		//maxThreat=INT
+		//maxThreat=SIGNED_INT
 		public Assignment getMaxThreatAssignment_7_1() { return cMaxThreatAssignment_7_1; }
 		
-		//INT
-		public RuleCall getMaxThreatINTTerminalRuleCall_7_1_0() { return cMaxThreatINTTerminalRuleCall_7_1_0; }
+		//SIGNED_INT
+		public RuleCall getMaxThreatSIGNED_INTParserRuleCall_7_1_0() { return cMaxThreatSIGNED_INTParserRuleCall_7_1_0; }
 		
 		//(enemyLimits+=EnemyLimit)*
 		public Assignment getEnemyLimitsAssignment_8() { return cEnemyLimitsAssignment_8; }
@@ -273,17 +273,17 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cTypeEnemyTypeEnumRuleCall_1_0 = (RuleCall)cTypeAssignment_1.eContents().get(0);
 		private final Keyword cMaxKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cMaxCountAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cMaxCountINTTerminalRuleCall_3_0 = (RuleCall)cMaxCountAssignment_3.eContents().get(0);
+		private final RuleCall cMaxCountSIGNED_INTParserRuleCall_3_0 = (RuleCall)cMaxCountAssignment_3.eContents().get(0);
 		
 		///*
 		// * Enemy count limits per type
 		// */
 		//EnemyLimit:
-		//    'limit' type=EnemyType 'max' maxCount=INT
+		//    'limit' type=EnemyType 'max' maxCount=SIGNED_INT
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'limit' type=EnemyType 'max' maxCount=INT
+		//'limit' type=EnemyType 'max' maxCount=SIGNED_INT
 		public Group getGroup() { return cGroup; }
 		
 		//'limit'
@@ -298,11 +298,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'max'
 		public Keyword getMaxKeyword_2() { return cMaxKeyword_2; }
 		
-		//maxCount=INT
+		//maxCount=SIGNED_INT
 		public Assignment getMaxCountAssignment_3() { return cMaxCountAssignment_3; }
 		
-		//INT
-		public RuleCall getMaxCountINTTerminalRuleCall_3_0() { return cMaxCountINTTerminalRuleCall_3_0; }
+		//SIGNED_INT
+		public RuleCall getMaxCountSIGNED_INTParserRuleCall_3_0() { return cMaxCountSIGNED_INTParserRuleCall_3_0; }
 	}
 	public class OpponentConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.OpponentConfig");
@@ -321,7 +321,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
 		private final Keyword cHealthKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
 		private final Assignment cHealthAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
-		private final RuleCall cHealthINTTerminalRuleCall_6_1_0 = (RuleCall)cHealthAssignment_6_1.eContents().get(0);
+		private final RuleCall cHealthSIGNED_INTParserRuleCall_6_1_0 = (RuleCall)cHealthAssignment_6_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cSpeedKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cSpeedAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -333,9 +333,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
 		private final Keyword cEnabledKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
 		private final Assignment cEnabledAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
-		private final Alternatives cEnabledAlternatives_9_1_0 = (Alternatives)cEnabledAssignment_9_1.eContents().get(0);
-		private final Keyword cEnabledTrueKeyword_9_1_0_0 = (Keyword)cEnabledAlternatives_9_1_0.eContents().get(0);
-		private final Keyword cEnabledFalseKeyword_9_1_0_1 = (Keyword)cEnabledAlternatives_9_1_0.eContents().get(1);
+		private final RuleCall cEnabledBOOLEANParserRuleCall_9_1_0 = (RuleCall)cEnabledAssignment_9_1.eContents().get(0);
 		private final Group cGroup_10 = (Group)cGroup.eContents().get(10);
 		private final Keyword cBehaviorKeyword_10_0 = (Keyword)cGroup_10.eContents().get(0);
 		private final Assignment cBehaviorAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
@@ -361,10 +359,10 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    'opponent' name=ID '{'
 		//        'type' type=CharacterTypeEnum
 		//        ('displayName' displayName=STRING)?
-		//        ('health' health=INT)?
+		//        ('health' health=SIGNED_INT)?
 		//        ('speed' speed=DOUBLE)?
 		//        ('threatLevel' threatLevel=DOUBLE)?
-		//        ('enabled' enabled=('true'|'false'))?
+		//        ('enabled' enabled=BOOLEAN)?
 		//        ('behavior' behavior=BehaviorTypeEnum)?
 		//        (characterSpecifics=CharacterSpecifics)?
 		//        ('patrol' patrolRef=[PatrolConfig])?
@@ -376,10 +374,10 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'opponent' name=ID '{'
 		//    'type' type=CharacterTypeEnum
 		//    ('displayName' displayName=STRING)?
-		//    ('health' health=INT)?
+		//    ('health' health=SIGNED_INT)?
 		//    ('speed' speed=DOUBLE)?
 		//    ('threatLevel' threatLevel=DOUBLE)?
-		//    ('enabled' enabled=('true'|'false'))?
+		//    ('enabled' enabled=BOOLEAN)?
 		//    ('behavior' behavior=BehaviorTypeEnum)?
 		//    (characterSpecifics=CharacterSpecifics)?
 		//    ('patrol' patrolRef=[PatrolConfig])?
@@ -420,17 +418,17 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//STRING
 		public RuleCall getDisplayNameSTRINGTerminalRuleCall_5_1_0() { return cDisplayNameSTRINGTerminalRuleCall_5_1_0; }
 		
-		//('health' health=INT)?
+		//('health' health=SIGNED_INT)?
 		public Group getGroup_6() { return cGroup_6; }
 		
 		//'health'
 		public Keyword getHealthKeyword_6_0() { return cHealthKeyword_6_0; }
 		
-		//health=INT
+		//health=SIGNED_INT
 		public Assignment getHealthAssignment_6_1() { return cHealthAssignment_6_1; }
 		
-		//INT
-		public RuleCall getHealthINTTerminalRuleCall_6_1_0() { return cHealthINTTerminalRuleCall_6_1_0; }
+		//SIGNED_INT
+		public RuleCall getHealthSIGNED_INTParserRuleCall_6_1_0() { return cHealthSIGNED_INTParserRuleCall_6_1_0; }
 		
 		//('speed' speed=DOUBLE)?
 		public Group getGroup_7() { return cGroup_7; }
@@ -456,23 +454,17 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//DOUBLE
 		public RuleCall getThreatLevelDOUBLEParserRuleCall_8_1_0() { return cThreatLevelDOUBLEParserRuleCall_8_1_0; }
 		
-		//('enabled' enabled=('true'|'false'))?
+		//('enabled' enabled=BOOLEAN)?
 		public Group getGroup_9() { return cGroup_9; }
 		
 		//'enabled'
 		public Keyword getEnabledKeyword_9_0() { return cEnabledKeyword_9_0; }
 		
-		//enabled=('true'|'false')
+		//enabled=BOOLEAN
 		public Assignment getEnabledAssignment_9_1() { return cEnabledAssignment_9_1; }
 		
-		//('true'|'false')
-		public Alternatives getEnabledAlternatives_9_1_0() { return cEnabledAlternatives_9_1_0; }
-		
-		//'true'
-		public Keyword getEnabledTrueKeyword_9_1_0_0() { return cEnabledTrueKeyword_9_1_0_0; }
-		
-		//'false'
-		public Keyword getEnabledFalseKeyword_9_1_0_1() { return cEnabledFalseKeyword_9_1_0_1; }
+		//BOOLEAN
+		public RuleCall getEnabledBOOLEANParserRuleCall_9_1_0() { return cEnabledBOOLEANParserRuleCall_9_1_0; }
 		
 		//('behavior' behavior=BehaviorTypeEnum)?
 		public Group getGroup_10() { return cGroup_10; }
@@ -875,10 +867,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cVisionRangeKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
 		private final Assignment cVisionRangeAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cVisionRangeDOUBLEParserRuleCall_3_1_0 = (RuleCall)cVisionRangeAssignment_3_1.eContents().get(0);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cZoneKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cZoneAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cZonePatrolZoneConfigParserRuleCall_4_1_0 = (RuleCall)cZoneAssignment_4_1.eContents().get(0);
+		private final Assignment cZoneAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cZonePatrolZoneConfigParserRuleCall_4_0 = (RuleCall)cZoneAssignment_4.eContents().get(0);
 		private final Keyword cPathKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		private final Keyword cLeftSquareBracketKeyword_6 = (Keyword)cGroup.eContents().get(6);
 		private final Assignment cWaypointsAssignment_7 = (Assignment)cGroup.eContents().get(7);
@@ -896,7 +886,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//PatrolConfig:
 		//    'patrol' name=ID '{'
 		//        ('visionRange' visionRange=DOUBLE)?
-		//        ('zone' zone=PatrolZoneConfig)?
+		//        (zone=PatrolZoneConfig)?
 		//        'path' '['
 		//            waypoints+=Waypoint (',' waypoints+=Waypoint)*
 		//        ']'
@@ -906,7 +896,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'patrol' name=ID '{'
 		//    ('visionRange' visionRange=DOUBLE)?
-		//    ('zone' zone=PatrolZoneConfig)?
+		//    (zone=PatrolZoneConfig)?
 		//    'path' '['
 		//        waypoints+=Waypoint (',' waypoints+=Waypoint)*
 		//    ']'
@@ -937,17 +927,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//DOUBLE
 		public RuleCall getVisionRangeDOUBLEParserRuleCall_3_1_0() { return cVisionRangeDOUBLEParserRuleCall_3_1_0; }
 		
-		//('zone' zone=PatrolZoneConfig)?
-		public Group getGroup_4() { return cGroup_4; }
-		
-		//'zone'
-		public Keyword getZoneKeyword_4_0() { return cZoneKeyword_4_0; }
-		
-		//zone=PatrolZoneConfig
-		public Assignment getZoneAssignment_4_1() { return cZoneAssignment_4_1; }
+		//(zone=PatrolZoneConfig)?
+		public Assignment getZoneAssignment_4() { return cZoneAssignment_4; }
 		
 		//PatrolZoneConfig
-		public RuleCall getZonePatrolZoneConfigParserRuleCall_4_1_0() { return cZonePatrolZoneConfigParserRuleCall_4_1_0; }
+		public RuleCall getZonePatrolZoneConfigParserRuleCall_4_0() { return cZonePatrolZoneConfigParserRuleCall_4_0; }
 		
 		//'path'
 		public Keyword getPathKeyword_5() { return cPathKeyword_5; }
@@ -1277,33 +1261,80 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	public class DOUBLEElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.DOUBLE");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cINTTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final RuleCall cINTTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		private final Keyword cHyphenMinusKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cFullStopKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_2_1 = (RuleCall)cGroup_2.eContents().get(1);
 		
 		///*
 		// * Datatype rule for double values (accepts both integers and decimals)
 		// */
 		//DOUBLE returns ecore::EDouble:
-		//    INT ('.' INT)?
+		//    ('-')? INT ('.' INT)?
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//INT ('.' INT)?
+		//('-')? INT ('.' INT)?
 		public Group getGroup() { return cGroup; }
 		
+		//('-')?
+		public Keyword getHyphenMinusKeyword_0() { return cHyphenMinusKeyword_0; }
+		
 		//INT
-		public RuleCall getINTTerminalRuleCall_0() { return cINTTerminalRuleCall_0; }
+		public RuleCall getINTTerminalRuleCall_1() { return cINTTerminalRuleCall_1; }
 		
 		//('.' INT)?
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_2() { return cGroup_2; }
 		
 		//'.'
-		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
+		public Keyword getFullStopKeyword_2_0() { return cFullStopKeyword_2_0; }
 		
 		//INT
-		public RuleCall getINTTerminalRuleCall_1_1() { return cINTTerminalRuleCall_1_1; }
+		public RuleCall getINTTerminalRuleCall_2_1() { return cINTTerminalRuleCall_2_1; }
+	}
+	public class SIGNED_INTElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.SIGNED_INT");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cHyphenMinusKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//SIGNED_INT returns ecore::EInt:
+		//    ('-')? INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//('-')? INT
+		public Group getGroup() { return cGroup; }
+		
+		//('-')?
+		public Keyword getHyphenMinusKeyword_0() { return cHyphenMinusKeyword_0; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_1() { return cINTTerminalRuleCall_1; }
+	}
+	public class BOOLEANElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.BOOLEAN");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cTrueKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cFalseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		
+		///*
+		// * Datatype rule for boolean values
+		// */
+		//BOOLEAN returns ecore::EBoolean:
+		//    'true' | 'false'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'true' | 'false'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//'true'
+		public Keyword getTrueKeyword_0() { return cTrueKeyword_0; }
+		
+		//'false'
+		public Keyword getFalseKeyword_1() { return cFalseKeyword_1; }
 	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
@@ -1560,6 +1591,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final LootItemConfigElements pLootItemConfig;
 	private final LootItemTypeEnumElements eLootItemTypeEnum;
 	private final DOUBLEElements pDOUBLE;
+	private final SIGNED_INTElements pSIGNED_INT;
+	private final BOOLEANElements pBOOLEAN;
 	
 	private final Grammar grammar;
 	
@@ -1591,6 +1624,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pLootItemConfig = new LootItemConfigElements();
 		this.eLootItemTypeEnum = new LootItemTypeEnumElements();
 		this.pDOUBLE = new DOUBLEElements();
+		this.pSIGNED_INT = new SIGNED_INTElements();
+		this.pBOOLEAN = new BOOLEANElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -1663,7 +1698,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        ('instantDeath' instantDeath?='true')?
 	//        ('speedMultiplier' speedMultiplier=DOUBLE)?
 	//        ('damageMultiplier' damageMultiplier=DOUBLE)?
-	//        ('maxThreat' maxThreat=INT)?
+	//        ('maxThreat' maxThreat=SIGNED_INT)?
 	//        (enemyLimits+=EnemyLimit)*
 	//    '}'
 	//;
@@ -1690,7 +1725,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Enemy count limits per type
 	// */
 	//EnemyLimit:
-	//    'limit' type=EnemyType 'max' maxCount=INT
+	//    'limit' type=EnemyType 'max' maxCount=SIGNED_INT
 	//;
 	public EnemyLimitElements getEnemyLimitAccess() {
 		return pEnemyLimit;
@@ -1718,10 +1753,10 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//    'opponent' name=ID '{'
 	//        'type' type=CharacterTypeEnum
 	//        ('displayName' displayName=STRING)?
-	//        ('health' health=INT)?
+	//        ('health' health=SIGNED_INT)?
 	//        ('speed' speed=DOUBLE)?
 	//        ('threatLevel' threatLevel=DOUBLE)?
-	//        ('enabled' enabled=('true'|'false'))?
+	//        ('enabled' enabled=BOOLEAN)?
 	//        ('behavior' behavior=BehaviorTypeEnum)?
 	//        (characterSpecifics=CharacterSpecifics)?
 	//        ('patrol' patrolRef=[PatrolConfig])?
@@ -1840,7 +1875,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//PatrolConfig:
 	//    'patrol' name=ID '{'
 	//        ('visionRange' visionRange=DOUBLE)?
-	//        ('zone' zone=PatrolZoneConfig)?
+	//        (zone=PatrolZoneConfig)?
 	//        'path' '['
 	//            waypoints+=Waypoint (',' waypoints+=Waypoint)*
 	//        ']'
@@ -1928,7 +1963,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Datatype rule for double values (accepts both integers and decimals)
 	// */
 	//DOUBLE returns ecore::EDouble:
-	//    INT ('.' INT)?
+	//    ('-')? INT ('.' INT)?
 	//;
 	public DOUBLEElements getDOUBLEAccess() {
 		return pDOUBLE;
@@ -1936,6 +1971,31 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getDOUBLERule() {
 		return getDOUBLEAccess().getRule();
+	}
+	
+	//SIGNED_INT returns ecore::EInt:
+	//    ('-')? INT
+	//;
+	public SIGNED_INTElements getSIGNED_INTAccess() {
+		return pSIGNED_INT;
+	}
+	
+	public ParserRule getSIGNED_INTRule() {
+		return getSIGNED_INTAccess().getRule();
+	}
+	
+	///*
+	// * Datatype rule for boolean values
+	// */
+	//BOOLEAN returns ecore::EBoolean:
+	//    'true' | 'false'
+	//;
+	public BOOLEANElements getBOOLEANAccess() {
+		return pBOOLEAN;
+	}
+	
+	public ParserRule getBOOLEANRule() {
+		return getBOOLEANAccess().getRule();
 	}
 	
 	//terminal ID: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

@@ -36,9 +36,9 @@
                 <repository>
                   <url>https://download.eclipse.org/modeling/mdt/ocl/updates/releases/</url>
                 </repository>
-                <!-- Xtext SDK for DSL support -->
+                <!-- Xtext SDK for DSL support (pinned to 2.42.0 to match Eclipse 4.33 platform) -->
                 <repository>
-                  <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/</url>
+                  <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.42.0/</url>
                 </repository>
                 <!-- MWE2 for Xtext code generation -->
                 <repository>
@@ -69,6 +69,10 @@
                 <iu><id>org.eclipse.emf.mwe2.launch</id></iu>
                 <iu><id>org.eclipse.emf.mwe2.lib</id></iu>
                 <iu><id>org.eclipse.emf.mwe2.language.sdk.feature.group</id></iu>
+                <!-- JUnit 5 platform suite (required by Tycho surefire for junit5 provider) -->
+                <iu><id>junit-platform-suite-engine</id></iu>
+                <iu><id>junit-platform-suite-api</id></iu>
+                <iu><id>junit-platform-suite-commons</id></iu>
               </ius>
               <destination>${project.basedir}/../local-p2</destination>
             </configuration>
