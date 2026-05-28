@@ -46,6 +46,10 @@ public class RestartGameAction extends ActionScreens {
         App.inGameMediaPlayer.play();
 
         try {
+            if (root == null || root.getScene() == null) {
+                return;
+            }
+
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
             App.gameController = controller;
@@ -64,8 +68,6 @@ public class RestartGameAction extends ActionScreens {
             App.applySizeForCurrentDifficulty(stage);
                         
             GameMazeWorld.RegenerateWorld(App.getBoardMaxX(), App.getBoardMaxY());
-
-            controller.initialize(null, null);
 
             controller.setupGame();
         } catch (IOException e) {
