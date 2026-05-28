@@ -4,7 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import main.game.maze.characters.Character;
-import main.game.maze.interfaces.INotifyMovement;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 import org.junit.jupiter.api.BeforeEach;

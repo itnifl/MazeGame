@@ -1,6 +1,5 @@
 package main.game.maze.generated;
 
-import java.util.logging.Logger;
 import main.game.maze.opponents.*;
 
 /**
@@ -8,8 +7,6 @@ import main.game.maze.opponents.*;
  * @generated from opponents.ecore via FreeMarker template
  */
 public final class CharacterGraphicsFactory {
-
-    private static final Logger LOGGER = Logger.getLogger(CharacterGraphicsFactory.class.getName());
 
     private CharacterGraphicsFactory() { }
 

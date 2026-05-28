@@ -2,13 +2,9 @@
  */
 package main.game.maze.behaviour.impl;
 
-import java.util.List;
-
-import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 
-import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.BehaviourPackage;
 import main.game.maze.behaviour.LocalPathCalculator;
 import main.game.maze.behaviour.Position;
@@ -88,16 +84,5 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 	 */
 	public Position getCurrentPosition() {
 		return currentPosition;
-	}
-
-	/**
-	 * Creates a copy of a Position.
-	 * @generated NOT
-	 */
-	private Position copyPosition(Position src) {
-		Position p = BehaviourFactory.eINSTANCE.createPosition();
-		p.setPosX(src.getPosX());
-		p.setPosY(src.getPosY());
-		return p;
 	}
 } //LocalPathCalculatorImpl

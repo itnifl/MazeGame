@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all','mirror','force-mirror','build','build-with-cache','clear-cache','toolchain')]
+    [ValidateSet('all','help','mirror','force-mirror','build','build-with-cache','quick','quick-no-tests','clear-cache','toolchain')]
     [string]$Target = 'all'
 )
 
@@ -121,6 +121,22 @@ function Show-ToolchainInfo {
     Write-Host "=========================="
 }
 
+function Show-Usage {
+    Write-Host "=== MazeGame make.ps1 targets ===" -ForegroundColor Cyan
+    Write-Host "all             : Full path. Mirror check/rebuild, clear Tycho cache, clean verify with tests."
+    Write-Host "build           : Same as all."
+    Write-Host "build-with-cache: Mirror check/rebuild, keep Tycho cache, clean verify with tests."
+    Write-Host "quick           : Fast path. Skip mirror step, keep cache, verify with tests."
+    Write-Host "quick-no-tests  : Fastest path. Skip mirror step, keep cache, verify with skipTests=true."
+    Write-Host "mirror          : Mirror only, rebuild only if inputs changed."
+    Write-Host "force-mirror    : Always rebuild mirror."
+    Write-Host "clear-cache     : Remove Tycho cache only."
+    Write-Host "toolchain       : Show Maven and Java versions."
+    Write-Host ""
+    Write-Host "To avoid mirror rebuilds, use: .\make.ps1 quick or .\make.ps1 quick-no-tests" -ForegroundColor Yellow
+    Write-Host "=================================" -ForegroundColor Cyan
+}
+
 function Test-MirrorOutdated {
     if (-not (Test-Path $LocalP2Dir)) { return $true }
     if (-not (Test-Path $MirrorStamp)) { return $true }
@@ -198,7 +214,25 @@ function Invoke-Build {
     Write-Host "=== Build finished successfully ==="
 }
 
+function Invoke-QuickBuild {
+    param([switch]$SkipTests)
+
+    $skipValue = if ($SkipTests) { 'true' } else { 'false' }
+    $cmd = "$Mvn -DskipTests=$skipValue verify"
+    Write-Host "=== Running quick build without mirror rebuild: $cmd ==="
+    & $Mvn "-DskipTests=$skipValue" verify
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Quick build failed with exit code $exit."
+    }
+    Write-Host "=== Quick build finished successfully ==="
+}
+
 switch ($Target) {
+    'help' {
+        Show-Usage
+    }
+
     'toolchain' {
         Use-Java21IfAvailable | Out-Null
         Show-ToolchainInfo
@@ -235,6 +269,20 @@ switch ($Target) {
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
         Invoke-Build
+    }
+
+    'quick' {
+        Use-Java21IfAvailable | Out-Null
+        Show-ToolchainInfo
+        Assert-JavaVersion
+        Invoke-QuickBuild
+    }
+
+    'quick-no-tests' {
+        Use-Java21IfAvailable | Out-Null
+        Show-ToolchainInfo
+        Assert-JavaVersion
+        Invoke-QuickBuild -SkipTests
     }
 
     'all' {

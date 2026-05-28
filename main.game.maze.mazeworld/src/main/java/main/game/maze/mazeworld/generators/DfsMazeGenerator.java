@@ -141,12 +141,8 @@ public class DfsMazeGenerator implements IMazeGenerator {
         List<Vector2D> walls = new ArrayList<>();
         int step = cfg.getWallSegmentLengthPx();
 
-        int usedWidth = cols * cellSize;
-        int usedHeight = rows * cellSize;
         int x0 = marginX;
         int y0 = marginY;
-        int x1 = x0 + usedWidth;
-        int y1 = y0 + usedHeight;
 
         // no explicit border walls here
 

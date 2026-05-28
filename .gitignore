@@ -108,3 +108,4 @@ main.game.maze.dsl/model/
 /run*_logs/
 *_runs.json
 build.log
+.github/copilot-instructions.md

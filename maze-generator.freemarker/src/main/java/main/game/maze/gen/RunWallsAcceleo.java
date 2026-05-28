@@ -56,6 +56,18 @@ public class RunWallsAcceleo {
         freemarkerConfig.setWrapUncheckedExceptions(true);
     }
 
+    public static void main(String[] args) throws Exception {
+        if (args.length < 2) {
+            LOGGER.severe("Usage: RunWallsAcceleo <wallsModel.xmi> <outDir>");
+            System.exit(1);
+        }
+
+        String wallsModelPath = new File(args[0]).getAbsolutePath();
+        String outDir = new File(args[1]).getAbsolutePath();
+
+        new RunWallsAcceleo().run(wallsModelPath, outDir);
+    }
+
     public void run(String wallsModelPath, String outDir) throws Exception {
 
         // 1. ResourceSet + XMI-factory for .xmi
