@@ -309,7 +309,7 @@ private static double spawnByTarget(
                 Node graphicsNode = createCharacterGraphics(b, StageConstants.PumpkinBomberCharacterXYSize);
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
-                var character = new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
+                new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
                 //gameController.registerComputerCharacter(character, graphicsNode); //Need new method to register pumpkin bomber
             } catch (Exception fxException) {
                 _logger.log(Level.SEVERE, "Failed to create or register a PumpkinBomberCharacter.", fxException);

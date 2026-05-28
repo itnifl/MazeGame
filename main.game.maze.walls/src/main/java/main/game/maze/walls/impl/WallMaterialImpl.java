@@ -40,7 +40,6 @@ public class WallMaterialImpl extends MinimalEObjectImpl.Container implements Wa
 	 * @generated
 	 * @ordered
 	 */
-	@SuppressWarnings("unchecked")
 	protected static final WallMaterialBaseType WALL_BASE_TYPE_EDEFAULT = WallMaterialBaseType.STEEL;
 
 	/**

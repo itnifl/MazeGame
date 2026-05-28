@@ -6,7 +6,6 @@ import java.util.Map;
 
 import main.game.maze.walls.*;
 
-import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
 
@@ -135,19 +134,7 @@ public class WallsValidator extends EObjectValidator {
 	 */
 	public boolean validateWallMaterial_ValidHitPoints(WallMaterial wallMaterial, DiagnosticChain diagnostics,
 			Map<Object, Object> context) {
-		// TODO implement the constraint
-		// -> specify the condition that violates the constraint
-		// -> verify the diagnostic details, including severity, code, and message
-		// Ensure that you remove @generated or mark it @generated NOT
-		if (false) {
-			if (diagnostics != null) {
-				diagnostics.add(
-						createDiagnostic(Diagnostic.ERROR, DIAGNOSTIC_SOURCE, 0, "_UI_GenericConstraint_diagnostic",
-								new Object[] { "ValidHitPoints", getObjectLabel(wallMaterial, context) },
-								new Object[] { wallMaterial }, context));
-			}
-			return false;
-		}
+		// TODO implement constraint validation logic.
 		return true;
 	}
 

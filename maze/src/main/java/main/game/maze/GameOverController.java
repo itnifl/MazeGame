@@ -28,7 +28,7 @@ public class GameOverController extends ActionScreenController implements Initia
 
         var resource = getClass().getResource(ResourceFileConstants.GameOverSound);
         Media media = new Media(resource.toString());
-        this.gameOverMediaPlayer = new MediaPlayer(media);
+        GameOverController.gameOverMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
         return new MediaView(gameOverMediaPlayer);

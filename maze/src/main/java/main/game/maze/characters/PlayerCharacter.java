@@ -60,7 +60,7 @@ public class PlayerCharacter extends Character
 
         var resource = getClass().getResource(ResourceFileConstants.PlayerScreamSound);
         Media media = new Media(resource.toString());
-        this.screamMediaPlayer = new MediaPlayer(media);
+        PlayerCharacter.screamMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
         return new MediaView(screamMediaPlayer);
@@ -69,7 +69,7 @@ public class PlayerCharacter extends Character
     private MediaView addInfectedSound() {
         var resource = getClass().getResource(ResourceFileConstants.PlayerInfectedSound);
         Media media = new Media(resource.toString());
-        this.infectedMediaPlayer = new MediaPlayer(media);
+        PlayerCharacter.infectedMediaPlayer = new MediaPlayer(media);
 
         // Create a MediaView and add it to the root node
         return new MediaView(infectedMediaPlayer);

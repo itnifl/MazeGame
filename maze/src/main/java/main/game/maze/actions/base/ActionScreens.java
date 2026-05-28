@@ -2,8 +2,6 @@ package main.game.maze.actions.base;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 
 public class ActionScreens {

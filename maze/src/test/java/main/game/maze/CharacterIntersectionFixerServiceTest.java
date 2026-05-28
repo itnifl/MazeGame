@@ -1,17 +1,12 @@
 package main.game.maze;
 
 import javafx.scene.layout.Pane;
-import main.game.maze.mazeworld.GameMazeWorld;
-import main.game.maze.mazeworld.Point2D;
-import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.service.CharacterIntersectionFixerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 

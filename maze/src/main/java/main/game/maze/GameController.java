@@ -1,12 +1,10 @@
 package main.game.maze;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -92,7 +90,7 @@ public class GameController implements Initializable {
     private Canvas pathCanvas;
     private Canvas treeCanvas;
 
-    private static Task runComputerCharacters;
+    private static Task<Boolean> runComputerCharacters;
     private Difficulty startDifficulty; 
 
     // Mapping vectors to their visual definition as requested
@@ -495,7 +493,7 @@ public class GameController implements Initializable {
             runComputerCharacters.cancel();
         }
 
-        runComputerCharacters = new Task() {
+        runComputerCharacters = new Task<Boolean>() {
             @Override
             protected Boolean call() throws Exception {
                 try {
@@ -621,13 +619,15 @@ public class GameController implements Initializable {
         }
     }
 
-    public void unregisterComputerCharacter(ICanSubscribeAndNotifyPosition character, Node node) {
+    public void unregisterComputerCharacter(IMovingComputerCharacter character, Node node) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> unregisterComputerCharacter(character,node));
             return;
         }
         allComputerCharacters.remove(character);
-        playerCharacter.removePositionSubscriber(character);
+        if (character instanceof ICanSubscribeAndNotifyPosition subscribable) {
+            playerCharacter.removePositionSubscriber(subscribable);
+        }
         gameBoard.getChildren().remove(node);
     }
 

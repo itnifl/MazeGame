@@ -1,8 +1,6 @@
 package main.game.maze;
 
 import javafx.application.Platform;
-import javafx.scene.layout.AnchorPane;
-import main.game.maze.actions.GameOverAction;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.interfaces.IDeathSubscriber;
@@ -58,16 +56,6 @@ public class DeathSubscriptionUsageTest {
     }
 
     // ---------- Test double for GameOverAction that counts transitions ----------
-    private static class TestableGameOverAction extends GameOverAction {
-        final AtomicInteger swaps = new AtomicInteger(0);
-        TestableGameOverAction(PlayerCharacter pc, AtomicInteger moveCount, AnchorPane root, Runnable onOver) {
-            super(pc, moveCount, root, onOver);
-        }
-        // NOTE: no @Override annotation to avoid toolchain complaints; this still overrides by signature.
-        protected void replaceRoot(AnchorPane oldRoot, AnchorPane newRoot) {
-            swaps.incrementAndGet(); // count instead of actually swapping screens
-        }
-    }
 
     // ---------- Generic ICanDie publisher to test interface contract w/o resources ----------
     private static class FakeMortal implements ICanDie {
@@ -76,7 +64,6 @@ public class DeathSubscriptionUsageTest {
         @Override 
         public void addDeathNotificationSubscriber(IDeathSubscriber s) { subs.add(s); }
         
-        public void removeDeathNotificationSubscriber(IDeathSubscriber s) { subs.remove(s); }
         void kill() {
             if (dead) return;
             dead = true;

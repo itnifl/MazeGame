@@ -22,10 +22,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import java.util.Random;
 
 import main.game.maze.behaviour.Position;
-import main.game.maze.behaviour.BehaviourFactory;
-import main.game.maze.mazeworld.GameMazeWorld;
-import main.game.maze.mazeworld.service.MazeNavigationGraph;
-import main.game.maze.mazeworld.Point2D;
 
 /**
  * <!-- begin-user-doc -->

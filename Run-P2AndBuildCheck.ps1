@@ -4,7 +4,7 @@ param(
     [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1-2, 4=skip 1-3
 )
 
-# Ensure we run from the script dir (repo root assumed)
+# Ensure we run from the script directory (repo root assumed)
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $scriptRoot
 
@@ -223,7 +223,7 @@ if ($StartAt -gt 2) {
     try {
         # Directory listing for jars and features
         $dirOutput = & {
-            dir releng\local-p2\plugins\org.eclipse.core.runtime_*,
+            Get-ChildItem releng\local-p2\plugins\org.eclipse.core.runtime_*,
                 releng\local-p2\plugins\org.eclipse.equinox.common_*,
                 releng\local-p2\plugins\org.eclipse.core.jobs_*,
                 releng\local-p2\plugins\org.eclipse.osgi_*,
