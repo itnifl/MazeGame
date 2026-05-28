@@ -27,17 +27,6 @@ Use [make.ps1](make.ps1).
 .\make.ps1 all
 ```
 
-### Alias wrapper entry point
-
-Use [makep.ps1](makep.ps1). It forwards arguments to make.ps1.
-
-```powershell
-# Same behavior as make.ps1
-.\makep.ps1 quick
-.\makep.ps1 quick-no-tests
-.\makep.ps1 all
-```
-
 ### Run P2 and build diagnostics entry point
 
 Use [Run-P2AndBuildCheck.ps1](Run-P2AndBuildCheck.ps1).

@@ -17,6 +17,7 @@
 * 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🖥️ [maze](maze/readme.md)
+* 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 
 Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
 Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
@@ -140,6 +141,8 @@ VS Code Java runtime:
 
 ## Build commands (exact)
 
+For a focused build command guide with fastest paths and no mirror rebuild options, see [build-tool-readme.md](build-tool-readme.md).
+
 Xtext generation and reactor builds that include DSL modules should be run with Java 21 in the shell session.
 
 ```powershell
@@ -205,6 +208,8 @@ make build
 ```
 
 ## Debug & Build Verification
+
+Quick reference for fast and no mirror command variants: [build-tool-readme.md](build-tool-readme.md).
 
 Use the script `Run-P2AndBuildCheck.ps1` to run a full build with diagnostics:
 
