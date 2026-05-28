@@ -1,7 +1,10 @@
 param(
     [string]$LogDirectory = "releng\test-results",
     [ValidateSet(1,2,3,4)]
-    [int]$StartAt = 1   # 1=run all, 2=skip 1, 3=skip 1-2, 4=skip 1-3
+    [int]$StartAt = 1,   # 1=run all, 2=skip mirror rebuild, 3=skip mirror+verify, 4=skip mirror+verify+cache clear
+    [switch]$SkipMirror,
+    [ValidateSet('full','fast','fastest')]
+    [string]$BuildMode = 'full'
 )
 
 # Ensure we run from the script directory (repo root assumed)
@@ -14,6 +17,17 @@ $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $logFile   = Join-Path $LogDirectory "p2-and-build-check_$timestamp.log"
 
 $stepSummaries = New-Object System.Collections.Generic.List[object]
+
+if ($SkipMirror -and $StartAt -lt 2) {
+    $StartAt = 2
+}
+
+Write-Host "=== Run-P2AndBuildCheck quick usage ===" -ForegroundColor Cyan
+Write-Host "Avoid mirror rebuild: .\Run-P2AndBuildCheck.ps1 -SkipMirror"
+Write-Host "Avoid mirror rebuild (equivalent): .\Run-P2AndBuildCheck.ps1 -StartAt 2"
+Write-Host "Fast build with tests: .\Run-P2AndBuildCheck.ps1 -SkipMirror -BuildMode fast"
+Write-Host "Fastest build, skip tests: .\Run-P2AndBuildCheck.ps1 -SkipMirror -BuildMode fastest"
+Write-Host "=======================================" -ForegroundColor Cyan
 
 function Get-JavaMajorFromExecutable {
     param([string]$JavaExe)
@@ -358,23 +372,53 @@ if ($StartAt -gt 3) {
     Write-StepResult -Step $step3 -Status $status3 -CommandText $cmdText3 -Summary $summary3 -Output $output3
 }
 
-# Step 4 - full Tycho + app build
-$step4   = "4. Full build (Tycho + app)"
-$cmdText4 = @'
+# Step 4 - build
+$step4 = "4. Build"
+switch ($BuildMode) {
+    'full' {
+        $cmdText4 = @'
 mvn -U -DskipTests=false clean verify -e -X
 '@
-Write-Host "Starting step 4: Full build (Tycho + app)..."
+        $buildLabel = "Full build (Tycho + app)"
+    }
+    'fast' {
+        $cmdText4 = @'
+mvn -DskipTests=false verify
+'@
+        $buildLabel = "Fast build with tests"
+    }
+    'fastest' {
+        $cmdText4 = @'
+mvn -DskipTests=true verify
+'@
+        $buildLabel = "Fastest build without tests"
+    }
+}
+
+Write-Host "Starting step 4: $buildLabel..."
 $output4 = & {
-    & mvn -U -DskipTests=false clean verify -e -X
+    switch ($BuildMode) {
+        'full'    { & mvn -U -DskipTests=false clean verify -e -X }
+        'fast'    { & mvn -DskipTests=false verify }
+        'fastest' { & mvn -DskipTests=true verify }
+    }
 } 2>&1
 if ($LASTEXITCODE -eq 0) {
     $status4  = "OK"
-    $summary4 = "Full build including tests completed successfully."
+    switch ($BuildMode) {
+        'full'    { $summary4 = "Full build including tests completed successfully." }
+        'fast'    { $summary4 = "Fast build including tests completed successfully." }
+        'fastest' { $summary4 = "Fastest build without tests completed successfully." }
+    }
 } else {
     $status4  = "FAIL (exit code $LASTEXITCODE)"
-    $summary4 = "Full build including tests failed."
+    switch ($BuildMode) {
+        'full'    { $summary4 = "Full build including tests failed." }
+        'fast'    { $summary4 = "Fast build including tests failed." }
+        'fastest' { $summary4 = "Fastest build without tests failed." }
+    }
 }
-Write-Host "Completed step 4, status: $status4"
+Write-Host "Completed step 4 ($buildLabel), status: $status4"
 Write-Host "Summary: $summary4"
 Write-StepResult -Step $step4 -Status $status4 -CommandText $cmdText4 -Summary $summary4 -Output $output4
 

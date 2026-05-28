@@ -9,7 +9,12 @@
 #   - maze (JavaFX game client)
 #
 # Default:
-#   make          → toolchain info, refresh mirror if needed, clear Tycho cache, full build
+#   make                    -> toolchain info, refresh mirror if needed, clear Tycho cache, full build
+#
+# Fast paths:
+#   make help               -> show all targets including no-mirror options
+#   make quick              -> fastest safe path, skip mirror rebuild, keep cache, run tests
+#   make quick-no-tests     -> absolute fastest path, skip mirror rebuild, keep cache, skip tests
 # ─────────────────────────────────────────────────────────
 
 # Tools (override with: make MVN=mvnw)
@@ -49,10 +54,23 @@ JAVA21_SELECT = $$javaHomeCandidates = @(); \
 # Files that, when changed, should trigger a mirror rebuild
 MIRROR_INPUTS := releng/mirror/pom.xml
 
-.PHONY: all default toolchain-info mirror force-mirror clear-tycho-cache build clean-mirror
+.PHONY: all default help toolchain-info mirror force-mirror clear-tycho-cache build quick quick-no-tests clean-mirror
 
 default: all
 all: toolchain-info mirror clear-tycho-cache build
+
+help:
+	@echo === MazeGame build targets ===
+	@echo make all                : Full path. Mirror check or rebuild, clear Tycho cache, full build with tests.
+	@echo make build              : Build only. Uses mvn -U -DskipTests=false clean verify.
+	@echo make quick              : Fast path. No mirror target, no cache clear, tests on. Uses mvn -DskipTests=false verify.
+	@echo make quick-no-tests     : Fastest path. No mirror target, no cache clear, tests off. Uses mvn -DskipTests=true verify.
+	@echo make mirror             : Build or refresh local mirror if needed.
+	@echo make force-mirror       : Always rebuild local mirror.
+	@echo make clean-mirror       : Remove local mirror directory and stamp.
+	@echo
+	@echo To avoid mirror rebuilds, use make quick or make quick-no-tests.
+	@echo =================================
 
 # ─────────────────────────────────────────────────────────
 # Step 0 – Toolchain info
@@ -107,3 +125,13 @@ build:
 	@echo === Running full build: mvn -U -DskipTests=false clean verify ===
 	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -U -DskipTests=false clean verify"
 	@echo === Build finished ===
+
+quick:
+	@echo === Running fast build without mirror rebuild: mvn -DskipTests=false verify ===
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -DskipTests=false verify"
+	@echo === Fast build finished ===
+
+quick-no-tests:
+	@echo === Running fastest build without mirror rebuild: mvn -DskipTests=true verify ===
+	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -DskipTests=true verify"
+	@echo === Fastest build finished ===
