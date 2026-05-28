@@ -24,6 +24,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -44,6 +45,8 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
+import main.game.maze.config.model.PlayerConfig;
+import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -53,6 +56,7 @@ import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
+import main.game.maze.constants.PlayerConstants;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.service.CharacterIntersectionFixerService;
@@ -66,7 +70,7 @@ public class GameController implements Initializable {
     @FXML
     private AnchorPane root;
     @FXML
-    private Node player;
+    private ImageView player;
     @FXML
     private Pane gameBoard;
     @FXML
@@ -112,6 +116,7 @@ public class GameController implements Initializable {
     private AnimationTimer movementTimer;
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
+    private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private static final int EASY_BASE_SCORE = 10000;
     private static final int NORMAL_BASE_SCORE = 20000;
     private static final int HARD_BASE_SCORE = 30000;
@@ -317,32 +322,36 @@ public class GameController implements Initializable {
     }
 
     private void movePlayerRight() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveRight(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
+        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
+        for (int x = 0; x < iterations; x++) {
+            if (playerCharacter.moveRight(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }
         }
     }
 
     private void movePlayerLeft() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveLeft(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
+        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
+        for (int x = 0; x < iterations; x++) {
+            if (playerCharacter.moveLeft(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }
         }
     }
 
     private void movePlayerDown() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveDown(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
+        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
+        for (int x = 0; x < iterations; x++) {
+            if (playerCharacter.moveDown(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }
         }
     }
 
     private void movePlayerUp() {
-        for (int x = 0; x < StageConstants.PlayerCharacterSpeed / StageConstants.SpeedReducer; x++) {
-            if (playerCharacter.moveUp(StageConstants.PlayerCharacterSpeed - (x * StageConstants.SpeedReducer), false)) {
+        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
+        for (int x = 0; x < iterations; x++) {
+            if (playerCharacter.moveUp(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
                 return;
             }        
         }
@@ -354,11 +363,17 @@ public class GameController implements Initializable {
         updateBoardBackground();
 
         maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
+    PlayerConfig playerConfig = loadPlayerConfig();
+    playerMovementSpeed = Math.max(1, (int) Math.round(playerConfig.speed()));
+
+        setPlayerBaseImage(player, playerConfig.imageBase());
+
         playerCharacter = new PlayerCharacter(
                 player,
                 player.getLayoutX(),
                 player.getLayoutY(),
-                hpBar);
+        hpBar,
+        playerConfig);
 
         var vectors = maze.getMazeVectors();
 
@@ -422,7 +437,7 @@ public class GameController implements Initializable {
             }
         });
 
-        playerCharacter.setHitPoints(100);
+        playerCharacter.setHitPoints(playerConfig.health());
         var score = winGameAction.resetScore();
         routeHintPenaltyPoints = 0;
         routeHintPenaltyAccumulator = 0.0;
@@ -435,6 +450,34 @@ public class GameController implements Initializable {
         ensureHudLayersOnTop();
         
         startMovementTimer();
+    }
+
+    private PlayerConfig loadPlayerConfig() {
+        var loader = new XmiRulesLoader();
+        try {
+            return loader.loadPlayerConfigFromClasspath(
+                    PlayerConstants.PlayerModelPath,
+                    PlayerConstants.PlayerModelEcorePath);
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Failed to load player model, falling back to defaults", ex);
+            return PlayerConfig.defaults();
+        }
+    }
+
+    private void setPlayerBaseImage(ImageView playerImageView, String imagePath) {
+        if (imagePath == null || imagePath.isBlank()) {
+            return;
+        }
+        try {
+            var url = getClass().getResource(imagePath);
+            if (url != null) {
+                playerImageView.setImage(new Image(url.toExternalForm()));
+            } else {
+                LOGGER.warning("Player base image not found: " + imagePath);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Failed to load player base image from " + imagePath, ex);
+        }
     }
 
     private void startMovementTimer() {
@@ -881,13 +924,36 @@ public class GameController implements Initializable {
      * Call this before screen transitions to prevent race conditions.
      */
     public void stopComputerCharacters() {
+        stopPlayerMovement();
+        stopOpponentMovement();
+    }
+
+    /**
+     * Stops only player movement and key state.
+     * Opponent movement loop remains active.
+     */
+    public void stopPlayerMovement() {
         if (movementTimer != null) {
             movementTimer.stop();
             movementTimer = null;
         }
         pressedKeys.clear();
+    }
+
+    /**
+     * Stops only opponent movement loop.
+     */
+    public void stopOpponentMovement() {
         if (runComputerCharacters != null) runComputerCharacters.cancel();
-        if (runComputerCharactersThread != null) runComputerCharactersThread.interrupt();
+        if (runComputerCharactersThread != null) {
+            runComputerCharactersThread.interrupt();
+            try {
+                runComputerCharactersThread.join(200);
+            } catch (InterruptedException interruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            runComputerCharactersThread = null;
+        }
     }
 
     public void dispose() {

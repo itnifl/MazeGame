@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.application.Platform;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import main.game.maze.App;
 import main.game.maze.GameOverController;
 import main.game.maze.actions.base.CharacterActionScreens;
@@ -18,6 +20,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 public class GameOverAction extends CharacterActionScreens implements IDeathSubscriber {
     private AnchorPane root;
     private Runnable runnableOnGameOver;
+    private volatile boolean gameOverScheduled = false;
 
     public GameOverAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root,
             Runnable runnableOnGameOver) {
@@ -38,14 +41,32 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
     }
 
     private void handleGameOver(ICanDie mortalEntity) {
-        // Stop movement loop immediately to prevent race conditions
+        if (gameOverScheduled) {
+            return;
+        }
+        gameOverScheduled = true;
+
+        if (App.gameController != null) {
+            App.gameController.stopPlayerMovement();
+        }
+
+        if (mortalEntity instanceof PlayerCharacter player) {
+            player.PlayDieAnimation();
+        }
+
+        PauseTransition waitBeforeGameOver = new PauseTransition(Duration.seconds(3));
+        waitBeforeGameOver.setOnFinished(event -> showGameOverScreen());
+        waitBeforeGameOver.play();
+    }
+
+    private void showGameOverScreen() {
+        // End movement loops only after the 3-second death display window.
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();
         }
+        runnableOnGameOver.run();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));
-
-        runnableOnGameOver.run();
 
         try {
             AnchorPane gameOverScreen = fxmlLoader.load();
