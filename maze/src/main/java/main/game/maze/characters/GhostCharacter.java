@@ -60,7 +60,11 @@ public class GhostCharacter extends ComputerCharacter
 
     @Override
     public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
-        if (nodeBounds.intersects(this.getCharacterGraphics().getBoundsInParent())) {
+        var graphics = this.getCharacterGraphics();
+        if (nodeBounds == null || graphics == null) {
+            return;
+        }
+        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
                 LOGGER.fine("Ghost is intersecting with " + canDieEntity);
