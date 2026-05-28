@@ -54,6 +54,77 @@ Typical concepts in the model include
 The model is the single source of truth.  
 Any change in opponent definitions should be made here, then propagated through generation.
 
+### Mermaid overview
+
+```mermaid
+classDiagram
+  class OpponentModel {
+    +name : String
+    +maxThreat : int
+    +gameSetCurrentThreatLevel : double
+  }
+
+  class CharacterType {
+    <<abstract>>
+    +id : String
+    +displayName : String
+    +enabled : boolean
+    +health : int
+    +speed : double
+    +threatLevel : double
+    +effectiveThreat : double
+    +behavior : BehaviorType
+    +animationFrameCount : int
+    +spriteScale : double
+  }
+
+  class Zombie {
+    +attackDamage : int
+    +infectionLevel : int
+    +resurrectionTime : int
+    +touchSound : String
+  }
+
+  class Ghost {
+    +attackDamage : int
+    +visibilityLevel : int
+    +nonTangibilityEnergy : double
+  }
+
+  class RangedEnemy {
+    <<abstract>>
+    +attackRange : double
+    +attackCooldownMs : int
+    +attackDamage : int
+    +projectileSpeed : double
+    +splashRadius : double
+    +arcHeight : double
+  }
+
+  class PumpkinBomber
+  class LootTable {
+    +weightCapacity : int
+  }
+  class LootItem {
+    +name : String
+    +type : LootItemType
+    +value : int
+    +weight : int
+  }
+  class Difficulty
+
+  OpponentModel "1" *-- "1..*" CharacterType : characterTypes
+  OpponentModel --> "0..1" Difficulty : selectedDifficulty
+  CharacterType <|-- Zombie
+  CharacterType <|-- Ghost
+  CharacterType <|-- RangedEnemy
+  RangedEnemy <|-- PumpkinBomber
+  Zombie --> "0..1" LootTable : zombieLootTable
+  LootTable "1" *-- "0..*" LootItem : items
+```
+
+The opponents model imports the difficulties metamodel and uses the non-Pivot EMF OCL delegates (URI: http://www.eclipse.org/emf/2002/Ecore/OCL) for derived values and validation.
+
 ---
 
 ## Generated And Runtime Code

@@ -24,6 +24,98 @@ Typical concepts found here include
 - Behaviour classes that decide where an actor should move next  
 - Helper services that connect to the navigation graph from `main.game.maze.mazeworld`
 
+### Mermaid overview
+
+```mermaid
+classDiagram
+  class MovementBehavior {
+    <<abstract>>
+    +baseVisionRange : double
+    +additionalVisionRange : double
+    +visionRangeMultiplier : double
+    +visionRange : double
+    +ignoreWalls : boolean
+    +instantKillOnCollision : boolean
+  }
+
+  class RandomBehavior {
+    +regenPerSecond : double
+  }
+
+  class PatrolBehavior {
+    +currentIndex : int
+    +behavior : PatrolPathBehavior
+  }
+
+  class ChaseBehavior
+  class Position {
+    +posX : double
+    +posY : double
+  }
+  class Direction
+  class PatrolPoint
+  class PatrolZone {
+    +width : double
+    +height : double
+  }
+
+  class PathCalculator {
+    <<abstract>>
+    +distanceMethod : DistanceMethod
+  }
+
+  class DijkstraPathCalculator {
+    +maxPathLength : int
+  }
+
+  class AstarPathCalculator {
+    +maxPathLength : int
+    +heuristicMethod : DistanceMethod
+  }
+
+  class LocalPathCalculator
+
+  class CharacterEvent {
+    <<abstract>>
+    +probability : double
+  }
+
+  class HealthEvent
+  class SpeedEvent
+  class TimeEvent
+  class VisionEvent
+  class AttackEvent
+  class CharacterType
+
+  MovementBehavior <|-- RandomBehavior
+  MovementBehavior <|-- PatrolBehavior
+  MovementBehavior <|-- ChaseBehavior
+  PathCalculator <|-- DijkstraPathCalculator
+  PathCalculator <|-- AstarPathCalculator
+  PathCalculator <|-- LocalPathCalculator
+  CharacterEvent <|-- HealthEvent
+  CharacterEvent <|-- SpeedEvent
+  CharacterEvent <|-- TimeEvent
+  CharacterEvent <|-- VisionEvent
+  CharacterEvent <|-- AttackEvent
+
+  MovementBehavior --> "1" CharacterType : charactertype
+  MovementBehavior --> "0..*" Position : nextPositions
+  MovementBehavior --> "0..1" Position : position
+  MovementBehavior --> "0..1" Direction : direction
+  Direction --> "1" Position : startPosition
+  Direction --> "1" Position : endPosition
+  PatrolBehavior "1" *-- "1..*" PatrolPoint : path
+  PatrolBehavior "1" *-- "1" PathCalculator : pathcalculator
+  PatrolBehavior --> "0..1" PatrolZone : patrolZone
+  PatrolPoint "1" *-- "1" Position : point
+  PatrolPoint "1" *-- "0..*" CharacterEvent : events
+  PatrolZone --> "1" Position : topLeft
+  ChaseBehavior "1" *-- "1" Position : relativePositionTarget
+  ChaseBehavior "1" *-- "1" PathCalculator : pathcalculator
+  CharacterEvent --> "1" MovementBehavior : subscriber
+```
+
 ---
 
 ## Core Concepts

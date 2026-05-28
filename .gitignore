@@ -56,8 +56,13 @@ bin/
 
 # Tycho / p2 artefacts 
 **/.flattened-pom.xml
+**/.tycho-consumer-pom.xml
 **/target/repository/
 **/target/*.repo.zip
+
+# Local PR watcher state
+tools/.watch-pr-state.json
+tools/.watch-pr-llm-prompt.txt
 
 # JavaFX packaging (optional)
 dist/
