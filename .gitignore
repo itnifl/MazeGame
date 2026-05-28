@@ -60,6 +60,9 @@ bin/
 **/target/repository/
 **/target/*.repo.zip
 
+# Local PR watcher state
+tools/.watch-pr-state.json
+
 # JavaFX packaging (optional)
 dist/
 out/

@@ -94,10 +94,14 @@ function Get-NewItems {
 function Show-WorkPrompt {
     param(
         [Parameter(Mandatory = $true)]$PullRequest,
-        [Parameter(Mandatory = $true)]$ReviewComments,
-        [Parameter(Mandatory = $true)]$IssueComments,
-        [Parameter(Mandatory = $true)]$CheckRuns
+        $ReviewComments = @(),
+        $IssueComments = @(),
+        $CheckRuns = @()
     )
+
+    if (-not $ReviewComments) { $ReviewComments = @() }
+    if (-not $IssueComments) { $IssueComments = @() }
+    if (-not $CheckRuns) { $CheckRuns = @() }
 
     Write-Host ''
     Write-Host "=== PR Watch Summary ===" -ForegroundColor Cyan
@@ -160,6 +164,10 @@ for ($cycle = 1; $cycle -le $Cycles; $cycle++) {
 
     $newReviewComments = Get-NewItems -Items $reviewComments -SeenIds @($state.ReviewCommentIds)
     $newIssueComments = Get-NewItems -Items $issueComments -SeenIds @($state.IssueCommentIds)
+
+    if (-not $newReviewComments) { $newReviewComments = @() }
+    if (-not $newIssueComments) { $newIssueComments = @() }
+    if (-not $checkRuns) { $checkRuns = @() }
 
     Show-WorkPrompt -PullRequest $pullRequest -ReviewComments $newReviewComments -IssueComments $newIssueComments -CheckRuns $checkRuns
 
