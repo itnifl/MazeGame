@@ -37,10 +37,18 @@ public class HighScoreController implements Initializable {
 
         // add score labels to the VBox
         if (highScoresVBox != null) {
-            for (Score score : scores) {
+            int maxRows = Math.min(scores.size(), 8);
+            for (int i = 0; i < maxRows; i++) {
+                Score score = scores.get(i);
                 Label scoreLabel = new Label(score.toString());
-                scoreLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: black;");
+                scoreLabel.setStyle("-fx-font-size: 22px; -fx-font-family: 'Consolas'; -fx-text-fill: #f2f8ff; -fx-font-weight: bold;");
                 highScoresVBox.getChildren().add(scoreLabel);
+            }
+
+            if (scores.isEmpty()) {
+                Label noScores = new Label("No saved scores yet");
+                noScores.setStyle("-fx-font-size: 18px; -fx-font-family: 'Consolas'; -fx-text-fill: #9fbad2;");
+                highScoresVBox.getChildren().add(noScores);
             }
         }
     }

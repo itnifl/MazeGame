@@ -18,7 +18,6 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -33,6 +32,7 @@ import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import javafx.scene.media.MediaException;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
@@ -45,6 +45,11 @@ public class PlayerCharacter extends Character
     private ProgressBar hpBar;
     public static MediaPlayer screamMediaPlayer;
     public static MediaPlayer infectedMediaPlayer;
+    private static volatile boolean screamSoundDisabled = false;
+    private static volatile boolean infectedSoundDisabled = false;
+    private static volatile long lastScreamPlaybackAt = 0L;
+    private static volatile long lastInfectedPlaybackAt = 0L;
+    private static final long SOUND_COOLDOWN_MS = 250L;
     public boolean isWinning = false;
     private Timeline infectionTimeline = null;
 
@@ -56,23 +61,35 @@ public class PlayerCharacter extends Character
         this.hpBar = hpBar;
     }
 
-    private MediaView addScreamSound() {
+    private MediaPlayer buildMediaPlayer(String resourcePath, String soundName) {
+        var resource = getClass().getResource(resourcePath);
+        if (resource == null) {
+            LOGGER.warning("Missing audio resource for " + soundName + ": " + resourcePath);
+            return null;
+        }
 
-        var resource = getClass().getResource(ResourceFileConstants.PlayerScreamSound);
-        Media media = new Media(resource.toString());
-        PlayerCharacter.screamMediaPlayer = new MediaPlayer(media);
-
-        // Create a MediaView and add it to the root node
-        return new MediaView(screamMediaPlayer);
+        try {
+            Media media = new Media(resource.toExternalForm());
+            return new MediaPlayer(media);
+        } catch (MediaException mediaEx) {
+            LOGGER.warning("Failed to initialize media backend for " + soundName + ": " + mediaEx.getMessage());
+            return null;
+        } catch (Exception ex) {
+            LOGGER.warning("Unexpected audio error for " + soundName + ": " + ex.getMessage());
+            return null;
+        }
     }
 
-    private MediaView addInfectedSound() {
-        var resource = getClass().getResource(ResourceFileConstants.PlayerInfectedSound);
-        Media media = new Media(resource.toString());
-        PlayerCharacter.infectedMediaPlayer = new MediaPlayer(media);
-
-        // Create a MediaView and add it to the root node
-        return new MediaView(infectedMediaPlayer);
+    private void playSoundSafely(MediaPlayer player, String soundName) {
+        try {
+            if (player.getStatus() == MediaPlayer.Status.PLAYING) {
+                player.stop();
+            }
+            player.seek(Duration.ZERO);
+            player.play();
+        } catch (Exception ex) {
+            LOGGER.warning("Failed to play " + soundName + ": " + ex.getMessage());
+        }
     }
 
     @Override
@@ -201,17 +218,47 @@ public class PlayerCharacter extends Character
     }
 
     private void doStandardScreamSound() {
-        if (hpBar != null) {
-            addScreamSound();
-            screamMediaPlayer.play();
+        if (hpBar == null || screamSoundDisabled) {
+            return;
         }
+
+        long now = System.currentTimeMillis();
+        if (now - lastScreamPlaybackAt < SOUND_COOLDOWN_MS) {
+            return;
+        }
+        lastScreamPlaybackAt = now;
+
+        if (screamMediaPlayer == null) {
+            screamMediaPlayer = buildMediaPlayer(ResourceFileConstants.PlayerScreamSound, "player scream sound");
+            if (screamMediaPlayer == null) {
+                screamSoundDisabled = true;
+                return;
+            }
+        }
+
+        Platform.runLater(() -> playSoundSafely(screamMediaPlayer, "player scream sound"));
     }
 
     private void doInfectedScreamSound() {
-        if (hpBar != null) {
-            addInfectedSound();
-            infectedMediaPlayer.play();
+        if (hpBar == null || infectedSoundDisabled) {
+            return;
         }
+
+        long now = System.currentTimeMillis();
+        if (now - lastInfectedPlaybackAt < SOUND_COOLDOWN_MS) {
+            return;
+        }
+        lastInfectedPlaybackAt = now;
+
+        if (infectedMediaPlayer == null) {
+            infectedMediaPlayer = buildMediaPlayer(ResourceFileConstants.PlayerInfectedSound, "infected scream sound");
+            if (infectedMediaPlayer == null) {
+                infectedSoundDisabled = true;
+                return;
+            }
+        }
+
+        Platform.runLater(() -> playSoundSafely(infectedMediaPlayer, "infected scream sound"));
     }
 
     private void flashCharacterColor(ImageView imageView, double colorHue) {
