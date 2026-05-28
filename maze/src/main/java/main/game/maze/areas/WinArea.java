@@ -64,7 +64,7 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
 
         @Override
     public void removePositionSubscriber(ICanSubscribeAndNotifyPosition touchEntity) {
-        winTargets.add(touchEntity);
+            winTargets.remove(touchEntity);
     }
 
     @Override

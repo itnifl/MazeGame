@@ -1,5 +1,8 @@
 package main.game.maze.actions;
 
+import java.util.ArrayList;
+
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.interfaces.INotifyMovement;
@@ -15,8 +18,27 @@ public class MovementNotifierAction implements INotifyMovement {
 
     @Override
     public void doNotifyCharacterMovement() {
-        for(var listener : entity.getPositionSubscribers() ) {
-            listener.doPositionEvaluation(this.characterGraphics.getBoundsInParent(), this.entity);
+        if (entity == null || characterGraphics == null) {
+            return;
+        }
+
+        Bounds bounds = characterGraphics.getBoundsInParent();
+        if (bounds == null) {
+            return;
+        }
+
+        var subscribers = entity.getPositionSubscribers();
+        if (subscribers == null || subscribers.isEmpty()) {
+            return;
+        }
+
+        // Iterate over a snapshot so listeners can subscribe/unsubscribe during callbacks.
+        var snapshot = new ArrayList<>(subscribers);
+        for (var listener : snapshot) {
+            if (listener == null) {
+                continue;
+            }
+            listener.doPositionEvaluation(bounds, this.entity);
         }
     }
     
