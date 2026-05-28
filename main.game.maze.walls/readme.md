@@ -37,6 +37,34 @@ Typical elements in the model include
 
 The model is the single source of truth. Any change here should be reflected automatically in the generated Java code and in the maze generator.
 
+### Mermaid overview
+
+```mermaid
+classDiagram
+  class WallModel
+
+  class WallMaterial {
+    +wallBaseType : WallMaterialBaseType
+    +displayName : String
+    +breakable : boolean
+    +hitPoints : int
+    +id : String
+    +baseImage : String
+  }
+
+  class WallMaterialBaseType {
+    <<enumeration>>
+    GLASS
+    DIRT
+    WOOD
+    STONE
+    STEEL
+  }
+
+  WallModel "1" *-- "0..*" WallMaterial : materials
+  WallMaterial --> WallMaterialBaseType
+```
+
 ### ２．Generated Java code
 
 From the EMF model and the .xmi configuration the Acceleo templates generate Java classes under `main.game.maze.walls.generated` (package name and folder layout may vary slightly depending on the current generator setup).

@@ -40,6 +40,47 @@ A difficulty entry usually contains information such as
 
 The model is the main source of truth for what a difficulty level is.
 
+### Mermaid overview
+
+```mermaid
+classDiagram
+  class DifficultyGameData {
+    +currentDifficulty : Difficulty
+  }
+
+  class Difficulty {
+    <<abstract>>
+    +instantDeath : boolean
+    +monstersMovementSpeedMultiplier : double
+    +monstersDamageMultiplier : double
+    +maxThreat : int
+  }
+
+  class EasyDifficulty
+  class NormalDifficulty
+  class HardDifficulty
+
+  class EnemyMaxCount {
+    +type : EnemyTypes
+    +maxCount : int
+  }
+
+  class EnemyTypes {
+    <<enumeration>>
+    ZOMBIE
+    GHOST
+    PUMPKINBOMBER
+  }
+
+  DifficultyGameData "1" *-- "1..*" Difficulty : difficulties
+  DifficultyGameData --> "0..1" Difficulty : currentDifficulty
+  Difficulty <|-- EasyDifficulty
+  Difficulty <|-- NormalDifficulty
+  Difficulty <|-- HardDifficulty
+  Difficulty "1" *-- "0..*" EnemyMaxCount : enemyMaxCount
+  EnemyMaxCount --> EnemyTypes
+```
+
 ### Generated and configuration based code
 
 From the model and accompanying configuration files, the build generates supporting code and constants.  
