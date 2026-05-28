@@ -147,13 +147,14 @@ public class App extends Application {
 
         Scene scene = stage.getScene();
         if (scene != null) {
-            var root = (AnchorPane) scene.getRoot();
-            root.setPrefWidth(width);
-            root.setPrefHeight(height);
-            root.setMaxWidth(width);
-            root.setMaxHeight(height);        
-            setProgressBarWidth(root);
-            scene.setRoot(root); 
+            var root = scene.getRoot();
+            if (root instanceof AnchorPane anchorRoot) {
+                anchorRoot.setPrefWidth(width);
+                anchorRoot.setPrefHeight(height);
+                anchorRoot.setMaxWidth(width);
+                anchorRoot.setMaxHeight(height);
+                setProgressBarWidth(anchorRoot);
+            }
 
         }
     }
@@ -170,13 +171,14 @@ public class App extends Application {
 
         Scene scene = stage.getScene();
         if (scene != null) {
-            var root = (AnchorPane) scene.getRoot();
-            root.setPrefWidth(width);
-            root.setPrefHeight(height);
-            root.setMaxWidth(width);
-            root.setMaxHeight(height);            
-            setProgressBarWidth(root);
-            scene.setRoot(root); 
+            var root = scene.getRoot();
+            if (root instanceof AnchorPane anchorRoot) {
+                anchorRoot.setPrefWidth(width);
+                anchorRoot.setPrefHeight(height);
+                anchorRoot.setMaxWidth(width);
+                anchorRoot.setMaxHeight(height);
+                setProgressBarWidth(anchorRoot);
+            }
         }
     }
 
