@@ -1,8 +1,5 @@
 package main.game.maze.generated;
 
-import java.util.function.Consumer;
-import java.util.logging.Logger;
-import main.game.maze.walls.WallMaterial;
 import main.game.maze.walls.WallMaterialBaseType;
 
 /**
@@ -10,8 +7,6 @@ import main.game.maze.walls.WallMaterialBaseType;
  * @generated from walls.ecore via FreeMarker template
  */
 public final class WallCollisionHandler {
-
-    private static final Logger LOGGER = Logger.getLogger(WallCollisionHandler.class.getName());
 
     private WallCollisionHandler() { }
 
