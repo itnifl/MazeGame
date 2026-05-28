@@ -44,7 +44,8 @@ public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
 
     private static final Logger LOGGER = Logger.getLogger(PlayerCharacter.class.getName());
-    private AtomicInteger hitPoints = new AtomicInteger(100);
+    public static final int MAX_PLAYER_HP = 100;
+    private AtomicInteger hitPoints = new AtomicInteger(MAX_PLAYER_HP);
     private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
@@ -57,6 +58,7 @@ public class PlayerCharacter extends Character
     private static volatile long lastInfectedPlaybackAt = 0L;
     private static final long SOUND_COOLDOWN_MS = 250L;
     private static final double DEAD_PLAYER_SCALE = 1.2;
+    private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
     public boolean isWinning = false;
     private Timeline infectionTimeline = null;
     private final PlayerConfig playerConfig;
@@ -170,42 +172,45 @@ public class PlayerCharacter extends Character
     @Override
     public void PlayDieAnimation() {
         deadVisualActive = true;
-        Node graphics = getCharacterGraphics();
-        double previousLayoutX = graphics != null ? graphics.getLayoutX() : 0;
-        double previousLayoutY = graphics != null ? graphics.getLayoutY() : 0;
-        double previousWidth = graphics != null ? graphics.getBoundsInLocal().getWidth() : 0;
-        double previousHeight = graphics != null ? graphics.getBoundsInLocal().getHeight() : 0;
+        applyDeathVisualState(getCharacterGraphics());
+        super.doCharacterAnimation(new DieAction());
+    }
 
-        if (deathImage != null && getCharacterGraphics() instanceof ImageView) {
+    private void applyDeathVisualState(Node graphics) {
+        if (graphics == null) {
+            return;
+        }
+
+        boolean isImageView = graphics instanceof ImageView;
+        double previousLayoutX = graphics.getLayoutX();
+        double previousLayoutY = graphics.getLayoutY();
+        double previousWidth = graphics.getBoundsInLocal().getWidth();
+        double previousHeight = graphics.getBoundsInLocal().getHeight();
+
+        if (deathImage != null && isImageView) {
             setCharacterImage(deathImage);
         }
 
-        if (graphics != null) {
-            graphics.setScaleX(DEAD_PLAYER_SCALE);
-            graphics.setScaleY(DEAD_PLAYER_SCALE);
+        graphics.setScaleX(DEAD_PLAYER_SCALE);
+        graphics.setScaleY(DEAD_PLAYER_SCALE);
 
-            // Keep top-left position stable after scaling up to avoid visible jump.
+        if (previousWidth > 0 && previousHeight > 0) {
             double xOffset = (previousWidth * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
             double yOffset = (previousHeight * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
             graphics.setLayoutX(previousLayoutX + xOffset);
             graphics.setLayoutY(previousLayoutY + yOffset);
-
-            // Keep dead player above opponents without reordering parent children.
-            graphics.setViewOrder(-1000);
         }
 
-        super.doCharacterAnimation(new DieAction());
+        graphics.setViewOrder(DEAD_PLAYER_VIEW_ORDER);
     }
 
     private class HappyAction implements ICharacterAction {
         public void doAction(Node characterGraphics) {
-            // Animate the character and do stuff
         }
     }
 
     private class DieAction implements ICharacterAction {
         public void doAction(Node characterGraphics) {
-            // Animate the character and do stuff
         }
     }
 

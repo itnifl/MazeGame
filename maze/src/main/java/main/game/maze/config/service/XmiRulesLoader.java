@@ -27,7 +27,7 @@ import main.game.maze.difficulties.DifficultiesPackage;
 public final class XmiRulesLoader {
 
   private static final Logger LOG = Logger.getLogger(XmiRulesLoader.class.getName());
-  private static volatile boolean XMI_FACTORY_REGISTERED = false;
+  private static volatile boolean xmiFactoryRegistered = false;
 
   public XmiRulesLoader() {}
 
@@ -54,13 +54,7 @@ public final class XmiRulesLoader {
     rs.getPackageRegistry().put(DifficultiesPackage.eNS_URI, DifficultiesPackage.eINSTANCE);
 
     // 2) Resolve the classpath resource
-    URL url = OpponentsPackage.class.getResource(classpathXmi);
-    if (url == null) {
-      url = XmiRulesLoader.class.getResource(classpathXmi);
-    }
-    if (url == null) {
-      throw new IllegalStateException("Opponent model resource not found in classpath: " + classpathXmi);
-    }
+    URL url = resolveClasspathUrl(classpathXmi);
 
     // 3) Load via EMF
     URI uri = URI.createURI(url.toString());
@@ -197,12 +191,11 @@ public final class XmiRulesLoader {
   }
 
   /** Registers the XMI factory only once. */
-  // Reduces redundancy and efficiency
   private static synchronized void ensureXmiFactory() {
-    if (!XMI_FACTORY_REGISTERED) {
+    if (!xmiFactoryRegistered) {
       Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
           .put("xmi", new XMIResourceFactoryImpl());
-      XMI_FACTORY_REGISTERED = true;
+      xmiFactoryRegistered = true;
       LOG.fine("XMIResourceFactoryImpl registered.");
     }
   }

@@ -1,7 +1,10 @@
 package main.game.maze.actions;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.animation.PauseTransition;
@@ -18,16 +21,27 @@ import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class GameOverAction extends CharacterActionScreens implements IDeathSubscriber {
-    private AnchorPane root;
-    private Runnable runnableOnGameOver;
-    private volatile boolean gameOverScheduled = false;
+    private static final Logger LOGGER = Logger.getLogger(GameOverAction.class.getName());
+    private static final double DEFAULT_DEATH_DISPLAY_DELAY_SECONDS = 3.0;
+
+    private final AnchorPane root;
+    private final Runnable runnableOnGameOver;
+    private final AtomicBoolean gameOverScheduled = new AtomicBoolean(false);
+    private final Duration deathDisplayDelay;
 
     public GameOverAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root,
             Runnable runnableOnGameOver) {
+        this(playerCharacter, playerMoveCount, root, runnableOnGameOver,
+                Duration.seconds(DEFAULT_DEATH_DISPLAY_DELAY_SECONDS));
+    }
+
+    public GameOverAction(PlayerCharacter playerCharacter, AtomicInteger playerMoveCount, AnchorPane root,
+            Runnable runnableOnGameOver, Duration deathDisplayDelay) {
         this.root = root;
         this.runnableOnGameOver = runnableOnGameOver;
         this.playerMoveCount = playerMoveCount;
         this.playerCharacter = playerCharacter;
+        this.deathDisplayDelay = deathDisplayDelay;
     }
 
     @Override
@@ -41,10 +55,9 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
     }
 
     private void handleGameOver(ICanDie mortalEntity) {
-        if (gameOverScheduled) {
+        if (!gameOverScheduled.compareAndSet(false, true)) {
             return;
         }
-        gameOverScheduled = true;
 
         if (App.gameController != null) {
             App.gameController.stopPlayerMovement();
@@ -54,13 +67,12 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
             player.PlayDieAnimation();
         }
 
-        PauseTransition waitBeforeGameOver = new PauseTransition(Duration.seconds(3));
+        PauseTransition waitBeforeGameOver = new PauseTransition(deathDisplayDelay);
         waitBeforeGameOver.setOnFinished(event -> showGameOverScreen());
         waitBeforeGameOver.play();
     }
 
     private void showGameOverScreen() {
-        // End movement loops only after the 3-second death display window.
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();
         }
@@ -77,14 +89,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
             updateScore();
             controller.setScoreLabel(this.score);
-
-            var hitPoints = playerCharacter.getHitPoints();
-            if (hitPoints < 100) {
-                controller.showDamagePenaltyLabel();
-            }
-            if (hitPoints <= 0) {
-                controller.showDeathPenaltyLabel();
-            }
+            configurePenaltyLabels(controller, playerCharacter.getHitPoints());
 
             Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
@@ -97,7 +102,16 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Failed to load game over screen", e);
+        }
+    }
+
+    private void configurePenaltyLabels(GameOverController controller, int hitPoints) {
+        if (hitPoints < PlayerCharacter.MAX_PLAYER_HP) {
+            controller.showDamagePenaltyLabel();
+        }
+        if (hitPoints <= 0) {
+            controller.showDeathPenaltyLabel();
         }
     }
 

@@ -16,5 +16,5 @@
       ImageTurnRight="/main/game/maze/you2.png"
       ImageTurnUp="/main/game/maze/you2.png"
       ImageTurnDown="/main/game/maze/you2.png"
-      ImageDeath="/main/game/maze/you2-dead.jpg"/>
+      ImageDeath="/main/game/maze/you2-dead.png"/>
 </player:PlayerModel>

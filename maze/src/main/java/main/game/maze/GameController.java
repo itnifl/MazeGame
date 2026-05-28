@@ -121,6 +121,7 @@ public class GameController implements Initializable {
     private static final int NORMAL_BASE_SCORE = 20000;
     private static final int HARD_BASE_SCORE = 30000;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
+    private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
     private boolean isRouteHintVisible = false;
     private long lastRouteHintPenaltyNanos = 0L;
     private double routeHintPenaltyAccumulator = 0.0;
@@ -388,13 +389,9 @@ public class GameController implements Initializable {
         root.getChildren().add(treeCanvas);
         ensureHudLayersOnTop();
 
-        gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {
-            runComputerCharacters.cancel();
-        });
+        gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {});
 
-        winGameAction = new WinGameAction(playerCharacter, playerMoveCount, root, () -> {
-            runComputerCharacters.cancel();
-        });
+        winGameAction = new WinGameAction(playerCharacter, playerMoveCount, root, () -> {});
 
         int baseScore = getBaseScoreForCurrentDifficulty();
         gameOverAction.setBaseScore(baseScore);
@@ -948,7 +945,7 @@ public class GameController implements Initializable {
         if (runComputerCharactersThread != null) {
             runComputerCharactersThread.interrupt();
             try {
-                runComputerCharactersThread.join(200);
+                runComputerCharactersThread.join(OPPONENT_THREAD_JOIN_TIMEOUT_MS);
             } catch (InterruptedException interruptedException) {
                 Thread.currentThread().interrupt();
             }

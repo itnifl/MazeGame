@@ -16,17 +16,18 @@ public record PlayerConfig(
         String imageDeath) {
 
     public static PlayerConfig defaults() {
+        String base = PlayerConstants.DefaultPlayerImage;
         return new PlayerConfig(
                 "player_default",
                 "Player",
                 true,
                 PlayerConstants.DefaultHealth,
                 PlayerConstants.DefaultSpeed,
-                PlayerConstants.DefaultPlayerImage,
-                PlayerConstants.DefaultPlayerImage,
-                PlayerConstants.DefaultPlayerImage,
-                PlayerConstants.DefaultPlayerImage,
-                PlayerConstants.DefaultPlayerImage,
+                base,
+                base,
+                base,
+                base,
+                base,
                 PlayerConstants.DefaultDeathImage);
     }
 }
