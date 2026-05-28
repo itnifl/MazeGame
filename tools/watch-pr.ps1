@@ -3,7 +3,10 @@ param(
     [int]$PullRequestNumber = 55,
     [int]$IntervalMinutes = 10,
     [int]$Cycles = 6,
-    [string]$StateFile = (Join-Path $PSScriptRoot '.watch-pr-state.json')
+    [string]$StateFile = (Join-Path $PSScriptRoot '.watch-pr-state.json'),
+    [string]$LlmCommand = '',
+    [string]$LlmPromptFile = (Join-Path $PSScriptRoot '.watch-pr-llm-prompt.txt'),
+    [switch]$InvokeLlmAlways
 )
 
 $ErrorActionPreference = 'Stop'
@@ -145,6 +148,86 @@ function Show-WorkPrompt {
     Write-Host 'Check the new comments and CI status, then make the smallest safe code change needed, run the focused validation, and keep the branch ready to push.' -ForegroundColor Yellow
 }
 
+function Get-FailingChecks {
+    param(
+        $CheckRuns
+    )
+
+    if (-not $CheckRuns) {
+        return @()
+    }
+
+    return @($CheckRuns | Where-Object {
+        $state = if ($_.conclusion) { [string]$_.conclusion } else { [string]$_.status }
+        $normalized = $state.ToLowerInvariant()
+        $normalized -in @('failure', 'failed', 'timed_out', 'cancelled', 'action_required')
+    })
+}
+
+function Build-LlmPrompt {
+    param(
+        [Parameter(Mandatory = $true)]$PullRequest,
+        $ReviewComments,
+        $IssueComments,
+        $FailingChecks
+    )
+
+    $reviewLines = @($ReviewComments | ForEach-Object {
+        "- Review by @$($_.user.login): $((($_.body -replace '\s+', ' ').Trim()))"
+    })
+    $issueLines = @($IssueComments | ForEach-Object {
+        "- Comment by @$($_.user.login): $((($_.body -replace '\s+', ' ').Trim()))"
+    })
+    $checkLines = @($FailingChecks | ForEach-Object {
+        $state = if ($_.conclusion) { $_.conclusion } else { $_.status }
+        "- $($_.name): $state"
+    })
+
+    if ($reviewLines.Count -eq 0) { $reviewLines = @('- None') }
+    if ($issueLines.Count -eq 0) { $issueLines = @('- None') }
+    if ($checkLines.Count -eq 0) { $checkLines = @('- None') }
+
+    return @"
+Repository: $Repository
+PR: #$($PullRequest.number) $($PullRequest.title)
+State: $($PullRequest.state)
+Head SHA: $($PullRequest.head.sha)
+
+Failing checks:
+$($checkLines -join [Environment]::NewLine)
+
+New review comments:
+$($reviewLines -join [Environment]::NewLine)
+
+New issue comments:
+$($issueLines -join [Environment]::NewLine)
+
+Instruction:
+Check the new comments and CI status, then make the smallest safe code change needed, run focused validation, and keep the branch ready to push.
+"@
+}
+
+function Invoke-LlmIfConfigured {
+    param(
+        [Parameter(Mandatory = $true)]$Prompt
+    )
+
+    if ([string]::IsNullOrWhiteSpace($LlmCommand)) {
+        return
+    }
+
+    $promptDirectory = Split-Path -Parent $LlmPromptFile
+    if ($promptDirectory -and -not (Test-Path $promptDirectory)) {
+        New-Item -ItemType Directory -Path $promptDirectory -Force | Out-Null
+    }
+
+    $Prompt | Set-Content -Path $LlmPromptFile -Encoding UTF8
+
+    $commandToRun = $LlmCommand.Replace('{PROMPT_FILE}', $LlmPromptFile)
+    Write-Host "Invoking LLM command: $commandToRun" -ForegroundColor Magenta
+    Invoke-Expression $commandToRun
+}
+
 Write-Host "Watching $Repository PR #$PullRequestNumber every $IntervalMinutes minute(s) for $Cycles cycle(s)." -ForegroundColor Green
 
 for ($cycle = 1; $cycle -le $Cycles; $cycle++) {
@@ -169,7 +252,14 @@ for ($cycle = 1; $cycle -le $Cycles; $cycle++) {
     if (-not $newIssueComments) { $newIssueComments = @() }
     if (-not $checkRuns) { $checkRuns = @() }
 
+    $failingChecks = Get-FailingChecks -CheckRuns $checkRuns
     Show-WorkPrompt -PullRequest $pullRequest -ReviewComments $newReviewComments -IssueComments $newIssueComments -CheckRuns $checkRuns
+
+    $hasActionableWork = ($newReviewComments.Count -gt 0) -or ($newIssueComments.Count -gt 0) -or ($failingChecks.Count -gt 0)
+    if ($InvokeLlmAlways -or $hasActionableWork) {
+        $llmPrompt = Build-LlmPrompt -PullRequest $pullRequest -ReviewComments $newReviewComments -IssueComments $newIssueComments -FailingChecks $failingChecks
+        Invoke-LlmIfConfigured -Prompt $llmPrompt
+    }
 
     $state.ReviewCommentIds = @($reviewComments | ForEach-Object { [string]$_.id })
     $state.IssueCommentIds = @($issueComments | ForEach-Object { [string]$_.id })
