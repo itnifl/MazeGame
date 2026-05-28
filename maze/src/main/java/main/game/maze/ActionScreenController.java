@@ -42,12 +42,10 @@ public class ActionScreenController {
     }
 
     public void writeScore(String playerName, int score, String filename) {
-        try {
-            FileWriter writer = new FileWriter(filename, true);
+        try (FileWriter writer = new FileWriter(filename, true)) {
             writer.write(playerName + ": " + score + "\n");
-            writer.close();
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Unable to write score file: {0} ({1})", new Object[] { filename, e.getMessage() });
+            LOGGER.log(Level.WARNING, String.format("Unable to write score file: %s", filename), e);
         }
     }
 

@@ -16,9 +16,23 @@ function Invoke-GhApiJson {
         [Parameter(Mandatory = $true)][string]$Path
     )
 
-    $json = & gh api $Path 2>$null
+    $stderrFile = [System.IO.Path]::GetTempFileName()
+    $json = $null
+    try {
+        $json = & gh api $Path 2> $stderrFile
+    } finally {
+        $errorOutput = ''
+        if (Test-Path $stderrFile) {
+            $errorOutput = Get-Content -Raw -Path $stderrFile
+            Remove-Item -Path $stderrFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     if ($LASTEXITCODE -ne 0) {
-        throw "gh api $Path failed"
+        if ([string]::IsNullOrWhiteSpace($errorOutput)) {
+            throw "gh api $Path failed"
+        }
+        throw "gh api $Path failed: $errorOutput"
     }
 
     if (-not $json) {
@@ -225,7 +239,32 @@ function Invoke-LlmIfConfigured {
 
     $commandToRun = $LlmCommand.Replace('{PROMPT_FILE}', $LlmPromptFile)
     Write-Host "Invoking LLM command: $commandToRun" -ForegroundColor Magenta
-    Invoke-Expression $commandToRun
+
+    if ($commandToRun -match '[|;&><]') {
+        & pwsh -NoLogo -NoProfile -Command $commandToRun
+        return
+    }
+
+    $tokenMatches = [regex]::Matches($commandToRun, '"[^"]*"|\S+')
+    if ($tokenMatches.Count -eq 0) {
+        throw 'LlmCommand is empty after tokenization.'
+    }
+
+    $tokens = @()
+    foreach ($tokenMatch in $tokenMatches) {
+        $token = $tokenMatch.Value
+        if ($token.StartsWith('"') -and $token.EndsWith('"')) {
+            $token = $token.Substring(1, $token.Length - 2)
+        }
+        $tokens += $token
+    }
+
+    $exe = $tokens[0]
+    $args = @()
+    if ($tokens.Count -gt 1) {
+        $args = @($tokens[1..($tokens.Count - 1)])
+    }
+    & $exe @args
 }
 
 Write-Host "Watching $Repository PR #$PullRequestNumber every $IntervalMinutes minute(s) for $Cycles cycle(s)." -ForegroundColor Green
@@ -234,6 +273,13 @@ for ($cycle = 1; $cycle -le $Cycles; $cycle++) {
     $state = Read-State
 
     $pullRequest = Invoke-GhApiJson -Path "repos/$Repository/pulls/$PullRequestNumber"
+    if (-not $pullRequest -or -not $pullRequest.head -or [string]::IsNullOrWhiteSpace([string]$pullRequest.head.sha)) {
+        Write-Host "Failed to fetch valid PR payload for #$PullRequestNumber. Skipping cycle." -ForegroundColor Red
+        if ($cycle -lt $Cycles) {
+            Start-Sleep -Seconds ($IntervalMinutes * 60)
+        }
+        continue
+    }
     $reviewComments = @()
     $issueComments = @()
     $checkRuns = @()
