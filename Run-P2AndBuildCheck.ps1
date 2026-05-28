@@ -38,48 +38,168 @@ function Get-JavaMajorFromExecutable {
     return -1
 }
 
-function Use-Java21IfAvailable {
-    $requiredJavaMajor = 21
-    $javaHomeCandidates = @()
+function Get-OSKind {
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) { return 'windows' }
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Linux)) { return 'linux' }
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::OSX)) { return 'macos' }
+    return 'unknown'
+}
+
+function Get-JavaExecutablePathForHome {
+    param([string]$JavaHome)
+    if (-not $JavaHome) { return $null }
+    $name = if ((Get-OSKind) -eq 'windows') { 'java.exe' } else { 'java' }
+    return Join-Path (Join-Path $JavaHome 'bin') $name
+}
+
+function Get-JavaHomeFromJavaExecutable {
+    param([string]$JavaExe)
+    if (-not $JavaExe) { return $null }
+    $resolved = $null
+    try { $resolved = (Resolve-Path $JavaExe -ErrorAction Stop).Path } catch { $resolved = $JavaExe }
+    $binDir = Split-Path -Parent $resolved
+    if (-not $binDir) { return $null }
+    return Split-Path -Parent $binDir
+}
+
+function Add-ChildJavaHomes {
+    param(
+        [System.Collections.Generic.List[string]]$Bucket,
+        [string]$ParentDir
+    )
+    if (-not $ParentDir -or -not (Test-Path $ParentDir)) { return }
+    Get-ChildItem -Path $ParentDir -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object {
+            $exe = Get-JavaExecutablePathForHome -JavaHome $_.FullName
+            if (Test-Path $exe) { $Bucket.Add($_.FullName) }
+        }
+}
+
+function Get-Java21SetupGuidance {
+    return @"
+Java 21 SDK is required but was not found.
+
+Windows install options:
+  winget install --id Microsoft.OpenJDK.21 -e
+  winget install --id EclipseAdoptium.Temurin.21.JDK -e
+  choco install temurin21 -y
+
+macOS install options:
+  brew install openjdk@21
+  SDKMAN: sdk install java 21-tem
+
+Linux install options:
+  Ubuntu or Debian: sudo apt-get update; sudo apt-get install -y openjdk-21-jdk
+  Fedora: sudo dnf install -y java-21-openjdk-devel
+  Arch: sudo pacman -S jdk21-openjdk
+  SDKMAN: sdk install java 21-tem
+
+Setup:
+  1. Set JAVA_HOME to your Java 21 home directory.
+  2. Add JAVA_HOME/bin to PATH.
+  3. Re-open your terminal and rerun this script.
+
+Download URLs:
+  Oracle JDK 21: https://www.oracle.com/java/technologies/downloads/#java21
+  Eclipse Temurin 21: https://adoptium.net/temurin/releases/?version=21
+  Microsoft Build of OpenJDK 21: https://learn.microsoft.com/java/openjdk/download
+"@
+}
+
+function Get-Java21Home {
+    param([int]$RequiredJavaMajor = 21)
+    $candidates = New-Object System.Collections.Generic.List[string]
 
     if ($env:JAVA_HOME) {
-        $javaHomeCandidates += $env:JAVA_HOME
+        $candidates.Add($env:JAVA_HOME)
+        $parent = Split-Path -Parent $env:JAVA_HOME
+        Add-ChildJavaHomes -Bucket $candidates -ParentDir $parent
+        $grandParent = if ($parent) { Split-Path -Parent $parent } else { $null }
+        Add-ChildJavaHomes -Bucket $candidates -ParentDir $grandParent
     }
 
-    $javaHomeCandidates += @(
-        'C:\Program Files\Java\jdk-21',
-        'C:\Program Files\Eclipse Adoptium\jdk-21*',
-        'C:\Program Files\Microsoft\jdk-21*'
-    )
-
-    $resolvedHomes = @()
-    foreach ($candidate in $javaHomeCandidates) {
-        if ($candidate.Contains('*')) {
-            $matched = Get-ChildItem -Path $candidate -Directory -ErrorAction SilentlyContinue |
-                Sort-Object Name -Descending |
-                Select-Object -ExpandProperty FullName
-            $resolvedHomes += $matched
-        }
-        elseif (Test-Path $candidate) {
-            $resolvedHomes += $candidate
+    $javaCmd = Get-Command java -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($javaCmd) {
+        $javaHome = Get-JavaHomeFromJavaExecutable -JavaExe $javaCmd.Source
+        if ($javaHome) {
+            $candidates.Add($javaHome)
+            Add-ChildJavaHomes -Bucket $candidates -ParentDir (Split-Path -Parent $javaHome)
         }
     }
 
-    foreach ($javaHomePath in ($resolvedHomes | Select-Object -Unique)) {
-        $javaExe = Join-Path $javaHomePath 'bin\java.exe'
-        $major = Get-JavaMajorFromExecutable -JavaExe $javaExe
-        if ($major -eq $requiredJavaMajor) {
-            $env:JAVA_HOME = $javaHomePath
-            $javaBinPath = Join-Path $javaHomePath 'bin'
-            if (-not (($env:Path -split ';') -contains $javaBinPath)) {
-                $env:Path = "$javaBinPath;$env:Path"
+    $osKind = Get-OSKind
+    if ($osKind -eq 'windows') {
+        $whereExe = Get-Command where.exe -ErrorAction SilentlyContinue
+        if ($whereExe) {
+            (& where.exe java 2>$null) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable -JavaExe $_
+                if ($h) { $candidates.Add($h) }
             }
-            Write-Host "Using Java $requiredJavaMajor from $javaHomePath" -ForegroundColor Green
-            return
+        }
+    } else {
+        $whichCmd = Get-Command which -ErrorAction SilentlyContinue
+        if ($whichCmd) {
+            (& which -a java 2>$null | Select-Object -Unique) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable -JavaExe $_
+                if ($h) { $candidates.Add($h) }
+            }
         }
     }
 
-    Write-Warning "Java $requiredJavaMajor not found in common install locations. Using current PATH java."
+    if ($osKind -eq 'macos' -and (Test-Path '/usr/libexec/java_home')) {
+        $macHome = & /usr/libexec/java_home -v 21 2>$null
+        if ($macHome) { $candidates.Add(($macHome | Select-Object -First 1).Trim()) }
+    }
+
+    if ($osKind -eq 'linux') {
+        $ua = Get-Command update-alternatives -ErrorAction SilentlyContinue
+        if ($ua) {
+            (& update-alternatives --list java 2>$null) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable -JavaExe $_
+                if ($h) { $candidates.Add($h) }
+            }
+        }
+    }
+
+    $sdkmanDir = Join-Path $HOME '.sdkman/candidates/java'
+    Add-ChildJavaHomes -Bucket $candidates -ParentDir $sdkmanDir
+    $asdfDir = Join-Path $HOME '.asdf/installs/java'
+    Add-ChildJavaHomes -Bucket $candidates -ParentDir $asdfDir
+
+    foreach ($candidateHome in ($candidates | Where-Object { $_ } | Select-Object -Unique)) {
+        $javaExe = Get-JavaExecutablePathForHome -JavaHome $candidateHome
+        $major = Get-JavaMajorFromExecutable -JavaExe $javaExe
+        if ($major -eq $RequiredJavaMajor) { return $candidateHome }
+    }
+
+    return $null
+}
+
+function Use-Java21OrFail {
+    $requiredJavaMajor = 21
+    $javaHome = Get-Java21Home -RequiredJavaMajor $requiredJavaMajor
+    if (-not $javaHome) {
+        $guidance = Get-Java21SetupGuidance
+        Write-Error "Java $requiredJavaMajor is required. `n`n$guidance"
+        exit 1
+    }
+
+    $env:JAVA_HOME = $javaHome
+    $javaBinPath = Join-Path $javaHome 'bin'
+    $pathSeparator = [IO.Path]::PathSeparator
+    if (-not (($env:Path -split [regex]::Escape($pathSeparator)) -contains $javaBinPath)) {
+        $env:Path = "$javaBinPath$pathSeparator$env:Path"
+    }
+
+    $activeJavaExe = Get-JavaExecutablePathForHome -JavaHome $javaHome
+    $activeMajor = Get-JavaMajorFromExecutable -JavaExe $activeJavaExe
+    if ($activeMajor -ne $requiredJavaMajor) {
+        $guidance = Get-Java21SetupGuidance
+        Write-Error "Java $requiredJavaMajor is required but active Java is version $activeMajor. `n`n$guidance"
+        exit 1
+    }
+
+    Write-Host "Using Java $requiredJavaMajor from $javaHome" -ForegroundColor Green
 }
 
 function Write-StepResult {
@@ -119,7 +239,7 @@ function Skip-Step {
     Write-StepResult -Step $Step -Status "SKIPPED" -CommandText $Cmd -Summary $reason -Output ""
 }
 
-Use-Java21IfAvailable
+Use-Java21OrFail
 
 $_activeJavaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\java.exe' } else { (Get-Command java -ErrorAction SilentlyContinue).Source }
 $_activeJavaMajor = Get-JavaMajorFromExecutable -JavaExe $_activeJavaExe

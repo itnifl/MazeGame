@@ -18,6 +18,138 @@ $MirrorInputs   = @(
 $TychoCache     = Join-Path $env:USERPROFILE '.m2\repository\.cache\tycho'
 $RequiredJavaMajor = 21
 
+function Get-OSKind {
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)) { return 'windows' }
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Linux)) { return 'linux' }
+    if ([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::OSX)) { return 'macos' }
+    return 'unknown'
+}
+
+function Get-JavaExecutablePathForHome([string]$javaHome) {
+    if (-not $javaHome) { return $null }
+    $name = if ((Get-OSKind) -eq 'windows') { 'java.exe' } else { 'java' }
+    return Join-Path (Join-Path $javaHome 'bin') $name
+}
+
+function Get-JavaHomeFromJavaExecutable([string]$javaExe) {
+    if (-not $javaExe) { return $null }
+    $resolved = $null
+    try { $resolved = (Resolve-Path $javaExe -ErrorAction Stop).Path } catch { $resolved = $javaExe }
+    $binDir = Split-Path -Parent $resolved
+    if (-not $binDir) { return $null }
+    return Split-Path -Parent $binDir
+}
+
+function Add-ChildJavaHomes([System.Collections.Generic.List[string]]$bucket, [string]$parentDir) {
+    if (-not $parentDir -or -not (Test-Path $parentDir)) { return }
+    Get-ChildItem -Path $parentDir -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object {
+            $exe = Get-JavaExecutablePathForHome $_.FullName
+            if (Test-Path $exe) { $bucket.Add($_.FullName) }
+        }
+}
+
+function Get-Java21SetupGuidance {
+    return @"
+Java 21 SDK is required but was not found.
+
+Windows install options:
+  winget install --id Microsoft.OpenJDK.21 -e
+  winget install --id EclipseAdoptium.Temurin.21.JDK -e
+  choco install temurin21 -y
+
+macOS install options:
+  brew install openjdk@21
+  SDKMAN: sdk install java 21-tem
+
+Linux install options:
+  Ubuntu or Debian: sudo apt-get update; sudo apt-get install -y openjdk-21-jdk
+  Fedora: sudo dnf install -y java-21-openjdk-devel
+  Arch: sudo pacman -S jdk21-openjdk
+  SDKMAN: sdk install java 21-tem
+
+Setup:
+  1. Set JAVA_HOME to your Java 21 home directory.
+  2. Add JAVA_HOME/bin to PATH.
+  3. Re-open your terminal and rerun this script.
+
+Download URLs:
+  Oracle JDK 21: https://www.oracle.com/java/technologies/downloads/#java21
+  Eclipse Temurin 21: https://adoptium.net/temurin/releases/?version=21
+  Microsoft Build of OpenJDK 21: https://learn.microsoft.com/java/openjdk/download
+"@
+}
+
+function Get-Java21Home {
+    $candidates = New-Object System.Collections.Generic.List[string]
+
+    if ($env:JAVA_HOME) {
+        $candidates.Add($env:JAVA_HOME)
+        $parent = Split-Path -Parent $env:JAVA_HOME
+        Add-ChildJavaHomes -bucket $candidates -parentDir $parent
+        $grandParent = if ($parent) { Split-Path -Parent $parent } else { $null }
+        Add-ChildJavaHomes -bucket $candidates -parentDir $grandParent
+    }
+
+    $javaCmd = Get-Command java -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($javaCmd) {
+        $javaHome = Get-JavaHomeFromJavaExecutable $javaCmd.Source
+        if ($javaHome) {
+            $candidates.Add($javaHome)
+            Add-ChildJavaHomes -bucket $candidates -parentDir (Split-Path -Parent $javaHome)
+        }
+    }
+
+    $osKind = Get-OSKind
+    if ($osKind -eq 'windows') {
+        $whereExe = Get-Command where.exe -ErrorAction SilentlyContinue
+        if ($whereExe) {
+            (& where.exe java 2>$null) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable $_
+                if ($h) { $candidates.Add($h) }
+            }
+        }
+    } else {
+        $whichCmd = Get-Command which -ErrorAction SilentlyContinue
+        if ($whichCmd) {
+            (& which -a java 2>$null | Select-Object -Unique) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable $_
+                if ($h) { $candidates.Add($h) }
+            }
+        }
+    }
+
+    if ($osKind -eq 'macos' -and (Test-Path '/usr/libexec/java_home')) {
+        $macHome = & /usr/libexec/java_home -v 21 2>$null
+        if ($macHome) { $candidates.Add(($macHome | Select-Object -First 1).Trim()) }
+    }
+
+    if ($osKind -eq 'linux') {
+        $ua = Get-Command update-alternatives -ErrorAction SilentlyContinue
+        if ($ua) {
+            (& update-alternatives --list java 2>$null) | ForEach-Object {
+                $h = Get-JavaHomeFromJavaExecutable $_
+                if ($h) { $candidates.Add($h) }
+            }
+        }
+    }
+
+    $sdkmanDir = Join-Path $HOME '.sdkman/candidates/java'
+    Add-ChildJavaHomes -bucket $candidates -parentDir $sdkmanDir
+    $asdfDir = Join-Path $HOME '.asdf/installs/java'
+    Add-ChildJavaHomes -bucket $candidates -parentDir $asdfDir
+
+    foreach ($candidateHome in ($candidates | Where-Object { $_ } | Select-Object -Unique)) {
+        $javaExe = Get-JavaExecutablePathForHome $candidateHome
+        $major = Get-JavaMajorFromExecutable $javaExe
+        if ($major -eq $RequiredJavaMajor) {
+            return $candidateHome
+        }
+    }
+
+    return $null
+}
+
 function Get-JavaMajorFromExecutable([string]$javaExe) {
     if (-not (Test-Path $javaExe)) { return -1 }
     $javaOutput = & $javaExe -version 2>&1 | Out-String
@@ -30,46 +162,27 @@ function Get-JavaMajorFromExecutable([string]$javaExe) {
     return -1
 }
 
-function Use-Java21IfAvailable {
-    $javaHomeCandidates = @()
-
-    if ($env:JAVA_HOME) {
-        $javaHomeCandidates += $env:JAVA_HOME
+function Use-Java21OrFail {
+    $javaHomePath = Get-Java21Home
+    if (-not $javaHomePath) {
+        $guidance = Get-Java21SetupGuidance
+        throw "Java $RequiredJavaMajor not found. `n`n$guidance"
     }
 
-    $javaHomeCandidates += @(
-        'C:\Program Files\Java\jdk-21',
-        'C:\Program Files\Eclipse Adoptium\jdk-21*',
-        'C:\Program Files\Microsoft\jdk-21*'
-    )
-
-    $resolvedHomes = @()
-    foreach ($candidate in $javaHomeCandidates) {
-        if ($candidate.Contains('*')) {
-            $matched = Get-ChildItem -Path $candidate -Directory -ErrorAction SilentlyContinue |
-                Sort-Object Name -Descending |
-                Select-Object -ExpandProperty FullName
-            $resolvedHomes += $matched
-        } elseif (Test-Path $candidate) {
-            $resolvedHomes += $candidate
-        }
+    $env:JAVA_HOME = $javaHomePath
+    $javaBinPath = Join-Path $javaHomePath 'bin'
+    $pathSeparator = [IO.Path]::PathSeparator
+    if (-not (($env:Path -split [regex]::Escape($pathSeparator)) -contains $javaBinPath)) {
+        $env:Path = "$javaBinPath$pathSeparator$env:Path"
     }
 
-    foreach ($javaHomePath in $resolvedHomes | Select-Object -Unique) {
-        $javaExe = Join-Path $javaHomePath 'bin\\java.exe'
-        $major = Get-JavaMajorFromExecutable $javaExe
-        if ($major -eq $RequiredJavaMajor) {
-            $env:JAVA_HOME = $javaHomePath
-            if (-not (($env:Path -split ';') -contains (Join-Path $javaHomePath 'bin'))) {
-                $env:Path = "$(Join-Path $javaHomePath 'bin');$env:Path"
-            }
-            Write-Host "Using Java $RequiredJavaMajor from $javaHomePath" -ForegroundColor Green
-            return $true
-        }
+    $currentMajor = Test-JavaVersion
+    if ($currentMajor -ne $RequiredJavaMajor) {
+        $guidance = Get-Java21SetupGuidance
+        throw "Java $RequiredJavaMajor is required, but active Java is $currentMajor. `n`n$guidance"
     }
 
-    Write-Warning "Java $RequiredJavaMajor not found in common install locations. Using current PATH java."
-    return $false
+    Write-Host "Using Java $RequiredJavaMajor from $javaHomePath" -ForegroundColor Green
 }
 
 function Test-JavaVersion {
@@ -91,16 +204,8 @@ function Assert-JavaVersion {
         throw "Could not determine Java version. Ensure Java is installed and in PATH."
     }
     if ($currentMajor -ne $RequiredJavaMajor) {
-        Write-Host ""
-        Write-Host "ERROR: Java $RequiredJavaMajor is required for Xtext/MWE2 generation." -ForegroundColor Red
-        Write-Host "Current version: Java $currentMajor" -ForegroundColor Yellow
-        Write-Host ""
-        Write-Host "To fix, set JAVA_HOME to Java 21 before running:" -ForegroundColor Cyan
-        Write-Host '  $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"' -ForegroundColor White
-        Write-Host '  $env:Path = "$env:JAVA_HOME\bin;$env:Path"' -ForegroundColor White
-        Write-Host '  .\make.ps1 build-with-cache' -ForegroundColor White
-        Write-Host ""
-        throw "Java version mismatch: found $currentMajor, required $RequiredJavaMajor"
+        $guidance = Get-Java21SetupGuidance
+        throw "Java version mismatch: found $currentMajor, required $RequiredJavaMajor. `n`n$guidance"
     }
     Write-Host "Java version check passed: Java $currentMajor" -ForegroundColor Green
 }
@@ -234,18 +339,18 @@ switch ($Target) {
     }
 
     'toolchain' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
     }
 
     'mirror' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Invoke-Mirror
     }
 
     'force-mirror' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Invoke-Mirror -Force
     }
@@ -255,7 +360,7 @@ switch ($Target) {
     }
 
     'build' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
@@ -264,7 +369,7 @@ switch ($Target) {
     }
 
     'build-with-cache' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed
@@ -272,21 +377,21 @@ switch ($Target) {
     }
 
     'quick' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-QuickBuild
     }
 
     'quick-no-tests' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-QuickBuild -SkipTests
     }
 
     'all' {
-        Use-Java21IfAvailable | Out-Null
+        Use-Java21OrFail
         Show-ToolchainInfo
         Assert-JavaVersion
         Invoke-Mirror           # only rebuild if needed

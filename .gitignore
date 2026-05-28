@@ -7,9 +7,6 @@ Thumbs.db
 *.class
 scores.txt
 
-# vscode configuration files
-.vscode/
-
 # Maven build output:
 **/target/
 /main.game.maze.opponents/target

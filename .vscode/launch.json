@@ -6,6 +6,7 @@
             "type": "java",
             "name": "Launch MazeGame (with dynamic paths)",
             "request": "launch",
+            "preLaunchTask": "Ensure Java 21",
             "mainClass": "main.game.maze.App",
             "projectName": "main.game.maze",
             "vmArgs": [

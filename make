@@ -17,42 +17,8 @@
 #   make quick-no-tests     -> absolute fastest path, skip mirror rebuild, keep cache, skip tests
 # ─────────────────────────────────────────────────────────
 
-# Tools (override with: make MVN=mvnw)
-MVN ?= mvn
-
-# Paths
-LOCAL_P2_DIR      := releng\local-p2
-MIRROR_STAMP      := $(LOCAL_P2_DIR)\.mirror.stamp
-TYCHO_CACHE_WIN   := $(USERPROFILE)\.m2\repository\.cache\tycho
-
-# Prefer JDK 21 if installed (Windows)
-JAVA21_SELECT = $$javaHomeCandidates = @(); \
-	if ($$env:JAVA_HOME) { $$javaHomeCandidates += $$env:JAVA_HOME }; \
-	$$javaHomeCandidates += @('C:\Program Files\Java\jdk-21','C:\Program Files\Eclipse Adoptium\jdk-21*','C:\Program Files\Microsoft\jdk-21*'); \
-	$$resolvedHomes = @(); \
-	foreach ($$candidate in $$javaHomeCandidates) { \
-		if ($$candidate.Contains('*')) { $$resolvedHomes += (Get-ChildItem -Path $$candidate -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -ExpandProperty FullName) } \
-		elseif (Test-Path $$candidate) { $$resolvedHomes += $$candidate } \
-	}; \
-	$$selected = $$null; \
-	foreach ($$javaHomePath in ($$resolvedHomes | Select-Object -Unique)) { \
-		$$javaExe = Join-Path $$javaHomePath 'bin\\java.exe'; \
-		if (Test-Path $$javaExe) { \
-			$$javaOut = & $$javaExe -version 2>&1 | Out-String; \
-			if ($$javaOut -match 'version[^0-9]+(21)') { $$selected = $$javaHomePath; break } \
-		} \
-	}; \
-	if ($$selected) { \
-		$$env:JAVA_HOME = $$selected; \
-		$$javaBin = Join-Path $$selected 'bin'; \
-		if (-not (($$env:Path -split ';') -contains $$javaBin)) { $$env:Path = $$javaBin + ';' + $$env:Path }; \
-		Write-Host ('Using Java 21 from ' + $$selected) \
-	} else { \
-		Write-Error 'Java 21 not found. Build requires Java 21. Aborting.'; exit 1 \
-	}
-
-# Files that, when changed, should trigger a mirror rebuild
-MIRROR_INPUTS := releng/mirror/pom.xml
+# PowerShell host (override with: make PSH=powershell)
+PSH ?= pwsh
 
 .PHONY: all default help toolchain-info mirror force-mirror clear-tycho-cache build quick quick-no-tests clean-mirror
 
@@ -77,61 +43,37 @@ help:
 # ─────────────────────────────────────────────────────────
 
 toolchain-info:
-	@echo === Toolchain versions ===
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -version"
-	@echo.
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & java -version"
-	@echo ==========================
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target toolchain
 
 # ─────────────────────────────────────────────────────────
 # Step 1 – Local p2 mirror
 # ─────────────────────────────────────────────────────────
 
-mirror: $(MIRROR_STAMP)
-
-$(MIRROR_STAMP): $(MIRROR_INPUTS)
-	@echo === Rebuilding local p2 mirror ===
-	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(LOCAL_P2_DIR)') { Remove-Item -Recurse -Force '$(LOCAL_P2_DIR)' }"
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -f releng/mirror/pom.xml -U verify"
-	@powershell -NoLogo -NoProfile -Command "if (-not (Test-Path '$(LOCAL_P2_DIR)')) { New-Item -ItemType Directory -Path '$(LOCAL_P2_DIR)' | Out-Null } ; New-Item -ItemType File -Path '$(MIRROR_STAMP)' -Force | Out-Null"
-	@echo === Mirror built and stamp updated ===
+mirror:
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target mirror
 
 force-mirror:
-	@echo === Force rebuild of local p2 mirror ===
-	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(LOCAL_P2_DIR)') { Remove-Item -Recurse -Force '$(LOCAL_P2_DIR)' }"
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -f releng/mirror/pom.xml -U verify"
-	@powershell -NoLogo -NoProfile -Command "if (-not (Test-Path '$(LOCAL_P2_DIR)')) { New-Item -ItemType Directory -Path '$(LOCAL_P2_DIR)' | Out-Null } ; New-Item -ItemType File -Path '$(MIRROR_STAMP)' -Force | Out-Null"
-	@echo === Force mirror rebuild completed ===
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target force-mirror
 
 clean-mirror:
-	@echo === Removing local p2 mirror and stamp ===
-	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(LOCAL_P2_DIR)') { Remove-Item -Recurse -Force '$(LOCAL_P2_DIR)' }"
-	@echo Done.
+	@$(PSH) -NoLogo -NoProfile -Command "if (Test-Path 'releng/local-p2') { Remove-Item -Recurse -Force 'releng/local-p2' }; if (Test-Path 'releng/local-p2/.mirror.stamp') { Remove-Item -Force 'releng/local-p2/.mirror.stamp' }; Write-Host 'Done.'"
 
 # ─────────────────────────────────────────────────────────
 # Step 3 – Clear Tycho p2 cache
 # ─────────────────────────────────────────────────────────
 
 clear-tycho-cache:
-	@echo === Clearing Tycho p2 cache (if present) ===
-	@powershell -NoLogo -NoProfile -Command "if (Test-Path '$(TYCHO_CACHE_WIN)') { Remove-Item -Recurse -Force '$(TYCHO_CACHE_WIN)' }"
-	@echo Tycho cache cleared (if it existed).
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target clear-cache
 
 # ─────────────────────────────────────────────────────────
 # Step 4 – Full build (Tycho + app)
 # ─────────────────────────────────────────────────────────
 
 build:
-	@echo === Running full build: mvn -U -DskipTests=false clean verify ===
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -U -DskipTests=false clean verify"
-	@echo === Build finished ===
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target build
 
 quick:
-	@echo === Running fast build without mirror rebuild: mvn -DskipTests=false verify ===
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -DskipTests=false verify"
-	@echo === Fast build finished ===
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target quick
 
 quick-no-tests:
-	@echo === Running fastest build without mirror rebuild: mvn -DskipTests=true verify ===
-	@powershell -NoLogo -NoProfile -Command "$(JAVA21_SELECT); & $(MVN) -DskipTests=true verify"
-	@echo === Fastest build finished ===
+	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target quick-no-tests
