@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import main.game.maze.config.model.PlayerConfig;
@@ -27,7 +28,7 @@ import main.game.maze.difficulties.DifficultiesPackage;
 public final class XmiRulesLoader {
 
   private static final Logger LOG = Logger.getLogger(XmiRulesLoader.class.getName());
-  private static volatile boolean xmiFactoryRegistered = false;
+  private static volatile boolean resourceFactoriesRegistered = false;
 
   public XmiRulesLoader() {}
 
@@ -190,13 +191,15 @@ public final class XmiRulesLoader {
     return fallback;
   }
 
-  /** Registers the XMI factory only once. */
+  /** Registers XMI and Ecore factories only once. */
   private static synchronized void ensureXmiFactory() {
-    if (!xmiFactoryRegistered) {
+    if (!resourceFactoriesRegistered) {
       Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
           .put("xmi", new XMIResourceFactoryImpl());
-      xmiFactoryRegistered = true;
-      LOG.fine("XMIResourceFactoryImpl registered.");
+      Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap()
+          .put("ecore", new EcoreResourceFactoryImpl());
+      resourceFactoriesRegistered = true;
+      LOG.fine("XMI and Ecore resource factories registered.");
     }
   }
 }

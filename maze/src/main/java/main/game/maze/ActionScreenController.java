@@ -3,6 +3,8 @@ package main.game.maze;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -12,6 +14,8 @@ import main.game.maze.actions.RestartGameAction;
 import main.game.maze.constants.ResourceFileConstants;
 
 public class ActionScreenController {
+    private static final Logger LOGGER = Logger.getLogger(ActionScreenController.class.getName());
+
     @FXML
     protected AnchorPane screenRoot;
 
@@ -43,7 +47,7 @@ public class ActionScreenController {
             writer.write(playerName + ": " + score + "\n");
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "Unable to write score file: {0} ({1})", new Object[] { filename, e.getMessage() });
         }
     }
 

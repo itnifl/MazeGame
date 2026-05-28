@@ -62,6 +62,7 @@ bin/
 
 # Local PR watcher state
 tools/.watch-pr-state.json
+tools/.watch-pr-llm-prompt.txt
 
 # JavaFX packaging (optional)
 dist/
