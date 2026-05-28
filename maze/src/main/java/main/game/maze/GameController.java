@@ -745,14 +745,13 @@ public class GameController implements Initializable {
 
     private void showNavigationPath() {
         if (maze == null || pathCanvas == null || heart == null || playerCharacter == null) {
+            isRouteHintVisible = false;
             return;
         }
 
-        isRouteHintVisible = true;
-        lastRouteHintPenaltyNanos = System.nanoTime();
-
         var navGraph = maze.getNavigationGraph();
         if (navGraph == null) {
+            isRouteHintVisible = false;
             return;
         }
 
@@ -773,6 +772,9 @@ public class GameController implements Initializable {
             clearNavigationPath();
             return;
         }
+
+        isRouteHintVisible = true;
+        lastRouteHintPenaltyNanos = System.nanoTime();
 
         GraphicsContext gc = pathCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
