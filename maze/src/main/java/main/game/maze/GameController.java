@@ -112,6 +112,9 @@ public class GameController implements Initializable {
     private AnimationTimer movementTimer;
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
+    private static final int EASY_BASE_SCORE = 10000;
+    private static final int NORMAL_BASE_SCORE = 20000;
+    private static final int HARD_BASE_SCORE = 30000;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private boolean isRouteHintVisible = false;
     private long lastRouteHintPenaltyNanos = 0L;
@@ -119,6 +122,16 @@ public class GameController implements Initializable {
     private int routeHintPenaltyPoints = 0;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
+
+    int getBaseScoreForCurrentDifficulty() {
+        if (startDifficulty instanceof HardDifficulty) {
+            return HARD_BASE_SCORE;
+        }
+        if (startDifficulty instanceof NormalDifficulty) {
+            return NORMAL_BASE_SCORE;
+        }
+        return EASY_BASE_SCORE;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -367,6 +380,10 @@ public class GameController implements Initializable {
         winGameAction = new WinGameAction(playerCharacter, playerMoveCount, root, () -> {
             runComputerCharacters.cancel();
         });
+
+        int baseScore = getBaseScoreForCurrentDifficulty();
+        gameOverAction.setBaseScore(baseScore);
+        winGameAction.setBaseScore(baseScore);
 
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
