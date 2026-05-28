@@ -217,6 +217,12 @@ public class GameController implements Initializable {
             int penaltyToApply = (int) routeHintPenaltyAccumulator;
             routeHintPenaltyPoints += penaltyToApply;
             routeHintPenaltyAccumulator -= penaltyToApply;
+
+            // Keep HUD score in sync even when the player is not moving.
+            if (winGameAction != null) {
+                var score = winGameAction.updateScore();
+                updateScoreHud(score);
+            }
         }
     }
 

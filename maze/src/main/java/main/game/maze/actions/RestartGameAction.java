@@ -53,6 +53,11 @@ public class RestartGameAction extends ActionScreens {
             AnchorPane screen = fxmlLoader.load();
             GameController controller = fxmlLoader.getController();
             App.gameController = controller;
+
+            AnchorPane.setTopAnchor(screen, 0.0);
+            AnchorPane.setRightAnchor(screen, 0.0);
+            AnchorPane.setBottomAnchor(screen, 0.0);
+            AnchorPane.setLeftAnchor(screen, 0.0);
             
             
             var newRoot = new AnchorPane();
