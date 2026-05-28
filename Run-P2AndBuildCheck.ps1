@@ -15,6 +15,8 @@ Set-Location $scriptRoot
 New-Item -ItemType Directory -Force -Path $LogDirectory | Out-Null
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $logFile   = Join-Path $LogDirectory "p2-and-build-check_$timestamp.log"
+$UserHome  = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile) }
+$M2RepoDir = Join-Path $UserHome '.m2\repository'
 
 $stepSummaries = New-Object System.Collections.Generic.List[object]
 
@@ -55,11 +57,36 @@ function Get-JavaExecutablePathForHome {
 function Get-JavaHomeFromJavaExecutable {
     param([string]$JavaExe)
     if (-not $JavaExe) { return $null }
+
+    # Ask the executable for java.home first, this avoids symlink alias issues such as /usr/bin/java.
+    $javaSettings = & $JavaExe -XshowSettings:properties -version 2>&1 | Out-String
+    if ($javaSettings -match '(?m)^\s*java\.home\s*=\s*(.+)\s*$') {
+        $reportedHome = $Matches[1].Trim()
+        if ($reportedHome) { return $reportedHome }
+    }
+
     $resolved = $null
     try { $resolved = (Resolve-Path $JavaExe -ErrorAction Stop).Path } catch { $resolved = $JavaExe }
     $binDir = Split-Path -Parent $resolved
     if (-not $binDir) { return $null }
     return Split-Path -Parent $binDir
+}
+
+function Test-IsJdkHome {
+    param([string]$JavaHome)
+    if (-not $JavaHome -or -not (Test-Path $JavaHome)) { return $false }
+
+    $javaExe = Get-JavaExecutablePathForHome -JavaHome $JavaHome
+    if (-not (Test-Path $javaExe)) { return $false }
+
+    $javacName = if ((Get-OSKind) -eq 'windows') { 'javac.exe' } else { 'javac' }
+    $javacExe = Join-Path (Join-Path $JavaHome 'bin') $javacName
+    if (-not (Test-Path $javacExe)) { return $false }
+
+    $releaseFile = Join-Path $JavaHome 'release'
+    if (-not (Test-Path $releaseFile)) { return $false }
+
+    return $true
 }
 
 function Add-ChildJavaHomes {
@@ -167,6 +194,7 @@ function Get-Java21Home {
     Add-ChildJavaHomes -Bucket $candidates -ParentDir $asdfDir
 
     foreach ($candidateHome in ($candidates | Where-Object { $_ } | Select-Object -Unique)) {
+        if (-not (Test-IsJdkHome -JavaHome $candidateHome)) { continue }
         $javaExe = Get-JavaExecutablePathForHome -JavaHome $candidateHome
         $major = Get-JavaMajorFromExecutable -JavaExe $javaExe
         if ($major -eq $RequiredJavaMajor) { return $candidateHome }
@@ -241,7 +269,7 @@ function Skip-Step {
 
 Use-Java21OrFail
 
-$_activeJavaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin\java.exe' } else { (Get-Command java -ErrorAction SilentlyContinue).Source }
+$_activeJavaExe = if ($env:JAVA_HOME) { Get-JavaExecutablePathForHome -JavaHome $env:JAVA_HOME } else { (Get-Command java -ErrorAction SilentlyContinue).Source }
 $_activeJavaMajor = Get-JavaMajorFromExecutable -JavaExe $_activeJavaExe
 if ($_activeJavaMajor -ne 21) {
     Write-Error "Java 21 is required but active Java is version $_activeJavaMajor. Aborting."
@@ -273,7 +301,7 @@ if ($StartAt -gt 1) {
 } else {
     Write-Host "Starting step 1: Rebuild local p2 mirror..."
     $output1 = & {
-        Remove-Item -Recurse -Force $env:USERPROFILE\.m2\repository -ErrorAction SilentlyContinue
+        Remove-Item -Recurse -Force $M2RepoDir -ErrorAction SilentlyContinue
         Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
         & mkdir -p releng\local-p2
         & mvn -f releng/mirror/pom.xml -U verify

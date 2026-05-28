@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all','help','mirror','force-mirror','build','build-with-cache','quick','quick-no-tests','clear-cache','toolchain')]
+    [ValidateSet('all','help','mirror','force-mirror','build','build-with-cache','quick','quick-no-tests','clear-cache','toolchain','write-launch-env')]
     [string]$Target = 'all'
 )
 
@@ -15,7 +15,8 @@ $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
 )
-$TychoCache     = Join-Path $env:USERPROFILE '.m2\repository\.cache\tycho'
+$UserHome       = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile) }
+$TychoCache     = Join-Path $UserHome '.m2\repository\.cache\tycho'
 $RequiredJavaMajor = 21
 
 function Get-OSKind {
@@ -33,11 +34,35 @@ function Get-JavaExecutablePathForHome([string]$javaHome) {
 
 function Get-JavaHomeFromJavaExecutable([string]$javaExe) {
     if (-not $javaExe) { return $null }
+
+    # Ask the executable for java.home first, this avoids symlink alias issues such as /usr/bin/java.
+    $javaSettings = & $javaExe -XshowSettings:properties -version 2>&1 | Out-String
+    if ($javaSettings -match '(?m)^\s*java\.home\s*=\s*(.+)\s*$') {
+        $reportedHome = $Matches[1].Trim()
+        if ($reportedHome) { return $reportedHome }
+    }
+
     $resolved = $null
     try { $resolved = (Resolve-Path $javaExe -ErrorAction Stop).Path } catch { $resolved = $javaExe }
     $binDir = Split-Path -Parent $resolved
     if (-not $binDir) { return $null }
     return Split-Path -Parent $binDir
+}
+
+function Test-IsJdkHome([string]$javaHome) {
+    if (-not $javaHome -or -not (Test-Path $javaHome)) { return $false }
+
+    $javaExe = Get-JavaExecutablePathForHome $javaHome
+    if (-not (Test-Path $javaExe)) { return $false }
+
+    $javacName = if ((Get-OSKind) -eq 'windows') { 'javac.exe' } else { 'javac' }
+    $javacExe = Join-Path (Join-Path $javaHome 'bin') $javacName
+    if (-not (Test-Path $javacExe)) { return $false }
+
+    $releaseFile = Join-Path $javaHome 'release'
+    if (-not (Test-Path $releaseFile)) { return $false }
+
+    return $true
 }
 
 function Add-ChildJavaHomes([System.Collections.Generic.List[string]]$bucket, [string]$parentDir) {
@@ -140,6 +165,7 @@ function Get-Java21Home {
     Add-ChildJavaHomes -bucket $candidates -parentDir $asdfDir
 
     foreach ($candidateHome in ($candidates | Where-Object { $_ } | Select-Object -Unique)) {
+        if (-not (Test-IsJdkHome $candidateHome)) { continue }
         $javaExe = Get-JavaExecutablePathForHome $candidateHome
         $major = Get-JavaMajorFromExecutable $javaExe
         if ($major -eq $RequiredJavaMajor) {
@@ -237,9 +263,31 @@ function Show-Usage {
     Write-Host "force-mirror    : Always rebuild mirror."
     Write-Host "clear-cache     : Remove Tycho cache only."
     Write-Host "toolchain       : Show Maven and Java versions."
+    Write-Host "write-launch-env: Write .vscode/maze.launch.env with discovered Java 21 for debug launch."
     Write-Host ""
     Write-Host "To avoid mirror rebuilds, use: .\make.ps1 quick or .\make.ps1 quick-no-tests" -ForegroundColor Yellow
     Write-Host "=================================" -ForegroundColor Cyan
+}
+
+function Write-LaunchEnvFile {
+    $javaHomePath = Get-Java21Home
+    if (-not $javaHomePath) {
+        $guidance = Get-Java21SetupGuidance
+        throw "Java $RequiredJavaMajor not found. `n`n$guidance"
+    }
+
+    $javaBinPath = Join-Path $javaHomePath 'bin'
+    $pathSeparator = [IO.Path]::PathSeparator
+    $launchPath = if ($env:Path) { "$javaBinPath$pathSeparator$env:Path" } else { $javaBinPath }
+
+    $launchEnvFile = Join-Path '.vscode' 'maze.launch.env'
+    New-Item -ItemType Directory -Path '.vscode' -Force | Out-Null
+    @(
+        "JAVA_HOME=$javaHomePath"
+        "PATH=$launchPath"
+    ) | Set-Content -Path $launchEnvFile -Encoding UTF8
+
+    Write-Host "Wrote launch environment: $launchEnvFile" -ForegroundColor Green
 }
 
 function Test-MirrorOutdated {
@@ -341,6 +389,11 @@ switch ($Target) {
     'toolchain' {
         Use-Java21OrFail
         Show-ToolchainInfo
+    }
+
+    'write-launch-env' {
+        Use-Java21OrFail
+        Write-LaunchEnvFile
     }
 
     'mirror' {
