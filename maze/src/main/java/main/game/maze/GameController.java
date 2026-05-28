@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -78,6 +79,14 @@ public class GameController implements Initializable {
     private Node heart;
     @FXML
     private Label scoreLabel;
+    @FXML
+    private AnchorPane scoreHudContainer;
+    @FXML
+    private AnchorPane bottomMenuContainer;
+    @FXML
+    private AnchorPane commandsOverlay;
+    @FXML
+    private Button commandsMenuButton;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -103,6 +112,11 @@ public class GameController implements Initializable {
     private AnimationTimer movementTimer;
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
+    private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
+    private boolean isRouteHintVisible = false;
+    private long lastRouteHintPenaltyNanos = 0L;
+    private double routeHintPenaltyAccumulator = 0.0;
+    private int routeHintPenaltyPoints = 0;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -166,8 +180,88 @@ public class GameController implements Initializable {
 
         gameOverAction.updateScore();
         var score = winGameAction.updateScore();
+        updateScoreHud(score);
+    }
 
-        scoreLabel.setText("Score: " + String.valueOf(score));
+    private void updateScoreHud(int score) {
+        if (scoreLabel != null) {
+            scoreLabel.setText("Score: " + score);
+        }
+    }
+
+    public int getDynamicScorePenalty() {
+        return routeHintPenaltyPoints;
+    }
+
+    private void applyRouteHintPenalty(long now) {
+        if (!isRouteHintVisible) {
+            lastRouteHintPenaltyNanos = now;
+            return;
+        }
+
+        if (lastRouteHintPenaltyNanos == 0L) {
+            lastRouteHintPenaltyNanos = now;
+            return;
+        }
+
+        long elapsedNanos = now - lastRouteHintPenaltyNanos;
+        if (elapsedNanos <= 0) {
+            return;
+        }
+        lastRouteHintPenaltyNanos = now;
+
+        double elapsedMs = elapsedNanos / 1_000_000.0;
+        routeHintPenaltyAccumulator += elapsedMs * ROUTE_HINT_PENALTY_PER_MS;
+
+        if (routeHintPenaltyAccumulator >= 1.0) {
+            int penaltyToApply = (int) routeHintPenaltyAccumulator;
+            routeHintPenaltyPoints += penaltyToApply;
+            routeHintPenaltyAccumulator -= penaltyToApply;
+        }
+    }
+
+    private void ensureHudLayersOnTop() {
+        if (scoreHudContainer != null) {
+            scoreHudContainer.toFront();
+        }
+        if (bottomMenuContainer != null) {
+            bottomMenuContainer.toFront();
+        }
+        if (commandsOverlay != null && commandsOverlay.isVisible()) {
+            commandsOverlay.toFront();
+        }
+    }
+
+    @FXML
+    private void toggleCommandsOverlay() {
+        if (commandsOverlay == null) {
+            return;
+        }
+
+        boolean show = !commandsOverlay.isVisible();
+        commandsOverlay.setVisible(show);
+        commandsOverlay.setManaged(show);
+        if (show) {
+            commandsOverlay.toFront();
+        }
+
+        if (!show && gameBoard != null) {
+            gameBoard.requestFocus();
+        }
+    }
+
+    @FXML
+    private void hideCommandsOverlay() {
+        if (commandsOverlay == null) {
+            return;
+        }
+
+        commandsOverlay.setVisible(false);
+        commandsOverlay.setManaged(false);
+
+        if (gameBoard != null) {
+            gameBoard.requestFocus();
+        }
     }
 
     private void openDifficultyPickerAndMaybeRestart() {
@@ -258,6 +352,7 @@ public class GameController implements Initializable {
 
         treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
         root.getChildren().add(treeCanvas);
+        ensureHudLayersOnTop();
 
         gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {
             runComputerCharacters.cancel();
@@ -306,10 +401,15 @@ public class GameController implements Initializable {
 
         playerCharacter.setHitPoints(100);
         var score = winGameAction.resetScore();
-        scoreLabel.setText("Score: " + String.valueOf(score));
+        routeHintPenaltyPoints = 0;
+        routeHintPenaltyAccumulator = 0.0;
+        isRouteHintVisible = false;
+        lastRouteHintPenaltyNanos = 0L;
+        updateScoreHud(score);
 
         gameBoard.setFocusTraversable(true);
         gameBoard.requestFocus();
+        ensureHudLayersOnTop();
         
         startMovementTimer();
     }
@@ -325,6 +425,8 @@ public class GameController implements Initializable {
                 if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) {
                     return;
                 }
+
+                applyRouteHintPenalty(now);
                 
                 // Throttle movement to avoid being too fast
                 if (now - lastMoveTime < MOVE_INTERVAL_NANOS) {
@@ -640,6 +742,9 @@ public class GameController implements Initializable {
             return;
         }
 
+        isRouteHintVisible = true;
+        lastRouteHintPenaltyNanos = System.nanoTime();
+
         var navGraph = maze.getNavigationGraph();
         if (navGraph == null) {
             return;
@@ -658,6 +763,7 @@ public class GameController implements Initializable {
 
         var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
         if (path == null || path.size() < 2) {
+            isRouteHintVisible = false;
             clearNavigationPath();
             return;
         }
@@ -680,6 +786,7 @@ public class GameController implements Initializable {
     }
 
     private void clearNavigationPath() {
+        isRouteHintVisible = false;
         if (pathCanvas == null) {
             return;
         }
