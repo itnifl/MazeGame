@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -50,6 +51,7 @@ public class App extends Application {
 
             primaryStage.setTitle("Maze Game");
             primaryStage.setScene(new Scene(root, App.getBoardMaxX(), App.getBoardMaxY()));
+            setWindowIcon(primaryStage);
             // --- MDD difficulty selection (reads difficulties.xmi) ---
             this.setDifficulty(primaryStage);
             // --------------------------------------------------------
@@ -195,6 +197,17 @@ public class App extends Application {
         inGameMediaPlayer = new MediaPlayer(media);
         inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         return new MediaView(inGameMediaPlayer);
+    }
+
+    private void setWindowIcon(Stage stage) {
+        try {
+            var icon = getClass().getResource("/main/game/maze/ghost1.png");
+            if (icon != null) {
+                stage.getIcons().add(new Image(icon.toExternalForm()));
+            }
+        } catch (Exception ignored) {
+            // Icon failure should not block startup.
+        }
     }
 
     // Helper to show clean names (Easy/Normal/Hard) directly from the model type

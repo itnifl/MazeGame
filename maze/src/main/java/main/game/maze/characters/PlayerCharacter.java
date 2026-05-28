@@ -81,6 +81,9 @@ public class PlayerCharacter extends Character
     }
 
     private void playSoundSafely(MediaPlayer player, String soundName) {
+        if (player == null) {
+            return;
+        }
         try {
             if (player.getStatus() == MediaPlayer.Status.PLAYING) {
                 player.stop();
@@ -236,7 +239,8 @@ public class PlayerCharacter extends Character
             }
         }
 
-        Platform.runLater(() -> playSoundSafely(screamMediaPlayer, "player scream sound"));
+        MediaPlayer currentScreamPlayer = screamMediaPlayer;
+        Platform.runLater(() -> playSoundSafely(currentScreamPlayer, "player scream sound"));
     }
 
     private void doInfectedScreamSound() {
@@ -258,7 +262,8 @@ public class PlayerCharacter extends Character
             }
         }
 
-        Platform.runLater(() -> playSoundSafely(infectedMediaPlayer, "infected scream sound"));
+        MediaPlayer currentInfectedPlayer = infectedMediaPlayer;
+        Platform.runLater(() -> playSoundSafely(currentInfectedPlayer, "infected scream sound"));
     }
 
     private void flashCharacterColor(ImageView imageView, double colorHue) {

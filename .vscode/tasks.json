@@ -12,7 +12,7 @@
                     "-File",
                     "${workspaceFolder}/make.ps1",
                     "-Target",
-                    "write-launch-env"
+                    "prepare-run"
                 ]
             },
             "linux": {
@@ -23,7 +23,7 @@
                     "-File",
                     "${workspaceFolder}/make.ps1",
                     "-Target",
-                    "write-launch-env"
+                    "prepare-run"
                 ]
             },
             "osx": {
@@ -34,7 +34,7 @@
                     "-File",
                     "${workspaceFolder}/make.ps1",
                     "-Target",
-                    "write-launch-env"
+                    "prepare-run"
                 ]
             },
             "problemMatcher": []

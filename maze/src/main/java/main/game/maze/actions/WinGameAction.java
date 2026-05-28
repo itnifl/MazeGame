@@ -3,6 +3,7 @@ package main.game.maze.actions;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -27,6 +28,11 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
 
     @Override
     public void WinGame() {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::WinGame);
+            return;
+        }
+
         // Stop movement loop immediately to prevent race conditions
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();
@@ -68,6 +74,9 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
                 controller.showDamagePenaltyLabel();
             }
 
+            if (root == null || root.getScene() == null) {
+                return;
+            }
             Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
             App.applyStandardSize(stage);

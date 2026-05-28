@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('all','help','mirror','force-mirror','build','build-with-cache','quick','quick-no-tests','clear-cache','toolchain','write-launch-env')]
+    [ValidateSet('all','help','mirror','force-mirror','build','build-with-cache','quick','quick-no-tests','clear-cache','toolchain','write-launch-env','prepare-run')]
     [string]$Target = 'all'
 )
 
@@ -264,6 +264,7 @@ function Show-Usage {
     Write-Host "clear-cache     : Remove Tycho cache only."
     Write-Host "toolchain       : Show Maven and Java versions."
     Write-Host "write-launch-env: Write .vscode/maze.launch.env with discovered Java 21 for debug launch."
+    Write-Host "prepare-run     : Write launch env, verify runtime modules are compiled and fresh, then ensure maze classes are Java 21 bytecode."
     Write-Host ""
     Write-Host "To avoid mirror rebuilds, use: .\make.ps1 quick or .\make.ps1 quick-no-tests" -ForegroundColor Yellow
     Write-Host "=================================" -ForegroundColor Cyan
@@ -288,6 +289,248 @@ function Write-LaunchEnvFile {
     ) | Set-Content -Path $launchEnvFile -Encoding UTF8
 
     Write-Host "Wrote launch environment: $launchEnvFile" -ForegroundColor Green
+}
+
+function Get-ClassMajorVersion([string]$classFilePath) {
+    if (-not (Test-Path $classFilePath)) { return -1 }
+    $javapName = if ((Get-OSKind) -eq 'windows') { 'javap.exe' } else { 'javap' }
+    $javapExe = Join-Path (Join-Path $env:JAVA_HOME 'bin') $javapName
+    if (-not (Test-Path $javapExe)) { return -1 }
+
+    $majorLine = (& $javapExe -verbose $classFilePath 2>$null | Select-String 'major version' | Select-Object -First 1)
+    if (-not $majorLine) { return -1 }
+
+    if ($majorLine.Line -match '(\d+)') {
+        return [int]$Matches[1]
+    }
+    return -1
+}
+
+function Ensure-LaunchBytecodeLevel {
+    $criticalClass = Join-Path 'main.game.maze.mazeworld' 'target/classes/main/game/maze/mazeworld/GameMazeWorld.class'
+    $major = Get-ClassMajorVersion $criticalClass
+
+    if ($major -eq 65) {
+        Write-Host 'Launch bytecode check passed: GameMazeWorld.class is Java 21 compatible.' -ForegroundColor Green
+        return
+    }
+
+    Write-Host "Detected stale or incompatible bytecode (major=$major). Rebuilding maze dependency graph with Java 21..." -ForegroundColor Yellow
+    & $Mvn -pl maze -am -DskipTests=true clean compile
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Failed to prepare launch classes with Java 21. Maven exited with code $exit."
+    }
+
+    $majorAfter = Get-ClassMajorVersion $criticalClass
+    if ($majorAfter -ne 65) {
+        throw "Prepared build completed but GameMazeWorld.class is still major=$majorAfter. Expected 65 for Java 21."
+    }
+
+    Write-Host 'Prepared launch classes are now Java 21 compatible.' -ForegroundColor Green
+}
+
+function Ensure-LaunchJavaFxLibs {
+    $libsDir = Join-Path 'maze' 'target/libs'
+    $requiredPatterns = @(
+        'javafx-controls*.jar',
+        'javafx-fxml*.jar',
+        'javafx-media*.jar',
+        'javafx-graphics*.jar',
+        'javafx-base*.jar'
+    )
+
+    $missing = @()
+    foreach ($pattern in $requiredPatterns) {
+        $match = Get-ChildItem -Path $libsDir -Filter $pattern -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $match) {
+            $missing += $pattern
+        }
+    }
+
+    if ($missing.Count -eq 0) {
+        Write-Host 'Launch JavaFX libs check passed: required modules exist in maze/target/libs.' -ForegroundColor Green
+        return
+    }
+
+    Write-Host ("Missing JavaFX launch libs ({0}). Restoring runtime dependencies..." -f ($missing -join ', ')) -ForegroundColor Yellow
+    & $Mvn -pl maze -am -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Failed to restore JavaFX runtime dependencies for launch. Maven exited with code $exit."
+    }
+
+    foreach ($pattern in $requiredPatterns) {
+        $match = Get-ChildItem -Path $libsDir -Filter $pattern -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $match) {
+            throw "JavaFX launch dependency still missing after restore: $pattern"
+        }
+    }
+
+    Write-Host 'JavaFX runtime dependencies restored for launch.' -ForegroundColor Green
+}
+
+function Test-JarContainsClasses([string]$jarPath) {
+    if (-not (Test-Path $jarPath)) { return $false }
+    try {
+        Add-Type -AssemblyName 'System.IO.Compression' -ErrorAction SilentlyContinue | Out-Null
+        Add-Type -AssemblyName 'System.IO.Compression.FileSystem' -ErrorAction SilentlyContinue | Out-Null
+        $zip = [System.IO.Compression.ZipFile]::OpenRead($jarPath)
+        try {
+            foreach ($entry in $zip.Entries) {
+                if ($entry.FullName.EndsWith('.class')) { return $true }
+            }
+            return $false
+        } finally {
+            $zip.Dispose()
+        }
+    } catch {
+        # If we cannot read the jar, treat as missing classes so it gets rebuilt.
+        return $false
+    }
+}
+
+function Get-NewestSourceWriteTime([string]$moduleDir) {
+    $candidateDirs = @(
+        (Join-Path $moduleDir 'src/main/java'),
+        (Join-Path $moduleDir 'src/main/xtend'),
+        (Join-Path $moduleDir 'src/main/resources'),
+        (Join-Path $moduleDir 'xtend-gen'),
+        (Join-Path $moduleDir 'src-gen'),
+        (Join-Path $moduleDir 'model')
+    )
+    $candidatePatterns = @('*.java', '*.xtend', '*.ecore', '*.genmodel', '*.fxml', '*.properties', '*.xmi')
+
+    $newest = [DateTime]::MinValue
+    foreach ($dir in $candidateDirs) {
+        if (-not (Test-Path $dir)) { continue }
+        foreach ($pattern in $candidatePatterns) {
+            $latest = Get-ChildItem -Path $dir -Recurse -File -Filter $pattern -ErrorAction SilentlyContinue |
+                Sort-Object LastWriteTimeUtc -Descending |
+                Select-Object -First 1
+            if ($latest -and $latest.LastWriteTimeUtc -gt $newest) {
+                $newest = $latest.LastWriteTimeUtc
+            }
+        }
+    }
+
+    # Include the module's own pom.xml and MANIFEST.MF so descriptor edits trigger a rebuild.
+    foreach ($descriptor in @((Join-Path $moduleDir 'pom.xml'), (Join-Path $moduleDir 'META-INF/MANIFEST.MF'), (Join-Path $moduleDir 'plugin.xml'), (Join-Path $moduleDir 'build.properties'))) {
+        if (Test-Path $descriptor) {
+            $time = (Get-Item $descriptor).LastWriteTimeUtc
+            if ($time -gt $newest) { $newest = $time }
+        }
+    }
+
+    return $newest
+}
+
+function Test-PluginModuleStale([string]$moduleDir) {
+    $artifactId = Split-Path -Leaf $moduleDir
+    $targetDir  = Join-Path $moduleDir 'target'
+    $jar = $null
+    if (Test-Path $targetDir) {
+        $jar = Get-ChildItem -Path $targetDir -File -Filter "$artifactId-*.jar" -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+    }
+
+    if (-not $jar) {
+        return @{ Stale = $true; Reason = "jar missing under $targetDir" }
+    }
+    if (-not (Test-JarContainsClasses $jar.FullName)) {
+        return @{ Stale = $true; Reason = "jar $($jar.Name) has no .class entries" }
+    }
+
+    $sourceTime = Get-NewestSourceWriteTime $moduleDir
+    if ($sourceTime -gt $jar.LastWriteTimeUtc) {
+        return @{ Stale = $true; Reason = "source newer than jar ($sourceTime > $($jar.LastWriteTimeUtc))" }
+    }
+
+    return @{ Stale = $false; Reason = '' }
+}
+
+function Test-MazeAppModuleStale([string]$moduleDir) {
+    $classesDir = Join-Path $moduleDir 'target/classes'
+    $appClass = Join-Path $classesDir 'main/game/maze/App.class'
+    if (-not (Test-Path $appClass)) {
+        return @{ Stale = $true; Reason = "App.class missing under $classesDir" }
+    }
+
+    $sourceTime = Get-NewestSourceWriteTime $moduleDir
+    $classTime  = (Get-Item $appClass).LastWriteTimeUtc
+    if ($sourceTime -gt $classTime) {
+        return @{ Stale = $true; Reason = "source newer than App.class ($sourceTime > $classTime)" }
+    }
+
+    return @{ Stale = $false; Reason = '' }
+}
+
+function Ensure-RuntimeModulesCompiled {
+    # Runtime closure rooted at maze/pom.xml. Order matters: producers before consumers.
+    $pluginModules = @(
+        'main.game.maze.difficulties',
+        'main.game.maze.opponents',
+        'main.game.maze.mazeworld',
+        'main.game.maze.behaviour'
+    )
+
+    $stale = New-Object System.Collections.Generic.List[string]
+    foreach ($moduleName in $pluginModules) {
+        $moduleDir = Join-Path $scriptRoot $moduleName
+        if (-not (Test-Path $moduleDir)) {
+            Write-Host "Skipping missing module: $moduleName" -ForegroundColor DarkYellow
+            continue
+        }
+        $check = Test-PluginModuleStale $moduleDir
+        if ($check.Stale) {
+            Write-Host ("Module '{0}' needs rebuild: {1}" -f $moduleName, $check.Reason) -ForegroundColor Yellow
+            $stale.Add($moduleName)
+        } else {
+            Write-Host "Module '$moduleName' up to date." -ForegroundColor DarkGreen
+        }
+    }
+
+    $mazeDir = Join-Path $scriptRoot 'maze'
+    $mazeCheck = Test-MazeAppModuleStale $mazeDir
+    $mazeStale = $mazeCheck.Stale
+    if ($mazeStale) {
+        Write-Host ("Module 'maze' needs rebuild: {0}" -f $mazeCheck.Reason) -ForegroundColor Yellow
+    } else {
+        Write-Host "Module 'maze' up to date." -ForegroundColor DarkGreen
+    }
+
+    if ($stale.Count -eq 0 -and -not $mazeStale) {
+        Write-Host 'Compiled artifacts are up to date with sources.' -ForegroundColor Green
+        return
+    }
+
+    $rebuildList = @($stale)
+    if ($mazeStale) { $rebuildList += 'maze' }
+    $plArg = ($rebuildList -join ',')
+
+    Write-Host "=== Rebuilding stale modules: $plArg ===" -ForegroundColor Cyan
+    & $Mvn -pl $plArg -am -DskipTests=true clean package
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Auto-rebuild of stale modules failed. Maven exited with code $exit."
+    }
+
+    # Verify all targeted modules are now fresh.
+    foreach ($moduleName in $stale) {
+        $moduleDir = Join-Path $scriptRoot $moduleName
+        $recheck = Test-PluginModuleStale $moduleDir
+        if ($recheck.Stale) {
+            throw "Module '$moduleName' is still stale after rebuild: $($recheck.Reason)"
+        }
+    }
+    if ($mazeStale) {
+        $recheck = Test-MazeAppModuleStale $mazeDir
+        if ($recheck.Stale) {
+            throw "Module 'maze' is still stale after rebuild: $($recheck.Reason)"
+        }
+    }
+
+    Write-Host '=== Stale modules rebuilt successfully ===' -ForegroundColor Green
 }
 
 function Test-MirrorOutdated {
@@ -394,6 +637,14 @@ switch ($Target) {
     'write-launch-env' {
         Use-Java21OrFail
         Write-LaunchEnvFile
+    }
+
+    'prepare-run' {
+        Use-Java21OrFail
+        Write-LaunchEnvFile
+        Ensure-RuntimeModulesCompiled
+        Ensure-LaunchBytecodeLevel
+        Ensure-LaunchJavaFxLibs
     }
 
     'mirror' {
