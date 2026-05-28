@@ -62,6 +62,7 @@ public class PlayerCharacter extends Character
     public boolean isWinning = false;
     private Timeline infectionTimeline = null;
     private final PlayerConfig playerConfig;
+    private final int maxHitPoints;
     private final Map<VectorFacing, Image> directionalImages = new EnumMap<>(VectorFacing.class);
     private Image deathImage;
     private volatile boolean deadVisualActive = false;
@@ -77,7 +78,19 @@ public class PlayerCharacter extends Character
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
         this.hpBar = hpBar;
         this.playerConfig = playerConfig == null ? PlayerConfig.defaults() : playerConfig;
+        this.maxHitPoints = Math.max(1, this.playerConfig.health());
+        this.hitPoints.set(this.maxHitPoints);
         configureDirectionalImages();
+    }
+
+    private void updateHpBarProgress() {
+        synchronized (lockObjectForHpbar) {
+            if (hpBar == null) {
+                return;
+            }
+            double normalizedProgress = hitPoints.get() / (double) maxHitPoints;
+            hpBar.setProgress(Math.max(0.0, Math.min(1.0, normalizedProgress)));
+        }
     }
 
     private void configureDirectionalImages() {
@@ -221,25 +234,15 @@ public class PlayerCharacter extends Character
 
     @Override
     public void setHitPoints(int hp) {
-        hitPoints = new AtomicInteger(hp);
-        Platform.runLater(() -> {
-            synchronized (lockObjectForHpbar) {
-                if (hpBar != null)
-                    hpBar.setProgress(hitPoints.get() / 100.0);
-            }
-        });
+        hitPoints.set(hp);
+        Platform.runLater(this::updateHpBarProgress);
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        Platform.runLater(() -> {
-            synchronized (lockObjectForHpbar) {
-                if (hpBar != null)
-                    hpBar.setProgress(hitPoints.get() / 100.0);
-            }
-        });
+        Platform.runLater(this::updateHpBarProgress);
 
         if (hitPoints.get() <= 0) {
             // Animation needs FX thread
@@ -260,12 +263,7 @@ public class PlayerCharacter extends Character
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
-        Platform.runLater(() -> {
-            synchronized (lockObjectForHpbar) {
-                if (hpBar != null)
-                    hpBar.setProgress(hitPoints.get() / 100.0);
-            }
-        });
+        Platform.runLater(this::updateHpBarProgress);
     }
 
     @Override

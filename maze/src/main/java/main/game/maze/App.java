@@ -142,21 +142,7 @@ public class App extends Application {
         stage.setWidth(width);
         stage.setHeight(height);
 
-        stage.setWidth(width);
-        stage.setHeight(height);
-
-        Scene scene = stage.getScene();
-        if (scene != null) {
-            var root = scene.getRoot();
-            if (root instanceof AnchorPane anchorRoot) {
-                anchorRoot.setPrefWidth(width);
-                anchorRoot.setPrefHeight(height);
-                anchorRoot.setMaxWidth(width);
-                anchorRoot.setMaxHeight(height);
-                setProgressBarWidth(anchorRoot);
-            }
-
-        }
+        applyRootSize(stage.getScene(), width, height);
     }
 
     public static void applyStandardSize(Stage stage) {
@@ -166,19 +152,21 @@ public class App extends Application {
         stage.setWidth(width);
         stage.setHeight(height);
 
-        stage.setWidth(width);
-        stage.setHeight(height);
+        applyRootSize(stage.getScene(), width, height);
+    }
 
-        Scene scene = stage.getScene();
-        if (scene != null) {
-            var root = scene.getRoot();
-            if (root instanceof AnchorPane anchorRoot) {
-                anchorRoot.setPrefWidth(width);
-                anchorRoot.setPrefHeight(height);
-                anchorRoot.setMaxWidth(width);
-                anchorRoot.setMaxHeight(height);
-                setProgressBarWidth(anchorRoot);
-            }
+    private static void applyRootSize(Scene scene, int width, int height) {
+        if (scene == null) {
+            return;
+        }
+
+        var root = scene.getRoot();
+        if (root instanceof AnchorPane anchorRoot) {
+            anchorRoot.setPrefWidth(width);
+            anchorRoot.setPrefHeight(height);
+            anchorRoot.setMaxWidth(width);
+            anchorRoot.setMaxHeight(height);
+            setProgressBarWidth(anchorRoot);
         }
     }
 

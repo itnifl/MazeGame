@@ -123,7 +123,7 @@ classDiagram
   LootTable "1" *-- "0..*" LootItem : items
 ```
 
-The opponents model imports the difficulties metamodel and uses classic EMF OCL delegates for derived values and validation.
+The opponents model imports the difficulties metamodel and uses the non-Pivot EMF OCL delegates (URI: http://www.eclipse.org/emf/2002/Ecore/OCL) for derived values and validation.
 
 ---
 

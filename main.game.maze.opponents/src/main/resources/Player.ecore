@@ -41,6 +41,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnDown"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/you2.png"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageDeath"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/You2-dead.png"/>
+                eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/you2-dead.png"/>
   </eClassifiers>
 </ecore:EPackage>
