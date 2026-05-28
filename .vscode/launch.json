@@ -6,6 +6,8 @@
             "type": "java",
             "name": "Launch MazeGame (with dynamic paths)",
             "request": "launch",
+            "preLaunchTask": "Ensure Java 21",
+            "envFile": "${workspaceFolder}/.vscode/maze.launch.env",
             "mainClass": "main.game.maze.App",
             "projectName": "main.game.maze",
             "vmArgs": [

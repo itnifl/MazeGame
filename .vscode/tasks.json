@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Ensure Java 21",
+            "type": "shell",
+            "windows": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make.ps1",
+                    "-Target",
+                    "write-launch-env"
+                ]
+            },
+            "linux": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make.ps1",
+                    "-Target",
+                    "write-launch-env"
+                ]
+            },
+            "osx": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make.ps1",
+                    "-Target",
+                    "write-launch-env"
+                ]
+            },
+            "problemMatcher": []
+        }
+    ]
+}
