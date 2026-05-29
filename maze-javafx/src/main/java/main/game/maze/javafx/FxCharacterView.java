@@ -2,6 +2,7 @@ package main.game.maze.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import main.game.maze.common.graphics.IBoundingBox;
 import main.game.maze.common.graphics.ICharacterView;
 import main.game.maze.common.graphics.UiScheduler;
 
@@ -30,6 +31,17 @@ public final class FxCharacterView implements ICharacterView {
     @Override public double getY()      { Node n = node; return n == null ? 0 : n.getLayoutY(); }
     @Override public double getWidth()  { Node n = node; return n == null ? 0 : n.getBoundsInLocal().getWidth(); }
     @Override public double getHeight() { Node n = node; return n == null ? 0 : n.getBoundsInLocal().getHeight(); }
+
+    @Override
+    public IBoundingBox getBoundingBox() {
+        Node n = node;
+        if (n == null) return IBoundingBox.of(0, 0, 0, 0);
+        double x = n.getLayoutX();
+        double y = n.getLayoutY();
+        double w = n.getBoundsInLocal().getWidth();
+        double h = n.getBoundsInLocal().getHeight();
+        return IBoundingBox.of(x, y, w, h);
+    }
 
     @Override
     public void setPosition(double x, double y) {

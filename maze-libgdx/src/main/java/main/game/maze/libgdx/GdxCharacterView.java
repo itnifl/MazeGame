@@ -1,6 +1,7 @@
 package main.game.maze.libgdx;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import main.game.maze.common.graphics.IBoundingBox;
 import main.game.maze.common.graphics.ICharacterView;
 import main.game.maze.common.graphics.UiScheduler;
 
@@ -34,6 +35,13 @@ public final class GdxCharacterView implements ICharacterView {
     @Override public double getY()      { Actor a = actor; return a == null ? 0 : a.getY(); }
     @Override public double getWidth()  { Actor a = actor; return a == null ? 0 : a.getWidth(); }
     @Override public double getHeight() { Actor a = actor; return a == null ? 0 : a.getHeight(); }
+
+    @Override
+    public IBoundingBox getBoundingBox() {
+        Actor a = actor;
+        if (a == null) return IBoundingBox.of(0, 0, 0, 0);
+        return IBoundingBox.of(a.getX(), a.getY(), a.getWidth(), a.getHeight());
+    }
 
     @Override
     public void setPosition(double x, double y) {

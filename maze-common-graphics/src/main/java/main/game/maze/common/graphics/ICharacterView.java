@@ -20,6 +20,9 @@ public interface ICharacterView {
     double getWidth();
     double getHeight();
 
+    /** Current axis-aligned bounds for collision or overlap checks. */
+    IBoundingBox getBoundingBox();
+
     void setPosition(double x, double y);
     void setScale(double sx, double sy);
     void setOpacity(double opacity);
