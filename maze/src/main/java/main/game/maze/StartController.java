@@ -12,6 +12,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.constants.AudioChannelConstants;
+import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.service.DifficultyService;
@@ -53,9 +56,14 @@ public class StartController implements Initializable {
         AnchorPane root = loader.load();
         GameController gc = loader.getController();
         gc.setStartDifficulty(selected); // <-- inject the EMF Difficulty from the model
-        gc.setupGame();                  // <-- your existing entry point
+        App.lastChosenDifficulty = selected;
+        App.gameController = gc;
 
         stage.setScene(new Scene(root));
+        App.applySizeForCurrentDifficulty(stage);
         stage.show();
+        gc.setupGame();
+
+        AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
     }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.game.maze.StartController"
+            style="-fx-background-color: linear-gradient(to bottom, #1d0d2f 0%, #0e1a2f 45%, #12241b 100%);">
+
+    <VBox alignment="CENTER" spacing="18" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+        <Label text="MAZE QUEST" style="-fx-font-size: 52px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0.4, 0, 3);" />
+        <Label text="Retro Challenge Mode" style="-fx-font-size: 20px; -fx-font-family: 'Consolas'; -fx-text-fill: #8fffe0; -fx-font-weight: bold;" />
+
+        <VBox alignment="CENTER" spacing="10" maxWidth="560" style="-fx-background-color: rgba(0,0,0,0.44); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 24; -fx-background-radius: 10; -fx-border-radius: 10;">
+            <Label text="Select Difficulty" style="-fx-font-size: 22px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
+            <ComboBox fx:id="difficultyCombo" prefWidth="320" style="-fx-font-size: 16px; -fx-font-family: 'Consolas'; -fx-background-color: #102238; -fx-border-color: #8fffe0; -fx-text-fill: #f2f8ff;" />
+
+            <HBox alignment="CENTER" spacing="14">
+                <Button text="Start Mission" onAction="#onStart" prefWidth="170" style="-fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
+            </HBox>
+
+            <Label text="Arrow keys to move, P path hint, O spanning tree, H high score, ESC restart menu" style="-fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-text-fill: #d7fff5;" wrapText="true" maxWidth="520" />
+            <Label fx:id="error" textFill="orangered" style="-fx-font-family: 'Consolas'; -fx-font-size: 14px; -fx-font-weight: bold;" />
+        </VBox>
+
+        <Label text="Collect the heart, avoid enemies, and maximize your score" style="-fx-font-size: 14px; -fx-font-family: 'Consolas'; -fx-text-fill: #ffe56e;" />
+    </VBox>
+</AnchorPane>

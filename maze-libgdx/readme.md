@@ -6,27 +6,22 @@ libGDX implementations of the facades defined in
 
 ## Status
 
-Phase 3 / 4 (current): the runnable gameplay subset now supports both the
-standalone `SampleMaze` placeholder and the shared `RealMaze` adapter
-(Phase 3, F11), selectable at runtime via `MazeRuntimeConfig` / the
-properties loader (Phase 4, F16). The launcher opens a real LWJGL3 window
-and drops you straight into either a procedurally generated maze or the
-shared `GameMazeWorld` arena with arrow-key controls and a goal cell. The
-deeper game pipeline (characters, opponents, behaviours, full DSL-driven
-configuration) still lives in Tycho-packaged Eclipse plugins; those
-bundles will be repackaged as plain Maven jars before the libGDX module
-consumes them. See [missing-feature.md](../missing-feature.md) for the
-gap list.
+Phase 4 parity work (current): the launcher now opens a retro start menu,
+lets the player choose difficulty from the shared EMF model, then builds a
+matching arena size and starts gameplay with visible score and command HUD.
+The runtime uses the shared `RealMaze` adapter for walls plus model-derived
+player, goal, wall and opponent art, and animates opponents so the board is
+not static.
 
 ## Gameplay subset
 
-- 16 by 12 grid maze, 48 px cells, generated with a seeded depth-first
-  recursive backtracker so each run is identical for reproducible bug reports.
-- Player rendered as a sky-blue square, goal cell as a green square.
-- Arrow keys or WASD to move; axis-separated collision resolution lets the
-  player slide along walls.
-- HUD line via libGDX `BitmapFont`; switches to a win message when the
-  player overlaps the goal cell.
+- Retro start menu in libGDX with difficulty selection (`UP`/`DOWN`, `ENTER`).
+- Difficulty specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
+- Arrow keys and WASD movement with collision against the shared maze walls.
+- Opponent sprites loaded from the model and animated continuously.
+- Bottom command bar with score, command hints and toggle status (`P`, `O`, `H`, `ESC`).
+- Camera follows the player when the world is larger than the viewport.
+- Win state shows completion text and allows returning to start menu (`ESC`).
 
 ## What lives here
 

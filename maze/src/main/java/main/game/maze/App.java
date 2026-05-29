@@ -4,11 +4,13 @@ package main.game.maze;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import main.game.maze.common.graphics.AudioEngine;
@@ -47,42 +49,19 @@ public class App extends Application {
             OpponentsPackage.eINSTANCE.eClass();
             DifficultiesPackage.eINSTANCE.eClass();
 
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.StartScreen));
             AnchorPane root = loader.load();
-            gameController = loader.getController();
+            StartController startController = loader.getController();
 
             primaryStage.setTitle("Maze Game");
-            primaryStage.setScene(new Scene(root, App.getBoardMaxX(), App.getBoardMaxY()));
+            primaryStage.setScene(new Scene(root, 980, 700));
             setWindowIcon(primaryStage);
-            // --- MDD difficulty selection (reads difficulties.xmi) ---
-            this.setDifficulty(primaryStage);
-            // --------------------------------------------------------
-            applySizeForCurrentDifficulty(primaryStage);
-            primaryStage.setResizable(false);
+            startController.setStage(primaryStage);
+            primaryStage.setResizable(true);
             primaryStage.setOnCloseRequest(event -> forceShutdownAndExit());
             primaryStage.show();
-
-            gameController.setupGame();
-
-            // Start looping background music via backend-agnostic audio engine.
-            AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void setDifficulty(Stage primaryStage) {
-        DifficultyService svc = new DifficultyService();
-        Difficulty current = svc.getCurrent();
-
-        Optional<Difficulty> chosen = pickDifficulty(primaryStage);
-        if (chosen.isPresent()) {
-            gameController.setStartDifficulty(chosen.get());
-        } else if (current != null) {
-            // Cancel → keep current from XMI
-            gameController.setStartDifficulty(current);
-            lastChosenDifficulty = current;
         }
     }
 
@@ -140,7 +119,19 @@ public class App extends Application {
     public static void applySizeForCurrentDifficulty(Stage stage) {
         int width  = getBoardMaxX();
         int height = getBoardMaxY();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
+        boolean needsFullscreen = width > bounds.getWidth() || height > bounds.getHeight();
+        if (needsFullscreen) {
+            stage.setWidth(bounds.getWidth());
+            stage.setHeight(bounds.getHeight());
+            stage.setFullScreenExitHint("");
+            stage.setFullScreen(true);
+            applyRootSize(stage.getScene(), (int) bounds.getWidth(), (int) bounds.getHeight());
+            return;
+        }
+
+        stage.setFullScreen(false);
         stage.setWidth(width);
         stage.setHeight(height);
 

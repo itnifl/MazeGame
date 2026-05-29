@@ -9,9 +9,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import main.game.maze.common.graphics.config.MazeConfigLoader;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
-import main.game.maze.mazeworld.generators.MazeArena;
-import main.game.maze.mazeworld.generators.RealMaze;
-import main.game.maze.mazeworld.generators.SampleMaze;
 
 /**
  * Launches the MazeGame libGDX backend.
@@ -41,11 +38,7 @@ public final class GdxAppLauncher {
         appConfig.setWindowedMode(cfg.windowWidth(), cfg.windowHeight());
         appConfig.setForegroundFPS(60);
 
-        MazeArena arena = cfg.useRealMaze()
-            ? RealMaze.fresh(cfg.windowWidth(), cfg.windowHeight())
-            : new SampleMaze(cfg.mazeCols(), cfg.mazeRows(), cfg.cellSize(), 1L);
-
-        new Lwjgl3Application(new GdxGameScreen(arena, cfg), appConfig);
+        new Lwjgl3Application(new GdxGameScreen(null, cfg), appConfig);
     }
 
     static MazeRuntimeConfig loadOrDefault() {

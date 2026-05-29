@@ -36,6 +36,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
@@ -126,6 +127,7 @@ public class GameController implements Initializable {
     private long lastRouteHintPenaltyNanos = 0L;
     private double routeHintPenaltyAccumulator = 0.0;
     private int routeHintPenaltyPoints = 0;
+    private Rectangle gameBoardClip;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -361,6 +363,10 @@ public class GameController implements Initializable {
     public void setupGame() {
         hpBar.setProgress(1.0);
 
+        gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
+        gameBoard.setMinSize(App.getBoardMaxX(), App.getBoardMaxY());
+        installGameBoardClip();
+
         updateBoardBackground();
 
         maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
@@ -380,13 +386,13 @@ public class GameController implements Initializable {
 
         // Create a canvas
         var canvas = this.drawCanvas(vectors);
-        root.getChildren().add(canvas);
+        gameBoard.getChildren().add(0, canvas);
 
         pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        root.getChildren().add(pathCanvas);
+        gameBoard.getChildren().add(pathCanvas);
 
         treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        root.getChildren().add(treeCanvas);
+        gameBoard.getChildren().add(treeCanvas);
         ensureHudLayersOnTop();
 
         gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {});
@@ -431,6 +437,7 @@ public class GameController implements Initializable {
 
                 var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
                 characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
+                updateCameraFollow();
             }
         });
 
@@ -445,8 +452,30 @@ public class GameController implements Initializable {
         gameBoard.setFocusTraversable(true);
         gameBoard.requestFocus();
         ensureHudLayersOnTop();
+        updateCameraFollow();
         
         startMovementTimer();
+    }
+
+    private void installGameBoardClip() {
+        if (root == null || gameBoard == null) {
+            return;
+        }
+        if (gameBoardClip == null) {
+            gameBoardClip = new Rectangle();
+            gameBoard.setClip(gameBoardClip);
+        }
+
+        if (!gameBoardClip.widthProperty().isBound()) {
+            gameBoardClip.widthProperty().bind(root.widthProperty());
+        }
+        if (!gameBoardClip.heightProperty().isBound()) {
+            if (bottomMenuContainer != null) {
+                gameBoardClip.heightProperty().bind(root.heightProperty().subtract(bottomMenuContainer.heightProperty()));
+            } else {
+                gameBoardClip.heightProperty().bind(root.heightProperty());
+            }
+        }
     }
 
     private PlayerConfig loadPlayerConfig() {
@@ -516,10 +545,49 @@ public class GameController implements Initializable {
                 }
                 if (moved) {
                     updateDebugLabels();
+                    updateCameraFollow();
                 }
             }
         };
         movementTimer.start();
+    }
+
+    private void updateCameraFollow() {
+        if (root == null || gameBoard == null || playerCharacter == null) {
+            return;
+        }
+
+        double viewportWidth = root.getWidth();
+        double viewportHeight = root.getHeight();
+        if (bottomMenuContainer != null) {
+            viewportHeight = Math.max(0, viewportHeight - bottomMenuContainer.getHeight());
+        }
+        if (viewportWidth <= 0 || viewportHeight <= 0) {
+            return;
+        }
+
+        double worldWidth = App.getBoardMaxX();
+        double worldHeight = App.getBoardMaxY();
+
+        double playerX = playerCharacter.getCharacterPosition().getX();
+        double playerY = playerCharacter.getCharacterPosition().getY();
+
+        double targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
+        double targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
+
+        gameBoard.setTranslateX(targetX);
+        gameBoard.setTranslateY(targetY);
+        ensureHudLayersOnTop();
+    }
+
+    private static double clamp(double value, double min, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
     }
 
     private void updateBoardBackground() {

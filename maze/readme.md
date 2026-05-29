@@ -106,6 +106,18 @@ The most common ways to run the `maze` module are:
 
 Check the `maze/pom.xml` for the exact plugin and main class configuration used in your setup.
 
+## Start menu and viewport behavior
+
+The JavaFX client now starts on a dedicated retro start screen (`startScreen.fxml`) where the player picks difficulty before loading the game scene.
+
+Current runtime behavior:
+
+- difficulty is selected from the shared `DifficultyService` model list
+- chosen difficulty sets board size before game setup
+- if the chosen board is larger than the screen, the stage automatically enters fullscreen
+- the maze viewport now follows the player while HUD elements stay fixed on top
+- the bottom command menu and score panel remain visible while the board scrolls
+
 ## Shutdown behavior
 
 The game now performs explicit shutdown cleanup when the window is closed:
