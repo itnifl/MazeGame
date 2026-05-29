@@ -381,6 +381,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (mode == Mode.START_MENU) {
+            applyFullWindowGlViewport();
             drawStartMenu();
             return;
         }
@@ -540,6 +541,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         shapes.end();
 
+        applyFullWindowGlViewport();
         drawHud();
         if (mode == Mode.HIGH_SCORES) {
             drawHighScoresOverlay();
@@ -550,6 +552,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (mode == Mode.GAME_OVER) {
             drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu", gameOverBackgroundTexture, Color.RED);
         }
+    }
+
+    private void applyFullWindowGlViewport() {
+        // viewport.apply() clamps the GL viewport to the gameplay strip; HUD must draw
+        // over the full window so the bottom command bar sticks to the actual bottom
+        // and the HP bar stays at the actual top.
+        Gdx.gl.glViewport(0, 0,
+                Math.max(1, Gdx.graphics.getBackBufferWidth()),
+                Math.max(1, Gdx.graphics.getBackBufferHeight()));
     }
 
     private void drawStartMenu() {
