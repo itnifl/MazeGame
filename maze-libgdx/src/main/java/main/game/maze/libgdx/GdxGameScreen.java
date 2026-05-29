@@ -218,16 +218,56 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private void applyGameViewportBounds(int width, int height) {
         int w = Math.max(1, width);
         int h = Math.max(1, height);
-        int bottom = (int) BOTTOM_BAR_HEIGHT;
-        int top = (int) HP_BAR_HEIGHT;
-        int gameH = Math.max(1, h - bottom - top);
+        GameStripBounds strip = computeGameStripBounds(w, h);
         viewport.update(w, h, true);
         if (viewport instanceof ScreenViewport sv) {
-            sv.setWorldSize(w, gameH);
-            sv.setScreenBounds(0, bottom, w, gameH);
+            sv.setWorldSize(strip.width(), strip.height());
+            sv.setScreenBounds(strip.x(), strip.y(), strip.width(), strip.height());
             sv.apply(true);
         }
     }
+
+    /**
+     * Gameplay viewport screen-pixel bounds. The strip sits between the bottom
+     * command bar and the top HP bar so the top wall is flush with the HP bar
+     * and the bottom wall is flush with the bottom bar.
+     *
+     * <p>Package-private for unit tests.
+     */
+    static GameStripBounds computeGameStripBounds(int windowWidth, int windowHeight) {
+        int w = Math.max(1, windowWidth);
+        int h = Math.max(1, windowHeight);
+        int bottom = (int) BOTTOM_BAR_HEIGHT;
+        int top = (int) HP_BAR_HEIGHT;
+        int gameH = Math.max(1, h - bottom - top);
+        return new GameStripBounds(0, bottom, w, gameH);
+    }
+
+    /** HUD y of the HP bar lower edge so the bar is pinned to the window top. */
+    static float hpBarBottomY(float windowHeight) {
+        return Math.max(0f, windowHeight - HP_BAR_HEIGHT - 1f);
+    }
+
+    /** HUD y of the bottom command row lower edge so the bar is pinned to the window bottom. */
+    static float bottomRowY() {
+        return 3f;
+    }
+
+    /** HUD pixel height reserved for the bottom command row. */
+    static float bottomRowHeight() {
+        return BOTTOM_BAR_HEIGHT - 6f;
+    }
+
+    static float bottomBarHeight() {
+        return BOTTOM_BAR_HEIGHT;
+    }
+
+    static float hpBarHeight() {
+        return HP_BAR_HEIGHT;
+    }
+
+    /** Package-private viewport-strip record exposed for unit tests. */
+    record GameStripBounds(int x, int y, int width, int height) {}
 
     @Override
     public void render() {
@@ -726,9 +766,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float buttonW = 112f;
         float buttonH = 26f;
         float rowPanelX = 8f;
-        float rowPanelY = 3f;
+        float rowPanelY = bottomRowY();
         float rowPanelW = w - 16f;
-        float rowPanelH = BOTTOM_BAR_HEIGHT - 6f;
+        float rowPanelH = bottomRowHeight();
 
         hudLayout.commandButtonX = buttonX;
         hudLayout.commandButtonY = buttonY;
@@ -738,7 +778,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         // HP bar like JavaFX.
         shapes.setColor(0.76f, 0.22f, 0.17f, 0.92f);
-        shapes.rect(1f, h - HP_BAR_HEIGHT - 1f, (w - 2f) * currentHpRatio, HP_BAR_HEIGHT);
+        shapes.rect(1f, hpBarBottomY(h), (w - 2f) * currentHpRatio, HP_BAR_HEIGHT);
 
         // Score panel and bottom row share the same visual language.
         shapes.setColor(0f, 0f, 0f, 0.45f);
@@ -752,7 +792,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         shapes.begin(ShapeRenderer.ShapeType.Line);
         shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
-        shapes.rect(1f, h - HP_BAR_HEIGHT - 1f, w - 2f, HP_BAR_HEIGHT);
+        shapes.rect(1f, hpBarBottomY(h), w - 2f, HP_BAR_HEIGHT);
         shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
         shapes.rect(0f, BOTTOM_BAR_HEIGHT, w, h - BOTTOM_BAR_HEIGHT - HP_BAR_HEIGHT);
