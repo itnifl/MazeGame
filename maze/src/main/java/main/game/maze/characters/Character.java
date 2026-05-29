@@ -10,7 +10,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ISubscribeOnDirection;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
-import javafx.application.Platform;
+import main.game.maze.platform.FxScheduler;
 
 public class Character  {
     public INotifyMovement notifyMovement = null;
@@ -164,7 +164,7 @@ public class Character  {
         double newX = characterPosition.getX() + speed;
         if (newX < maxX && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            Platform.runLater(() -> gfx.setLayoutX(newX));
+            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -176,7 +176,7 @@ public class Character  {
         double newX = characterPosition.getX() - speed;
         if (newX >= 0 && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            Platform.runLater(() -> gfx.setLayoutX(newX));
+            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -188,7 +188,7 @@ public class Character  {
         double newY = characterPosition.getY() + speed;
         if (newY < maxY && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            Platform.runLater(() -> gfx.setLayoutY(newY));
+            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }
@@ -200,7 +200,7 @@ public class Character  {
         double newY = characterPosition.getY() - speed;
         if (newY >= 0 && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            Platform.runLater(() -> gfx.setLayoutY(newY));
+            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }
@@ -231,7 +231,7 @@ public class Character  {
         maze = null;
         
         if (gfx != null) {
-            Runnable remove = () -> {
+            FxScheduler.get().runOnFxThread(() -> {
                 try {
                     gfx.setEffect(null);
                     var parent = gfx.getParent();
@@ -239,12 +239,7 @@ public class Character  {
                         p.getChildren().remove(gfx);
                     }
                 } catch (Exception ignored) {}
-            };
-            if (javafx.application.Platform.isFxApplicationThread()) {
-                remove.run();
-            } else {
-                javafx.application.Platform.runLater(remove);
-            }
+            });
         }
     }
 }

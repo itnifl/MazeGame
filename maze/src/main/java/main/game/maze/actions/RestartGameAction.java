@@ -10,8 +10,8 @@ import main.game.maze.GameOverController;
 import main.game.maze.WinGameController;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.actions.base.ActionScreens;
-import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.platform.AudioEngine;
 
 public class RestartGameAction extends ActionScreens {
     private AnchorPane root;
@@ -37,12 +37,7 @@ public class RestartGameAction extends ActionScreens {
         if (GameOverController.gameOverMediaPlayer != null) {
             GameOverController.gameOverMediaPlayer.stop();
         }
-        if (PlayerCharacter.infectedMediaPlayer != null) {
-            PlayerCharacter.infectedMediaPlayer.stop();
-        }
-        if (PlayerCharacter.screamMediaPlayer != null) {
-            PlayerCharacter.screamMediaPlayer.stop();
-        }
+        AudioEngine.get().dispose();
         App.inGameMediaPlayer.play();
 
         try {

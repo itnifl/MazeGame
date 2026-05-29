@@ -142,6 +142,56 @@ By following these ideas, `maze` stays a thin, clear and maintainable game clien
 
 ---
 
+## Platform abstraction (`main.game.maze.platform`)
+
+The `platform` package isolates the rest of the game from direct JavaFX (and other runtime) dependencies. It exists so the game loop, characters and actions can be unit tested without booting a JavaFX toolkit or playing real audio.
+
+### Interfaces
+
+- `IFxScheduler`: schedules work that must run on the JavaFX Application Thread (`runLater`, `runOnFxThread`, `isFxApplicationThread`).
+- `IAudioEngine`: plays bundled sound resources (`play`, `playRateLimited(resourcePath, soundId, cooldownMs)`, `dispose`).
+- `ICharacterView`: minimal facade over a JavaFX `Node` used by characters (position, scale, opacity, visibility, view order, effect clearing, detach from parent).
+
+### Production implementations
+
+- `JavaFxScheduler`: delegates to `javafx.application.Platform`. If the toolkit is not yet initialised (for example during tests), it falls back to running the action inline so callers never blow up.
+- `JavaFxAudioEngine`: caches a `MediaPlayer` per resource, dispatches playback through the FX thread, swallows `MediaException` and disables further attempts for resources that fail.
+- `FxCharacterView`: wraps a JavaFX `Node` and routes every mutation through `FxScheduler`.
+
+### Test doubles
+
+- `SynchronousFxScheduler`: runs every action inline on the calling thread; reports itself as the FX thread.
+- `NoopAudioEngine`: records every play attempt in memory so tests can assert which sounds would have been triggered.
+
+### Singletons with mockable swap
+
+Both subsystems are exposed as process-wide singletons whose implementation can be replaced in tests:
+
+```java
+// In a test @BeforeEach
+FxScheduler.set(new SynchronousFxScheduler());
+AudioEngine.set(new NoopAudioEngine());
+
+// In @AfterEach
+FxScheduler.reset();
+AudioEngine.reset();
+```
+
+`reset()` restores the production default (`JavaFxScheduler` / `JavaFxAudioEngine`). `AudioEngine.reset()` also disposes the previously installed engine.
+
+### Why this matters
+
+- **Mockable JavaFX**: `Character.moveCharacter*`, `PlayerCharacter` death animations and `PumpkinBomberCharacter` projectile cleanup all schedule UI writes via `FxScheduler.get()` instead of calling `Platform.runLater` directly. Tests install `SynchronousFxScheduler` and observe state changes immediately, with no JavaFX toolkit required.
+- **Global audio singleton**: All sound playback in `PlayerCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter` and `RestartGameAction` goes through `AudioEngine.get()`. There are no static `MediaPlayer` fields scattered through gameplay classes; lifetimes and cooldowns live in one place.
+- **View manipulation isolation**: Mutations such as setLayoutX/Y, opacity, effect clearing and child removal are performed through `IFxScheduler` (and, where appropriate, `FxCharacterView`), keeping the bulk of character logic free of direct JavaFX calls.
+
+### Tests
+
+- [src/test/java/main/game/maze/platform/FxSchedulerTest.java](src/test/java/main/game/maze/platform/FxSchedulerTest.java)
+- [src/test/java/main/game/maze/platform/AudioEngineTest.java](src/test/java/main/game/maze/platform/AudioEngineTest.java)
+
+---
+
 ## Related Documentation
 
 | Document | Description |

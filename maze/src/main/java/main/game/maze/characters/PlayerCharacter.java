@@ -1,6 +1,5 @@
 package main.game.maze.characters;
 
-import javafx.application.Platform;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -34,11 +31,10 @@ import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
-import java.util.concurrent.CountDownLatch;
+import main.game.maze.platform.AudioEngine;
+import main.game.maze.platform.FxScheduler;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javafx.scene.media.MediaException;
 
 public class PlayerCharacter extends Character
         implements ICharacterAnimations, ICanDie, ICanSubscribeAndNotifyPosition {
@@ -50,12 +46,6 @@ public class PlayerCharacter extends Character
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
     private ProgressBar hpBar;
-    public static MediaPlayer screamMediaPlayer;
-    public static MediaPlayer infectedMediaPlayer;
-    private static volatile boolean screamSoundDisabled = false;
-    private static volatile boolean infectedSoundDisabled = false;
-    private static volatile long lastScreamPlaybackAt = 0L;
-    private static volatile long lastInfectedPlaybackAt = 0L;
     private static final long SOUND_COOLDOWN_MS = 250L;
     private static final double DEAD_PLAYER_SCALE = 1.2;
     private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
@@ -143,40 +133,6 @@ public class PlayerCharacter extends Character
         return new Image(resource.toExternalForm());
     }
 
-    private MediaPlayer buildMediaPlayer(String resourcePath, String soundName) {
-        var resource = getClass().getResource(resourcePath);
-        if (resource == null) {
-            LOGGER.warning("Missing audio resource for " + soundName + ": " + resourcePath);
-            return null;
-        }
-
-        try {
-            Media media = new Media(resource.toExternalForm());
-            return new MediaPlayer(media);
-        } catch (MediaException mediaEx) {
-            LOGGER.warning("Failed to initialize media backend for " + soundName + ": " + mediaEx.getMessage());
-            return null;
-        } catch (Exception ex) {
-            LOGGER.warning("Unexpected audio error for " + soundName + ": " + ex.getMessage());
-            return null;
-        }
-    }
-
-    private void playSoundSafely(MediaPlayer player, String soundName) {
-        if (player == null) {
-            return;
-        }
-        try {
-            if (player.getStatus() == MediaPlayer.Status.PLAYING) {
-                player.stop();
-            }
-            player.seek(Duration.ZERO);
-            player.play();
-        } catch (Exception ex) {
-            LOGGER.warning("Failed to play " + soundName + ": " + ex.getMessage());
-        }
-    }
-
     @Override
     public void PlayHappyAnimation() {
         super.doCharacterAnimation(new HappyAction());
@@ -235,24 +191,19 @@ public class PlayerCharacter extends Character
     @Override
     public void setHitPoints(int hp) {
         hitPoints.set(hp);
-        Platform.runLater(this::updateHpBarProgress);
+        FxScheduler.get().runLater(this::updateHpBarProgress);
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        Platform.runLater(this::updateHpBarProgress);
+        FxScheduler.get().runLater(this::updateHpBarProgress);
 
         if (hitPoints.get() <= 0) {
-            // Animation needs FX thread
-            try {
-                Platform.runLater(this::PlayDieAnimation);
-            } catch (IllegalStateException e) {
-                // FX toolkit not initialized (test environment) - skip animation
-            }
-            
-            // Notify subscribers synchronously (they can use Platform.runLater if needed)
+            FxScheduler.get().runLater(this::PlayDieAnimation);
+
+            // Notify subscribers synchronously (they can schedule UI work themselves if needed)
             var subscribersCopy = new ArrayList<>(deathSubscribers);
             for (var subscriber : subscribersCopy) {
                 subscriber.AddDeathNotification(this);
@@ -263,7 +214,7 @@ public class PlayerCharacter extends Character
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
-        Platform.runLater(this::updateHpBarProgress);
+        FxScheduler.get().runLater(this::updateHpBarProgress);
     }
 
     @Override
@@ -316,49 +267,23 @@ public class PlayerCharacter extends Character
     }
 
     private void doStandardScreamSound() {
-        if (hpBar == null || screamSoundDisabled) {
+        if (hpBar == null) {
             return;
         }
-
-        long now = System.currentTimeMillis();
-        if (now - lastScreamPlaybackAt < SOUND_COOLDOWN_MS) {
-            return;
-        }
-        lastScreamPlaybackAt = now;
-
-        if (screamMediaPlayer == null) {
-            screamMediaPlayer = buildMediaPlayer(ResourceFileConstants.PlayerScreamSound, "player scream sound");
-            if (screamMediaPlayer == null) {
-                screamSoundDisabled = true;
-                return;
-            }
-        }
-
-        MediaPlayer currentScreamPlayer = screamMediaPlayer;
-        Platform.runLater(() -> playSoundSafely(currentScreamPlayer, "player scream sound"));
+        AudioEngine.get().playRateLimited(
+            ResourceFileConstants.PlayerScreamSound,
+            "player.scream",
+            SOUND_COOLDOWN_MS);
     }
 
     private void doInfectedScreamSound() {
-        if (hpBar == null || infectedSoundDisabled) {
+        if (hpBar == null) {
             return;
         }
-
-        long now = System.currentTimeMillis();
-        if (now - lastInfectedPlaybackAt < SOUND_COOLDOWN_MS) {
-            return;
-        }
-        lastInfectedPlaybackAt = now;
-
-        if (infectedMediaPlayer == null) {
-            infectedMediaPlayer = buildMediaPlayer(ResourceFileConstants.PlayerInfectedSound, "infected scream sound");
-            if (infectedMediaPlayer == null) {
-                infectedSoundDisabled = true;
-                return;
-            }
-        }
-
-        MediaPlayer currentInfectedPlayer = infectedMediaPlayer;
-        Platform.runLater(() -> playSoundSafely(currentInfectedPlayer, "infected scream sound"));
+        AudioEngine.get().playRateLimited(
+            ResourceFileConstants.PlayerInfectedSound,
+            "player.infected",
+            SOUND_COOLDOWN_MS);
     }
 
     private void flashCharacterColor(ImageView imageView, double colorHue) {
@@ -419,35 +344,10 @@ public class PlayerCharacter extends Character
             infectionTimeline = null;
         }
 
-        // stop & release sounds
-        try {
-            if (screamMediaPlayer != null) {
-                screamMediaPlayer.stop();
-                screamMediaPlayer.dispose();
-                screamMediaPlayer = null;
-            }
-        } catch (Exception ignored) {}
-        try {
-            if (infectedMediaPlayer != null) {
-                infectedMediaPlayer.stop();
-                infectedMediaPlayer.dispose();
-                infectedMediaPlayer = null;
-            }
-        } catch (Exception ignored) {}
-
         // clear any flash effect left on the sprite (defensive; base also clears)
         Node gfx = getCharacterGraphics();
         if (gfx != null) {
-            if (javafx.application.Platform.isFxApplicationThread()) {
-                gfx.setEffect(null);
-            } else {
-                CountDownLatch latch = new CountDownLatch(1);
-                javafx.application.Platform.runLater(() -> {
-                    try { gfx.setEffect(null); }
-                    finally { latch.countDown(); }
-                });
-                try { latch.await(2, TimeUnit.SECONDS); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
-            }
+            FxScheduler.get().runOnFxThread(() -> gfx.setEffect(null));
         }
 
         // detach subscribers
