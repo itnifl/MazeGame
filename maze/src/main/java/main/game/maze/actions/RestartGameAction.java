@@ -8,6 +8,7 @@ import main.game.maze.App;
 import main.game.maze.GameController;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.actions.base.ActionScreens;
+import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.common.graphics.AudioEngine;
@@ -27,8 +28,8 @@ public class RestartGameAction extends ActionScreens {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
 
-        AudioEngine.get().stopChannel("music.inGame");
-        AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, "music.inGame");
+    AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+    AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
 
         try {
             if (root == null || root.getScene() == null) {

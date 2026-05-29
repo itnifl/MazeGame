@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -61,7 +62,7 @@ public class App extends Application {
             gameController.setupGame();
 
             // Start looping background music via backend-agnostic audio engine.
-            AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, "music.inGame");
+            AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
         } catch (IOException e) {
             e.printStackTrace();
         }

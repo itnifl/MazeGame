@@ -13,6 +13,7 @@ import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameConstants;
 
 public class WinGameAction extends CharacterActionScreens implements ICanLetYouWin {
@@ -43,7 +44,7 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
 
         runnableOnWin.run();
 
-        AudioEngine.get().stopChannel("music.inGame");
+        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
 
         try {
             AnchorPane winScreen = fxmlLoader.load();
