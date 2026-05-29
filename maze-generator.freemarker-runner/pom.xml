@@ -11,6 +11,21 @@
   <artifactId>maze-generator.acceleo-runner</artifactId>
   <packaging>eclipse-plugin</packaging>
 
+  <properties>
+    <!--
+      Tycho 5.0.0 tycho-eclipse-plugin:eclipse-run drops every p2 bundle from the
+      <dependencies> list (see target/skippedP2Dependencies.txt). With no EMF /
+      Equinox runtime bundles available the application class cannot be resolved
+      and Equinox throws NullPointerException in ReferenceMap.put (exit code 13).
+
+      The generated sources are already committed under
+      maze-module-generator/src-gen, so model regeneration is only needed when an
+      .xmi model actually changes. Default to skipping the eclipse-run codegen
+      until the Tycho regression is sorted out. Re-enable with -Dskip.acceleo=false.
+    -->
+    <skip.acceleo>true</skip.acceleo>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -23,6 +38,7 @@
             <phase>generate-sources</phase>
             <goals><goal>eclipse-run</goal></goals>
             <configuration>
+              <skip>${skip.acceleo}</skip>
               <applicationArgs>
                 <arg>-application</arg>
                 <arg>maze-generator.acceleo.main.game.maze.gen.HeadlessWallsApp</arg>
@@ -41,6 +57,7 @@
             <phase>generate-sources</phase>
             <goals><goal>eclipse-run</goal></goals>
             <configuration>
+              <skip>${skip.acceleo}</skip>
               <applicationArgs>
                 <arg>-application</arg>
                 <arg>maze-generator.acceleo.main.game.maze.gen.RunAcceleo</arg>
