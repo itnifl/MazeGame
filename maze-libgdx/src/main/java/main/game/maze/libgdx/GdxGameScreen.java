@@ -13,7 +13,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import main.game.maze.libgdx.game.MazeArena;
 import main.game.maze.libgdx.game.PlayerState;
+import main.game.maze.libgdx.game.RealMaze;
 import main.game.maze.libgdx.game.SampleMaze;
 import main.game.maze.libgdx.game.WallSegment;
 
@@ -32,9 +34,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float PLAYER_SIZE = CELL_SIZE * 0.5f;
     private static final float PLAYER_SPEED = CELL_SIZE * 3.5f;
     private static final float WALL_THICKNESS = 3f;
+    private static final float GOAL_SIZE = 32f;
     private static final long SEED = 1L;
 
-    private SampleMaze maze;
+    private final MazeArena providedMaze;
+    private MazeArena maze;
     private PlayerState player;
     private SpriteBatch batch;
     private ShapeRenderer shapes;
@@ -43,10 +47,20 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private Viewport viewport;
     private boolean won;
 
+    public GdxGameScreen() {
+        this(null);
+    }
+
+    public GdxGameScreen(MazeArena arena) {
+        this.providedMaze = arena;
+    }
+
     @Override
     public void create() {
         GdxBackend.install();
-        maze = new SampleMaze(COLS, ROWS, CELL_SIZE, SEED);
+        maze = providedMaze != null
+            ? providedMaze
+            : new SampleMaze(COLS, ROWS, CELL_SIZE, SEED);
         player = new PlayerState(maze.startX(), maze.startY(), PLAYER_SIZE);
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
@@ -82,7 +96,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (dx != 0f || dy != 0f) {
             player.attemptMove(dx * PLAYER_SPEED * dt, dy * PLAYER_SPEED * dt, maze);
         }
-        if (player.reached(maze.goalX(), maze.goalY(), CELL_SIZE * 0.45f)) {
+        if (player.reached(maze.goalX(), maze.goalY(), GOAL_SIZE * 0.5f)) {
             won = true;
         }
     }
@@ -97,8 +111,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Goal cell.
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.15f, 0.55f, 0.2f, 1f);
-        float g = CELL_SIZE;
-        shapes.rect(maze.goalX() - g * 0.5f, maze.goalY() - g * 0.5f, g, g);
+        shapes.rect(maze.goalX() - GOAL_SIZE * 0.5f, maze.goalY() - GOAL_SIZE * 0.5f, GOAL_SIZE, GOAL_SIZE);
 
         // Walls.
         shapes.setColor(0.85f, 0.85f, 0.9f, 1f);

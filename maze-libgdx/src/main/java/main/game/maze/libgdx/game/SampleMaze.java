@@ -14,7 +14,7 @@ import java.util.Random;
  * {@code main.game.maze.mazeworld} bundle is repackaged as a plain Maven
  * jar that the libGDX module can consume directly.
  */
-public final class SampleMaze {
+public final class SampleMaze implements MazeArena {
 
     private final int cols;
     private final int rows;

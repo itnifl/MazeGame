@@ -26,7 +26,7 @@ public final class PlayerState {
      * Attempt to move by (dx, dy). Each axis is resolved separately so the
      * player can slide along a wall instead of getting stuck.
      */
-    public void attemptMove(float dx, float dy, SampleMaze maze) {
+    public void attemptMove(float dx, float dy, MazeArena maze) {
         if (dx != 0f) {
             float candidate = x + dx;
             if (!collides(candidate, y, maze)) x = candidate;
@@ -43,7 +43,7 @@ public final class PlayerState {
         return (dx * dx + dy * dy) <= (goalRadius * goalRadius);
     }
 
-    private boolean collides(float cx, float cy, SampleMaze maze) {
+    private boolean collides(float cx, float cy, MazeArena maze) {
         // Clamp inside the playfield first.
         if (cx - halfSize < 0f || cy - halfSize < 0f) return true;
         if (cx + halfSize > maze.widthPx() || cy + halfSize > maze.heightPx()) return true;

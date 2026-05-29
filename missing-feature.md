@@ -221,12 +221,19 @@ overall feature is marked Done.
 ### F16. DSL is grammar-only; no loader feeds the game
 
 - **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) and the empty `dsl/` examples folder.
-- **Status**: Missing.
+- **Status**: In progress (Phase 4 scaffold landed). A backend-neutral
+  `MazeRuntimeConfig` record + `MazeConfigLoader` interface +
+  `PropertiesMazeConfigLoader` default impl live in
+  [maze-common-graphics](maze-common-graphics/src/main/java/main/game/maze/common/graphics/config/);
+  the libGDX launcher now reads window size, maze grid and arena selection
+  from it. Still missing: an Xtext-driven loader that parses a real
+  `.mazedsl` file into the same record.
 - **Backend**: both.
 - **What the grammar says**: a single `.mazedsl` file can declare an entire
   game configuration (difficulty + opponents + patrols + loot tables).
 - **What the game does today**: `GameController` loads opponents, difficulty,
-  walls and player from XMI directly. No code path parses a `.mazedsl` file or
+  walls and player from XMI directly. The new properties loader covers
+  runtime/window parameters only; no code path parses a `.mazedsl` file or
   bridges its AST into the EMF runtime models.
 - **Acceptance**: pointing the game at a `.mazedsl` file (CLI flag or
   drop-in resource) produces the same gameplay configuration as the
