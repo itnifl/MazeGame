@@ -10,8 +10,6 @@ import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 
-import main.game.maze.dsl.mazeDsl.*;
-
 /**
  * Provides custom content assist proposals for MazeDsl.
  * 
