@@ -1,6 +1,7 @@
 package main.game.maze.javafx;
 
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.AnimationEngine;
 import main.game.maze.common.graphics.UiScheduler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ class JavaFxUiSchedulerTest {
     void restoreDefault() {
         UiScheduler.reset();
         AudioEngine.reset();
+        AnimationEngine.reset();
     }
 
     @Test
@@ -30,5 +32,6 @@ class JavaFxUiSchedulerTest {
     void backendInstallSwapsInJavaFxImpls() {
         JavaFxBackend.install();
         assertTrue(UiScheduler.get() instanceof JavaFxUiScheduler);
+        assertTrue(AnimationEngine.get() instanceof JavaFxAnimationEngine);
     }
 }

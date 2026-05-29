@@ -1,15 +1,11 @@
 package main.game.maze.characters;
 
-import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
@@ -32,6 +28,8 @@ import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.AnimationEngine;
+import main.game.maze.common.graphics.IAnimationHandle;
 import main.game.maze.common.graphics.UiScheduler;
 import java.util.EnumMap;
 import java.util.Map;
@@ -50,7 +48,7 @@ public class PlayerCharacter extends Character
     private static final double DEAD_PLAYER_SCALE = 1.2;
     private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
     public boolean isWinning = false;
-    private Timeline infectionTimeline = null;
+    private IAnimationHandle infectionAnimation = null;
     private final PlayerConfig playerConfig;
     private final int maxHitPoints;
     private final Map<VectorFacing, Image> directionalImages = new EnumMap<>(VectorFacing.class);
@@ -296,17 +294,12 @@ public class PlayerCharacter extends Character
         colorAdjust.setContrast(1.0);
         colorAdjust.setHue(colorHue); 
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(colorAdjust.hueProperty(), -1.0)),
-                new KeyFrame(Duration.seconds(0.5), new KeyValue(colorAdjust.hueProperty(), 0.5)),
-                new KeyFrame(Duration.seconds(1.0), new KeyValue(colorAdjust.hueProperty(), -1.0)));
-
-        timeline.setOnFinished(event -> {
-            imageView.setEffect(null);
-        });
-
         imageView.setEffect(colorAdjust);
-        timeline.play();
+        AnimationEngine.get().animateValues(
+            new double[] {0.0, 0.5, 1.0},
+            new double[] {-1.0, colorHue, -1.0},
+            value -> UiScheduler.get().runOnUiThread(() -> colorAdjust.setHue(value)),
+            () -> UiScheduler.get().runOnUiThread(() -> imageView.setEffect(null)));
     }
 
     private void calculateInfection(ZombieCharacter z) {
@@ -325,13 +318,12 @@ public class PlayerCharacter extends Character
             
             double dps = 0.10 * z.getDamage() * calculatedInfectionLevel; // ticks each second for 6s
             final int totalTicks = 6;
-            if(infectionTimeline == null || infectionTimeline.getStatus() != Timeline.Status.RUNNING) {
-                    infectionTimeline= new Timeline(new KeyFrame(Duration.seconds(totalTicks), event -> {
+            if (infectionAnimation == null || !infectionAnimation.isRunning()) {
+                infectionAnimation = AnimationEngine.get().scheduleOnce(totalTicks, () -> {
                     this.subtractHitPoints((int)Math.round(dps));
                     this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
                     this.doInfectedScreamSound();
-                }));
-                infectionTimeline.play();
+                });
             }
 
         }
@@ -339,9 +331,9 @@ public class PlayerCharacter extends Character
 
     public void dispose() {
         // stop infection tick
-        if (infectionTimeline != null) {
-            infectionTimeline.stop();
-            infectionTimeline = null;
+        if (infectionAnimation != null) {
+            infectionAnimation.stop();
+            infectionAnimation = null;
         }
 
         // clear any flash effect left on the sprite (defensive; base also clears)

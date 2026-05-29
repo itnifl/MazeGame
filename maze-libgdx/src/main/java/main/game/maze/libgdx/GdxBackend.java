@@ -1,6 +1,7 @@
 package main.game.maze.libgdx;
 
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.AnimationEngine;
 import main.game.maze.common.graphics.UiScheduler;
 
 /**
@@ -20,5 +21,6 @@ public final class GdxBackend {
     public static void install() {
         UiScheduler.set(new GdxUiScheduler());
         AudioEngine.set(new GdxAudioEngine());
+        AnimationEngine.reset();
     }
 }

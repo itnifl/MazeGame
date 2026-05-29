@@ -1,6 +1,7 @@
 package main.game.maze.javafx;
 
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.AnimationEngine;
 import main.game.maze.common.graphics.UiScheduler;
 
 /**
@@ -22,5 +23,6 @@ public final class JavaFxBackend {
     public static void install() {
         UiScheduler.set(new JavaFxUiScheduler());
         AudioEngine.set(new JavaFxAudioEngine());
+        AnimationEngine.set(new JavaFxAnimationEngine());
     }
 }
