@@ -14,6 +14,8 @@ import main.game.maze.mazeworld.service.MazeNavigationGraph;
  */
 public final class RealMaze implements MazeArena {
 
+    private final GameMazeWorld world;
+    private final MazeNavigationGraph navigationGraph;
     private final float widthPx;
     private final float heightPx;
     private final float startX;
@@ -27,10 +29,12 @@ public final class RealMaze implements MazeArena {
         if (widthPx <= 0 || heightPx <= 0) {
             throw new IllegalArgumentException("widthPx and heightPx must be positive");
         }
+        this.world = world;
+        this.navigationGraph = world.getNavigationGraph();
         this.widthPx = widthPx;
         this.heightPx = heightPx;
         this.walls = Collections.unmodifiableList(flipWalls(world.getMazeVectors(), heightPx));
-        float[] points = computeStartAndGoal(world.getNavigationGraph(), heightPx, widthPx);
+        float[] points = computeStartAndGoal(this.navigationGraph, heightPx, widthPx);
         this.startX = points[0];
         this.startY = points[1];
         this.goalX = points[2];
@@ -48,6 +52,8 @@ public final class RealMaze implements MazeArena {
     @Override public float startY()               { return startY; }
     @Override public float goalX()                { return goalX; }
     @Override public float goalY()                { return goalY; }
+    public GameMazeWorld sourceWorld()            { return world; }
+    public MazeNavigationGraph navigationGraph()  { return navigationGraph; }
 
     private static List<WallSegment> flipWalls(List<Vector2D> vectors, int heightPx) {
         List<WallSegment> out = new ArrayList<>(vectors.size());

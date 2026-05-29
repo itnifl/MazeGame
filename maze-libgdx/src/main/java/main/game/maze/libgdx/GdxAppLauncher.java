@@ -37,6 +37,7 @@ public final class GdxAppLauncher {
         appConfig.setTitle("MazeGame (libGDX backend)");
         appConfig.setWindowedMode(cfg.windowWidth(), cfg.windowHeight());
         appConfig.setForegroundFPS(60);
+        appConfig.setWindowIcon("main/game/maze/ghost1.png");
 
         new Lwjgl3Application(new GdxGameScreen(null, cfg), appConfig);
     }

@@ -118,6 +118,7 @@ Current runtime behavior:
 - the maze viewport now follows the player while HUD elements stay fixed on top
 - the bottom command menu and score panel remain visible while the board scrolls
 - start menu music and menu selection sound are optional; missing files are ignored safely
+- HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
 
 ## Shutdown behavior
 

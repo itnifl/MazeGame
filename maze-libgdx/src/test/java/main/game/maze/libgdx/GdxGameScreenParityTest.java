@@ -1,6 +1,8 @@
 package main.game.maze.libgdx;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 
@@ -38,5 +40,18 @@ class GdxGameScreenParityTest {
         assertEquals(StageConstants.BoardMaxYMedium, normalH);
         assertEquals(StageConstants.BoardMaxXLarge, hardW);
         assertEquals(StageConstants.BoardMaxYLarge, hardH);
+    }
+
+    @Test
+    void mouseHitTestingUsesSameRectLogic() throws Exception {
+        Method contains = GdxGameScreen.class.getDeclaredMethod(
+                "contains", float.class, float.class, float.class, float.class, float.class, float.class);
+        contains.setAccessible(true);
+
+        boolean inside = (boolean) contains.invoke(null, 10f, 10f, 5f, 5f, 20f, 20f);
+        boolean outside = (boolean) contains.invoke(null, 30.1f, 30.1f, 5f, 5f, 20f, 20f);
+
+        assertTrue(inside);
+        assertFalse(outside);
     }
 }

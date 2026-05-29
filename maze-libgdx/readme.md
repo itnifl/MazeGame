@@ -16,11 +16,15 @@ not static.
 ## Gameplay subset
 
 - Retro start menu in libGDX with difficulty selection (`UP`/`DOWN`, `ENTER`).
+- Start menu supports mouse selection for difficulty and start button.
 - Difficulty specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
 - Arrow keys and WASD movement tuned to JavaFX-equivalent speed behavior.
 - Opponent sprites loaded from the model and animated continuously.
 - Bottom command row and top-right score card styled to match JavaFX HUD overlays.
+- HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
 - Camera follows the player when the world is larger than the viewport.
+- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`.
+- High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
 - Win state shows completion text and allows returning to start menu (`ESC`).
 - Menu music and menu selection sound are optional; if files are missing the game continues without audio failures.
 
