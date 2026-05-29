@@ -145,6 +145,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private float playerTintBlue = 1f;
     private boolean playedWinSound;
     private boolean playedGameOverSound;
+    private boolean loadingPending;
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<ScoreRow> highScoreRows = new ArrayList<>();
     private final MenuLayout menuLayout = new MenuLayout();
@@ -210,7 +211,21 @@ public final class GdxGameScreen extends ApplicationAdapter {
         hudCamera.setToOrtho(false, Math.max(1, width), Math.max(1, height));
         hudCamera.update();
         if (viewport != null) {
-            viewport.update(width, height, true);
+            applyGameViewportBounds(width, height);
+        }
+    }
+
+    private void applyGameViewportBounds(int width, int height) {
+        int w = Math.max(1, width);
+        int h = Math.max(1, height);
+        int bottom = (int) BOTTOM_BAR_HEIGHT;
+        int top = (int) HP_BAR_HEIGHT;
+        int gameH = Math.max(1, h - bottom - top);
+        viewport.update(w, h, true);
+        if (viewport instanceof ScreenViewport sv) {
+            sv.setWorldSize(w, gameH);
+            sv.setScreenBounds(0, bottom, w, gameH);
+            sv.apply(true);
         }
     }
 
@@ -219,6 +234,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float dt = Math.min(Gdx.graphics.getDeltaTime(), 1f / 30f);
         update(dt);
         draw();
+        if (loadingPending) {
+            loadingPending = false;
+            startGameFromSelection();
+        }
     }
 
     private void update(float dt) {
@@ -340,7 +359,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             if (!playedGameOverSound) {
                 playedGameOverSound = true;
                 AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                AudioEngine.get().play(ResourceFileConstants.GameOverSound);
+                AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
             }
         }
 
@@ -351,7 +370,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             if (!playedWinSound) {
                 playedWinSound = true;
                 AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                AudioEngine.get().play(visualStyle.winSoundPath());
+                AudioEngine.get().playLoop(visualStyle.winSoundPath(), AudioChannelConstants.WIN_MUSIC);
                 AudioEngine.get().play(ResourceFileConstants.WinGameSoundComment);
             }
         }
@@ -669,6 +688,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
             font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
             font.draw(batch, statusMessage, panelX + 16f, panelY + 44f);
         }
+        if (loadingPending) {
+            font.setColor(Color.GOLD);
+            font.getData().setScale(4.0f);
+            glyphLayout.setText(font, "Loading ...");
+            float lx = (w - glyphLayout.width) * 0.5f;
+            float ly = h * 0.5f + glyphLayout.height * 0.5f;
+            font.draw(batch, "Loading ...", lx, ly);
+            font.getData().setScale(1.0f);
+        }
         batch.end();
     }
 
@@ -875,6 +903,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void handleStartMenuInput() {
+        if (loadingPending) {
+            return;
+        }
         handleStartMenuMouseInput();
         boolean upPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean downPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
@@ -890,7 +921,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (enterPressed && !enterLatch) {
             AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-            startGameFromSelection();
+            loadingPending = true;
         }
 
         upLatch = upPressed;
@@ -929,7 +960,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (contains(mx, my, menuLayout.buttonX, menuLayout.buttonY, menuLayout.buttonW, menuLayout.buttonH)) {
             startMenuDropdownOpen = false;
             AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-            startGameFromSelection();
+            loadingPending = true;
         }
     }
 
@@ -1061,7 +1092,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (viewport == null) {
             viewport = new ScreenViewport(camera);
         }
-        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         playerTexture = loadTexture(runtimeModel.playerImagePath());
         playerDeathTexture = loadTexture(runtimeModel.playerDeathImagePath());
@@ -1186,7 +1217,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             camX = clamp(player.x(), halfW, maze.widthPx() - halfW);
         }
         if (maze.heightPx() <= worldH + 0.001f) {
-            camY = maze.heightPx() - halfH;
+            camY = halfH;
         } else {
             camY = clamp(player.y(), halfH, maze.heightPx() - halfH);
         }
@@ -1213,12 +1244,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private void switchToInGameMusic() {
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
         AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
     }
 
     private void switchToMenuMusic() {
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
         AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
     }
@@ -1268,6 +1303,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     public void dispose() {
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         for (Texture texture : texturesByPath.values()) {
             texture.dispose();
         }

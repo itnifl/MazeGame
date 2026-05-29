@@ -79,6 +79,8 @@ public class StartController implements Initializable {
         gc.setupGame();
 
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
     }
 

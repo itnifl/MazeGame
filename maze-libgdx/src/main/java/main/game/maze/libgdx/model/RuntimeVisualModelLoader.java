@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.characters.CollisionDamage;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.constants.OpponentConstants;
@@ -119,6 +120,8 @@ public final class RuntimeVisualModelLoader {
         List<EnemySpawn> out = new ArrayList<>();
         Random random = new Random(1337L);
         float threatBudget = difficulty != null ? Math.max(1f, difficulty.getMaxThreat()) : Float.MAX_VALUE;
+        float damageMultiplier = difficulty != null ? (float) Math.max(0d, difficulty.getMonstersDamageMultiplier()) : 1f;
+        boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
         float startX = arena != null ? arena.startX() : widthPx * 0.5f;
         float startY = arena != null ? arena.startY() : heightPx * 0.5f;
@@ -149,16 +152,20 @@ public final class RuntimeVisualModelLoader {
                     if (!isValidSpawn(arena, x, y, size, widthPx, heightPx, startX, startY, goalX, goalY)) {
                         continue;
                     }
-                    int attackDamage = Math.max(0, attackDamageFor(picked));
+                    int baseDamage = Math.max(0, attackDamageFor(picked));
+                    int attackDamage = Math.max(0, Math.round(baseDamage * damageMultiplier));
                     int infectionLevel = infectionLevelFor(picked);
                     String touchSound = touchSoundFor(picked);
+                    float effectiveThreat = instantDeath
+                            ? (float) (CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD + 1d)
+                            : threat;
                     accepted = new EnemySpawn(
                             defaultIfBlank(picked.getId(), type.name().toLowerCase(Locale.ROOT) + "_" + i),
                             defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type)),
                             x,
                             y,
                             size,
-                            threat,
+                            effectiveThreat,
                             attackDamage,
                             infectionLevel,
                             touchSound);

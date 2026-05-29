@@ -58,6 +58,8 @@ public class RestartGameAction extends ActionScreens {
             GameMazeWorld.RegenerateWorld(App.getBoardMaxX(), App.getBoardMaxY());
 
             controller.setupGame();
+            AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+            AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
             AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
             AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
         } catch (IOException e) {
