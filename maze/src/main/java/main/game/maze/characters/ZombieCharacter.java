@@ -63,7 +63,7 @@ public class ZombieCharacter extends ComputerCharacter
 
     @Override
     public int getDamage() {
-        return Math.max(0, zombieModel.getAttackDamage());
+        return CollisionDamage.effectiveDamage(zombieModel.getThreatLevel(), zombieModel.getAttackDamage());
     }
 
     @Override

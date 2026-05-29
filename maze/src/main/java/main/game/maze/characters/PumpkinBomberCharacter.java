@@ -142,7 +142,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ICanKill / damage
 
     @Override public int getDamage() {
-        return Math.max(0, defaultIfNull(model.getAttackDamage(), 5));
+        return CollisionDamage.effectiveDamage(model.getThreatLevel(), defaultIfNull(model.getAttackDamage(), 5));
     }
 
     // ICanDie

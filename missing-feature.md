@@ -102,12 +102,14 @@ overall feature is marked Done.
 ### F7. Difficulty multipliers applied to opponents
 
 - **Source**: [difficulty-module.ecore](main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `Difficulty.monstersMovementSpeedMultiplier`, `Difficulty.monstersDamageMultiplier`.
-- **Status**: Partial.
+- **Status**: Done.
 - **Backend**: both.
 - **What the model says**: enemy speed and damage should scale per difficulty.
-- **What the game does today**: difficulty only controls board size and base
-  score. Grep finds no runtime use of `monstersMovementSpeedMultiplier` or
-  `monstersDamageMultiplier`.
+- **What the game does today**: `OpponentRuntimeFactory.setCharacterAttributesByDifficulty`
+  scales `speed` by `monstersMovementSpeedMultiplier` and `attackDamage` by
+  `monstersDamageMultiplier` (or `Integer.MAX_VALUE` when
+  `Difficulty.instantDeath` is true) for every spawned Zombie, Ghost and
+  PumpkinBomber.
 - **Acceptance**: changing the selected `Difficulty` measurably changes enemy
   movement speed and damage at runtime.
 
@@ -205,12 +207,16 @@ overall feature is marked Done.
 ### F15. instantKillOnCollision for high-threat enemies
 
 - **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `instantKillOnCollision = threatLevel > 100`.
-- **Status**: Missing.
-- **Backend**: both.
+- **Status**: Done.
+- **Backend**: both (shared `CollisionDamage` lives in the JavaFX `maze`
+  module; libGDX backend will reuse it once enemies are rendered there).
 - **What the model says**: any enemy with threat level above 100 should
   instantly kill the player on contact, irrespective of player HP.
-- **What the game does today**: damage on collision is computed from
-  `attackDamage` only; no path queries `instantKillOnCollision`.
+- **What the game does today**: `ZombieCharacter.getDamage`,
+  `GhostCharacter.getDamage` and `PumpkinBomberCharacter.getDamage` route
+  through [CollisionDamage](maze/src/main/java/main/game/maze/characters/CollisionDamage.java),
+  which returns `Integer.MAX_VALUE` whenever
+  `CharacterType.threatLevel > 100`.
 - **Acceptance**: an enemy authored with `threatLevel > 100` reduces the
   player to 0 HP on first contact.
 
@@ -266,12 +272,16 @@ overall feature is marked Done.
 ### F19. DSL `passive` and `aggressive` behaviors
 
 - **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `BehaviorTypeEnum {passive, wander, aggressive, patrol}`.
-- **Status**: Partial.
-- **Backend**: both.
+- **Status**: Done.
+- **Backend**: both (JavaFX runtime today; libGDX inherits once enemies are
+  ported).
 - **What the grammar says**: four behaviour modes are selectable.
-- **What the game does today**: `GameController.doCharacter*Move()` switches
-  on `WANDER` and `PATROL` only; `PASSIVE` (do nothing) and `AGGRESSIVE`
-  (always chase) are not implemented.
+- **What the game does today**: `GameController` switches on all four
+  behaviour modes. `PASSIVE` opponents stay still; `AGGRESSIVE` opponents
+  chase the player every tick via
+  [ChaseController](maze/src/main/java/main/game/maze/ChaseController.java),
+  which computes a 4-way grid-aligned unit vector from the opponent toward
+  the player position.
 - **Acceptance**: an opponent declared as `behavior passive` stands still and
   one declared as `behavior aggressive` actively chases the player.
 
@@ -327,10 +337,10 @@ overall feature is marked Done.
 
 | Area | Open IDs |
 |------|----------|
-| Opponents + sprites | F1, F10, F14, F15, F18 |
+| Opponents + sprites | F1, F10, F14, F18 |
 | Loot | F2, F21 |
-| Patrol + AI | F3, F4, F5, F6, F19, F22, F23 |
-| Difficulty | F7, F8, F9 |
+| Patrol + AI | F3, F4, F5, F6, F22, F23 |
+| Difficulty | F8, F9 |
 | Walls | F11, F12 |
 | Player | F13 |
 | DSL plumbing | F16, F17, F20 |

@@ -680,6 +680,12 @@ public class GameController implements Initializable {
                                         case PATROL:
                                             doCharacterPatrolMove(computerCharacter);
                                             break;
+                                        case PASSIVE:
+                                            // F19: PASSIVE opponents stand still.
+                                            break;
+                                        case AGGRESSIVE:
+                                            doCharacterAggressiveMove(computerCharacter);
+                                            break;
                                         default:
                                             doCharacterWanderMove(computerCharacter);
                                             break;
@@ -743,6 +749,29 @@ public class GameController implements Initializable {
         // If move failed, enter wander fallback to get unstuck
         if (!successfulMove) {
             PatrolController.triggerWanderFallback(computerCharacter);
+            computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
+        }
+    }
+
+    private void doCharacterAggressiveMove(IMovingComputerCharacter computerCharacter) {
+        if (playerCharacter == null) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        var nonTangient = false;
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
+        }
+        var direction = ChaseController.getDirectionTowards(
+                computerCharacter, playerCharacter.getCharacterPosition());
+        if (direction == null) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        computerCharacter.setDirection(direction);
+        var successfulMove = computerCharacter.move(nonTangient);
+        if (!successfulMove) {
             computerCharacter.changeDirection();
             computerCharacter.move(nonTangient);
         }
