@@ -359,7 +359,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         // Player fallback.
         if (playerTexture == null) {
-            shapes.setColor(won ? Color.GOLD : Color.SKY);
+            shapes.setColor(mode == Mode.WON ? Color.GOLD : Color.SKY);
             shapes.rect(player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
         }
 

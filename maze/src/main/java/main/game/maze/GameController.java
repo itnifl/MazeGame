@@ -577,7 +577,6 @@ public class GameController implements Initializable {
 
         gameBoard.setTranslateX(targetX);
         gameBoard.setTranslateY(targetY);
-        ensureHudLayersOnTop();
     }
 
     private static double clamp(double value, double min, double max) {
