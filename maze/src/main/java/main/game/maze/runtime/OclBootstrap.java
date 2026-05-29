@@ -1,10 +1,8 @@
 package main.game.maze.runtime;
 
 import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
-import org.eclipse.ocl.ecore.delegate.OCLDelegateDomainFactory;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
@@ -24,11 +22,5 @@ public final class OclBootstrap {
                 uri, new OCLSettingDelegateFactory.Global());
             EValidator.ValidationDelegate.Registry.INSTANCE.put(
                 uri, new OCLValidationDelegateFactory.Global());
-        
-
-        EPackage.Registry.INSTANCE.put(
-            "http://www.eclipse.org/emf/2002/Ecore/OCL/Pivot",
-            new OCLDelegateDomainFactory()
-        );
     }
 }
