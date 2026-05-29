@@ -46,6 +46,14 @@ public final class XmiMazeVisualStyleLoader {
             }
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
+            // Harden against XXE / external entity expansion (OWASP XXE).
+            dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
             Document doc = dbf.newDocumentBuilder().parse(in);
             Element root = doc.getDocumentElement();
             if (root == null) {
