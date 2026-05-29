@@ -1,8 +1,13 @@
 package main.game.maze.runtime;
 
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
+import org.eclipse.emf.ecore.impl.EOperationImpl;
+import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
@@ -24,6 +29,13 @@ public final class OclBootstrap {
 
         registerFor(OCL_DELEGATE_URI);
         registerFor(OCL_PIVOT_DELEGATE_URI);
+
+        // If any EPackage was loaded BEFORE init() (common in test JVMs where
+        // sibling tests touch generated EMF packages first), its EStructuralFeatures
+        // will have cached the default SettingDelegate, which throws
+        // "settings is null" for OCL-derived attributes. Re-resolve them now that
+        // the OCL factories are registered.
+        invalidateCachedDelegates();
     }
 
     private static void registerFor(String uri) {
@@ -33,5 +45,35 @@ public final class OclBootstrap {
             uri, new OCLSettingDelegateFactory.Global());
         EValidator.ValidationDelegate.Registry.INSTANCE.put(
             uri, new OCLValidationDelegateFactory.Global());
+    }
+
+    private static void invalidateCachedDelegates() {
+        for (Object value : EPackage.Registry.INSTANCE.values()) {
+            // values() returns raw stored entries; skip unresolved EPackage.Descriptor
+            // wrappers to avoid forcing their initialization here.
+            if (value instanceof EPackage pkg) {
+                resetPackage(pkg);
+            }
+        }
+    }
+
+    private static void resetPackage(EPackage pkg) {
+        for (EClassifier classifier : pkg.getEClassifiers()) {
+            if (classifier instanceof EClass eClass) {
+                for (EStructuralFeature f : eClass.getEStructuralFeatures()) {
+                    if (f instanceof EStructuralFeatureImpl impl) {
+                        impl.setSettingDelegate(null);
+                    }
+                }
+                for (EOperation op : eClass.getEOperations()) {
+                    if (op instanceof EOperationImpl opImpl) {
+                        opImpl.setInvocationDelegate(null);
+                    }
+                }
+            }
+        }
+        for (EPackage sub : pkg.getESubpackages()) {
+            resetPackage(sub);
+        }
     }
 }

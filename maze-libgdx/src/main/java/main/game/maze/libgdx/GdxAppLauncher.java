@@ -12,6 +12,7 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.runtime.OclBootstrap;
 
 /**
  * Launches the MazeGame libGDX backend.
@@ -34,6 +35,7 @@ public final class GdxAppLauncher {
     private GdxAppLauncher() {}
 
     public static void main(String[] args) {
+        OclBootstrap.init();
         MazeRuntimeConfig cfg = loadOrDefault();
 
         Lwjgl3ApplicationConfiguration appConfig = new Lwjgl3ApplicationConfiguration();
