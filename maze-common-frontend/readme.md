@@ -16,7 +16,11 @@ runtime renderer is JavaFX, libGDX, or something else.
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
   difficulty background images, wall type ids, menu icon, and common
-  menu or gameplay audio resource paths.
+  menu or gameplay audio resource paths. `XmiMazeVisualStyleLoader` configures
+  its `DocumentBuilderFactory` with OWASP XXE hardening (secure-processing,
+  disallow-doctype-decl, external general/parameter entities and external DTD
+  loading disabled, XInclude off, entity expansion off) so loading from
+  arbitrary file paths is safe.
 
 ## Default behaviour with no backend installed
 

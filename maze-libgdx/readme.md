@@ -17,12 +17,15 @@ not static.
 
 - Retro start menu in libGDX with difficulty selection (`UP`/`DOWN`, `ENTER`).
 - Start menu supports mouse selection for difficulty and start button.
+- A "Loading ..." overlay is rendered on the start menu while the level is being built, and is cleared once gameplay begins.
 - Difficulty-specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
+- OCL-derived difficulty parameters from the shared opponents / difficulties XMI model are applied at spawn time: monster population cap, max threat level, monster speed multiplier, monster damage multiplier, and instant-death (modeled via a threat above `CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD`).
 - Arrow keys and WASD movement tuned to JavaFX-equivalent speed behavior.
 - Opponent sprites loaded from the model and animated continuously.
 - Background image, wall type selection, goal sprite, menu icon, and menu/in-game sound paths now come from shared `MazeVisualStyleConfig` loaded from XMI first, with properties fallback, so JavaFX and libGDX follow the same style model.
 - Bottom command row and top-right score card styled to match JavaFX HUD overlays.
 - HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
+- The maze world is bottom-anchored to the bottom HUD bar: when the maze fits the gameplay viewport vertically, its bottom edge is pinned to the top of the bottom command row instead of floating.
 - Camera follows the player when the world is larger than the viewport.
 - Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
@@ -30,6 +33,7 @@ not static.
 - Win state shows completion text and allows returning to start menu (`ESC`).
 - `ESC` while in overlays (help, high score, controls) returns to gameplay first, then start menu only from gameplay state.
 - Menu music and menu selection sound are optional; if files are missing the game continues without audio failures.
+- Win and game-over music are routed through the shared `AudioEngine` singleton on dedicated channels (`WIN_MUSIC`, `GAME_OVER_MUSIC`) alongside `MENU_MUSIC` and `IN_GAME_MUSIC`, and are explicitly stopped when transitioning away from the corresponding screen (and on dispose), preventing music bleed-through between screens.
 
 ## What lives here
 

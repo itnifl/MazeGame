@@ -120,6 +120,8 @@ Current runtime behavior:
 - start menu music and menu selection sound are optional; missing files are ignored safely
 - HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
 - visual assets and style selection now consume the shared `MazeVisualStyleConfig` model loaded from XMI first with properties fallback, so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
+- screen-scoped music (menu, in-game, win, game-over) is owned by the `AudioEngine` singleton on dedicated channels (`MENU_MUSIC`, `IN_GAME_MUSIC`, `WIN_MUSIC`, `GAME_OVER_MUSIC`) and is explicitly stopped when transitioning to another screen, so win or game-over music never bleeds into the next screen
+- `RestartGameAction` resolves the in-game music track from the active `MazeVisualStyleConfig` (XMI loader with properties fallback) so restarting honours the style-configured track instead of hard-coded constants
 
 ## Shutdown behavior
 
