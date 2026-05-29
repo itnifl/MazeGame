@@ -8,7 +8,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import main.game.maze.common.graphics.config.MazeConfigLoader;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 
 /**
  * Launches the MazeGame libGDX backend.
@@ -37,7 +39,11 @@ public final class GdxAppLauncher {
         appConfig.setTitle("MazeGame (libGDX backend)");
         appConfig.setWindowedMode(cfg.windowWidth(), cfg.windowHeight());
         appConfig.setForegroundFPS(60);
-        appConfig.setWindowIcon("main/game/maze/ghost1.png");
+        MazeVisualStyleConfig style = loadStyleOrDefault();
+        String iconPath = style.menuIconImagePath().startsWith("/")
+            ? style.menuIconImagePath().substring(1)
+            : style.menuIconImagePath();
+        appConfig.setWindowIcon(iconPath);
 
         new Lwjgl3Application(new GdxGameScreen(null, cfg), appConfig);
     }
@@ -49,6 +55,16 @@ public final class GdxAppLauncher {
             LOGGER.log(Level.WARNING,
                 "Failed to load runtime config; falling back to MazeRuntimeConfig.DEFAULT", ex);
             return MazeRuntimeConfig.DEFAULT;
+        }
+    }
+
+    private static MazeVisualStyleConfig loadStyleOrDefault() {
+        try {
+            return new PropertiesMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            LOGGER.log(Level.WARNING,
+                "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT", ex);
+            return MazeVisualStyleConfig.DEFAULT;
         }
     }
 }

@@ -48,6 +48,8 @@ import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -67,6 +69,7 @@ import java.util.logging.Logger;
 
 public class GameController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+    private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
 
     @FXML
     private AnchorPane root;
@@ -128,6 +131,7 @@ public class GameController implements Initializable {
     private double routeHintPenaltyAccumulator = 0.0;
     private int routeHintPenaltyPoints = 0;
     private Rectangle gameBoardClip;
+    private boolean cameraFollowListenersInstalled;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -473,6 +477,14 @@ public class GameController implements Initializable {
                 gameBoardClip.heightProperty().bind(root.heightProperty());
             }
         }
+        if (!cameraFollowListenersInstalled) {
+            root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            root.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            if (bottomMenuContainer != null) {
+                bottomMenuContainer.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            }
+            cameraFollowListenersInstalled = true;
+        }
     }
 
     private PlayerConfig loadPlayerConfig() {
@@ -587,16 +599,10 @@ public class GameController implements Initializable {
     }
 
     private void updateBoardBackground() {
-        String bgImageName = "gameBackGround1.png"; // Default / Easy
-        
-        if (startDifficulty instanceof HardDifficulty) {
-            bgImageName = "gameBackGround3.png";
-        } else if (startDifficulty instanceof NormalDifficulty) {
-            bgImageName = "gameBackGround2.png";
-        }
+        String bgPath = VISUAL_STYLE.backgroundImageForDifficultyName(difficultyName());
         
         try {
-            var url = getClass().getResource(bgImageName);
+            var url = getClass().getResource(bgPath);
             if (url != null) {
                 Image bgImage = new Image(url.toExternalForm());
                 BackgroundImage bi = new BackgroundImage(bgImage,
@@ -607,7 +613,7 @@ public class GameController implements Initializable {
                 
                 gameBoard.setBackground(new Background(bi));
             } else {
-                LOGGER.warning("Could not find background image: " + bgImageName);
+                LOGGER.warning("Could not find background image: " + bgPath);
             }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error loading background", e);
@@ -631,11 +637,10 @@ public class GameController implements Initializable {
         
         // Use WOOD_BASIC as default for now, or fetch from logic if available
 
-        var wallType = WallRegistry.get("DIRT_BASIC");
-        if(startDifficulty instanceof HardDifficulty) {
-            wallType = WallRegistry.get("STEEL_SOLID");
-        } else if(startDifficulty instanceof NormalDifficulty) {
-            wallType = WallRegistry.get("WOOD_BASIC");
+        String wallTypeId = VISUAL_STYLE.wallTypeIdForDifficultyName(difficultyName());
+        var wallType = WallRegistry.get(wallTypeId);
+        if (wallType == null) {
+            wallType = WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName()));
         }
         
         // Ensure image is loaded
@@ -712,6 +717,19 @@ public class GameController implements Initializable {
             }
         }
         return wallImageCache.get(def.id);
+    }
+
+    private String difficultyName() {
+        return startDifficulty == null ? "" : startDifficulty.eClass().getName();
+    }
+
+    private static MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new PropertiesMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", ex);
+            return MazeVisualStyleConfig.DEFAULT;
+        }
     }
 
     public void runComputerCharacters() {

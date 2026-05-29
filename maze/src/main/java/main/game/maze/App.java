@@ -14,6 +14,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
@@ -38,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class App extends Application {
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
+    private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
     private final AtomicBoolean shutdownInvoked = new AtomicBoolean(false);
 
 
@@ -182,7 +185,7 @@ public class App extends Application {
 
     private void setWindowIcon(Stage stage) {
         try {
-            var icon = getClass().getResource("/main/game/maze/ghost1.png");
+            var icon = getClass().getResource(VISUAL_STYLE.menuIconImagePath());
             if (icon != null) {
                 stage.getIcons().add(new Image(icon.toExternalForm()));
             }
@@ -222,5 +225,13 @@ public class App extends Application {
         shutdownResources();
         Platform.exit();
         System.exit(0);
+    }
+
+    private static MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new PropertiesMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            return MazeVisualStyleConfig.DEFAULT;
+        }
     }
 }

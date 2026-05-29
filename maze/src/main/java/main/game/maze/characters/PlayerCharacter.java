@@ -324,14 +324,23 @@ public class PlayerCharacter extends Character
             double dps = 0.10 * z.getDamage() * calculatedInfectionLevel; // ticks each second for 6s
             final int totalTicks = 6;
             if (infectionAnimation == null || !infectionAnimation.isRunning()) {
-                infectionAnimation = AnimationEngine.get().scheduleOnce(totalTicks, () -> {
-                    this.subtractHitPoints((int)Math.round(dps));
-                    this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
-                    this.doInfectedScreamSound();
-                });
+                scheduleInfectionTick(dps, totalTicks);
             }
 
         }
+    }
+
+    private void scheduleInfectionTick(double dps, int remainingTicks) {
+        if (remainingTicks <= 0) {
+            infectionAnimation = null;
+            return;
+        }
+        infectionAnimation = AnimationEngine.get().scheduleOnce(1.0, () -> {
+            this.subtractHitPoints((int) Math.round(dps));
+            this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
+            this.doInfectedScreamSound();
+            scheduleInfectionTick(dps, remainingTicks - 1);
+        });
     }
 
     public void dispose() {

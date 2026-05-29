@@ -10,6 +10,7 @@ public record RuntimeVisualModel(
         String playerImagePath,
         float playerSpeed,
         float playerSize,
+        String backgroundImagePath,
         String wallImagePath,
         String goalImagePath,
         float goalX,

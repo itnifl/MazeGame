@@ -20,6 +20,7 @@ not static.
 - Difficulty-specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
 - Arrow keys and WASD movement tuned to JavaFX-equivalent speed behavior.
 - Opponent sprites loaded from the model and animated continuously.
+- Background image, wall type selection, goal sprite, menu icon, and menu/in-game sound paths now come from shared `MazeVisualStyleConfig` so JavaFX and libGDX follow the same style model.
 - Bottom command row and top-right score card styled to match JavaFX HUD overlays.
 - HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
 - Camera follows the player when the world is larger than the viewport.

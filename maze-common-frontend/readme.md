@@ -12,6 +12,10 @@ runtime renderer is JavaFX, libGDX, or something else.
   classpath path, with optional per-sound cooldown.
 - `ICharacterView`: a renderer-neutral view facade exposing position, scale,
   opacity, visibility, view order, effect clearing, and parent detachment.
+- `MazeVisualStyleConfig` and `PropertiesMazeVisualStyleLoader`: shared
+  model driven style and asset mapping for both backends, including
+  difficulty background images, wall type ids, menu icon, and common
+  menu or gameplay audio resource paths.
 
 ## Default behaviour with no backend installed
 
@@ -41,3 +45,4 @@ singletons.
 
 - [UiSchedulerTest](src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
+- [PropertiesMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/PropertiesMazeVisualStyleLoaderTest.java)

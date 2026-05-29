@@ -25,6 +25,8 @@ import java.util.Map;
 
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -83,6 +85,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final float playerSize;
     private final boolean useRealMaze;
     private final DifficultyService difficultyService = new DifficultyService();
+    private final MazeVisualStyleConfig visualStyle = loadVisualStyle();
     private final List<Difficulty> difficulties = new ArrayList<>();
     private int selectedDifficultyIndex;
     private int baseScore;
@@ -116,6 +119,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private Texture playerTexture;
     private Texture goalTexture;
     private Texture wallTexture;
+    private Texture backgroundTexture;
     private Texture menuIconTexture;
     private float activePlayerSpeed;
     private float activeGoalSize;
@@ -160,7 +164,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
-        menuIconTexture = loadTexture("/main/game/maze/ghost1.png");
+        menuIconTexture = loadTexture(visualStyle.menuIconImagePath());
 
         difficulties.clear();
         difficulties.addAll(difficultyService.list());
@@ -176,7 +180,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        AudioEngine.get().playLoop(ResourceFileConstants.MenuMusic, AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
     }
 
     @Override
@@ -286,7 +290,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             mode = Mode.WON;
             if (!playedWinSound) {
                 playedWinSound = true;
-                AudioEngine.get().play(ResourceFileConstants.WinGameSound);
+                AudioEngine.get().play(visualStyle.winSoundPath());
             }
         }
     }
@@ -313,6 +317,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
+        if (backgroundTexture != null) {
+            float tileW = Math.max(1f, backgroundTexture.getWidth());
+            float tileH = Math.max(1f, backgroundTexture.getHeight());
+            for (float x = 0f; x < maze.widthPx(); x += tileW) {
+                for (float y = 0f; y < maze.heightPx(); y += tileH) {
+                    float drawW = Math.min(tileW, maze.widthPx() - x);
+                    float drawH = Math.min(tileH, maze.heightPx() - y);
+                    batch.draw(backgroundTexture, x, y, drawW, drawH);
+                }
+            }
+        }
 
         // Goal / heart.
         if (goalTexture != null) {
@@ -688,14 +704,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (upPressed && !upLatch && !difficulties.isEmpty()) {
             selectedDifficultyIndex = (selectedDifficultyIndex - 1 + difficulties.size()) % difficulties.size();
-            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
         }
         if (downPressed && !downLatch && !difficulties.isEmpty()) {
             selectedDifficultyIndex = (selectedDifficultyIndex + 1) % difficulties.size();
-            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
         }
         if (enterPressed && !enterLatch) {
-            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
             startGameFromSelection();
         }
 
@@ -713,11 +729,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (contains(mx, my, menuLayout.comboX, menuLayout.comboY, menuLayout.comboW, menuLayout.comboH) && !difficulties.isEmpty()) {
             selectedDifficultyIndex = (selectedDifficultyIndex + 1) % difficulties.size();
-            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
             return;
         }
         if (contains(mx, my, menuLayout.buttonX, menuLayout.buttonY, menuLayout.buttonW, menuLayout.buttonH)) {
-            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
             startGameFromSelection();
         }
     }
@@ -804,7 +820,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         resizeWindowForDifficulty(selected);
 
         maze = providedMaze != null ? providedMaze : buildArenaForDifficulty(selected);
-        runtimeModel = runtimeModelLoader.load(maze.widthPx(), maze.heightPx());
+        runtimeModel = runtimeModelLoader.load(maze);
         float baseSpeed = runtimeModel.playerSpeed() > 0f
                 ? runtimeModel.playerSpeed()
                 : StageConstants.PlayerCharacterSpeed;
@@ -838,12 +854,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         playerTexture = loadTexture(runtimeModel.playerImagePath());
         goalTexture = loadTexture(runtimeModel.goalImagePath());
         wallTexture = loadTexture(runtimeModel.wallImagePath());
+        backgroundTexture = loadTexture(runtimeModel.backgroundImagePath());
         recenterGoalLikeJavaFx();
         mode = Mode.PLAYING;
 
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
         flashStatus("Started " + (selected != null ? displayName(selected) : "Default") + " difficulty");
     }
 
@@ -965,8 +982,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private void switchToStartMenu() {
         mode = Mode.START_MENU;
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().playLoop(ResourceFileConstants.MenuMusic, AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
         flashStatus("Returned to start menu");
+    }
+
+    private MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new PropertiesMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            return MazeVisualStyleConfig.DEFAULT;
+        }
     }
 
     private void flashStatus(String text) {
