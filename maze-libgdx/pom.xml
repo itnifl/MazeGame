@@ -43,6 +43,12 @@
     </dependency>
 
     <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.badlogicgames.gdx</groupId>
       <artifactId>gdx</artifactId>
       <version>${gdx.version}</version>
