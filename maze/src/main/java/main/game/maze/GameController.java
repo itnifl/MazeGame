@@ -625,17 +625,50 @@ public class GameController implements Initializable {
         double playerX = playerCharacter.getCharacterPosition().getX();
         double playerY = playerCharacter.getCharacterPosition().getY();
 
-        double targetX = 0;
-        double targetY = 0;
+        boolean fullscreen = isStageFullscreen();
+        double[] translation = computeCameraTranslation(
+                viewportWidth, viewportHeight,
+                worldWidth, worldHeight,
+                playerX, playerY,
+                fullscreen);
+
+        gameBoard.setTranslateX(translation[0]);
+        gameBoard.setTranslateY(translation[1]);
+    }
+
+    private boolean isStageFullscreen() {
+        if (root == null || root.getScene() == null) {
+            return false;
+        }
+        var window = root.getScene().getWindow();
+        return window instanceof javafx.stage.Stage stage && stage.isFullScreen();
+    }
+
+    /**
+     * Camera follow rule: scroll the board only when the stage is fullscreen AND
+     * the world is larger than the viewport. In windowed mode the board stays at
+     * (0,0) so it always fits inside the window without distortion.
+     *
+     * <p>Translation is clamped so the world edges never leave the viewport edges.
+     *
+     * <p>Package-private for unit tests.
+     */
+    static double[] computeCameraTranslation(double viewportWidth, double viewportHeight,
+                                             double worldWidth, double worldHeight,
+                                             double playerX, double playerY,
+                                             boolean fullscreen) {
+        if (!fullscreen) {
+            return new double[] {0d, 0d};
+        }
+        double targetX = 0d;
+        double targetY = 0d;
         if (worldWidth > viewportWidth) {
             targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
         }
         if (worldHeight > viewportHeight) {
             targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
         }
-
-        gameBoard.setTranslateX(targetX);
-        gameBoard.setTranslateY(targetY);
+        return new double[] {targetX, targetY};
     }
 
     private static double clamp(double value, double min, double max) {

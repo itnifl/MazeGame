@@ -133,8 +133,7 @@ public class App extends Application {
         int height = getBoardMaxY();
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
-        boolean needsFullscreen = width > bounds.getWidth() || height > bounds.getHeight();
-        if (needsFullscreen) {
+        if (needsFullscreenForBoard(width, height, bounds.getWidth(), bounds.getHeight())) {
             stage.setWidth(bounds.getWidth());
             stage.setHeight(bounds.getHeight());
             stage.setFullScreenExitHint("");
@@ -148,6 +147,17 @@ public class App extends Application {
         stage.setHeight(height);
 
         applyRootSize(stage.getScene(), width, height);
+    }
+
+    /**
+     * Fullscreen is auto-enabled whenever the chosen board exceeds the player's
+     * screen size in either dimension; otherwise the window stays sized to the
+     * board so the map always fits inside the window without camera scrolling.
+     *
+     * <p>Package-private for unit tests.
+     */
+    static boolean needsFullscreenForBoard(int boardWidth, int boardHeight, double screenWidth, double screenHeight) {
+        return boardWidth > screenWidth || boardHeight > screenHeight;
     }
 
     public static void applyStandardSize(Stage stage) {

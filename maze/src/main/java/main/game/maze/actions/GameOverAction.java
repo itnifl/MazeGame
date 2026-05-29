@@ -19,6 +19,7 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.AudioChannelConstants;
+import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
@@ -79,6 +80,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
             App.gameController.stopComputerCharacters();
         }
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        startGameOverMusic();
         runnableOnGameOver.run();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));
@@ -116,6 +118,14 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
         if (hitPoints <= 0) {
             controller.showDeathPenaltyLabel();
         }
+    }
+
+    /**
+     * Loops the game-over track on the GAME_OVER_MUSIC channel. Extracted so
+     * the music start is testable in isolation (libgdx has the same behavior).
+     */
+    public static void startGameOverMusic() {
+        AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
     }
 
 }
