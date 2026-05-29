@@ -50,7 +50,7 @@
         <Label fx:id="scoreLabel" text="Score: 0" style="-fx-font-size: 17px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-padding: 8 10 8 10;" />
     </AnchorPane>
 
-    <AnchorPane fx:id="bottomMenuContainer" prefHeight="40" style="-fx-background-color: rgba(0, 0, 0, 0.45); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="6" AnchorPane.rightAnchor="6">
+    <AnchorPane fx:id="bottomMenuContainer" prefHeight="40" style="-fx-background-color: rgba(0, 0, 0, 0.12); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="6" AnchorPane.rightAnchor="6">
         <HBox alignment="CENTER_LEFT" spacing="10" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="0">
             <Button fx:id="commandsMenuButton" text="Commands" onAction="#toggleCommandsOverlay" style="-fx-background-color: rgba(143,255,224,0.85); -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" />
             <Label text="Open keyboard command help" style="-fx-text-fill: #d7fff5; -fx-font-family: 'Consolas'; -fx-font-size: 13px;" />

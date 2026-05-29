@@ -15,6 +15,7 @@ import javafx.util.StringConverter;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -83,9 +84,13 @@ public class StartController implements Initializable {
 
     private MazeVisualStyleConfig loadVisualStyle() {
         try {
-            return new PropertiesMazeVisualStyleLoader().load();
+            return new XmiMazeVisualStyleLoader().load();
         } catch (RuntimeException ex) {
-            return MazeVisualStyleConfig.DEFAULT;
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException ignored) {
+                return MazeVisualStyleConfig.DEFAULT;
+            }
         }
     }
 }

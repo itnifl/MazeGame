@@ -50,6 +50,7 @@ import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -66,6 +67,7 @@ import main.game.maze.service.CharacterIntersectionFixerService;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 
 public class GameController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
@@ -106,6 +108,7 @@ public class GameController implements Initializable {
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
     private Canvas pathCanvas;
     private Canvas treeCanvas;
+    private Canvas mazeCanvas;
 
     private static Task<Boolean> runComputerCharacters;
     private Difficulty startDifficulty; 
@@ -366,6 +369,7 @@ public class GameController implements Initializable {
 
         gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
         gameBoard.setMinSize(App.getBoardMaxX(), App.getBoardMaxY());
+        gameBoard.setMaxSize(App.getBoardMaxX(), App.getBoardMaxY());
         installGameBoardClip();
 
         updateBoardBackground();
@@ -385,14 +389,29 @@ public class GameController implements Initializable {
 
         var vectors = maze.getMazeVectors();
 
-        // Create a canvas
-        var canvas = this.drawCanvas(vectors);
-        gameBoard.getChildren().add(0, canvas);
+        // Replace dynamic canvases to avoid growth and pulse-time list inconsistencies.
+        if (mazeCanvas != null) {
+            gameBoard.getChildren().remove(mazeCanvas);
+            mazeCanvas = null;
+        }
+        if (pathCanvas != null) {
+            gameBoard.getChildren().remove(pathCanvas);
+            pathCanvas = null;
+        }
+        if (treeCanvas != null) {
+            gameBoard.getChildren().remove(treeCanvas);
+            treeCanvas = null;
+        }
+
+        mazeCanvas = this.drawCanvas(vectors);
+        gameBoard.getChildren().add(0, mazeCanvas);
 
         pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
+        pathCanvas.setMouseTransparent(true);
         gameBoard.getChildren().add(pathCanvas);
 
         treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
+        treeCanvas.setMouseTransparent(true);
         gameBoard.getChildren().add(treeCanvas);
         ensureHudLayersOnTop();
 
@@ -472,9 +491,9 @@ public class GameController implements Initializable {
         }
         if (!gameBoardClip.heightProperty().isBound()) {
             if (bottomMenuContainer != null) {
-                gameBoardClip.heightProperty().bind(root.heightProperty().subtract(bottomMenuContainer.heightProperty()));
+                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty().subtract(bottomMenuContainer.heightProperty())));
             } else {
-                gameBoardClip.heightProperty().bind(root.heightProperty());
+                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty()));
             }
         }
         if (!cameraFollowListenersInstalled) {
@@ -581,8 +600,14 @@ public class GameController implements Initializable {
         double playerX = playerCharacter.getCharacterPosition().getX();
         double playerY = playerCharacter.getCharacterPosition().getY();
 
-        double targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
-        double targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
+        double targetX = 0;
+        double targetY = 0;
+        if (worldWidth > viewportWidth) {
+            targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
+        }
+        if (worldHeight > viewportHeight) {
+            targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
+        }
 
         gameBoard.setTranslateX(targetX);
         gameBoard.setTranslateY(targetY);
@@ -725,10 +750,14 @@ public class GameController implements Initializable {
 
     private static MazeVisualStyleConfig loadVisualStyle() {
         try {
-            return new PropertiesMazeVisualStyleLoader().load();
+            return new XmiMazeVisualStyleLoader().load();
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", ex);
-            return MazeVisualStyleConfig.DEFAULT;
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException fallbackEx) {
+                LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", fallbackEx);
+                return MazeVisualStyleConfig.DEFAULT;
+            }
         }
     }
 
@@ -904,7 +933,9 @@ public class GameController implements Initializable {
         if (character instanceof ICanSubscribeAndNotifyPosition subscribable) {
             playerCharacter.removePositionSubscriber(subscribable);
         }
-        gameBoard.getChildren().remove(node);
+        if (node != null && node.getParent() == gameBoard) {
+            gameBoard.getChildren().remove(node);
+        }
     }
 
     public void showInfectionWarning() {

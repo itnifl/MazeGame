@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.eclipse.emf.common.util.BasicDiagnostic;
 
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.constants.OpponentConstants;
@@ -26,6 +28,7 @@ import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 
 /**
@@ -37,7 +40,7 @@ public final class RuntimeVisualModelLoader {
     private static final Logger LOGGER = Logger.getLogger(RuntimeVisualModelLoader.class.getName());
     private static final float GOAL_SIZE = 50f;
     private static final int SPAWN_MARGIN = 30;
-    private static final int MAX_SPAWN_ATTEMPTS_PER_ENEMY = 24;
+    private static final int MAX_SPAWN_ATTEMPTS_PER_ENEMY = 120;
     private final MazeVisualStyleConfig style = loadStyle();
 
     public RuntimeVisualModel load(float widthPx, float heightPx) {
@@ -95,6 +98,7 @@ public final class RuntimeVisualModelLoader {
         OpponentModel model;
         try {
             model = new XmiRulesLoader().loadOpponentModelFromClasspath(OpponentConstants.ZombieModelPath);
+            validateOpponentModel(model);
         } catch (RuntimeException ex) {
             LOGGER.log(Level.WARNING, "Failed to load opponent model, spawning no enemies", ex);
             return List.of();
@@ -231,7 +235,7 @@ public final class RuntimeVisualModelLoader {
             float goalX,
             float goalY) {
         float half = size * 0.5f;
-        float border = Math.max(half + 2f, SPAWN_MARGIN * 0.5f);
+        float border = Math.max(half + 1f, SPAWN_MARGIN * 0.25f);
         if (x < border || x > widthPx - border || y < border || y > heightPx - border) {
             return false;
         }
@@ -247,8 +251,9 @@ public final class RuntimeVisualModelLoader {
         if (arena == null) {
             return true;
         }
+        float clearance = Math.max(2f, half * 0.35f);
         for (WallSegment wall : arena.walls()) {
-            if (distanceSquaredToSegment(x, y, wall) <= (half + 2f) * (half + 2f)) {
+            if (distanceSquaredToSegment(x, y, wall) <= clearance * clearance) {
                 return false;
             }
         }
@@ -297,10 +302,26 @@ public final class RuntimeVisualModelLoader {
 
     private static MazeVisualStyleConfig loadStyle() {
         try {
-            return new PropertiesMazeVisualStyleLoader().load();
+            return new XmiMazeVisualStyleLoader().load();
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", ex);
-            return MazeVisualStyleConfig.DEFAULT;
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException fallbackEx) {
+                LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", fallbackEx);
+                return MazeVisualStyleConfig.DEFAULT;
+            }
+        }
+    }
+
+    private static void validateOpponentModel(OpponentModel model) {
+        try {
+            BasicDiagnostic diagnostics = new BasicDiagnostic();
+            boolean valid = OpponentsValidator.INSTANCE.validate(model, diagnostics, null);
+            if (!valid) {
+                LOGGER.log(Level.WARNING, "Opponent model OCL validation reported diagnostics: {0}", diagnostics.getMessage());
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "Opponent model OCL validation threw at runtime, continuing with model load", ex);
         }
     }
 

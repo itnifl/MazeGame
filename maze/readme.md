@@ -119,7 +119,7 @@ Current runtime behavior:
 - the bottom command menu and score panel remain visible while the board scrolls
 - start menu music and menu selection sound are optional; missing files are ignored safely
 - HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
-- visual assets and style selection now consume the shared `MazeVisualStyleConfig` model so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
+- visual assets and style selection now consume the shared `MazeVisualStyleConfig` model loaded from XMI first with properties fallback, so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
 
 ## Shutdown behavior
 

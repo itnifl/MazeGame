@@ -11,6 +11,7 @@ import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 
 /**
  * Launches the MazeGame libGDX backend.
@@ -60,11 +61,15 @@ public final class GdxAppLauncher {
 
     private static MazeVisualStyleConfig loadStyleOrDefault() {
         try {
-            return new PropertiesMazeVisualStyleLoader().load();
+            return new XmiMazeVisualStyleLoader().load();
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING,
-                "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT", ex);
-            return MazeVisualStyleConfig.DEFAULT;
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException fallbackEx) {
+                LOGGER.log(Level.WARNING,
+                    "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT", fallbackEx);
+                return MazeVisualStyleConfig.DEFAULT;
+            }
         }
     }
 }
