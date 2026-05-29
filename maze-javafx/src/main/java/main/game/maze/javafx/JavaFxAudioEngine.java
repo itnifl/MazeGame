@@ -1,4 +1,4 @@
-package main.game.maze.platform;
+package main.game.maze.javafx;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,17 +9,20 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import main.game.maze.common.graphics.IAudioEngine;
+import main.game.maze.common.graphics.UiScheduler;
 
 /**
  * Production audio engine backed by JavaFX {@code Media}/{@code MediaPlayer}.
  *
  * <p>Maintains a single cached {@link MediaPlayer} per classpath resource so
  * repeated calls for the same sound do not reload the file. Playback is
- * dispatched onto the FX application thread via {@link FxScheduler} so callers
+ * dispatched onto the FX application thread via {@link UiScheduler} so callers
  * may invoke {@link #play} from any thread.
  *
- * <p>If the FX media backend is unavailable (e.g. headless CI without GStreamer)
- * the engine disables the offending sound and logs a warning; it never throws.
+ * <p>If the FX media backend is unavailable (e.g. headless CI without
+ * GStreamer) the engine disables the offending sound and logs a warning;
+ * it never throws.
  */
 public final class JavaFxAudioEngine implements IAudioEngine {
 
@@ -55,7 +58,7 @@ public final class JavaFxAudioEngine implements IAudioEngine {
             return;
         }
 
-        FxScheduler.get().runOnFxThread(() -> {
+        UiScheduler.get().runOnUiThread(() -> {
             try {
                 if (player.getStatus() == MediaPlayer.Status.PLAYING) {
                     player.stop();

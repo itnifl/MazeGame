@@ -11,7 +11,7 @@ import main.game.maze.WinGameController;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.actions.base.ActionScreens;
 import main.game.maze.constants.ScreenNameConstants;
-import main.game.maze.platform.AudioEngine;
+import main.game.maze.common.graphics.AudioEngine;
 
 public class RestartGameAction extends ActionScreens {
     private AnchorPane root;

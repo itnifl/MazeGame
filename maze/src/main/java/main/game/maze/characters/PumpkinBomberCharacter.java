@@ -20,7 +20,7 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
-import main.game.maze.platform.AudioEngine;
+import main.game.maze.common.graphics.AudioEngine;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
@@ -247,7 +247,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             // linear path + vertical bump for arc
             double x = lerp(sx, tx, u);
             double y = lerp(sy, ty, u) - arcHeight * Math.sin(Math.PI * u);
-            main.game.maze.platform.FxScheduler.get().runOnFxThread(() -> {
+            main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
                 node.setLayoutX(x);
                 node.setLayoutY(y);
             });
@@ -256,7 +256,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         boolean isArrived() { return u >= 1.0; }
 
         void dispose() {
-            main.game.maze.platform.FxScheduler.get().runOnFxThread(() -> {
+            main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
                 if (node.getParent() != null) node.setVisible(false);
             });
         }

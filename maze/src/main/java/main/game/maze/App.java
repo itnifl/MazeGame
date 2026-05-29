@@ -25,6 +25,7 @@ import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.runtime.OclBootstrap;
+import main.game.maze.javafx.JavaFxBackend;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -40,6 +41,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
+            JavaFxBackend.install();
             OclBootstrap.init();
             OpponentsPackage.eINSTANCE.eClass();
             DifficultiesPackage.eINSTANCE.eClass();

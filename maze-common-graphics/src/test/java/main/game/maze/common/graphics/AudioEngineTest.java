@@ -1,4 +1,4 @@
-package main.game.maze.platform;
+package main.game.maze.common.graphics;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,11 +50,15 @@ class AudioEngineTest {
     }
 
     @Test
-    @DisplayName("dispose clears recorded resources on the noop engine")
-    void disposeClearsHistory() {
+    @DisplayName("set(other) disposes the previous engine; reset restores noop default")
+    void resetRestoresNoopAndDisposes() {
         AudioEngine.get().play("/x.wav");
-        AudioEngine.get().dispose();
+        assertFalse(fake.playedResources().isEmpty());
 
-        assertTrue(fake.playedResources().isEmpty());
+        AudioEngine.reset();
+
+        assertTrue(AudioEngine.get() instanceof NoopAudioEngine);
+        assertTrue(fake.playedResources().isEmpty(),
+                "Previous engine should be disposed on reset");
     }
 }

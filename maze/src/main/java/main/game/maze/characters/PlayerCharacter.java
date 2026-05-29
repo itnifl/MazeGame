@@ -31,8 +31,8 @@ import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
-import main.game.maze.platform.AudioEngine;
-import main.game.maze.platform.FxScheduler;
+import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.UiScheduler;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -191,17 +191,17 @@ public class PlayerCharacter extends Character
     @Override
     public void setHitPoints(int hp) {
         hitPoints.set(hp);
-        FxScheduler.get().runLater(this::updateHpBarProgress);
+        UiScheduler.get().runLater(this::updateHpBarProgress);
     }
 
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        FxScheduler.get().runLater(this::updateHpBarProgress);
+        UiScheduler.get().runLater(this::updateHpBarProgress);
 
         if (hitPoints.get() <= 0) {
-            FxScheduler.get().runLater(this::PlayDieAnimation);
+            UiScheduler.get().runLater(this::PlayDieAnimation);
 
             // Notify subscribers synchronously (they can schedule UI work themselves if needed)
             var subscribersCopy = new ArrayList<>(deathSubscribers);
@@ -214,7 +214,7 @@ public class PlayerCharacter extends Character
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
-        FxScheduler.get().runLater(this::updateHpBarProgress);
+        UiScheduler.get().runLater(this::updateHpBarProgress);
     }
 
     @Override
@@ -347,7 +347,7 @@ public class PlayerCharacter extends Character
         // clear any flash effect left on the sprite (defensive; base also clears)
         Node gfx = getCharacterGraphics();
         if (gfx != null) {
-            FxScheduler.get().runOnFxThread(() -> gfx.setEffect(null));
+            UiScheduler.get().runOnUiThread(() -> gfx.setEffect(null));
         }
 
         // detach subscribers

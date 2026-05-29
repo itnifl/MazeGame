@@ -162,6 +162,18 @@
         <artifactId>maze-module-generator</artifactId>
         <version>${project.version}</version>
     </dependency>
+
+    <!-- Backend-agnostic graphics/audio facades + JavaFX implementations -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-common-graphics</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-javafx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -1,11 +1,13 @@
-package main.game.maze.platform;
+package main.game.maze.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import main.game.maze.common.graphics.ICharacterView;
+import main.game.maze.common.graphics.UiScheduler;
 
 /**
  * JavaFX adapter that exposes a {@link Node} through the {@link ICharacterView}
- * facade. Layout writes are routed through {@link FxScheduler} so callers may
+ * facade. Layout writes are routed through {@link UiScheduler} so callers may
  * mutate position from any thread without violating the FX threading model.
  *
  * <p>This adapter does not own image/sprite content; character classes still
@@ -33,7 +35,7 @@ public final class FxCharacterView implements ICharacterView {
     public void setPosition(double x, double y) {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> {
+        UiScheduler.get().runOnUiThread(() -> {
             n.setLayoutX(x);
             n.setLayoutY(y);
         });
@@ -43,7 +45,7 @@ public final class FxCharacterView implements ICharacterView {
     public void setScale(double sx, double sy) {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> {
+        UiScheduler.get().runOnUiThread(() -> {
             n.setScaleX(sx);
             n.setScaleY(sy);
         });
@@ -53,35 +55,35 @@ public final class FxCharacterView implements ICharacterView {
     public void setOpacity(double opacity) {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> n.setOpacity(opacity));
+        UiScheduler.get().runOnUiThread(() -> n.setOpacity(opacity));
     }
 
     @Override
     public void setVisible(boolean visible) {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> n.setVisible(visible));
+        UiScheduler.get().runOnUiThread(() -> n.setVisible(visible));
     }
 
     @Override
     public void setViewOrder(double order) {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> n.setViewOrder(order));
+        UiScheduler.get().runOnUiThread(() -> n.setViewOrder(order));
     }
 
     @Override
     public void clearEffect() {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> n.setEffect(null));
+        UiScheduler.get().runOnUiThread(() -> n.setEffect(null));
     }
 
     @Override
     public void detachFromParent() {
         Node n = node;
         if (n == null) return;
-        FxScheduler.get().runOnFxThread(() -> {
+        UiScheduler.get().runOnUiThread(() -> {
             try {
                 n.setEffect(null);
                 if (n.getParent() instanceof Pane p) {

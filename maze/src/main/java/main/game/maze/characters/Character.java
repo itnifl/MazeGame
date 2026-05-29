@@ -10,7 +10,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ISubscribeOnDirection;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
-import main.game.maze.platform.FxScheduler;
+import main.game.maze.common.graphics.UiScheduler;
 
 public class Character  {
     public INotifyMovement notifyMovement = null;
@@ -164,7 +164,7 @@ public class Character  {
         double newX = characterPosition.getX() + speed;
         if (newX < maxX && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutX(newX));
+            UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -176,7 +176,7 @@ public class Character  {
         double newX = characterPosition.getX() - speed;
         if (newX >= 0 && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutX(newX));
+            UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -188,7 +188,7 @@ public class Character  {
         double newY = characterPosition.getY() + speed;
         if (newY < maxY && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutY(newY));
+            UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }
@@ -200,7 +200,7 @@ public class Character  {
         double newY = characterPosition.getY() - speed;
         if (newY >= 0 && (force || !isTouchingVector())) {
             final Node gfx = characterGraphics;
-            FxScheduler.get().runOnFxThread(() -> gfx.setLayoutY(newY));
+            UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }
@@ -231,7 +231,7 @@ public class Character  {
         maze = null;
         
         if (gfx != null) {
-            FxScheduler.get().runOnFxThread(() -> {
+            UiScheduler.get().runOnUiThread(() -> {
                 try {
                     gfx.setEffect(null);
                     var parent = gfx.getParent();

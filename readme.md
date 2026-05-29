@@ -139,6 +139,26 @@ VS Code Java runtime:
 
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
 
+### Graphics backends (JavaFX vs libGDX)
+
+The graphics, threading and audio facades have been extracted into three
+sibling modules so the renderer can be swapped:
+
+- [maze-common-graphics](maze-common-graphics/readme.md) — backend-agnostic
+  interfaces and inert defaults used by the gameplay code.
+- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend used
+  by `main.game.maze.App`.
+- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend (WIP). The
+  interface adapters are in place; the actual game loop is still being ported.
+
+To launch either backend, use the configurations in
+[.vscode/launch.json](.vscode/launch.json):
+
+- **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.App`.
+- **Launch MazeGame (libGDX backend, WIP)** — runs
+  `main.game.maze.libgdx.GdxAppLauncher`, which opens a 1024x768 LWJGL3 window
+  showing placeholder status text until the game loop has been ported.
+
 ## Build commands (exact)
 
 For a focused build command guide with fastest paths and no mirror rebuild options, see [build-tool-readme.md](build-tool-readme.md).

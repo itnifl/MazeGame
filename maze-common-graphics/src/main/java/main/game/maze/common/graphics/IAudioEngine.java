@@ -1,12 +1,12 @@
-package main.game.maze.platform;
+package main.game.maze.common.graphics;
 
 /**
  * Centralised audio facade. Game code requests sounds by classpath resource
- * path; the active engine decides how (or whether) to play them. Sound playback
- * is rate-limited per sound id by the engine, so callers do not need to manage
- * cooldowns themselves.
+ * path; the active engine decides how (or whether) to play them. Sound
+ * playback is rate-limited per sound id by the engine, so callers do not need
+ * to manage cooldowns themselves.
  *
- * <p>Pure business logic must never instantiate {@code MediaPlayer} directly;
+ * <p>Pure business logic must never instantiate backend audio types directly;
  * it must route playback through {@link AudioEngine#get()}.
  */
 public interface IAudioEngine {

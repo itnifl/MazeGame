@@ -1,13 +1,14 @@
-package main.game.maze.platform;
+package main.game.maze.javafx;
 
 import javafx.application.Platform;
+import main.game.maze.common.graphics.IUiScheduler;
 
 /**
  * Production scheduler backed by {@link javafx.application.Platform}.
  * Silently degrades to direct execution if the FX toolkit is not initialised
  * so unit tests that touch this code path do not blow up.
  */
-public final class JavaFxScheduler implements IFxScheduler {
+public final class JavaFxUiScheduler implements IUiScheduler {
 
     @Override
     public void runLater(Runnable action) {
@@ -20,9 +21,9 @@ public final class JavaFxScheduler implements IFxScheduler {
     }
 
     @Override
-    public void runOnFxThread(Runnable action) {
+    public void runOnUiThread(Runnable action) {
         if (action == null) return;
-        if (isFxApplicationThread()) {
+        if (isUiThread()) {
             action.run();
             return;
         }
@@ -30,7 +31,7 @@ public final class JavaFxScheduler implements IFxScheduler {
     }
 
     @Override
-    public boolean isFxApplicationThread() {
+    public boolean isUiThread() {
         try {
             return Platform.isFxApplicationThread();
         } catch (IllegalStateException toolkitNotReady) {

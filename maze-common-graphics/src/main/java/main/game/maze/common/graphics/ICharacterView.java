@@ -1,11 +1,18 @@
-package main.game.maze.platform;
+package main.game.maze.common.graphics;
 
 /**
  * Read/write facade over a renderable character sprite. Business logic talks
- * to this interface so it does not need to import {@code javafx.scene.Node}
- * for the few view properties it actually manipulates (position, scale,
- * visibility, view order, effect clearing). Tests can provide a recording
- * fake; production code uses {@link FxCharacterView}.
+ * to this interface so it does not need to import a specific rendering
+ * backend's node type for the few view properties it actually manipulates
+ * (position, scale, visibility, view order, effect clearing).
+ *
+ * <p>Each backend provides its own adapter:
+ * <ul>
+ *   <li>JavaFX: {@code main.game.maze.javafx.FxCharacterView} wraps a
+ *       {@code javafx.scene.Node}.</li>
+ *   <li>libGDX: {@code main.game.maze.libgdx.GdxCharacterView} wraps a
+ *       {@code com.badlogic.gdx.scenes.scene2d.Actor}.</li>
+ * </ul>
  */
 public interface ICharacterView {
     double getX();

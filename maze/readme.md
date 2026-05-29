@@ -142,53 +142,61 @@ By following these ideas, `maze` stays a thin, clear and maintainable game clien
 
 ---
 
-## Platform abstraction (`main.game.maze.platform`)
+## Graphics backend abstraction
 
-The `platform` package isolates the rest of the game from direct JavaFX (and other runtime) dependencies. It exists so the game loop, characters and actions can be unit tested without booting a JavaFX toolkit or playing real audio.
+The graphics, threading and audio facades that the game code talks to live in
+a separate, backend-agnostic module so the game loop, characters and actions
+can be unit tested without booting any windowing toolkit or playing real audio,
+and so an alternative renderer (libGDX) can be developed alongside JavaFX.
 
-### Interfaces
+The three sibling modules are:
 
-- `IFxScheduler`: schedules work that must run on the JavaFX Application Thread (`runLater`, `runOnFxThread`, `isFxApplicationThread`).
-- `IAudioEngine`: plays bundled sound resources (`play`, `playRateLimited(resourcePath, soundId, cooldownMs)`, `dispose`).
-- `ICharacterView`: minimal facade over a JavaFX `Node` used by characters (position, scale, opacity, visibility, view order, effect clearing, detach from parent).
+| Module | Role |
+|--------|------|
+| [maze-common-graphics](../maze-common-graphics/readme.md) | Interfaces (`IUiScheduler`, `IAudioEngine`, `ICharacterView`) and their inert defaults (`SynchronousUiScheduler`, `NoopAudioEngine`). |
+| [maze-javafx](../maze-javafx/readme.md) | JavaFX implementations (`JavaFxUiScheduler`, `JavaFxAudioEngine`, `FxCharacterView`) and `JavaFxBackend.install()`. |
+| [maze-libgdx](../maze-libgdx/readme.md) | libGDX implementations (`GdxUiScheduler`, `GdxAudioEngine`, `GdxCharacterView`), `GdxBackend.install()` and `GdxAppLauncher` (WIP). |
 
-### Production implementations
+### Bootstrap
 
-- `JavaFxScheduler`: delegates to `javafx.application.Platform`. If the toolkit is not yet initialised (for example during tests), it falls back to running the action inline so callers never blow up.
-- `JavaFxAudioEngine`: caches a `MediaPlayer` per resource, dispatches playback through the FX thread, swallows `MediaException` and disables further attempts for resources that fail.
-- `FxCharacterView`: wraps a JavaFX `Node` and routes every mutation through `FxScheduler`.
-
-### Test doubles
-
-- `SynchronousFxScheduler`: runs every action inline on the calling thread; reports itself as the FX thread.
-- `NoopAudioEngine`: records every play attempt in memory so tests can assert which sounds would have been triggered.
-
-### Singletons with mockable swap
-
-Both subsystems are exposed as process-wide singletons whose implementation can be replaced in tests:
+`App.start()` calls `JavaFxBackend.install()` as its first action, which swaps
+the JavaFX implementations into the `UiScheduler` and `AudioEngine` singletons
+before any gameplay code touches them. Tests can call `UiScheduler.reset()` /
+`AudioEngine.reset()` to drop back to the inert defaults, or `set(...)` their
+own doubles.
 
 ```java
 // In a test @BeforeEach
-FxScheduler.set(new SynchronousFxScheduler());
+UiScheduler.set(new SynchronousUiScheduler());
 AudioEngine.set(new NoopAudioEngine());
 
 // In @AfterEach
-FxScheduler.reset();
+UiScheduler.reset();
 AudioEngine.reset();
 ```
 
-`reset()` restores the production default (`JavaFxScheduler` / `JavaFxAudioEngine`). `AudioEngine.reset()` also disposes the previously installed engine.
+`AudioEngine.set(...)` disposes the previous engine before swapping.
 
 ### Why this matters
 
-- **Mockable JavaFX**: `Character.moveCharacter*`, `PlayerCharacter` death animations and `PumpkinBomberCharacter` projectile cleanup all schedule UI writes via `FxScheduler.get()` instead of calling `Platform.runLater` directly. Tests install `SynchronousFxScheduler` and observe state changes immediately, with no JavaFX toolkit required.
-- **Global audio singleton**: All sound playback in `PlayerCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter` and `RestartGameAction` goes through `AudioEngine.get()`. There are no static `MediaPlayer` fields scattered through gameplay classes; lifetimes and cooldowns live in one place.
-- **View manipulation isolation**: Mutations such as setLayoutX/Y, opacity, effect clearing and child removal are performed through `IFxScheduler` (and, where appropriate, `FxCharacterView`), keeping the bulk of character logic free of direct JavaFX calls.
+- **Mockable UI thread**: `Character.moveCharacter*`, `PlayerCharacter` death
+  animations and `PumpkinBomberCharacter` projectile cleanup all schedule UI
+  writes via `UiScheduler.get()` instead of calling `Platform.runLater`
+  directly. Tests observe state changes immediately, with no toolkit required.
+- **Global audio singleton**: All sound playback in `PlayerCharacter`,
+  `ZombieCharacter`, `PumpkinBomberCharacter` and `RestartGameAction` goes
+  through `AudioEngine.get()`. Lifetimes and cooldowns live in one place.
+- **Renderer-neutral view manipulation**: Mutations such as setLayoutX/Y,
+  opacity, effect clearing and child removal go through `IUiScheduler` (and,
+  where appropriate, `ICharacterView`), keeping gameplay free of direct
+  JavaFX calls and making the libGDX port viable.
 
 ### Tests
 
-- [src/test/java/main/game/maze/platform/FxSchedulerTest.java](src/test/java/main/game/maze/platform/FxSchedulerTest.java)
-- [src/test/java/main/game/maze/platform/AudioEngineTest.java](src/test/java/main/game/maze/platform/AudioEngineTest.java)
+- [maze-common-graphics/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java](../maze-common-graphics/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
+- [maze-common-graphics/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java](../maze-common-graphics/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
+- [maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java](../maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java)
+- [maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java](../maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java)
 
 ---
 
