@@ -106,6 +106,16 @@ The most common ways to run the `maze` module are:
 
 Check the `maze/pom.xml` for the exact plugin and main class configuration used in your setup.
 
+## Shutdown behavior
+
+The game now performs explicit shutdown cleanup when the window is closed:
+
+- disposes the active game controller and character resources
+- disposes the active audio engine and loop channels
+- exits JavaFX and then terminates the JVM process
+
+This ensures the process actually stops when closing the game window, even if background threads are still alive.
+
 ---
 
 ## Adding features to the game client
