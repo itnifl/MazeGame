@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>main.game.maze</groupId>
-      <artifactId>maze-common-graphics</artifactId>
+      <artifactId>maze-common-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
 

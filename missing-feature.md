@@ -230,7 +230,7 @@ overall feature is marked Done.
 - **Status**: In progress (Phase 4 scaffold landed). A backend-neutral
   `MazeRuntimeConfig` record + `MazeConfigLoader` interface +
   `PropertiesMazeConfigLoader` default impl live in
-  [maze-common-graphics](maze-common-graphics/src/main/java/main/game/maze/common/graphics/config/);
+  [maze-common-frontend](maze-common-frontend/src/main/java/main/game/maze/common/graphics/config/);
   the libGDX launcher now reads window size, maze grid and arena selection
   from it. Still missing: an Xtext-driven loader that parses a real
   `.mazedsl` file into the same record.

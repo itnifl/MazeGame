@@ -1,4 +1,4 @@
-# maze-common-graphics
+# maze-common-frontend
 
 Backend-agnostic facades for UI threading, audio playback, and character views.
 This module is the seam that lets the game code stay independent of whether the

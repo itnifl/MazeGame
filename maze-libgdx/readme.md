@@ -2,7 +2,7 @@
 
 libGDX backend for MazeGame: a self-contained LWJGL3 launcher plus the
 libGDX implementations of the facades defined in
-[maze-common-graphics](../maze-common-graphics/readme.md).
+[maze-common-frontend](../maze-common-frontend/readme.md).
 
 ## Status
 
@@ -58,11 +58,11 @@ From the command line:
 pwsh ./make-libgdx.ps1 run
 ```
 
-That target builds `maze-common-graphics` and `maze-libgdx` (copying the
+That target builds `maze-common-frontend` and `maze-libgdx` (copying the
 runtime libs into `maze-libgdx/target/libs`), then launches:
 
 ```powershell
-java -cp "maze-libgdx/target/classes;maze-libgdx/target/libs/*;maze-common-graphics/target/classes" main.game.maze.libgdx.GdxAppLauncher
+java -cp "maze-libgdx/target/classes;maze-libgdx/target/libs/*;maze-common-frontend/target/classes" main.game.maze.libgdx.GdxAppLauncher
 ```
 
 ## Building and testing
@@ -76,7 +76,7 @@ pwsh ./make-libgdx.ps1 quick-no-tests
 Or directly via Maven:
 
 ```powershell
-mvn -pl maze-common-graphics,maze-libgdx -am test
+mvn -pl maze-common-frontend,maze-libgdx -am test
 ```
 
 ## Tests

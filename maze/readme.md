@@ -182,7 +182,7 @@ The three sibling modules are:
 
 | Module | Role |
 |--------|------|
-| [maze-common-graphics](../maze-common-graphics/readme.md) | Interfaces (`IUiScheduler`, `IAudioEngine`, `ICharacterView`) and their inert defaults (`SynchronousUiScheduler`, `NoopAudioEngine`). |
+| [maze-common-frontend](../maze-common-frontend/readme.md) | Interfaces (`IUiScheduler`, `IAudioEngine`, `ICharacterView`) and their inert defaults (`SynchronousUiScheduler`, `NoopAudioEngine`). |
 | [maze-javafx](../maze-javafx/readme.md) | JavaFX implementations (`JavaFxUiScheduler`, `JavaFxAudioEngine`, `FxCharacterView`) and `JavaFxBackend.install()`. |
 | [maze-libgdx](../maze-libgdx/readme.md) | libGDX implementations (`GdxUiScheduler`, `GdxAudioEngine`, `GdxCharacterView`), `GdxBackend.install()` and `GdxAppLauncher` (WIP). |
 
@@ -222,8 +222,8 @@ AudioEngine.reset();
 
 ### Tests
 
-- [maze-common-graphics/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java](../maze-common-graphics/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
-- [maze-common-graphics/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java](../maze-common-graphics/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
+- [maze-common-frontend/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java](../maze-common-frontend/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
+- [maze-common-frontend/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java](../maze-common-frontend/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java](../maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java)
 - [maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java](../maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java)
 

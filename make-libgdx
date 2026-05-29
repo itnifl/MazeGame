@@ -2,7 +2,7 @@
 # MazeGame Makefile (libGDX backend, Windows-friendly, uses PowerShell)
 #
 # Modules built:
-#   - maze-common-graphics (backend-agnostic facades)
+#   - maze-common-frontend (backend-agnostic facades)
 #   - maze-libgdx          (libGDX implementations + GdxAppLauncher)
 #
 # This is a plain Maven build. No Tycho, no Eclipse p2 mirror, no platform

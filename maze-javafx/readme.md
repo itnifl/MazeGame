@@ -1,7 +1,7 @@
 # maze-javafx
 
 JavaFX implementations of the facades defined in
-[maze-common-graphics](../maze-common-graphics/readme.md).
+[maze-common-frontend](../maze-common-frontend/readme.md).
 
 ## What lives here
 

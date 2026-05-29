@@ -16,7 +16,7 @@ need local compile and test feedback.
 | libGDX (LWJGL3 launcher + headless gameplay core) | [make-libgdx.ps1](make-libgdx.ps1) | [make-libgdx](make-libgdx) | [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) |
 
 The libGDX chain is plain Maven (no Tycho, no p2 mirror) and only builds
-`maze-common-graphics` and `maze-libgdx`. The JavaFX chain drives the full
+`maze-common-frontend` and `maze-libgdx`. The JavaFX chain drives the full
 reactor including the Eclipse-plugin and Xtext modules.
 
 ## JavaFX quick command matrix
@@ -69,7 +69,7 @@ reactor including the Eclipse-plugin and Xtext modules.
 # Show all targets
 .\make-libgdx.ps1 help
 
-# Full clean verify of maze-common-graphics + maze-libgdx
+# Full clean verify of maze-common-frontend + maze-libgdx
 .\make-libgdx.ps1 build
 
 # Fast path, tests enabled

@@ -59,7 +59,7 @@ try {
 
     switch ($BuildMode) {
         'full' {
-            Invoke-Step 'Maven clean verify (maze-common-graphics + maze-libgdx)' {
+            Invoke-Step 'Maven clean verify (maze-common-frontend + maze-libgdx)' {
                 Invoke-LibgdxFullBuild
             }
         }

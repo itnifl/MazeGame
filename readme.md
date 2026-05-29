@@ -144,7 +144,7 @@ VS Code Java runtime:
 The graphics, threading and audio facades have been extracted into three
 sibling modules so the renderer can be swapped:
 
-- [maze-common-graphics](maze-common-graphics/readme.md) — backend-agnostic
+- [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic
   interfaces and inert defaults used by the gameplay code.
 - [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend used
   by `main.game.maze.App`.

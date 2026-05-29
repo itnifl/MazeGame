@@ -9,7 +9,7 @@ Set-Location $scriptRoot
 
 # Config
 $Mvn               = 'mvn'
-$LibgdxModules     = 'maze-common-graphics,maze-libgdx'
+$LibgdxModules     = 'maze-common-frontend,maze-libgdx'
 $RequiredJavaMajor = 21
 
 # Reuse the shared Java 21 helpers from make-javafx.ps1. They live in the same file in this repo,
@@ -91,7 +91,7 @@ function Invoke-LibgdxRun {
     $classpath = @(
         'maze-libgdx/target/classes',
         'maze-libgdx/target/libs/*',
-        'maze-common-graphics/target/classes'
+        'maze-common-frontend/target/classes'
     ) -join $sep
     $javaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin/java' } else { 'java' }
     Write-Host "=== Launching libGDX backend: $javaExe -cp `"$classpath`" main.game.maze.libgdx.GdxAppLauncher ===" -ForegroundColor Cyan

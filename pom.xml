@@ -48,7 +48,7 @@
     <module>maze-module-generator</module>
 
     <!-- 6: backend-agnostiske grafikk-/lyd-abstraksjoner og backends -->
-    <module>maze-common-graphics</module>
+    <module>maze-common-frontend</module>
     <module>maze-javafx</module>
     <module>maze-libgdx</module>
 
