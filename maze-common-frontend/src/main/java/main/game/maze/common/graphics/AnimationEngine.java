@@ -19,7 +19,11 @@ public final class AnimationEngine {
         IAnimationEngine previous = instance;
         instance = engine;
         if (previous != engine) {
-            previous.dispose();
+            try {
+                previous.dispose();
+            } catch (Exception ignored) {
+                // best-effort cleanup
+            }
         }
     }
 

@@ -28,9 +28,6 @@ public class RestartGameAction extends ActionScreens {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
 
-    AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-    AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
-
         try {
             if (root == null || root.getScene() == null) {
                 return;
@@ -61,6 +58,8 @@ public class RestartGameAction extends ActionScreens {
             GameMazeWorld.RegenerateWorld(App.getBoardMaxX(), App.getBoardMaxY());
 
             controller.setupGame();
+            AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+            AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
         } catch (IOException e) {
             e.printStackTrace();
         }

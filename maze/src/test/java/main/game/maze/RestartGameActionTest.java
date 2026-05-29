@@ -5,9 +5,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.game.maze.actions.RestartGameAction;
+import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.IAudioEngine;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests RestartGameAction behavior on the FX thread. */
 public class RestartGameActionTest {
+
+    @AfterEach
+    void restoreAudioEngine() {
+        AudioEngine.reset();
+        App.gameController = null;
+    }
 
     @BeforeAll
     static void initFx() throws Exception {
@@ -45,6 +54,19 @@ public class RestartGameActionTest {
 
     private static void ensureAudioReady() {
         // Background music now routes via AudioEngine channels in App/RestartGameAction.
+    }
+
+    @Test
+    @DisplayName("Load leaves audio untouched when no scene is attached")
+    void loadWithoutSceneDoesNotRestartMusic() {
+        RecordingAudioEngine audio = new RecordingAudioEngine();
+        AudioEngine.set(audio);
+
+        RestartGameAction action = new RestartGameAction(new AnchorPane());
+        action.Load();
+
+        assertEquals(0, audio.stopCalls);
+        assertEquals(0, audio.loopCalls);
     }
 
     @Test
@@ -92,5 +114,29 @@ public class RestartGameActionTest {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    private static final class RecordingAudioEngine implements IAudioEngine {
+        private int loopCalls;
+        private int stopCalls;
+
+        @Override
+        public void play(String resourcePath) {}
+
+        @Override
+        public void playRateLimited(String resourcePath, String soundId, long cooldownMs) {}
+
+        @Override
+        public void playLoop(String resourcePath, String channelId) {
+            loopCalls++;
+        }
+
+        @Override
+        public void stopChannel(String channelId) {
+            stopCalls++;
+        }
+
+        @Override
+        public void dispose() {}
     }
 }
