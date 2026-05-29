@@ -310,6 +310,6 @@ Model constraints keep the persisted definitions clean, while runtime constraint
 |----------|-------------|
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Opponents Module](../main.game.maze.opponents/readme.md) | Opponent definitions and threat values |
 | [Demo Guide](../demo.md) | Demonstration of difficulty effects in the game |

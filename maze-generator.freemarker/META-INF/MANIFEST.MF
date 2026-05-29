@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: maze-generator.acceleo
-Bundle-SymbolicName: maze-generator.acceleo;singleton:=true
+Bundle-Name: maze-generator.freemarker
+Bundle-SymbolicName: maze-generator.freemarker;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy

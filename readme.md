@@ -20,7 +20,7 @@
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 
 Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
-Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
+Also, see: [Model-Driven Code Generation Plan](docs/mdd-code-generation.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-readme.md)
 

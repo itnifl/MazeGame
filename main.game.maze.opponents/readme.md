@@ -357,5 +357,5 @@ When evolving this module it is useful to follow a few guiding principles.
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels and code generation in everyday terms |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
 | [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

@@ -1251,7 +1251,7 @@ This allows the behaviour model to access opponent types, enabling constraints l
 
 ## 🔗 Related Projects
 
-- **[Model-Driven Code Generation Plan](../readme-mddcodegeneration.md)** - Comprehensive plan for MDE code generation across all domains
+- **[Model-Driven Code Generation Plan](../docs/mdd-code-generation.md)** - Comprehensive plan for MDE code generation across all domains
 - [maze-generator.freemarker-runner](../maze-generator.freemarker-runner/readme.md) - Headless runner for Maven builds
 - [maze-module-generator](../maze-module-generator/readme.md) - Contains generated sources and **unit tests** for MDE validation
 - [main.game.maze.opponents](../main.game.maze.opponents/readme.md) - Opponents EMF model (`CharacterType`, `Zombie`, `Ghost`, `PumpkinBomber`)
@@ -1342,6 +1342,6 @@ Here's the complete workflow for making model-driven changes:
 |----------|-------------|
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of FreeMarker and MDD concepts in everyday terms |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [DSL Reference Guide](../docs/dsl-reference.md) | MazeGame DSL syntax documentation |
 | [FreeMarker Runner](../maze-generator.freemarker-runner/readme.md) | Headless runner for Maven builds |

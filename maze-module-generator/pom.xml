@@ -52,7 +52,7 @@
   <build>
     <plugins>
         <!-- 
-        Note: Code generation is handled by maze-generator.acceleo-runner in the Tycho build.
+        Note: Code generation is handled by maze-generator.freemarker-runner in the Tycho build.
         Generated sources in src-gen are committed to the repository.
         -->
         <plugin>

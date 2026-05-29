@@ -76,7 +76,7 @@ It is wired into the main multi-module build.
 If you want to build just the generator part, you can run (from the repository root):
 
 ```bash
-mvn -f maze-generator.acceleo-runner/pom.xml clean verify
+mvn -f maze-generator.freemarker-runner/pom.xml clean verify
 ```
 
 This will:
@@ -91,7 +91,7 @@ Check the `target` folders of the relevant modules (or `target/generated-sources
 
 ## Configuration aspects
 
-Key configuration points typically found in `maze-generator.acceleo-runner`:
+Key configuration points typically found in `maze-generator.freemarker-runner`:
 
 * **Model locations**
   How and where the runner finds the model instances:
@@ -119,13 +119,13 @@ Any changes to the models, the generator templates, or the target layout may req
 
 ## Troubleshooting
 
-Common issues when working with `maze-generator.acceleo-runner`:
+Common issues when working with `maze-generator.freemarker-runner`:
 
 * **No files are generated**
 
   * Check that the runner is actually executed in the Maven phase you expect.
   * Verify that the model URIs in the runner match the locations of your `.ecore` / `.xmi` files.
-  * Confirm that `maze-generator.acceleo` is on the runtime classpath and contains the FreeMarker templates.
+  * Confirm that `maze-generator.freemarker` is on the runtime classpath and contains the FreeMarker templates.
 
 * **Model loading errors**
 
@@ -135,19 +135,19 @@ Common issues when working with `maze-generator.acceleo-runner`:
 * **Compilation errors in generated code**
 
   * Inspect the generated sources to see which imports or types are missing.
-  * Adjust the FreeMarker templates in `maze-generator.acceleo/src/main/resources/templates/` to add required imports.
+  * Adjust the FreeMarker templates in `maze-generator.freemarker/src/main/resources/templates/` to add required imports.
   * Re-run the build after fixes to regenerate the code.
 
 ---
 
-## When to modify maze-generator.acceleo-runner
+## When to modify maze-generator.freemarker-runner
 
 You typically update this project when you:
 
 * add a new model that should be processed by the FreeMarker generators
 * change where models are stored or how they are loaded
 * change the output structure for generated code
-* rename or restructure templates in `maze-generator.acceleo`
+* rename or restructure templates in `maze-generator.freemarker`
 
 In such cases:
 
@@ -155,6 +155,6 @@ In such cases:
 2. Adjust `MANIFEST.MF` dependencies so all required plug-ins are available.
 3. Run `mvn clean verify` and verify that generated sources appear as expected.
 
-By keeping the logic for headless generation in `maze-generator.acceleo-runner` and the templates in `maze-generator.acceleo`, the MazeGame project maintains a clean separation between **what** is generated and **how** it is executed in automated builds.
+By keeping the logic for headless generation in `maze-generator.freemarker-runner` and the templates in `maze-generator.freemarker`, the MazeGame project maintains a clean separation between **what** is generated and **how** it is executed in automated builds.
 
 

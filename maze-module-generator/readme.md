@@ -232,6 +232,6 @@ With this setup, `maze-module-generator` provides a clean, Maven friendly way to
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of code generation in everyday terms |
 | [FreeMarker Guide](../freemarker.readme.md) | Detailed FreeMarker usage in this project |
 | [FreeMarker Generator Module](../maze-generator.freemarker/readme.md) | The FreeMarker template module |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Walls Module](../main.game.maze.walls/readme.md) | Walls model definition |
 | [Opponents Module](../main.game.maze.opponents/readme.md) | Opponents model definition |

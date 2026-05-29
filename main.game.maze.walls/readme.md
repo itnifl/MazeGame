@@ -1,6 +1,6 @@
 # main.game.maze.walls
 
-This module contains the Ecore wall model. The module [maze-generator.acceleo ](../maze-generator.acceleo/readme.md) uses model and its generated together with a corresponding xmi to generate a Wall registry. 
+This module contains the Ecore wall model. The module [maze-generator.freemarker](../maze-generator.freemarker/readme.md) uses this model together with corresponding XMI files to generate a wall registry.
 It defines what kinds of walls exist in the game, how they look, and how set the parameters related to later character interaction with them.
 
 Typical responsibilities:
@@ -97,7 +97,7 @@ classDiagram
 
 ### ２．Generated Java code
 
-From the EMF model and the .xmi configuration the Acceleo templates generate Java classes under `main.game.maze.walls.generated` (package name and folder layout may vary slightly depending on the current generator setup).
+From the EMF model and the .xmi configuration the FreeMarker templates generate Java classes under `main.game.maze.walls.generated` (package name and folder layout may vary slightly depending on the current generator setup).
 
 Generated output typically includes
 
@@ -158,7 +158,7 @@ The recommended workflow for extending the set of walls is:
 Add a new wall type, material or property in the walls model.<br/>
 If you maintain a separate .xmi configuration of instances, add an instance entry there as well.
 -  Regenerate the Java code:<br/>
-Run the Acceleo generator (for example from the `maze-generator.acceleo` module) so that the generated API and registry input are updated.<br/>
+Run the FreeMarker generator (for example from the `maze-generator.freemarker` module) so that the generated API and registry input are updated.<br/>
 -  Wire the new wall into the registry:<br/>
 If the registry is generated from the model, this happens automatically.<br/>
 If there is a manual section in `WallRegistry`, add a new `WallDefinition` entry with a unique `id`.
@@ -204,5 +204,5 @@ This makes it easy to reuse the wall definitions in tests, headless maze generat
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels and code generation in everyday terms |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
 | [FreeMarker Guide](../freemarker.readme.md) | Code generation with FreeMarker |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

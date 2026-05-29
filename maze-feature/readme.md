@@ -30,7 +30,7 @@ but typically the feature includes plug ins such as
 
 - core domain models and editors for opponents, difficulties and walls  
 - the maze world and behaviour related plug ins that are needed inside Eclipse  
-- Acceleo generator and runner plug ins if they are intended to be installed in Eclipse  
+- FreeMarker generator and runner plug ins if they are intended to be installed in Eclipse  
 - any Xtext or Sirius based tooling projects associated with MazeGame
 
 Each included plug in is referenced by its identifier and version range in the feature definition.  
