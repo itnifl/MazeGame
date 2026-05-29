@@ -21,10 +21,10 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 ```bash
   # Windows (PowerShell, from the repo root)
-  ./make.ps1 all
+  ./make-javafx.ps1 all
 
   # Linux / macOS (or Windows with make installed)
-  make all
+  make -f make-javafx all
 ```
 
 * For a quick rebuild when the mirror already exists:
@@ -537,9 +537,9 @@ Use this as a compact spoken script.
   * full Tycho build of the Eclipse modules and p two repository,
   * full Maven build and test of the `maze` game (headless JavaFX on Linux).
 
-* **`make` (Makefile)** and **`make.ps1`** provide local shortcuts:
+* **`make-javafx` (Makefile)** and **`make-javafx.ps1`** provide local shortcuts for the JavaFX backend, with parallel `make-libgdx` and `make-libgdx.ps1` for the libGDX backend:
 
-  * `make` or `./make.ps1 all`:
+  * `make -f make-javafx all` or `./make-javafx.ps1 all`:
 
     * refresh the local p two mirror when needed,
     * clear the Tycho cache,

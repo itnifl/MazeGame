@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────
-# MazeGame Makefile (Windows-friendly, uses PowerShell)
+# MazeGame Makefile (JavaFX backend) (Windows-friendly, uses PowerShell)
 #
 # Modules built:
 #   - main.game.maze.behaviour, difficulties, opponents, walls, mazeworld
@@ -43,17 +43,17 @@ help:
 # ─────────────────────────────────────────────────────────
 
 toolchain-info:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target toolchain
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target toolchain
 
 # ─────────────────────────────────────────────────────────
 # Step 1 – Local p2 mirror
 # ─────────────────────────────────────────────────────────
 
 mirror:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target mirror
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target mirror
 
 force-mirror:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target force-mirror
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target force-mirror
 
 clean-mirror:
 	@$(PSH) -NoLogo -NoProfile -Command "if (Test-Path 'releng/local-p2') { Remove-Item -Recurse -Force 'releng/local-p2' }; if (Test-Path 'releng/local-p2/.mirror.stamp') { Remove-Item -Force 'releng/local-p2/.mirror.stamp' }; Write-Host 'Done.'"
@@ -63,17 +63,17 @@ clean-mirror:
 # ─────────────────────────────────────────────────────────
 
 clear-tycho-cache:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target clear-cache
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target clear-cache
 
 # ─────────────────────────────────────────────────────────
 # Step 4 – Full build (Tycho + app)
 # ─────────────────────────────────────────────────────────
 
 build:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target build
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target build
 
 quick:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target quick
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target quick
 
 quick-no-tests:
-	@$(PSH) -NoLogo -NoProfile -File ./make.ps1 -Target quick-no-tests
+	@$(PSH) -NoLogo -NoProfile -File ./make-javafx.ps1 -Target quick-no-tests

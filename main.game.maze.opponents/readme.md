@@ -28,6 +28,102 @@ Instead it focuses on “what” an opponent is, not “how” it moves.
 
 ## Model Structure
 
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class OpponentModel {
+        +EString name
+    }
+    class CharacterType {
+        <<abstract>>
+        +EString id
+        +EString displayName
+        +EBoolean enabled = true
+        +EInt health = 100
+        +EDouble speed = 1.0
+        +EDouble threatLevel «derived»
+        +EDouble effectiveThreat «derived»
+        +EString ImageBase
+        +EString ImageTurnLeft
+        +EString ImageTurnRight
+        +EString ImageTurnUp
+        +EString ImageTurnDown
+        +BehaviorType behavior = WANDER
+        +EInt animationFrameCount = 1
+        +EDouble spriteScale = 1.0
+    }
+    class Zombie {
+        +EInt attackDamage = 10
+        +EInt infectionLevel = 1
+        +EInt resurrectionTime = 0
+        +EString touchSound
+    }
+    class Ghost {
+        +EInt attackDamage = 1
+        +EInt visibilityLevel = 100
+        +EInt nonTangibilityEnergy = 100
+    }
+    class RangedEnemy {
+        <<abstract>>
+        +EInt attackRange = 50
+        +EInt attackCooldownMs = 10000
+        +EInt attackDamage = 1
+        +EInt projectileSpeed = 0
+        +ProjectileType projectileType
+        +EInt splashRadius
+        +EInt arcHeight
+        +EString projectileImage
+        +EString explosionImage
+        +EString explosionSound
+        +EString throwSound
+    }
+    class PumpkinBomber
+    class LootTable {
+        +EInt weightCapacity = 1
+    }
+    class LootItem {
+        +EString name
+        +LootItemType type = FOOD
+        +EInt value
+        +EInt weight
+        +EString graphicBase
+    }
+    class BehaviorType {
+        <<enum>>
+        PASSIVE
+        WANDER
+        AGGRESSIVE
+        PATROL
+    }
+    class LootItemType {
+        <<enum>>
+        FOOD
+        BOMB
+        TRAP
+        WEAPON
+    }
+    class ProjectileType {
+        <<enum>>
+        STRAIGHT
+        LOB
+        BEAM
+    }
+
+    CharacterType <|-- Zombie
+    CharacterType <|-- Ghost
+    CharacterType <|-- RangedEnemy
+    RangedEnemy <|-- PumpkinBomber
+    OpponentModel "1" o-- "1..*" CharacterType : characterTypes
+    OpponentModel "1" --> "0..1" Difficulty : selectedDifficulty
+    Zombie "1" --> "0..1" LootTable : zombieLootTable
+    LootTable "1" *-- "0..*" LootItem : items
+```
+
+> Constraint `validateMaxThreat`: the sum of `characterTypes.threatLevel` must
+> stay at or below `selectedDifficulty.maxThreat`.
+
 The core of the module is an EMF based model (Ecore) that describes the opponent domain.  
 Typical concepts in the model include
 

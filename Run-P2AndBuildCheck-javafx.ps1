@@ -24,11 +24,11 @@ if ($SkipMirror -and $StartAt -lt 2) {
     $StartAt = 2
 }
 
-Write-Host "=== Run-P2AndBuildCheck quick usage ===" -ForegroundColor Cyan
-Write-Host "Avoid mirror rebuild: .\Run-P2AndBuildCheck.ps1 -SkipMirror"
-Write-Host "Avoid mirror rebuild (equivalent): .\Run-P2AndBuildCheck.ps1 -StartAt 2"
-Write-Host "Fast build with tests: .\Run-P2AndBuildCheck.ps1 -SkipMirror -BuildMode fast"
-Write-Host "Fastest build, skip tests: .\Run-P2AndBuildCheck.ps1 -SkipMirror -BuildMode fastest"
+Write-Host "=== Run-P2AndBuildCheck-javafx quick usage ===" -ForegroundColor Cyan
+Write-Host "Avoid mirror rebuild: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror"
+Write-Host "Avoid mirror rebuild (equivalent): .\Run-P2AndBuildCheck-javafx.ps1 -StartAt 2"
+Write-Host "Fast build with tests: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror -BuildMode fast"
+Write-Host "Fastest build, skip tests: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror -BuildMode fastest"
 Write-Host "=======================================" -ForegroundColor Cyan
 
 function Get-JavaMajorFromExecutable {

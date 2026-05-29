@@ -253,7 +253,7 @@ function Show-ToolchainInfo {
 }
 
 function Show-Usage {
-    Write-Host "=== MazeGame make.ps1 targets ===" -ForegroundColor Cyan
+    Write-Host "=== MazeGame make-javafx.ps1 targets ===" -ForegroundColor Cyan
     Write-Host "all             : Full path. Mirror check/rebuild, clear Tycho cache, clean verify with tests."
     Write-Host "build           : Same as all."
     Write-Host "build-with-cache: Mirror check/rebuild, keep Tycho cache, clean verify with tests."
@@ -266,7 +266,7 @@ function Show-Usage {
     Write-Host "write-launch-env: Write .vscode/maze.launch.env with discovered Java 21 for debug launch."
     Write-Host "prepare-run     : Write launch env, verify runtime modules are compiled and fresh, then ensure maze classes are Java 21 bytecode."
     Write-Host ""
-    Write-Host "To avoid mirror rebuilds, use: .\make.ps1 quick or .\make.ps1 quick-no-tests" -ForegroundColor Yellow
+    Write-Host "To avoid mirror rebuilds, use: .\make-javafx.ps1 quick or .\make-javafx.ps1 quick-no-tests" -ForegroundColor Yellow
     Write-Host "=================================" -ForegroundColor Cyan
 }
 

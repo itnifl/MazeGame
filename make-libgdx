@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────
+# MazeGame Makefile (libGDX backend, Windows-friendly, uses PowerShell)
+#
+# Modules built:
+#   - maze-common-graphics (backend-agnostic facades)
+#   - maze-libgdx          (libGDX implementations + GdxAppLauncher)
+#
+# This is a plain Maven build. No Tycho, no Eclipse p2 mirror, no platform
+# bundles. For the full JavaFX game build (Tycho + Xtext + acceleo + freemarker
+# generators + maze JavaFX client) see ./make-javafx.
+#
+# Default:
+#   make -f make-libgdx                   -> toolchain info + full clean verify
+#
+# Fast paths:
+#   make -f make-libgdx help              -> show all targets
+#   make -f make-libgdx quick             -> verify without clean
+#   make -f make-libgdx quick-no-tests    -> verify without clean, tests off
+#   make -f make-libgdx run               -> launch the libGDX backend
+# ─────────────────────────────────────────────────────────
+
+# PowerShell host (override with: make PSH=powershell)
+PSH ?= pwsh
+
+.PHONY: all default help toolchain-info build quick quick-no-tests prepare-run run
+
+default: all
+all: toolchain-info build
+
+help:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target help
+
+toolchain-info:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target toolchain
+
+build:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target build
+
+quick:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target quick
+
+quick-no-tests:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target quick-no-tests
+
+prepare-run:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target prepare-run
+
+run:
+	@$(PSH) -NoLogo -NoProfile -File ./make-libgdx.ps1 -Target run

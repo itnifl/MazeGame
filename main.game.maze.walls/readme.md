@@ -13,6 +13,36 @@ Typical responsibilities:
 
 ## Structure
 
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class WallModel
+    class WallMaterial {
+        +WallMaterialBaseType wallBaseType = STEEL
+        +EString displayName
+        +EBoolean breakable = false «transient»
+        +EInt hitPoints = 0
+        +EString id «derived, ID»
+        +EString baseImage = /main/game/maze/baseWall.png
+    }
+    class WallMaterialBaseType {
+        <<enum>>
+        GLASS
+        DIRT
+        WOOD
+        STONE
+        STEEL
+    }
+
+    WallModel "1" *-- "0..*" WallMaterial : materials
+    WallMaterial --> WallMaterialBaseType
+```
+
+> Constraint `ValidHitPoints`: `(breakable=false ⇒ hitPoints=0)` and
+> `(breakable=true ⇒ hitPoints>0)`.
+
 The module is organised in three main parts.
 
 ### １．EMF model

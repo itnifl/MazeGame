@@ -23,6 +23,41 @@ By centralising these rules, the game can stay consistent, and you can tune diff
 
 ## Conceptual Structure
 
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class DifficultyGameData
+    class Difficulty {
+        <<abstract>>
+        +EBoolean instantDeath
+        +EDouble monstersMovementSpeedMultiplier
+        +EDouble monstersDamageMultiplier
+        +EInt maxThreat
+    }
+    class EasyDifficulty
+    class NormalDifficulty
+    class HardDifficulty
+    class EnemyMaxCount {
+        +EnemyTypes type
+        +EInt maxCount
+    }
+    class EnemyTypes {
+        <<enum>>
+        ZOMBIE
+        GHOST
+        PUMPKINBOMBER
+    }
+
+    Difficulty <|-- EasyDifficulty
+    Difficulty <|-- NormalDifficulty
+    Difficulty <|-- HardDifficulty
+    DifficultyGameData "1" o-- "1..*" Difficulty : difficulties
+    DifficultyGameData "1" --> "0..1" Difficulty : currentDifficulty
+    Difficulty "1" *-- "0..*" EnemyMaxCount : enemyMaxCount
+```
+
 The module is typically built around three layers.
 
 ### Difficulty model

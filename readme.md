@@ -209,14 +209,14 @@ mvn -pl main.game.maze.opponents -am test
 ### Makefile usage - Windows Powershell
 ```
 # Default: toolchain info, update mirror if needed, clear Tycho cache, full build
-.\make.ps1
+.\make-javafx.ps1
 
 # Explicit target:
-.\make.ps1 -Target toolchain
-.\make.ps1 -Target mirror
-.\make.ps1 -Target force-mirror
-.\make.ps1 -Target clear-cache
-.\make.ps1 -Target build
+.\make-javafx.ps1 -Target toolchain
+.\make-javafx.ps1 -Target mirror
+.\make-javafx.ps1 -Target force-mirror
+.\make-javafx.ps1 -Target clear-cache
+.\make-javafx.ps1 -Target build
 
 ```
 
@@ -231,14 +231,14 @@ make build
 
 Quick reference for fast and no mirror command variants: [build-tool-readme.md](build-tool-readme.md).
 
-Use the script `Run-P2AndBuildCheck.ps1` to run a full build with diagnostics:
+Use the script `Run-P2AndBuildCheck-javafx.ps1` to run a full build with diagnostics:
 
 ```powershell
 # Full build with all steps
-.\Run-P2AndBuildCheck.ps1
+.\Run-P2AndBuildCheck-javafx.ps1
 
 # Skip mirror rebuild, start at build step
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 Logs are written to `releng\test-results`.
@@ -319,11 +319,11 @@ See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
 This repository includes two helper scripts for packaging the source and for running a repeatable build with diagnostics. Both scripts live in the root of the repo for easy access.
 
 * 📦 **[pack-source.ps1](./tools/pack-source.ps1)**
-* 🧪 **[Run-P2AndBuildCheck.ps1](./Run-P2AndBuildCheck.ps1)**
+* 🧪 **[Run-P2AndBuildCheck-javafx.ps1](./Run-P2AndBuildCheck-javafx.ps1)**
 
 ---
 
-### Run-P2AndBuildCheck.ps1
+### Run-P2AndBuildCheck-javafx.ps1
 
 **What it does**
 Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
@@ -340,20 +340,20 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 
 ```powershell
 # From the repo root - full build
-.\Run-P2AndBuildCheck.ps1
+.\Run-P2AndBuildCheck-javafx.ps1
 
 # Skip to build step only (steps 1-3 skipped)
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 **Parameters**
 
 ```powershell
 # Default output folder for logs
-.\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
+.\Run-P2AndBuildCheck-javafx.ps1 -LogDirectory "releng\test-results"
 
 # Start at a specific step (1=all, 2=skip mirror, 3=skip mirror+verify, 4=build only)
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 **Outputs**

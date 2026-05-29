@@ -142,6 +142,35 @@ By following these ideas, `maze` stays a thin, clear and maintainable game clien
 
 ---
 
+## Player ecore model
+
+`Player.ecore` (under `src/main/resources/xmi/player/`) and its XMI instance
+`playerModel.xmi` describe the player character that the game loads at start.
+
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class PlayerModel {
+        +EString name
+    }
+    class PlayerType {
+        +EString id
+        +EString displayName
+        +EBoolean enabled = true
+        +EInt health = 100
+        +EDouble speed = 10.0
+        +EString ImageBase = /main/game/maze/you2.png
+        +EString ImageTurnLeft
+        +EString ImageTurnRight
+        +EString ImageTurnUp
+        +EString ImageTurnDown
+        +EString ImageDeath = /main/game/maze/you2-dead.png
+    }
+    PlayerModel "1" --> "1" PlayerType : playerCharacter
+```
+
 ## Graphics backend abstraction
 
 The graphics, threading and audio facades that the game code talks to live in
