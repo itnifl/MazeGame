@@ -44,19 +44,26 @@ public final class RuntimeVisualModelLoader {
     private final MazeVisualStyleConfig style = loadStyle();
 
     public RuntimeVisualModel load(float widthPx, float heightPx) {
-        return load(null, widthPx, heightPx);
+        return load(null, widthPx, heightPx, null);
     }
 
     public RuntimeVisualModel load(MazeArena arena) {
         if (arena == null) {
             throw new IllegalArgumentException("arena must not be null");
         }
-        return load(arena, arena.widthPx(), arena.heightPx());
+        return load(arena, arena.widthPx(), arena.heightPx(), null);
     }
 
-    private RuntimeVisualModel load(MazeArena arena, float widthPx, float heightPx) {
+    public RuntimeVisualModel load(MazeArena arena, Difficulty difficulty) {
+        if (arena == null) {
+            throw new IllegalArgumentException("arena must not be null");
+        }
+        return load(arena, arena.widthPx(), arena.heightPx(), difficulty);
+    }
+
+    private RuntimeVisualModel load(MazeArena arena, float widthPx, float heightPx, Difficulty selectedDifficulty) {
         PlayerConfig playerConfig = loadPlayerConfig();
-        Difficulty difficulty = loadCurrentDifficulty();
+        Difficulty difficulty = selectedDifficulty != null ? selectedDifficulty : loadCurrentDifficulty();
         WallRegistry.WallDefinition wallDefinition = resolveWallDefinition(difficulty, style);
         List<EnemySpawn> enemies = loadEnemySpawns(arena, widthPx, heightPx, difficulty);
 
@@ -321,7 +328,7 @@ public final class RuntimeVisualModelLoader {
                 LOGGER.log(Level.WARNING, "Opponent model OCL validation reported diagnostics: {0}", diagnostics.getMessage());
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Opponent model OCL validation threw at runtime, continuing with model load", ex);
+            LOGGER.log(Level.WARNING, "Opponent model OCL validation unavailable at runtime, continuing with model load");
         }
     }
 

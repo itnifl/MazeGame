@@ -81,11 +81,19 @@ public class App extends Application {
                 ? displayName(current)
                 : (byName.isEmpty() ? null : byName.keySet().iterator().next());
 
+        if (byName.isEmpty()) {
+            return Optional.empty();
+        }
+
         ChoiceDialog<String> dlg = new ChoiceDialog<>(def, byName.keySet());
         dlg.setTitle("Select difficulty");
         dlg.setHeaderText("Choose game difficulty");
         dlg.setContentText("Difficulty:");
-        dlg.initOwner(owner);
+        if (owner != null) {
+            dlg.initOwner(owner);
+        }
+        dlg.getDialogPane().setMinWidth(380);
+        dlg.getDialogPane().setMinHeight(180);
 
         Optional<String> result = dlg.showAndWait();
         if (result.isPresent()) {

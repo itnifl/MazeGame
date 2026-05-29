@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -73,12 +73,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int NORMAL_BASE_SCORE = 20000;
     private static final int HARD_BASE_SCORE = 30000;
     private static final float MOUSE_STEP_DISTANCE = 20f;
+    private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
+    private static final float PLAYER_MAX_HP = 100f;
+    private static final float CONTACT_DAMAGE = 10f;
+    private static final float CONTACT_DAMAGE_COOLDOWN_SEC = 0.45f;
+    private static final float CONTACT_HIT_DISTANCE_PADDING = 2f;
 
     private enum Mode {
         START_MENU,
         PLAYING,
         HIGH_SCORES,
-        WON
+        WON,
+        GAME_OVER
     }
 
     private final MazeArena providedMaze;
@@ -132,10 +138,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private float activeGoalY;
     private float currentHpRatio = 1f;
     private boolean playedWinSound;
+    private boolean playedGameOverSound;
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<ScoreRow> highScoreRows = new ArrayList<>();
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
+    private float pathPenaltyPoints;
+    private float currentHp = PLAYER_MAX_HP;
+    private float contactDamageCooldown;
 
     public GdxGameScreen() {
         this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true);
@@ -217,8 +227,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 escLatch = true;
                 pausedFromGame = false;
                 mode = Mode.PLAYING;
-                AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-                AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+                switchToInGameMusic();
                 flashStatus("Resumed game");
                 return;
             }
@@ -251,6 +260,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
 
+        if (mode == Mode.GAME_OVER) {
+            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
+                escLatch = true;
+                switchToStartMenu(false);
+            }
+            if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                escLatch = false;
+            }
+            return;
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
             escLatch = true;
             switchToStartMenu(true);
@@ -272,6 +292,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
+        applyPathPenalty(dt);
         updatePathHint();
 
         if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
@@ -301,12 +322,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
             enemy.update(enemyAnimationClock, maze.widthPx(), maze.heightPx());
         }
 
+        handleEnemyCollisions(dt);
+
         updateCameraFollow();
 
         if (player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
             mode = Mode.WON;
             if (!playedWinSound) {
                 playedWinSound = true;
+                AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
                 AudioEngine.get().play(visualStyle.winSoundPath());
             }
         }
@@ -333,11 +357,22 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (backgroundTexture != null) {
             float tileW = Math.max(1f, backgroundTexture.getWidth());
             float tileH = Math.max(1f, backgroundTexture.getHeight());
-            for (float x = 0f; x < maze.widthPx(); x += tileW) {
-                for (float y = 0f; y < maze.heightPx(); y += tileH) {
-                    float drawW = Math.min(tileW, maze.widthPx() - x);
-                    float drawH = Math.min(tileH, maze.heightPx() - y);
-                    batch.draw(backgroundTexture, x, y, drawW, drawH);
+            float viewMinX = camera.position.x - viewport.getWorldWidth() * 0.5f;
+            float viewMinY = camera.position.y - viewport.getWorldHeight() * 0.5f;
+            float viewMaxX = camera.position.x + viewport.getWorldWidth() * 0.5f;
+            float viewMaxY = camera.position.y + viewport.getWorldHeight() * 0.5f;
+
+            float minX = Math.min(0f, viewMinX);
+            float minY = Math.min(0f, viewMinY);
+            float maxX = Math.max(maze.widthPx(), viewMaxX);
+            float maxY = Math.max(maze.heightPx(), viewMaxY);
+
+            float startX = (float) Math.floor(minX / tileW) * tileW;
+            float startY = (float) Math.floor(minY / tileH) * tileH;
+
+            for (float x = startX; x < maxX; x += tileW) {
+                for (float y = startY; y < maxY; y += tileH) {
+                    batch.draw(backgroundTexture, x, y, tileW, tileH);
                 }
             }
         }
@@ -465,6 +500,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         drawHud();
         if (mode == Mode.HIGH_SCORES) {
             drawHighScoresOverlay();
+        }
+        if (mode == Mode.WON) {
+            drawCenteredStateOverlay("YOU WIN", "Press ESC to return to start menu");
+        }
+        if (mode == Mode.GAME_OVER) {
+            drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu");
         }
     }
 
@@ -639,7 +680,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Score panel and bottom row share the same visual language.
         shapes.setColor(0f, 0f, 0f, 0.45f);
         shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
-        shapes.setColor(0f, 0f, 0f, 0.14f);
+        shapes.setColor(0f, 0f, 0f, 0.12f);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
 
         shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
@@ -655,7 +696,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.end();
 
         batch.begin();
-        int score = Math.max(0, baseScore - (moveCount * 10));
+        int score = currentScore();
 
         font.setColor(new Color(0.07f, 0.22f, 0.19f, 1f));
         font.draw(batch, "Commands", buttonX + 10f, buttonY + 18f);
@@ -677,6 +718,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (mode == Mode.WON) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
             font.draw(batch, "You reached the heart. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
+        } else if (mode == Mode.GAME_OVER) {
+            font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
+            font.draw(batch, "You were defeated. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
         } else if (statusMessage != null && !statusMessage.isBlank()) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
             font.draw(batch, statusMessage, 12f, BOTTOM_BAR_HEIGHT + 18f);
@@ -729,13 +773,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float h = hudCamera.viewportHeight;
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.03f, 0.04f, 0.08f, 0.36f);
+        shapes.setColor(0.03f, 0.04f, 0.08f, 0.18f);
         shapes.rect(0f, 0f, w, h);
         float panelW = Math.min(560f, w - 70f);
         float panelH = Math.min(460f, h - 90f);
         float panelX = (w - panelW) * 0.5f;
         float panelY = (h - panelH) * 0.5f;
-        shapes.setColor(0f, 0f, 0f, 0.62f);
+        shapes.setColor(0f, 0f, 0f, 0.35f);
         shapes.rect(panelX, panelY, panelW, panelH);
         shapes.end();
 
@@ -766,6 +810,35 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
         font.draw(batch, "Press ESC to continue", panelX + 22f, panelY + 24f);
+        batch.end();
+    }
+
+    private void drawCenteredStateOverlay(String title, String subtitle) {
+        float w = hudCamera.viewportWidth;
+        float h = hudCamera.viewportHeight;
+
+        float panelW = Math.min(600f, w - 80f);
+        float panelH = 180f;
+        float panelX = (w - panelW) * 0.5f;
+        float panelY = (h - panelH) * 0.5f;
+
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        shapes.setColor(0f, 0f, 0f, 0.30f);
+        shapes.rect(panelX, panelY, panelW, panelH);
+        shapes.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);
+        shapes.setColor(0.56f, 1.0f, 0.88f, 0.95f);
+        shapes.rect(panelX, panelY, panelW, panelH);
+        shapes.end();
+
+        batch.begin();
+        font.setColor(Color.GOLD);
+        font.getData().setScale(2.0f);
+        font.draw(batch, title, panelX + 34f, panelY + panelH - 50f);
+        font.getData().setScale(1.0f);
+        font.setColor(new Color(0.9f, 0.96f, 1f, 1f));
+        font.draw(batch, subtitle, panelX + 34f, panelY + 58f);
         batch.end();
     }
 
@@ -925,7 +998,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         resizeWindowForDifficulty(selected);
 
         maze = providedMaze != null ? providedMaze : buildArenaForDifficulty(selected);
-        runtimeModel = runtimeModelLoader.load(maze);
+        runtimeModel = runtimeModelLoader.load(maze, selected);
         float baseSpeed = runtimeModel.playerSpeed() > 0f
                 ? runtimeModel.playerSpeed()
                 : StageConstants.PlayerCharacterSpeed;
@@ -939,7 +1012,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         startMenuDropdownOpen = false;
         pausedFromGame = false;
         playedWinSound = false;
+        playedGameOverSound = false;
         animatedEnemies.clear();
+        pathPenaltyPoints = 0f;
+        currentHp = PLAYER_MAX_HP;
+        currentHpRatio = 1f;
+        contactDamageCooldown = 0f;
 
         int idx = 0;
         for (EnemySpawn enemy : runtimeModel.enemies()) {
@@ -947,14 +1025,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         if (viewport == null) {
-            viewport = new FitViewport(
-                    Math.min(maze.widthPx(), Math.max(1, Gdx.graphics.getWidth())),
-                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) (BOTTOM_BAR_HEIGHT + HP_BAR_HEIGHT))),
-                    camera);
-        } else {
-            ((FitViewport) viewport).setWorldSize(
-                    Math.min(maze.widthPx(), Math.max(1, Gdx.graphics.getWidth())),
-                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) (BOTTOM_BAR_HEIGHT + HP_BAR_HEIGHT))));
+            viewport = new ScreenViewport(camera);
         }
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
@@ -965,9 +1036,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         recenterGoalLikeJavaFx();
         mode = Mode.PLAYING;
 
-        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+        switchToInGameMusic();
         flashStatus("Started " + (selected != null ? displayName(selected) : "Default") + " difficulty");
     }
 
@@ -1099,13 +1168,73 @@ public final class GdxGameScreen extends ApplicationAdapter {
         return value;
     }
 
+    private static float distanceSquared(float x1, float y1, float x2, float y2) {
+        float dx = x1 - x2;
+        float dy = y1 - y2;
+        return dx * dx + dy * dy;
+    }
+
     private void switchToStartMenu(boolean fromGame) {
         pausedFromGame = fromGame;
         startMenuDropdownOpen = false;
         mode = Mode.START_MENU;
-        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+        switchToMenuMusic();
         flashStatus(fromGame ? "Paused in start menu. Press ESC to resume." : "Returned to start menu");
+    }
+
+    private void switchToInGameMusic() {
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+    }
+
+    private void switchToMenuMusic() {
+        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+    }
+
+    private void applyPathPenalty(float dt) {
+        if (!showHintInfo || mode != Mode.PLAYING) {
+            return;
+        }
+        pathPenaltyPoints += dt * ROUTE_HINT_PENALTY_PER_SEC;
+    }
+
+    private void handleEnemyCollisions(float dt) {
+        if (mode != Mode.PLAYING || player == null) {
+            return;
+        }
+        contactDamageCooldown = Math.max(0f, contactDamageCooldown - dt);
+        if (contactDamageCooldown > 0f) {
+            return;
+        }
+
+        float playerRadius = player.halfSize();
+        for (EnemyRuntime enemy : animatedEnemies) {
+            float enemyRadius = enemy.size * 0.5f;
+            float allowed = playerRadius + enemyRadius + CONTACT_HIT_DISTANCE_PADDING;
+            if (distanceSquared(player.x(), player.y(), enemy.x, enemy.y) <= allowed * allowed) {
+                currentHp = Math.max(0f, currentHp - CONTACT_DAMAGE);
+                currentHpRatio = Math.max(0f, currentHp / PLAYER_MAX_HP);
+                contactDamageCooldown = CONTACT_DAMAGE_COOLDOWN_SEC;
+                if (currentHp <= 0f) {
+                    mode = Mode.GAME_OVER;
+                    if (!playedGameOverSound) {
+                        playedGameOverSound = true;
+                        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+                        AudioEngine.get().play(ResourceFileConstants.GameOverSound);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    private int currentScore() {
+        int movePenalty = moveCount * 10;
+        int hintPenalty = (int) Math.floor(pathPenaltyPoints);
+        return Math.max(0, baseScore - movePenalty - hintPenalty);
     }
 
     private MazeVisualStyleConfig loadVisualStyle() {

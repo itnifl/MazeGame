@@ -40,10 +40,10 @@
     </Pane>    
     <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1" prefHeight="20" prefWidth="800" style="-fx-accent: #c0392b;" />
 
-    <Label fx:id="mouseCoordsLabel" layoutX="1.0" layoutY="23.0" prefHeight="20" prefWidth="100" />
+    <Label fx:id="mouseCoordsLabel" layoutX="1.0" layoutY="23.0" prefHeight="20" prefWidth="100" style="-fx-text-fill: white;" />
 
     <AnchorPane prefHeight="20" prefWidth="210" AnchorPane.bottomAnchor="46" AnchorPane.rightAnchor="10">
-        <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" />
+        <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" style="-fx-text-fill: white;" />
     </AnchorPane>
 
     <AnchorPane fx:id="scoreHudContainer" prefHeight="30" prefWidth="170" style="-fx-background-color: rgba(0, 0, 0, 0.45); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.rightAnchor="6" AnchorPane.topAnchor="22">

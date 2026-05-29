@@ -215,6 +215,12 @@ public class GameController implements Initializable {
         if (scoreLabel != null) {
             scoreLabel.setText("Score: " + score);
         }
+        if (coordinatesLabel != null) {
+            coordinatesLabel.setTextFill(Color.WHITE);
+        }
+        if (mouseCoordsLabel != null) {
+            mouseCoordsLabel.setTextFill(Color.WHITE);
+        }
     }
 
     public int getDynamicScorePenalty() {
@@ -298,6 +304,9 @@ public class GameController implements Initializable {
     private void openDifficultyPickerAndMaybeRestart() {
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
 
+        stopComputerCharacters();
+        hideCommandsOverlay();
+
         App.pickDifficulty(window).ifPresent(chosen -> {
             var confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Restart required");
@@ -311,8 +320,21 @@ public class GameController implements Initializable {
             } else {
                 this.setStartDifficulty(chosen);
                 App.lastChosenDifficulty = chosen;
+                runComputerCharacters();
+                startMovementTimer();
+                if (gameBoard != null) {
+                    gameBoard.requestFocus();
+                }
             }
         });
+
+        if (runComputerCharactersThread == null && movementTimer == null) {
+            runComputerCharacters();
+            startMovementTimer();
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+            }
+        }
     }
 
     @FXML
