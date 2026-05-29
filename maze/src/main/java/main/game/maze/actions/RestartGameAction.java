@@ -27,7 +27,7 @@ public class RestartGameAction extends ActionScreens {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
 
-        AudioEngine.get().dispose();
+        AudioEngine.get().stopChannel("music.inGame");
         AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, "music.inGame");
 
         try {
