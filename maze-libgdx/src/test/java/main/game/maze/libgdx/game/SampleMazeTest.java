@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import main.game.maze.mazeworld.generators.SampleMaze;
+import main.game.maze.mazeworld.generators.WallSegment;
+
 class SampleMazeTest {
 
     @Test

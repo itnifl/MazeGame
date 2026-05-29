@@ -14,17 +14,17 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
-import main.game.maze.libgdx.game.MazeArena;
-import main.game.maze.libgdx.game.PlayerState;
-import main.game.maze.libgdx.game.RealMaze;
-import main.game.maze.libgdx.game.SampleMaze;
-import main.game.maze.libgdx.game.WallSegment;
+import main.game.maze.mazeworld.generators.MazeArena;
+import main.game.maze.mazeworld.generators.PlayerState;
+import main.game.maze.mazeworld.generators.RealMaze;
+import main.game.maze.mazeworld.generators.SampleMaze;
+import main.game.maze.mazeworld.generators.WallSegment;
 
 /**
  * Minimal-but-real libGDX gameplay subset: a procedurally generated maze the
  * player walks through with arrow keys until reaching the green goal cell.
  * Heavy lifting (maze generation, collision resolution) lives in pure-Java
- * helpers under {@code main.game.maze.libgdx.game} so it can be tested
+ * helpers under {@code main.game.maze.mazeworld.generators} so it can be tested
  * headlessly.
  */
 public final class GdxGameScreen extends ApplicationAdapter {

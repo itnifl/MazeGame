@@ -1,9 +1,7 @@
-package main.game.maze.libgdx.game;
+package main.game.maze.mazeworld.generators;
 
 /**
- * Mutable player position + size, with axis-separated collision resolution
- * against {@link WallSegment} walls. Pure Java so it can be unit-tested
- * headlessly without a GL context.
+ * Mutable player position + size, with axis-separated collision resolution.
  */
 public final class PlayerState {
 
@@ -22,10 +20,6 @@ public final class PlayerState {
     public float y() { return y; }
     public float halfSize() { return halfSize; }
 
-    /**
-     * Attempt to move by (dx, dy). Each axis is resolved separately so the
-     * player can slide along a wall instead of getting stuck.
-     */
     public void attemptMove(float dx, float dy, MazeArena maze) {
         if (dx != 0f) {
             float candidate = x + dx;
@@ -44,7 +38,6 @@ public final class PlayerState {
     }
 
     private boolean collides(float cx, float cy, MazeArena maze) {
-        // Clamp inside the playfield first.
         if (cx - halfSize < 0f || cy - halfSize < 0f) return true;
         if (cx + halfSize > maze.widthPx() || cy + halfSize > maze.heightPx()) return true;
         float left = cx - halfSize;

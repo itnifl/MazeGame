@@ -9,9 +9,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import main.game.maze.common.graphics.config.MazeConfigLoader;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
-import main.game.maze.libgdx.game.MazeArena;
-import main.game.maze.libgdx.game.RealMaze;
-import main.game.maze.libgdx.game.SampleMaze;
+import main.game.maze.mazeworld.generators.MazeArena;
+import main.game.maze.mazeworld.generators.RealMaze;
+import main.game.maze.mazeworld.generators.SampleMaze;
 
 /**
  * Launches the MazeGame libGDX backend.

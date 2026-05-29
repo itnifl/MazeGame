@@ -1,8 +1,6 @@
-package main.game.maze.libgdx.game;
+package main.game.maze.mazeworld.generators;
 
-/**
- * Axis-aligned wall segment in continuous 2D space. Pure data, no rendering deps.
- */
+/** Axis-aligned wall segment in continuous 2D space. */
 public final class WallSegment {
     public final float x1;
     public final float y1;

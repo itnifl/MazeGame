@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import main.game.maze.mazeworld.generators.PlayerState;
+import main.game.maze.mazeworld.generators.SampleMaze;
+
 class PlayerStateTest {
 
     private static SampleMaze maze() {

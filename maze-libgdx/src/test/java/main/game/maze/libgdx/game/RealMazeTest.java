@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.generators.RealMaze;
+import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.mazeworld.Vector2D;
 
 class RealMazeTest {

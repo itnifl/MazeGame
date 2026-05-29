@@ -1,4 +1,4 @@
-package main.game.maze.libgdx.game;
+package main.game.maze.mazeworld.generators;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,16 +9,7 @@ import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 
 /**
- * Phase 3 adapter that exposes the shared {@link GameMazeWorld} (from the
- * {@code main.game.maze.mazeworld} bundle) as a {@link MazeArena} the libGDX
- * renderer can draw and the collision code can walk. This is the bridge that
- * makes the libGDX backend render the same procedural maze the JavaFX game
- * uses, instead of the standalone {@link SampleMaze} placeholder.
- *
- * <p>Coordinates: {@code GameMazeWorld} produces pixel-space wall vectors
- * already, so no scaling is needed. The libGDX origin is bottom-left while
- * the JavaFX game treats y as growing downward; we flip y once at adapter
- * boundary so the maze renders the same way visually.
+ * Adapter that exposes shared GameMazeWorld as a MazeArena.
  */
 public final class RealMaze implements MazeArena {
 
