@@ -17,7 +17,7 @@ not static.
 
 - Retro start menu in libGDX with difficulty selection (`UP`/`DOWN`, `ENTER`).
 - Start menu supports mouse selection for difficulty and start button.
-- Difficulty specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
+- Difficulty-specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
 - Arrow keys and WASD movement tuned to JavaFX-equivalent speed behavior.
 - Opponent sprites loaded from the model and animated continuously.
 - Bottom command row and top-right score card styled to match JavaFX HUD overlays.

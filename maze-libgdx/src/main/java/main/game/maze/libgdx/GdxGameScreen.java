@@ -873,12 +873,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         int maxH = display != null ? display.height : targetH;
         int windowW = Math.min(targetW, maxW);
         int windowH = Math.min(targetH + (int) BOTTOM_BAR_HEIGHT, maxH);
-        windowW = Math.max(800, windowW);
-        windowH = Math.max(640, windowH);
-        if (Gdx.graphics.getWidth() == windowW && Gdx.graphics.getHeight() == windowH) {
+        int finalWidth = Math.min(maxW, Math.max(800, windowW));
+        int finalHeight = Math.min(maxH, Math.max(640, windowH));
+        if (Gdx.graphics.getWidth() == finalWidth && Gdx.graphics.getHeight() == finalHeight) {
             return;
         }
-        Gdx.graphics.setWindowedMode(windowW, windowH);
+        Gdx.graphics.setWindowedMode(finalWidth, finalHeight);
     }
 
     private MazeArena buildArenaForDifficulty(Difficulty selected) {

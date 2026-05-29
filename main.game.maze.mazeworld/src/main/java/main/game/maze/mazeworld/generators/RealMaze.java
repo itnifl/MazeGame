@@ -81,9 +81,9 @@ public final class RealMaze implements MazeArena {
         double bestGoal = Double.POSITIVE_INFINITY;
 
         double targetStartX = 60.0;
-        double targetStartY = 60.0;
+        double targetStartY = heightPx - 60.0;
         double targetGoalX = widthPx - 60.0;
-        double targetGoalY = heightPx - 60.0;
+        double targetGoalY = 60.0;
 
         for (int c = 0; c < graph.getCols(); c++) {
             for (int r = 0; r < graph.getRows(); r++) {
