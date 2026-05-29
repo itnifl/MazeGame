@@ -10,6 +10,7 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ISubscribeOnDirection;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
+import javafx.application.Platform;
 
 public class Character  {
     public INotifyMovement notifyMovement = null;
@@ -160,9 +161,10 @@ public class Character  {
 
     private boolean moveCharacterRight(double speed, boolean force) {
         if (characterGraphics == null) return false;
-        double newX = characterGraphics.getLayoutX() + speed;
+        double newX = characterPosition.getX() + speed;
         if (newX < maxX && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutX(newX);
+            final Node gfx = characterGraphics;
+            Platform.runLater(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -171,9 +173,10 @@ public class Character  {
 
     private boolean moveCharacterLeft(double speed, boolean force) {
         if (characterGraphics == null) return false;
-        double newX = characterGraphics.getLayoutX() - speed;
+        double newX = characterPosition.getX() - speed;
         if (newX >= 0 && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutX(newX);
+            final Node gfx = characterGraphics;
+            Platform.runLater(() -> gfx.setLayoutX(newX));
             doNotifyMovement();
             return true;
         }
@@ -182,9 +185,10 @@ public class Character  {
 
     private boolean moveCharacterDown(double speed, boolean force) {
         if (characterGraphics == null) return false;
-        double newY = characterGraphics.getLayoutY() + speed;
+        double newY = characterPosition.getY() + speed;
         if (newY < maxY && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutY(newY);
+            final Node gfx = characterGraphics;
+            Platform.runLater(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }
@@ -193,9 +197,10 @@ public class Character  {
 
     private boolean moveCharacterUp(double speed, boolean force) {
         if (characterGraphics == null) return false;
-        double newY = characterGraphics.getLayoutY() - speed;
+        double newY = characterPosition.getY() - speed;
         if (newY >= 0 && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutY(newY);
+            final Node gfx = characterGraphics;
+            Platform.runLater(() -> gfx.setLayoutY(newY));
             doNotifyMovement();
             return true;
         }

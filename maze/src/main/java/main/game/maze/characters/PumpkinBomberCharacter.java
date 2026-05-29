@@ -256,14 +256,18 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             // linear path + vertical bump for arc
             double x = lerp(sx, tx, u);
             double y = lerp(sy, ty, u) - arcHeight * Math.sin(Math.PI * u);
-            node.setLayoutX(x);
-            node.setLayoutY(y);
+            javafx.application.Platform.runLater(() -> {
+                node.setLayoutX(x);
+                node.setLayoutY(y);
+            });
         }
 
         boolean isArrived() { return u >= 1.0; }
 
         void dispose() {
-            if (node.getParent() != null) node.setVisible(false);
+            javafx.application.Platform.runLater(() -> {
+                if (node.getParent() != null) node.setVisible(false);
+            });
         }
 
         private static double lerp(double a, double b, double t) { return a + (b - a) * t; }
