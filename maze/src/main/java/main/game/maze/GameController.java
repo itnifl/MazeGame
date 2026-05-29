@@ -249,13 +249,13 @@ public class GameController implements Initializable {
 
     private void ensureHudLayersOnTop() {
         if (scoreHudContainer != null) {
-            scoreHudContainer.toFront();
+            scoreHudContainer.setViewOrder(-20);
         }
         if (bottomMenuContainer != null) {
-            bottomMenuContainer.toFront();
+            bottomMenuContainer.setViewOrder(-20);
         }
-        if (commandsOverlay != null && commandsOverlay.isVisible()) {
-            commandsOverlay.toFront();
+        if (commandsOverlay != null) {
+            commandsOverlay.setViewOrder(-30);
         }
     }
 
@@ -268,9 +268,6 @@ public class GameController implements Initializable {
         boolean show = !commandsOverlay.isVisible();
         commandsOverlay.setVisible(show);
         commandsOverlay.setManaged(show);
-        if (show) {
-            commandsOverlay.toFront();
-        }
 
         if (!show && gameBoard != null) {
             gameBoard.requestFocus();

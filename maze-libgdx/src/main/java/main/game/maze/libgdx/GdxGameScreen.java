@@ -52,7 +52,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float DEFAULT_PLAYER_SPEED = DEFAULT_CELL_SIZE * 3.5f;
     private static final float WALL_THICKNESS = 3f;
     private static final float GOAL_SIZE = 50f;
-    private static final float HUD_HEIGHT = 52f;
+    private static final float JAVA_FX_TICK_RATE = 30f;
+    private static final float BOTTOM_BAR_HEIGHT = 40f;
+    private static final float TOP_MARGIN = 22f;
+    private static final float SCORE_PANEL_WIDTH = 170f;
+    private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
     private static final int EASY_BASE_SCORE = 10000;
     private static final int NORMAL_BASE_SCORE = 20000;
@@ -102,11 +106,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
+    private Difficulty selectedDifficulty;
     private Texture playerTexture;
     private Texture goalTexture;
     private Texture wallTexture;
+    private Texture menuIconTexture;
     private float activePlayerSpeed;
     private float activeGoalSize;
+    private float activeGoalX;
+    private float activeGoalY;
     private boolean playedWinSound;
 
     public GdxGameScreen() {
@@ -142,6 +150,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
+        menuIconTexture = loadTexture("/main/game/maze/ghost1.png");
 
         difficulties.clear();
         difficulties.addAll(difficultyService.list());
@@ -157,6 +166,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        AudioEngine.get().playLoop(ResourceFileConstants.MenuMusic, AudioChannelConstants.MENU_MUSIC);
     }
 
     @Override
@@ -253,7 +263,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         updateCameraFollow();
 
-        if (player.reached(runtimeModel.goalX(), runtimeModel.goalY(), activeGoalSize * 0.5f)) {
+        if (player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
             mode = Mode.WON;
             if (!playedWinSound) {
                 playedWinSound = true;
@@ -283,7 +293,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Goal / heart.
         if (goalTexture != null) {
             float hs = activeGoalSize * 0.5f;
-            batch.draw(goalTexture, runtimeModel.goalX() - hs, runtimeModel.goalY() - hs, activeGoalSize, activeGoalSize);
+            batch.draw(goalTexture, activeGoalX - hs, activeGoalY - hs, activeGoalSize, activeGoalSize);
         }
 
         // Walls mapped from generated WallRegistry + difficulty.
@@ -328,7 +338,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (goalTexture == null) {
             shapes.setColor(0.15f, 0.55f, 0.2f, 1f);
             float hs = activeGoalSize * 0.5f;
-            shapes.rect(runtimeModel.goalX() - hs, runtimeModel.goalY() - hs, activeGoalSize, activeGoalSize);
+            shapes.rect(activeGoalX - hs, activeGoalY - hs, activeGoalSize, activeGoalSize);
         }
 
         // Wall fallback.
@@ -375,38 +385,95 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float w = hudCamera.viewportWidth;
         float h = hudCamera.viewportHeight;
 
+        float panelW = Math.min(610f, w - 70f);
+        float panelH = 250f;
+        float panelX = (w - panelW) * 0.5f;
+        float panelY = (h - panelH) * 0.5f - 35f;
+
+        float titleY = panelY + panelH + 130f;
+        float subtitleY = panelY + panelH + 90f;
+
+        float comboW = Math.min(350f, panelW - 80f);
+        float comboH = 40f;
+        float comboX = panelX + (panelW - comboW) * 0.5f;
+        float comboY = panelY + panelH - 98f;
+
+        float buttonW = 190f;
+        float buttonH = 40f;
+        float buttonX = panelX + (panelW - buttonW) * 0.5f;
+        float buttonY = comboY - 54f;
+
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.06f, 0.09f, 0.16f, 1f);
-        shapes.rect(0f, 0f, w, h);
-        shapes.setColor(0.12f, 0.06f, 0.2f, 0.95f);
-        shapes.rect(40f, h - 260f, w - 80f, 220f);
-        shapes.setColor(0.04f, 0.12f, 0.09f, 0.95f);
-        shapes.rect(40f, 80f, w - 80f, 180f);
+        shapes.setColor(0.11f, 0.05f, 0.18f, 1f);
+        shapes.rect(0f, h * 0.45f, w, h * 0.55f);
+        shapes.setColor(0.05f, 0.10f, 0.18f, 1f);
+        shapes.rect(0f, h * 0.18f, w, h * 0.27f);
+        shapes.setColor(0.07f, 0.16f, 0.12f, 1f);
+        shapes.rect(0f, 0f, w, h * 0.18f);
+
+        shapes.setColor(0f, 0f, 0f, 0.44f);
+        shapes.rect(panelX, panelY, panelW, panelH);
+
+        shapes.setColor(0.06f, 0.13f, 0.22f, 1f);
+        shapes.rect(comboX, comboY, comboW, comboH);
+        shapes.setColor(1f, 0.90f, 0.43f, 1f);
+        shapes.rect(buttonX, buttonY, buttonW, buttonH);
+        shapes.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);
+        shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
+        shapes.rect(panelX, panelY, panelW, panelH);
+        shapes.rect(comboX, comboY, comboW, comboH);
         shapes.end();
 
         batch.begin();
         font.setColor(Color.GOLD);
-        font.draw(batch, "MAZE QUEST", 70f, h - 80f);
-        font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-        font.draw(batch, "Retro libGDX Start Menu", 70f, h - 120f);
-        font.setColor(Color.WHITE);
-        font.draw(batch, "Use UP and DOWN to pick difficulty, press ENTER to start", 70f, h - 155f);
+        font.getData().setScale(2.0f);
+        font.draw(batch, "MAZE QUEST", panelX + panelW * 0.25f, titleY);
+        font.getData().setScale(1.0f);
 
-        float y = h - 220f;
-        for (int i = 0; i < difficulties.size(); i++) {
-            Difficulty difficulty = difficulties.get(i);
-            String marker = i == selectedDifficultyIndex ? "> " : "  ";
-            Color color = i == selectedDifficultyIndex ? Color.GOLD : Color.LIGHT_GRAY;
-            font.setColor(color);
-            font.draw(batch, marker + displayName(difficulty) + "  " + boardSizeLabel(difficulty), 90f, y);
-            y -= 28f;
+        if (menuIconTexture != null) {
+            float iconSize = 34f;
+            batch.draw(menuIconTexture, panelX + panelW * 0.25f - 52f, titleY - 28f, iconSize, iconSize);
         }
 
-        font.setColor(new Color(1f, 0.9f, 0.45f, 1f));
-        font.draw(batch, "Controls: Arrow Keys / WASD move, P path info, O tree info, ESC start menu", 70f, 180f);
+        font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
+        font.draw(batch, "Retro Challenge Mode", panelX + panelW * 0.37f, subtitleY);
+
         font.setColor(Color.WHITE);
+        font.getData().setScale(1.35f);
+        font.draw(batch, "Select Difficulty", panelX + panelW * 0.36f, panelY + panelH - 40f);
+        font.getData().setScale(1.0f);
+
+        String selectedText = selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()
+                ? displayName(difficulties.get(selectedDifficultyIndex))
+                : "Easy";
+        font.setColor(new Color(0.95f, 0.98f, 1f, 0.88f));
+        font.draw(batch, selectedText, comboX + 14f, comboY + 25f);
+        font.setColor(new Color(0.95f, 0.98f, 1f, 0.45f));
+        font.draw(batch, "v", comboX + comboW - 18f, comboY + 24f);
+
+        font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
+        font.draw(batch, "Start Mission", buttonX + 38f, buttonY + 26f);
+
+        float hintY = buttonY - 25f;
+        font.setColor(new Color(0.93f, 0.97f, 1f, 1f));
+        font.draw(batch, "Arrow keys to move, P path hint, O spanning tree, H high score, ESC", panelX + 28f, hintY);
+        font.draw(batch, "restart menu", panelX + 28f, hintY - 24f);
+
+        font.setColor(new Color(1f, 0.90f, 0.43f, 1f));
+        font.draw(batch, "Collect the heart, avoid enemies, and maximize your score", panelX + 62f, panelY - 32f);
+
+        if (selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()) {
+            font.setColor(new Color(0.80f, 1f, 0.94f, 0.95f));
+            String dims = "Difficulty: " + displayName(difficulties.get(selectedDifficultyIndex))
+                    + "  " + boardSizeLabel(difficulties.get(selectedDifficultyIndex));
+            font.draw(batch, dims, panelX + 16f, panelY + 20f);
+        }
+
         if (statusMessage != null && !statusMessage.isBlank()) {
-            font.draw(batch, statusMessage, 70f, 145f);
+            font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
+            font.draw(batch, statusMessage, panelX + 16f, panelY + 44f);
         }
         batch.end();
     }
@@ -416,31 +483,57 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.setProjectionMatrix(hudCamera.combined);
 
         float w = hudCamera.viewportWidth;
+        float h = hudCamera.viewportHeight;
+
+        float scoreX = w - SCORE_PANEL_WIDTH - 6f;
+        float scoreY = h - TOP_MARGIN - SCORE_PANEL_HEIGHT;
+
+        float buttonX = 14f;
+        float buttonY = 9f;
+        float buttonW = 112f;
+        float buttonH = 25f;
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0f, 0f, 0f, 0.72f);
-        shapes.rect(0f, 0f, w, HUD_HEIGHT);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.9f);
-        shapes.rect(0f, HUD_HEIGHT - 2f, w, 2f);
+        // Keep the bottom row transparent and only draw controls/button itself.
+        shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
+        shapes.rect(buttonX, buttonY, buttonW, buttonH);
+
+        shapes.setColor(0f, 0f, 0f, 0.45f);
+        shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
+        shapes.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);
+        shapes.setColor(0.56f, 1.0f, 0.88f, 0.7f);
+        shapes.line(0f, BOTTOM_BAR_HEIGHT, w, BOTTOM_BAR_HEIGHT);
+        shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
         shapes.end();
 
         batch.begin();
         int score = Math.max(0, baseScore - (moveCount * 10));
-        font.setColor(Color.GOLD);
-        font.draw(batch, "Score: " + score, 12f, 35f);
 
-        font.setColor(Color.WHITE);
-        String commandText = "Commands: H Highscore  ESC Start Menu  P Path Info "
+        font.setColor(new Color(0.07f, 0.22f, 0.19f, 1f));
+        font.draw(batch, "Commands", buttonX + 10f, buttonY + 18f);
+
+        font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
+        font.draw(batch, "Open keyboard command help", buttonX + buttonW + 14f, buttonY + 18f);
+
+        font.setColor(Color.GOLD);
+        font.getData().setScale(1.25f);
+        font.draw(batch, "Score: " + score, scoreX + 14f, scoreY + 21f);
+        font.getData().setScale(1.0f);
+
+        font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
+        String commandText = "H Highscore  ESC Restart  P Path "
                 + (showHintInfo ? "[ON]" : "[OFF]")
-                + "  O Tree Info " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
-        font.draw(batch, commandText, 140f, 35f);
+                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
+        font.draw(batch, commandText, buttonX + buttonW + 300f, buttonY + 18f);
 
         if (mode == Mode.WON) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-            font.draw(batch, "You reached the heart. Press ESC to return to menu.", 12f, 18f);
+            font.draw(batch, "You reached the heart. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
         } else if (statusMessage != null && !statusMessage.isBlank()) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-            font.draw(batch, statusMessage, 12f, 18f);
+            font.draw(batch, statusMessage, 12f, BOTTOM_BAR_HEIGHT + 18f);
         }
         batch.end();
     }
@@ -452,11 +545,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (upPressed && !upLatch && !difficulties.isEmpty()) {
             selectedDifficultyIndex = (selectedDifficultyIndex - 1 + difficulties.size()) % difficulties.size();
+            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
         }
         if (downPressed && !downLatch && !difficulties.isEmpty()) {
             selectedDifficultyIndex = (selectedDifficultyIndex + 1) % difficulties.size();
+            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
         }
         if (enterPressed && !enterLatch) {
+            AudioEngine.get().play(ResourceFileConstants.MenuSelectSound);
             startGameFromSelection();
         }
 
@@ -470,10 +566,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (selected != null) {
             difficultyService.setCurrent(selected);
         }
+        selectedDifficulty = selected;
+
+        resizeWindowForDifficulty(selected);
 
         maze = providedMaze != null ? providedMaze : buildArenaForDifficulty(selected);
         runtimeModel = runtimeModelLoader.load(maze.widthPx(), maze.heightPx());
-        activePlayerSpeed = Math.max(1f, runtimeModel.playerSpeed() > 0f ? runtimeModel.playerSpeed() : configuredPlayerSpeed);
+        float baseSpeed = runtimeModel.playerSpeed() > 0f
+                ? runtimeModel.playerSpeed()
+                : StageConstants.PlayerCharacterSpeed;
+        activePlayerSpeed = Math.max(1f, toJavaFxLikeSpeed(baseSpeed));
         activeGoalSize = runtimeModel.goalSize() > 0f ? runtimeModel.goalSize() : GOAL_SIZE;
         player = new PlayerState(maze.startX(), maze.startY(), runtimeModel.playerSize() > 0f ? runtimeModel.playerSize() : playerSize);
         baseScore = baseScoreForDifficulty(selected);
@@ -491,23 +593,54 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (viewport == null) {
             viewport = new FitViewport(
                     Math.min(maze.widthPx(), Math.max(1, Gdx.graphics.getWidth())),
-                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) HUD_HEIGHT)),
+                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) BOTTOM_BAR_HEIGHT)),
                     camera);
         } else {
             ((FitViewport) viewport).setWorldSize(
                     Math.min(maze.widthPx(), Math.max(1, Gdx.graphics.getWidth())),
-                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) HUD_HEIGHT)));
+                    Math.min(maze.heightPx(), Math.max(1, Gdx.graphics.getHeight() - (int) BOTTOM_BAR_HEIGHT)));
         }
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         playerTexture = loadTexture(runtimeModel.playerImagePath());
         goalTexture = loadTexture(runtimeModel.goalImagePath());
         wallTexture = loadTexture(runtimeModel.wallImagePath());
+        recenterGoalLikeJavaFx();
         mode = Mode.PLAYING;
 
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
         AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
         flashStatus("Started " + (selected != null ? displayName(selected) : "Default") + " difficulty");
+    }
+
+    static float toJavaFxLikeSpeed(float playerSpeed) {
+        return playerSpeed * JAVA_FX_TICK_RATE;
+    }
+
+    private void recenterGoalLikeJavaFx() {
+        float goalW = activeGoalSize;
+        float goalH = activeGoalSize;
+        if (goalTexture != null) {
+            goalW = goalTexture.getWidth();
+            goalH = goalTexture.getHeight();
+        }
+        activeGoalX = (maze.widthPx() - goalW) * 0.5f + goalW * 0.5f;
+        activeGoalY = (maze.heightPx() - goalH) * 0.5f + goalH * 0.5f;
+    }
+
+    private void resizeWindowForDifficulty(Difficulty selected) {
+        if (Gdx.graphics == null) {
+            return;
+        }
+        int targetW = boardWidth(selected);
+        int targetH = boardHeight(selected);
+        var display = Gdx.graphics.getDisplayMode();
+        int maxW = display != null ? display.width : targetW;
+        int maxH = display != null ? display.height : targetH;
+        int windowW = Math.min(targetW, maxW);
+        int windowH = Math.min(targetH + (int) BOTTOM_BAR_HEIGHT, maxH);
+        Gdx.graphics.setWindowedMode(Math.max(800, windowW), Math.max(640, windowH));
     }
 
     private MazeArena buildArenaForDifficulty(Difficulty selected) {
@@ -594,6 +727,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private void switchToStartMenu() {
         mode = Mode.START_MENU;
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().playLoop(ResourceFileConstants.MenuMusic, AudioChannelConstants.MENU_MUSIC);
         flashStatus("Returned to start menu");
     }
 
@@ -605,6 +739,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     @Override
     public void dispose() {
         AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
         for (Texture texture : texturesByPath.values()) {
             texture.dispose();
         }

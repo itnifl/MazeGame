@@ -117,6 +117,7 @@ Current runtime behavior:
 - if the chosen board is larger than the screen, the stage automatically enters fullscreen
 - the maze viewport now follows the player while HUD elements stay fixed on top
 - the bottom command menu and score panel remain visible while the board scrolls
+- start menu music and menu selection sound are optional; missing files are ignored safely
 
 ## Shutdown behavior
 

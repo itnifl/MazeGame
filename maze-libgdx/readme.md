@@ -17,11 +17,12 @@ not static.
 
 - Retro start menu in libGDX with difficulty selection (`UP`/`DOWN`, `ENTER`).
 - Difficulty specific board dimensions aligned with JavaFX (`Easy`, `Normal`, `Hard`).
-- Arrow keys and WASD movement with collision against the shared maze walls.
+- Arrow keys and WASD movement tuned to JavaFX-equivalent speed behavior.
 - Opponent sprites loaded from the model and animated continuously.
-- Bottom command bar with score, command hints and toggle status (`P`, `O`, `H`, `ESC`).
+- Bottom command row and top-right score card styled to match JavaFX HUD overlays.
 - Camera follows the player when the world is larger than the viewport.
 - Win state shows completion text and allows returning to start menu (`ESC`).
+- Menu music and menu selection sound are optional; if files are missing the game continues without audio failures.
 
 ## What lives here
 

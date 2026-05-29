@@ -1,0 +1,42 @@
+package main.game.maze.libgdx;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.lang.reflect.Method;
+
+import org.junit.jupiter.api.Test;
+
+import main.game.maze.difficulties.DifficultiesFactory;
+import main.game.maze.mazeworld.constants.StageConstants;
+
+class GdxGameScreenParityTest {
+
+    @Test
+    void playerSpeedMatchesJavaFxTickModel() {
+        assertEquals(300f, GdxGameScreen.toJavaFxLikeSpeed(10f), 0.001f);
+    }
+
+    @Test
+    void boardSizesMatchJavaFxConstants() throws Exception {
+        GdxGameScreen screen = new GdxGameScreen(null, 48f, 16, 12, 160f, true);
+
+        Method widthMethod = GdxGameScreen.class.getDeclaredMethod("boardWidth", main.game.maze.difficulties.Difficulty.class);
+        Method heightMethod = GdxGameScreen.class.getDeclaredMethod("boardHeight", main.game.maze.difficulties.Difficulty.class);
+        widthMethod.setAccessible(true);
+        heightMethod.setAccessible(true);
+
+        int easyW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createEasyDifficulty());
+        int easyH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createEasyDifficulty());
+        int normalW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createNormalDifficulty());
+        int normalH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createNormalDifficulty());
+        int hardW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createHardDifficulty());
+        int hardH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createHardDifficulty());
+
+        assertEquals(StageConstants.BoardMaxX, easyW);
+        assertEquals(StageConstants.BoardMaxY, easyH);
+        assertEquals(StageConstants.BoardMaxXMedium, normalW);
+        assertEquals(StageConstants.BoardMaxYMedium, normalH);
+        assertEquals(StageConstants.BoardMaxXLarge, hardW);
+        assertEquals(StageConstants.BoardMaxYLarge, hardH);
+    }
+}

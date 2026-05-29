@@ -42,6 +42,17 @@ public class StartController implements Initializable {
         var cur = svc.getCurrent();
         if (cur != null) difficultyCombo.getSelectionModel().select(cur);
         else if (!diffs.isEmpty()) difficultyCombo.getSelectionModel().select(0);
+
+        difficultyCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && oldValue != newValue) {
+                AudioEngine.get().playRateLimited(
+                        ResourceFileConstants.MenuSelectSound,
+                        "menu.select",
+                        90L);
+            }
+        });
+
+        AudioEngine.get().playLoop(ResourceFileConstants.MenuMusic, AudioChannelConstants.MENU_MUSIC);
     }
 
     @FXML private void onStart() throws IOException {
@@ -64,6 +75,7 @@ public class StartController implements Initializable {
         stage.show();
         gc.setupGame();
 
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
         AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, AudioChannelConstants.IN_GAME_MUSIC);
     }
 }
