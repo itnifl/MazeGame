@@ -36,6 +36,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
@@ -47,6 +48,9 @@ import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -63,9 +67,11 @@ import main.game.maze.service.CharacterIntersectionFixerService;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 
 public class GameController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
+    private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
 
     @FXML
     private AnchorPane root;
@@ -102,6 +108,7 @@ public class GameController implements Initializable {
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
     private Canvas pathCanvas;
     private Canvas treeCanvas;
+    private Canvas mazeCanvas;
 
     private static Task<Boolean> runComputerCharacters;
     private Difficulty startDifficulty; 
@@ -126,6 +133,8 @@ public class GameController implements Initializable {
     private long lastRouteHintPenaltyNanos = 0L;
     private double routeHintPenaltyAccumulator = 0.0;
     private int routeHintPenaltyPoints = 0;
+    private Rectangle gameBoardClip;
+    private boolean cameraFollowListenersInstalled;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -189,6 +198,9 @@ public class GameController implements Initializable {
     }
 
     private void updateDebugLabels() {
+        if (playerCharacter == null || gameOverAction == null || winGameAction == null) {
+            return;
+        }
         var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
                 + playerCharacter.getCharacterPosition().getY();
         var directionsText = "Direction: " + playerCharacter.getCharacterDirection();
@@ -205,6 +217,12 @@ public class GameController implements Initializable {
     private void updateScoreHud(int score) {
         if (scoreLabel != null) {
             scoreLabel.setText("Score: " + score);
+        }
+        if (coordinatesLabel != null) {
+            coordinatesLabel.setTextFill(Color.WHITE);
+        }
+        if (mouseCoordsLabel != null) {
+            mouseCoordsLabel.setTextFill(Color.WHITE);
         }
     }
 
@@ -247,13 +265,13 @@ public class GameController implements Initializable {
 
     private void ensureHudLayersOnTop() {
         if (scoreHudContainer != null) {
-            scoreHudContainer.toFront();
+            scoreHudContainer.setViewOrder(-20);
         }
         if (bottomMenuContainer != null) {
-            bottomMenuContainer.toFront();
+            bottomMenuContainer.setViewOrder(-20);
         }
-        if (commandsOverlay != null && commandsOverlay.isVisible()) {
-            commandsOverlay.toFront();
+        if (commandsOverlay != null) {
+            commandsOverlay.setViewOrder(-30);
         }
     }
 
@@ -266,9 +284,6 @@ public class GameController implements Initializable {
         boolean show = !commandsOverlay.isVisible();
         commandsOverlay.setVisible(show);
         commandsOverlay.setManaged(show);
-        if (show) {
-            commandsOverlay.toFront();
-        }
 
         if (!show && gameBoard != null) {
             gameBoard.requestFocus();
@@ -292,6 +307,9 @@ public class GameController implements Initializable {
     private void openDifficultyPickerAndMaybeRestart() {
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
 
+        stopComputerCharacters();
+        hideCommandsOverlay();
+
         App.pickDifficulty(window).ifPresent(chosen -> {
             var confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Restart required");
@@ -305,8 +323,21 @@ public class GameController implements Initializable {
             } else {
                 this.setStartDifficulty(chosen);
                 App.lastChosenDifficulty = chosen;
+                runComputerCharacters();
+                startMovementTimer();
+                if (gameBoard != null) {
+                    gameBoard.requestFocus();
+                }
             }
         });
+
+        if (runComputerCharactersThread == null && movementTimer == null) {
+            runComputerCharacters();
+            startMovementTimer();
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+            }
+        }
     }
 
     @FXML
@@ -361,6 +392,11 @@ public class GameController implements Initializable {
     public void setupGame() {
         hpBar.setProgress(1.0);
 
+        gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
+        gameBoard.setMinSize(App.getBoardMaxX(), App.getBoardMaxY());
+        gameBoard.setMaxSize(App.getBoardMaxX(), App.getBoardMaxY());
+        installGameBoardClip();
+
         updateBoardBackground();
 
         maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
@@ -378,15 +414,30 @@ public class GameController implements Initializable {
 
         var vectors = maze.getMazeVectors();
 
-        // Create a canvas
-        var canvas = this.drawCanvas(vectors);
-        root.getChildren().add(canvas);
+        // Replace dynamic canvases to avoid growth and pulse-time list inconsistencies.
+        if (mazeCanvas != null) {
+            gameBoard.getChildren().remove(mazeCanvas);
+            mazeCanvas = null;
+        }
+        if (pathCanvas != null) {
+            gameBoard.getChildren().remove(pathCanvas);
+            pathCanvas = null;
+        }
+        if (treeCanvas != null) {
+            gameBoard.getChildren().remove(treeCanvas);
+            treeCanvas = null;
+        }
+
+        mazeCanvas = this.drawCanvas(vectors);
+        gameBoard.getChildren().add(0, mazeCanvas);
 
         pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        root.getChildren().add(pathCanvas);
+        pathCanvas.setMouseTransparent(true);
+        gameBoard.getChildren().add(pathCanvas);
 
         treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        root.getChildren().add(treeCanvas);
+        treeCanvas.setMouseTransparent(true);
+        gameBoard.getChildren().add(treeCanvas);
         ensureHudLayersOnTop();
 
         gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {});
@@ -431,6 +482,7 @@ public class GameController implements Initializable {
 
                 var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
                 characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
+                updateCameraFollow();
             }
         });
 
@@ -445,8 +497,38 @@ public class GameController implements Initializable {
         gameBoard.setFocusTraversable(true);
         gameBoard.requestFocus();
         ensureHudLayersOnTop();
+        updateCameraFollow();
         
         startMovementTimer();
+    }
+
+    private void installGameBoardClip() {
+        if (root == null || gameBoard == null) {
+            return;
+        }
+        if (gameBoardClip == null) {
+            gameBoardClip = new Rectangle();
+            gameBoard.setClip(gameBoardClip);
+        }
+
+        if (!gameBoardClip.widthProperty().isBound()) {
+            gameBoardClip.widthProperty().bind(root.widthProperty());
+        }
+        if (!gameBoardClip.heightProperty().isBound()) {
+            if (bottomMenuContainer != null) {
+                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty().subtract(bottomMenuContainer.heightProperty())));
+            } else {
+                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty()));
+            }
+        }
+        if (!cameraFollowListenersInstalled) {
+            root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            root.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            if (bottomMenuContainer != null) {
+                bottomMenuContainer.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
+            }
+            cameraFollowListenersInstalled = true;
+        }
     }
 
     private PlayerConfig loadPlayerConfig() {
@@ -516,23 +598,94 @@ public class GameController implements Initializable {
                 }
                 if (moved) {
                     updateDebugLabels();
+                    updateCameraFollow();
                 }
             }
         };
         movementTimer.start();
     }
 
-    private void updateBoardBackground() {
-        String bgImageName = "gameBackGround1.png"; // Default / Easy
-        
-        if (startDifficulty instanceof HardDifficulty) {
-            bgImageName = "gameBackGround3.png";
-        } else if (startDifficulty instanceof NormalDifficulty) {
-            bgImageName = "gameBackGround2.png";
+    private void updateCameraFollow() {
+        if (root == null || gameBoard == null || playerCharacter == null) {
+            return;
         }
+
+        double viewportWidth = root.getWidth();
+        double viewportHeight = root.getHeight();
+        if (bottomMenuContainer != null) {
+            viewportHeight = Math.max(0, viewportHeight - bottomMenuContainer.getHeight());
+        }
+        if (viewportWidth <= 0 || viewportHeight <= 0) {
+            return;
+        }
+
+        double worldWidth = App.getBoardMaxX();
+        double worldHeight = App.getBoardMaxY();
+
+        double playerX = playerCharacter.getCharacterPosition().getX();
+        double playerY = playerCharacter.getCharacterPosition().getY();
+
+        boolean fullscreen = isStageFullscreen();
+        double[] translation = computeCameraTranslation(
+                viewportWidth, viewportHeight,
+                worldWidth, worldHeight,
+                playerX, playerY,
+                fullscreen);
+
+        gameBoard.setTranslateX(translation[0]);
+        gameBoard.setTranslateY(translation[1]);
+    }
+
+    private boolean isStageFullscreen() {
+        if (root == null || root.getScene() == null) {
+            return false;
+        }
+        var window = root.getScene().getWindow();
+        return window instanceof javafx.stage.Stage stage && stage.isFullScreen();
+    }
+
+    /**
+     * Camera follow rule: scroll the board only when the stage is fullscreen AND
+     * the world is larger than the viewport. In windowed mode the board stays at
+     * (0,0) so it always fits inside the window without distortion.
+     *
+     * <p>Translation is clamped so the world edges never leave the viewport edges.
+     *
+     * <p>Package-private for unit tests.
+     */
+    static double[] computeCameraTranslation(double viewportWidth, double viewportHeight,
+                                             double worldWidth, double worldHeight,
+                                             double playerX, double playerY,
+                                             boolean fullscreen) {
+        if (!fullscreen) {
+            return new double[] {0d, 0d};
+        }
+        double targetX = 0d;
+        double targetY = 0d;
+        if (worldWidth > viewportWidth) {
+            targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
+        }
+        if (worldHeight > viewportHeight) {
+            targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
+        }
+        return new double[] {targetX, targetY};
+    }
+
+    private static double clamp(double value, double min, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
+    }
+
+    private void updateBoardBackground() {
+        String bgPath = VISUAL_STYLE.backgroundImageForDifficultyName(difficultyName());
         
         try {
-            var url = getClass().getResource(bgImageName);
+            var url = getClass().getResource(bgPath);
             if (url != null) {
                 Image bgImage = new Image(url.toExternalForm());
                 BackgroundImage bi = new BackgroundImage(bgImage,
@@ -543,7 +696,7 @@ public class GameController implements Initializable {
                 
                 gameBoard.setBackground(new Background(bi));
             } else {
-                LOGGER.warning("Could not find background image: " + bgImageName);
+                LOGGER.warning("Could not find background image: " + bgPath);
             }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error loading background", e);
@@ -567,11 +720,10 @@ public class GameController implements Initializable {
         
         // Use WOOD_BASIC as default for now, or fetch from logic if available
 
-        var wallType = WallRegistry.get("DIRT_BASIC");
-        if(startDifficulty instanceof HardDifficulty) {
-            wallType = WallRegistry.get("STEEL_SOLID");
-        } else if(startDifficulty instanceof NormalDifficulty) {
-            wallType = WallRegistry.get("WOOD_BASIC");
+        String wallTypeId = VISUAL_STYLE.wallTypeIdForDifficultyName(difficultyName());
+        var wallType = WallRegistry.get(wallTypeId);
+        if (wallType == null) {
+            wallType = WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName()));
         }
         
         // Ensure image is loaded
@@ -650,6 +802,23 @@ public class GameController implements Initializable {
         return wallImageCache.get(def.id);
     }
 
+    private String difficultyName() {
+        return startDifficulty == null ? "" : startDifficulty.eClass().getName();
+    }
+
+    private static MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new XmiMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException fallbackEx) {
+                LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", fallbackEx);
+                return MazeVisualStyleConfig.DEFAULT;
+            }
+        }
+    }
+
     public void runComputerCharacters() {
         if (runComputerCharactersThread != null) {
             runComputerCharacters.cancel();
@@ -679,6 +848,12 @@ public class GameController implements Initializable {
                                             break;
                                         case PATROL:
                                             doCharacterPatrolMove(computerCharacter);
+                                            break;
+                                        case PASSIVE:
+                                            // F19: PASSIVE opponents stand still.
+                                            break;
+                                        case AGGRESSIVE:
+                                            doCharacterAggressiveMove(computerCharacter);
                                             break;
                                         default:
                                             doCharacterWanderMove(computerCharacter);
@@ -748,6 +923,29 @@ public class GameController implements Initializable {
         }
     }
 
+    private void doCharacterAggressiveMove(IMovingComputerCharacter computerCharacter) {
+        if (playerCharacter == null) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        var nonTangient = false;
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
+        }
+        var direction = ChaseController.getDirectionTowards(
+                computerCharacter, playerCharacter.getCharacterPosition());
+        if (direction == null) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+        computerCharacter.setDirection(direction);
+        var successfulMove = computerCharacter.move(nonTangient);
+        if (!successfulMove) {
+            computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
+        }
+    }
+
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
             var energy = nontangientcc.getNonTangientEnergy();
             boolean nonTangient = energy > 0; 
@@ -793,7 +991,9 @@ public class GameController implements Initializable {
         if (character instanceof ICanSubscribeAndNotifyPosition subscribable) {
             playerCharacter.removePositionSubscriber(subscribable);
         }
-        gameBoard.getChildren().remove(node);
+        if (node != null && node.getParent() == gameBoard) {
+            gameBoard.getChildren().remove(node);
+        }
     }
 
     public void showInfectionWarning() {

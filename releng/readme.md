@@ -8,7 +8,7 @@ This folder contains the build infrastructure for the Eclipse plug in modules an
 * a local p2 mirror that can be used for offline or stable builds
 * log files with the result of automated mirror and build checks
 
-The configuration is consumed by the root `pom.xml` and by the helper PowerShell script `Run-P2AndBuildCheck.ps1` in the repository root.
+The configuration is consumed by the root `pom.xml` and by the helper PowerShell script `Run-P2AndBuildCheck-javafx.ps1` in the repository root.
 
 ## Layout
 
@@ -22,7 +22,7 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Equinox executable and related dependencies).
 
 * `releng/test-results/`
-  Log files written by the helper script `Run-P2AndBuildCheck.ps1` when you run full mirror and build checks.
+  Log files written by the helper script `Run-P2AndBuildCheck-javafx.ps1` when you run full mirror and build checks.
 
 ## Local p2 mirror
 
@@ -93,12 +93,12 @@ You can also open `releng/maze.target` inside Eclipse to use the same platform f
 
 NB! This setup is not thoroughly tested, as we used Visual Studio Code a lot.
 
-## Helper script `Run-P2AndBuildCheck.ps1` (Windows)
+## Helper script `Run-P2AndBuildCheck-javafx.ps1` (Windows)
 
 The repository root contains a helper script that drives the releng setup end to end:
 
 * Script path in repo root
-  `Run-P2AndBuildCheck.ps1`
+  `Run-P2AndBuildCheck-javafx.ps1`
 
 I will clear all cache and set up the repos correctly if all setps are run. Usually this is necessary as a first time run.
 
@@ -133,15 +133,15 @@ Run: `$PSVersionTable`
 From the repository root on Windows PowerShell:
 
 ```powershell
-.\Run-P2AndBuildCheck.ps1
+.\Run-P2AndBuildCheck-javafx.ps1
 ```
 
 You can choose to start at a later step with the `StartAt` parameter:
 
 ```powershell
-.\Run-P2AndBuildCheck.ps1 -StartAt 2   # Skip rebuilding the mirror
-.\Run-P2AndBuildCheck.ps1 -StartAt 3   # Skip mirror and mirror verification
-.\Run-P2AndBuildCheck.ps1 -StartAt 4   # Only run the full Maven build
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 2   # Skip rebuilding the mirror
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 3   # Skip mirror and mirror verification
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4   # Only run the full Maven build
 ```
 
 The optional `LogDirectory` parameter controls where the log files are written. By default it uses `releng\test-results`.
@@ -152,26 +152,26 @@ The optional `LogDirectory` parameter controls where the log files are written. 
 
   * `releng/mirror/pom.xml`
   * `releng/maze.target`
-  * the script `Run-P2AndBuildCheck.ps1` (in the repository root)
+  * the script `Run-P2AndBuildCheck-javafx.ps1` (in the repository root)
 
 * Do not commit the generated mirror content under `releng/local-p2/`. If new files appear there after running the mirror, keep them untracked in Git. Git should ignore this path, as it is in the .gitignore.
 
-## Helper commands `make.ps1` and `make`
+## Helper commands `make-javafx.ps1` and `make`
 
 For day to day work on Windows you can use the lightweight helpers in the repository root instead of calling Maven and the releng modules manually.
 
-### `make.ps1` PowerShell wrapper
+### `make-javafx.ps1` PowerShell wrapper
 
-`make.ps1` is a PowerShell script that drives the same four steps described above:
+`make-javafx.ps1` is a PowerShell script that drives the same four steps described above:
 
 ```powershell
-.\make.ps1                       # same as -Target all
-.\make.ps1 -Target mirror        # refresh local p2 mirror if needed
-.\make.ps1 -Target force-mirror  # always rebuild mirror
-.\make.ps1 -Target clear-cache   # clear Tycho p2 cache
-.\make.ps1 -Target build         # full Maven build (clears Tycho cache first)
-.\make.ps1 -Target build-with-cache  # full Maven build (keeps Tycho cache)
-.\make.ps1 -Target toolchain     # show Maven and Java versions
+.\make-javafx.ps1                       # same as -Target all
+.\make-javafx.ps1 -Target mirror        # refresh local p2 mirror if needed
+.\make-javafx.ps1 -Target force-mirror  # always rebuild mirror
+.\make-javafx.ps1 -Target clear-cache   # clear Tycho p2 cache
+.\make-javafx.ps1 -Target build         # full Maven build (clears Tycho cache first)
+.\make-javafx.ps1 -Target build-with-cache  # full Maven build (keeps Tycho cache)
+.\make-javafx.ps1 -Target toolchain     # show Maven and Java versions
 ```
 
 Behaviour:
@@ -185,7 +185,7 @@ Behaviour:
 * `build-with-cache` runs `mvn -U -DskipTests=false clean verify` **without** clearing the Tycho cache, which is faster for incremental builds.
 * `all` combines `toolchain`, `mirror` (with change detection), `clear-cache` and `build`.
 
-The script uses `mvn` by default. If you prefer the Maven wrapper, edit `$Mvn = 'mvn'` in `make.ps1` and change it to `mvnw`.
+The script uses `mvn` by default. If you prefer the Maven wrapper, edit `$Mvn = 'mvn'` in `make-javafx.ps1` and change it to `mvnw`.
 
 ### `make` Makefile front end
 
@@ -208,7 +208,7 @@ Key points:
   make MVN=mvnw all
   ```
 
-* `mirror` and `force-mirror` call the same Tycho mirror build as `make.ps1` and maintain the same stamp file in `releng\local-p2\.mirror.stamp`.
+* `mirror` and `force-mirror` call the same Tycho mirror build as `make-javafx.ps1` and maintain the same stamp file in `releng\local-p2\.mirror.stamp`.
 
 * `clear-tycho-cache` removes the Tycho cache folder under `%USERPROFILE%\.m2\repository\.cache\tycho` if it exists.
 

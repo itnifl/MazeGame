@@ -8,8 +8,23 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>maze-generator.acceleo-runner</artifactId>
+  <artifactId>maze-generator.freemarker-runner</artifactId>
   <packaging>eclipse-plugin</packaging>
+
+  <properties>
+    <!--
+      Tycho 5.0.0 tycho-eclipse-plugin:eclipse-run drops every p2 bundle from the
+      <dependencies> list (see target/skippedP2Dependencies.txt). With no EMF /
+      Equinox runtime bundles available the application class cannot be resolved
+      and Equinox throws NullPointerException in ReferenceMap.put (exit code 13).
+
+      The generated sources are already committed under
+      maze-module-generator/src-gen, so model regeneration is only needed when an
+      .xmi model actually changes. Default to skipping the eclipse-run codegen
+      until the Tycho regression is sorted out. Re-enable with -Dskip.codegen=false.
+    -->
+    <skip.codegen>true</skip.codegen>
+  </properties>
 
   <build>
     <plugins>
@@ -23,9 +38,10 @@
             <phase>generate-sources</phase>
             <goals><goal>eclipse-run</goal></goals>
             <configuration>
+              <skip>${skip.codegen}</skip>
               <applicationArgs>
                 <arg>-application</arg>
-                <arg>maze-generator.acceleo.main.game.maze.gen.HeadlessWallsApp</arg>
+                <arg>maze-generator.freemarker.main.game.maze.gen.HeadlessWallsApp</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
@@ -41,9 +57,10 @@
             <phase>generate-sources</phase>
             <goals><goal>eclipse-run</goal></goals>
             <configuration>
+              <skip>${skip.codegen}</skip>
               <applicationArgs>
                 <arg>-application</arg>
-                <arg>maze-generator.acceleo.main.game.maze.gen.RunAcceleo</arg>
+                <arg>maze-generator.freemarker.main.game.maze.gen.RunAcceleo</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
@@ -72,7 +89,7 @@
                 <!-- FreeMarker-based Generator -->
                 <dependency>
                     <type>eclipse-plugin</type>
-                    <artifactId>maze-generator.acceleo</artifactId>
+                  <artifactId>maze-generator.freemarker</artifactId>
                     <version>0.0.0</version>
                 </dependency>
 

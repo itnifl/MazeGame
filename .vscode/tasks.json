@@ -10,7 +10,7 @@
                     "-NoLogo",
                     "-NoProfile",
                     "-File",
-                    "${workspaceFolder}/make.ps1",
+                    "${workspaceFolder}/make-javafx.ps1",
                     "-Target",
                     "prepare-run"
                 ]
@@ -21,7 +21,7 @@
                     "-NoLogo",
                     "-NoProfile",
                     "-File",
-                    "${workspaceFolder}/make.ps1",
+                    "${workspaceFolder}/make-javafx.ps1",
                     "-Target",
                     "prepare-run"
                 ]
@@ -32,7 +32,45 @@
                     "-NoLogo",
                     "-NoProfile",
                     "-File",
-                    "${workspaceFolder}/make.ps1",
+                    "${workspaceFolder}/make-javafx.ps1",
+                    "-Target",
+                    "prepare-run"
+                ]
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Ensure Java 21 (libGDX)",
+            "type": "shell",
+            "windows": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make-libgdx.ps1",
+                    "-Target",
+                    "prepare-run"
+                ]
+            },
+            "linux": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make-libgdx.ps1",
+                    "-Target",
+                    "prepare-run"
+                ]
+            },
+            "osx": {
+                "command": "pwsh",
+                "args": [
+                    "-NoLogo",
+                    "-NoProfile",
+                    "-File",
+                    "${workspaceFolder}/make-libgdx.ps1",
                     "-Target",
                     "prepare-run"
                 ]

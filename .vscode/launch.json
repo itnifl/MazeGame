@@ -4,7 +4,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch MazeGame (with dynamic paths)",
+            "name": "Launch MazeGame (JavaFX)",
             "request": "launch",
             "preLaunchTask": "Ensure Java 21",
             "envFile": "${workspaceFolder}/.vscode/maze.launch.env",
@@ -16,6 +16,20 @@
                 "--add-modules",
                 "javafx.controls,javafx.fxml,javafx.media"
             ]
+        },
+        {
+            "type": "java",
+            "name": "Launch MazeGame (libGDX backend)",
+            "request": "launch",
+            "preLaunchTask": "Ensure Java 21 (libGDX)",
+            "envFile": "${workspaceFolder}/.vscode/maze.launch.env",
+            "mainClass": "main.game.maze.libgdx.GdxAppLauncher",
+            "projectName": "maze-libgdx",
+            "osx": {
+                "vmArgs": [
+                    "-XstartOnFirstThread"
+                ]
+            }
         }
     ]
 }

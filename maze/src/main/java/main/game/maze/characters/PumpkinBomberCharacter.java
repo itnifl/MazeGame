@@ -9,8 +9,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -22,6 +20,7 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.common.graphics.AudioEngine;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
@@ -143,7 +142,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ICanKill / damage
 
     @Override public int getDamage() {
-        return Math.max(0, defaultIfNull(model.getAttackDamage(), 5));
+        return CollisionDamage.effectiveDamage(model.getThreatLevel(), defaultIfNull(model.getAttackDamage(), 5));
     }
 
     // ICanDie
@@ -192,16 +191,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     private static int    defaultIfNull(Integer v, int def)   { return v == null ? def : v; }
     private static double defaultIfNull(Double  v, double def) { return v == null ? def : v; }
 
-    private MediaPlayer playSound(String path) {
-        try {
-            if (path == null || path.isBlank()) return null;
-            var url = getClass().getResource(path);
-            if (url == null) return null;
-            Media media = new Media(url.toString());
-            MediaPlayer mp = new MediaPlayer(media);
-            mp.play();
-            return mp;
-        } catch (Throwable t) { return null; }
+    private void playSound(String path) {
+        AudioEngine.get().play(path);
     }
 
     // projectile with parametric arc (no gravity)
@@ -256,14 +247,18 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             // linear path + vertical bump for arc
             double x = lerp(sx, tx, u);
             double y = lerp(sy, ty, u) - arcHeight * Math.sin(Math.PI * u);
-            node.setLayoutX(x);
-            node.setLayoutY(y);
+            main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+                node.setLayoutX(x);
+                node.setLayoutY(y);
+            });
         }
 
         boolean isArrived() { return u >= 1.0; }
 
         void dispose() {
-            if (node.getParent() != null) node.setVisible(false);
+            main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+                if (node.getParent() != null) node.setVisible(false);
+            });
         }
 
         private static double lerp(double a, double b, double t) { return a + (b - a) * t; }

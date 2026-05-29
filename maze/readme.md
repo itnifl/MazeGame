@@ -106,6 +106,33 @@ The most common ways to run the `maze` module are:
 
 Check the `maze/pom.xml` for the exact plugin and main class configuration used in your setup.
 
+## Start menu and viewport behavior
+
+The JavaFX client now starts on a dedicated retro start screen (`startScreen.fxml`) where the player picks difficulty before loading the game scene.
+
+Current runtime behavior:
+
+- difficulty is selected from the shared `DifficultyService` model list
+- chosen difficulty sets board size before game setup
+- if the chosen board is larger than the screen, the stage automatically enters fullscreen
+- the maze viewport now follows the player while HUD elements stay fixed on top
+- the bottom command menu and score panel remain visible while the board scrolls
+- start menu music and menu selection sound are optional; missing files are ignored safely
+- HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
+- visual assets and style selection now consume the shared `MazeVisualStyleConfig` model loaded from XMI first with properties fallback, so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
+- screen-scoped music (menu, in-game, win, game-over) is owned by the `AudioEngine` singleton on dedicated channels (`MENU_MUSIC`, `IN_GAME_MUSIC`, `WIN_MUSIC`, `GAME_OVER_MUSIC`) and is explicitly stopped when transitioning to another screen, so win or game-over music never bleeds into the next screen
+- `RestartGameAction` resolves the in-game music track from the active `MazeVisualStyleConfig` (XMI loader with properties fallback) so restarting honours the style-configured track instead of hard-coded constants
+
+## Shutdown behavior
+
+The game now performs explicit shutdown cleanup when the window is closed:
+
+- disposes the active game controller and character resources
+- disposes the active audio engine and loop channels
+- exits JavaFX and then terminates the JVM process
+
+This ensures the process actually stops when closing the game window, even if background threads are still alive.
+
 ---
 
 ## Adding features to the game client
@@ -139,6 +166,93 @@ When working on the `maze` module:
 - prefer calling services from the other modules instead of hard coding values
 
 By following these ideas, `maze` stays a thin, clear and maintainable game client for the MazeGame project.
+
+---
+
+## Player ecore model
+
+`Player.ecore` (under `src/main/resources/xmi/player/`) and its XMI instance
+`playerModel.xmi` describe the player character that the game loads at start.
+
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class PlayerModel {
+        +EString name
+    }
+    class PlayerType {
+        +EString id
+        +EString displayName
+        +EBoolean enabled = true
+        +EInt health = 100
+        +EDouble speed = 10.0
+        +EString ImageBase = /main/game/maze/you2.png
+        +EString ImageTurnLeft
+        +EString ImageTurnRight
+        +EString ImageTurnUp
+        +EString ImageTurnDown
+        +EString ImageDeath = /main/game/maze/you2-dead.png
+    }
+    PlayerModel "1" --> "1" PlayerType : playerCharacter
+```
+
+## Graphics backend abstraction
+
+The graphics, threading and audio facades that the game code talks to live in
+a separate, backend-agnostic module so the game loop, characters and actions
+can be unit tested without booting any windowing toolkit or playing real audio,
+and so an alternative renderer (libGDX) can be developed alongside JavaFX.
+
+The three sibling modules are:
+
+| Module | Role |
+|--------|------|
+| [maze-common-frontend](../maze-common-frontend/readme.md) | Interfaces (`IUiScheduler`, `IAudioEngine`, `ICharacterView`) and their inert defaults (`SynchronousUiScheduler`, `NoopAudioEngine`). |
+| [maze-javafx](../maze-javafx/readme.md) | JavaFX implementations (`JavaFxUiScheduler`, `JavaFxAudioEngine`, `FxCharacterView`) and `JavaFxBackend.install()`. |
+| [maze-libgdx](../maze-libgdx/readme.md) | libGDX implementations (`GdxUiScheduler`, `GdxAudioEngine`, `GdxCharacterView`), `GdxBackend.install()` and `GdxAppLauncher` (WIP). |
+
+### Bootstrap
+
+`App.start()` calls `JavaFxBackend.install()` as its first action, which swaps
+the JavaFX implementations into the `UiScheduler` and `AudioEngine` singletons
+before any gameplay code touches them. Tests can call `UiScheduler.reset()` /
+`AudioEngine.reset()` to drop back to the inert defaults, or `set(...)` their
+own doubles.
+
+```java
+// In a test @BeforeEach
+UiScheduler.set(new SynchronousUiScheduler());
+AudioEngine.set(new NoopAudioEngine());
+
+// In @AfterEach
+UiScheduler.reset();
+AudioEngine.reset();
+```
+
+`AudioEngine.set(...)` disposes the previous engine before swapping.
+
+### Why this matters
+
+- **Mockable UI thread**: `Character.moveCharacter*`, `PlayerCharacter` death
+  animations and `PumpkinBomberCharacter` projectile cleanup all schedule UI
+  writes via `UiScheduler.get()` instead of calling `Platform.runLater`
+  directly. Tests observe state changes immediately, with no toolkit required.
+- **Global audio singleton**: All sound playback in `PlayerCharacter`,
+  `ZombieCharacter`, `PumpkinBomberCharacter` and `RestartGameAction` goes
+  through `AudioEngine.get()`. Lifetimes and cooldowns live in one place.
+- **Renderer-neutral view manipulation**: Mutations such as setLayoutX/Y,
+  opacity, effect clearing and child removal go through `IUiScheduler` (and,
+  where appropriate, `ICharacterView`), keeping gameplay free of direct
+  JavaFX calls and making the libGDX port viable.
+
+### Tests
+
+- [maze-common-frontend/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java](../maze-common-frontend/src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
+- [maze-common-frontend/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java](../maze-common-frontend/src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
+- [maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java](../maze-javafx/src/test/java/main/game/maze/javafx/JavaFxUiSchedulerTest.java)
+- [maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java](../maze-libgdx/src/test/java/main/game/maze/libgdx/GdxBackendTest.java)
 
 ---
 

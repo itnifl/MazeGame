@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<style:MazeVisualStyle
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:style="http://www.example.org/maze/style"
+    xmi:version="2.0"
+    easyBackgroundImagePath="/main/game/maze/gameBackGround1.png"
+    normalBackgroundImagePath="/main/game/maze/gameBackGround2.png"
+    hardBackgroundImagePath="/main/game/maze/gameBackGround3.png"
+    menuIconImagePath="/main/game/maze/ghost1.png"
+    goalImagePath="/main/game/maze/heart2.png"
+    easyWallTypeId="DIRT_BASIC"
+    normalWallTypeId="WOOD_BASIC"
+    hardWallTypeId="STEEL_SOLID"
+    menuMusicPath="/main/game/maze/menuMusic.mp3"
+    menuSelectSoundPath="/main/game/maze/menuSelect.mp3"
+    inGameMusicPath="/main/game/maze/backgroundMusic.mp3"
+    winSoundPath="/main/game/maze/winGame.mp3"/>

@@ -2,17 +2,22 @@
 package main.game.maze;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.scene.media.Media;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -25,62 +30,42 @@ import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.runtime.OclBootstrap;
+import main.game.maze.javafx.JavaFxBackend;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class App extends Application {
-    public static MediaPlayer inGameMediaPlayer;
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
+    private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
+    private final AtomicBoolean shutdownInvoked = new AtomicBoolean(false);
 
 
     @Override
     public void start(Stage primaryStage) {
         try {
+            JavaFxBackend.install();
             OclBootstrap.init();
             OpponentsPackage.eINSTANCE.eClass();
             DifficultiesPackage.eINSTANCE.eClass();
 
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.StartScreen));
             AnchorPane root = loader.load();
-            gameController = loader.getController();
+            StartController startController = loader.getController();
 
             primaryStage.setTitle("Maze Game");
-            primaryStage.setScene(new Scene(root, App.getBoardMaxX(), App.getBoardMaxY()));
+            primaryStage.setScene(new Scene(root, 980, 700));
             setWindowIcon(primaryStage);
-            // --- MDD difficulty selection (reads difficulties.xmi) ---
-            this.setDifficulty(primaryStage);
-            // --------------------------------------------------------
-            applySizeForCurrentDifficulty(primaryStage);
-            primaryStage.setResizable(false);
+            startController.setStage(primaryStage);
+            primaryStage.setResizable(true);
+            primaryStage.setOnCloseRequest(event -> forceShutdownAndExit());
             primaryStage.show();
-
-            gameController.setupGame();
-
-            // Start playing the music
-            MediaView view = addMusic();
-            root.getChildren().add(view);
-            inGameMediaPlayer.play();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void setDifficulty(Stage primaryStage) {
-        DifficultyService svc = new DifficultyService();
-        Difficulty current = svc.getCurrent();
-
-        Optional<Difficulty> chosen = pickDifficulty(primaryStage);
-        if (chosen.isPresent()) {
-            gameController.setStartDifficulty(chosen.get());
-        } else if (current != null) {
-            // Cancel → keep current from XMI
-            gameController.setStartDifficulty(current);
-            lastChosenDifficulty = current;
         }
     }
 
@@ -96,11 +81,19 @@ public class App extends Application {
                 ? displayName(current)
                 : (byName.isEmpty() ? null : byName.keySet().iterator().next());
 
+        if (byName.isEmpty()) {
+            return Optional.empty();
+        }
+
         ChoiceDialog<String> dlg = new ChoiceDialog<>(def, byName.keySet());
         dlg.setTitle("Select difficulty");
         dlg.setHeaderText("Choose game difficulty");
         dlg.setContentText("Difficulty:");
-        dlg.initOwner(owner);
+        if (owner != null) {
+            dlg.initOwner(owner);
+        }
+        dlg.getDialogPane().setMinWidth(380);
+        dlg.getDialogPane().setMinHeight(180);
 
         Optional<String> result = dlg.showAndWait();
         if (result.isPresent()) {
@@ -138,11 +131,33 @@ public class App extends Application {
     public static void applySizeForCurrentDifficulty(Stage stage) {
         int width  = getBoardMaxX();
         int height = getBoardMaxY();
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
+        if (needsFullscreenForBoard(width, height, bounds.getWidth(), bounds.getHeight())) {
+            stage.setWidth(bounds.getWidth());
+            stage.setHeight(bounds.getHeight());
+            stage.setFullScreenExitHint("");
+            stage.setFullScreen(true);
+            applyRootSize(stage.getScene(), (int) bounds.getWidth(), (int) bounds.getHeight());
+            return;
+        }
+
+        stage.setFullScreen(false);
         stage.setWidth(width);
         stage.setHeight(height);
 
         applyRootSize(stage.getScene(), width, height);
+    }
+
+    /**
+     * Fullscreen is auto-enabled whenever the chosen board exceeds the player's
+     * screen size in either dimension; otherwise the window stays sized to the
+     * board so the map always fits inside the window without camera scrolling.
+     *
+     * <p>Package-private for unit tests.
+     */
+    static boolean needsFullscreenForBoard(int boardWidth, int boardHeight, double screenWidth, double screenHeight) {
+        return boardWidth > screenWidth || boardHeight > screenHeight;
     }
 
     public static void applyStandardSize(Stage stage) {
@@ -181,17 +196,15 @@ public class App extends Application {
         launch(args);
     }
 
-    private MediaView addMusic() {
-        var resource = getClass().getResource(ResourceFileConstants.BackgroundMusic);
-        Media media = new Media(resource.toString());
-        inGameMediaPlayer = new MediaPlayer(media);
-        inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        return new MediaView(inGameMediaPlayer);
+    @Override
+    public void stop() {
+        // JavaFX calls stop() during normal shutdown paths; keep cleanup idempotent.
+        shutdownResources();
     }
 
     private void setWindowIcon(Stage stage) {
         try {
-            var icon = getClass().getResource("/main/game/maze/ghost1.png");
+            var icon = getClass().getResource(VISUAL_STYLE.menuIconImagePath());
             if (icon != null) {
                 stage.getIcons().add(new Image(icon.toExternalForm()));
             }
@@ -205,5 +218,43 @@ public class App extends Application {
         if (d == null) return "";
         String n = d.eClass().getName(); // e.g., NormalDifficulty
         return n.endsWith("Difficulty") ? n.substring(0, n.length() - 10) : n;
+    }
+
+    private void shutdownResources() {
+        if (!shutdownInvoked.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            if (App.gameController != null) {
+                App.gameController.dispose();
+                App.gameController = null;
+            }
+        } catch (Exception ignored) {
+            // Best-effort cleanup during shutdown.
+        }
+
+        try {
+            AudioEngine.get().dispose();
+        } catch (Exception ignored) {
+            // Best-effort cleanup during shutdown.
+        }
+    }
+
+    private void forceShutdownAndExit() {
+        shutdownResources();
+        Platform.exit();
+        System.exit(0);
+    }
+
+    private static MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new XmiMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException ignored) {
+                return MazeVisualStyleConfig.DEFAULT;
+            }
+        }
     }
 }

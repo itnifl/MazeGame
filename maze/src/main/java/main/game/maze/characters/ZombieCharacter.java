@@ -7,9 +7,6 @@ import java.util.logging.Logger;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
 import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -22,6 +19,7 @@ import main.game.maze.opponents.BehaviorType;         // generated enum
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
+import main.game.maze.common.graphics.AudioEngine;
 
 public class ZombieCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<Zombie> {
@@ -29,7 +27,7 @@ public class ZombieCharacter extends ComputerCharacter
     private static final Logger LOGGER = Logger.getLogger(ZombieCharacter.class.getName());
     private final Zombie zombieModel;
     private AtomicInteger hitPoints;
-    private MediaPlayer screamMediaPlayer;    
+    private static final long ZOMBIE_SCREAM_COOLDOWN_MS = 600L;
 
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
@@ -65,7 +63,7 @@ public class ZombieCharacter extends ComputerCharacter
 
     @Override
     public int getDamage() {
-        return Math.max(0, zombieModel.getAttackDamage());
+        return CollisionDamage.effectiveDamage(zombieModel.getThreatLevel(), zombieModel.getAttackDamage());
     }
 
     @Override
@@ -109,18 +107,11 @@ public class ZombieCharacter extends ComputerCharacter
                 LOGGER.fine("Zombie is intersecting with " + canDieEntity);
                 canDieEntity.subtractHitPoints(getDamage());                
             }
-            if(screamMediaPlayer == null || screamMediaPlayer.getStatus() != Status.PLAYING) {
-                screamMediaPlayer = playScream();
-                screamMediaPlayer.play();
-            }
+            AudioEngine.get().playRateLimited(
+                zombieModel.getTouchSound(),
+                "zombie.touch." + System.identityHashCode(this),
+                ZOMBIE_SCREAM_COOLDOWN_MS);
         }        
-    }
-
-    private MediaPlayer playScream() {
-        var soundFile = zombieModel.getTouchSound();
-        var resource = getClass().getResource(soundFile);
-        Media media = new Media(resource.toString());
-        return new MediaPlayer(media);
     }
 
     @Override

@@ -14,8 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.difficulties.DifficultiesPackage;
-import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.DifficultyGameData;
 
 
 public class DefaultsAndRoundtripTest {

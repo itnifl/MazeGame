@@ -94,6 +94,110 @@ main.game.maze.dsl.tests/    # Automated tests
 
 ## DSL Syntax
 
+### Grammar overview
+
+The Xtext grammar (`MazeDsl.xtext`) produces an EMF AST whose top-level
+structure mirrors the runtime configuration tree:
+
+```mermaid
+classDiagram
+    direction LR
+    class GameConfiguration {
+        +ID name
+    }
+    class Import {
+        +STRING importURI
+    }
+    class DifficultyConfig {
+        +DifficultyLevel level
+        +EBoolean instantDeath
+        +EDouble speedMultiplier
+        +EDouble damageMultiplier
+        +EInt maxThreat
+    }
+    class EnemyLimit {
+        +CharacterTypeEnum type
+        +EInt maxCount
+    }
+    class OpponentConfig {
+        +CharacterTypeEnum type
+        +STRING displayName
+        +EInt health
+        +EDouble speed
+        +EDouble threatLevel
+        +EBoolean enabled
+        +BehaviorTypeEnum behavior
+    }
+    class CharacterSpecifics {
+        <<abstract>>
+    }
+    class ZombieSpecifics {
+        +EInt attackDamage
+        +EInt infectionLevel
+        +EInt resurrectionTime
+    }
+    class GhostSpecifics {
+        +EInt attackDamage
+        +EInt visibilityLevel
+        +EInt nonTangibilityEnergy
+    }
+    class RangedSpecifics {
+        +EInt attackRange
+        +EInt attackCooldown
+        +EInt attackDamage
+        +EInt projectileSpeed
+        +ProjectileTypeEnum projectileType
+        +EInt splashRadius
+    }
+    class PatrolConfig {
+        +ID name
+        +EInt visionRange
+    }
+    class PatrolZoneConfig {
+        +EInt topLeftX
+        +EInt topLeftY
+        +EInt width
+        +EInt height
+    }
+    class Waypoint {
+        +EInt x
+        +EInt y
+        +EInt waitTimeMs
+    }
+    class LootTableConfig {
+        +ID name
+        +EInt capacity
+    }
+    class LootItemConfig {
+        +STRING name
+        +LootItemTypeEnum type
+        +EInt value
+        +EInt weight
+    }
+    class DifficultyLevel { <<enum>> easy; normal; hard }
+    class CharacterTypeEnum { <<enum>> zombie; ghost; pumpkinbomber }
+    class BehaviorTypeEnum { <<enum>> passive; wander; aggressive; patrol }
+    class ProjectileTypeEnum { <<enum>> straight; lob; beam }
+    class LootItemTypeEnum { <<enum>> food; bomb; trap; weapon }
+
+    CharacterSpecifics <|-- ZombieSpecifics
+    CharacterSpecifics <|-- GhostSpecifics
+    CharacterSpecifics <|-- RangedSpecifics
+
+    GameConfiguration "1" *-- "0..*" Import : imports
+    GameConfiguration "1" *-- "0..1" DifficultyConfig : difficulty
+    GameConfiguration "1" *-- "0..*" OpponentConfig : opponents
+    GameConfiguration "1" *-- "0..*" PatrolConfig : patrols
+    GameConfiguration "1" *-- "0..*" LootTableConfig : lootTables
+    DifficultyConfig "1" *-- "0..*" EnemyLimit : enemyLimits
+    OpponentConfig "1" *-- "0..1" CharacterSpecifics : specifics
+    OpponentConfig "1" --> "0..1" PatrolConfig : patrol
+    OpponentConfig "1" --> "0..1" LootTableConfig : loot
+    PatrolConfig "1" *-- "0..1" PatrolZoneConfig : zone
+    PatrolConfig "1" *-- "1..*" Waypoint : waypoints
+    LootTableConfig "1" *-- "0..*" LootItemConfig : items
+```
+
 ### Basic Structure
 
 ```

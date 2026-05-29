@@ -4,12 +4,15 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import main.game.maze.App;
+import main.game.maze.common.graphics.ICharacterView;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ISubscribeOnDirection;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.INotifyMovement;
+import main.game.maze.common.graphics.UiScheduler;
+import main.game.maze.javafx.FxCharacterView;
 
 public class Character  {
     public INotifyMovement notifyMovement = null;
@@ -23,6 +26,7 @@ public class Character  {
     private double directionX;
     private double directionY;
     private Node characterGraphics;
+    private ICharacterView characterView;
 
     private int maxX;
     private int maxY;
@@ -33,6 +37,7 @@ public class Character  {
         this.directionX = 0;
         this.directionY = 0;
         this.characterGraphics = characterGraphics;
+        this.characterView = characterGraphics == null ? null : new FxCharacterView(characterGraphics);
 
         characterPosition = new Point2D(x, y);
         characterDirection = new Vector2D(
@@ -41,6 +46,11 @@ public class Character  {
 
         maze = GameMazeWorld.GetWorld();
         calculateMaxPositions();
+    }
+
+    public Character(ICharacterView characterView, double x, double y) {
+        this((characterView instanceof FxCharacterView fx) ? fx.getNode() : null, x, y);
+        this.characterView = characterView;
     }
 
     protected void calculateMaxPositions() {
@@ -54,6 +64,18 @@ public class Character  {
 
     public void setCharacterGraphics(Node newGraphics) {
         this.characterGraphics = newGraphics;
+        this.characterView = newGraphics == null ? null : new FxCharacterView(newGraphics);
+    }
+
+    public ICharacterView getCharacterView() {
+        return this.characterView;
+    }
+
+    public void setCharacterView(ICharacterView newView) {
+        this.characterView = newView;
+        if (newView instanceof FxCharacterView fx) {
+            this.characterGraphics = fx.getNode();
+        }
     }
 
     protected void setCharacterImage(Image image) {
@@ -159,10 +181,16 @@ public class Character  {
     }
 
     private boolean moveCharacterRight(double speed, boolean force) {
-        if (characterGraphics == null) return false;
-        double newX = characterGraphics.getLayoutX() + speed;
+        if (characterGraphics == null && characterView == null) return false;
+        double newX = characterPosition.getX() + speed;
         if (newX < maxX && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutX(newX);
+            ICharacterView view = characterView;
+            if (view != null) {
+                view.setPosition(newX, characterPosition.getY());
+            } else {
+                final Node gfx = characterGraphics;
+                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
+            }
             doNotifyMovement();
             return true;
         }
@@ -170,10 +198,16 @@ public class Character  {
     }
 
     private boolean moveCharacterLeft(double speed, boolean force) {
-        if (characterGraphics == null) return false;
-        double newX = characterGraphics.getLayoutX() - speed;
+        if (characterGraphics == null && characterView == null) return false;
+        double newX = characterPosition.getX() - speed;
         if (newX >= 0 && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutX(newX);
+            ICharacterView view = characterView;
+            if (view != null) {
+                view.setPosition(newX, characterPosition.getY());
+            } else {
+                final Node gfx = characterGraphics;
+                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
+            }
             doNotifyMovement();
             return true;
         }
@@ -181,10 +215,16 @@ public class Character  {
     }
 
     private boolean moveCharacterDown(double speed, boolean force) {
-        if (characterGraphics == null) return false;
-        double newY = characterGraphics.getLayoutY() + speed;
+        if (characterGraphics == null && characterView == null) return false;
+        double newY = characterPosition.getY() + speed;
         if (newY < maxY && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutY(newY);
+            ICharacterView view = characterView;
+            if (view != null) {
+                view.setPosition(characterPosition.getX(), newY);
+            } else {
+                final Node gfx = characterGraphics;
+                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
+            }
             doNotifyMovement();
             return true;
         }
@@ -192,10 +232,16 @@ public class Character  {
     }
 
     private boolean moveCharacterUp(double speed, boolean force) {
-        if (characterGraphics == null) return false;
-        double newY = characterGraphics.getLayoutY() - speed;
+        if (characterGraphics == null && characterView == null) return false;
+        double newY = characterPosition.getY() - speed;
         if (newY >= 0 && (force || !isTouchingVector())) {
-            characterGraphics.setLayoutY(newY);
+            ICharacterView view = characterView;
+            if (view != null) {
+                view.setPosition(characterPosition.getX(), newY);
+            } else {
+                final Node gfx = characterGraphics;
+                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
+            }
             doNotifyMovement();
             return true;
         }
@@ -223,10 +269,18 @@ public class Character  {
         // remove graphics from scene graph and clear effects
         Node gfx = characterGraphics;
         characterGraphics = null;  // null immediately to stop movement methods
+        ICharacterView view = characterView;
+        characterView = null;
         maze = null;
+
+        if (view != null) {
+            view.clearEffect();
+            view.detachFromParent();
+            return;
+        }
         
         if (gfx != null) {
-            Runnable remove = () -> {
+            UiScheduler.get().runOnUiThread(() -> {
                 try {
                     gfx.setEffect(null);
                     var parent = gfx.getParent();
@@ -234,12 +288,7 @@ public class Character  {
                         p.getChildren().remove(gfx);
                     }
                 } catch (Exception ignored) {}
-            };
-            if (javafx.application.Platform.isFxApplicationThread()) {
-                remove.run();
-            } else {
-                javafx.application.Platform.runLater(remove);
-            }
+            });
         }
     }
 }

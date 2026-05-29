@@ -6,7 +6,7 @@
   <plugin id="main.game.maze.behaviour"    version="0.0.0" unpack="false"/>
   <plugin id="main.game.maze.difficulties" version="0.0.0" unpack="false"/>
   <plugin id="main.game.maze.opponents"    version="0.0.0" unpack="false"/>
-  <plugin id="maze-generator.acceleo"      version="0.0.0" unpack="false"/>
+  <plugin id="maze-generator.freemarker"   version="0.0.0" unpack="false"/>
   <!-- Xtext DSL plugins -->
   <plugin id="main.game.maze.dsl"          version="0.0.0" unpack="false"/>
   <plugin id="main.game.maze.dsl.ide"      version="0.0.0" unpack="false"/>

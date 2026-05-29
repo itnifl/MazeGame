@@ -120,6 +120,103 @@ classDiagram
 
 ## Core Concepts
 
+### Ecore class diagram
+
+```mermaid
+classDiagram
+    direction LR
+    class MovementBehavior {
+        <<abstract>>
+        +EInt baseVisionRange = 100
+        +EInt additionalVisionRange = 100
+        +EInt visionRangeMultiplier = 1
+        +EInt visionRange «derived»
+        +EBoolean ignoreWalls «derived»
+        +EBoolean instantKillOnCollision «derived»
+    }
+    class RandomBehavior {
+        +EInt regenPerSecond
+    }
+    class PatrolBehavior {
+        +EInt currentIndex = 0
+        +PatrolPathBehavior behavior
+    }
+    class ChaseBehavior
+    class Position {
+        +EInt posX «≥0»
+        +EInt posY «≥0»
+    }
+    class Direction
+    class PatrolPoint
+    class PatrolZone {
+        +EInt width
+        +EInt height
+    }
+    class PathCalculator {
+        <<abstract>>
+        +DistanceMethod distanceMethod
+    }
+    class DijkstraPathCalculator {
+        +EInt maxPathLength «>0»
+    }
+    class AstarPathCalculator {
+        +EInt maxPathLength «>0»
+        +DistanceMethod heuristicMethod = MANHATTAN
+    }
+    class LocalPathCalculator
+    class CharacterEvent {
+        <<abstract>>
+        +EInt probability «0..100»
+    }
+    class HealthEvent
+    class SpeedEvent
+    class TimeEvent
+    class AttackEvent
+    class VisionEvent
+    class DistanceMethod {
+        <<enum>>
+        MANHATTAN
+        EUCLIDEAN
+    }
+    class PatrolPathBehavior {
+        <<enum>>
+        LOOP
+        BACKWARD
+        RANDOM
+    }
+
+    MovementBehavior <|-- RandomBehavior
+    MovementBehavior <|-- PatrolBehavior
+    MovementBehavior <|-- ChaseBehavior
+    PathCalculator <|-- DijkstraPathCalculator
+    PathCalculator <|-- AstarPathCalculator
+    PathCalculator <|-- LocalPathCalculator
+    CharacterEvent <|-- HealthEvent
+    CharacterEvent <|-- SpeedEvent
+    CharacterEvent <|-- TimeEvent
+    CharacterEvent <|-- AttackEvent
+    CharacterEvent <|-- VisionEvent
+
+    MovementBehavior --> CharacterType : charactertype
+    MovementBehavior --> "0..*" Position : nextPositions
+    MovementBehavior --> Position : position
+    MovementBehavior --> Direction : direction
+    Direction --> Position : startPosition
+    Direction --> Position : endPosition
+    PatrolBehavior --> "1..*" PatrolPoint : path
+    PatrolBehavior --> PathCalculator : pathcalculator
+    PatrolBehavior --> PatrolZone : patrolZone
+    PatrolPoint --> Position : point
+    PatrolPoint --> "0..*" CharacterEvent : events
+    PatrolZone --> Position : topLeft
+    ChaseBehavior --> Position : relativePositionTarget
+    ChaseBehavior --> PathCalculator : pathcalculator
+    CharacterEvent --> MovementBehavior : subscriber
+```
+
+> Constraint `MovementBehavior_ValidVisionRange`: `visionRange > 0`, and if the
+> linked `CharacterType` is a `RangedEnemy` then `attackRange ≤ visionRange`.
+
 ### Positions
 
 The module provides lightweight types that represent positions in the maze.  
@@ -204,7 +301,7 @@ The factory is responsible for
 
 > **Note**: The `BehaviorDispatcher` class is **planned but not yet implemented**.  
 > When created, it will route behaviour requests by character type based on EMF model definitions.  
-> See [readme-mddcodegeneration.md](../readme-mddcodegeneration.md) for the generation roadmap.
+> See [mdd-code-generation.md](../docs/mdd-code-generation.md) for the generation roadmap.
 
 This keeps the rest of the game code small and declarative.  
 For a given opponent type, the game only needs to ask the factory for "its" behaviour instead of manually creating and wiring objects.
@@ -261,6 +358,6 @@ By keeping these goals in mind, `main.game.maze.behaviour` remains a clear and r
 |----------|-------------|
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of metamodels in everyday terms |
 | [Metamodel Architecture](../docs/metamodel-architecture.md) | Technical details about the Ecore metamodels |
-| [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Maze World Module](../main.game.maze.mazeworld/readme.md) | Navigation graph and maze structure |
 | [Opponents Module](../main.game.maze.opponents/readme.md) | Opponent definitions and runtime factory |

@@ -12,6 +12,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
+import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.service.DifficultyService;
@@ -21,6 +26,7 @@ public class StartController implements Initializable {
     @FXML private Label error;
 
     private final DifficultyService svc = new DifficultyService();
+    private final MazeVisualStyleConfig visualStyle = loadVisualStyle();
     private Stage stage;
 
     void setStage(Stage s) { this.stage = s; }
@@ -39,6 +45,17 @@ public class StartController implements Initializable {
         var cur = svc.getCurrent();
         if (cur != null) difficultyCombo.getSelectionModel().select(cur);
         else if (!diffs.isEmpty()) difficultyCombo.getSelectionModel().select(0);
+
+        difficultyCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null && oldValue != newValue) {
+                AudioEngine.get().playRateLimited(
+                    visualStyle.menuSelectSoundPath(),
+                        "menu.select",
+                        90L);
+            }
+        });
+
+            AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
     }
 
     @FXML private void onStart() throws IOException {
@@ -53,9 +70,29 @@ public class StartController implements Initializable {
         AnchorPane root = loader.load();
         GameController gc = loader.getController();
         gc.setStartDifficulty(selected); // <-- inject the EMF Difficulty from the model
-        gc.setupGame();                  // <-- your existing entry point
+        App.lastChosenDifficulty = selected;
+        App.gameController = gc;
 
         stage.setScene(new Scene(root));
+        App.applySizeForCurrentDifficulty(stage);
         stage.show();
+        gc.setupGame();
+
+        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
+        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
+        AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+    }
+
+    private MazeVisualStyleConfig loadVisualStyle() {
+        try {
+            return new XmiMazeVisualStyleLoader().load();
+        } catch (RuntimeException ex) {
+            try {
+                return new PropertiesMazeVisualStyleLoader().load();
+            } catch (RuntimeException ignored) {
+                return MazeVisualStyleConfig.DEFAULT;
+            }
+        }
     }
 }

@@ -90,7 +90,7 @@ public class GhostCharacter extends ComputerCharacter
 
     @Override
     public int getDamage() {
-        return Math.max(0, ghostModel.getAttackDamage());
+        return CollisionDamage.effectiveDamage(ghostModel.getThreatLevel(), ghostModel.getAttackDamage());
     }
 
     private static int mapSpeed(double modelSpeed) {

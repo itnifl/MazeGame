@@ -47,7 +47,12 @@
     <!-- 5: evt. egen generated/jar-modul for spillet -->
     <module>maze-module-generator</module>
 
-    <!-- 6: selve JavaFX-spillet -->
+    <!-- 6: backend-agnostiske grafikk-/lyd-abstraksjoner og backends -->
+    <module>maze-common-frontend</module>
+    <module>maze-javafx</module>
+    <module>maze-libgdx</module>
+
+    <!-- 7: selve JavaFX-spillet -->
     <module>maze</module>    
   </modules>
 

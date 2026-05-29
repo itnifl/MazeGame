@@ -305,5 +305,5 @@ The **FreeMarker printer** ensures every order produces consistent kitchen instr
 - [DSL Tests](../main.game.maze.dsl.tests/readme.md) - Test suite
 
 ### Technical
-- [Model-Driven Code Generation Plan](../readme-mddcodegeneration.md) - Architecture overview
+- [Model-Driven Code Generation Plan](mdd-code-generation.md) - Architecture overview
 - [Eclipse Modules](../eclipse.modules.md) - Plugin structure

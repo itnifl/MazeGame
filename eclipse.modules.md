@@ -137,5 +137,5 @@ while Maven makes sure the game sees them as plain Java libraries in the runtime
 |----------|-------------|
 | [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of the technologies in everyday terms |
 | [FreeMarker Guide](freemarker.readme.md) | Detailed FreeMarker usage in this project |
-| [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) | Architecture for generating code from models |
+| [Model-Driven Code Generation Plan](docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [Releng Documentation](releng/readme.md) | Build infrastructure and target platform |

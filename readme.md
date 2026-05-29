@@ -9,6 +9,9 @@
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
+* 📝 [main.game.maze.dsl.ide](main.game.maze.dsl.ide/readme.md)
+* 📝 [main.game.maze.dsl.ui](main.game.maze.dsl.ui/readme.md)
+* 📝 [main.game.maze.dsl.tests](main.game.maze.dsl.tests/readme.md)
 * 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
 * 📚 [Technology Layman's Guide](docs/technology-laymans-guide.md) - **Simple explanations of Xtext, metamodels, and FreeMarker**
 * 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
@@ -20,7 +23,7 @@
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 
 Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
-Also, see: [Model-Driven Code Generation Plan](readme-mddcodegeneration.md) — architecture for generating application logic from models
+Also, see: [Model-Driven Code Generation Plan](docs/mdd-code-generation.md) — architecture for generating application logic from models
 Also, see Eclipse plugin setup: [Eclipse module worlds](eclipse.modules.md) in the Maze Game
 Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-readme.md)
 
@@ -139,6 +142,26 @@ VS Code Java runtime:
 
 ⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
 
+### Graphics backends (JavaFX vs libGDX)
+
+The graphics, threading and audio facades have been extracted into three
+sibling modules so the renderer can be swapped:
+
+- [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic
+  interfaces and inert defaults used by the gameplay code.
+- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend used
+  by `main.game.maze.App`.
+- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend (WIP). The
+  interface adapters are in place; the actual game loop is still being ported.
+
+To launch either backend, use the configurations in
+[.vscode/launch.json](.vscode/launch.json):
+
+- **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.App`.
+- **Launch MazeGame (libGDX backend, WIP)** — runs
+  `main.game.maze.libgdx.GdxAppLauncher`, which opens a 1024x768 LWJGL3 window
+  showing placeholder status text until the game loop has been ported.
+
 ## Build commands (exact)
 
 For a focused build command guide with fastest paths and no mirror rebuild options, see [build-tool-readme.md](build-tool-readme.md).
@@ -189,14 +212,14 @@ mvn -pl main.game.maze.opponents -am test
 ### Makefile usage - Windows Powershell
 ```
 # Default: toolchain info, update mirror if needed, clear Tycho cache, full build
-.\make.ps1
+.\make-javafx.ps1
 
 # Explicit target:
-.\make.ps1 -Target toolchain
-.\make.ps1 -Target mirror
-.\make.ps1 -Target force-mirror
-.\make.ps1 -Target clear-cache
-.\make.ps1 -Target build
+.\make-javafx.ps1 -Target toolchain
+.\make-javafx.ps1 -Target mirror
+.\make-javafx.ps1 -Target force-mirror
+.\make-javafx.ps1 -Target clear-cache
+.\make-javafx.ps1 -Target build
 
 ```
 
@@ -211,14 +234,14 @@ make build
 
 Quick reference for fast and no mirror command variants: [build-tool-readme.md](build-tool-readme.md).
 
-Use the script `Run-P2AndBuildCheck.ps1` to run a full build with diagnostics:
+Use the script `Run-P2AndBuildCheck-javafx.ps1` to run a full build with diagnostics:
 
 ```powershell
 # Full build with all steps
-.\Run-P2AndBuildCheck.ps1
+.\Run-P2AndBuildCheck-javafx.ps1
 
 # Skip mirror rebuild, start at build step
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 Logs are written to `releng\test-results`.
@@ -263,6 +286,21 @@ Xtext-based Domain-Specific Language for game configuration. Provides a human-re
 See: [main.game.maze.dsl/readme.md](main.game.maze.dsl/readme.md)  
 Reference: [DSL Reference Guide](docs/dsl-reference.md) | [DSL Tutorial](docs/dsl-tutorial.md)
 
+### main.game.maze.dsl.ide
+
+IDE and language server module for the DSL. Provides editor and indexing integration for development workflows.
+See: [main.game.maze.dsl.ide/readme.md](main.game.maze.dsl.ide/readme.md)
+
+### main.game.maze.dsl.ui
+
+Eclipse UI integration for the DSL, including content assist and editor behavior.
+See: [main.game.maze.dsl.ui/readme.md](main.game.maze.dsl.ui/readme.md)
+
+### main.game.maze.dsl.tests
+
+Automated test module for DSL parsing, validation, and integration behavior.
+See: [main.game.maze.dsl.tests/readme.md](main.game.maze.dsl.tests/readme.md)
+
 ### maze
 
 JavaFX game client that starts the application, runs the game loop, and renders maze and actors.  
@@ -299,11 +337,11 @@ See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
 This repository includes two helper scripts for packaging the source and for running a repeatable build with diagnostics. Both scripts live in the root of the repo for easy access.
 
 * 📦 **[pack-source.ps1](./tools/pack-source.ps1)**
-* 🧪 **[Run-P2AndBuildCheck.ps1](./Run-P2AndBuildCheck.ps1)**
+* 🧪 **[Run-P2AndBuildCheck-javafx.ps1](./Run-P2AndBuildCheck-javafx.ps1)**
 
 ---
 
-### Run-P2AndBuildCheck.ps1
+### Run-P2AndBuildCheck-javafx.ps1
 
 **What it does**
 Runs the end to end Tycho and Maven build in a controlled order, regenerates or validates the local p2 mirror, verifies required bundles (EMF, OCL, Xtext), resets Tycho cache if needed, builds modules, runs tests, and writes a single timestamped log that includes per step summaries and captured output. It also echoes the summary to the terminal at the end.
@@ -320,20 +358,20 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 
 ```powershell
 # From the repo root - full build
-.\Run-P2AndBuildCheck.ps1
+.\Run-P2AndBuildCheck-javafx.ps1
 
 # Skip to build step only (steps 1-3 skipped)
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 **Parameters**
 
 ```powershell
 # Default output folder for logs
-.\Run-P2AndBuildCheck.ps1 -LogDirectory "releng\test-results"
+.\Run-P2AndBuildCheck-javafx.ps1 -LogDirectory "releng\test-results"
 
 # Start at a specific step (1=all, 2=skip mirror, 3=skip mirror+verify, 4=build only)
-.\Run-P2AndBuildCheck.ps1 -StartAt 4
+.\Run-P2AndBuildCheck-javafx.ps1 -StartAt 4
 ```
 
 **Outputs**

@@ -5,8 +5,6 @@
  */
 package main.game.maze.dsl.tests;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.testing.validation.ValidationTestHelper;
