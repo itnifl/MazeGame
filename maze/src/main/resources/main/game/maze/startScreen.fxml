@@ -13,7 +13,7 @@
             style="-fx-background-color: linear-gradient(to bottom, #1d0d2f 0%, #0e1a2f 45%, #12241b 100%);">
 
     <VBox alignment="CENTER" spacing="18" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
-        <Label text="MAZE QUEST" style="-fx-font-size: 52px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0.4, 0, 3);" />
+        <Label text="MAZE GAME" style="-fx-font-size: 52px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0.4, 0, 3);" />
         <Label text="Retro Challenge Mode" style="-fx-font-size: 20px; -fx-font-family: 'Consolas'; -fx-text-fill: #8fffe0; -fx-font-weight: bold;" />
 
         <VBox alignment="CENTER" spacing="10" maxWidth="560" style="-fx-background-color: rgba(0,0,0,0.44); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 24; -fx-background-radius: 10; -fx-border-radius: 10;">

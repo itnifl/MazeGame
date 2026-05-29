@@ -198,6 +198,9 @@ public class GameController implements Initializable {
     }
 
     private void updateDebugLabels() {
+        if (playerCharacter == null || gameOverAction == null || winGameAction == null) {
+            return;
+        }
         var coordinatesText = "X: " + playerCharacter.getCharacterPosition().getX() + ", Y: "
                 + playerCharacter.getCharacterPosition().getY();
         var directionsText = "Direction: " + playerCharacter.getCharacterDirection();

@@ -8,8 +8,10 @@ import java.util.Objects;
  */
 public record RuntimeVisualModel(
         String playerImagePath,
+        String playerDeathImagePath,
         float playerSpeed,
         float playerSize,
+        int playerMaxHitPoints,
         String backgroundImagePath,
         String wallImagePath,
         String goalImagePath,

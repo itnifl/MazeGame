@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
@@ -34,6 +35,7 @@ import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
+import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
@@ -74,10 +76,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int HARD_BASE_SCORE = 30000;
     private static final float MOUSE_STEP_DISTANCE = 20f;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
-    private static final float PLAYER_MAX_HP = 100f;
-    private static final float CONTACT_DAMAGE = 10f;
-    private static final float CONTACT_DAMAGE_COOLDOWN_SEC = 0.45f;
-    private static final float CONTACT_HIT_DISTANCE_PADDING = 2f;
 
     private enum Mode {
         START_MENU,
@@ -120,6 +118,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private SpriteBatch batch;
     private ShapeRenderer shapes;
     private BitmapFont font;
+    private GlyphLayout glyphLayout;
     private OrthographicCamera camera;
     private OrthographicCamera hudCamera;
     private Viewport viewport;
@@ -127,16 +126,23 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
+    private final PlayerCombatStateService combatState = new PlayerCombatStateService();
     private Texture playerTexture;
+    private Texture playerDeathTexture;
     private Texture goalTexture;
     private Texture wallTexture;
     private Texture backgroundTexture;
     private Texture menuIconTexture;
+    private Texture winBackgroundTexture;
+    private Texture gameOverBackgroundTexture;
     private float activePlayerSpeed;
     private float activeGoalSize;
     private float activeGoalX;
     private float activeGoalY;
     private float currentHpRatio = 1f;
+    private float playerTintRed = 1f;
+    private float playerTintGreen = 1f;
+    private float playerTintBlue = 1f;
     private boolean playedWinSound;
     private boolean playedGameOverSound;
     private final List<Point2D> activePathPoints = new ArrayList<>();
@@ -144,8 +150,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
-    private float currentHp = PLAYER_MAX_HP;
-    private float contactDamageCooldown;
 
     public GdxGameScreen() {
         this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true);
@@ -175,11 +179,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
         font = new BitmapFont();
+        glyphLayout = new GlyphLayout();
         font.setColor(Color.WHITE);
 
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
         menuIconTexture = loadTexture(visualStyle.menuIconImagePath());
+        winBackgroundTexture = loadTexture("/main/game/maze/zombieGameOverBackground1.png");
+        gameOverBackgroundTexture = loadTexture("/main/game/maze/zombieBackground.png");
 
         difficulties.clear();
         difficulties.addAll(difficultyService.list());
@@ -322,16 +329,30 @@ public final class GdxGameScreen extends ApplicationAdapter {
             enemy.update(enemyAnimationClock, maze.widthPx(), maze.heightPx());
         }
 
-        handleEnemyCollisions(dt);
+        var combatFrame = combatState.update(dt, player.x(), player.y(), player.halfSize(), currentEnemyContacts());
+        currentHpRatio = combatFrame.hpRatio();
+        playerTintRed = combatFrame.tintRed();
+        playerTintGreen = combatFrame.tintGreen();
+        playerTintBlue = combatFrame.tintBlue();
+
+        if (combatFrame.dead()) {
+            mode = Mode.GAME_OVER;
+            if (!playedGameOverSound) {
+                playedGameOverSound = true;
+                AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+                AudioEngine.get().play(ResourceFileConstants.GameOverSound);
+            }
+        }
 
         updateCameraFollow();
 
-        if (player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
+        if (mode == Mode.PLAYING && player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
             mode = Mode.WON;
             if (!playedWinSound) {
                 playedWinSound = true;
                 AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
                 AudioEngine.get().play(visualStyle.winSoundPath());
+                AudioEngine.get().play(ResourceFileConstants.WinGameSoundComment);
             }
         }
     }
@@ -412,9 +433,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Player from player Ecore/XMI model.
         float playerDrawSize = player.halfSize() * 2f;
         float playerHalf = player.halfSize();
-        if (playerTexture != null) {
-            batch.draw(playerTexture, player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
+        Texture activePlayerTexture = combatState.isDead() ? playerDeathTexture : playerTexture;
+        batch.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
+        if (activePlayerTexture != null) {
+            batch.draw(activePlayerTexture, player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
         }
+        batch.setColor(Color.WHITE);
 
         batch.end();
 
@@ -455,8 +479,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         // Player fallback.
-        if (playerTexture == null) {
-            shapes.setColor(mode == Mode.WON ? Color.GOLD : Color.SKY);
+        if (activePlayerTexture == null) {
+            shapes.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
             shapes.rect(player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
         }
 
@@ -502,10 +526,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
             drawHighScoresOverlay();
         }
         if (mode == Mode.WON) {
-            drawCenteredStateOverlay("YOU WIN", "Press ESC to return to start menu");
+            drawCenteredStateOverlay("YOU WIN", "Press ESC to return to start menu", winBackgroundTexture, Color.GREEN);
         }
         if (mode == Mode.GAME_OVER) {
-            drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu");
+            drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu", gameOverBackgroundTexture, Color.RED);
         }
     }
 
@@ -521,8 +545,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float panelX = (w - panelW) * 0.5f;
         float panelY = (h - panelH) * 0.5f - 20f;
 
-        float titleY = panelY + panelH + 156f;
-        float subtitleY = panelY + panelH + 106f;
+        float titleY = panelY + panelH + 138f;
 
         float comboW = Math.min(430f, panelW - 120f);
         float comboH = 52f;
@@ -588,20 +611,21 @@ public final class GdxGameScreen extends ApplicationAdapter {
         batch.begin();
         font.setColor(Color.GOLD);
         font.getData().setScale(2.8f);
-        font.draw(batch, "MAZEGAME", panelX + panelW * 0.30f, titleY);
-        font.getData().setScale(1.0f);
-
+        glyphLayout.setText(font, "Maze Game");
+        float iconSize = menuIconTexture != null ? 42f : 0f;
+        float iconGap = menuIconTexture != null ? 16f : 0f;
+        float blockWidth = glyphLayout.width + iconSize + iconGap;
+        float blockX = panelX + (panelW - blockWidth) * 0.5f;
         if (menuIconTexture != null) {
-            float iconSize = 42f;
-            batch.draw(menuIconTexture, panelX + panelW * 0.30f - 58f, titleY - 35f, iconSize, iconSize);
+            batch.draw(menuIconTexture, blockX, titleY - 35f, iconSize, iconSize);
         }
-
-        font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-        font.draw(batch, "Retro Challenge Mode", panelX + panelW * 0.40f, subtitleY);
+        font.draw(batch, "Maze Game", blockX + iconSize + iconGap, titleY);
+        font.getData().setScale(1.0f);
 
         font.setColor(Color.WHITE);
         font.getData().setScale(1.55f);
-        font.draw(batch, "Select Difficulty", panelX + panelW * 0.40f, panelY + panelH - 52f);
+        glyphLayout.setText(font, "Select Difficulty");
+        font.draw(batch, "Select Difficulty", panelX + (panelW - glyphLayout.width) * 0.5f, panelY + panelH - 52f);
         font.getData().setScale(1.0f);
 
         String selectedText = selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()
@@ -813,9 +837,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
         batch.end();
     }
 
-    private void drawCenteredStateOverlay(String title, String subtitle) {
+    private void drawCenteredStateOverlay(String title, String subtitle, Texture backdrop, Color titleColor) {
         float w = hudCamera.viewportWidth;
         float h = hudCamera.viewportHeight;
+
+        batch.setProjectionMatrix(hudCamera.combined);
+        if (backdrop != null) {
+            batch.begin();
+            batch.setColor(Color.WHITE);
+            batch.draw(backdrop, 0f, 0f, w, h);
+            batch.end();
+        }
 
         float panelW = Math.min(600f, w - 80f);
         float panelH = 180f;
@@ -833,7 +865,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.end();
 
         batch.begin();
-        font.setColor(Color.GOLD);
+        font.setColor(titleColor);
         font.getData().setScale(2.0f);
         font.draw(batch, title, panelX + 34f, panelY + panelH - 50f);
         font.getData().setScale(1.0f);
@@ -1015,9 +1047,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
         playedGameOverSound = false;
         animatedEnemies.clear();
         pathPenaltyPoints = 0f;
-        currentHp = PLAYER_MAX_HP;
         currentHpRatio = 1f;
-        contactDamageCooldown = 0f;
+        playerTintRed = 1f;
+        playerTintGreen = 1f;
+        playerTintBlue = 1f;
+        combatState.reset(runtimeModel.playerMaxHitPoints());
 
         int idx = 0;
         for (EnemySpawn enemy : runtimeModel.enemies()) {
@@ -1030,6 +1064,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
         playerTexture = loadTexture(runtimeModel.playerImagePath());
+        playerDeathTexture = loadTexture(runtimeModel.playerDeathImagePath());
         goalTexture = loadTexture(runtimeModel.goalImagePath());
         wallTexture = loadTexture(runtimeModel.wallImagePath());
         backgroundTexture = loadTexture(runtimeModel.backgroundImagePath());
@@ -1151,7 +1186,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             camX = clamp(player.x(), halfW, maze.widthPx() - halfW);
         }
         if (maze.heightPx() <= worldH + 0.001f) {
-            camY = maze.heightPx() * 0.5f;
+            camY = maze.heightPx() - halfH;
         } else {
             camY = clamp(player.y(), halfH, maze.heightPx() - halfH);
         }
@@ -1166,12 +1201,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return max;
         }
         return value;
-    }
-
-    private static float distanceSquared(float x1, float y1, float x2, float y2) {
-        float dx = x1 - x2;
-        float dy = y1 - y2;
-        return dx * dx + dy * dy;
     }
 
     private void switchToStartMenu(boolean fromGame) {
@@ -1201,34 +1230,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
         pathPenaltyPoints += dt * ROUTE_HINT_PENALTY_PER_SEC;
     }
 
-    private void handleEnemyCollisions(float dt) {
-        if (mode != Mode.PLAYING || player == null) {
-            return;
+    private List<EnemySpawn> currentEnemyContacts() {
+        if (animatedEnemies.isEmpty()) {
+            return List.of();
         }
-        contactDamageCooldown = Math.max(0f, contactDamageCooldown - dt);
-        if (contactDamageCooldown > 0f) {
-            return;
-        }
-
-        float playerRadius = player.halfSize();
+        List<EnemySpawn> contacts = new ArrayList<>(animatedEnemies.size());
         for (EnemyRuntime enemy : animatedEnemies) {
-            float enemyRadius = enemy.size * 0.5f;
-            float allowed = playerRadius + enemyRadius + CONTACT_HIT_DISTANCE_PADDING;
-            if (distanceSquared(player.x(), player.y(), enemy.x, enemy.y) <= allowed * allowed) {
-                currentHp = Math.max(0f, currentHp - CONTACT_DAMAGE);
-                currentHpRatio = Math.max(0f, currentHp / PLAYER_MAX_HP);
-                contactDamageCooldown = CONTACT_DAMAGE_COOLDOWN_SEC;
-                if (currentHp <= 0f) {
-                    mode = Mode.GAME_OVER;
-                    if (!playedGameOverSound) {
-                        playedGameOverSound = true;
-                        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                        AudioEngine.get().play(ResourceFileConstants.GameOverSound);
-                    }
-                }
-                break;
-            }
+            contacts.add(enemy.contactSnapshot());
         }
+        return contacts;
     }
 
     private int currentScore() {
@@ -1315,6 +1325,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private static final class EnemyRuntime {
+        private final EnemySpawn spawn;
         private final String imagePath;
         private final float size;
         private final float baseX;
@@ -1325,7 +1336,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private float x;
         private float y;
 
-        private EnemyRuntime(String imagePath, float size, float baseX, float baseY, float radius, float speed, float phase) {
+        private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float radius, float speed, float phase) {
+            this.spawn = spawn;
             this.imagePath = imagePath;
             this.size = size;
             this.baseX = baseX;
@@ -1341,7 +1353,20 @@ public final class GdxGameScreen extends ApplicationAdapter {
             float radius = Math.max(8f, spawn.size() * 0.35f);
             float speed = 0.9f + (index % 5) * 0.25f;
             float phase = index * 0.8f;
-            return new EnemyRuntime(spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), radius, speed, phase);
+            return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), radius, speed, phase);
+        }
+
+        private EnemySpawn contactSnapshot() {
+            return new EnemySpawn(
+                    spawn.id(),
+                    spawn.imagePath(),
+                    x,
+                    y,
+                    spawn.size(),
+                    spawn.effectiveThreat(),
+                    spawn.attackDamage(),
+                    spawn.infectionLevel(),
+                    spawn.touchSoundPath());
         }
 
         private void update(float t, float maxX, float maxY) {

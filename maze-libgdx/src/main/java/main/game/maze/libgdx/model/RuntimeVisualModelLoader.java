@@ -69,8 +69,10 @@ public final class RuntimeVisualModelLoader {
 
         return new RuntimeVisualModel(
                 normalizePath(playerConfig.imageBase()),
+            normalizePath(playerConfig.imageDeath()),
                 (float) Math.max(1.0d, playerConfig.speed()),
                 StageConstants.PlayerCharacterXYSize,
+            Math.max(1, playerConfig.health()),
                 style.backgroundImageForDifficultyName(difficultyName(difficulty)),
                 wallDefinition != null ? normalizePath(wallDefinition.baseImage) : "/main/game/maze/woodWall.png",
                 normalizePath(style.goalImagePath()),
@@ -147,7 +149,19 @@ public final class RuntimeVisualModelLoader {
                     if (!isValidSpawn(arena, x, y, size, widthPx, heightPx, startX, startY, goalX, goalY)) {
                         continue;
                     }
-                    accepted = new EnemySpawn(defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type)), x, y, size, threat);
+                    int attackDamage = Math.max(0, attackDamageFor(picked));
+                    int infectionLevel = infectionLevelFor(picked);
+                    String touchSound = touchSoundFor(picked);
+                    accepted = new EnemySpawn(
+                            defaultIfBlank(picked.getId(), type.name().toLowerCase(Locale.ROOT) + "_" + i),
+                            defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type)),
+                            x,
+                            y,
+                            size,
+                            threat,
+                            attackDamage,
+                            infectionLevel,
+                            touchSound);
                     break;
                 }
                 if (accepted != null) {
@@ -228,6 +242,33 @@ public final class RuntimeVisualModelLoader {
             case GHOST -> "/main/game/maze/ghost1.png";
             case PUMPKINBOMBER -> "/main/game/maze/pumpkinbomber.png";
         };
+    }
+
+    private static int attackDamageFor(CharacterType type) {
+        if (type instanceof Zombie zombie) {
+            return zombie.getAttackDamage();
+        }
+        if (type instanceof Ghost ghost) {
+            return ghost.getAttackDamage();
+        }
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return pumpkinBomber.getAttackDamage();
+        }
+        return 0;
+    }
+
+    private static int infectionLevelFor(CharacterType type) {
+        if (type instanceof Zombie zombie) {
+            return zombie.getInfectionLevel();
+        }
+        return 0;
+    }
+
+    private static String touchSoundFor(CharacterType type) {
+        if (type instanceof Zombie zombie) {
+            return defaultIfBlank(zombie.getTouchSound(), "/main/game/maze/zombieScream.mp3");
+        }
+        return "";
     }
 
     private static boolean isValidSpawn(
