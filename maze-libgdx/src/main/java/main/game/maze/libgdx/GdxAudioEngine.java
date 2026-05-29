@@ -1,6 +1,7 @@
 package main.game.maze.libgdx;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +25,8 @@ public final class GdxAudioEngine implements IAudioEngine {
     private static final Logger LOGGER = Logger.getLogger(GdxAudioEngine.class.getName());
 
     private final ConcurrentHashMap<String, Sound> soundsByResource = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Boolean> disabledResources = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, LoopState> loopsByChannel = new ConcurrentHashMap<>();
+    private final Set<String> disabledResources = ConcurrentHashMap.newKeySet();
     private final ConcurrentHashMap<String, Long> lastPlayedAtMs = new ConcurrentHashMap<>();
 
     @Override
@@ -35,7 +37,7 @@ public final class GdxAudioEngine implements IAudioEngine {
     @Override
     public void playRateLimited(String resourcePath, String soundId, long cooldownMs) {
         if (resourcePath == null || resourcePath.isBlank()) return;
-        if (Boolean.TRUE.equals(disabledResources.get(resourcePath))) return;
+        if (disabledResources.contains(resourcePath)) return;
         if (Gdx.audio == null || Gdx.files == null) return;
 
         String key = soundId == null ? resourcePath : soundId;
@@ -50,7 +52,7 @@ public final class GdxAudioEngine implements IAudioEngine {
 
         Sound sound = soundsByResource.computeIfAbsent(resourcePath, this::buildSound);
         if (sound == null) {
-            disabledResources.put(resourcePath, Boolean.TRUE);
+            disabledResources.add(resourcePath);
             return;
         }
 
@@ -62,7 +64,45 @@ public final class GdxAudioEngine implements IAudioEngine {
     }
 
     @Override
+    public void playLoop(String resourcePath, String channelId) {
+        if (resourcePath == null || resourcePath.isBlank()) return;
+        if (channelId == null || channelId.isBlank()) return;
+        if (disabledResources.contains(resourcePath)) return;
+        if (Gdx.audio == null || Gdx.files == null) return;
+
+        Sound sound = soundsByResource.computeIfAbsent(resourcePath, this::buildSound);
+        if (sound == null) {
+            disabledResources.add(resourcePath);
+            return;
+        }
+
+        stopChannel(channelId);
+        try {
+            long playbackId = sound.loop();
+            loopsByChannel.put(channelId, new LoopState(sound, playbackId));
+        } catch (Exception ex) {
+            LOGGER.log(Level.FINE, "Failed to loop " + resourcePath + " on channel " + channelId, ex);
+        }
+    }
+
+    @Override
+    public void stopChannel(String channelId) {
+        if (channelId == null || channelId.isBlank()) return;
+        LoopState state = loopsByChannel.remove(channelId);
+        if (state == null) return;
+        try {
+            state.sound.stop(state.playbackId);
+        } catch (Exception ignored) {
+            // best-effort stop
+        }
+    }
+
+    @Override
     public void dispose() {
+        for (String channelId : loopsByChannel.keySet()) {
+            stopChannel(channelId);
+        }
+        loopsByChannel.clear();
         for (Sound sound : soundsByResource.values()) {
             try {
                 sound.dispose();
@@ -73,6 +113,16 @@ public final class GdxAudioEngine implements IAudioEngine {
         soundsByResource.clear();
         disabledResources.clear();
         lastPlayedAtMs.clear();
+    }
+
+    private static final class LoopState {
+        private final Sound sound;
+        private final long playbackId;
+
+        private LoopState(Sound sound, long playbackId) {
+            this.sound = sound;
+            this.playbackId = playbackId;
+        }
     }
 
     private Sound buildSound(String resourcePath) {

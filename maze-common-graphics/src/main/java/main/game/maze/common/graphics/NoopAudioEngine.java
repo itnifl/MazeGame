@@ -23,6 +23,16 @@ public final class NoopAudioEngine implements IAudioEngine {
     }
 
     @Override
+    public void playLoop(String resourcePath, String channelId) {
+        playedResources.add(resourcePath);
+    }
+
+    @Override
+    public void stopChannel(String channelId) {
+        // noop
+    }
+
+    @Override
     public void dispose() {
         playedResources.clear();
     }

@@ -8,11 +8,9 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.scene.media.Media;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -33,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class App extends Application {
-    public static MediaPlayer inGameMediaPlayer;
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
 
@@ -63,10 +60,8 @@ public class App extends Application {
 
             gameController.setupGame();
 
-            // Start playing the music
-            MediaView view = addMusic();
-            root.getChildren().add(view);
-            inGameMediaPlayer.play();
+            // Start looping background music via backend-agnostic audio engine.
+            AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, "music.inGame");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -181,14 +176,6 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
-
-    private MediaView addMusic() {
-        var resource = getClass().getResource(ResourceFileConstants.BackgroundMusic);
-        Media media = new Media(resource.toString());
-        inGameMediaPlayer = new MediaPlayer(media);
-        inGameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        return new MediaView(inGameMediaPlayer);
     }
 
     private void setWindowIcon(Stage stage) {

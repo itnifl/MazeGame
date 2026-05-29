@@ -6,10 +6,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.GameController;
-import main.game.maze.GameOverController;
-import main.game.maze.WinGameController;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.actions.base.ActionScreens;
+import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.common.graphics.AudioEngine;
 
@@ -27,18 +26,9 @@ public class RestartGameAction extends ActionScreens {
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
-                    
-        if (WinGameController.winGameMediaPlayer != null) {
-            WinGameController.winGameMediaPlayer.stop();
-        }
-         if (WinGameController.winGameMediaPlayerComment != null) {
-            WinGameController.winGameMediaPlayerComment.stop();
-        }
-        if (GameOverController.gameOverMediaPlayer != null) {
-            GameOverController.gameOverMediaPlayer.stop();
-        }
+
         AudioEngine.get().dispose();
-        App.inGameMediaPlayer.play();
+        AudioEngine.get().playLoop(ResourceFileConstants.BackgroundMusic, "music.inGame");
 
         try {
             if (root == null || root.getScene() == null) {

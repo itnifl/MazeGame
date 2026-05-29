@@ -32,6 +32,16 @@ public interface IAudioEngine {
      */
     void playRateLimited(String resourcePath, String soundId, long cooldownMs);
 
+    /**
+     * Starts looping playback for the given logical channel.
+     */
+    void playLoop(String resourcePath, String channelId);
+
+    /**
+     * Stops playback for a logical channel started via {@link #playLoop}.
+     */
+    void stopChannel(String channelId);
+
     /** Stops all active playback and releases backing resources. */
     void dispose();
 }

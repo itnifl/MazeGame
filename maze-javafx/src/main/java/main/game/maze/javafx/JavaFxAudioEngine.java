@@ -2,6 +2,7 @@ package main.game.maze.javafx;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +30,8 @@ public final class JavaFxAudioEngine implements IAudioEngine {
     private static final Logger LOGGER = Logger.getLogger(JavaFxAudioEngine.class.getName());
 
     private final ConcurrentHashMap<String, MediaPlayer> playersByResource = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Boolean> disabledResources = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, MediaPlayer> loopPlayersByChannel = new ConcurrentHashMap<>();
+    private final Set<String> disabledResources = ConcurrentHashMap.newKeySet();
     private final ConcurrentHashMap<String, Long> lastPlayedAtMs = new ConcurrentHashMap<>();
 
     @Override
@@ -40,7 +42,7 @@ public final class JavaFxAudioEngine implements IAudioEngine {
     @Override
     public void playRateLimited(String resourcePath, String soundId, long cooldownMs) {
         if (resourcePath == null || resourcePath.isBlank()) return;
-        if (Boolean.TRUE.equals(disabledResources.get(resourcePath))) return;
+        if (disabledResources.contains(resourcePath)) return;
 
         String key = soundId == null ? resourcePath : soundId;
         if (cooldownMs > 0) {
@@ -54,7 +56,7 @@ public final class JavaFxAudioEngine implements IAudioEngine {
 
         MediaPlayer player = playersByResource.computeIfAbsent(resourcePath, this::buildPlayer);
         if (player == null) {
-            disabledResources.put(resourcePath, Boolean.TRUE);
+            disabledResources.add(resourcePath);
             return;
         }
 
@@ -72,14 +74,46 @@ public final class JavaFxAudioEngine implements IAudioEngine {
     }
 
     @Override
-    public void dispose() {
-        for (MediaPlayer player : playersByResource.values()) {
+    public void playLoop(String resourcePath, String channelId) {
+        if (resourcePath == null || resourcePath.isBlank()) return;
+        if (channelId == null || channelId.isBlank()) return;
+        if (disabledResources.contains(resourcePath)) return;
+
+        MediaPlayer next = buildPlayer(resourcePath);
+        if (next == null) {
+            disabledResources.add(resourcePath);
+            return;
+        }
+
+        next.setCycleCount(MediaPlayer.INDEFINITE);
+        MediaPlayer previous = loopPlayersByChannel.put(channelId, next);
+        UiScheduler.get().runOnUiThread(() -> {
             try {
-                player.stop();
-                player.dispose();
-            } catch (Exception ignored) {
-                // best-effort cleanup
+                stopAndDispose(previous);
+                next.seek(Duration.ZERO);
+                next.play();
+            } catch (Exception ex) {
+                LOGGER.log(Level.FINE, "Failed to loop " + resourcePath + " on channel " + channelId, ex);
             }
+        });
+    }
+
+    @Override
+    public void stopChannel(String channelId) {
+        if (channelId == null || channelId.isBlank()) return;
+        MediaPlayer player = loopPlayersByChannel.remove(channelId);
+        if (player == null) return;
+        UiScheduler.get().runOnUiThread(() -> stopAndDispose(player));
+    }
+
+    @Override
+    public void dispose() {
+        for (MediaPlayer loopPlayer : loopPlayersByChannel.values()) {
+            stopAndDispose(loopPlayer);
+        }
+        loopPlayersByChannel.clear();
+        for (MediaPlayer player : playersByResource.values()) {
+            stopAndDispose(player);
         }
         playersByResource.clear();
         disabledResources.clear();
@@ -98,6 +132,16 @@ public final class JavaFxAudioEngine implements IAudioEngine {
         } catch (Exception ex) {
             LOGGER.warning("Cannot load audio " + resourcePath + ": " + ex.getMessage());
             return null;
+        }
+    }
+
+    private static void stopAndDispose(MediaPlayer player) {
+        if (player == null) return;
+        try {
+            player.stop();
+            player.dispose();
+        } catch (Exception ignored) {
+            // best-effort cleanup
         }
     }
 }

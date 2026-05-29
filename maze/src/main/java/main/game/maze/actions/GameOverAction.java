@@ -17,6 +17,7 @@ import main.game.maze.GameOverController;
 import main.game.maze.actions.base.CharacterActionScreens;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
+import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.ScreenNameConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
@@ -76,6 +77,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();
         }
+        AudioEngine.get().stopChannel("music.inGame");
         runnableOnGameOver.run();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));

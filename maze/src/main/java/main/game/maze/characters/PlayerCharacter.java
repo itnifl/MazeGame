@@ -30,6 +30,7 @@ import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.AnimationEngine;
 import main.game.maze.common.graphics.IAnimationHandle;
+import main.game.maze.common.graphics.ICharacterStatePresenter;
 import main.game.maze.common.graphics.UiScheduler;
 import java.util.EnumMap;
 import java.util.Map;
@@ -40,10 +41,9 @@ public class PlayerCharacter extends Character
     private static final Logger LOGGER = Logger.getLogger(PlayerCharacter.class.getName());
     public static final int MAX_PLAYER_HP = 100;
     private AtomicInteger hitPoints = new AtomicInteger(MAX_PLAYER_HP);
-    private static final Object lockObjectForHpbar = new Object();
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
-    private ProgressBar hpBar;
+    private ICharacterStatePresenter statePresenter;
     private static final long SOUND_COOLDOWN_MS = 250L;
     private static final double DEAD_PLAYER_SCALE = 1.2;
     private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
@@ -60,11 +60,19 @@ public class PlayerCharacter extends Character
     }
 
     public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar, PlayerConfig playerConfig) {
+        this(characterGraphics, x, y,
+            hpBar == null ? null : new ProgressBarStatePresenter(hpBar),
+            playerConfig);
+    }
+
+    public PlayerCharacter(Node characterGraphics, double x, double y,
+                           ICharacterStatePresenter statePresenter,
+                           PlayerConfig playerConfig) {
         super(characterGraphics, x, y);
         this.characterXYSizeFromPoint = StageConstants.PlayerCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
-        this.hpBar = hpBar;
+        this.statePresenter = statePresenter;
         this.playerConfig = playerConfig == null ? PlayerConfig.defaults() : playerConfig;
         this.maxHitPoints = Math.max(1, this.playerConfig.health());
         this.hitPoints.set(this.maxHitPoints);
@@ -72,13 +80,10 @@ public class PlayerCharacter extends Character
     }
 
     private void updateHpBarProgress() {
-        synchronized (lockObjectForHpbar) {
-            if (hpBar == null) {
-                return;
-            }
-            double normalizedProgress = hitPoints.get() / (double) maxHitPoints;
-            hpBar.setProgress(Math.max(0.0, Math.min(1.0, normalizedProgress)));
-        }
+        ICharacterStatePresenter presenter = statePresenter;
+        if (presenter == null) return;
+        double normalizedProgress = hitPoints.get() / (double) maxHitPoints;
+        presenter.showHealthRatio(normalizedProgress);
     }
 
     private void configureDirectionalImages() {
@@ -265,7 +270,7 @@ public class PlayerCharacter extends Character
     }
 
     private void doStandardScreamSound() {
-        if (hpBar == null) {
+        if (statePresenter == null) {
             return;
         }
         AudioEngine.get().playRateLimited(
@@ -275,7 +280,7 @@ public class PlayerCharacter extends Character
     }
 
     private void doInfectedScreamSound() {
-        if (hpBar == null) {
+        if (statePresenter == null) {
             return;
         }
         AudioEngine.get().playRateLimited(
@@ -285,7 +290,7 @@ public class PlayerCharacter extends Character
     }
 
     private void flashCharacterColor(ImageView imageView, double colorHue) {
-        if (imageView == null || hpBar == null) 
+        if (imageView == null || statePresenter == null)
             return;
 
         ColorAdjust colorAdjust = new ColorAdjust();
@@ -346,11 +351,10 @@ public class PlayerCharacter extends Character
         deathSubscribers.clear();
         touchKillers.clear();
 
-        synchronized (lockObjectForHpbar) {
-            if (hpBar != null && hpBar.progressProperty().isBound()) {
-                hpBar.progressProperty().unbind();
-            }
-            hpBar = null;
+        ICharacterStatePresenter presenter = statePresenter;
+        statePresenter = null;
+        if (presenter != null) {
+            presenter.dispose();
         }
 
         // finally, let the base class clean up node + references
