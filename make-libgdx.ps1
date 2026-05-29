@@ -10,11 +10,10 @@ Set-Location $scriptRoot
 # Config
 $Mvn               = 'mvn'
 $LibgdxModules     = 'maze-common-frontend,maze-libgdx'
-$RequiredJavaMajor = 21
 
 # Reuse the shared Java 21 helpers from make-javafx.ps1. They live in the same file in this repo,
 # so we dot-source it but suppress its top-level switch by stripping the argument.
-. "$scriptRoot\make-javafx.ps1" -Target help *> $null 2>&1
+. (Join-Path $scriptRoot 'make-javafx.ps1') -Target help *> $null 2>&1
 
 # The dot-source above evaluates make-javafx.ps1 with -Target help (which only prints usage and
 # defines all functions). That is enough to expose Get-Java21Home / Use-Java21OrFail / etc. for us.
