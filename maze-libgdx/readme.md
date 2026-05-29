@@ -62,8 +62,11 @@ That target builds `maze-common-frontend` and `maze-libgdx` (copying the
 runtime libs into `maze-libgdx/target/libs`), then launches:
 
 ```powershell
-java -cp "maze-libgdx/target/classes;maze-libgdx/target/libs/*;maze-common-frontend/target/classes" main.game.maze.libgdx.GdxAppLauncher
+java -cp "maze-libgdx/target/classes${([IO.Path]::PathSeparator)}maze-libgdx/target/libs/*${([IO.Path]::PathSeparator)}maze-common-frontend/target/classes" main.game.maze.libgdx.GdxAppLauncher
 ```
+
+The script applies `-XstartOnFirstThread` automatically on macOS only, and
+does not add that flag on Windows or Linux.
 
 ## Building and testing
 

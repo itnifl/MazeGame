@@ -93,9 +93,21 @@ function Invoke-LibgdxRun {
         'maze-libgdx/target/libs/*',
         'maze-common-frontend/target/classes'
     ) -join $sep
-    $javaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin/java' } else { 'java' }
-    Write-Host "=== Launching libGDX backend: $javaExe -cp `"$classpath`" main.game.maze.libgdx.GdxAppLauncher ===" -ForegroundColor Cyan
-    & $javaExe -cp $classpath main.game.maze.libgdx.GdxAppLauncher
+    $javaExe = if ($env:JAVA_HOME) {
+        Get-JavaExecutablePathForHome $env:JAVA_HOME
+    } else {
+        'java'
+    }
+
+    $platformVmArgs = @()
+    if ((Get-OSKind) -eq 'macos') {
+        # LWJGL requires first-thread startup on macOS.
+        $platformVmArgs += '-XstartOnFirstThread'
+    }
+
+    $vmArgsText = if ($platformVmArgs.Count -gt 0) { ($platformVmArgs -join ' ') + ' ' } else { '' }
+    Write-Host "=== Launching libGDX backend: $javaExe $vmArgsText-cp `"$classpath`" main.game.maze.libgdx.GdxAppLauncher ===" -ForegroundColor Cyan
+    & $javaExe @platformVmArgs -cp $classpath main.game.maze.libgdx.GdxAppLauncher
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX backend exited with code $exit."

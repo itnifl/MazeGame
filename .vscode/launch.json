@@ -25,9 +25,11 @@
             "envFile": "${workspaceFolder}/.vscode/maze.launch.env",
             "mainClass": "main.game.maze.libgdx.GdxAppLauncher",
             "projectName": "maze-libgdx",
-            "vmArgs": [
-                "-XstartOnFirstThread"
-            ]
+            "osx": {
+                "vmArgs": [
+                    "-XstartOnFirstThread"
+                ]
+            }
         }
     ]
 }
