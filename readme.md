@@ -9,6 +9,9 @@
 * 🧩 [main.game.maze.difficulties](main.game.maze.difficulties/readme.md)
 * 🧩 [main.game.maze.opponents](main.game.maze.opponents/readme.md)
 * 📝 [main.game.maze.dsl](main.game.maze.dsl/readme.md) - **Xtext DSL for game configuration**
+* 📝 [main.game.maze.dsl.ide](main.game.maze.dsl.ide/readme.md)
+* 📝 [main.game.maze.dsl.ui](main.game.maze.dsl.ui/readme.md)
+* 📝 [main.game.maze.dsl.tests](main.game.maze.dsl.tests/readme.md)
 * 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
 * 📚 [Technology Layman's Guide](docs/technology-laymans-guide.md) - **Simple explanations of Xtext, metamodels, and FreeMarker**
 * 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
@@ -282,6 +285,21 @@ See: [main.game.maze.opponents/readme.md](main.game.maze.opponents/readme.md)
 Xtext-based Domain-Specific Language for game configuration. Provides a human-readable textual syntax for defining game levels, opponents, difficulties, patrol behaviors, and loot tables. Generates Java factory classes and XMI model instances.  
 See: [main.game.maze.dsl/readme.md](main.game.maze.dsl/readme.md)  
 Reference: [DSL Reference Guide](docs/dsl-reference.md) | [DSL Tutorial](docs/dsl-tutorial.md)
+
+### main.game.maze.dsl.ide
+
+IDE and language server module for the DSL. Provides editor and indexing integration for development workflows.
+See: [main.game.maze.dsl.ide/readme.md](main.game.maze.dsl.ide/readme.md)
+
+### main.game.maze.dsl.ui
+
+Eclipse UI integration for the DSL, including content assist and editor behavior.
+See: [main.game.maze.dsl.ui/readme.md](main.game.maze.dsl.ui/readme.md)
+
+### main.game.maze.dsl.tests
+
+Automated test module for DSL parsing, validation, and integration behavior.
+See: [main.game.maze.dsl.tests/readme.md](main.game.maze.dsl.tests/readme.md)
 
 ### maze
 

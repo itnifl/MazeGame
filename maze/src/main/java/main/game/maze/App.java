@@ -2,6 +2,7 @@
 package main.game.maze;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceDialog;
@@ -30,10 +31,12 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class App extends Application {
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
+    private final AtomicBoolean shutdownInvoked = new AtomicBoolean(false);
 
 
     @Override
@@ -57,6 +60,7 @@ public class App extends Application {
             // --------------------------------------------------------
             applySizeForCurrentDifficulty(primaryStage);
             primaryStage.setResizable(false);
+            primaryStage.setOnCloseRequest(event -> forceShutdownAndExit());
             primaryStage.show();
 
             gameController.setupGame();
@@ -179,6 +183,12 @@ public class App extends Application {
         launch(args);
     }
 
+    @Override
+    public void stop() {
+        // JavaFX calls stop() during normal shutdown paths; keep cleanup idempotent.
+        shutdownResources();
+    }
+
     private void setWindowIcon(Stage stage) {
         try {
             var icon = getClass().getResource("/main/game/maze/ghost1.png");
@@ -195,5 +205,31 @@ public class App extends Application {
         if (d == null) return "";
         String n = d.eClass().getName(); // e.g., NormalDifficulty
         return n.endsWith("Difficulty") ? n.substring(0, n.length() - 10) : n;
+    }
+
+    private void shutdownResources() {
+        if (!shutdownInvoked.compareAndSet(false, true)) {
+            return;
+        }
+        try {
+            if (App.gameController != null) {
+                App.gameController.dispose();
+                App.gameController = null;
+            }
+        } catch (Exception ignored) {
+            // Best-effort cleanup during shutdown.
+        }
+
+        try {
+            AudioEngine.get().dispose();
+        } catch (Exception ignored) {
+            // Best-effort cleanup during shutdown.
+        }
+    }
+
+    private void forceShutdownAndExit() {
+        shutdownResources();
+        Platform.exit();
+        System.exit(0);
     }
 }

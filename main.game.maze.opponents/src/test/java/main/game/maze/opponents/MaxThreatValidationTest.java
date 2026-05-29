@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import main.game.maze.difficulties.*;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.ocl.ecore.delegate.OCLDelegateDomain;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
@@ -22,9 +21,11 @@ import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
 
 class MaxThreatValidationTest {
 
+  private static final String OCL_DELEGATE_URI = "http://www.eclipse.org/emf/2002/Ecore/OCL";
+
   @BeforeAll
   static void initDelegates() {
-    var uri = OCLDelegateDomain.OCL_DELEGATE_URI; // "http://www.eclipse.org/emf/2002/Ecore/OCL"
+    var uri = OCL_DELEGATE_URI;
     EOperation.Internal.InvocationDelegate.Factory.Registry.INSTANCE.put(
         uri, new OCLInvocationDelegateFactory.Global());
     EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.put(

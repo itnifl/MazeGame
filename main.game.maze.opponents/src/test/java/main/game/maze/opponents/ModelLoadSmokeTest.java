@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.ocl.ecore.delegate.OCLDelegateDomain;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
@@ -25,9 +24,11 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 public class ModelLoadSmokeTest {
 
+  private static final String OCL_DELEGATE_URI = "http://www.eclipse.org/emf/2002/Ecore/OCL";
+
   @BeforeAll
   static void setup() {
-        var uri = OCLDelegateDomain.OCL_DELEGATE_URI; // "http://www.eclipse.org/emf/2002/Ecore/OCL"
+        var uri = OCL_DELEGATE_URI;
     EOperation.Internal.InvocationDelegate.Factory.Registry.INSTANCE.put(
         uri, new OCLInvocationDelegateFactory.Global());
     EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.put(
