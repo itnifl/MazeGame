@@ -86,4 +86,34 @@ class PropertiesMazeConfigLoaderTest {
         assertThrows(IllegalArgumentException.class,
             () -> new MazeRuntimeConfig(100, 100, 1, 1, 1f, -1f, true));
     }
+
+    @Test
+    void rejectsNonFiniteFloatInvariants() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new MazeRuntimeConfig(100, 100, 1, 1, Float.NaN, 1f, true));
+        assertThrows(IllegalArgumentException.class,
+            () -> new MazeRuntimeConfig(100, 100, 1, 1, Float.POSITIVE_INFINITY, 1f, true));
+        assertThrows(IllegalArgumentException.class,
+            () -> new MazeRuntimeConfig(100, 100, 1, 1, 1f, Float.NaN, true));
+        assertThrows(IllegalArgumentException.class,
+            () -> new MazeRuntimeConfig(100, 100, 1, 1, 1f, Float.NEGATIVE_INFINITY, true));
+    }
+
+    @Test
+    void malformedBooleanFailsLoudly(@TempDir Path dir) throws IOException {
+        Path p = dir.resolve("bad-bool.properties");
+        Files.writeString(p, "useRealMaze=yes\n");
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> PropertiesMazeConfigLoader.fromFile(p).load());
+        assertTrue(ex.getMessage().contains("useRealMaze"));
+    }
+
+    @Test
+    void booleanAcceptsTrueFalseCaseInsensitively(@TempDir Path dir) throws IOException {
+        Path p = dir.resolve("bool.properties");
+        Files.writeString(p, "useRealMaze=FALSE\n");
+        assertFalse(PropertiesMazeConfigLoader.fromFile(p).load().useRealMaze());
+        Files.writeString(p, "useRealMaze=True\n");
+        assertTrue(PropertiesMazeConfigLoader.fromFile(p).load().useRealMaze());
+    }
 }

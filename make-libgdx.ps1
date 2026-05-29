@@ -87,9 +87,15 @@ function Ensure-LibgdxLaunchClasses {
 
 function Invoke-LibgdxRun {
     Ensure-LibgdxLaunchClasses
-    $classpath = "maze-libgdx/target/classes;maze-libgdx/target/libs/*;maze-common-graphics/target/classes"
-    Write-Host "=== Launching libGDX backend: java -cp `"$classpath`" main.game.maze.libgdx.GdxAppLauncher ===" -ForegroundColor Cyan
-    & java -cp $classpath main.game.maze.libgdx.GdxAppLauncher
+    $sep = [IO.Path]::PathSeparator
+    $classpath = @(
+        'maze-libgdx/target/classes',
+        'maze-libgdx/target/libs/*',
+        'maze-common-graphics/target/classes'
+    ) -join $sep
+    $javaExe = if ($env:JAVA_HOME) { Join-Path $env:JAVA_HOME 'bin/java' } else { 'java' }
+    Write-Host "=== Launching libGDX backend: $javaExe -cp `"$classpath`" main.game.maze.libgdx.GdxAppLauncher ===" -ForegroundColor Cyan
+    & $javaExe -cp $classpath main.game.maze.libgdx.GdxAppLauncher
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX backend exited with code $exit."

@@ -6,10 +6,13 @@ libGDX implementations of the facades defined in
 
 ## Status
 
-Phase 2 (current): a runnable gameplay subset ships in this module. The
-launcher opens a real LWJGL3 window and drops you straight into a
-procedurally generated maze with arrow-key controls and a goal cell. The
-deeper game pipeline (characters, opponents, behaviours, DSL-driven
+Phase 3 / 4 (current): the runnable gameplay subset now supports both the
+standalone `SampleMaze` placeholder and the shared `RealMaze` adapter
+(Phase 3, F11), selectable at runtime via `MazeRuntimeConfig` / the
+properties loader (Phase 4, F16). The launcher opens a real LWJGL3 window
+and drops you straight into either a procedurally generated maze or the
+shared `GameMazeWorld` arena with arrow-key controls and a goal cell. The
+deeper game pipeline (characters, opponents, behaviours, full DSL-driven
 configuration) still lives in Tycho-packaged Eclipse plugins; those
 bundles will be repackaged as plain Maven jars before the libGDX module
 consumes them. See [missing-feature.md](../missing-feature.md) for the
@@ -31,7 +34,9 @@ gap list.
 | --- | --- |
 | `GdxAppLauncher` | `main()` that boots `Lwjgl3Application` with `GdxGameScreen`. |
 | `GdxGameScreen` | `ApplicationAdapter` that owns the camera, batch, shape renderer, font, and per-frame update + draw. |
+| `game.MazeArena` | Pure-Java arena facade (walls, start, goal, pixel dimensions) implemented by both maze backends. |
 | `game.SampleMaze` | Pure-Java maze generator (no libGDX deps); produces the immutable wall list. |
+| `game.RealMaze` | Pure-Java `MazeArena` adapter over the shared `GameMazeWorld` (Phase 3, F11). |
 | `game.WallSegment` | Pure-Java axis-aligned wall data class. |
 | `game.PlayerState` | Pure-Java player position + axis-separated collision against walls. |
 | `GdxUiScheduler` | Posts work via `Gdx.app.postRunnable`; falls back to inline execution before libGDX is initialised. |
@@ -77,7 +82,8 @@ mvn -pl maze-common-graphics,maze-libgdx -am test
 ## Tests
 
 - [GdxBackendTest](src/test/java/main/game/maze/libgdx/GdxBackendTest.java): adapters degrade gracefully without libGDX initialised.
-- [SampleMazeTest](src/test/java/main/game/maze/libgdx/game/SampleMazeTest.java): deterministic generation, axis-aligned walls, immutability, input validation.
+- [SampleMazeTest](src/test/java/main/game/maze/libgdx/game/SampleMazeTest.java): deterministic generation, axis-aligned walls, immutability, input validation, full-grid connectivity.
+- [RealMazeTest](src/test/java/main/game/maze/libgdx/game/RealMazeTest.java): `RealMaze` adapter exposes walls / start / goal derived from `GameMazeWorld`.
 - [PlayerStateTest](src/test/java/main/game/maze/libgdx/game/PlayerStateTest.java): collision resolution, border clamping, goal-proximity detection.
 
 ## Coordinate system

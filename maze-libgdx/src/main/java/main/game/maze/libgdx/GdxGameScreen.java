@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.libgdx.game.MazeArena;
 import main.game.maze.libgdx.game.PlayerState;
 import main.game.maze.libgdx.game.RealMaze;
@@ -28,16 +29,20 @@ import main.game.maze.libgdx.game.WallSegment;
  */
 public final class GdxGameScreen extends ApplicationAdapter {
 
-    private static final float CELL_SIZE = 48f;
-    private static final int COLS = 16;
-    private static final int ROWS = 12;
-    private static final float PLAYER_SIZE = CELL_SIZE * 0.5f;
-    private static final float PLAYER_SPEED = CELL_SIZE * 3.5f;
+    private static final float DEFAULT_CELL_SIZE = 48f;
+    private static final int DEFAULT_COLS = 16;
+    private static final int DEFAULT_ROWS = 12;
+    private static final float DEFAULT_PLAYER_SPEED = DEFAULT_CELL_SIZE * 3.5f;
     private static final float WALL_THICKNESS = 3f;
     private static final float GOAL_SIZE = 32f;
     private static final long SEED = 1L;
 
     private final MazeArena providedMaze;
+    private final float cellSize;
+    private final int cols;
+    private final int rows;
+    private final float playerSize;
+    private final float playerSpeed;
     private MazeArena maze;
     private PlayerState player;
     private SpriteBatch batch;
@@ -48,11 +53,24 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean won;
 
     public GdxGameScreen() {
-        this(null);
+        this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED);
     }
 
     public GdxGameScreen(MazeArena arena) {
+        this(arena, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED);
+    }
+
+    public GdxGameScreen(MazeArena arena, MazeRuntimeConfig cfg) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed());
+    }
+
+    public GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed) {
         this.providedMaze = arena;
+        this.cellSize = cellSize;
+        this.cols = cols;
+        this.rows = rows;
+        this.playerSize = cellSize * 0.5f;
+        this.playerSpeed = playerSpeed;
     }
 
     @Override
@@ -60,8 +78,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         GdxBackend.install();
         maze = providedMaze != null
             ? providedMaze
-            : new SampleMaze(COLS, ROWS, CELL_SIZE, SEED);
-        player = new PlayerState(maze.startX(), maze.startY(), PLAYER_SIZE);
+            : new SampleMaze(cols, rows, cellSize, SEED);
+        player = new PlayerState(maze.startX(), maze.startY(), playerSize);
         batch = new SpriteBatch();
         shapes = new ShapeRenderer();
         font = new BitmapFont();
@@ -94,7 +112,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             dx *= inv; dy *= inv;
         }
         if (dx != 0f || dy != 0f) {
-            player.attemptMove(dx * PLAYER_SPEED * dt, dy * PLAYER_SPEED * dt, maze);
+            player.attemptMove(dx * playerSpeed * dt, dy * playerSpeed * dt, maze);
         }
         if (player.reached(maze.goalX(), maze.goalY(), GOAL_SIZE * 0.5f)) {
             won = true;

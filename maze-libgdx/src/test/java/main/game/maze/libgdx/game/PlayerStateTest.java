@@ -35,8 +35,8 @@ class PlayerStateTest {
         float before = p.x();
         p.attemptMove(-1000f, 0f, m);
         // Cannot pass the left wall.
-        assertTrue(p.x() >= 8f, "player should remain inside the playfield");
-        assertEquals(before, p.x() < 0f ? p.x() : before, 0.001f);
+        assertTrue(p.x() >= p.halfSize(), "player should remain inside the playfield");
+        assertTrue(p.x() <= before, "leftward move should not increase x");
     }
 
     @Test

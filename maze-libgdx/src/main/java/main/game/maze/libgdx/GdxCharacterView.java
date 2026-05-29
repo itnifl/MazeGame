@@ -91,8 +91,8 @@ public final class GdxCharacterView implements ICharacterView {
             } catch (Exception ignored) {
                 // best-effort detach
             }
+            actor = null;
         });
-        actor = null;
     }
 
     @Override

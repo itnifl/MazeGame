@@ -106,6 +106,9 @@ public final class PropertiesMazeConfigLoader implements MazeConfigLoader {
     private static boolean boolProp(Properties p, String key, boolean fallback) {
         String v = p.getProperty(key);
         if (v == null || v.isBlank()) return fallback;
-        return Boolean.parseBoolean(v.trim());
+        String t = v.trim();
+        if (t.equalsIgnoreCase("true"))  return true;
+        if (t.equalsIgnoreCase("false")) return false;
+        throw new IllegalStateException("Invalid boolean for " + key + ": " + v);
     }
 }

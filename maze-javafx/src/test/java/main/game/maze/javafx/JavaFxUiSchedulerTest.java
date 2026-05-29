@@ -1,5 +1,6 @@
 package main.game.maze.javafx;
 
+import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.UiScheduler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,7 @@ class JavaFxUiSchedulerTest {
     @AfterEach
     void restoreDefault() {
         UiScheduler.reset();
+        AudioEngine.reset();
     }
 
     @Test

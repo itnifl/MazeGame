@@ -1,5 +1,8 @@
 package main.game.maze.libgdx;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -26,10 +29,12 @@ import main.game.maze.libgdx.game.SampleMaze;
  */
 public final class GdxAppLauncher {
 
+    private static final Logger LOGGER = Logger.getLogger(GdxAppLauncher.class.getName());
+
     private GdxAppLauncher() {}
 
     public static void main(String[] args) {
-        MazeRuntimeConfig cfg = new PropertiesMazeConfigLoader().load();
+        MazeRuntimeConfig cfg = loadOrDefault();
 
         Lwjgl3ApplicationConfiguration appConfig = new Lwjgl3ApplicationConfiguration();
         appConfig.setTitle("MazeGame (libGDX backend)");
@@ -40,6 +45,16 @@ public final class GdxAppLauncher {
             ? RealMaze.fresh(cfg.windowWidth(), cfg.windowHeight())
             : new SampleMaze(cfg.mazeCols(), cfg.mazeRows(), cfg.cellSize(), 1L);
 
-        new Lwjgl3Application(new GdxGameScreen(arena), appConfig);
+        new Lwjgl3Application(new GdxGameScreen(arena, cfg), appConfig);
+    }
+
+    static MazeRuntimeConfig loadOrDefault() {
+        try {
+            return new PropertiesMazeConfigLoader().load();
+        } catch (RuntimeException ex) {
+            LOGGER.log(Level.WARNING,
+                "Failed to load runtime config; falling back to MazeRuntimeConfig.DEFAULT", ex);
+            return MazeRuntimeConfig.DEFAULT;
+        }
     }
 }

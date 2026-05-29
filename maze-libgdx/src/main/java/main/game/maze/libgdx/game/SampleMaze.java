@@ -79,9 +79,9 @@ public final class SampleMaze implements MazeArena {
                 if (visited[nx][ny]) continue;
                 // Carve wall between (cx,cy) and (nx,ny).
                 switch (d) {
-                    case 0: top[cx][cy] = false; bottom[nx][ny] = false; break;
+                    case 0: bottom[cx][cy] = false; top[nx][ny] = false; break;
                     case 1: right[cx][cy] = false; left[nx][ny] = false; break;
-                    case 2: bottom[cx][cy] = false; top[nx][ny] = false; break;
+                    case 2: top[cx][cy] = false; bottom[nx][ny] = false; break;
                     case 3: left[cx][cy] = false; right[nx][ny] = false; break;
                     default: break;
                 }

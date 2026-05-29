@@ -1,5 +1,5 @@
 param(
-    [string]$LogDirectory = "releng\test-results-libgdx",
+    [string]$LogDirectory = (Join-Path 'releng' 'test-results-libgdx'),
     [ValidateSet('full','fast','fastest')]
     [string]$BuildMode = 'full'
 )
@@ -20,7 +20,7 @@ Write-Host "Logs              : $logFile"
 Write-Host "==============================================" -ForegroundColor Cyan
 
 # Reuse Java 21 detection from make-libgdx.ps1 (which in turn dot-sources make-javafx.ps1).
-. "$scriptRoot\make-libgdx.ps1" -Target help *> $null 2>&1
+. (Join-Path $scriptRoot 'make-libgdx.ps1') -Target help *> $null 2>&1
 
 $stepSummaries = New-Object System.Collections.Generic.List[object]
 

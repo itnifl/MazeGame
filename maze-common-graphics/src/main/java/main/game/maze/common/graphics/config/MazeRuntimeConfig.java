@@ -36,7 +36,7 @@ public record MazeRuntimeConfig(
         if (windowHeight <= 0) throw new IllegalArgumentException("windowHeight must be positive");
         if (mazeCols     <= 0) throw new IllegalArgumentException("mazeCols must be positive");
         if (mazeRows     <= 0) throw new IllegalArgumentException("mazeRows must be positive");
-        if (cellSize     <= 0f) throw new IllegalArgumentException("cellSize must be positive");
-        if (playerSpeed  <= 0f) throw new IllegalArgumentException("playerSpeed must be positive");
+        if (!Float.isFinite(cellSize)    || cellSize    <= 0f) throw new IllegalArgumentException("cellSize must be a positive finite value");
+        if (!Float.isFinite(playerSpeed) || playerSpeed <= 0f) throw new IllegalArgumentException("playerSpeed must be a positive finite value");
     }
 }
