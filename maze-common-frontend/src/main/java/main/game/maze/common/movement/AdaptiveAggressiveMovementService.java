@@ -30,6 +30,10 @@ public final class AdaptiveAggressiveMovementService {
 
     private final Map<String, RuntimeState> states = new HashMap<>();
 
+    public void reset() {
+        states.clear();
+    }
+
     public AggressiveMovementMode modeForEnemy(String enemyId) {
         if (enemyId == null) {
             return AggressiveMovementMode.DIRECTIONAL;

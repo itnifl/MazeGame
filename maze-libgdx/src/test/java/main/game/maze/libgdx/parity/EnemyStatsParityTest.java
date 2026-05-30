@@ -78,11 +78,15 @@ class EnemyStatsParityTest {
                         ? Integer.MAX_VALUE
                         : Math.max(1, EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult));
                 double libgdxSpeed = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, speedMult);
+                double javafxThreat = baseThreat;
+                double libgdxThreat = baseThreat;
+                int javafxHealth = baseHealth;
+                int libgdxHealth = baseHealth;
 
                 assertEquals(javafxDamage, libgdxDamage, "damage parity " + tag);
                 assertEquals(javafxSpeed, libgdxSpeed, 1e-9, "speed parity " + tag);
-                assertEquals(baseThreat, baseThreat, 1e-9, "threat parity " + tag);
-                assertEquals(baseHealth, baseHealth, "health parity " + tag);
+                assertEquals(javafxThreat, libgdxThreat, 1e-9, "threat parity " + tag);
+                assertEquals(javafxHealth, libgdxHealth, "health parity " + tag);
                 assertions += 4;
             }
         }

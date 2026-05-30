@@ -87,12 +87,14 @@ public final class OpponentRuntimeFactory {
         /* REFACTOR START Composition Resolver line 137-161 */
         var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
         if (diff == null) {
-            _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
+            _logger.warning("No selectedDifficulty set; spawning with default caps/multipliers.");
         } else {
             _logger.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
         }
         // 1) Key for the profile (e.g., "easy", "normal", "hard")
-        String key = diff.eClass().getName().toLowerCase(java.util.Locale.ROOT);
+        String key = diff != null
+                ? diff.eClass().getName().toLowerCase(java.util.Locale.ROOT)
+                : "default";
 
         // 2) Build caps from Difficulty (shared with libGDX via EnemySpawnPlanner)
         EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemySpawnPlanner.capsFromDifficulty(diff));
@@ -130,10 +132,10 @@ public final class OpponentRuntimeFactory {
         
         Map<EnemyTypes, Integer> target = resolver.resolve(key);
 
-        final int maxThreatByDifficulty = diff.getMaxThreat();
-        final double speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
-        final double dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
-        final boolean instantDeath = diff.isInstantDeath();
+        final int maxThreatByDifficulty = diff != null ? diff.getMaxThreat() : Integer.MAX_VALUE;
+        final double speedMultiplierByDifficulty = diff != null ? diff.getMonstersMovementSpeedMultiplier() : 1d;
+        final double dmgMultiplierByDifficulty = diff != null ? diff.getMonstersDamageMultiplier() : 1d;
+        final boolean instantDeath = diff != null && diff.isInstantDeath();
 
         /* REFACTOR END Composition Resolver line 137-161 */
         AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);

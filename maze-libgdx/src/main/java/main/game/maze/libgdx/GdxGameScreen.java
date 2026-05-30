@@ -1559,6 +1559,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         deathSequenceStarted = false;
         deathDisplayRemainingSeconds = 0f;
         animatedEnemies.clear();
+        adaptiveAggressiveMovementService.reset();
         pathPenaltyPoints = 0f;
         currentHpRatio = 1f;
         playerTintRed = 1f;

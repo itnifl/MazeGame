@@ -32,6 +32,13 @@ public final class ChasePlayerMovementService implements EnemyMovementService {
         double dy = world.playerY() - enemy.y();
         int altX = desired[0] == 0 ? (int) Math.signum(dx) : 0;
         int altY = desired[1] == 0 ? (int) Math.signum(dy) : 0;
+        if (altX != 0 && altY != 0) {
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                altY = 0;
+            } else {
+                altX = 0;
+            }
+        }
         if (altX != 0 || altY != 0) {
             attempt = tryStep(enemy, world, altX, altY);
             if (attempt.moved()) {

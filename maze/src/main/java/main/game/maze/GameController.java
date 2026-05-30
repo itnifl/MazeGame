@@ -638,6 +638,7 @@ public class GameController implements Initializable {
 
         player.requestFocus();
         gameBoard.requestFocus();
+        adaptiveAggressiveMovementService.reset();
         
         if (startDifficulty != null) {
             OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
