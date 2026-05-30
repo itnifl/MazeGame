@@ -28,6 +28,12 @@ runtime renderer is JavaFX, libGDX, or something else.
   blocked movement and keep it for up to 20 seconds before returning to
   directional chase. Wander and patrol use anti-loop scoring to avoid short
   repeating circles when alternate cardinal moves exist.
+- Shared live path snapshot support for enemy overlays:
+  `ActivePathPoint`,
+  `AdaptiveAggressiveMovementService.currentPathForEnemy(...)`, and
+  `PatrolMovementService.currentPathForEnemy(...)`.
+  Frontends use these APIs for `/showenemypath` and `/sep` so overlays show
+  the active runtime path being followed, rather than a newly computed path.
 
 ## Default behaviour with no backend installed
 

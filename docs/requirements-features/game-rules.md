@@ -145,3 +145,14 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-33**: Wander and patrol movement MUST avoid repeating short circular
   loops when alternatives are available. JavaFX and libGDX MUST use the same
   shared anti-loop wander logic so non-aggressive movement remains parity-safe.
+
+## Enemy path overlay and wander collision semantics
+
+- **GR-34**: `/showenemypath` and `/sep` MUST visualize the active runtime
+  path buffer each enemy is currently following (aggressive path-follow or
+  patrol path mode). Frontends MUST NOT substitute a newly computed
+  shortest-path to the player for this overlay.
+- **GR-35**: WANDER collision behavior MUST keep moving in the current
+  direction until blocked, then choose a random passable cardinal direction.
+  Immediate reverse is allowed when selected by random choice or when it is
+  the only passable option.
