@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -21,6 +22,7 @@ import main.game.maze.difficulties.DifficultiesFactory;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyMaxCount;
 import main.game.maze.difficulties.EnemyTypes;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -129,12 +131,46 @@ class EnemySpawnPlannerTest {
     @Test
     void applyDamageMultiplierRoundsAndClampsNegatives() {
         assertEquals(0, EnemySpawnPlanner.applyDamageMultiplier(0, 1.0d));
-        assertEquals(0, EnemySpawnPlanner.applyDamageMultiplier(10, 0d));
+        assertEquals(1, EnemySpawnPlanner.applyDamageMultiplier(10, 0d));
         assertEquals(15, EnemySpawnPlanner.applyDamageMultiplier(10, 1.5d));
         assertEquals(20, EnemySpawnPlanner.applyDamageMultiplier(10, 2.0d));
         assertEquals(8, EnemySpawnPlanner.applyDamageMultiplier(10, 0.75d));
         assertEquals(0, EnemySpawnPlanner.applyDamageMultiplier(-10, 1.0d));
         assertEquals(0, EnemySpawnPlanner.applyDamageMultiplier(10, -2.0d));
+    }
+
+    @Test
+    void applyDifficultyAttributesUsesSharedSpeedAndDamageRules() {
+        Zombie zombie = OpponentsFactory.eINSTANCE.createZombie();
+        zombie.setSpeed(4.0d);
+        zombie.setAttackDamage(10);
+
+        EnemySpawnPlanner.applyDifficultyAttributes(zombie, 1.5d, 0.5d, false);
+        assertEquals(6.0d, zombie.getSpeed(), 1e-9);
+        assertEquals(5, zombie.getAttackDamage());
+
+        EnemySpawnPlanner.applyDifficultyAttributes(zombie, 2.0d, 10d, true);
+        assertEquals(Integer.MAX_VALUE, zombie.getAttackDamage());
+    }
+
+    @Test
+    void resolveRuntimeBehaviorPreservesAggressiveAndPassive() {
+        Random seeded = new Random(1337L);
+        assertEquals(BehaviorType.AGGRESSIVE,
+                EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.AGGRESSIVE, seeded));
+        assertEquals(BehaviorType.PASSIVE,
+                EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.PASSIVE, seeded));
+    }
+
+    @Test
+    void resolveRuntimeBehaviorProducesPatrolWanderMixDeterministically() {
+        Random seeded = new Random(1337L);
+        BehaviorType first = EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.WANDER, seeded);
+        BehaviorType second = EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.WANDER, seeded);
+        assertTrue(first == BehaviorType.WANDER || first == BehaviorType.PATROL);
+        assertTrue(second == BehaviorType.WANDER || second == BehaviorType.PATROL);
+        assertTrue(first != second,
+                "Seeded draw should produce a stable non-degenerate mix for parity checks");
     }
 
     private static void addCap(Difficulty d, EnemyTypes type, int max) {

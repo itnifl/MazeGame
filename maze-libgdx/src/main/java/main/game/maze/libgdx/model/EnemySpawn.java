@@ -1,5 +1,7 @@
 package main.game.maze.libgdx.model;
 
+import main.game.maze.opponents.BehaviorType;
+
 /**
  * Immutable enemy sprite placement derived from the shared Ecore/XMI model.
  *
@@ -18,5 +20,21 @@ public record EnemySpawn(
         int attackDamage,
         int infectionLevel,
         String touchSoundPath,
+        BehaviorType behavior,
         float speed) {
+
+    public EnemySpawn(
+            String id,
+            String imagePath,
+            float x,
+            float y,
+            float size,
+            float effectiveThreat,
+            int attackDamage,
+            int infectionLevel,
+            String touchSoundPath,
+            float speed) {
+        this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
+                touchSoundPath, BehaviorType.WANDER, speed);
+    }
 }

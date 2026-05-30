@@ -185,6 +185,7 @@ public final class RuntimeVisualModelLoader {
                     int baseDamage = Math.max(0, attackDamageFor(picked));
                     int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
                     float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
+                        var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehavior(picked.getBehavior(), random);
                     int infectionLevel = infectionLevelFor(picked);
                     String touchSound = touchSoundFor(picked);
                     float effectiveThreat = instantDeath
@@ -200,6 +201,7 @@ public final class RuntimeVisualModelLoader {
                             attackDamage,
                             infectionLevel,
                             touchSound,
+                            runtimeBehavior,
                             spawnSpeed);
                     break;
                 }

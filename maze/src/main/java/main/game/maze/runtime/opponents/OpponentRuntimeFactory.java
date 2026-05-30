@@ -246,12 +246,12 @@ private static double spawnByTarget(
             if (picked == null) break; // no suitable options left
 
             // apply difficulty multipliers
-            setCharacterAttributesByDifficulty(template, speedMult, dmgMult, instantDeath);
+            setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);
 
             // register in game (updates per-type counters)
-            doCharacterRegistration(gameController, template, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+            doCharacterRegistration(gameController, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
 
-            threat += template.getEffectiveThreat();
+            threat += picked.getEffectiveThreat();
         }
 
     }
@@ -272,14 +272,11 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
-            // Randomly assign PATROL behavior to ~50% of characters
-            if (ThreadLocalRandom.current().nextDouble() < 0.50) {
-                characterType.setBehavior(BehaviorType.PATROL);
-                _logger.log(Level.FINE, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
-            } else {
-                characterType.setBehavior(BehaviorType.WANDER);
-                _logger.log(Level.FINE, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
-            }
+            BehaviorType runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehavior(
+                    characterType.getBehavior(), ThreadLocalRandom.current());
+            characterType.setBehavior(runtimeBehavior);
+            _logger.log(Level.FINE, "Assigned {0} behavior to {1}",
+                    new Object[] { runtimeBehavior, characterType.getClass().getSimpleName() });
 
             // Use generated CharacterRegistrar for type-safe dispatch
             CharacterRegistrar.register(
@@ -353,29 +350,11 @@ private static double spawnByTarget(
      */
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
-
-        characterType.setSpeed(characterType.getSpeed() * speedMultiplierByDifficulty);
-
-        if (characterType instanceof Zombie z) {
-          if (instantDeath) {
-                z.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof Ghost g) {
-            if (instantDeath) {
-                g.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof PumpkinBomber b) {
-            if (instantDeath) {
-                b.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                b.setAttackDamage(Math.max(1, (int)Math.round(b.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        }
-        
+        EnemySpawnPlanner.applyDifficultyAttributes(
+                characterType,
+                speedMultiplierByDifficulty,
+                dmgMultiplierByDifficulty,
+                instantDeath);
     }
 
 

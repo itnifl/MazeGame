@@ -55,6 +55,7 @@ import main.game.maze.mazeworld.generators.SampleMaze;
 import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.service.DifficultyService;
 
 /**
@@ -1639,6 +1640,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private static final class EnemyRuntime {
+        private static final int[][] CARDINAL_STEPS = {
+            { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 }
+        };
+
         private final EnemySpawn spawn;
         private final String imagePath;
         private final float size;
@@ -1653,6 +1658,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private int directionX;
         private int directionY;
         private float moveAccumulator;
+        private long behaviorTick;
 
         private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
@@ -1664,9 +1670,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
             this.phase = phase;
             this.x = baseX;
             this.y = baseY;
-            this.directionX = 0;
-            this.directionY = 0;
+            int[] initialDirection = seededCardinal(spawn.id(), 0L);
+            this.directionX = initialDirection[0];
+            this.directionY = initialDirection[1];
             this.moveAccumulator = 0f;
+            this.behaviorTick = 0L;
         }
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index) {
@@ -1690,6 +1698,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     spawn.attackDamage(),
                     spawn.infectionLevel(),
                     spawn.touchSoundPath(),
+                    spawn.behavior(),
                     spawn.speed());
         }
 
@@ -1710,13 +1719,81 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
-                MovementResult next = service.tick(state, world);
+                MovementResult next = nextMove(world, service);
                 x = (float) next.x();
                 y = (float) next.y();
                 directionX = next.directionX();
                 directionY = next.directionY();
+                behaviorTick++;
             }
+        }
+
+        private MovementResult nextMove(WorldView world, EnemyMovementService chaseService) {
+            BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
+            if (behavior == BehaviorType.PASSIVE) {
+                return new MovementResult(x, y, directionX, directionY, false);
+            }
+            if (behavior == BehaviorType.AGGRESSIVE) {
+                EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
+                return chaseService.tick(state, world);
+            }
+            // PATROL currently falls back to the same directional motion model
+            // as WANDER on libGDX, matching JavaFX's patrol fallback behavior
+            // when a route is not available.
+            return wanderMove(world);
+        }
+
+        private MovementResult wanderMove(WorldView world) {
+            MovementResult forward = tryStep(world, directionX, directionY);
+            if (forward.moved()) {
+                return forward;
+            }
+
+            int[] seeded = seededCardinal(spawn.id(), behaviorTick);
+            int reverseX = -directionX;
+            int reverseY = -directionY;
+
+            for (int i = 0; i < CARDINAL_STEPS.length; i++) {
+                int idx = Math.floorMod(indexOfStep(seeded[0], seeded[1]) + i, CARDINAL_STEPS.length);
+                int dx = CARDINAL_STEPS[idx][0];
+                int dy = CARDINAL_STEPS[idx][1];
+                if (dx == reverseX && dy == reverseY) {
+                    continue;
+                }
+                MovementResult candidate = tryStep(world, dx, dy);
+                if (candidate.moved()) {
+                    return candidate;
+                }
+            }
+
+            return new MovementResult(x, y, directionX, directionY, false);
+        }
+
+        private MovementResult tryStep(WorldView world, int dx, int dy) {
+            if (dx == 0 && dy == 0) {
+                return new MovementResult(x, y, 0, 0, false);
+            }
+            double nx = x + dx * speed;
+            double ny = y + dy * speed;
+            if (world.wouldCollide(nx, ny, size)) {
+                return new MovementResult(x, y, dx, dy, false);
+            }
+            return new MovementResult(nx, ny, dx, dy, true);
+        }
+
+        private static int[] seededCardinal(String id, long tick) {
+            int seed = (id == null ? 0 : id.hashCode()) ^ (int) (tick * 31L + 17L);
+            int idx = Math.floorMod(seed, CARDINAL_STEPS.length);
+            return CARDINAL_STEPS[idx];
+        }
+
+        private static int indexOfStep(int dx, int dy) {
+            for (int i = 0; i < CARDINAL_STEPS.length; i++) {
+                if (CARDINAL_STEPS[i][0] == dx && CARDINAL_STEPS[i][1] == dy) {
+                    return i;
+                }
+            }
+            return 0;
         }
     }
 }

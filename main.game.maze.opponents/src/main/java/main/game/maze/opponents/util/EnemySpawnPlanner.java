@@ -5,9 +5,11 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyTypes;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -122,5 +124,54 @@ public final class EnemySpawnPlanner {
         double safeBase = Math.max(0d, baseSpeed);
         double safeMul = Math.max(0d, multiplier);
         return safeBase * safeMul;
+    }
+
+    /**
+     * Apply difficulty multipliers in-place to the spawned runtime character.
+     * Both frontends must call this helper to keep damage and speed parity.
+     */
+    public static void applyDifficultyAttributes(
+            CharacterType characterType,
+            double speedMultiplier,
+            double damageMultiplier,
+            boolean instantDeath) {
+        if (characterType == null) {
+            return;
+        }
+
+        characterType.setSpeed(applySpeedMultiplier(characterType.getSpeed(), speedMultiplier));
+
+        if (characterType instanceof Zombie zombie) {
+            zombie.setAttackDamage(resolveAttackDamage(zombie.getAttackDamage(), damageMultiplier, instantDeath));
+        } else if (characterType instanceof Ghost ghost) {
+            ghost.setAttackDamage(resolveAttackDamage(ghost.getAttackDamage(), damageMultiplier, instantDeath));
+        } else if (characterType instanceof PumpkinBomber pumpkinBomber) {
+            pumpkinBomber.setAttackDamage(resolveAttackDamage(
+                    pumpkinBomber.getAttackDamage(), damageMultiplier, instantDeath));
+        }
+    }
+
+    /**
+     * Runtime behaviour policy shared between JavaFX and libGDX.
+     *
+     * <p>AGGRESSIVE and PASSIVE are preserved from the model. For WANDER/PATROL
+     * we keep the legacy runtime mix by assigning PATROL or WANDER with a 50/50
+     * split so both frontends render the same blend.
+     */
+    public static BehaviorType resolveRuntimeBehavior(BehaviorType modelBehavior, Random random) {
+        if (modelBehavior == BehaviorType.AGGRESSIVE || modelBehavior == BehaviorType.PASSIVE) {
+            return modelBehavior;
+        }
+        if (random == null) {
+            return modelBehavior != null ? modelBehavior : BehaviorType.WANDER;
+        }
+        return random.nextDouble() < 0.5d ? BehaviorType.PATROL : BehaviorType.WANDER;
+    }
+
+    private static int resolveAttackDamage(int baseDamage, double damageMultiplier, boolean instantDeath) {
+        if (instantDeath) {
+            return Integer.MAX_VALUE;
+        }
+        return applyDamageMultiplier(baseDamage, damageMultiplier);
     }
 }
