@@ -72,6 +72,8 @@ class AdaptiveAggressiveMovementServiceTest {
         assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW,
                 service.modeForEnemy("z"),
             "enemy should be in path-follow mode shortly after the 4 second stuck trigger");
+        assertTrue(!service.currentPathForEnemy("z", enemy.x(), enemy.y()).isEmpty(),
+            "path-follow mode should expose the live path the enemy is currently following");
 
         for (int i = 0; i < 210; i++) {
             MovementResult result = service.tick(enemy, world, 0.1d);

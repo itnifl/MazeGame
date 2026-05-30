@@ -28,6 +28,8 @@ class PatrolMovementServiceTest {
         assertTrue(sawVerticalStep,
                 "with the direct lane blocked, patrol should eventually follow a shortest path that changes vertical axis");
         assertEquals(PatrolMovementService.PatrolMovementMode.PATH_FOLLOW, service.modeForEnemy("patrol"));
+        assertTrue(!service.currentPathForEnemy("patrol", enemy.x(), enemy.y()).isEmpty(),
+                "path-follow patrol should expose the live path it is currently using");
     }
 
     @Test

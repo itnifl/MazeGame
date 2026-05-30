@@ -72,6 +72,7 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
@@ -506,6 +507,12 @@ public class GameController implements Initializable {
                 return "AGGRESSIVE_WANDER";
             }
             return "AGGRESSIVE_CHASE";
+        }
+        if (behaviour == BehaviorType.PATROL) {
+            String id = enemyRuntimeId(character);
+            return patrolMovementService.modeForEnemy(id) == PatrolMovementService.PatrolMovementMode.WANDER_RECOVERY
+                    ? "PATROL_WANDER"
+                    : "PATROL_PATH";
         }
         if (behaviour == BehaviorType.PASSIVE) {
             return "WANDER";
@@ -1571,17 +1578,9 @@ public class GameController implements Initializable {
     }
 
     private void drawEnemyNavigationPaths(GraphicsContext gc) {
-        if (maze == null || playerCharacter == null) {
+        if (maze == null) {
             return;
         }
-        var navGraph = maze.getNavigationGraph();
-        if (navGraph == null) {
-            return;
-        }
-
-        Point2D goal = new Point2D(
-                playerCharacter.getCharacterPosition().getX(),
-                playerCharacter.getCharacterPosition().getY());
         gc.setLineWidth(5.0);
         gc.setStroke(Color.ORANGE);
         gc.setGlobalAlpha(0.65);
@@ -1590,20 +1589,31 @@ public class GameController implements Initializable {
             if (!(cc instanceof ComputerCharacter computerCharacter)) {
                 continue;
             }
-            Point2D start = new Point2D(
-                    computerCharacter.getCharacterPosition().getX(),
-                    computerCharacter.getCharacterPosition().getY());
-            var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
-            if (path == null || path.size() < 2) {
+            List<ActivePathPoint> path = activeEnemyPath(computerCharacter);
+            if (path.isEmpty()) {
                 continue;
             }
-            Point2D prev = path.get(0);
+            ActivePathPoint prev = path.get(0);
             for (int i = 1; i < path.size(); i++) {
-                Point2D p = path.get(i);
-                gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
+                ActivePathPoint p = path.get(i);
+                gc.strokeLine(prev.x(), prev.y(), p.x(), p.y());
                 prev = p;
             }
         }
+    }
+
+    private List<ActivePathPoint> activeEnemyPath(ComputerCharacter character) {
+        String id = enemyRuntimeId(character);
+        double x = character.getCharacterPosition().getX();
+        double y = character.getCharacterPosition().getY();
+        BehaviorType behaviour = character.getCharacterBehaviour();
+        if (behaviour == BehaviorType.AGGRESSIVE) {
+            return adaptiveAggressiveMovementService.currentPathForEnemy(id, x, y);
+        }
+        if (behaviour == BehaviorType.PATROL) {
+            return patrolMovementService.currentPathForEnemy(id, x, y);
+        }
+        return List.of();
     }
 
     private void showSpanningTree() {

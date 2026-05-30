@@ -61,6 +61,21 @@ public final class AdaptiveAggressiveMovementService {
         return AggressiveMovementMode.DIRECTIONAL;
     }
 
+    public List<ActivePathPoint> currentPathForEnemy(String enemyId, double currentX, double currentY) {
+        String id = enemyId == null ? "<anonymous>" : enemyId;
+        RuntimeState state = states.get(id);
+        if (state == null || state.path == null || state.pathIndex >= state.path.size()) {
+            return List.of();
+        }
+        List<ActivePathPoint> snapshot = new ArrayList<>();
+        snapshot.add(new ActivePathPoint(currentX, currentY));
+        for (int i = state.pathIndex; i < state.path.size(); i++) {
+            Point point = state.path.get(i);
+            snapshot.add(new ActivePathPoint(point.x, point.y));
+        }
+        return snapshot.size() > 1 ? snapshot : List.of();
+    }
+
     public MovementResult tick(EnemyState enemy, WorldView world, double deltaSeconds) {
         if (enemy == null || world == null) {
             return new MovementResult(0d, 0d, 0, 0, false);
