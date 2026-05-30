@@ -107,8 +107,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int INFECTION_GLOW_LAYERS = 6;
     private static final int INFECTION_EDGE_LAYERS = 4;
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
-    private static final float ENEMY_LABEL_SECONDS = 5f;
-    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /showmovementtype";
+    private static final float ENEMY_LABEL_SECONDS = 20f;
+    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt";
     private static final float BUTTON_PRESS_SECONDS = 0.14f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
@@ -1466,10 +1466,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if ("/h".equals(command)) {
             return TerminalCommand.HELP;
         }
-        if ("/showbehaviourtype".equals(command)) {
+        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
             return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
         }
-        if ("/showmovementtype".equals(command)) {
+        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
             return TerminalCommand.SHOW_MOVEMENT_TYPE;
         }
         return TerminalCommand.UNKNOWN;
@@ -1863,6 +1863,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         };
 
         private final EnemySpawn spawn;
+        private final String runtimeEnemyId;
         private final String imagePath;
         private final float size;
         private final float speed;
@@ -1880,8 +1881,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private String behaviorTypeLabel;
         private String movementTypeLabel;
 
-        private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
+        private EnemyRuntime(EnemySpawn spawn, String runtimeEnemyId, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
+            this.runtimeEnemyId = runtimeEnemyId;
             this.imagePath = imagePath;
             this.size = size;
             this.speed = speed;
@@ -1907,7 +1909,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
             // index now only seeds the visual mist phase, not motion.
             float speed = Math.max(1f, spawn.speed());
             float phase = index * 0.8f;
-            return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), speed, phase);
+            String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + index;
+            return new EnemyRuntime(spawn, runtimeId, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), speed, phase);
         }
 
         private EnemySpawn contactSnapshot() {
@@ -1963,12 +1966,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
             behaviorTypeLabel = behavior.name();
             if (behavior == BehaviorType.AGGRESSIVE) {
-                EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
+                EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
                 MovementResult result = adaptiveService.tick(
                         state,
                         world,
                         1.0d / JAVA_FX_TICK_RATE);
-                movementTypeLabel = adaptiveService.modeForEnemy(spawn.id())
+                movementTypeLabel = adaptiveService.modeForEnemy(runtimeEnemyId)
                         == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW
                                 ? "AGGRESSIVE_PATH"
                                 : "AGGRESSIVE_CHASE";

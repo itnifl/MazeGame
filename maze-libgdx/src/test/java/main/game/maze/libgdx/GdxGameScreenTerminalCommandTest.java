@@ -16,12 +16,16 @@ class GdxGameScreenTerminalCommandTest {
     void parsesBehaviourCommandCaseInsensitive() {
         assertEquals(GdxGameScreen.TerminalCommand.SHOW_BEHAVIOUR_TYPE,
                 GdxGameScreen.parseTerminalCommand("  /SHOWBEHAVIOURTYPE  "));
+        assertEquals(GdxGameScreen.TerminalCommand.SHOW_BEHAVIOUR_TYPE,
+            GdxGameScreen.parseTerminalCommand("/sbt"));
     }
 
     @Test
     void parsesMovementCommand() {
         assertEquals(GdxGameScreen.TerminalCommand.SHOW_MOVEMENT_TYPE,
                 GdxGameScreen.parseTerminalCommand("/showmovementtype"));
+        assertEquals(GdxGameScreen.TerminalCommand.SHOW_MOVEMENT_TYPE,
+            GdxGameScreen.parseTerminalCommand("/smt"));
     }
 
     @Test
