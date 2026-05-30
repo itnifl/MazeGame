@@ -24,4 +24,24 @@ public interface WorldView {
      * the same coordinates so the parity test holds.
      */
     boolean wouldCollide(double centerX, double centerY, double size);
+
+    /** Minimum playable x bound in world units. */
+    default double minX() {
+        return 0d;
+    }
+
+    /** Minimum playable y bound in world units. */
+    default double minY() {
+        return 0d;
+    }
+
+    /** Maximum playable x bound in world units. */
+    default double maxX() {
+        return 1000d;
+    }
+
+    /** Maximum playable y bound in world units. */
+    default double maxY() {
+        return 1000d;
+    }
 }

@@ -42,6 +42,26 @@ public final class GdxWorldView implements WorldView {
     }
 
     @Override
+    public double minX() {
+        return 0d;
+    }
+
+    @Override
+    public double minY() {
+        return 0d;
+    }
+
+    @Override
+    public double maxX() {
+        return maze.widthPx();
+    }
+
+    @Override
+    public double maxY() {
+        return maze.heightPx();
+    }
+
+    @Override
     public boolean wouldCollide(double centerX, double centerY, double size) {
         double half = size * 0.5d;
         if (centerX - half < 0d || centerY - half < 0d) {

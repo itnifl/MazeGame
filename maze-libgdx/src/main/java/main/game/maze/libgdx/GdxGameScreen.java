@@ -30,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.ChasePlayerMovementService;
@@ -150,6 +151,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
     private final EnemyMovementService enemyMovementService = new ChasePlayerMovementService();
+        private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
+            new AdaptiveAggressiveMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -421,7 +424,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (!animatedEnemies.isEmpty() && maze != null && player != null) {
             WorldView world = new GdxWorldView(maze, player);
             for (EnemyRuntime enemy : animatedEnemies) {
-                enemy.advance(world, enemyMovementService, dt);
+                enemy.advance(world, enemyMovementService, adaptiveAggressiveMovementService, dt);
             }
         }
 
@@ -1707,7 +1710,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
          * Accumulates fractional steps so the per-tick world-unit speed in
          * {@code spawn.speed()} translates to a frame-rate-independent move.
          */
-        private void advance(WorldView world, EnemyMovementService service, float dt) {
+        private void advance(WorldView world,
+                     EnemyMovementService service,
+                     AdaptiveAggressiveMovementService adaptiveService,
+                     float dt) {
             // Treat spawn.speed() as world units per simulated tick at the
             // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
             // arbitrary frame rates produces matching displacement.
@@ -1719,7 +1725,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(world, service);
+                MovementResult next = nextMove(world, service, adaptiveService);
                 x = (float) next.x();
                 y = (float) next.y();
                 directionX = next.directionX();
@@ -1728,14 +1734,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
         }
 
-        private MovementResult nextMove(WorldView world, EnemyMovementService chaseService) {
+        private MovementResult nextMove(WorldView world,
+                        EnemyMovementService chaseService,
+                        AdaptiveAggressiveMovementService adaptiveService) {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             if (behavior == BehaviorType.PASSIVE) {
                 return new MovementResult(x, y, directionX, directionY, false);
             }
             if (behavior == BehaviorType.AGGRESSIVE) {
                 EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
-                return chaseService.tick(state, world);
+                return adaptiveService.tick(
+                        state,
+                        world,
+                        1.0d / JAVA_FX_TICK_RATE);
             }
             // PATROL currently falls back to the same directional motion model
             // as WANDER on libGDX, matching JavaFX's patrol fallback behavior
