@@ -67,6 +67,9 @@ import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -164,6 +167,7 @@ public class GameController implements Initializable {
     private final Map<Node, Timeline> infectiousMists = new HashMap<>();
     private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
     private PauseTransition enemyDebugLabelHideTimer;
+    private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
 
     private enum TerminalCommand {
         HELP,
@@ -426,7 +430,7 @@ public class GameController implements Initializable {
             }
             String labelText = behaviourType
                     ? computerCharacter.getCharacterBehaviour().name()
-                    : movementTypeName(computerCharacter.getCharacterBehaviour());
+                    : movementTypeName(computerCharacter);
             Label label = new Label(labelText);
             label.setMouseTransparent(true);
             label.setStyle("-fx-text-fill: #f3f9ff; -fx-font-family: 'Consolas'; -fx-font-size: 12px; -fx-font-weight: bold; "
@@ -445,9 +449,14 @@ public class GameController implements Initializable {
         enemyDebugLabelHideTimer.playFromStart();
     }
 
-    private static String movementTypeName(BehaviorType behaviour) {
+    private String movementTypeName(ComputerCharacter character) {
+        BehaviorType behaviour = character.getCharacterBehaviour();
         if (behaviour == BehaviorType.AGGRESSIVE) {
-            return "AGGRESSIVE_CHASE";
+            String id = enemyRuntimeId(character);
+            return adaptiveAggressiveMovementService.modeForEnemy(id)
+                    == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW
+                            ? "AGGRESSIVE_PATH"
+                            : "AGGRESSIVE_CHASE";
         }
         if (behaviour == BehaviorType.PASSIVE) {
             return "WANDER";
@@ -1092,22 +1101,141 @@ public class GameController implements Initializable {
             doCharacterWanderMove(computerCharacter);
             return;
         }
+        if (!(computerCharacter instanceof ComputerCharacter cc)) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
         var nonTangient = false;
         if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        var direction = ChaseController.getDirectionTowards(
-                computerCharacter, playerCharacter.getCharacterPosition());
-        if (direction == null) {
+        Node enemyNode = cc.getCharacterGraphics();
+        if (enemyNode == null || maze == null) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
-        computerCharacter.setDirection(direction);
+
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = Math.max(12d, Math.max(enemyNode.getBoundsInParent().getWidth(), enemyNode.getBoundsInParent().getHeight()));
+        EnemyState state = new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+
+        var result = adaptiveAggressiveMovementService.tick(
+                state,
+                createJavaFxWorldView(),
+                0.06d);
+
+        if (result.directionX() == 0 && result.directionY() == 0) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+
+        cc.setDirection(new Point2D(result.directionX(), result.directionY()));
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
             computerCharacter.move(nonTangient);
         }
+    }
+
+    private static int directionSign(double value) {
+        if (value > 0d) {
+            return 1;
+        }
+        if (value < 0d) {
+            return -1;
+        }
+        return 0;
+    }
+
+    private String enemyRuntimeId(ComputerCharacter character) {
+        return Integer.toHexString(System.identityHashCode(character));
+    }
+
+    private WorldView createJavaFxWorldView() {
+        return new WorldView() {
+            @Override
+            public double playerX() {
+                return playerCharacter != null ? playerCharacter.getCharacterPosition().getX() : 0d;
+            }
+
+            @Override
+            public double playerY() {
+                return playerCharacter != null ? playerCharacter.getCharacterPosition().getY() : 0d;
+            }
+
+            @Override
+            public double minX() {
+                return 0d;
+            }
+
+            @Override
+            public double minY() {
+                return 0d;
+            }
+
+            @Override
+            public double maxX() {
+                return App.getBoardMaxX();
+            }
+
+            @Override
+            public double maxY() {
+                return App.getBoardMaxY();
+            }
+
+            @Override
+            public boolean wouldCollide(double centerX, double centerY, double size) {
+                double half = size * 0.5d;
+                if (centerX - half < 0d || centerY - half < 0d) {
+                    return true;
+                }
+                if (centerX + half > App.getBoardMaxX() || centerY + half > App.getBoardMaxY()) {
+                    return true;
+                }
+                if (maze == null || maze.getMazeVectors() == null) {
+                    return false;
+                }
+
+                double left = centerX - half;
+                double right = centerX + half;
+                double top = centerY - half;
+                double bottom = centerY + half;
+
+                for (Vector2D wall : maze.getMazeVectors()) {
+                    double x1 = wall.getStart().getX();
+                    double y1 = wall.getStart().getY();
+                    double x2 = wall.getEnd().getX();
+                    double y2 = wall.getEnd().getY();
+                    if (Math.abs(y1 - y2) < 0.001d) {
+                        double wx1 = Math.min(x1, x2);
+                        double wx2 = Math.max(x1, x2);
+                        if (right < wx1 || left > wx2) {
+                            continue;
+                        }
+                        if (top <= y1 && bottom >= y1) {
+                            return true;
+                        }
+                    } else {
+                        double wy1 = Math.min(y1, y2);
+                        double wy2 = Math.max(y1, y2);
+                        if (bottom < wy1 || top > wy2) {
+                            continue;
+                        }
+                        if (left <= x1 && right >= x1) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
     }
 
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
