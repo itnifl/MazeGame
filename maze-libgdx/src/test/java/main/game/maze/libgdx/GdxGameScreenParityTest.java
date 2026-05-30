@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.difficulties.DifficultiesFactory;
+import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.mazeworld.constants.StageConstants;
 
 class GdxGameScreenParityTest {
@@ -53,5 +54,14 @@ class GdxGameScreenParityTest {
 
         assertTrue(inside);
         assertFalse(outside);
+    }
+
+    @Test
+    void infectionLevelControlsMistRenderingFlag() {
+        EnemySpawn nonInfectious = new EnemySpawn("a", "/a.png", 10f, 10f, 20f, 1f, 1, 0, "");
+        EnemySpawn infectious = new EnemySpawn("b", "/b.png", 10f, 10f, 20f, 1f, 1, 25, "");
+
+        assertFalse(GdxGameScreen.isInfectious(nonInfectious));
+        assertTrue(GdxGameScreen.isInfectious(infectious));
     }
 }

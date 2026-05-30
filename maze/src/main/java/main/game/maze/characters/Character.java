@@ -280,7 +280,7 @@ public class Character  {
         }
         
         if (gfx != null) {
-            UiScheduler.get().runOnUiThread(() -> {
+            UiScheduler.get().runLater(() -> {
                 try {
                     gfx.setEffect(null);
                     var parent = gfx.getParent();

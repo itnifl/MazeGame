@@ -45,7 +45,7 @@ public class PlayerCharacter extends Character
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
     private ICharacterStatePresenter statePresenter;
     private static final long SOUND_COOLDOWN_MS = 250L;
-    private static final double DEAD_PLAYER_SCALE = 1.2;
+    private static final double DEAD_PLAYER_SCALE = 1.8;
     private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
     public boolean isWinning = false;
     private IAnimationHandle infectionAnimation = null;

@@ -21,6 +21,10 @@
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
 * 🖥️ [maze](maze/readme.md)
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
+* 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
+  * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
+  * 📄 [Maze Generation Rules](docs/requirements-features/maze-generation-rules.md) (MGR-1..19)
+  * 📄 [Missing Features](docs/requirements-features/missing-feature.md)
 
 Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
 Also, see: [Model-Driven Code Generation Plan](docs/mdd-code-generation.md) — architecture for generating application logic from models
@@ -68,22 +72,6 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
 * Sometimes when compiling and starting the game in VS Code, you will error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Bith debugging and running without debugging will still work.
 * You can pass walls by running into them through the edge.
-
-## Missing implementations
-
-* More music and game sounds
-* Animations for die action and happy action
-* Different new game actions like shooting and blowing up walls and enemies.
-* Read a maze from SVG for play
-* More and different levels with their own characters and setup
-* Better design for high score, and let high score be affected by the difficulty setting
-* A menu with instructions and game setup, including player profile settings
-* Refactor score handling out of CharacterActionScreens
-* Refactor code for code smells
-* Implement stronger algorithms for gameplay and movement
-* Replace `System.out.println` with a logger
-* The application system is not very testable. Unit tests should have been written first. DI Patterns should be implemented.
-* The whole Eclipse MDD model is not implemented (loot items, ranged attacks etc).
 
 ## Sources
 

@@ -331,13 +331,48 @@ overall feature is marked Done.
 - **Acceptance**: an enemy whose `patrol` includes a `zone` never leaves
   that rectangle.
 
+### F24. Zombie resurrection time
+
+- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.resurrectionTime`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ZombieSpecifics.resurrectionTime`.
+- **Status**: Missing.
+- **Backend**: both.
+- **What the model says**: zombies can declare a resurrection delay after
+  death.
+- **What the game does today**: zombies are removed on death and do not
+  return after a configured delay.
+- **Acceptance**: a zombie with `resurrectionTime > 0` reappears after that
+  delay using its configured spawn point and stats.
+
+### F25. Ghost visibility level
+
+- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.visibilityLevel`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `GhostSpecifics.visibilityLevel`.
+- **Status**: Missing.
+- **Backend**: both.
+- **What the model says**: ghosts can expose a visibility percentage that
+  controls how visible or hidden they are.
+- **What the game does today**: ghosts ignore walls via energy, but the
+  visibility level is not used to drive any on-screen alpha or stealth cue.
+- **Acceptance**: lowering `visibilityLevel` makes ghosts visibly harder to
+  see, while `100` keeps them fully visible.
+
+### F26. Ranged projectile speed from DSL/model
+
+- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `RangedEnemy.projectileSpeed`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `RangedSpecifics.projectileSpeed`.
+- **Status**: Missing.
+- **Backend**: both.
+- **What the model says**: ranged enemies can tune projectile velocity.
+- **What the game does today**: projectile motion is hard-coded and does not
+  honour a per-opponent `projectileSpeed` value from the level file.
+- **Acceptance**: changing `projectileSpeed` in a level changes projectile
+  travel speed at runtime.
+
 ---
 
 ## Roll-up by area
 
 | Area | Open IDs |
 |------|----------|
-| Opponents + sprites | F1, F10, F14, F18 |
+| Opponents + sprites | F1, F10, F14, F18, F24, F25, F26 |
 | Loot | F2, F21 |
 | Patrol + AI | F3, F4, F5, F6, F22, F23 |
 | Difficulty | F8, F9 |
@@ -347,3 +382,15 @@ overall feature is marked Done.
 
 When picking up a feature, link the commit and PR back to its `F<number>`
 identifier so the gap analysis stays in sync with the implementation.
+
+
+## Missing implementations
+
+* Animations for die action and happy action
+* Different new game actions like shooting and blowing up walls and enemies.
+* Read a maze from SVG for play
+* More and different levels with their own characters and setup
+* A menu with player profile settings
+* Refactor score handling out of CharacterActionScreens
+* Implement stronger algorithms for gameplay and movement
+* The whole Eclipse MDD model is not implemented (loot items, ranged attacks etc).

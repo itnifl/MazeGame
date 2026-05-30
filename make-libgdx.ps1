@@ -10,10 +10,19 @@ Set-Location $scriptRoot
 # Config
 $Mvn               = 'mvn'
 $LibgdxModules     = 'maze-common-frontend,maze-libgdx'
+$GeneratedSourceDir = Join-Path 'maze-module-generator' 'src-gen/main/game/maze/generated'
+$XtextGeneratedDirs = @(
+    (Join-Path 'main.game.maze.dsl' 'src/main/xtext-gen'),
+    (Join-Path 'main.game.maze.dsl.ide' 'src/main/xtext-gen'),
+    (Join-Path 'main.game.maze.dsl.ui' 'src/main/xtext-gen'),
+    (Join-Path 'main.game.maze.dsl.tests' 'src/test/xtext-gen')
+)
 
 # Reuse the shared Java 21 helpers from make-javafx.ps1. They live in the same file in this repo,
 # so we dot-source it but suppress its top-level switch by stripping the argument.
+$requestedTarget = $Target
 . (Join-Path $scriptRoot 'make-javafx.ps1') -Target help *> $null 2>&1
+$Target = $requestedTarget
 
 # The dot-source above evaluates make-javafx.ps1 with -Target help (which only prints usage and
 # defines all functions). That is enough to expose Get-Java21Home / Use-Java21OrFail / etc. for us.
@@ -29,11 +38,81 @@ function Show-LibgdxUsage {
     Write-Host "prepare-run     : write launch env, then build the libGDX runtime jar + libs."
     Write-Host "run             : after prepare-run, launch the libGDX backend (GdxAppLauncher)."
     Write-Host ""
+    Write-Host "If generated Xtext or FreeMarker sources are missing, this script regenerates them automatically." -ForegroundColor Yellow
     Write-Host "Note: the libGDX backend is a plain Maven build. No Tycho mirror or p2 cache is involved." -ForegroundColor Yellow
     Write-Host "=========================================" -ForegroundColor Cyan
 }
 
+function Test-GeneratedSourcesPresent {
+    if (-not (Test-Path $GeneratedSourceDir)) {
+        return $false
+    }
+
+    $anyJava = Get-ChildItem -Path $GeneratedSourceDir -File -Filter '*.java' -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    return $null -ne $anyJava
+}
+
+function Test-XtextGeneratedSourcesPresent {
+    foreach ($dir in $XtextGeneratedDirs) {
+        if (-not (Test-Path $dir)) {
+            return $false
+        }
+
+        $anyFile = Get-ChildItem -Path $dir -File -Recurse -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+        if ($null -eq $anyFile) {
+            return $false
+        }
+    }
+
+    return $true
+}
+
+function Ensure-XtextGeneratedSources {
+    if (Test-XtextGeneratedSourcesPresent) {
+        Write-Host 'Generated Xtext sources already present.' -ForegroundColor Green
+        return
+    }
+
+    Write-Host 'Generated Xtext sources are missing, regenerating...' -ForegroundColor Yellow
+    & $Mvn -pl main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests -am generate-sources
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Xtext generated source recovery failed with exit code $exit."
+    }
+
+    if (-not (Test-XtextGeneratedSourcesPresent)) {
+        throw 'Xtext generated source recovery completed, but xtext-gen output is still missing.'
+    }
+
+    Write-Host 'Generated Xtext sources restored.' -ForegroundColor Green
+}
+
+function Ensure-GeneratedSources {
+    Ensure-XtextGeneratedSources
+
+    if (Test-GeneratedSourcesPresent) {
+        Write-Host 'Generated FreeMarker sources already present.' -ForegroundColor Green
+        return
+    }
+
+    Write-Host 'Generated FreeMarker sources are missing, regenerating via runner...' -ForegroundColor Yellow
+    & $Mvn -pl maze-generator.freemarker-runner,maze-module-generator -am -Dskip.codegen=false generate-sources
+    $exit = $LASTEXITCODE
+    if ($exit -ne 0) {
+        throw "Generated source recovery failed with exit code $exit."
+    }
+
+    if (-not (Test-GeneratedSourcesPresent)) {
+        throw "Generated source recovery completed, but no .java files were found in $GeneratedSourceDir."
+    }
+
+    Write-Host 'Generated FreeMarker sources restored.' -ForegroundColor Green
+}
+
 function Invoke-LibgdxFullBuild {
+    Ensure-GeneratedSources
     $cmd = "$Mvn -pl $LibgdxModules -am -U -DskipTests=false clean verify"
     Write-Host "=== Running libGDX full build: $cmd ===" -ForegroundColor Cyan
     & $Mvn -pl $LibgdxModules -am -U -DskipTests=false clean verify
@@ -46,6 +125,7 @@ function Invoke-LibgdxFullBuild {
 
 function Invoke-LibgdxQuickBuild {
     param([switch]$SkipTests)
+    Ensure-GeneratedSources
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
     Write-Host "=== Running libGDX quick build (skipTests=$skipValue) ===" -ForegroundColor Cyan
     & $Mvn -pl $LibgdxModules -am "-DskipTests=$skipValue" verify
@@ -57,6 +137,7 @@ function Invoke-LibgdxQuickBuild {
 }
 
 function Ensure-LibgdxLaunchClasses {
+    Ensure-GeneratedSources
     $launcherClass = Join-Path 'maze-libgdx' 'target/classes/main/game/maze/libgdx/GdxAppLauncher.class'
     $libsDir       = Join-Path 'maze-libgdx' 'target/libs'
 

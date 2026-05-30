@@ -10,12 +10,20 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -35,8 +43,15 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
@@ -67,7 +82,6 @@ import main.game.maze.service.CharacterIntersectionFixerService;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
 
 public class GameController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
@@ -124,9 +138,9 @@ public class GameController implements Initializable {
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
-    private static final int EASY_BASE_SCORE = 10000;
-    private static final int NORMAL_BASE_SCORE = 20000;
-    private static final int HARD_BASE_SCORE = 30000;
+    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
+    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
+    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
     private boolean isRouteHintVisible = false;
@@ -135,17 +149,14 @@ public class GameController implements Initializable {
     private int routeHintPenaltyPoints = 0;
     private Rectangle gameBoardClip;
     private boolean cameraFollowListenersInstalled;
+    private VBox infectionWarningSign;
+    private PauseTransition infectionWarningHideTimer;
+    private final Map<Node, Timeline> infectiousMists = new HashMap<>();
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     int getBaseScoreForCurrentDifficulty() {
-        if (startDifficulty instanceof HardDifficulty) {
-            return HARD_BASE_SCORE;
-        }
-        if (startDifficulty instanceof NormalDifficulty) {
-            return NORMAL_BASE_SCORE;
-        }
-        return EASY_BASE_SCORE;
+        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty);
     }
 
     @Override
@@ -515,11 +526,7 @@ public class GameController implements Initializable {
             gameBoardClip.widthProperty().bind(root.widthProperty());
         }
         if (!gameBoardClip.heightProperty().isBound()) {
-            if (bottomMenuContainer != null) {
-                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty().subtract(bottomMenuContainer.heightProperty())));
-            } else {
-                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty()));
-            }
+            gameBoardClip.heightProperty().bind(root.heightProperty());
         }
         if (!cameraFollowListenersInstalled) {
             root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
@@ -612,9 +619,6 @@ public class GameController implements Initializable {
 
         double viewportWidth = root.getWidth();
         double viewportHeight = root.getHeight();
-        if (bottomMenuContainer != null) {
-            viewportHeight = Math.max(0, viewportHeight - bottomMenuContainer.getHeight());
-        }
         if (viewportWidth <= 0 || viewportHeight <= 0) {
             return;
         }
@@ -970,34 +974,140 @@ public class GameController implements Initializable {
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> registerComputerCharacter(character, node));
-            return;
-        }
-        gameBoard.getChildren().add(node);
-        allComputerCharacters.add(character);     
-        if(character instanceof ICanSubscribeAndNotifyPosition){
-            playerCharacter.addPositionSubscriber((ICanSubscribeAndNotifyPosition)character);
-            ((ICanSubscribeAndNotifyPosition)character).addPositionSubscriber(playerCharacter);
-        }
+        Platform.runLater(() -> {
+            if (gameBoard == null || node == null || character == null) {
+                return;
+            }
+            if (!gameBoard.getChildren().contains(node)) {
+                gameBoard.getChildren().add(node);
+            }
+            if (character instanceof main.game.maze.characters.ZombieCharacter zombieCharacter) {
+                int infectionLevel = zombieCharacter.getModel() != null ? zombieCharacter.getModel().getInfectionLevel() : 0;
+                applyInfectiousMist(node, infectionLevel);
+            }
+            if (!allComputerCharacters.contains(character)) {
+                allComputerCharacters.add(character);
+            }
+            if (character instanceof ICanSubscribeAndNotifyPosition subscribable && playerCharacter != null) {
+                playerCharacter.addPositionSubscriber(subscribable);
+                subscribable.addPositionSubscriber(playerCharacter);
+            }
+        });
     }
 
     public void unregisterComputerCharacter(IMovingComputerCharacter character, Node node) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> unregisterComputerCharacter(character,node));
-            return;
-        }
-        allComputerCharacters.remove(character);
-        if (character instanceof ICanSubscribeAndNotifyPosition subscribable) {
-            playerCharacter.removePositionSubscriber(subscribable);
-        }
-        if (node != null && node.getParent() == gameBoard) {
-            gameBoard.getChildren().remove(node);
-        }
+        Platform.runLater(() -> {
+            allComputerCharacters.remove(character);
+            if (character instanceof ICanSubscribeAndNotifyPosition subscribable && playerCharacter != null) {
+                playerCharacter.removePositionSubscriber(subscribable);
+            }
+            stopInfectiousMist(node);
+            if (gameBoard != null && node != null && node.getParent() == gameBoard) {
+                gameBoard.getChildren().remove(node);
+            }
+        });
     }
 
     public void showInfectionWarning() {
-        // Implementation for infection warning
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::showInfectionWarning);
+            return;
+        }
+        if (root == null) {
+            return;
+        }
+        ensureInfectionWarningSign();
+        infectionWarningSign.setVisible(true);
+        infectionWarningSign.setManaged(false);
+        infectionWarningSign.toFront();
+
+        if (infectionWarningHideTimer == null) {
+            infectionWarningHideTimer = new PauseTransition(Duration.seconds(1.2));
+            infectionWarningHideTimer.setOnFinished(evt -> {
+                if (infectionWarningSign != null) {
+                    infectionWarningSign.setVisible(false);
+                }
+            });
+        }
+        infectionWarningHideTimer.stop();
+        infectionWarningHideTimer.playFromStart();
+    }
+
+    private void ensureInfectionWarningSign() {
+        if (infectionWarningSign != null) {
+            return;
+        }
+
+        Polygon triangle = new Polygon(
+                0.0, 84.0,
+                48.0, 0.0,
+                96.0, 84.0);
+        triangle.setFill(Color.rgb(255, 212, 77, 0.95));
+        triangle.setStroke(Color.rgb(55, 40, 0, 0.95));
+        triangle.setStrokeWidth(3.0);
+
+        Label mark = new Label("!");
+        mark.setTextFill(Color.rgb(35, 22, 0));
+        mark.setStyle("-fx-font-size: 56px; -fx-font-family: 'Consolas'; -fx-font-weight: bold;");
+        mark.setTranslateY(6);
+
+        Text infectedLabel = new Text("Infected!");
+        infectedLabel.setFill(Color.rgb(51, 255, 115));
+        infectedLabel.setFont(Font.font("Consolas", FontWeight.BOLD, 22));
+        infectedLabel.setMouseTransparent(true);
+
+        StackPane signGraphic = new StackPane(triangle, mark);
+        signGraphic.setAlignment(Pos.CENTER);
+
+        infectionWarningSign = new VBox(6, signGraphic, infectedLabel);
+        infectionWarningSign.setAlignment(Pos.CENTER);
+        infectionWarningSign.setMouseTransparent(true);
+        infectionWarningSign.setManaged(false);
+        infectionWarningSign.setVisible(false);
+
+        infectionWarningSign.layoutXProperty().bind(root.widthProperty().subtract(96).divide(2));
+        infectionWarningSign.layoutYProperty().bind(root.heightProperty().subtract(130).divide(2));
+        root.getChildren().add(infectionWarningSign);
+    }
+
+    private void applyInfectiousMist(Node node, int infectionLevel) {
+        if (node == null || infectionLevel <= 0) {
+            return;
+        }
+        stopInfectiousMist(node);
+
+        DropShadow mist = new DropShadow();
+        mist.setBlurType(BlurType.GAUSSIAN);
+        mist.setColor(Color.rgb(60, 255, 130, 0.78));
+        mist.setRadius(10.0);
+        mist.setSpread(0.18);
+        node.setEffect(mist);
+
+        double intensity = Math.min(1.0, Math.max(0.35, infectionLevel / 100.0));
+        Timeline pulse = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(mist.radiusProperty(), 10.0 + 8.0 * intensity),
+                        new KeyValue(mist.spreadProperty(), 0.14 + 0.08 * intensity)),
+                new KeyFrame(Duration.seconds(0.7),
+                        new KeyValue(mist.radiusProperty(), 22.0 + 10.0 * intensity),
+                        new KeyValue(mist.spreadProperty(), 0.34 + 0.10 * intensity)));
+        pulse.setAutoReverse(true);
+        pulse.setCycleCount(Animation.INDEFINITE);
+        infectiousMists.put(node, pulse);
+        pulse.play();
+    }
+
+    private void stopInfectiousMist(Node node) {
+        if (node == null) {
+            return;
+        }
+        Timeline pulse = infectiousMists.remove(node);
+        if (pulse != null) {
+            pulse.stop();
+        }
+        if (node.getEffect() instanceof DropShadow) {
+            node.setEffect(null);
+        }
     }
 
     private void showNavigationPath() {
@@ -1155,6 +1265,22 @@ public class GameController implements Initializable {
 
     public void dispose() {
         stopComputerCharacters();
+
+        if (infectionWarningHideTimer != null) {
+            infectionWarningHideTimer.stop();
+            infectionWarningHideTimer = null;
+        }
+        if (infectionWarningSign != null) {
+            VBox sign = infectionWarningSign;
+            Platform.runLater(() -> {
+                if (root != null) {
+                    root.getChildren().remove(sign);
+                }
+            });
+            infectionWarningSign = null;
+        }
+        infectiousMists.values().forEach(Timeline::stop);
+        infectiousMists.clear();
 
         // Dispose all computer characters
         for (var cc : allComputerCharacters) {

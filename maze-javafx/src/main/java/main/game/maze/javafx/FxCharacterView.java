@@ -95,7 +95,8 @@ public final class FxCharacterView implements ICharacterView {
     public void detachFromParent() {
         Node n = node;
         if (n == null) return;
-        UiScheduler.get().runOnUiThread(() -> {
+        // Always defer detach to avoid mutating a Parent children list in the same pulse.
+        UiScheduler.get().runLater(() -> {
             try {
                 n.setEffect(null);
                 if (n.getParent() instanceof Pane p) {

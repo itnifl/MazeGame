@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.RealMaze;
 import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.mazeworld.Vector2D;
@@ -33,6 +34,15 @@ class RealMazeTest {
         assertFalse(maze.walls().isEmpty());
         assertTrue(maze.startX() >= 0f && maze.startX() <= maze.widthPx());
         assertTrue(maze.goalX()  >= 0f && maze.goalX()  <= maze.widthPx());
+    }
+
+    @Test
+    void freshStartPositionIsNotInsideAnyWall() {
+        RealMaze maze = RealMaze.fresh(640, 480);
+        PlayerState spawn = PlayerState.spawnAwayFromWalls(maze.startX(), maze.startY(), 16f, maze);
+
+        assertFalse(spawn.collidesWith(maze), "the shared maze start should not place the player inside a wall");
+        assertTrue(spawn.x() >= 0f && spawn.y() >= 0f, "spawn should stay inside the maze bounds");
     }
 
     @Test

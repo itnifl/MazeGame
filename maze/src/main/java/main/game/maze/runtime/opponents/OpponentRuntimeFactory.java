@@ -27,6 +27,7 @@ import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.generated.CharacterRegistrar;
@@ -93,9 +94,8 @@ public final class OpponentRuntimeFactory {
         // 1) Key for the profile (e.g., "easy", "normal", "hard")
         String key = diff.eClass().getName().toLowerCase(java.util.Locale.ROOT);
 
-        // 2) Build caps from Difficulty (type -> maxCount)
-        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
-        diff.getEnemyMaxCount().forEach(e -> caps.put(e.getType(), Math.max(0, e.getMaxCount())));
+        // 2) Build caps from Difficulty (shared with libGDX via EnemySpawnPlanner)
+        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemySpawnPlanner.capsFromDifficulty(diff));
         
         // 3) Choose a total enemyCount and ratios for the resolver
         //    - enemyCount: use sum(caps) as a reasonable default 

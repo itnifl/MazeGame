@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
@@ -71,11 +73,21 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float SCORE_PANEL_WIDTH = 170f;
     private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
-    private static final int EASY_BASE_SCORE = 10000;
-    private static final int NORMAL_BASE_SCORE = 20000;
-    private static final int HARD_BASE_SCORE = 30000;
+    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
+    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
+    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final float MOUSE_STEP_DISTANCE = 20f;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
+    private static final float PLAYER_ALIVE_SCALE = 1f;
+    private static final float PLAYER_DEAD_SCALE = 1.8f;
+    private static final float HALF_RATIO = 0.5f;
+    private static final String INFECTION_WARNING_TEXT = "Infected!";
+    private static final float INFECTION_TRIANGLE_WIDTH = 120f;
+    private static final float INFECTION_TRIANGLE_HEIGHT = 106f;
+    private static final float INFECTION_PULSE_BASE = 0.5f;
+    private static final float INFECTION_PULSE_AMPLITUDE = 0.5f;
+    private static final float INFECTION_PULSE_SPEED = 3.2f;
+    private static final int INFECTION_GLOW_LAYERS = 6;
 
     private enum Mode {
         START_MENU,
@@ -143,14 +155,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private float playerTintRed = 1f;
     private float playerTintGreen = 1f;
     private float playerTintBlue = 1f;
+    private boolean infectionWarningVisible;
     private boolean playedWinSound;
     private boolean playedGameOverSound;
     private boolean loadingPending;
+    private long loadingStartedAtNanos;
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<ScoreRow> highScoreRows = new ArrayList<>();
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
+    private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
     public GdxGameScreen() {
         this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true);
@@ -228,34 +243,30 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     /**
-     * Gameplay viewport screen-pixel bounds. The strip sits between the bottom
-     * command bar and the top HP bar so the top wall is flush with the HP bar
-     * and the bottom wall is flush with the bottom bar.
+     * Gameplay viewport screen-pixel bounds. Match JavaFX by rendering the
+     * maze under HUD overlays across the full window.
      *
      * <p>Package-private for unit tests.
      */
     static GameStripBounds computeGameStripBounds(int windowWidth, int windowHeight) {
         int w = Math.max(1, windowWidth);
         int h = Math.max(1, windowHeight);
-        int bottom = (int) BOTTOM_BAR_HEIGHT;
-        int top = (int) HP_BAR_HEIGHT;
-        int gameH = Math.max(1, h - bottom - top);
-        return new GameStripBounds(0, bottom, w, gameH);
+        return new GameStripBounds(0, 0, w, h);
     }
 
     /** HUD y of the HP bar lower edge so the bar is pinned to the window top. */
     static float hpBarBottomY(float windowHeight) {
-        return Math.max(0f, windowHeight - HP_BAR_HEIGHT - 1f);
+        return Math.max(0f, windowHeight - HP_BAR_HEIGHT);
     }
 
     /** HUD y of the bottom command row lower edge so the bar is pinned to the window bottom. */
     static float bottomRowY() {
-        return 3f;
+        return 0f;
     }
 
     /** HUD pixel height reserved for the bottom command row. */
     static float bottomRowHeight() {
-        return BOTTOM_BAR_HEIGHT - 6f;
+        return BOTTOM_BAR_HEIGHT;
     }
 
     static float bottomBarHeight() {
@@ -266,6 +277,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         return HP_BAR_HEIGHT;
     }
 
+    static boolean isInfectious(EnemySpawn spawn) {
+        return spawn != null && spawn.infectionLevel() > 0;
+    }
+
     /** Package-private viewport-strip record exposed for unit tests. */
     record GameStripBounds(int x, int y, int width, int height) {}
 
@@ -274,7 +289,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float dt = Math.min(Gdx.graphics.getDeltaTime(), 1f / 30f);
         update(dt);
         draw();
-        if (loadingPending) {
+        if (loadingPending && TimeUtils.timeSinceNanos(loadingStartedAtNanos) >= START_MENU_LOADING_DELAY_NANOS) {
             loadingPending = false;
             startGameFromSelection();
         }
@@ -393,6 +408,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         playerTintRed = combatFrame.tintRed();
         playerTintGreen = combatFrame.tintGreen();
         playerTintBlue = combatFrame.tintBlue();
+        infectionWarningVisible = combatFrame.infected();
 
         if (combatFrame.dead()) {
             mode = Mode.GAME_OVER;
@@ -480,6 +496,20 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
         }
 
+        // Mist pre-pass: drawn behind enemy sprites so the sprite stays visible.
+        batch.end();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapes.setProjectionMatrix(camera.combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        for (EnemyRuntime enemy : animatedEnemies) {
+            if (enemy.infectious) {
+                drawInfectiousMist(shapes, enemy);
+            }
+        }
+        shapes.end();
+        batch.begin();
+
         // Enemies loaded from opponents model and animated in-game.
         for (EnemyRuntime enemy : animatedEnemies) {
             Texture enemyTexture = loadTexture(enemy.imagePath);
@@ -492,11 +522,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         // Player from player Ecore/XMI model.
         float playerDrawSize = player.halfSize() * 2f;
-        float playerHalf = player.halfSize();
         Texture activePlayerTexture = combatState.isDead() ? playerDeathTexture : playerTexture;
         batch.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
         if (activePlayerTexture != null) {
-            batch.draw(activePlayerTexture, player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
+            float scale = combatState.isDead() ? PLAYER_DEAD_SCALE : PLAYER_ALIVE_SCALE;
+            float drawSize = playerDrawSize * scale;
+            float halfDraw = drawSize * HALF_RATIO;
+            batch.draw(activePlayerTexture, player.x() - halfDraw, player.y() - halfDraw, drawSize, drawSize);
         }
         batch.setColor(Color.WHITE);
 
@@ -541,7 +573,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Player fallback.
         if (activePlayerTexture == null) {
             shapes.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
-            shapes.rect(player.x() - playerHalf, player.y() - playerHalf, playerDrawSize, playerDrawSize);
+            float scale = combatState.isDead() ? PLAYER_DEAD_SCALE : PLAYER_ALIVE_SCALE;
+            float drawSize = playerDrawSize * scale;
+            float halfDraw = drawSize * HALF_RATIO;
+            shapes.rect(player.x() - halfDraw, player.y() - halfDraw, drawSize, drawSize);
         }
 
         if (!activePathPoints.isEmpty()) {
@@ -592,6 +627,73 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (mode == Mode.GAME_OVER) {
             drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu", gameOverBackgroundTexture, Color.RED);
         }
+        if (mode == Mode.PLAYING && infectionWarningVisible) {
+            drawInfectionWarningSign();
+        }
+    }
+
+    private void drawInfectionWarningSign() {
+        float w = hudCamera.viewportWidth;
+        float h = hudCamera.viewportHeight;
+        float triangleW = INFECTION_TRIANGLE_WIDTH;
+        float triangleH = INFECTION_TRIANGLE_HEIGHT;
+        float cx = w * HALF_RATIO;
+        float cy = h * HALF_RATIO;
+
+        shapes.setProjectionMatrix(hudCamera.combined);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Pulsing green outer glow around the warning triangle edges.
+        float pulse = INFECTION_PULSE_BASE + INFECTION_PULSE_AMPLITUDE * (float) Math.sin(enemyAnimationClock * INFECTION_PULSE_SPEED);
+        int glowLayers = INFECTION_GLOW_LAYERS;
+        for (int i = glowLayers; i >= 1; i--) {
+            float spread = 6f + i * 4f + pulse * 4f;
+            float alpha = (0.10f + 0.10f * pulse) * (i / (float) glowLayers) * 0.55f;
+            shapes.setColor(0.20f, 1.0f, 0.45f, alpha);
+            shapes.triangle(
+                    cx, cy + triangleH * 0.5f + spread,
+                    cx - triangleW * 0.5f - spread, cy - triangleH * 0.5f - spread * 0.5f,
+                    cx + triangleW * 0.5f + spread, cy - triangleH * 0.5f - spread * 0.5f);
+        }
+
+        shapes.setColor(1f, 0.84f, 0.30f, 0.96f);
+        shapes.triangle(
+                cx, cy + triangleH * 0.5f,
+                cx - triangleW * 0.5f, cy - triangleH * 0.5f,
+                cx + triangleW * 0.5f, cy - triangleH * 0.5f);
+        shapes.setColor(0.22f, 0.14f, 0.00f, 0.98f);
+        shapes.rect(cx - 5f, cy - 22f, 10f, 44f);
+        shapes.circle(cx, cy - 35f, 6f);
+        shapes.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        batch.setProjectionMatrix(hudCamera.combined);
+        batch.begin();
+        font.setColor(new Color(0.20f, 1.0f, 0.45f, 1f));
+        font.getData().setScale(1.3f);
+        glyphLayout.setText(font, INFECTION_WARNING_TEXT);
+        float tx = cx - glyphLayout.width * 0.5f;
+        float ty = cy - triangleH * 0.5f - 18f;
+        font.draw(batch, INFECTION_WARNING_TEXT, tx, ty);
+        font.getData().setScale(1.0f);
+        batch.end();
+    }
+
+    private void drawInfectiousMist(ShapeRenderer renderer, EnemyRuntime enemy) {
+        float pulse = 0.5f + 0.5f * (float) Math.sin(enemyAnimationClock * (1.8f + enemy.infectionStrength) + enemy.phase);
+        float centerX = enemy.x;
+        float centerY = enemy.y;
+        float baseRadius = enemy.size * (0.65f + 0.14f * enemy.infectionStrength);
+        float outerRadius = baseRadius + pulse * enemy.size * 0.42f;
+        float midRadius = baseRadius * 0.78f + pulse * enemy.size * 0.22f;
+
+        // Faint haze; alpha kept low so sprite drawn on top stays clearly visible.
+        renderer.setColor(0.20f, 1.0f, 0.46f, 0.10f + 0.10f * pulse * enemy.infectionStrength);
+        renderer.circle(centerX, centerY, outerRadius, 28);
+        renderer.setColor(0.56f, 1.0f, 0.72f, 0.08f + 0.10f * pulse * enemy.infectionStrength);
+        renderer.circle(centerX, centerY, midRadius, 24);
     }
 
     private void applyFullWindowGlViewport() {
@@ -653,6 +755,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.rect(buttonX, buttonY, buttonW, buttonH);
         if (startMenuDropdownOpen && !difficulties.isEmpty()) {
             float optH = comboH;
+            shapes.setColor(0.03f, 0.09f, 0.15f, 1f);
+            shapes.rect(comboX, comboY - difficulties.size() * optH, comboW, difficulties.size() * optH);
             for (int i = 0; i < difficulties.size(); i++) {
                 float oy = comboY - (i + 1) * optH;
                 if (i == selectedDifficultyIndex) {
@@ -701,9 +805,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         String selectedText = selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()
                 ? displayName(difficulties.get(selectedDifficultyIndex))
                 : "Easy";
-        font.setColor(new Color(0.95f, 0.98f, 1f, 0.88f));
+        font.setColor(new Color(0.95f, 0.98f, 1f, 1f));
         font.draw(batch, selectedText, comboX + 18f, comboY + 33f);
-        font.setColor(new Color(0.95f, 0.98f, 1f, 0.45f));
+        font.setColor(new Color(0.95f, 0.98f, 1f, 1f));
         font.draw(batch, startMenuDropdownOpen ? "^" : "v", comboX + comboW - 20f, comboY + 33f);
 
         if (startMenuDropdownOpen && !difficulties.isEmpty()) {
@@ -741,12 +845,55 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (loadingPending) {
             font.setColor(Color.GOLD);
-            font.getData().setScale(4.0f);
+            font.getData().setScale(2.0f);
             glyphLayout.setText(font, "Loading ...");
-            float lx = (w - glyphLayout.width) * 0.5f;
-            float ly = h * 0.5f + glyphLayout.height * 0.5f;
+            float lx = panelX + (panelW - glyphLayout.width) * 0.5f;
+            float ly = titleY - 52f;
             font.draw(batch, "Loading ...", lx, ly);
             font.getData().setScale(1.0f);
+        }
+        batch.end();
+
+        if (startMenuDropdownOpen && !difficulties.isEmpty()) {
+            drawStartMenuDropdownOverlay(comboX, comboY, comboW, comboH);
+        }
+    }
+
+    private void drawStartMenuDropdownOverlay(float comboX, float comboY, float comboW, float comboH) {
+        float optH = comboH;
+        float optionsHeight = difficulties.size() * optH;
+
+        shapes.setProjectionMatrix(hudCamera.combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        shapes.setColor(0.03f, 0.09f, 0.15f, 1f);
+        shapes.rect(comboX, comboY - optionsHeight, comboW, optionsHeight);
+        for (int i = 0; i < difficulties.size(); i++) {
+            float oy = comboY - (i + 1) * optH;
+            if (i == selectedDifficultyIndex) {
+                shapes.setColor(0.08f, 0.20f, 0.34f, 1f);
+            } else {
+                shapes.setColor(0.04f, 0.11f, 0.19f, 1f);
+            }
+            shapes.rect(comboX, oy, comboW, optH);
+        }
+        shapes.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);
+        shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
+        for (int i = 0; i < difficulties.size(); i++) {
+            float oy = comboY - (i + 1) * optH;
+            shapes.rect(comboX, oy, comboW, optH);
+        }
+        shapes.end();
+
+        batch.setProjectionMatrix(hudCamera.combined);
+        batch.begin();
+        for (int i = 0; i < difficulties.size(); i++) {
+            float oy = comboY - (i + 1) * optH;
+            font.setColor(i == selectedDifficultyIndex
+                ? new Color(0.95f, 1f, 0.98f, 1f)
+                : new Color(0.84f, 0.94f, 0.98f, 1f));
+            font.draw(batch, displayName(difficulties.get(i)), comboX + 18f, oy + 33f);
         }
         batch.end();
     }
@@ -972,7 +1119,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (enterPressed && !enterLatch) {
             AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-            loadingPending = true;
+            beginStartLoading();
         }
 
         upLatch = upPressed;
@@ -1011,8 +1158,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (contains(mx, my, menuLayout.buttonX, menuLayout.buttonY, menuLayout.buttonW, menuLayout.buttonH)) {
             startMenuDropdownOpen = false;
             AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-            loadingPending = true;
+            beginStartLoading();
         }
+    }
+
+    private void beginStartLoading() {
+        loadingPending = true;
+        loadingStartedAtNanos = TimeUtils.nanoTime();
     }
 
     private void handleGameMouseInput() {
@@ -1118,7 +1270,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 : StageConstants.PlayerCharacterSpeed;
         activePlayerSpeed = Math.max(1f, toJavaFxLikeSpeed(baseSpeed));
         activeGoalSize = runtimeModel.goalSize() > 0f ? runtimeModel.goalSize() : GOAL_SIZE;
-        player = new PlayerState(maze.startX(), maze.startY(), runtimeModel.playerSize() > 0f ? runtimeModel.playerSize() : playerSize);
+        player = PlayerState.spawnAwayFromWalls(
+            maze.startX(),
+            maze.startY(),
+            runtimeModel.playerSize() > 0f ? runtimeModel.playerSize() : playerSize,
+            maze);
         baseScore = baseScoreForDifficulty(selected);
         moveCount = 0;
         showHintInfo = false;
@@ -1162,14 +1318,26 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void recenterGoalLikeJavaFx() {
-        float goalW = activeGoalSize;
-        float goalH = activeGoalSize;
-        if (goalTexture != null) {
-            goalW = goalTexture.getWidth();
-            goalH = goalTexture.getHeight();
+        activeGoalX = maze.widthPx() * 0.5f;
+        activeGoalY = maze.heightPx() * 0.5f;
+        nudgeGoalOffWalls(activeGoalSize, activeGoalSize);
+    }
+
+    private void nudgeGoalOffWalls(float goalW, float goalH) {
+        if (maze == null || maze.walls() == null || maze.walls().isEmpty()) {
+            return;
         }
-        activeGoalX = (maze.widthPx() - goalW) * 0.5f + goalW * 0.5f;
-        activeGoalY = (maze.heightPx() - goalH) * 0.5f + goalH * 0.5f;
+        final float halfW = goalW * 0.5f;
+        final float halfH = goalH * 0.5f;
+        main.game.maze.mazeworld.generators.SpriteWallNudger.MovableAabb rect =
+                new main.game.maze.mazeworld.generators.SpriteWallNudger.MovableAabb() {
+            @Override public float minX() { return activeGoalX - halfW; }
+            @Override public float minY() { return activeGoalY - halfH; }
+            @Override public float maxX() { return activeGoalX + halfW; }
+            @Override public float maxY() { return activeGoalY + halfH; }
+            @Override public void offset(float dx, float dy) { activeGoalX += dx; activeGoalY += dy; }
+        };
+        main.game.maze.mazeworld.generators.SpriteWallNudger.nudgeOffWalls(rect, maze.walls(), 400);
     }
 
     private void resizeWindowForDifficulty(Difficulty selected) {
@@ -1181,10 +1349,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         var display = Gdx.graphics.getDisplayMode();
         int maxW = display != null ? display.width : targetW;
         int maxH = display != null ? display.height : targetH;
-        int windowW = Math.min(targetW, maxW);
-        int windowH = Math.min(targetH + (int) BOTTOM_BAR_HEIGHT, maxH);
-        int finalWidth = Math.min(maxW, Math.max(800, windowW));
-        int finalHeight = Math.min(maxH, Math.max(640, windowH));
+        int finalWidth = Math.min(maxW, targetW);
+        int finalHeight = Math.min(maxH, targetH);
         if (Gdx.graphics.getWidth() == finalWidth && Gdx.graphics.getHeight() == finalHeight) {
             return;
         }
@@ -1231,13 +1397,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private int baseScoreForDifficulty(Difficulty selected) {
-        if (selected instanceof HardDifficulty) {
-            return HARD_BASE_SCORE;
-        }
-        if (selected instanceof NormalDifficulty) {
-            return NORMAL_BASE_SCORE;
-        }
-        return EASY_BASE_SCORE;
+        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(selected);
     }
 
     private String displayName(Difficulty difficulty) {
@@ -1306,7 +1466,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+        AudioEngine.get().playLoop(resolveMenuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+    }
+
+    private String resolveMenuMusicPath() {
+        String primary = visualStyle.menuMusicPath();
+        String alternate = "/main/game/maze/menumusic1.wav";
+        return ThreadLocalRandom.current().nextBoolean() ? primary : alternate;
     }
 
     private void applyPathPenalty(float dt) {
@@ -1421,6 +1587,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private final float radius;
         private final float speed;
         private final float phase;
+        private final boolean infectious;
+        private final float infectionStrength;
         private float x;
         private float y;
 
@@ -1433,6 +1601,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
             this.radius = radius;
             this.speed = speed;
             this.phase = phase;
+            this.infectious = isInfectious(spawn);
+            this.infectionStrength = infectious ? Math.min(1f, Math.max(0.35f, spawn.infectionLevel() / 100f)) : 0f;
             this.x = baseX;
             this.y = baseY;
         }
