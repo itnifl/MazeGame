@@ -9,6 +9,28 @@ import org.junit.jupiter.api.Test;
 class AntiLoopWanderMovementServiceTest {
 
     @Test
+    void continuesStraightUntilCollisionThenTurns() {
+        AntiLoopWanderMovementService service = new AntiLoopWanderMovementService();
+        WorldView world = new CorridorWorld(200d, 200d, 140d);
+
+        EnemyState current = new EnemyState("corridor", 40d, 100d, 1, 0, 16d, 8d);
+
+        for (int i = 0; i < 11; i++) {
+            MovementResult next = service.tick(current, world);
+            assertTrue(next.moved(), "enemy should keep moving straight before the wall");
+            assertTrue(next.directionX() == 1 && next.directionY() == 0,
+                    "wander should keep the same heading until it collides");
+            current = new EnemyState(current.id(), next.x(), next.y(), next.directionX(), next.directionY(),
+                    current.size(), current.speed());
+        }
+
+        MovementResult turn = service.tick(current, world);
+        assertTrue(turn.moved(), "after collision wander should choose another open cardinal");
+        assertTrue(turn.directionX() == 0 && Math.abs(turn.directionY()) == 1,
+                "after collision wander should turn, not keep pushing into the wall");
+    }
+
+    @Test
     void wanderBreaksOutOfTinyLoopArea() {
         AntiLoopWanderMovementService service = new AntiLoopWanderMovementService();
         WorldView world = new OpenWorld(1000d, 1000d);
@@ -77,6 +99,30 @@ class AntiLoopWanderMovementServiceTest {
                 return true;
             }
             return centerX + half > maxX || centerY + half > maxY;
+        }
+    }
+
+    private record CorridorWorld(double maxX, double maxY, double wallX) implements WorldView {
+        @Override
+        public double playerX() {
+            return 0;
+        }
+
+        @Override
+        public double playerY() {
+            return 0;
+        }
+
+        @Override
+        public boolean wouldCollide(double centerX, double centerY, double size) {
+            double half = size * 0.5d;
+            if (centerX - half < 0d || centerY - half < 0d) {
+                return true;
+            }
+            if (centerX + half > maxX || centerY + half > maxY) {
+                return true;
+            }
+            return centerX + half >= wallX;
         }
     }
 }

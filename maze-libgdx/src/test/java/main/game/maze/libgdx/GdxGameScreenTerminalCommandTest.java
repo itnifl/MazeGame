@@ -1,6 +1,7 @@
 package main.game.maze.libgdx;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -45,4 +46,10 @@ class GdxGameScreenTerminalCommandTest {
         assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
                 GdxGameScreen.parseTerminalCommand("  /SEP  "));
     }
+
+        @Test
+        void helpTextMentionsEnemyPathDuration() {
+                assertTrue(GdxGameScreen.terminalHelpText().contains("10 seconds"),
+                                "terminal help must say that /sep shows enemy paths for 10 seconds");
+        }
 }

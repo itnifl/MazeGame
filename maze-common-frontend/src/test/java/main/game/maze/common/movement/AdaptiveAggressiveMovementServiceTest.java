@@ -145,6 +145,31 @@ class AdaptiveAggressiveMovementServiceTest {
                 "repeating circles without player progress for 10 seconds should be treated as stuck");
     }
 
+    @Test
+    void wanderRecoveryDoesNotRevisitHotCellsMoreThanThreeTimesInSlidingWindow() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        ToggleBarrierWorld world = new ToggleBarrierWorld(220d, 120d, 240d, 240d);
+
+        EnemyState enemy = new EnemyState("anti-circle", 32d, 120d, 1, 0, 16d, 4d);
+        List<Long> recent = new java.util.ArrayList<>();
+
+        for (int i = 0; i < 220; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+            if (service.modeForEnemy("anti-circle") != AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                continue;
+            }
+            recent.add(cell(enemy.x(), enemy.y()));
+            if (recent.size() > 24) {
+                recent.remove(0);
+            }
+            long latest = recent.get(recent.size() - 1);
+            long visits = recent.stream().filter(v -> v == latest).count();
+            assertTrue(visits <= 3,
+                    "wander recovery should not let a hot cell appear more than 3 times in the last 24 steps");
+        }
+    }
+
     private static EnemyState advance(EnemyState s, MovementResult r) {
         return new EnemyState(s.id(), r.x(), r.y(), r.directionX(), r.directionY(), s.size(), s.speed());
     }
@@ -153,6 +178,12 @@ class AdaptiveAggressiveMovementServiceTest {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return Math.hypot(dx, dy);
+    }
+
+    private static long cell(double x, double y) {
+        long qx = Math.round(x / 4d);
+        long qy = Math.round(y / 4d);
+        return (qx << 32) ^ (qy & 0xffffffffL);
     }
 
     private record FlatWorldView(double playerX, double playerY,

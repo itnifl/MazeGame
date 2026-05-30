@@ -75,6 +75,7 @@ import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
@@ -175,6 +176,10 @@ public class GameController implements Initializable {
     private PauseTransition enemyDebugLabelHideTimer;
     private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
+    private final PatrolMovementService patrolMovementService = new PatrolMovementService();
+    private AnimationTimer enemyPathOverlayTimer;
+    private boolean enemyPathOverlayVisible;
+    private long enemyPathOverlayHideAtNanos;
 
     private enum TerminalCommand {
         HELP,
@@ -377,7 +382,7 @@ public class GameController implements Initializable {
         var dialog = new TextInputDialog();
         dialog.setTitle("Maze Terminal");
         dialog.setHeaderText("Enter command");
-        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath");
+        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath, /sep (shows enemy paths for 10 seconds)");
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
         if (window != null) {
             dialog.initOwner(window);
@@ -392,7 +397,7 @@ public class GameController implements Initializable {
     private void executeTerminalCommand(String raw) {
         TerminalCommand command = parseTerminalCommand(raw);
         switch (command) {
-            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep");
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)");
             case SHOW_BEHAVIOUR_TYPE -> {
                 setHudMessage("Showing behaviour type above enemies");
                 showEnemyDebugLabels(true);
@@ -402,7 +407,7 @@ public class GameController implements Initializable {
                 showEnemyDebugLabels(false);
             }
             case SHOW_ENEMY_PATH -> {
-                setHudMessage("Showing enemy paths for 10s");
+                setHudMessage("Showing enemy paths for 10 seconds");
                 showEnemyPathsOverlay();
             }
             case EMPTY -> setHudMessage("No command entered");
@@ -431,17 +436,28 @@ public class GameController implements Initializable {
     }
 
     private void showEnemyPathsOverlay() {
-        // Lightweight overlay: count how many enemy paths we could compute and
-        // surface the count as a HUD echo. Full Canvas-line rendering is
-        // wired in a follow-up; for now the user gets confirmation that the
-        // command fired plus the visible count of trackable enemies.
-        int trackable = 0;
-        for (var cc : allComputerCharacters) {
-            if (cc instanceof ComputerCharacter) {
-                trackable++;
-            }
+        enemyPathOverlayVisible = true;
+        enemyPathOverlayHideAtNanos = System.nanoTime() + 10_000_000_000L;
+        ensureEnemyPathOverlayTimer();
+        refreshPathCanvasOverlay();
+    }
+
+    private void ensureEnemyPathOverlayTimer() {
+        if (enemyPathOverlayTimer != null) {
+            enemyPathOverlayTimer.start();
+            return;
         }
-        setHudMessage("Enemy path overlay: tracking " + trackable + " enemies for 10s");
+        enemyPathOverlayTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (now >= enemyPathOverlayHideAtNanos) {
+                    enemyPathOverlayVisible = false;
+                    stop();
+                }
+                refreshPathCanvasOverlay();
+            }
+        };
+        enemyPathOverlayTimer.start();
     }
 
     private void showEnemyDebugLabels(boolean behaviourType) {
@@ -1132,8 +1148,7 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterPatrolMove(IMovingComputerCharacter computerCharacter) {
-        // Check if character is in wander fallback mode
-        if (PatrolController.isInWanderFallback(computerCharacter)) {
+        if (!(computerCharacter instanceof ComputerCharacter cc)) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
@@ -1142,24 +1157,28 @@ public class GameController implements Initializable {
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        
-        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter);
-        
-        // If no valid patrol direction, enter wander fallback
-        if (direction == null) {
-            PatrolController.triggerWanderFallback(computerCharacter);
+
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        EnemyState state = new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+
+        MovementResult result = patrolMovementService.tick(state, createJavaFxWorldView(), 0.06d);
+        if (result.directionX() == 0 && result.directionY() == 0) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
-        
-        computerCharacter.setDirection(direction);
+
+        computerCharacter.setDirection(new Point2D(result.directionX(), result.directionY()));
         var successfulMove = computerCharacter.move(nonTangient);
-        
-        // If move failed, enter wander fallback to get unstuck
         if (!successfulMove) {
-            PatrolController.triggerWanderFallback(computerCharacter);
-            computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
+            doCharacterWanderMove(computerCharacter);
         }
     }
 
@@ -1488,7 +1507,33 @@ public class GameController implements Initializable {
     }
 
     private void showNavigationPath() {
-        if (maze == null || pathCanvas == null || heart == null || playerCharacter == null) {
+        isRouteHintVisible = true;
+        lastRouteHintPenaltyNanos = System.nanoTime();
+        refreshPathCanvasOverlay();
+    }
+
+    private void clearNavigationPath() {
+        isRouteHintVisible = false;
+        refreshPathCanvasOverlay();
+    }
+
+    private void refreshPathCanvasOverlay() {
+        if (pathCanvas == null) {
+            return;
+        }
+        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+        if (isRouteHintVisible) {
+            drawPlayerNavigationPath(gc);
+        }
+        if (enemyPathOverlayVisible) {
+            drawEnemyNavigationPaths(gc);
+        }
+        gc.setGlobalAlpha(1.0);
+    }
+
+    private void drawPlayerNavigationPath(GraphicsContext gc) {
+        if (maze == null || heart == null || playerCharacter == null) {
             isRouteHintVisible = false;
             return;
         }
@@ -1501,49 +1546,64 @@ public class GameController implements Initializable {
 
         Point2D start = new Point2D(
                 playerCharacter.getCharacterPosition().getX(),
-                playerCharacter.getCharacterPosition().getY()
-        );
-
+                playerCharacter.getCharacterPosition().getY());
         double heartW = heart.getBoundsInLocal().getWidth();
         double heartH = heart.getBoundsInLocal().getHeight();
-        double hx = heart.getLayoutX() + heartW / 2.0;
-        double hy = heart.getLayoutY() + heartH / 2.0;
-        Point2D goal = new Point2D(hx, hy);
+        Point2D goal = new Point2D(
+                heart.getLayoutX() + heartW / 2.0,
+                heart.getLayoutY() + heartH / 2.0);
 
         var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
         if (path == null || path.size() < 2) {
             isRouteHintVisible = false;
-            clearNavigationPath();
             return;
         }
-
-        isRouteHintVisible = true;
-        lastRouteHintPenaltyNanos = System.nanoTime();
-
-        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
 
         gc.setLineWidth(8.0);
         gc.setStroke(Color.DODGERBLUE);
         gc.setGlobalAlpha(0.6);
-
         Point2D prev = path.get(0);
         for (int i = 1; i < path.size(); i++) {
             Point2D p = path.get(i);
             gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
             prev = p;
         }
-
-        gc.setGlobalAlpha(1.0); 
     }
 
-    private void clearNavigationPath() {
-        isRouteHintVisible = false;
-        if (pathCanvas == null) {
+    private void drawEnemyNavigationPaths(GraphicsContext gc) {
+        if (maze == null || playerCharacter == null) {
             return;
         }
-        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+        var navGraph = maze.getNavigationGraph();
+        if (navGraph == null) {
+            return;
+        }
+
+        Point2D goal = new Point2D(
+                playerCharacter.getCharacterPosition().getX(),
+                playerCharacter.getCharacterPosition().getY());
+        gc.setLineWidth(5.0);
+        gc.setStroke(Color.ORANGE);
+        gc.setGlobalAlpha(0.65);
+
+        for (var cc : allComputerCharacters) {
+            if (!(cc instanceof ComputerCharacter computerCharacter)) {
+                continue;
+            }
+            Point2D start = new Point2D(
+                    computerCharacter.getCharacterPosition().getX(),
+                    computerCharacter.getCharacterPosition().getY());
+            var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
+            if (path == null || path.size() < 2) {
+                continue;
+            }
+            Point2D prev = path.get(0);
+            for (int i = 1; i < path.size(); i++) {
+                Point2D p = path.get(i);
+                gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
+                prev = p;
+            }
+        }
     }
 
     private void showSpanningTree() {

@@ -38,6 +38,7 @@ import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
@@ -111,7 +112,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
     private static final float ENEMY_PATH_OVERLAY_SECONDS = 10f;
-    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep";
+    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)";
     private static final float BUTTON_PRESS_SECONDS = 0.14f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
@@ -177,6 +178,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
             new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
             new AdaptiveAggressiveMovementService();
+        private final PatrolMovementService patrolMovementService =
+            new PatrolMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -509,6 +512,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 enemy.advance(
                     world,
                     antiLoopWanderMovementService,
+                    patrolMovementService,
                     adaptiveAggressiveMovementService,
                     dt);
             }
@@ -707,6 +711,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 float by = maze.heightPx() - (float) b.getY();
                 drawPathSegment(shapes, ax, ay, bx, by, 8f);
             }
+        }
+
+        if (showEnemyPathSeconds > 0f) {
+            drawEnemyPathOverlay(shapes);
         }
 
         if (showSpanningTreeInfo && maze instanceof RealMaze realMaze && realMaze.navigationGraph() != null) {
@@ -1473,10 +1481,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (command == TerminalCommand.SHOW_ENEMY_PATH) {
             showEnemyPathSeconds = ENEMY_PATH_OVERLAY_SECONDS;
-            flashStatus("Showing enemy paths for 10s");
+            flashStatus("Showing enemy paths for 10 seconds");
             return;
         }
         flashStatus("Unknown command. Use /h");
+    }
+
+    static String terminalHelpText() {
+        return TERMINAL_HELP_TEXT;
     }
 
     static TerminalCommand parseTerminalCommand(String raw) {
@@ -1514,6 +1526,55 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (path != null && path.size() > 1) {
             activePathPoints.addAll(path);
         }
+    }
+
+    private void drawEnemyPathOverlay(ShapeRenderer renderer) {
+        if (!(maze instanceof RealMaze realMaze) || player == null || realMaze.navigationGraph() == null) {
+            return;
+        }
+        List<Point2D> enemyPositions = new ArrayList<>(animatedEnemies.size());
+        for (EnemyRuntime enemy : animatedEnemies) {
+            enemyPositions.add(new Point2D(enemy.x, enemy.y));
+        }
+        var paths = buildEnemyPathOverlayPaths(
+                realMaze.navigationGraph(),
+                maze.heightPx(),
+                player.x(),
+                player.y(),
+                enemyPositions);
+        renderer.setColor(1f, 0.72f, 0.2f, 0.7f);
+        for (List<Point2D> path : paths) {
+            for (int i = 1; i < path.size(); i++) {
+                Point2D a = path.get(i - 1);
+                Point2D b = path.get(i);
+                float ax = (float) a.getX();
+                float ay = maze.heightPx() - (float) a.getY();
+                float bx = (float) b.getX();
+                float by = maze.heightPx() - (float) b.getY();
+                drawPathSegment(renderer, ax, ay, bx, by, 5f);
+            }
+        }
+    }
+
+    static List<List<Point2D>> buildEnemyPathOverlayPaths(
+            main.game.maze.mazeworld.service.MazeNavigationGraph graph,
+            float mazeHeight,
+            float playerX,
+            float playerY,
+            List<Point2D> enemyPositions) {
+        if (graph == null || enemyPositions == null || enemyPositions.isEmpty()) {
+            return List.of();
+        }
+        Point2D goal = new Point2D(playerX, mazeHeight - playerY);
+        List<List<Point2D>> paths = new ArrayList<>();
+        for (Point2D enemy : enemyPositions) {
+            Point2D start = new Point2D(enemy.getX(), mazeHeight - enemy.getY());
+            var path = MazeNavigationGraphService.findPath(graph, start, goal);
+            if (path != null && path.size() > 1) {
+                paths.add(path);
+            }
+        }
+        return paths;
     }
 
     private void loadHighScores() {
@@ -1964,9 +2025,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
          * {@code spawn.speed()} translates to a frame-rate-independent move.
          */
         private void advance(WorldView world,
-                     AntiLoopWanderMovementService wanderService,
-                     AdaptiveAggressiveMovementService adaptiveService,
-                     float dt) {
+                 AntiLoopWanderMovementService wanderService,
+                 PatrolMovementService patrolService,
+                 AdaptiveAggressiveMovementService adaptiveService,
+                 float dt) {
             // Treat spawn.speed() as world units per simulated tick at the
             // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
             // arbitrary frame rates produces matching displacement.
@@ -1978,7 +2040,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(world, wanderService, adaptiveService);
+                MovementResult next = nextMove(world, wanderService, patrolService, adaptiveService);
                 x = (float) next.x();
                 y = (float) next.y();
                 directionX = next.directionX();
@@ -1988,6 +2050,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         private MovementResult nextMove(WorldView world,
                         AntiLoopWanderMovementService wanderService,
+                        PatrolMovementService patrolService,
                         AdaptiveAggressiveMovementService adaptiveService) {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             if (behavior == BehaviorType.PASSIVE) {
@@ -2008,6 +2071,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 } else {
                     movementTypeLabel = "AGGRESSIVE_CHASE";
                 }
+                return result;
+            }
+            if (behavior == BehaviorType.PATROL) {
+                EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
+                MovementResult result = patrolService.tick(
+                        state,
+                        world,
+                        1.0d / JAVA_FX_TICK_RATE);
+                movementTypeLabel = patrolService.modeForEnemy(runtimeEnemyId)
+                        == PatrolMovementService.PatrolMovementMode.WANDER_RECOVERY
+                        ? "PATROL_WANDER"
+                        : "PATROL_PATH";
                 return result;
             }
             EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
