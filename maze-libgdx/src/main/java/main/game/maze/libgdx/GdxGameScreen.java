@@ -32,6 +32,12 @@ import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.movement.ChasePlayerMovementService;
+import main.game.maze.common.movement.EnemyMovementService;
+import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.WorldView;
+import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -67,6 +73,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float WALL_THICKNESS = 3f;
     private static final float GOAL_SIZE = 50f;
     private static final float JAVA_FX_TICK_RATE = 30f;
+    private static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
     private static final float BOTTOM_BAR_HEIGHT = 40f;
     private static final float HP_BAR_HEIGHT = 20f;
     private static final float TOP_MARGIN = 22f;
@@ -141,6 +148,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
+    private final EnemyMovementService enemyMovementService = new ChasePlayerMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -409,8 +417,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         enemyAnimationClock += dt;
-        for (EnemyRuntime enemy : animatedEnemies) {
-            enemy.update(enemyAnimationClock, maze.widthPx(), maze.heightPx());
+        if (!animatedEnemies.isEmpty() && maze != null && player != null) {
+            WorldView world = new GdxWorldView(maze, player);
+            for (EnemyRuntime enemy : animatedEnemies) {
+                enemy.advance(world, enemyMovementService, dt);
+            }
         }
 
         var combatFrame = combatState.update(dt, player.x(), player.y(), player.halfSize(), currentEnemyContacts());
@@ -1631,39 +1642,41 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private final EnemySpawn spawn;
         private final String imagePath;
         private final float size;
-        private final float baseX;
-        private final float baseY;
-        private final float radius;
         private final float speed;
-        private final float phase;
         private final boolean infectious;
         private final float infectionStrength;
+        // Cosmetic-only seed for the infectious mist pulse so neighbouring
+        // enemies don't shimmer in perfect lockstep. Not used by movement.
+        private final float phase;
         private float x;
         private float y;
+        private int directionX;
+        private int directionY;
+        private float moveAccumulator;
 
-        private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float radius, float speed, float phase) {
+        private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
             this.imagePath = imagePath;
             this.size = size;
-            this.baseX = baseX;
-            this.baseY = baseY;
-            this.radius = radius;
             this.speed = speed;
-            this.phase = phase;
             this.infectious = isInfectious(spawn);
             this.infectionStrength = infectious ? Math.min(1f, Math.max(0.35f, spawn.infectionLevel() / 100f)) : 0f;
+            this.phase = phase;
             this.x = baseX;
             this.y = baseY;
+            this.directionX = 0;
+            this.directionY = 0;
+            this.moveAccumulator = 0f;
         }
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index) {
-            float radius = Math.max(8f, spawn.size() * 0.35f);
-            // spawn.speed() already incorporates the difficulty speed multiplier;
-            // floor it so a zero-speed enemy still idles visibly via the
-            // sin/cos oscillator below instead of standing perfectly still.
+            // spawn.speed() already incorporates the difficulty speed multiplier.
+            // Floor to a small positive so a zero-speed enemy still inches toward
+            // the player; the shared chase service drives deliberate movement so
+            // index now only seeds the visual mist phase, not motion.
             float speed = Math.max(0.25f, spawn.speed());
             float phase = index * 0.8f;
-            return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), radius, speed, phase);
+            return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), speed, phase);
         }
 
         private EnemySpawn contactSnapshot() {
@@ -1680,11 +1693,30 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     spawn.speed());
         }
 
-        private void update(float t, float maxX, float maxY) {
-            float nx = baseX + (float) Math.cos(t * speed + phase) * radius;
-            float ny = baseY + (float) Math.sin(t * speed + phase) * radius;
-            x = clamp(nx, size * 0.5f, Math.max(size * 0.5f, maxX - size * 0.5f));
-            y = clamp(ny, size * 0.5f, Math.max(size * 0.5f, maxY - size * 0.5f));
+        /**
+         * Advance this enemy one frame through the shared movement service.
+         * Accumulates fractional steps so the per-tick world-unit speed in
+         * {@code spawn.speed()} translates to a frame-rate-independent move.
+         */
+        private void advance(WorldView world, EnemyMovementService service, float dt) {
+            // Treat spawn.speed() as world units per simulated tick at the
+            // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
+            // arbitrary frame rates produces matching displacement.
+            moveAccumulator += dt * JAVA_FX_TICK_RATE;
+            int ticks = (int) moveAccumulator;
+            if (ticks <= 0) {
+                return;
+            }
+            moveAccumulator -= ticks;
+            int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
+            for (int i = 0; i < budget; i++) {
+                EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
+                MovementResult next = service.tick(state, world);
+                x = (float) next.x();
+                y = (float) next.y();
+                directionX = next.directionX();
+                directionY = next.directionY();
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package main.game.maze;
 
 import main.game.maze.characters.ComputerCharacter;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
+import main.game.maze.common.movement.GridDirection;
 import main.game.maze.mazeworld.Point2D;
 
 /**
@@ -9,10 +10,12 @@ import main.game.maze.mazeworld.Point2D;
  * toward a target position. Backs F19 (AGGRESSIVE behavior), where an
  * opponent actively chases the player every tick instead of wandering or
  * following a fixed patrol route.
+ *
+ * <p>The direction math itself lives in the backend-neutral
+ * {@link GridDirection} helper in maze-common-frontend so the JavaFX and
+ * libGDX runtimes provably share a single implementation (DIP).
  */
 public final class ChaseController {
-
-    private static final double ALIGNMENT_THRESHOLD = 1.0;
 
     private ChaseController() {}
 
@@ -37,23 +40,12 @@ public final class ChaseController {
     /**
      * Pure helper exposed for testability. Returns the same 4-way unit
      * vector that {@link #getDirectionTowards} would return for the given
-     * raw coordinates.
+     * raw coordinates. Delegates to {@link GridDirection#directionBetween}
+     * so the rule is defined exactly once across both frontends.
      */
     public static Point2D directionBetween(double currentX, double currentY,
                                            double targetX, double targetY) {
-        double deltaX = targetX - currentX;
-        double deltaY = targetY - currentY;
-
-        int dirX = Math.abs(deltaX) > ALIGNMENT_THRESHOLD ? (int) Math.signum(deltaX) : 0;
-        int dirY = Math.abs(deltaY) > ALIGNMENT_THRESHOLD ? (int) Math.signum(deltaY) : 0;
-
-        if (dirX != 0 && dirY != 0) {
-            if (Math.abs(deltaX) >= Math.abs(deltaY)) {
-                dirY = 0;
-            } else {
-                dirX = 0;
-            }
-        }
-        return new Point2D(dirX, dirY);
+        int[] step = GridDirection.directionBetween(currentX, currentY, targetX, targetY);
+        return new Point2D(step[0], step[1]);
     }
 }
