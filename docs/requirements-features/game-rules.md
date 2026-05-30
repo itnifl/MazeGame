@@ -139,3 +139,9 @@ MUST be added to the shared core, not to a single frontend.
   window MUST be shared across JavaFX and libGDX through
   `AdaptiveAggressiveMovementService`; frontend-specific duplicates are
   forbidden.
+
+## Loop avoidance
+
+- **GR-33**: Wander and patrol movement MUST avoid repeating short circular
+  loops when alternatives are available. JavaFX and libGDX MUST use the same
+  shared anti-loop wander logic so non-aggressive movement remains parity-safe.

@@ -70,9 +70,11 @@ import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
@@ -171,6 +173,7 @@ public class GameController implements Initializable {
     private final Map<Node, Timeline> infectiousMists = new HashMap<>();
     private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
     private PauseTransition enemyDebugLabelHideTimer;
+    private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
 
     private enum TerminalCommand {
@@ -646,6 +649,7 @@ public class GameController implements Initializable {
 
         player.requestFocus();
         gameBoard.requestFocus();
+        antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         
         if (startDifficulty != null) {
@@ -1062,14 +1066,39 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
+        if (!(computerCharacter instanceof ComputerCharacter cc) || maze == null) {
+            var successfulMove = computerCharacter.move(false);
+            if (!successfulMove) {
+                computerCharacter.changeDirection();
+            }
+            return;
+        }
+
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        EnemyState state = new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+        MovementResult next = antiLoopWanderMovementService.tick(state, createJavaFxWorldView());
+
+        if (next.directionX() != 0 || next.directionY() != 0) {
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+        }
+
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
         }
     }
 

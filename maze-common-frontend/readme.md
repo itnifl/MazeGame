@@ -22,10 +22,12 @@ runtime renderer is JavaFX, libGDX, or something else.
   loading disabled, XInclude off, entity expansion off) so loading from
   arbitrary file paths is safe.
 - Shared enemy movement helpers:
-  `AdaptiveAggressiveMovementService` and `EnemySpawnUnstuckService`.
+  `AdaptiveAggressiveMovementService`, `AntiLoopWanderMovementService`, and
+  `EnemySpawnUnstuckService`.
   Aggressive enemies switch to shortest-path follow mode after 4 seconds of
   blocked movement and keep it for up to 20 seconds before returning to
-  directional chase.
+  directional chase. Wander and patrol use anti-loop scoring to avoid short
+  repeating circles when alternate cardinal moves exist.
 
 ## Default behaviour with no backend installed
 

@@ -30,11 +30,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
+import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
-import main.game.maze.common.movement.ChasePlayerMovementService;
-import main.game.maze.common.movement.EnemyMovementService;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
@@ -170,7 +169,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
-    private final EnemyMovementService enemyMovementService = new ChasePlayerMovementService();
+    private final AntiLoopWanderMovementService antiLoopWanderMovementService =
+            new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
             new AdaptiveAggressiveMovementService();
     private Texture playerTexture;
@@ -468,7 +468,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (!animatedEnemies.isEmpty() && maze != null && player != null) {
             WorldView world = new GdxWorldView(maze, player);
             for (EnemyRuntime enemy : animatedEnemies) {
-                enemy.advance(world, enemyMovementService, adaptiveAggressiveMovementService, dt);
+                enemy.advance(
+                    world,
+                    antiLoopWanderMovementService,
+                    adaptiveAggressiveMovementService,
+                    dt);
             }
         }
 
@@ -1560,6 +1564,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         deathSequenceStarted = false;
         deathDisplayRemainingSeconds = 0f;
         animatedEnemies.clear();
+        antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         pathPenaltyPoints = 0f;
         currentHpRatio = 1f;
@@ -1861,10 +1866,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private static final class EnemyRuntime {
-        private static final int[][] CARDINAL_STEPS = {
-            { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 }
-        };
-
         private final EnemySpawn spawn;
         private final String runtimeEnemyId;
         private final String imagePath;
@@ -1880,7 +1881,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private int directionX;
         private int directionY;
         private float moveAccumulator;
-        private long behaviorTick;
         private String behaviorTypeLabel;
         private String movementTypeLabel;
 
@@ -1899,7 +1899,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
             this.directionX = initialDirection[0];
             this.directionY = initialDirection[1];
             this.moveAccumulator = 0f;
-            this.behaviorTick = 0L;
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             this.behaviorTypeLabel = behavior.name();
             this.movementTypeLabel = "WANDER";
@@ -1946,7 +1945,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
          * {@code spawn.speed()} translates to a frame-rate-independent move.
          */
         private void advance(WorldView world,
-                     EnemyMovementService service,
+                     AntiLoopWanderMovementService wanderService,
                      AdaptiveAggressiveMovementService adaptiveService,
                      float dt) {
             // Treat spawn.speed() as world units per simulated tick at the
@@ -1960,17 +1959,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(world, service, adaptiveService);
+                MovementResult next = nextMove(world, wanderService, adaptiveService);
                 x = (float) next.x();
                 y = (float) next.y();
                 directionX = next.directionX();
                 directionY = next.directionY();
-                behaviorTick++;
             }
         }
 
         private MovementResult nextMove(WorldView world,
-                        EnemyMovementService chaseService,
+                        AntiLoopWanderMovementService wanderService,
                         AdaptiveAggressiveMovementService adaptiveService) {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             if (behavior == BehaviorType.PASSIVE) {
@@ -1993,11 +1991,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 }
                 return result;
             }
-            // PATROL currently falls back to the same directional motion model
-            // as WANDER on libGDX, matching JavaFX's patrol fallback behavior
-            // when a route is not available.
-            movementTypeLabel = "WANDER";
-            return wanderMove(world);
+            EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
+            movementTypeLabel = behavior == BehaviorType.PATROL ? "PATROL" : "WANDER";
+            return wanderService.tick(state, world);
         }
 
         private String debugLabel(boolean showBehaviorType, boolean showMovementType) {
@@ -2013,57 +2009,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return null;
         }
 
-        private MovementResult wanderMove(WorldView world) {
-            MovementResult forward = tryStep(world, directionX, directionY);
-            if (forward.moved()) {
-                return forward;
-            }
-
-            int[] seeded = seededCardinal(spawn.id(), behaviorTick);
-            int reverseX = -directionX;
-            int reverseY = -directionY;
-
-            for (int i = 0; i < CARDINAL_STEPS.length; i++) {
-                int idx = Math.floorMod(indexOfStep(seeded[0], seeded[1]) + i, CARDINAL_STEPS.length);
-                int dx = CARDINAL_STEPS[idx][0];
-                int dy = CARDINAL_STEPS[idx][1];
-                if (dx == reverseX && dy == reverseY) {
-                    continue;
-                }
-                MovementResult candidate = tryStep(world, dx, dy);
-                if (candidate.moved()) {
-                    return candidate;
-                }
-            }
-
-            return new MovementResult(x, y, directionX, directionY, false);
-        }
-
-        private MovementResult tryStep(WorldView world, int dx, int dy) {
-            if (dx == 0 && dy == 0) {
-                return new MovementResult(x, y, 0, 0, false);
-            }
-            double nx = x + dx * speed;
-            double ny = y + dy * speed;
-            if (world.wouldCollide(nx, ny, size)) {
-                return new MovementResult(x, y, dx, dy, false);
-            }
-            return new MovementResult(nx, ny, dx, dy, true);
-        }
-
         private static int[] seededCardinal(String id, long tick) {
             int seed = (id == null ? 0 : id.hashCode()) ^ (int) (tick * 31L + 17L);
-            int idx = Math.floorMod(seed, CARDINAL_STEPS.length);
-            return CARDINAL_STEPS[idx];
-        }
-
-        private static int indexOfStep(int dx, int dy) {
-            for (int i = 0; i < CARDINAL_STEPS.length; i++) {
-                if (CARDINAL_STEPS[i][0] == dx && CARDINAL_STEPS[i][1] == dy) {
-                    return i;
-                }
-            }
-            return 0;
+            int idx = Math.floorMod(seed, 4);
+            return switch (idx) {
+                case 0 -> new int[] {1, 0};
+                case 1 -> new int[] {0, 1};
+                case 2 -> new int[] {0, -1};
+                default -> new int[] {-1, 0};
+            };
         }
     }
 }
