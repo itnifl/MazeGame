@@ -16,14 +16,32 @@ import java.util.Map;
  */
 public final class AdaptiveAggressiveMovementService {
 
+    public enum AggressiveMovementMode {
+        DIRECTIONAL,
+        PATH_FOLLOW
+    }
+
     public static final double STUCK_THRESHOLD_SECONDS = 3.0d;
-    public static final double PATH_FOLLOW_SECONDS = 4.0d;
+    public static final double PATH_FOLLOW_SECONDS = 20.0d;
 
     private static final int[][] CARDINAL = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
     };
 
     private final Map<String, RuntimeState> states = new HashMap<>();
+
+    public AggressiveMovementMode modeForEnemy(String enemyId) {
+        if (enemyId == null) {
+            return AggressiveMovementMode.DIRECTIONAL;
+        }
+        RuntimeState state = states.get(enemyId);
+        if (state == null) {
+            return AggressiveMovementMode.DIRECTIONAL;
+        }
+        return state.pathSecondsRemaining > 0d
+                ? AggressiveMovementMode.PATH_FOLLOW
+                : AggressiveMovementMode.DIRECTIONAL;
+    }
 
     public MovementResult tick(EnemyState enemy, WorldView world, double deltaSeconds) {
         if (enemy == null || world == null) {

@@ -154,13 +154,17 @@ public final class EnemySpawnPlanner {
     /**
      * Runtime behaviour policy shared between JavaFX and libGDX.
      *
-     * <p>AGGRESSIVE and PASSIVE are preserved from the model. For WANDER/PATROL
-     * we keep the legacy runtime mix by assigning PATROL or WANDER with a 50/50
-     * split so both frontends render the same blend.
+     * <p>AGGRESSIVE is preserved from the model. PASSIVE is normalized to WANDER
+     * so enemies do not remain static at spawn. For WANDER/PATROL we keep the
+     * legacy runtime mix by assigning PATROL or WANDER with a 50/50 split so
+     * both frontends render the same blend.
      */
     public static BehaviorType resolveRuntimeBehavior(BehaviorType modelBehavior, Random random) {
-        if (modelBehavior == BehaviorType.AGGRESSIVE || modelBehavior == BehaviorType.PASSIVE) {
+        if (modelBehavior == BehaviorType.AGGRESSIVE) {
             return modelBehavior;
+        }
+        if (modelBehavior == BehaviorType.PASSIVE) {
+            return BehaviorType.WANDER;
         }
         if (random == null) {
             return modelBehavior != null ? modelBehavior : BehaviorType.WANDER;

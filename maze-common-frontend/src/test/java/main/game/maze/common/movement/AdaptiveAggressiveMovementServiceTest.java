@@ -1,5 +1,6 @@
 package main.game.maze.common.movement;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,6 +53,34 @@ class AdaptiveAggressiveMovementServiceTest {
                 "stuck enemy should switch to path-follow movement after the 3 second threshold");
         assertTrue(endDistance < startDistance,
                 "path fallback should help enemy make net progress toward player");
+    }
+
+    @Test
+    void pathFollowModeRemainsActiveForTwentySecondsThenReturnsToDirectional() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        WorldView world = new FlatWorldView(180d, 120d,
+                List.of(new SimpleWall(80d, 40d, 80d, 200d, false)),
+                240d, 240d);
+
+        EnemyState enemy = new EnemyState("z", 72d, 120d, 1, 0, 16d, 4d);
+
+        for (int i = 0; i < 31; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+        }
+
+        assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW,
+                service.modeForEnemy("z"),
+                "enemy should be in path-follow mode shortly after the 3 second stuck trigger");
+
+        for (int i = 0; i < 210; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+        }
+
+        assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.DIRECTIONAL,
+                service.modeForEnemy("z"),
+                "enemy should return to directional chase after 20 seconds of path-follow mode");
     }
 
     private static EnemyState advance(EnemyState s, MovementResult r) {

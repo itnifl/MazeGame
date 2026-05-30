@@ -154,11 +154,11 @@ class EnemySpawnPlannerTest {
     }
 
     @Test
-    void resolveRuntimeBehaviorPreservesAggressiveAndPassive() {
+    void resolveRuntimeBehaviorPreservesAggressiveAndNormalizesPassiveToWander() {
         Random seeded = new Random(1337L);
         assertEquals(BehaviorType.AGGRESSIVE,
                 EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.AGGRESSIVE, seeded));
-        assertEquals(BehaviorType.PASSIVE,
+        assertEquals(BehaviorType.WANDER,
                 EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.PASSIVE, seeded));
     }
 

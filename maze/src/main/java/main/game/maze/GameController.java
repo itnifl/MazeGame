@@ -31,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -111,6 +112,15 @@ public class GameController implements Initializable {
     private AnchorPane commandsOverlay;
     @FXML
     private Button commandsMenuButton;
+    @FXML
+    private Button terminalMenuButton;
+
+    private static final String COMMANDS_BUTTON_STYLE = "-fx-background-color: rgba(143,255,224,0.85); -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String TERMINAL_BUTTON_STYLE = "-fx-background-color: rgba(255,229,110,0.90); -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String TERMINAL_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(232,197,79,0.95); -fx-text-fill: #251700; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final Duration ENEMY_LABEL_DURATION = Duration.seconds(5);
+    private static final double ENEMY_LABEL_Y_OFFSET = 14.0;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -152,6 +162,16 @@ public class GameController implements Initializable {
     private VBox infectionWarningSign;
     private PauseTransition infectionWarningHideTimer;
     private final Map<Node, Timeline> infectiousMists = new HashMap<>();
+    private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
+    private PauseTransition enemyDebugLabelHideTimer;
+
+    private enum TerminalCommand {
+        HELP,
+        SHOW_BEHAVIOUR_TYPE,
+        SHOW_MOVEMENT_TYPE,
+        UNKNOWN,
+        EMPTY
+    }
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -162,9 +182,34 @@ public class GameController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         javafx.application.Platform.runLater(() -> {
+            installBottomButtonPressEffects();
             if (gameBoard != null) {
                 gameBoard.requestFocus();
             }
+        });
+    }
+
+    private void installBottomButtonPressEffects() {
+        installButtonPressEffect(commandsMenuButton, COMMANDS_BUTTON_STYLE, COMMANDS_BUTTON_PRESSED_STYLE);
+        installButtonPressEffect(terminalMenuButton, TERMINAL_BUTTON_STYLE, TERMINAL_BUTTON_PRESSED_STYLE);
+    }
+
+    private static void installButtonPressEffect(Button button, String normalStyle, String pressedStyle) {
+        if (button == null) {
+            return;
+        }
+        button.setStyle(normalStyle);
+        button.setOnMousePressed(evt -> {
+            button.setTranslateY(1.8);
+            button.setStyle(pressedStyle);
+        });
+        button.setOnMouseReleased(evt -> {
+            button.setTranslateY(0);
+            button.setStyle(normalStyle);
+        });
+        button.setOnMouseExited(evt -> {
+            button.setTranslateY(0);
+            button.setStyle(normalStyle);
         });
     }
     
@@ -312,6 +357,121 @@ public class GameController implements Initializable {
 
         if (gameBoard != null) {
             gameBoard.requestFocus();
+        }
+    }
+
+    @FXML
+    private void openTerminalPrompt() {
+        var dialog = new TextInputDialog();
+        dialog.setTitle("Maze Terminal");
+        dialog.setHeaderText("Enter command");
+        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype");
+        var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
+        if (window != null) {
+            dialog.initOwner(window);
+        }
+
+        dialog.showAndWait().ifPresent(this::executeTerminalCommand);
+        if (gameBoard != null) {
+            gameBoard.requestFocus();
+        }
+    }
+
+    private void executeTerminalCommand(String raw) {
+        TerminalCommand command = parseTerminalCommand(raw);
+        switch (command) {
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /showmovementtype");
+            case SHOW_BEHAVIOUR_TYPE -> {
+                setHudMessage("Showing behaviour type above enemies");
+                showEnemyDebugLabels(true);
+            }
+            case SHOW_MOVEMENT_TYPE -> {
+                setHudMessage("Showing movement type above enemies");
+                showEnemyDebugLabels(false);
+            }
+            case EMPTY -> setHudMessage("No command entered");
+            default -> setHudMessage("Unknown command. Use /h");
+        }
+    }
+
+    private static TerminalCommand parseTerminalCommand(String raw) {
+        String command = raw == null ? "" : raw.trim().toLowerCase();
+        if (command.isEmpty()) {
+            return TerminalCommand.EMPTY;
+        }
+        if ("/h".equals(command)) {
+            return TerminalCommand.HELP;
+        }
+        if ("/showbehaviourtype".equals(command)) {
+            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
+        }
+        if ("/showmovementtype".equals(command)) {
+            return TerminalCommand.SHOW_MOVEMENT_TYPE;
+        }
+        return TerminalCommand.UNKNOWN;
+    }
+
+    private void showEnemyDebugLabels(boolean behaviourType) {
+        clearEnemyDebugLabels();
+        if (gameBoard == null) {
+            return;
+        }
+        for (var cc : allComputerCharacters) {
+            if (!(cc instanceof ComputerCharacter computerCharacter)) {
+                continue;
+            }
+            Node enemyNode = computerCharacter.getCharacterGraphics();
+            if (enemyNode == null) {
+                continue;
+            }
+            String labelText = behaviourType
+                    ? computerCharacter.getCharacterBehaviour().name()
+                    : movementTypeName(computerCharacter.getCharacterBehaviour());
+            Label label = new Label(labelText);
+            label.setMouseTransparent(true);
+            label.setStyle("-fx-text-fill: #f3f9ff; -fx-font-family: 'Consolas'; -fx-font-size: 12px; -fx-font-weight: bold; "
+                    + "-fx-background-color: rgba(0,0,0,0.45); -fx-padding: 2 4 2 4; -fx-background-radius: 3;");
+            label.layoutXProperty().bind(enemyNode.layoutXProperty());
+            label.layoutYProperty().bind(enemyNode.layoutYProperty().subtract(ENEMY_LABEL_Y_OFFSET));
+            gameBoard.getChildren().add(label);
+            activeEnemyDebugLabels.add(label);
+        }
+
+        if (enemyDebugLabelHideTimer == null) {
+            enemyDebugLabelHideTimer = new PauseTransition(ENEMY_LABEL_DURATION);
+            enemyDebugLabelHideTimer.setOnFinished(evt -> clearEnemyDebugLabels());
+        }
+        enemyDebugLabelHideTimer.stop();
+        enemyDebugLabelHideTimer.playFromStart();
+    }
+
+    private static String movementTypeName(BehaviorType behaviour) {
+        if (behaviour == BehaviorType.AGGRESSIVE) {
+            return "AGGRESSIVE_CHASE";
+        }
+        if (behaviour == BehaviorType.PASSIVE) {
+            return "WANDER";
+        }
+        return behaviour.name();
+    }
+
+    private void clearEnemyDebugLabels() {
+        if (activeEnemyDebugLabels.isEmpty() || gameBoard == null) {
+            return;
+        }
+        for (Node label : activeEnemyDebugLabels) {
+            if (label != null) {
+                label.layoutXProperty().unbind();
+                label.layoutYProperty().unbind();
+                gameBoard.getChildren().remove(label);
+            }
+        }
+        activeEnemyDebugLabels.clear();
+    }
+
+    private void setHudMessage(String text) {
+        if (mouseCoordsLabel != null) {
+            mouseCoordsLabel.setText(text);
         }
     }
 
@@ -854,7 +1014,7 @@ public class GameController implements Initializable {
                                             doCharacterPatrolMove(computerCharacter);
                                             break;
                                         case PASSIVE:
-                                            // F19: PASSIVE opponents stand still.
+                                            doCharacterWanderMove(computerCharacter);
                                             break;
                                         case AGGRESSIVE:
                                             doCharacterAggressiveMove(computerCharacter);

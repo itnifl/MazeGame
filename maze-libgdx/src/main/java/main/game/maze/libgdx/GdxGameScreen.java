@@ -68,6 +68,14 @@ import main.game.maze.service.DifficultyService;
  */
 public final class GdxGameScreen extends ApplicationAdapter {
 
+    enum TerminalCommand {
+        EMPTY,
+        HELP,
+        SHOW_BEHAVIOUR_TYPE,
+        SHOW_MOVEMENT_TYPE,
+        UNKNOWN
+    }
+
     private static final float DEFAULT_CELL_SIZE = 48f;
     private static final int DEFAULT_COLS = 16;
     private static final int DEFAULT_ROWS = 12;
@@ -99,6 +107,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int INFECTION_GLOW_LAYERS = 6;
     private static final int INFECTION_EDGE_LAYERS = 4;
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
+    private static final float ENEMY_LABEL_SECONDS = 5f;
+    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /showmovementtype";
+    private static final float BUTTON_PRESS_SECONDS = 0.14f;
+    private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
     private enum Mode {
         START_MENU,
@@ -123,6 +135,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean showHintInfo;
     private boolean showSpanningTreeInfo;
     private boolean showCommandsOverlay;
+    private float showBehaviourTypeSeconds;
+    private float showMovementTypeSeconds;
+    private String pendingTerminalCommand;
+    private boolean terminalInputActive;
+    private final StringBuilder terminalInputBuffer = new StringBuilder();
+    private float commandButtonPressedSeconds;
+    private float terminalButtonPressedSeconds;
     private String statusMessage = "";
     private float statusMessageTimer;
     private float enemyAnimationClock;
@@ -151,7 +170,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<EnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
     private final EnemyMovementService enemyMovementService = new ChasePlayerMovementService();
-        private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
+    private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
             new AdaptiveAggressiveMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
@@ -316,6 +335,26 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void update(float dt) {
+        if (commandButtonPressedSeconds > 0f) {
+            commandButtonPressedSeconds = Math.max(0f, commandButtonPressedSeconds - dt);
+        }
+        if (terminalButtonPressedSeconds > 0f) {
+            terminalButtonPressedSeconds = Math.max(0f, terminalButtonPressedSeconds - dt);
+        }
+
+        if (pendingTerminalCommand != null) {
+            String command = pendingTerminalCommand;
+            pendingTerminalCommand = null;
+            executeTerminalCommand(command);
+        }
+
+        if (showBehaviourTypeSeconds > 0f) {
+            showBehaviourTypeSeconds = Math.max(0f, showBehaviourTypeSeconds - dt);
+        }
+        if (showMovementTypeSeconds > 0f) {
+            showMovementTypeSeconds = Math.max(0f, showMovementTypeSeconds - dt);
+        }
+
         if (statusMessageTimer > 0f) {
             statusMessageTimer -= dt;
             if (statusMessageTimer <= 0f) {
@@ -384,39 +423,43 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (!combatState.isDead()) {
             handleGameMouseInput();
 
-            if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
-                hLatch = true;
-                loadHighScores();
-                mode = Mode.HIGH_SCORES;
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.H)) {
-                hLatch = false;
-            }
+            if (terminalInputActive) {
+                handleTerminalTypingInput();
+            } else {
+                if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
+                    hLatch = true;
+                    loadHighScores();
+                    mode = Mode.HIGH_SCORES;
+                }
+                if (!Gdx.input.isKeyPressed(Input.Keys.H)) {
+                    hLatch = false;
+                }
 
-            showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
-            applyPathPenalty(dt);
-            updatePathHint();
+                showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
+                applyPathPenalty(dt);
+                updatePathHint();
 
-            if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
-                oLatch = true;
-                showSpanningTreeInfo = !showSpanningTreeInfo;
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.O)) {
-                oLatch = false;
-            }
+                if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
+                    oLatch = true;
+                    showSpanningTreeInfo = !showSpanningTreeInfo;
+                }
+                if (!Gdx.input.isKeyPressed(Input.Keys.O)) {
+                    oLatch = false;
+                }
 
-            float dx = 0f, dy = 0f;
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) dx -= 1f;
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) dx += 1f;
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) dy -= 1f;
-            if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1f;
-            if (dx != 0f && dy != 0f) {
-                float inv = (float) (1.0 / Math.sqrt(2.0));
-                dx *= inv; dy *= inv;
-            }
-            if (dx != 0f || dy != 0f) {
-                player.attemptMove(dx * activePlayerSpeed * dt, dy * activePlayerSpeed * dt, maze);
-                moveCount++;
+                float dx = 0f, dy = 0f;
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) dx -= 1f;
+                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) dx += 1f;
+                if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) dy -= 1f;
+                if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1f;
+                if (dx != 0f && dy != 0f) {
+                    float inv = (float) (1.0 / Math.sqrt(2.0));
+                    dx *= inv; dy *= inv;
+                }
+                if (dx != 0f || dy != 0f) {
+                    player.attemptMove(dx * activePlayerSpeed * dt, dy * activePlayerSpeed * dt, maze);
+                    moveCount++;
+                }
             }
         }
 
@@ -540,6 +583,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
             float half = enemy.size * 0.5f;
             batch.draw(enemyTexture, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
+
+            String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
+            if (label != null) {
+                font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
+                font.draw(batch, label, enemy.x - enemy.size * 0.5f, enemy.y + enemy.size * 0.75f);
+            }
         }
 
         // Player from player Ecore/XMI model.
@@ -974,15 +1023,27 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float buttonY = 7f;
         float buttonW = 112f;
         float buttonH = 26f;
+        float terminalButtonX = buttonX + buttonW + 12f;
+        float terminalButtonY = buttonY;
+        float terminalButtonW = 112f;
+        float terminalButtonH = 26f;
+        float commandsPressOffset = commandButtonPressedSeconds > 0f ? -2f : 0f;
+        float terminalPressOffset = terminalButtonPressedSeconds > 0f ? -2f : 0f;
+        float commandYDraw = buttonY + commandsPressOffset;
+        float terminalYDraw = terminalButtonY + terminalPressOffset;
         float rowPanelX = 8f;
         float rowPanelY = bottomRowY();
         float rowPanelW = w - 16f;
         float rowPanelH = bottomRowHeight();
 
         hudLayout.commandButtonX = buttonX;
-        hudLayout.commandButtonY = buttonY;
+        hudLayout.commandButtonY = commandYDraw;
         hudLayout.commandButtonW = buttonW;
         hudLayout.commandButtonH = buttonH;
+        hudLayout.terminalButtonX = terminalButtonX;
+        hudLayout.terminalButtonY = terminalYDraw;
+        hudLayout.terminalButtonW = terminalButtonW;
+        hudLayout.terminalButtonH = terminalButtonH;
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         // HP bar like JavaFX.
@@ -995,8 +1056,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.setColor(0f, 0f, 0f, 0.12f);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
 
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
-        shapes.rect(buttonX, buttonY, buttonW, buttonH);
+        if (commandButtonPressedSeconds > 0f) {
+            shapes.setColor(0.42f, 0.86f, 0.74f, 0.92f);
+        } else {
+            shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
+        }
+        shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
+        if (terminalButtonPressedSeconds > 0f) {
+            shapes.setColor(0.88f, 0.76f, 0.30f, 0.95f);
+        } else {
+            shapes.setColor(1f, 0.90f, 0.43f, 0.90f);
+        }
+        shapes.rect(terminalButtonX, terminalYDraw, terminalButtonW, terminalButtonH);
         shapes.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Line);
@@ -1005,16 +1076,21 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
         shapes.rect(0f, BOTTOM_BAR_HEIGHT, w, h - BOTTOM_BAR_HEIGHT - HP_BAR_HEIGHT);
+        shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
+        shapes.rect(terminalButtonX, terminalYDraw, terminalButtonW, terminalButtonH);
         shapes.end();
 
         batch.begin();
         int score = currentScore();
 
         font.setColor(new Color(0.07f, 0.22f, 0.19f, 1f));
-        font.draw(batch, "Commands", buttonX + 10f, buttonY + 18f);
+        font.draw(batch, "Commands", buttonX + 10f, commandYDraw + 18f);
+
+        font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
+        font.draw(batch, "Terminal", terminalButtonX + 16f, terminalYDraw + 18f);
 
         font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        font.draw(batch, "Open keyboard command help", buttonX + buttonW + 14f, buttonY + 18f);
+        font.draw(batch, "Open keyboard command help", terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
 
         font.setColor(Color.GOLD);
         font.getData().setScale(1.25f);
@@ -1025,7 +1101,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         String commandText = "H Highscore  ESC Restart  P Path "
                 + (showHintInfo ? "[ON]" : "[OFF]")
                 + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
-        font.draw(batch, commandText, buttonX + buttonW + 260f, buttonY + 18f);
+        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 260f, buttonY + 18f);
 
         if (mode == Mode.WON) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
@@ -1036,6 +1112,30 @@ public final class GdxGameScreen extends ApplicationAdapter {
         } else if (statusMessage != null && !statusMessage.isBlank()) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
             font.draw(batch, statusMessage, 12f, BOTTOM_BAR_HEIGHT + 18f);
+        }
+
+        if (terminalInputActive) {
+            float panelX = 22f;
+            float panelY = BOTTOM_BAR_HEIGHT + 26f;
+            float panelW = Math.max(360f, w * 0.58f);
+            float panelH = 56f;
+            batch.end();
+
+            shapes.begin(ShapeRenderer.ShapeType.Filled);
+            shapes.setColor(0.02f, 0.04f, 0.09f, 0.93f);
+            shapes.rect(panelX, panelY, panelW, panelH);
+            shapes.end();
+
+            shapes.begin(ShapeRenderer.ShapeType.Line);
+            shapes.setColor(1f, 0.90f, 0.43f, 0.94f);
+            shapes.rect(panelX, panelY, panelW, panelH);
+            shapes.end();
+
+            batch.begin();
+            font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
+            font.draw(batch, "Terminal: " + terminalInputBuffer, panelX + 10f, panelY + 35f);
+            font.setColor(new Color(0.78f, 0.90f, 1f, 1f));
+            font.draw(batch, "Enter: run  Backspace: delete  Esc: close", panelX + 10f, panelY + 16f);
         }
         batch.end();
 
@@ -1236,13 +1336,20 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float mx = Gdx.input.getX();
         float my = hudCamera.viewportHeight - Gdx.input.getY();
 
-        if (showCommandsOverlay) {
-            showCommandsOverlay = false;
+        if (contains(mx, my, hudLayout.commandButtonX, hudLayout.commandButtonY, hudLayout.commandButtonW, hudLayout.commandButtonH)) {
+            commandButtonPressedSeconds = BUTTON_PRESS_SECONDS;
+            showCommandsOverlay = !showCommandsOverlay;
             return;
         }
 
-        if (contains(mx, my, hudLayout.commandButtonX, hudLayout.commandButtonY, hudLayout.commandButtonW, hudLayout.commandButtonH)) {
-            showCommandsOverlay = !showCommandsOverlay;
+        if (contains(mx, my, hudLayout.terminalButtonX, hudLayout.terminalButtonY, hudLayout.terminalButtonW, hudLayout.terminalButtonH)) {
+            terminalButtonPressedSeconds = BUTTON_PRESS_SECONDS;
+            openTerminalPrompt();
+            return;
+        }
+
+        if (showCommandsOverlay) {
+            showCommandsOverlay = false;
             return;
         }
 
@@ -1262,6 +1369,110 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         flashStatus(String.format(Locale.ROOT, "Mouse: %.0f, %.0f", mx, my));
+    }
+
+    private void openTerminalPrompt() {
+        terminalInputActive = true;
+        terminalInputBuffer.setLength(0);
+        flashStatus("Terminal opened. Type command and press Enter");
+    }
+
+    private void handleTerminalTypingInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            terminalInputActive = false;
+            flashStatus("Terminal closed");
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            pendingTerminalCommand = terminalInputBuffer.toString();
+            terminalInputBuffer.setLength(0);
+            terminalInputActive = false;
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
+            if (terminalInputBuffer.length() > 0) {
+                terminalInputBuffer.setLength(terminalInputBuffer.length() - 1);
+            }
+            return;
+        }
+
+        appendIfJustPressed(Input.Keys.SLASH, '/');
+        appendIfJustPressed(Input.Keys.SPACE, ' ');
+        appendIfJustPressed(Input.Keys.A, 'a');
+        appendIfJustPressed(Input.Keys.B, 'b');
+        appendIfJustPressed(Input.Keys.C, 'c');
+        appendIfJustPressed(Input.Keys.D, 'd');
+        appendIfJustPressed(Input.Keys.E, 'e');
+        appendIfJustPressed(Input.Keys.F, 'f');
+        appendIfJustPressed(Input.Keys.G, 'g');
+        appendIfJustPressed(Input.Keys.H, 'h');
+        appendIfJustPressed(Input.Keys.I, 'i');
+        appendIfJustPressed(Input.Keys.J, 'j');
+        appendIfJustPressed(Input.Keys.K, 'k');
+        appendIfJustPressed(Input.Keys.L, 'l');
+        appendIfJustPressed(Input.Keys.M, 'm');
+        appendIfJustPressed(Input.Keys.N, 'n');
+        appendIfJustPressed(Input.Keys.O, 'o');
+        appendIfJustPressed(Input.Keys.P, 'p');
+        appendIfJustPressed(Input.Keys.Q, 'q');
+        appendIfJustPressed(Input.Keys.R, 'r');
+        appendIfJustPressed(Input.Keys.S, 's');
+        appendIfJustPressed(Input.Keys.T, 't');
+        appendIfJustPressed(Input.Keys.U, 'u');
+        appendIfJustPressed(Input.Keys.V, 'v');
+        appendIfJustPressed(Input.Keys.W, 'w');
+        appendIfJustPressed(Input.Keys.X, 'x');
+        appendIfJustPressed(Input.Keys.Y, 'y');
+        appendIfJustPressed(Input.Keys.Z, 'z');
+    }
+
+    private void appendIfJustPressed(int key, char ch) {
+        if (terminalInputBuffer.length() >= TERMINAL_INPUT_MAX_CHARS) {
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(key)) {
+            terminalInputBuffer.append(ch);
+        }
+    }
+
+    private void executeTerminalCommand(String raw) {
+        TerminalCommand command = parseTerminalCommand(raw);
+        if (command == TerminalCommand.EMPTY) {
+            flashStatus("No command entered");
+            return;
+        }
+        if (command == TerminalCommand.HELP) {
+            flashStatus("Commands: " + TERMINAL_HELP_TEXT);
+            return;
+        }
+        if (command == TerminalCommand.SHOW_BEHAVIOUR_TYPE) {
+            showBehaviourTypeSeconds = ENEMY_LABEL_SECONDS;
+            flashStatus("Showing behaviour type above enemies");
+            return;
+        }
+        if (command == TerminalCommand.SHOW_MOVEMENT_TYPE) {
+            showMovementTypeSeconds = ENEMY_LABEL_SECONDS;
+            flashStatus("Showing movement type above enemies");
+            return;
+        }
+        flashStatus("Unknown command. Use /h");
+    }
+
+    static TerminalCommand parseTerminalCommand(String raw) {
+        String command = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
+        if (command.isEmpty()) {
+            return TerminalCommand.EMPTY;
+        }
+        if ("/h".equals(command)) {
+            return TerminalCommand.HELP;
+        }
+        if ("/showbehaviourtype".equals(command)) {
+            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
+        }
+        if ("/showmovementtype".equals(command)) {
+            return TerminalCommand.SHOW_MOVEMENT_TYPE;
+        }
+        return TerminalCommand.UNKNOWN;
     }
 
     private void updatePathHint() {
@@ -1625,6 +1836,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private float commandButtonY;
         private float commandButtonW;
         private float commandButtonH;
+        private float terminalButtonX;
+        private float terminalButtonY;
+        private float terminalButtonW;
+        private float terminalButtonH;
     }
 
     private static final class ScoreRow implements Comparable<ScoreRow> {
@@ -1662,6 +1877,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private int directionY;
         private float moveAccumulator;
         private long behaviorTick;
+        private String behaviorTypeLabel;
+        private String movementTypeLabel;
 
         private EnemyRuntime(EnemySpawn spawn, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
@@ -1678,6 +1895,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
             this.directionY = initialDirection[1];
             this.moveAccumulator = 0f;
             this.behaviorTick = 0L;
+            BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
+            this.behaviorTypeLabel = behavior.name();
+            this.movementTypeLabel = "WANDER";
         }
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index) {
@@ -1685,7 +1905,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             // Floor to a small positive so a zero-speed enemy still inches toward
             // the player; the shared chase service drives deliberate movement so
             // index now only seeds the visual mist phase, not motion.
-            float speed = Math.max(0.25f, spawn.speed());
+            float speed = Math.max(1f, spawn.speed());
             float phase = index * 0.8f;
             return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), speed, phase);
         }
@@ -1739,19 +1959,39 @@ public final class GdxGameScreen extends ApplicationAdapter {
                         AdaptiveAggressiveMovementService adaptiveService) {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             if (behavior == BehaviorType.PASSIVE) {
-                return new MovementResult(x, y, directionX, directionY, false);
+                behavior = BehaviorType.WANDER;
             }
+            behaviorTypeLabel = behavior.name();
             if (behavior == BehaviorType.AGGRESSIVE) {
                 EnemyState state = new EnemyState(spawn.id(), x, y, directionX, directionY, size, speed);
-                return adaptiveService.tick(
+                MovementResult result = adaptiveService.tick(
                         state,
                         world,
                         1.0d / JAVA_FX_TICK_RATE);
+                movementTypeLabel = adaptiveService.modeForEnemy(spawn.id())
+                        == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW
+                                ? "AGGRESSIVE_PATH"
+                                : "AGGRESSIVE_CHASE";
+                return result;
             }
             // PATROL currently falls back to the same directional motion model
             // as WANDER on libGDX, matching JavaFX's patrol fallback behavior
             // when a route is not available.
+            movementTypeLabel = "WANDER";
             return wanderMove(world);
+        }
+
+        private String debugLabel(boolean showBehaviorType, boolean showMovementType) {
+            if (showBehaviorType && showMovementType) {
+                return behaviorTypeLabel + " | " + movementTypeLabel;
+            }
+            if (showBehaviorType) {
+                return behaviorTypeLabel;
+            }
+            if (showMovementType) {
+                return movementTypeLabel;
+            }
+            return null;
         }
 
         private MovementResult wanderMove(WorldView world) {
