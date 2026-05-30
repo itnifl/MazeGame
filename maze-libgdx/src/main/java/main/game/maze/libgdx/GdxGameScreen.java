@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -73,6 +74,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         HELP,
         SHOW_BEHAVIOUR_TYPE,
         SHOW_MOVEMENT_TYPE,
+        SHOW_ENEMY_PATH,
         UNKNOWN
     }
 
@@ -108,7 +110,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int INFECTION_EDGE_LAYERS = 4;
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
-    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt";
+    private static final float ENEMY_PATH_OVERLAY_SECONDS = 10f;
+    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep";
     private static final float BUTTON_PRESS_SECONDS = 0.14f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
@@ -137,6 +140,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean showCommandsOverlay;
     private float showBehaviourTypeSeconds;
     private float showMovementTypeSeconds;
+    private float showEnemyPathSeconds;
     private String pendingTerminalCommand;
     private boolean terminalInputActive;
     private final StringBuilder terminalInputBuffer = new StringBuilder();
@@ -255,6 +259,37 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+
+        installTerminalKeyboardProcessor();
+    }
+
+    /**
+     * Use the platform InputProcessor.keyTyped callback for terminal text
+     * input so the OS-localized keyboard layout produces the right chars
+     * (æ, ø, å, accented letters, etc.). Without this, libGDX's
+     * Input.Keys.* constants map only US-layout ASCII.
+     */
+    private void installTerminalKeyboardProcessor() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean keyTyped(char character) {
+                if (!terminalInputActive) {
+                    return false;
+                }
+                if (character == '\b' || character == '\r' || character == '\n' || character == 27) {
+                    // ENTER / BACKSPACE / ESC handled by polled keyDown in handleTerminalTypingInput.
+                    return false;
+                }
+                if (character < 32) {
+                    return false;
+                }
+                if (terminalInputBuffer.length() >= TERMINAL_INPUT_MAX_CHARS) {
+                    return true;
+                }
+                terminalInputBuffer.append(character);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -354,6 +389,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (showMovementTypeSeconds > 0f) {
             showMovementTypeSeconds = Math.max(0f, showMovementTypeSeconds - dt);
+        }
+        if (showEnemyPathSeconds > 0f) {
+            showEnemyPathSeconds = Math.max(0f, showEnemyPathSeconds - dt);
         }
 
         if (statusMessageTimer > 0f) {
@@ -1400,35 +1438,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
             return;
         }
-
-        appendIfJustPressed(Input.Keys.SLASH, '/');
-        appendIfJustPressed(Input.Keys.SPACE, ' ');
-        appendIfJustPressed(Input.Keys.A, 'a');
-        appendIfJustPressed(Input.Keys.B, 'b');
-        appendIfJustPressed(Input.Keys.C, 'c');
-        appendIfJustPressed(Input.Keys.D, 'd');
-        appendIfJustPressed(Input.Keys.E, 'e');
-        appendIfJustPressed(Input.Keys.F, 'f');
-        appendIfJustPressed(Input.Keys.G, 'g');
-        appendIfJustPressed(Input.Keys.H, 'h');
-        appendIfJustPressed(Input.Keys.I, 'i');
-        appendIfJustPressed(Input.Keys.J, 'j');
-        appendIfJustPressed(Input.Keys.K, 'k');
-        appendIfJustPressed(Input.Keys.L, 'l');
-        appendIfJustPressed(Input.Keys.M, 'm');
-        appendIfJustPressed(Input.Keys.N, 'n');
-        appendIfJustPressed(Input.Keys.O, 'o');
-        appendIfJustPressed(Input.Keys.P, 'p');
-        appendIfJustPressed(Input.Keys.Q, 'q');
-        appendIfJustPressed(Input.Keys.R, 'r');
-        appendIfJustPressed(Input.Keys.S, 's');
-        appendIfJustPressed(Input.Keys.T, 't');
-        appendIfJustPressed(Input.Keys.U, 'u');
-        appendIfJustPressed(Input.Keys.V, 'v');
-        appendIfJustPressed(Input.Keys.W, 'w');
-        appendIfJustPressed(Input.Keys.X, 'x');
-        appendIfJustPressed(Input.Keys.Y, 'y');
-        appendIfJustPressed(Input.Keys.Z, 'z');
+        // All other character input is fed by InputAdapter#keyTyped which
+        // respects the OS keyboard layout (æ, ø, å, etc.).
     }
 
     private void appendIfJustPressed(int key, char ch) {
@@ -1460,6 +1471,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
             flashStatus("Showing movement type above enemies");
             return;
         }
+        if (command == TerminalCommand.SHOW_ENEMY_PATH) {
+            showEnemyPathSeconds = ENEMY_PATH_OVERLAY_SECONDS;
+            flashStatus("Showing enemy paths for 10s");
+            return;
+        }
         flashStatus("Unknown command. Use /h");
     }
 
@@ -1476,6 +1492,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
             return TerminalCommand.SHOW_MOVEMENT_TYPE;
+        }
+        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
+            return TerminalCommand.SHOW_ENEMY_PATH;
         }
         return TerminalCommand.UNKNOWN;
     }

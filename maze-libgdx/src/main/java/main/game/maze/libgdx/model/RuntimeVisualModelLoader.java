@@ -153,6 +153,7 @@ public final class RuntimeVisualModelLoader {
         double speedMultiplier = difficulty != null ? difficulty.getMonstersMovementSpeedMultiplier() : 1d;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
+        int aggressiveAssigned = 0;
         float startX = arena != null ? arena.startX() : widthPx * CENTER_RATIO;
         float startY = arena != null ? arena.startY() : heightPx * CENTER_RATIO;
         float goalX = arena != null ? arena.goalX() : widthPx * CENTER_RATIO;
@@ -185,7 +186,11 @@ public final class RuntimeVisualModelLoader {
                     int baseDamage = Math.max(0, attackDamageFor(picked));
                     int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
                     float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
-                        var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehavior(picked.getBehavior(), random);
+                        var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                                picked.getBehavior(), difficulty, aggressiveAssigned, random);
+                        if (runtimeBehavior == main.game.maze.opponents.BehaviorType.AGGRESSIVE) {
+                            aggressiveAssigned++;
+                        }
                     int infectionLevel = infectionLevelFor(picked);
                     String touchSound = touchSoundFor(picked);
                     float effectiveThreat = instantDeath

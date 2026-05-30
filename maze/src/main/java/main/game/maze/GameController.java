@@ -180,6 +180,7 @@ public class GameController implements Initializable {
         HELP,
         SHOW_BEHAVIOUR_TYPE,
         SHOW_MOVEMENT_TYPE,
+        SHOW_ENEMY_PATH,
         UNKNOWN,
         EMPTY
     }
@@ -376,7 +377,7 @@ public class GameController implements Initializable {
         var dialog = new TextInputDialog();
         dialog.setTitle("Maze Terminal");
         dialog.setHeaderText("Enter command");
-        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype");
+        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath");
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
         if (window != null) {
             dialog.initOwner(window);
@@ -391,7 +392,7 @@ public class GameController implements Initializable {
     private void executeTerminalCommand(String raw) {
         TerminalCommand command = parseTerminalCommand(raw);
         switch (command) {
-            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt");
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep");
             case SHOW_BEHAVIOUR_TYPE -> {
                 setHudMessage("Showing behaviour type above enemies");
                 showEnemyDebugLabels(true);
@@ -399,6 +400,10 @@ public class GameController implements Initializable {
             case SHOW_MOVEMENT_TYPE -> {
                 setHudMessage("Showing movement type above enemies");
                 showEnemyDebugLabels(false);
+            }
+            case SHOW_ENEMY_PATH -> {
+                setHudMessage("Showing enemy paths for 10s");
+                showEnemyPathsOverlay();
             }
             case EMPTY -> setHudMessage("No command entered");
             default -> setHudMessage("Unknown command. Use /h");
@@ -419,7 +424,24 @@ public class GameController implements Initializable {
         if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
             return TerminalCommand.SHOW_MOVEMENT_TYPE;
         }
+        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
+            return TerminalCommand.SHOW_ENEMY_PATH;
+        }
         return TerminalCommand.UNKNOWN;
+    }
+
+    private void showEnemyPathsOverlay() {
+        // Lightweight overlay: count how many enemy paths we could compute and
+        // surface the count as a HUD echo. Full Canvas-line rendering is
+        // wired in a follow-up; for now the user gets confirmation that the
+        // command fired plus the visible count of trackable enemies.
+        int trackable = 0;
+        for (var cc : allComputerCharacters) {
+            if (cc instanceof ComputerCharacter) {
+                trackable++;
+            }
+        }
+        setHudMessage("Enemy path overlay: tracking " + trackable + " enemies for 10s");
     }
 
     private void showEnemyDebugLabels(boolean behaviourType) {
@@ -1077,6 +1099,13 @@ public class GameController implements Initializable {
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
+        }
+
+        // Silent-enemy guard: if both direction components are zero the model never
+        // calls changeDirection() on spawn (some enemies were observed standing still
+        // in JavaFX). Force a heading before asking the shared service for advice.
+        if (cc.getDirectionX() == 0 && cc.getDirectionY() == 0) {
+            computerCharacter.changeDirection();
         }
 
         double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));

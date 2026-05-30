@@ -142,7 +142,14 @@ public final class OpponentRuntimeFactory {
         AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
         AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
       
-        var characterList = opponentModel.getCharacterTypes();            
+        var characterList = opponentModel.getCharacterTypes();
+
+        // Reset per-spawn aggressive counter and stash the active difficulty so
+        // the per-character registration path can apply the aggressive cap from
+        // EnemySpawnPlanner.aggressiveCapForDifficulty without changing the
+        // method signature of the generated CharacterRegistrar dispatch.
+        currentSpawnDifficulty = diff;
+        aggressiveAssignedThisSpawn.set(0);
 
 
         double threatSum = spawnByTarget(
@@ -262,6 +269,10 @@ private static double spawnByTarget(
 
 
 
+    private static final java.util.concurrent.atomic.AtomicInteger aggressiveAssignedThisSpawn =
+            new java.util.concurrent.atomic.AtomicInteger(0);
+    private static volatile Difficulty currentSpawnDifficulty;
+
     /**
      * Delegates character registration to the generated CharacterRegistrar.
      * This eliminates manual instanceof chains - the generated code handles dispatch.
@@ -274,8 +285,14 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
-            BehaviorType runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehavior(
-                    characterType.getBehavior(), ThreadLocalRandom.current());
+            BehaviorType runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                    characterType.getBehavior(),
+                    currentSpawnDifficulty,
+                    aggressiveAssignedThisSpawn.get(),
+                    ThreadLocalRandom.current());
+            if (runtimeBehavior == BehaviorType.AGGRESSIVE) {
+                aggressiveAssignedThisSpawn.incrementAndGet();
+            }
             characterType.setBehavior(runtimeBehavior);
             _logger.log(Level.FINE, "Assigned {0} behavior to {1}",
                     new Object[] { runtimeBehavior, characterType.getClass().getSimpleName() });

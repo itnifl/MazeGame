@@ -22,7 +22,12 @@ import main.game.maze.mazeworld.service.MazeNavigationGraph;
 public class PatrolController {
 
     private static final Logger LOGGER = Logger.getLogger(PatrolController.class.getName());
-    private static final int WANDER_FALLBACK_TICKS = 60;
+    // Patrol loop ticks ~every 60ms in GameController#runComputerCharacters.
+    // 5 seconds of wander fallback before retrying the shortest path.
+    private static final double WANDER_FALLBACK_SECONDS = 5.0d;
+    private static final double TICK_SECONDS = 0.060d;
+    private static final int WANDER_FALLBACK_TICKS =
+            (int) Math.round(WANDER_FALLBACK_SECONDS / TICK_SECONDS);
 
     // Cache to hold the stateful Behavior for each character, as we are manually instantiating them.
     // WeakHashMap ensures cleanup when characters are removed/garbage collected.

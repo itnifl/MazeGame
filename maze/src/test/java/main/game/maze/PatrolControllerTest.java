@@ -40,15 +40,16 @@ public class PatrolControllerTest {
         assertTrue(PatrolController.isInWanderFallback(character),
             "Character should be in wander fallback after trigger");
         
-        // Call multiple times to decrement
-        for (int i = 0; i < 59; i++) {
+        // Wander fallback now runs for ~5 seconds. With a ~60ms tick this
+        // works out to 83 ticks (see PatrolController#WANDER_FALLBACK_TICKS).
+        for (int i = 0; i < 82; i++) {
             assertTrue(PatrolController.isInWanderFallback(character),
                 "Should still be in wander fallback during countdown");
         }
         
-        // After 60 calls total, should be false
+        // After 83 calls total, should be false
         assertFalse(PatrolController.isInWanderFallback(character),
-            "Should exit wander fallback after 60 ticks");
+            "Should exit wander fallback after 83 ticks (~5 seconds)");
     }
 
     @Test
@@ -77,13 +78,13 @@ public class PatrolControllerTest {
         // Re-trigger should reset
         PatrolController.triggerWanderFallback(character);
         
-        // Should still have 60 more ticks
+        // Should still have 83 more ticks (~5 seconds at ~60ms per tick)
         int count = 0;
         while (PatrolController.isInWanderFallback(character)) {
             count++;
-            if (count > 100) break; // safety
+            if (count > 150) break; // safety
         }
         
-        assertEquals(60, count, "Re-trigger should reset to 60 ticks");
+        assertEquals(83, count, "Re-trigger should reset to 83 ticks (~5 seconds)");
     }
 }

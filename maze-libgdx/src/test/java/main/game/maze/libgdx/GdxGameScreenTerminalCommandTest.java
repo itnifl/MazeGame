@@ -35,4 +35,14 @@ class GdxGameScreenTerminalCommandTest {
         assertEquals(GdxGameScreen.TerminalCommand.EMPTY,
                 GdxGameScreen.parseTerminalCommand("   "));
     }
+
+    @Test
+    void parsesShowEnemyPathCommand() {
+        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+                GdxGameScreen.parseTerminalCommand("/showenemypath"));
+        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+                GdxGameScreen.parseTerminalCommand("/sep"));
+        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+                GdxGameScreen.parseTerminalCommand("  /SEP  "));
+    }
 }

@@ -173,6 +173,38 @@ class EnemySpawnPlannerTest {
                 "Seeded draw should produce a stable non-degenerate mix for parity checks");
     }
 
+    @Test
+    void aggressiveCapForDifficultyMatchesGameplayContract() {
+        Difficulty easy = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
+        Difficulty normal = DifficultiesFactory.eINSTANCE.createNormalDifficulty();
+        Difficulty hard = DifficultiesFactory.eINSTANCE.createHardDifficulty();
+
+        assertEquals(1, EnemySpawnPlanner.aggressiveCapForDifficulty(easy));
+        assertEquals(3, EnemySpawnPlanner.aggressiveCapForDifficulty(normal));
+        assertEquals(5, EnemySpawnPlanner.aggressiveCapForDifficulty(hard));
+        assertEquals(Integer.MAX_VALUE, EnemySpawnPlanner.aggressiveCapForDifficulty(null));
+    }
+
+    @Test
+    void resolveRuntimeBehaviorWithAggressiveCapDowngradesOverflowToWander() {
+        Random seeded = new Random(42L);
+        Difficulty hard = DifficultiesFactory.eINSTANCE.createHardDifficulty();
+
+        // Under the cap (5): AGGRESSIVE stays AGGRESSIVE
+        for (int assigned = 0; assigned < 5; assigned++) {
+            assertEquals(BehaviorType.AGGRESSIVE,
+                    EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                            BehaviorType.AGGRESSIVE, hard, assigned, seeded));
+        }
+        // At and above the cap: AGGRESSIVE downgrades to WANDER
+        assertEquals(BehaviorType.WANDER,
+                EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                        BehaviorType.AGGRESSIVE, hard, 5, seeded));
+        assertEquals(BehaviorType.WANDER,
+                EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                        BehaviorType.AGGRESSIVE, hard, 99, seeded));
+    }
+
     private static void addCap(Difficulty d, EnemyTypes type, int max) {
         EnemyMaxCount c = DifficultiesFactory.eINSTANCE.createEnemyMaxCount();
         c.setType(type);

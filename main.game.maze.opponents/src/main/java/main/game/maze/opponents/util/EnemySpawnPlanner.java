@@ -172,6 +172,56 @@ public final class EnemySpawnPlanner {
         return random.nextDouble() < 0.5d ? BehaviorType.PATROL : BehaviorType.WANDER;
     }
 
+    /**
+     * Per-difficulty cap on how many spawned enemies may be assigned the
+     * {@link BehaviorType#AGGRESSIVE} runtime behaviour. The values follow
+     * the gameplay rule that hard difficulty allows up to 5 aggressive
+     * enemies. The cap is enforced via {@link #resolveRuntimeBehaviorWithAggressiveCap(BehaviorType, Difficulty, int, Random)}.
+     *
+     * <p>The threat sum itself is enforced by the OCL invariant on the
+     * opponent model (see {@code OclConstraintsParityTest}); this cap is an
+     * additional gameplay-balance constraint that limits how many of the
+     * spawned enemies behave aggressively at the same time.
+     */
+    public static int aggressiveCapForDifficulty(Difficulty difficulty) {
+        if (difficulty == null) {
+            return Integer.MAX_VALUE;
+        }
+        String name = difficulty.eClass().getName().toLowerCase(java.util.Locale.ROOT);
+        if (name.contains("hard")) {
+            return 5;
+        }
+        if (name.contains("normal")) {
+            return 3;
+        }
+        if (name.contains("easy")) {
+            return 1;
+        }
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Variant of {@link #resolveRuntimeBehavior(BehaviorType, Random)} that
+     * downgrades AGGRESSIVE to WANDER once {@code aggressiveAlreadyAssigned}
+     * has reached {@link #aggressiveCapForDifficulty(Difficulty)}. Spawn
+     * loops should pass the running count and the chosen difficulty in.
+     */
+    public static BehaviorType resolveRuntimeBehaviorWithAggressiveCap(
+            BehaviorType modelBehavior,
+            Difficulty difficulty,
+            int aggressiveAlreadyAssigned,
+            Random random) {
+        BehaviorType resolved = resolveRuntimeBehavior(modelBehavior, random);
+        if (resolved != BehaviorType.AGGRESSIVE) {
+            return resolved;
+        }
+        int cap = aggressiveCapForDifficulty(difficulty);
+        if (aggressiveAlreadyAssigned >= cap) {
+            return BehaviorType.WANDER;
+        }
+        return BehaviorType.AGGRESSIVE;
+    }
+
     private static int resolveAttackDamage(int baseDamage, double damageMultiplier, boolean instantDeath) {
         if (instantDeath) {
             return Integer.MAX_VALUE;

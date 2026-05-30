@@ -28,6 +28,11 @@ public final class AdaptiveAggressiveMovementService {
     public static final double NO_PROGRESS_STUCK_SECONDS = 10.0d;
     private static final double PROGRESS_EPSILON_UNITS = 1.0d;
     private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
+    /** Hard anti-circle cap: never visit the same cell more than this many times
+     * in the recent history window before forcing a fresh shortest-path retry. */
+    private static final int MAX_CELL_VISITS = 3;
+    private static final int CELL_HISTORY_SIZE = 24;
+    private static final double CELL_GRID_MIN = 2.0d;
 
     private static final int[][] CARDINAL = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
@@ -267,30 +272,89 @@ public final class AdaptiveAggressiveMovementService {
                                              WorldView world,
                                              RuntimeState state,
                                              String enemyId) {
-        MovementResult forward = tryStep(enemy, world, enemy.directionX(), enemy.directionY());
-        if (forward.moved()) {
-            return forward;
+        rememberCell(state, cellKey(enemy.x(), enemy.y(), enemy.speed()));
+
+        int dx = enemy.directionX();
+        int dy = enemy.directionY();
+
+        // Anti-circle: if continuing straight would revisit a hot cell, force change.
+        boolean blockedByVisitCap = dx != 0 || dy != 0
+                ? visitCountAfterStep(state, enemy, dx, dy) >= MAX_CELL_VISITS
+                : true;
+        if (!blockedByVisitCap) {
+            MovementResult forward = tryStep(enemy, world, dx, dy);
+            if (forward.moved()) {
+                state.wanderTick++;
+                rememberCell(state, cellKey(forward.x(), forward.y(), enemy.speed()));
+                return forward;
+            }
         }
 
-        int reverseX = -enemy.directionX();
-        int reverseY = -enemy.directionY();
-        int startIndex = Math.floorMod((enemyId == null ? 0 : enemyId.hashCode()) + state.wanderTick, CARDINAL.length);
+        int reverseX = -dx;
+        int reverseY = -dy;
+        int startIndex = Math.floorMod(
+                (enemyId == null ? 0 : enemyId.hashCode()) + state.wanderTick,
+                CARDINAL.length);
 
-        for (int i = 0; i < CARDINAL.length; i++) {
-            int idx = Math.floorMod(startIndex + i, CARDINAL.length);
-            int dx = CARDINAL[idx][0];
-            int dy = CARDINAL[idx][1];
-            if (dx == reverseX && dy == reverseY) {
-                continue;
+        // Two passes: first respecting the visit cap, then ignoring it but still
+        // banning the immediate reverse. Last resort is reverse.
+        for (int pass = 0; pass < 2; pass++) {
+            for (int i = 0; i < CARDINAL.length; i++) {
+                int idx = Math.floorMod(startIndex + i, CARDINAL.length);
+                int cdx = CARDINAL[idx][0];
+                int cdy = CARDINAL[idx][1];
+                if (cdx == reverseX && cdy == reverseY && (dx != 0 || dy != 0)) {
+                    continue;
+                }
+                if (pass == 0 && visitCountAfterStep(state, enemy, cdx, cdy) >= MAX_CELL_VISITS) {
+                    continue;
+                }
+                MovementResult candidate = tryStep(enemy, world, cdx, cdy);
+                if (candidate.moved()) {
+                    state.wanderTick++;
+                    rememberCell(state, cellKey(candidate.x(), candidate.y(), enemy.speed()));
+                    return candidate;
+                }
             }
-            MovementResult candidate = tryStep(enemy, world, dx, dy);
-            if (candidate.moved()) {
+        }
+        // Absolute last resort: try reverse so we never hard-freeze.
+        if (dx != 0 || dy != 0) {
+            MovementResult rev = tryStep(enemy, world, reverseX, reverseY);
+            if (rev.moved()) {
                 state.wanderTick++;
-                return candidate;
+                rememberCell(state, cellKey(rev.x(), rev.y(), enemy.speed()));
+                return rev;
             }
         }
         state.wanderTick++;
-        return new MovementResult(enemy.x(), enemy.y(), enemy.directionX(), enemy.directionY(), false);
+        return new MovementResult(enemy.x(), enemy.y(), dx, dy, false);
+    }
+
+    private static int visitCountAfterStep(RuntimeState state, EnemyState enemy, int dx, int dy) {
+        double nx = enemy.x() + dx * enemy.speed();
+        double ny = enemy.y() + dy * enemy.speed();
+        return state.visitCounts.getOrDefault(cellKey(nx, ny, enemy.speed()), 0);
+    }
+
+    private static long cellKey(double x, double y, double speed) {
+        double cell = Math.max(CELL_GRID_MIN, Math.max(1d, speed));
+        long qx = Math.round(x / cell);
+        long qy = Math.round(y / cell);
+        return (qx << 32) ^ (qy & 0xffffffffL);
+    }
+
+    private static void rememberCell(RuntimeState state, long key) {
+        state.recentCells.addLast(key);
+        state.visitCounts.merge(key, 1, Integer::sum);
+        while (state.recentCells.size() > CELL_HISTORY_SIZE) {
+            long removed = state.recentCells.removeFirst();
+            int next = state.visitCounts.getOrDefault(removed, 0) - 1;
+            if (next <= 0) {
+                state.visitCounts.remove(removed);
+            } else {
+                state.visitCounts.put(removed, next);
+            }
+        }
     }
 
     private static MovementResult tryStep(EnemyState enemy, WorldView world, int dx, int dy) {
@@ -467,6 +531,8 @@ public final class AdaptiveAggressiveMovementService {
         private List<Point> path;
         private int pathIndex;
         private int wanderTick;
+        private final ArrayDeque<Long> recentCells = new ArrayDeque<>();
+        private final Map<Long, Integer> visitCounts = new HashMap<>();
 
         private void initDistanceIfNeeded(double distance) {
             if (Double.isNaN(bestDistanceToPlayer)) {
