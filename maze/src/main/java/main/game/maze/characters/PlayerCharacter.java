@@ -191,6 +191,15 @@ public class PlayerCharacter extends Character
         return hitPoints.get();
     }
 
+    /**
+     * Maximum hit points configured for this player (from PlayerConfig).
+     * Used by score/UI code that needs to express damage as a fraction of full
+     * HP without assuming a hard-coded 100-point pool.
+     */
+    public int getMaxHitPoints() {
+        return maxHitPoints;
+    }
+
     @Override
     public void setHitPoints(int hp) {
         hitPoints.set(hp);

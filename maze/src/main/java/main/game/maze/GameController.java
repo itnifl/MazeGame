@@ -1000,6 +1000,7 @@ public class GameController implements Initializable {
             allComputerCharacters.remove(character);
             if (character instanceof ICanSubscribeAndNotifyPosition subscribable && playerCharacter != null) {
                 playerCharacter.removePositionSubscriber(subscribable);
+                subscribable.removePositionSubscriber(playerCharacter);
             }
             stopInfectiousMist(node);
             if (gameBoard != null && node != null && node.getParent() == gameBoard) {
@@ -1280,6 +1281,11 @@ public class GameController implements Initializable {
             infectionWarningSign = null;
         }
         infectiousMists.values().forEach(Timeline::stop);
+        infectiousMists.keySet().forEach(n -> {
+            if (n != null && n.getEffect() instanceof DropShadow) {
+                n.setEffect(null);
+            }
+        });
         infectiousMists.clear();
 
         // Dispose all computer characters
