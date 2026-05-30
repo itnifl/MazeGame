@@ -457,10 +457,14 @@ public class GameController implements Initializable {
         BehaviorType behaviour = character.getCharacterBehaviour();
         if (behaviour == BehaviorType.AGGRESSIVE) {
             String id = enemyRuntimeId(character);
-            return adaptiveAggressiveMovementService.modeForEnemy(id)
-                    == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW
-                            ? "AGGRESSIVE_PATH"
-                            : "AGGRESSIVE_CHASE";
+            var mode = adaptiveAggressiveMovementService.modeForEnemy(id);
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                return "AGGRESSIVE_PATH";
+            }
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                return "AGGRESSIVE_WANDER";
+            }
+            return "AGGRESSIVE_CHASE";
         }
         if (behaviour == BehaviorType.PASSIVE) {
             return "WANDER";

@@ -18,11 +18,13 @@ public final class AdaptiveAggressiveMovementService {
 
     public enum AggressiveMovementMode {
         DIRECTIONAL,
-        PATH_FOLLOW
+        PATH_FOLLOW,
+        WANDER_RECOVERY
     }
 
     public static final double STUCK_THRESHOLD_SECONDS = 4.0d;
     public static final double PATH_FOLLOW_SECONDS = 20.0d;
+    public static final double WANDER_RECOVERY_SECONDS = 6.0d;
     private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
 
     private static final int[][] CARDINAL = {
@@ -43,9 +45,13 @@ public final class AdaptiveAggressiveMovementService {
         if (state == null) {
             return AggressiveMovementMode.DIRECTIONAL;
         }
-        return state.pathSecondsRemaining > 0d
-                ? AggressiveMovementMode.PATH_FOLLOW
-                : AggressiveMovementMode.DIRECTIONAL;
+        if (state.pathSecondsRemaining > 0d) {
+            return AggressiveMovementMode.PATH_FOLLOW;
+        }
+        if (state.wanderRecoverySecondsRemaining > 0d) {
+            return AggressiveMovementMode.WANDER_RECOVERY;
+        }
+        return AggressiveMovementMode.DIRECTIONAL;
     }
 
     public MovementResult tick(EnemyState enemy, WorldView world, double deltaSeconds) {
@@ -54,22 +60,38 @@ public final class AdaptiveAggressiveMovementService {
         }
         String id = enemy.id() == null ? "<anonymous>" : enemy.id();
         RuntimeState state = states.computeIfAbsent(id, ignored -> new RuntimeState());
+        double dt = Math.max(0d, deltaSeconds);
 
-        if (state.pathSecondsRemaining > 0d && state.path != null && !state.path.isEmpty()) {
-            MovementResult alongPath = followPath(enemy, world, state);
-            state.pathSecondsRemaining = Math.max(0d, state.pathSecondsRemaining - Math.max(0d, deltaSeconds));
-            if (state.pathSecondsRemaining <= 0d || state.path == null || state.pathIndex >= state.path.size()) {
-                state.path = null;
-                state.pathIndex = 0;
-            }
-            if (alongPath.moved()) {
+        if (state.pathSecondsRemaining > 0d) {
+            MovementResult whilePath = tickPathMode(enemy, world, state, dt);
+            if (state.pathSecondsRemaining <= 0d) {
+                // Full 20 second shortest-path phase completed successfully.
                 state.blockedSeconds = 0d;
-                return alongPath;
+                return whilePath;
             }
-            // Path became invalid, reset and re-enter directional mode.
-            state.path = null;
-            state.pathIndex = 0;
-            state.pathSecondsRemaining = 0d;
+            if (whilePath.moved()) {
+                state.blockedSeconds = 0d;
+                return whilePath;
+            }
+            beginWanderRecovery(state);
+            MovementResult wanderAfterPathFail = wanderStep(enemy, world, state, id);
+            state.blockedSeconds = 0d;
+            return wanderAfterPathFail;
+        }
+
+        if (state.wanderRecoverySecondsRemaining > 0d) {
+            MovementResult wander = wanderStep(enemy, world, state, id);
+            state.wanderRecoverySecondsRemaining = Math.max(0d, state.wanderRecoverySecondsRemaining - dt);
+            if (state.wanderRecoverySecondsRemaining <= 0d) {
+                MovementResult retryPath = startPathAttempt(enemy, world, state);
+                if (state.pathSecondsRemaining > 0d) {
+                    state.blockedSeconds = 0d;
+                    return retryPath;
+                }
+                beginWanderRecovery(state);
+            }
+            state.blockedSeconds = 0d;
+            return wander;
         }
 
         MovementResult directional = directionalStep(enemy, world);
@@ -78,24 +100,83 @@ public final class AdaptiveAggressiveMovementService {
             return directional;
         }
 
-        state.blockedSeconds += Math.max(0d, deltaSeconds);
+        state.blockedSeconds += dt;
         if (state.blockedSeconds > STUCK_THRESHOLD_SECONDS) {
-            List<Point> path = computeShortestPath(enemy, world);
-            if (path.size() > 1) {
-                state.path = path;
-                state.pathIndex = 1;
-                state.pathSecondsRemaining = PATH_FOLLOW_SECONDS;
+            MovementResult pathStart = startPathAttempt(enemy, world, state);
+            if (state.pathSecondsRemaining > 0d) {
                 state.blockedSeconds = 0d;
-                MovementResult firstPathMove = followPath(enemy, world, state);
-                if (firstPathMove.moved()) {
-                    return firstPathMove;
-                }
-                state.path = null;
-                state.pathIndex = 0;
-                state.pathSecondsRemaining = 0d;
+                return pathStart;
             }
+            beginWanderRecovery(state);
+            MovementResult wanderAfterNoPath = wanderStep(enemy, world, state, id);
+            state.blockedSeconds = 0d;
+            return wanderAfterNoPath;
         }
         return directional;
+    }
+
+    private static MovementResult tickPathMode(EnemyState enemy,
+                                               WorldView world,
+                                               RuntimeState state,
+                                               double deltaSeconds) {
+        MovementResult alongPath = followPath(enemy, world, state);
+        state.pathSecondsRemaining = Math.max(0d, state.pathSecondsRemaining - deltaSeconds);
+        if (state.pathSecondsRemaining <= 0d) {
+            clearPath(state);
+            return alongPath;
+        }
+        if (alongPath.moved()) {
+            return alongPath;
+        }
+
+        // Path segment may have expired as the player moved; refresh path while
+        // preserving remaining path-follow time.
+        if (refreshPath(enemy, world, state)) {
+            MovementResult refreshed = followPath(enemy, world, state);
+            if (refreshed.moved()) {
+                return refreshed;
+            }
+        }
+        clearPath(state);
+        return alongPath;
+    }
+
+    private static MovementResult startPathAttempt(EnemyState enemy,
+                                                   WorldView world,
+                                                   RuntimeState state) {
+        clearPath(state);
+        if (!refreshPath(enemy, world, state)) {
+            return new MovementResult(enemy.x(), enemy.y(), enemy.directionX(), enemy.directionY(), false);
+        }
+        state.pathSecondsRemaining = PATH_FOLLOW_SECONDS;
+        MovementResult firstStep = followPath(enemy, world, state);
+        if (!firstStep.moved()) {
+            clearPath(state);
+        }
+        return firstStep;
+    }
+
+    private static boolean refreshPath(EnemyState enemy, WorldView world, RuntimeState state) {
+        List<Point> path = computeShortestPath(enemy, world);
+        if (path.size() <= 1) {
+            state.path = null;
+            state.pathIndex = 0;
+            return false;
+        }
+        state.path = path;
+        state.pathIndex = 1;
+        return true;
+    }
+
+    private static void beginWanderRecovery(RuntimeState state) {
+        clearPath(state);
+        state.wanderRecoverySecondsRemaining = WANDER_RECOVERY_SECONDS;
+    }
+
+    private static void clearPath(RuntimeState state) {
+        state.path = null;
+        state.pathIndex = 0;
+        state.pathSecondsRemaining = 0d;
     }
 
     private static MovementResult directionalStep(EnemyState enemy, WorldView world) {
@@ -147,6 +228,36 @@ public final class AdaptiveAggressiveMovementService {
             }
             return primary;
         }
+        return new MovementResult(enemy.x(), enemy.y(), enemy.directionX(), enemy.directionY(), false);
+    }
+
+    private static MovementResult wanderStep(EnemyState enemy,
+                                             WorldView world,
+                                             RuntimeState state,
+                                             String enemyId) {
+        MovementResult forward = tryStep(enemy, world, enemy.directionX(), enemy.directionY());
+        if (forward.moved()) {
+            return forward;
+        }
+
+        int reverseX = -enemy.directionX();
+        int reverseY = -enemy.directionY();
+        int startIndex = Math.floorMod((enemyId == null ? 0 : enemyId.hashCode()) + state.wanderTick, CARDINAL.length);
+
+        for (int i = 0; i < CARDINAL.length; i++) {
+            int idx = Math.floorMod(startIndex + i, CARDINAL.length);
+            int dx = CARDINAL[idx][0];
+            int dy = CARDINAL[idx][1];
+            if (dx == reverseX && dy == reverseY) {
+                continue;
+            }
+            MovementResult candidate = tryStep(enemy, world, dx, dy);
+            if (candidate.moved()) {
+                state.wanderTick++;
+                return candidate;
+            }
+        }
+        state.wanderTick++;
         return new MovementResult(enemy.x(), enemy.y(), enemy.directionX(), enemy.directionY(), false);
     }
 
@@ -318,8 +429,10 @@ public final class AdaptiveAggressiveMovementService {
     private static final class RuntimeState {
         private double blockedSeconds;
         private double pathSecondsRemaining;
+        private double wanderRecoverySecondsRemaining;
         private List<Point> path;
         private int pathIndex;
+        private int wanderTick;
     }
 
     private static final class Point {

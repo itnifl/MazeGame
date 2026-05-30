@@ -71,7 +71,7 @@ class AdaptiveAggressiveMovementServiceTest {
 
         assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW,
                 service.modeForEnemy("z"),
-                "enemy should be in path-follow mode shortly after the 3 second stuck trigger");
+            "enemy should be in path-follow mode shortly after the 4 second stuck trigger");
 
         for (int i = 0; i < 210; i++) {
             MovementResult result = service.tick(enemy, world, 0.1d);
@@ -81,6 +81,41 @@ class AdaptiveAggressiveMovementServiceTest {
         assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.DIRECTIONAL,
                 service.modeForEnemy("z"),
                 "enemy should return to directional chase after 20 seconds of path-follow mode");
+    }
+
+    @Test
+    void noPathFallsBackToWanderAndRetriesUntilPathWindowCanComplete() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        ToggleBarrierWorld world = new ToggleBarrierWorld(220d, 120d, 240d, 240d);
+
+        EnemyState enemy = new EnemyState("z", 32d, 120d, 1, 0, 16d, 4d);
+        boolean sawWanderRecovery = false;
+        boolean sawPathFollowAfterOpen = false;
+
+        for (int i = 0; i < 520; i++) {
+            if (i == 170) {
+                world.barrierOpen = true;
+            }
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+
+            var mode = service.modeForEnemy("z");
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                sawWanderRecovery = true;
+            }
+            if (world.barrierOpen
+                    && mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                sawPathFollowAfterOpen = true;
+            }
+        }
+
+        assertTrue(sawWanderRecovery,
+                "when no shortest path is available, aggressive enemy must enter wander recovery");
+        assertTrue(sawPathFollowAfterOpen,
+                "after path becomes available, enemy must retry and re-enter path-follow mode");
+        assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.DIRECTIONAL,
+                service.modeForEnemy("z"),
+                "after a full 20 second path-follow window completes, mode returns to directional chase");
     }
 
     private static EnemyState advance(EnemyState s, MovementResult r) {
@@ -135,5 +170,72 @@ class AdaptiveAggressiveMovementServiceTest {
     }
 
     private record SimpleWall(double x1, double y1, double x2, double y2, boolean horizontal) {
+    }
+
+    private static final class ToggleBarrierWorld implements WorldView {
+        private final double playerX;
+        private final double playerY;
+        private final double maxX;
+        private final double maxY;
+        private boolean barrierOpen;
+
+        private ToggleBarrierWorld(double playerX, double playerY, double maxX, double maxY) {
+            this.playerX = playerX;
+            this.playerY = playerY;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.barrierOpen = false;
+        }
+
+        @Override
+        public double playerX() {
+            return playerX;
+        }
+
+        @Override
+        public double playerY() {
+            return playerY;
+        }
+
+        @Override
+        public double minX() {
+            return 0d;
+        }
+
+        @Override
+        public double minY() {
+            return 0d;
+        }
+
+        @Override
+        public double maxX() {
+            return maxX;
+        }
+
+        @Override
+        public double maxY() {
+            return maxY;
+        }
+
+        @Override
+        public boolean wouldCollide(double centerX, double centerY, double size) {
+            double half = size * 0.5d;
+            if (centerX - half < 0d || centerY - half < 0d) {
+                return true;
+            }
+            if (centerX + half > maxX || centerY + half > maxY) {
+                return true;
+            }
+            if (barrierOpen) {
+                return false;
+            }
+
+            double left = centerX - half;
+            double right = centerX + half;
+            double bottom = centerY - half;
+            double top = centerY + half;
+            double wallX = 120d;
+            return left <= wallX && right >= wallX && bottom <= maxY && top >= 0d;
+        }
     }
 }

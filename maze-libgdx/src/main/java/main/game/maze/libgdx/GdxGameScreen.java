@@ -1983,10 +1983,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
                         state,
                         world,
                         1.0d / JAVA_FX_TICK_RATE);
-                movementTypeLabel = adaptiveService.modeForEnemy(runtimeEnemyId)
-                        == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW
-                                ? "AGGRESSIVE_PATH"
-                                : "AGGRESSIVE_CHASE";
+                var mode = adaptiveService.modeForEnemy(runtimeEnemyId);
+                if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                    movementTypeLabel = "AGGRESSIVE_PATH";
+                } else if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                    movementTypeLabel = "AGGRESSIVE_WANDER";
+                } else {
+                    movementTypeLabel = "AGGRESSIVE_CHASE";
+                }
                 return result;
             }
             // PATROL currently falls back to the same directional motion model
