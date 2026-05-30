@@ -35,6 +35,7 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.ChasePlayerMovementService;
 import main.game.maze.common.movement.EnemyMovementService;
+import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.WorldView;
@@ -1568,8 +1569,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         combatState.reset(runtimeModel.playerMaxHitPoints());
 
         int idx = 0;
+        WorldView spawnWorld = new GdxWorldView(maze, player);
         for (EnemySpawn enemy : runtimeModel.enemies()) {
-            animatedEnemies.add(EnemyRuntime.fromSpawn(enemy, idx++));
+            animatedEnemies.add(EnemyRuntime.fromSpawn(enemy, idx++, spawnWorld));
         }
 
         if (viewport == null) {
@@ -1903,7 +1905,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             this.movementTypeLabel = "WANDER";
         }
 
-        private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index) {
+        private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index, WorldView world) {
             // spawn.speed() already incorporates the difficulty speed multiplier.
             // Floor to a small positive so a zero-speed enemy still inches toward
             // the player; the shared chase service drives deliberate movement so
@@ -1911,7 +1913,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
             float speed = Math.max(1f, spawn.speed());
             float phase = index * 0.8f;
             String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + index;
-            return new EnemyRuntime(spawn, runtimeId, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), speed, phase);
+            var resolution = EnemySpawnUnstuckService.nudgeIfColliding(world, spawn.x(), spawn.y(), spawn.size());
+            return new EnemyRuntime(
+                    spawn,
+                    runtimeId,
+                    spawn.imagePath(),
+                    spawn.size(),
+                    (float) resolution.x(),
+                    (float) resolution.y(),
+                    speed,
+                    phase);
         }
 
         private EnemySpawn contactSnapshot() {

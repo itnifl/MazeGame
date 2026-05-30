@@ -68,6 +68,7 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
@@ -1237,6 +1238,15 @@ public class GameController implements Initializable {
                 return false;
             }
         };
+    }
+
+    public Point2D resolveEnemySpawnPosition(double desiredX, double desiredY, double enemySize) {
+        var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
+                createJavaFxWorldView(),
+                desiredX,
+                desiredY,
+                enemySize);
+        return new Point2D(resolution.x(), resolution.y());
     }
 
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {

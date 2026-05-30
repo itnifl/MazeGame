@@ -286,17 +286,29 @@ private static double spawnByTarget(
                 // Ghost handler
                 g -> {                            
                     noOfGhostsSpawned.incrementAndGet();                    
-                    registerGhostCharacter(gameController, spawnX, spawnY, g);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.GhostCharacterXYSize);
+                    registerGhostCharacter(gameController, resolved.getX(), resolved.getY(), g);
                 },
                 // Zombie handler
                 z -> {
                     noOfZombiesSpawned.incrementAndGet();        
-                    registerZombieCharacter(gameController, spawnX, spawnY, z);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.ZombieCharacterXYSize);
+                    registerZombieCharacter(gameController, resolved.getX(), resolved.getY(), z);
                 },
                 // PumpkinBomber handler
                 b -> {
                     noOfPumpkinBombersSpawned.incrementAndGet();
-                    registerPumpkinBomberCharacter(gameController, spawnX, spawnY, b);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.PumpkinBomberCharacterXYSize);
+                    registerPumpkinBomberCharacter(gameController, resolved.getX(), resolved.getY(), b);
                 }
             );
     }

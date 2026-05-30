@@ -23,6 +23,7 @@ public final class AdaptiveAggressiveMovementService {
 
     public static final double STUCK_THRESHOLD_SECONDS = 3.0d;
     public static final double PATH_FOLLOW_SECONDS = 20.0d;
+    private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
 
     private static final int[][] CARDINAL = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
@@ -98,8 +99,27 @@ public final class AdaptiveAggressiveMovementService {
     }
 
     private static MovementResult directionalStep(EnemyState enemy, WorldView world) {
-        int[] desired = GridDirection.directionBetween(enemy.x(), enemy.y(), world.playerX(), world.playerY());
+        int[] desired = directionalVectorWithHysteresis(enemy, world);
         return tryStep(enemy, world, desired[0], desired[1]);
+    }
+
+    private static int[] directionalVectorWithHysteresis(EnemyState enemy, WorldView world) {
+        double deltaX = world.playerX() - enemy.x();
+        double deltaY = world.playerY() - enemy.y();
+        double absX = Math.abs(deltaX);
+        double absY = Math.abs(deltaY);
+        int signX = absX > GridDirection.ALIGNMENT_THRESHOLD ? (int) Math.signum(deltaX) : 0;
+        int signY = absY > GridDirection.ALIGNMENT_THRESHOLD ? (int) Math.signum(deltaY) : 0;
+
+        if (signX != 0 && signY != 0 && Math.abs(absX - absY) <= AXIS_HYSTERESIS_UNITS) {
+            if (enemy.directionX() != 0) {
+                return new int[] {signX, 0};
+            }
+            if (enemy.directionY() != 0) {
+                return new int[] {0, signY};
+            }
+        }
+        return GridDirection.directionBetween(enemy.x(), enemy.y(), world.playerX(), world.playerY());
     }
 
     private static MovementResult followPath(EnemyState enemy, WorldView world, RuntimeState state) {
