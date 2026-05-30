@@ -58,7 +58,10 @@ import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.ComputerCharacter;
+import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.characters.PumpkinBomberCharacter;
+import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
@@ -1111,14 +1114,13 @@ public class GameController implements Initializable {
         if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        Node enemyNode = cc.getCharacterGraphics();
-        if (enemyNode == null || maze == null) {
+        if (maze == null) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
 
         double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = Math.max(12d, Math.max(enemyNode.getBoundsInParent().getWidth(), enemyNode.getBoundsInParent().getHeight()));
+        double size = approximateEnemySize(cc);
         EnemyState state = new EnemyState(
                 enemyRuntimeId(cc),
                 cc.getCharacterPosition().getX(),
@@ -1154,6 +1156,19 @@ public class GameController implements Initializable {
             return -1;
         }
         return 0;
+    }
+
+    private static double approximateEnemySize(ComputerCharacter character) {
+        if (character instanceof ZombieCharacter) {
+            return StageConstants.ZombieCharacterXYSize;
+        }
+        if (character instanceof GhostCharacter) {
+            return StageConstants.GhostCharacterXYSize;
+        }
+        if (character instanceof PumpkinBomberCharacter) {
+            return StageConstants.PumpkinBomberCharacterXYSize;
+        }
+        return StageConstants.TouchDistance;
     }
 
     private String enemyRuntimeId(ComputerCharacter character) {

@@ -129,3 +129,13 @@ MUST be added to the shared core, not to a single frontend.
   difficulty in both frontends (GR-17).
 - **GR-30**: A parity test MUST verify the death-display delay is 3
   seconds in libGDX and matches the JavaFX death-delay rule (GR-21).
+
+## Aggressive chase fallback
+
+- **GR-31**: If an aggressive enemy stays blocked for more than 4 seconds,
+  it MUST switch to shortest-path follow mode and keep following that path
+  for up to 20 seconds before returning to directional chase.
+- **GR-32**: The blocked detection timer and the 20-second path-follow
+  window MUST be shared across JavaFX and libGDX through
+  `AdaptiveAggressiveMovementService`; frontend-specific duplicates are
+  forbidden.

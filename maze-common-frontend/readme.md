@@ -21,6 +21,11 @@ runtime renderer is JavaFX, libGDX, or something else.
   disallow-doctype-decl, external general/parameter entities and external DTD
   loading disabled, XInclude off, entity expansion off) so loading from
   arbitrary file paths is safe.
+- Shared enemy movement helpers:
+  `AdaptiveAggressiveMovementService` and `EnemySpawnUnstuckService`.
+  Aggressive enemies switch to shortest-path follow mode after 4 seconds of
+  blocked movement and keep it for up to 20 seconds before returning to
+  directional chase.
 
 ## Default behaviour with no backend installed
 

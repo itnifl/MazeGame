@@ -21,7 +21,7 @@ public final class AdaptiveAggressiveMovementService {
         PATH_FOLLOW
     }
 
-    public static final double STUCK_THRESHOLD_SECONDS = 3.0d;
+    public static final double STUCK_THRESHOLD_SECONDS = 4.0d;
     public static final double PATH_FOLLOW_SECONDS = 20.0d;
     private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
 
@@ -308,9 +308,11 @@ public final class AdaptiveAggressiveMovementService {
     }
 
     private static double gridStep(EnemyState enemy) {
-        double bySize = Math.max(6d, enemy.size() * 0.5d);
-        double bySpeed = Math.max(1d, enemy.speed());
-        return Math.max(bySpeed, bySize);
+        // Keep the navigation lattice fine enough for narrow corridors.
+        // Coupling this to movement speed can over-coarsen the grid and make
+        // reachable shortest paths appear blocked.
+        double bySize = Math.max(4d, enemy.size() * 0.35d);
+        return Math.min(10d, bySize);
     }
 
     private static final class RuntimeState {

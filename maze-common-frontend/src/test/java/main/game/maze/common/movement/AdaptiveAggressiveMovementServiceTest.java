@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class AdaptiveAggressiveMovementServiceTest {
 
     @Test
-    void doesNotTriggerPathBeforeThreeSecondsStuck() {
+    void doesNotTriggerPathBeforeFourSecondsStuck() {
         AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
         WorldView world = new FlatWorldView(180d, 120d,
             List.of(
@@ -30,7 +30,7 @@ class AdaptiveAggressiveMovementServiceTest {
     }
 
     @Test
-    void afterThreeSecondsStuckEnemyUsesShortestPathThenRecoversProgress() {
+    void afterFourSecondsStuckEnemyUsesShortestPathThenRecoversProgress() {
         AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
         WorldView world = new FlatWorldView(180d, 120d,
                 List.of(new SimpleWall(80d, 40d, 80d, 200d, false)),
@@ -42,7 +42,7 @@ class AdaptiveAggressiveMovementServiceTest {
         boolean movedAfterTrigger = false;
         for (int i = 0; i < 120; i++) {
             MovementResult result = service.tick(enemy, world, 0.1d);
-            if (i >= 30 && result.moved()) {
+            if (i >= 40 && result.moved()) {
                 movedAfterTrigger = true;
             }
             enemy = advance(enemy, result);
@@ -50,7 +50,7 @@ class AdaptiveAggressiveMovementServiceTest {
 
         double endDistance = distance(enemy.x(), enemy.y(), world.playerX(), world.playerY());
         assertTrue(movedAfterTrigger,
-                "stuck enemy should switch to path-follow movement after the 3 second threshold");
+                "stuck enemy should switch to path-follow movement after the 4 second threshold");
         assertTrue(endDistance < startDistance,
                 "path fallback should help enemy make net progress toward player");
     }
@@ -64,7 +64,7 @@ class AdaptiveAggressiveMovementServiceTest {
 
         EnemyState enemy = new EnemyState("z", 72d, 120d, 1, 0, 16d, 4d);
 
-        for (int i = 0; i < 31; i++) {
+        for (int i = 0; i < 41; i++) {
             MovementResult result = service.tick(enemy, world, 0.1d);
             enemy = advance(enemy, result);
         }
