@@ -64,4 +64,9 @@ class GdxGameScreenParityTest {
         assertFalse(GdxGameScreen.isInfectious(nonInfectious));
         assertTrue(GdxGameScreen.isInfectious(infectious));
     }
+
+    @Test
+    void deathDisplayDelayMatchesJavaFxRule() {
+        assertEquals(3f, GdxGameScreen.deathDisplayDelaySeconds(), 0.001f);
+    }
 }

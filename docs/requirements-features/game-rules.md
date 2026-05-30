@@ -96,23 +96,36 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-20**: Loss is reached when HP reaches 0. Both frontends MUST
   consult the same `CombatState` frame to detect death.
 
+## Death flow and input lock
+
+- **GR-21**: After player death is detected, the dead player visual MUST
+  remain visible for 3 seconds before the GAME OVER screen is shown.
+  JavaFX and libGDX MUST use the same delay.
+- **GR-22**: Once the player is dead, player movement input MUST be
+  blocked immediately. Keyboard and mouse movement are forbidden until the
+  game leaves the active play state.
+- **GR-23**: During the death-display delay window, the game MUST NOT
+  transition to WIN state even if the player position overlaps the goal.
+
 ## Audio
 
-- **GR-21**: Music tracks for menu, in-game, win, and game-over MUST be
+- **GR-24**: Music tracks for menu, in-game, win, and game-over MUST be
   resolved via the same `MazeVisualStyleConfig` keys and the shared
   `AudioEngine`. Per-frontend audio routing is forbidden.
 
 ## Locked-in tests (regression contracts)
 
-- **GR-22**: A parity test MUST verify caps derived from `Difficulty` are
+- **GR-25**: A parity test MUST verify caps derived from `Difficulty` are
   equal for both consumers (JavaFX `OpponentRuntimeFactory` path and
   libGDX `RuntimeVisualModelLoader` path).
-- **GR-23**: A parity test MUST verify that loaded `OpponentModel` passes
+- **GR-26**: A parity test MUST verify that loaded `OpponentModel` passes
   OCL validation; both frontends use the same validator.
-- **GR-24**: A parity test MUST verify that `EnemySpawn.infectionLevel`
+- **GR-27**: A parity test MUST verify that `EnemySpawn.infectionLevel`
   drives `isInfectious` consistently and that the libGDX mist is drawn
   before the enemy sprite (GR-14).
-- **GR-25**: A parity test MUST verify that `PlayerConfig.health()` is
+- **GR-28**: A parity test MUST verify that `PlayerConfig.health()` is
   what initializes player HP in both frontends.
-- **GR-26**: A parity test MUST verify identical base score per
+- **GR-29**: A parity test MUST verify identical base score per
   difficulty in both frontends (GR-17).
+- **GR-30**: A parity test MUST verify the death-display delay is 3
+  seconds in libGDX and matches the JavaFX death-delay rule (GR-21).

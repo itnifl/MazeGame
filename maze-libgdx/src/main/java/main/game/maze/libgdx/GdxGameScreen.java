@@ -88,6 +88,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float INFECTION_PULSE_AMPLITUDE = 0.5f;
     private static final float INFECTION_PULSE_SPEED = 3.2f;
     private static final int INFECTION_GLOW_LAYERS = 6;
+    private static final int INFECTION_EDGE_LAYERS = 4;
+    private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
 
     private enum Mode {
         START_MENU,
@@ -158,6 +160,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean infectionWarningVisible;
     private boolean playedWinSound;
     private boolean playedGameOverSound;
+    private boolean deathSequenceStarted;
+    private float deathDisplayRemainingSeconds;
     private boolean loadingPending;
     private long loadingStartedAtNanos;
     private final List<Point2D> activePathPoints = new ArrayList<>();
@@ -273,6 +277,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         return BOTTOM_BAR_HEIGHT;
     }
 
+    static float deathDisplayDelaySeconds() {
+        return DEATH_DISPLAY_DELAY_SECONDS;
+    }
+
     static float hpBarHeight() {
         return HP_BAR_HEIGHT;
     }
@@ -361,41 +369,43 @@ public final class GdxGameScreen extends ApplicationAdapter {
             escLatch = false;
         }
 
-        handleGameMouseInput();
+        if (!combatState.isDead()) {
+            handleGameMouseInput();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
-            hLatch = true;
-            loadHighScores();
-            mode = Mode.HIGH_SCORES;
-        }
-        if (!Gdx.input.isKeyPressed(Input.Keys.H)) {
-            hLatch = false;
-        }
+            if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
+                hLatch = true;
+                loadHighScores();
+                mode = Mode.HIGH_SCORES;
+            }
+            if (!Gdx.input.isKeyPressed(Input.Keys.H)) {
+                hLatch = false;
+            }
 
-        showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
-        applyPathPenalty(dt);
-        updatePathHint();
+            showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
+            applyPathPenalty(dt);
+            updatePathHint();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
-            oLatch = true;
-            showSpanningTreeInfo = !showSpanningTreeInfo;
-        }
-        if (!Gdx.input.isKeyPressed(Input.Keys.O)) {
-            oLatch = false;
-        }
+            if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
+                oLatch = true;
+                showSpanningTreeInfo = !showSpanningTreeInfo;
+            }
+            if (!Gdx.input.isKeyPressed(Input.Keys.O)) {
+                oLatch = false;
+            }
 
-        float dx = 0f, dy = 0f;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) dx -= 1f;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) dx += 1f;
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) dy -= 1f;
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1f;
-        if (dx != 0f && dy != 0f) {
-            float inv = (float) (1.0 / Math.sqrt(2.0));
-            dx *= inv; dy *= inv;
-        }
-        if (dx != 0f || dy != 0f) {
-            player.attemptMove(dx * activePlayerSpeed * dt, dy * activePlayerSpeed * dt, maze);
-            moveCount++;
+            float dx = 0f, dy = 0f;
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) dx -= 1f;
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) dx += 1f;
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) dy -= 1f;
+            if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1f;
+            if (dx != 0f && dy != 0f) {
+                float inv = (float) (1.0 / Math.sqrt(2.0));
+                dx *= inv; dy *= inv;
+            }
+            if (dx != 0f || dy != 0f) {
+                player.attemptMove(dx * activePlayerSpeed * dt, dy * activePlayerSpeed * dt, maze);
+                moveCount++;
+            }
         }
 
         enemyAnimationClock += dt;
@@ -411,17 +421,25 @@ public final class GdxGameScreen extends ApplicationAdapter {
         infectionWarningVisible = combatFrame.infected();
 
         if (combatFrame.dead()) {
-            mode = Mode.GAME_OVER;
-            if (!playedGameOverSound) {
-                playedGameOverSound = true;
-                AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
+            if (!deathSequenceStarted) {
+                deathSequenceStarted = true;
+                deathDisplayRemainingSeconds = DEATH_DISPLAY_DELAY_SECONDS;
+            }
+
+            deathDisplayRemainingSeconds -= dt;
+            if (deathDisplayRemainingSeconds <= 0f) {
+                mode = Mode.GAME_OVER;
+                if (!playedGameOverSound) {
+                    playedGameOverSound = true;
+                    AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
+                    AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
+                }
             }
         }
 
         updateCameraFollow();
 
-        if (mode == Mode.PLAYING && player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
+        if (mode == Mode.PLAYING && !combatFrame.dead() && player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
             mode = Mode.WON;
             if (!playedWinSound) {
                 playedWinSound = true;
@@ -496,25 +514,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
             }
         }
 
-        // Mist pre-pass: drawn behind enemy sprites so the sprite stays visible.
-        batch.end();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapes.setProjectionMatrix(camera.combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        for (EnemyRuntime enemy : animatedEnemies) {
-            if (enemy.infectious) {
-                drawInfectiousMist(shapes, enemy);
-            }
-        }
-        shapes.end();
-        batch.begin();
-
         // Enemies loaded from opponents model and animated in-game.
         for (EnemyRuntime enemy : animatedEnemies) {
             Texture enemyTexture = loadTexture(enemy.imagePath);
             if (enemyTexture == null) {
                 continue;
+            }
+            if (enemy.infectious) {
+                drawInfectiousEdgeMist(batch, enemy, enemyTexture);
             }
             float half = enemy.size * 0.5f;
             batch.draw(enemyTexture, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
@@ -564,6 +571,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         for (EnemyRuntime enemy : animatedEnemies) {
             if (loadTexture(enemy.imagePath) != null) {
                 continue;
+            }
+            if (enemy.infectious) {
+                drawInfectiousMist(shapes, enemy);
             }
             shapes.setColor(0.65f, 0.2f, 0.2f, 1f);
             float half = enemy.size * 0.5f;
@@ -694,6 +704,43 @@ public final class GdxGameScreen extends ApplicationAdapter {
         renderer.circle(centerX, centerY, outerRadius, 28);
         renderer.setColor(0.56f, 1.0f, 0.72f, 0.08f + 0.10f * pulse * enemy.infectionStrength);
         renderer.circle(centerX, centerY, midRadius, 24);
+    }
+
+    private void drawInfectiousEdgeMist(SpriteBatch spriteBatch, EnemyRuntime enemy, Texture enemyTexture) {
+        float pulse = 0.5f + 0.5f * (float) Math.sin(enemyAnimationClock * (1.8f + enemy.infectionStrength) + enemy.phase);
+        float intensity = Math.max(0.35f, Math.min(1f, enemy.infectionStrength));
+
+        int prevSrcBlend = spriteBatch.getBlendSrcFunc();
+        int prevDstBlend = spriteBatch.getBlendDstFunc();
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+
+        for (int i = 0; i < INFECTION_EDGE_LAYERS; i++) {
+            float layerFraction = i / (float) (INFECTION_EDGE_LAYERS - 1);
+            float scale = 1.04f + layerFraction * (0.22f + 0.08f * pulse) + 0.06f * pulse * intensity;
+            float alpha = (0.34f - layerFraction * 0.07f) * (0.78f + 0.22f * pulse) * intensity;
+
+            float drawSize = enemy.size * scale;
+            float halfDraw = drawSize * HALF_RATIO;
+
+            float edgeOffset = (1.5f + 2.3f * layerFraction) * (0.95f + 1.05f * pulse);
+            spriteBatch.setColor(0.30f, 1.0f, 0.52f, alpha);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - edgeOffset, enemy.y - halfDraw, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + edgeOffset, enemy.y - halfDraw, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw, enemy.y - halfDraw - edgeOffset, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw, enemy.y - halfDraw + edgeOffset, drawSize, drawSize);
+
+            float diagonalOffset = edgeOffset * 0.75f;
+            float diagonalAlpha = alpha * 0.9f;
+            spriteBatch.setColor(0.30f, 1.0f, 0.52f, diagonalAlpha);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - diagonalOffset, enemy.y - halfDraw - diagonalOffset, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + diagonalOffset, enemy.y - halfDraw - diagonalOffset, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - diagonalOffset, enemy.y - halfDraw + diagonalOffset, drawSize, drawSize);
+            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + diagonalOffset, enemy.y - halfDraw + diagonalOffset, drawSize, drawSize);
+        }
+
+        spriteBatch.setBlendFunction(prevSrcBlend, prevDstBlend);
+
+        spriteBatch.setColor(Color.WHITE);
     }
 
     private void applyFullWindowGlViewport() {
@@ -1283,6 +1330,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         pausedFromGame = false;
         playedWinSound = false;
         playedGameOverSound = false;
+        deathSequenceStarted = false;
+        deathDisplayRemainingSeconds = 0f;
         animatedEnemies.clear();
         pathPenaltyPoints = 0f;
         currentHpRatio = 1f;

@@ -11,12 +11,7 @@ Set-Location $scriptRoot
 $Mvn               = 'mvn'
 $LibgdxModules     = 'maze-common-frontend,maze-libgdx'
 $GeneratedSourceDir = Join-Path 'maze-module-generator' 'src-gen/main/game/maze/generated'
-$XtextGeneratedDirs = @(
-    (Join-Path 'main.game.maze.dsl' 'src/main/xtext-gen'),
-    (Join-Path 'main.game.maze.dsl.ide' 'src/main/xtext-gen'),
-    (Join-Path 'main.game.maze.dsl.ui' 'src/main/xtext-gen'),
-    (Join-Path 'main.game.maze.dsl.tests' 'src/test/xtext-gen')
-)
+$XtextGeneratedDir = Join-Path 'main.game.maze.dsl' 'src/main/xtext-gen'
 
 # Reuse the shared Java 21 helpers from make-javafx.ps1. They live in the same file in this repo,
 # so we dot-source it but suppress its top-level switch by stripping the argument.
@@ -54,19 +49,13 @@ function Test-GeneratedSourcesPresent {
 }
 
 function Test-XtextGeneratedSourcesPresent {
-    foreach ($dir in $XtextGeneratedDirs) {
-        if (-not (Test-Path $dir)) {
-            return $false
-        }
-
-        $anyFile = Get-ChildItem -Path $dir -File -Recurse -ErrorAction SilentlyContinue |
-            Select-Object -First 1
-        if ($null -eq $anyFile) {
-            return $false
-        }
+    if (-not (Test-Path $XtextGeneratedDir)) {
+        return $false
     }
 
-    return $true
+    $anyFile = Get-ChildItem -Path $XtextGeneratedDir -File -Recurse -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    return $null -ne $anyFile
 }
 
 function Ensure-XtextGeneratedSources {
@@ -76,7 +65,7 @@ function Ensure-XtextGeneratedSources {
     }
 
     Write-Host 'Generated Xtext sources are missing, regenerating...' -ForegroundColor Yellow
-    & $Mvn -pl main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests -am generate-sources
+    & $Mvn -pl main.game.maze.dsl -am generate-sources
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Xtext generated source recovery failed with exit code $exit."
@@ -97,18 +86,24 @@ function Ensure-GeneratedSources {
         return
     }
 
-    Write-Host 'Generated FreeMarker sources are missing, regenerating via runner...' -ForegroundColor Yellow
-    & $Mvn -pl maze-generator.freemarker-runner,maze-module-generator -am -Dskip.codegen=false generate-sources
+    Write-Host 'Generated FreeMarker sources are missing, restoring tracked generated sources from git...' -ForegroundColor Yellow
+
+    $git = Get-Command git -ErrorAction SilentlyContinue
+    if (-not $git) {
+        throw 'Generated FreeMarker sources are missing and git is not available. Restore maze-module-generator/src-gen from version control.'
+    }
+
+    & $git.Source restore --source=HEAD --worktree -- 'maze-module-generator/src-gen'
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
-        throw "Generated source recovery failed with exit code $exit."
+        throw "Generated FreeMarker source restore failed with exit code $exit. Restore maze-module-generator/src-gen from version control."
     }
 
     if (-not (Test-GeneratedSourcesPresent)) {
-        throw "Generated source recovery completed, but no .java files were found in $GeneratedSourceDir."
+        throw "Generated FreeMarker source restore completed, but no .java files were found in $GeneratedSourceDir."
     }
 
-    Write-Host 'Generated FreeMarker sources restored.' -ForegroundColor Green
+    Write-Host 'Generated FreeMarker sources restored from git.' -ForegroundColor Green
 }
 
 function Invoke-LibgdxFullBuild {
