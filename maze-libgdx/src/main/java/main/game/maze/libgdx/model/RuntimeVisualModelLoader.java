@@ -149,7 +149,7 @@ public final class RuntimeVisualModelLoader {
         List<EnemySpawn> out = new ArrayList<>();
         Random random = new Random(ENEMY_SPAWN_RANDOM_SEED);
         float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, difficulty.getMaxThreat()) : Float.MAX_VALUE;
-        float damageMultiplier = difficulty != null ? (float) Math.max(MIN_DAMAGE_MULTIPLIER, difficulty.getMonstersDamageMultiplier()) : MIN_THREAT_BUDGET;
+        float damageMultiplier = difficulty != null ? (float) Math.max(MIN_DAMAGE_MULTIPLIER, difficulty.getMonstersDamageMultiplier()) : 1f;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
         float startX = arena != null ? arena.startX() : widthPx * CENTER_RATIO;

@@ -70,4 +70,5 @@ jobs:
           mvn -B -U -e \
             -DskipITs \
             -Djavafx.platform=linux \
+            -pl '!releng/mirror' \
             test

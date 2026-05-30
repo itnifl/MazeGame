@@ -42,7 +42,10 @@ class RealMazeTest {
         PlayerState spawn = PlayerState.spawnAwayFromWalls(maze.startX(), maze.startY(), 16f, maze);
 
         assertFalse(spawn.collidesWith(maze), "the shared maze start should not place the player inside a wall");
-        assertTrue(spawn.x() >= 0f && spawn.y() >= 0f, "spawn should stay inside the maze bounds");
+        assertTrue(spawn.x() >= 0f && spawn.x() <= maze.widthPx(),
+                "spawn x should stay inside the maze bounds");
+        assertTrue(spawn.y() >= 0f && spawn.y() <= maze.heightPx(),
+                "spawn y should stay inside the maze bounds");
     }
 
     @Test

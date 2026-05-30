@@ -93,7 +93,20 @@ public final class SpriteWallNudger {
             float dx = cx - mx;
             float dy = cy - my;
             float len = (float) Math.hypot(dx, dy);
-            if (len == 0f) len = 1f;
+            if (len == 0f) {
+                // Rect center exactly on the wall midpoint: nudge along a
+                // perpendicular to the wall so nudgeOffWalls() can make progress
+                // instead of burning iterations on a zero-vector offset.
+                float wx = wall.x2 - wall.x1;
+                float wy = wall.y2 - wall.y1;
+                float wlen = (float) Math.hypot(wx, wy);
+                if (wlen == 0f) {
+                    rect.offset(1f, 0f);
+                    return;
+                }
+                rect.offset(-wy / wlen, wx / wlen);
+                return;
+            }
             rect.offset(dx / len, dy / len);
         }
     }

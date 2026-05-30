@@ -59,7 +59,7 @@ public class CharacterIntersectionFixerServiceTest {
 
     @Test
     @DisplayName("direction returns negative for point above CCW triangle base")
-    void directionReturnsPositiveForCCW() throws Exception {
+    void directionReturnsNegativeForCCW() throws Exception {
         float result = invokeDirection(0, 0, 10, 0, 5, 5);
         assertTrue(result < 0, "Point above line should give negative cross product");
     }

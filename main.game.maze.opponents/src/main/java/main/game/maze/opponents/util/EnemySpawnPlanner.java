@@ -91,10 +91,19 @@ public final class EnemySpawnPlanner {
     /**
      * Apply the difficulty damage multiplier to a base attack damage value.
      * Both frontends MUST use this to keep per-tick damage identical.
+     *
+     * <p>Mirrors the JavaFX clamp in {@code OpponentRuntimeFactory
+     * .setCharacterAttributesByDifficulty}: any positive base damage stays at
+     * least 1 after scaling so a low multiplier never silently nullifies an
+     * enemy's attack on one frontend while keeping it lethal on the other.
      */
     public static int applyDamageMultiplier(int baseDamage, double multiplier) {
         int safeBase = Math.max(0, baseDamage);
         double safeMul = Math.max(0d, multiplier);
-        return Math.max(0, (int) Math.round(safeBase * safeMul));
+        int scaled = (int) Math.round(safeBase * safeMul);
+        if (safeBase > 0) {
+            return Math.max(1, scaled);
+        }
+        return Math.max(0, scaled);
     }
 }

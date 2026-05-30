@@ -10,7 +10,6 @@ import org.eclipse.emf.ecore.impl.EOperationImpl;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegate;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
-import org.eclipse.ocl.ecore.delegate.OCLSettingDelegate;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegate;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
