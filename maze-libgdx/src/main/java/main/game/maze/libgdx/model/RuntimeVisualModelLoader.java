@@ -150,6 +150,7 @@ public final class RuntimeVisualModelLoader {
         Random random = new Random(ENEMY_SPAWN_RANDOM_SEED);
         float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, difficulty.getMaxThreat()) : Float.MAX_VALUE;
         float damageMultiplier = difficulty != null ? (float) Math.max(MIN_DAMAGE_MULTIPLIER, difficulty.getMonstersDamageMultiplier()) : 1f;
+        double speedMultiplier = difficulty != null ? difficulty.getMonstersMovementSpeedMultiplier() : 1d;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
         float startX = arena != null ? arena.startX() : widthPx * CENTER_RATIO;
@@ -183,6 +184,7 @@ public final class RuntimeVisualModelLoader {
                     }
                     int baseDamage = Math.max(0, attackDamageFor(picked));
                     int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
+                    float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
                     int infectionLevel = infectionLevelFor(picked);
                     String touchSound = touchSoundFor(picked);
                     float effectiveThreat = instantDeath
@@ -197,7 +199,8 @@ public final class RuntimeVisualModelLoader {
                             effectiveThreat,
                             attackDamage,
                             infectionLevel,
-                            touchSound);
+                            touchSound,
+                            spawnSpeed);
                     break;
                 }
                 if (accepted != null) {

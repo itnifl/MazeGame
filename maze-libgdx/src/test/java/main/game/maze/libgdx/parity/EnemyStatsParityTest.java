@@ -77,7 +77,7 @@ class EnemyStatsParityTest {
                 int libgdxDamage = instantDeath
                         ? Integer.MAX_VALUE
                         : Math.max(1, EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult));
-                double libgdxSpeed = baseSpeed * speedMult;
+                double libgdxSpeed = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, speedMult);
 
                 assertEquals(javafxDamage, libgdxDamage, "damage parity " + tag);
                 assertEquals(javafxSpeed, libgdxSpeed, 1e-9, "speed parity " + tag);

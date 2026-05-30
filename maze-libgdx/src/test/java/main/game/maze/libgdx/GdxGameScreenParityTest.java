@@ -58,8 +58,8 @@ class GdxGameScreenParityTest {
 
     @Test
     void infectionLevelControlsMistRenderingFlag() {
-        EnemySpawn nonInfectious = new EnemySpawn("a", "/a.png", 10f, 10f, 20f, 1f, 1, 0, "");
-        EnemySpawn infectious = new EnemySpawn("b", "/b.png", 10f, 10f, 20f, 1f, 1, 25, "");
+        EnemySpawn nonInfectious = new EnemySpawn("a", "/a.png", 10f, 10f, 20f, 1f, 1, 0, "", 1f);
+        EnemySpawn infectious = new EnemySpawn("b", "/b.png", 10f, 10f, 20f, 1f, 1, 25, "", 1f);
 
         assertFalse(GdxGameScreen.isInfectious(nonInfectious));
         assertTrue(GdxGameScreen.isInfectious(infectious));

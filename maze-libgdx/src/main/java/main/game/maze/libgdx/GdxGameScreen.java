@@ -1658,7 +1658,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index) {
             float radius = Math.max(8f, spawn.size() * 0.35f);
-            float speed = 0.9f + (index % 5) * 0.25f;
+            // spawn.speed() already incorporates the difficulty speed multiplier;
+            // floor it so a zero-speed enemy still idles visibly via the
+            // sin/cos oscillator below instead of standing perfectly still.
+            float speed = Math.max(0.25f, spawn.speed());
             float phase = index * 0.8f;
             return new EnemyRuntime(spawn, spawn.imagePath(), spawn.size(), spawn.x(), spawn.y(), radius, speed, phase);
         }
@@ -1673,7 +1676,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     spawn.effectiveThreat(),
                     spawn.attackDamage(),
                     spawn.infectionLevel(),
-                    spawn.touchSoundPath());
+                    spawn.touchSoundPath(),
+                    spawn.speed());
         }
 
         private void update(float t, float maxX, float maxY) {

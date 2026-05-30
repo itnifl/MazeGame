@@ -106,4 +106,21 @@ public final class EnemySpawnPlanner {
         }
         return Math.max(0, scaled);
     }
+
+    /**
+     * Apply the difficulty movement speed multiplier to a base speed value.
+     * Both frontends MUST use this so a Zombie on Easy moves at the same
+     * relative pace whether the player is on the JavaFX or libGDX runtime.
+     *
+     * <p>Mirrors the JavaFX path in {@code OpponentRuntimeFactory
+     * .setCharacterAttributesByDifficulty}, which does
+     * {@code character.setSpeed(character.getSpeed() * speedMultiplier)} with
+     * no clamping; negative multipliers are coerced to 0 to avoid moving
+     * enemies backwards along the oscillation path.
+     */
+    public static double applySpeedMultiplier(double baseSpeed, double multiplier) {
+        double safeBase = Math.max(0d, baseSpeed);
+        double safeMul = Math.max(0d, multiplier);
+        return safeBase * safeMul;
+    }
 }
