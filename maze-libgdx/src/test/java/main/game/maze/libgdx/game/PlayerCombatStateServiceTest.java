@@ -16,7 +16,7 @@ class PlayerCombatStateServiceTest {
         PlayerCombatStateService service = new PlayerCombatStateService();
         service.reset(100);
 
-        EnemySpawn enemy = new EnemySpawn("z1", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 5, 0, "");
+        EnemySpawn enemy = new EnemySpawn("z1", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 5, 0, "", 1f);
         var frame = service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
 
         assertTrue(frame.hpRatio() < 1f);
@@ -29,7 +29,7 @@ class PlayerCombatStateServiceTest {
         PlayerCombatStateService service = new PlayerCombatStateService();
         service.reset(20);
 
-        EnemySpawn enemy = new EnemySpawn("z2", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 101f, 1, 0, "");
+        EnemySpawn enemy = new EnemySpawn("z2", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 101f, 1, 0, "", 1f);
         var frame = service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
 
         assertTrue(frame.dead());
@@ -41,7 +41,7 @@ class PlayerCombatStateServiceTest {
         PlayerCombatStateService service = new PlayerCombatStateService(() -> 0.0);
         service.reset(1000);
 
-        EnemySpawn enemy = new EnemySpawn("z3", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 100, 100, "/main/game/maze/zombieScream.mp3");
+        EnemySpawn enemy = new EnemySpawn("z3", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 100, 100, "/main/game/maze/zombieScream.mp3", 1f);
         service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
 
         boolean hpDroppedBelowImmediateHit = false;

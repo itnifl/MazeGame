@@ -1,153 +1,129 @@
 package main.game.maze;
 
 import javafx.scene.layout.Pane;
+import main.game.maze.mazeworld.generators.SpriteWallNudger;
+import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.service.CharacterIntersectionFixerService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests for CharacterIntersectionFixerService geometry calculations.
- * Uses reflection to test private helper methods for thorough coverage.
+ * Verifies the JavaFX adapter and the shared {@link SpriteWallNudger}
+ * geometry now used by both frontends. Private helpers are exercised via
+ * reflection so the math contract stays locked.
  */
 public class CharacterIntersectionFixerServiceTest {
-
-    private Pane gameBoard;
-    private CharacterIntersectionFixerService service;
-
-    @BeforeEach
-    void setUp() {
-        gameBoard = new Pane();
-        // Use null maze for most tests since we test private methods directly
-        service = new CharacterIntersectionFixerService(gameBoard, null);
-    }
 
     @Test
     @DisplayName("fixInitialSpriteMazeIntersections handles null maze gracefully")
     void fixIntersectionsHandlesNullMaze() {
-        CharacterIntersectionFixerService nullMazeService = 
-            new CharacterIntersectionFixerService(gameBoard, null);
-        
-        assertDoesNotThrow(() -> nullMazeService.fixInitialSpriteMazeIntersections(),
-            "Should handle null maze without throwing");
+        CharacterIntersectionFixerService service =
+            new CharacterIntersectionFixerService(new Pane(), null);
+        assertDoesNotThrow(service::fixInitialSpriteMazeIntersections);
     }
 
     @Test
     @DisplayName("pointInRect returns true for point inside rectangle")
     void pointInRectReturnsTrueForInsidePoint() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "pointInRect", double.class, double.class, 
-            double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        boolean result = (boolean) method.invoke(service, 5.0, 5.0, 0.0, 0.0, 10.0, 10.0);
-        
-        assertTrue(result, "Point (5,5) should be inside rectangle (0,0)-(10,10)");
+        assertTrue(invokePointInRect(5f, 5f, 0f, 0f, 10f, 10f));
     }
 
     @Test
     @DisplayName("pointInRect returns false for point outside rectangle")
     void pointInRectReturnsFalseForOutsidePoint() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "pointInRect", double.class, double.class, 
-            double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        boolean result = (boolean) method.invoke(service, 15.0, 15.0, 0.0, 0.0, 10.0, 10.0);
-        
-        assertFalse(result, "Point (15,15) should be outside rectangle (0,0)-(10,10)");
+        assertFalse(invokePointInRect(15f, 15f, 0f, 0f, 10f, 10f));
     }
 
     @Test
     @DisplayName("pointInRect returns true for point on boundary")
     void pointInRectReturnsTrueForBoundaryPoint() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "pointInRect", double.class, double.class, 
-            double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        boolean result = (boolean) method.invoke(service, 10.0, 5.0, 0.0, 0.0, 10.0, 10.0);
-        
-        assertTrue(result, "Point (10,5) on boundary should be inside rectangle");
+        assertTrue(invokePointInRect(10f, 5f, 0f, 0f, 10f, 10f));
     }
 
     @Test
     @DisplayName("segmentsIntersect detects crossing segments")
     void segmentsIntersectDetectsCrossing() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "segmentsIntersect", 
-            double.class, double.class, double.class, double.class,
-            double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        // Horizontal line (0,5) to (10,5) crossing vertical line (5,0) to (5,10)
-        boolean result = (boolean) method.invoke(service, 
-            0.0, 5.0, 10.0, 5.0,  // segment 1
-            5.0, 0.0, 5.0, 10.0); // segment 2
-        
-        assertTrue(result, "Perpendicular crossing segments should intersect");
+        assertTrue(invokeSegmentsIntersect(0, 5, 10, 5, 5, 0, 5, 10));
     }
 
     @Test
     @DisplayName("segmentsIntersect rejects parallel non-overlapping segments")
     void segmentsIntersectRejectsParallel() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "segmentsIntersect", 
-            double.class, double.class, double.class, double.class,
-            double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        // Two parallel horizontal lines
-        boolean result = (boolean) method.invoke(service, 
-            0.0, 0.0, 10.0, 0.0,   // y=0 line
-            0.0, 5.0, 10.0, 5.0);  // y=5 line
-        
-        assertFalse(result, "Parallel non-overlapping segments should not intersect");
+        assertFalse(invokeSegmentsIntersect(0, 0, 10, 0, 0, 5, 10, 5));
     }
 
     @Test
-    @DisplayName("direction returns positive for counterclockwise orientation")
-    void directionReturnsPositiveForCCW() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "direction", 
-            double.class, double.class, double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        // Triangle (0,0), (10,0), (5,5) - k is above the line ij
-        double result = (double) method.invoke(service, 0.0, 0.0, 10.0, 0.0, 5.0, 5.0);
-        
+    @DisplayName("direction returns negative for point above CCW triangle base")
+    void directionReturnsNegativeForCCW() throws Exception {
+        float result = invokeDirection(0, 0, 10, 0, 5, 5);
         assertTrue(result < 0, "Point above line should give negative cross product");
     }
 
     @Test
     @DisplayName("onSegment returns true for point on segment")
     void onSegmentReturnsTrueForPointOnSegment() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "onSegment", 
-            double.class, double.class, double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        // Point (5,0) on segment (0,0) to (10,0)
-        boolean result = (boolean) method.invoke(service, 0.0, 0.0, 10.0, 0.0, 5.0, 0.0);
-        
-        assertTrue(result, "Point (5,0) should be on segment (0,0)-(10,0)");
+        assertTrue(invokeOnSegment(0, 0, 10, 0, 5, 0));
     }
 
     @Test
     @DisplayName("onSegment returns false for point off segment")
     void onSegmentReturnsFalseForPointOffSegment() throws Exception {
-        Method method = CharacterIntersectionFixerService.class.getDeclaredMethod(
-            "onSegment", 
-            double.class, double.class, double.class, double.class, double.class, double.class);
-        method.setAccessible(true);
-        
-        // Point (15,0) beyond segment (0,0) to (10,0)
-        boolean result = (boolean) method.invoke(service, 0.0, 0.0, 10.0, 0.0, 15.0, 0.0);
-        
-        assertFalse(result, "Point (15,0) should not be on segment (0,0)-(10,0)");
+        assertFalse(invokeOnSegment(0, 0, 10, 0, 15, 0));
+    }
+
+    @Test
+    @DisplayName("nudgeOffWalls pushes an AABB off a horizontal wall")
+    void nudgeOffWallsMovesRectOffHorizontalWall() {
+        float[] pos = { 50f, 50f }; // rect center
+        final float half = 5f;
+        SpriteWallNudger.MovableAabb rect = new SpriteWallNudger.MovableAabb() {
+            @Override public float minX() { return pos[0] - half; }
+            @Override public float minY() { return pos[1] - half; }
+            @Override public float maxX() { return pos[0] + half; }
+            @Override public float maxY() { return pos[1] + half; }
+            @Override public void offset(float dx, float dy) { pos[0] += dx; pos[1] += dy; }
+        };
+        WallSegment horizontalThroughRect = new WallSegment(0, 50, 100, 50);
+        SpriteWallNudger.nudgeOffWalls(rect, List.of(horizontalThroughRect), 50);
+
+        assertFalse(SpriteWallNudger.intersects(rect, horizontalThroughRect),
+            "Rect should be clear of the horizontal wall after nudging");
+    }
+
+    // --- reflection helpers targeting the shared geometry module ---
+
+    private static boolean invokePointInRect(float x, float y, float rx1, float ry1, float rx2, float ry2) throws Exception {
+        Method m = SpriteWallNudger.class.getDeclaredMethod("pointInRect",
+            float.class, float.class, float.class, float.class, float.class, float.class);
+        m.setAccessible(true);
+        return (boolean) m.invoke(null, x, y, rx1, ry1, rx2, ry2);
+    }
+
+    private static boolean invokeSegmentsIntersect(float x1, float y1, float x2, float y2,
+                                                   float x3, float y3, float x4, float y4) throws Exception {
+        Method m = SpriteWallNudger.class.getDeclaredMethod("segmentsIntersect",
+            float.class, float.class, float.class, float.class,
+            float.class, float.class, float.class, float.class);
+        m.setAccessible(true);
+        return (boolean) m.invoke(null, x1, y1, x2, y2, x3, y3, x4, y4);
+    }
+
+    private static float invokeDirection(float xi, float yi, float xj, float yj, float xk, float yk) throws Exception {
+        Method m = SpriteWallNudger.class.getDeclaredMethod("direction",
+            float.class, float.class, float.class, float.class, float.class, float.class);
+        m.setAccessible(true);
+        return (float) m.invoke(null, xi, yi, xj, yj, xk, yk);
+    }
+
+    private static boolean invokeOnSegment(float xi, float yi, float xj, float yj, float xk, float yk) throws Exception {
+        Method m = SpriteWallNudger.class.getDeclaredMethod("onSegment",
+            float.class, float.class, float.class, float.class, float.class, float.class);
+        m.setAccessible(true);
+        return (boolean) m.invoke(null, xi, yi, xj, yj, xk, yk);
     }
 }

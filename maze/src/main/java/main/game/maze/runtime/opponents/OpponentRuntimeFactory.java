@@ -27,6 +27,7 @@ import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.generated.CharacterRegistrar;
@@ -86,16 +87,17 @@ public final class OpponentRuntimeFactory {
         /* REFACTOR START Composition Resolver line 137-161 */
         var diff = resolveActiveDifficulty(setOverrideDifficulty, opponentModel);
         if (diff == null) {
-            _logger.warning("No selectedDifficulty set; spawning without caps/multipliers.");
+            _logger.warning("No selectedDifficulty set; spawning with default caps/multipliers.");
         } else {
             _logger.log(Level.INFO, "Selected difficulty: {0}", diff.getClass());
         }
         // 1) Key for the profile (e.g., "easy", "normal", "hard")
-        String key = diff.eClass().getName().toLowerCase(java.util.Locale.ROOT);
+        String key = diff != null
+                ? diff.eClass().getName().toLowerCase(java.util.Locale.ROOT)
+                : "default";
 
-        // 2) Build caps from Difficulty (type -> maxCount)
-        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
-        diff.getEnemyMaxCount().forEach(e -> caps.put(e.getType(), Math.max(0, e.getMaxCount())));
+        // 2) Build caps from Difficulty (shared with libGDX via EnemySpawnPlanner)
+        EnumMap<EnemyTypes, Integer> caps = new EnumMap<>(EnemySpawnPlanner.capsFromDifficulty(diff));
         
         // 3) Choose a total enemyCount and ratios for the resolver
         //    - enemyCount: use sum(caps) as a reasonable default 
@@ -130,17 +132,24 @@ public final class OpponentRuntimeFactory {
         
         Map<EnemyTypes, Integer> target = resolver.resolve(key);
 
-        final int maxThreatByDifficulty = diff.getMaxThreat();
-        final double speedMultiplierByDifficulty = diff.getMonstersMovementSpeedMultiplier();
-        final double dmgMultiplierByDifficulty = diff.getMonstersDamageMultiplier();
-        final boolean instantDeath = diff.isInstantDeath();
+        final int maxThreatByDifficulty = diff != null ? diff.getMaxThreat() : Integer.MAX_VALUE;
+        final double speedMultiplierByDifficulty = diff != null ? diff.getMonstersMovementSpeedMultiplier() : 1d;
+        final double dmgMultiplierByDifficulty = diff != null ? diff.getMonstersDamageMultiplier() : 1d;
+        final boolean instantDeath = diff != null && diff.isInstantDeath();
 
         /* REFACTOR END Composition Resolver line 137-161 */
         AtomicInteger noOfGhostsSpawned = new AtomicInteger(0);
         AtomicInteger noOfZombiesSpawned = new AtomicInteger(0);
         AtomicInteger noOfPumpkinBombersSpawned = new AtomicInteger(0);
       
-        var characterList = opponentModel.getCharacterTypes();            
+        var characterList = opponentModel.getCharacterTypes();
+
+        // Reset per-spawn aggressive counter and stash the active difficulty so
+        // the per-character registration path can apply the aggressive cap from
+        // EnemySpawnPlanner.aggressiveCapForDifficulty without changing the
+        // method signature of the generated CharacterRegistrar dispatch.
+        currentSpawnDifficulty = diff;
+        aggressiveAssignedThisSpawn.set(0);
 
 
         double threatSum = spawnByTarget(
@@ -246,12 +255,12 @@ private static double spawnByTarget(
             if (picked == null) break; // no suitable options left
 
             // apply difficulty multipliers
-            setCharacterAttributesByDifficulty(template, speedMult, dmgMult, instantDeath);
+            setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);
 
             // register in game (updates per-type counters)
-            doCharacterRegistration(gameController, template, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+            doCharacterRegistration(gameController, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
 
-            threat += template.getEffectiveThreat();
+            threat += picked.getEffectiveThreat();
         }
 
     }
@@ -259,6 +268,10 @@ private static double spawnByTarget(
 }
 
 
+
+    private static final java.util.concurrent.atomic.AtomicInteger aggressiveAssignedThisSpawn =
+            new java.util.concurrent.atomic.AtomicInteger(0);
+    private static volatile Difficulty currentSpawnDifficulty;
 
     /**
      * Delegates character registration to the generated CharacterRegistrar.
@@ -272,14 +285,17 @@ private static double spawnByTarget(
             final double spawnY = ThreadLocalRandom.current()
                 .nextInt(SPAWN_MARGIN, Math.max(SPAWN_MARGIN + 1, App.getBoardMaxY() - SPAWN_MARGIN));
             
-            // Randomly assign PATROL behavior to ~50% of characters
-            if (ThreadLocalRandom.current().nextDouble() < 0.50) {
-                characterType.setBehavior(BehaviorType.PATROL);
-                _logger.log(Level.FINE, "Assigned PATROL behavior to {0}", characterType.getClass().getSimpleName());
-            } else {
-                characterType.setBehavior(BehaviorType.WANDER);
-                _logger.log(Level.FINE, "Assigned WANDER behavior to {0}", characterType.getClass().getSimpleName());
+            BehaviorType runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                    characterType.getBehavior(),
+                    currentSpawnDifficulty,
+                    aggressiveAssignedThisSpawn.get(),
+                    ThreadLocalRandom.current());
+            if (runtimeBehavior == BehaviorType.AGGRESSIVE) {
+                aggressiveAssignedThisSpawn.incrementAndGet();
             }
+            characterType.setBehavior(runtimeBehavior);
+            _logger.log(Level.FINE, "Assigned {0} behavior to {1}",
+                    new Object[] { runtimeBehavior, characterType.getClass().getSimpleName() });
 
             // Use generated CharacterRegistrar for type-safe dispatch
             CharacterRegistrar.register(
@@ -287,17 +303,29 @@ private static double spawnByTarget(
                 // Ghost handler
                 g -> {                            
                     noOfGhostsSpawned.incrementAndGet();                    
-                    registerGhostCharacter(gameController, spawnX, spawnY, g);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.GhostCharacterXYSize);
+                    registerGhostCharacter(gameController, resolved.getX(), resolved.getY(), g);
                 },
                 // Zombie handler
                 z -> {
                     noOfZombiesSpawned.incrementAndGet();        
-                    registerZombieCharacter(gameController, spawnX, spawnY, z);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.ZombieCharacterXYSize);
+                    registerZombieCharacter(gameController, resolved.getX(), resolved.getY(), z);
                 },
                 // PumpkinBomber handler
                 b -> {
                     noOfPumpkinBombersSpawned.incrementAndGet();
-                    registerPumpkinBomberCharacter(gameController, spawnX, spawnY, b);
+                    var resolved = gameController.resolveEnemySpawnPosition(
+                            spawnX,
+                            spawnY,
+                            StageConstants.PumpkinBomberCharacterXYSize);
+                    registerPumpkinBomberCharacter(gameController, resolved.getX(), resolved.getY(), b);
                 }
             );
     }
@@ -353,29 +381,11 @@ private static double spawnByTarget(
      */
     private static void setCharacterAttributesByDifficulty(CharacterType characterType,
             double speedMultiplierByDifficulty, double dmgMultiplierByDifficulty, boolean instantDeath) {
-
-        characterType.setSpeed(characterType.getSpeed() * speedMultiplierByDifficulty);
-
-        if (characterType instanceof Zombie z) {
-          if (instantDeath) {
-                z.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                z.setAttackDamage(Math.max(1, (int)Math.round(z.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof Ghost g) {
-            if (instantDeath) {
-                g.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                g.setAttackDamage(Math.max(1, (int)Math.round(g.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        } else if (characterType instanceof PumpkinBomber b) {
-            if (instantDeath) {
-                b.setAttackDamage(Integer.MAX_VALUE);
-            } else {
-                b.setAttackDamage(Math.max(1, (int)Math.round(b.getAttackDamage() * dmgMultiplierByDifficulty)));
-            }
-        }
-        
+        EnemySpawnPlanner.applyDifficultyAttributes(
+                characterType,
+                speedMultiplierByDifficulty,
+                dmgMultiplierByDifficulty,
+                instantDeath);
     }
 
 

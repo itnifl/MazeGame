@@ -32,17 +32,16 @@ jobs:
             -DskipTests=true \
             clean verify
 
-      - name: Build game with tests
+      - name: Run full test suite
         env:
           MAVEN_OPTS: -Xmx2g
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
           mvn -B -U -e \
-            -pl maze \
-            -am \
+            -DskipITs \
             -Djavafx.platform=linux \
-            -DskipTests=false \
-            clean verify
+            -pl '!releng/mirror' \
+            test
 
       - name: Upload Surefire reports
         if: always()

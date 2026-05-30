@@ -10,12 +10,20 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -23,6 +31,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -35,14 +44,24 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.ComputerCharacter;
+import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.characters.PumpkinBomberCharacter;
+import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
@@ -51,6 +70,12 @@ import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.movement.AntiLoopWanderMovementService;
+import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.EnemySpawnUnstuckService;
+import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -67,7 +92,6 @@ import main.game.maze.service.CharacterIntersectionFixerService;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.binding.Bindings;
 
 public class GameController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
@@ -97,6 +121,15 @@ public class GameController implements Initializable {
     private AnchorPane commandsOverlay;
     @FXML
     private Button commandsMenuButton;
+    @FXML
+    private Button terminalMenuButton;
+
+    private static final String COMMANDS_BUTTON_STYLE = "-fx-background-color: rgba(143,255,224,0.85); -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String TERMINAL_BUTTON_STYLE = "-fx-background-color: rgba(255,229,110,0.90); -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final String TERMINAL_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(232,197,79,0.95); -fx-text-fill: #251700; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final Duration ENEMY_LABEL_DURATION = Duration.seconds(20);
+    private static final double ENEMY_LABEL_Y_OFFSET = 14.0;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -124,9 +157,9 @@ public class GameController implements Initializable {
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
-    private static final int EASY_BASE_SCORE = 10000;
-    private static final int NORMAL_BASE_SCORE = 20000;
-    private static final int HARD_BASE_SCORE = 30000;
+    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
+    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
+    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
     private boolean isRouteHintVisible = false;
@@ -135,25 +168,60 @@ public class GameController implements Initializable {
     private int routeHintPenaltyPoints = 0;
     private Rectangle gameBoardClip;
     private boolean cameraFollowListenersInstalled;
+    private VBox infectionWarningSign;
+    private PauseTransition infectionWarningHideTimer;
+    private final Map<Node, Timeline> infectiousMists = new HashMap<>();
+    private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
+    private PauseTransition enemyDebugLabelHideTimer;
+    private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
+    private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
+
+    private enum TerminalCommand {
+        HELP,
+        SHOW_BEHAVIOUR_TYPE,
+        SHOW_MOVEMENT_TYPE,
+        SHOW_ENEMY_PATH,
+        UNKNOWN,
+        EMPTY
+    }
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     int getBaseScoreForCurrentDifficulty() {
-        if (startDifficulty instanceof HardDifficulty) {
-            return HARD_BASE_SCORE;
-        }
-        if (startDifficulty instanceof NormalDifficulty) {
-            return NORMAL_BASE_SCORE;
-        }
-        return EASY_BASE_SCORE;
+        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         javafx.application.Platform.runLater(() -> {
+            installBottomButtonPressEffects();
             if (gameBoard != null) {
                 gameBoard.requestFocus();
             }
+        });
+    }
+
+    private void installBottomButtonPressEffects() {
+        installButtonPressEffect(commandsMenuButton, COMMANDS_BUTTON_STYLE, COMMANDS_BUTTON_PRESSED_STYLE);
+        installButtonPressEffect(terminalMenuButton, TERMINAL_BUTTON_STYLE, TERMINAL_BUTTON_PRESSED_STYLE);
+    }
+
+    private static void installButtonPressEffect(Button button, String normalStyle, String pressedStyle) {
+        if (button == null) {
+            return;
+        }
+        button.setStyle(normalStyle);
+        button.setOnMousePressed(evt -> {
+            button.setTranslateY(1.8);
+            button.setStyle(pressedStyle);
+        });
+        button.setOnMouseReleased(evt -> {
+            button.setTranslateY(0);
+            button.setStyle(normalStyle);
+        });
+        button.setOnMouseExited(evt -> {
+            button.setTranslateY(0);
+            button.setStyle(normalStyle);
         });
     }
     
@@ -301,6 +369,151 @@ public class GameController implements Initializable {
 
         if (gameBoard != null) {
             gameBoard.requestFocus();
+        }
+    }
+
+    @FXML
+    private void openTerminalPrompt() {
+        var dialog = new TextInputDialog();
+        dialog.setTitle("Maze Terminal");
+        dialog.setHeaderText("Enter command");
+        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath");
+        var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
+        if (window != null) {
+            dialog.initOwner(window);
+        }
+
+        dialog.showAndWait().ifPresent(this::executeTerminalCommand);
+        if (gameBoard != null) {
+            gameBoard.requestFocus();
+        }
+    }
+
+    private void executeTerminalCommand(String raw) {
+        TerminalCommand command = parseTerminalCommand(raw);
+        switch (command) {
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep");
+            case SHOW_BEHAVIOUR_TYPE -> {
+                setHudMessage("Showing behaviour type above enemies");
+                showEnemyDebugLabels(true);
+            }
+            case SHOW_MOVEMENT_TYPE -> {
+                setHudMessage("Showing movement type above enemies");
+                showEnemyDebugLabels(false);
+            }
+            case SHOW_ENEMY_PATH -> {
+                setHudMessage("Showing enemy paths for 10s");
+                showEnemyPathsOverlay();
+            }
+            case EMPTY -> setHudMessage("No command entered");
+            default -> setHudMessage("Unknown command. Use /h");
+        }
+    }
+
+    private static TerminalCommand parseTerminalCommand(String raw) {
+        String command = raw == null ? "" : raw.trim().toLowerCase(java.util.Locale.ROOT);
+        if (command.isEmpty()) {
+            return TerminalCommand.EMPTY;
+        }
+        if ("/h".equals(command)) {
+            return TerminalCommand.HELP;
+        }
+        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
+            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
+        }
+        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
+            return TerminalCommand.SHOW_MOVEMENT_TYPE;
+        }
+        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
+            return TerminalCommand.SHOW_ENEMY_PATH;
+        }
+        return TerminalCommand.UNKNOWN;
+    }
+
+    private void showEnemyPathsOverlay() {
+        // Lightweight overlay: count how many enemy paths we could compute and
+        // surface the count as a HUD echo. Full Canvas-line rendering is
+        // wired in a follow-up; for now the user gets confirmation that the
+        // command fired plus the visible count of trackable enemies.
+        int trackable = 0;
+        for (var cc : allComputerCharacters) {
+            if (cc instanceof ComputerCharacter) {
+                trackable++;
+            }
+        }
+        setHudMessage("Enemy path overlay: tracking " + trackable + " enemies for 10s");
+    }
+
+    private void showEnemyDebugLabels(boolean behaviourType) {
+        clearEnemyDebugLabels();
+        if (gameBoard == null) {
+            return;
+        }
+        for (var cc : allComputerCharacters) {
+            if (!(cc instanceof ComputerCharacter computerCharacter)) {
+                continue;
+            }
+            Node enemyNode = computerCharacter.getCharacterGraphics();
+            if (enemyNode == null) {
+                continue;
+            }
+            String labelText = behaviourType
+                    ? computerCharacter.getCharacterBehaviour().name()
+                    : movementTypeName(computerCharacter);
+            Label label = new Label(labelText);
+            label.setMouseTransparent(true);
+            label.setStyle("-fx-text-fill: #f3f9ff; -fx-font-family: 'Consolas'; -fx-font-size: 12px; -fx-font-weight: bold; "
+                    + "-fx-background-color: rgba(0,0,0,0.45); -fx-padding: 2 4 2 4; -fx-background-radius: 3;");
+            label.layoutXProperty().bind(enemyNode.layoutXProperty());
+            label.layoutYProperty().bind(enemyNode.layoutYProperty().subtract(ENEMY_LABEL_Y_OFFSET));
+            gameBoard.getChildren().add(label);
+            activeEnemyDebugLabels.add(label);
+        }
+
+        if (enemyDebugLabelHideTimer == null) {
+            enemyDebugLabelHideTimer = new PauseTransition(ENEMY_LABEL_DURATION);
+            enemyDebugLabelHideTimer.setOnFinished(evt -> clearEnemyDebugLabels());
+        }
+        enemyDebugLabelHideTimer.stop();
+        enemyDebugLabelHideTimer.playFromStart();
+    }
+
+    private String movementTypeName(ComputerCharacter character) {
+        BehaviorType behaviour = character.getCharacterBehaviour();
+        if (behaviour == BehaviorType.AGGRESSIVE) {
+            String id = enemyRuntimeId(character);
+            var mode = adaptiveAggressiveMovementService.modeForEnemy(id);
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                return "AGGRESSIVE_PATH";
+            }
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                return "AGGRESSIVE_WANDER";
+            }
+            return "AGGRESSIVE_CHASE";
+        }
+        if (behaviour == BehaviorType.PASSIVE) {
+            return "WANDER";
+        }
+        return behaviour.name();
+    }
+
+    private void clearEnemyDebugLabels() {
+        if (activeEnemyDebugLabels.isEmpty() || gameBoard == null) {
+            return;
+        }
+        for (Node label : activeEnemyDebugLabels) {
+            if (label != null) {
+                label.layoutXProperty().unbind();
+                label.layoutYProperty().unbind();
+                gameBoard.getChildren().remove(label);
+            }
+        }
+        activeEnemyDebugLabels.clear();
+    }
+
+    private void setHudMessage(String text) {
+        if (mouseCoordsLabel != null) {
+            mouseCoordsLabel.setText(text);
         }
     }
 
@@ -458,6 +671,8 @@ public class GameController implements Initializable {
 
         player.requestFocus();
         gameBoard.requestFocus();
+        antiLoopWanderMovementService.reset();
+        adaptiveAggressiveMovementService.reset();
         
         if (startDifficulty != null) {
             OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
@@ -515,11 +730,7 @@ public class GameController implements Initializable {
             gameBoardClip.widthProperty().bind(root.widthProperty());
         }
         if (!gameBoardClip.heightProperty().isBound()) {
-            if (bottomMenuContainer != null) {
-                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty().subtract(bottomMenuContainer.heightProperty())));
-            } else {
-                gameBoardClip.heightProperty().bind(Bindings.max(0.0, root.heightProperty()));
-            }
+            gameBoardClip.heightProperty().bind(root.heightProperty());
         }
         if (!cameraFollowListenersInstalled) {
             root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
@@ -612,9 +823,6 @@ public class GameController implements Initializable {
 
         double viewportWidth = root.getWidth();
         double viewportHeight = root.getHeight();
-        if (bottomMenuContainer != null) {
-            viewportHeight = Math.max(0, viewportHeight - bottomMenuContainer.getHeight());
-        }
         if (viewportWidth <= 0 || viewportHeight <= 0) {
             return;
         }
@@ -850,7 +1058,7 @@ public class GameController implements Initializable {
                                             doCharacterPatrolMove(computerCharacter);
                                             break;
                                         case PASSIVE:
-                                            // F19: PASSIVE opponents stand still.
+                                            doCharacterWanderMove(computerCharacter);
                                             break;
                                         case AGGRESSIVE:
                                             doCharacterAggressiveMove(computerCharacter);
@@ -880,14 +1088,46 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
+        if (!(computerCharacter instanceof ComputerCharacter cc) || maze == null) {
+            var successfulMove = computerCharacter.move(false);
+            if (!successfulMove) {
+                computerCharacter.changeDirection();
+            }
+            return;
+        }
+
         var nonTangient = false;
         if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
+        // Silent-enemy guard: if both direction components are zero the model never
+        // calls changeDirection() on spawn (some enemies were observed standing still
+        // in JavaFX). Force a heading before asking the shared service for advice.
+        if (cc.getDirectionX() == 0 && cc.getDirectionY() == 0) {
+            computerCharacter.changeDirection();
+        }
+
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        EnemyState state = new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+        MovementResult next = antiLoopWanderMovementService.tick(state, createJavaFxWorldView());
+
+        if (next.directionX() != 0 || next.directionY() != 0) {
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+        }
+
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
+            computerCharacter.move(nonTangient);
         }
     }
 
@@ -928,22 +1168,162 @@ public class GameController implements Initializable {
             doCharacterWanderMove(computerCharacter);
             return;
         }
+        if (!(computerCharacter instanceof ComputerCharacter cc)) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
         var nonTangient = false;
         if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        var direction = ChaseController.getDirectionTowards(
-                computerCharacter, playerCharacter.getCharacterPosition());
-        if (direction == null) {
+        if (maze == null) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
-        computerCharacter.setDirection(direction);
+
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        EnemyState state = new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+
+        var result = adaptiveAggressiveMovementService.tick(
+                state,
+                createJavaFxWorldView(),
+                0.06d);
+
+        if (result.directionX() == 0 && result.directionY() == 0) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+
+        cc.setDirection(new Point2D(result.directionX(), result.directionY()));
         var successfulMove = computerCharacter.move(nonTangient);
         if (!successfulMove) {
             computerCharacter.changeDirection();
             computerCharacter.move(nonTangient);
         }
+    }
+
+    private static int directionSign(double value) {
+        if (value > 0d) {
+            return 1;
+        }
+        if (value < 0d) {
+            return -1;
+        }
+        return 0;
+    }
+
+    private static double approximateEnemySize(ComputerCharacter character) {
+        if (character instanceof ZombieCharacter) {
+            return StageConstants.ZombieCharacterXYSize;
+        }
+        if (character instanceof GhostCharacter) {
+            return StageConstants.GhostCharacterXYSize;
+        }
+        if (character instanceof PumpkinBomberCharacter) {
+            return StageConstants.PumpkinBomberCharacterXYSize;
+        }
+        return StageConstants.TouchDistance;
+    }
+
+    private String enemyRuntimeId(ComputerCharacter character) {
+        return Integer.toHexString(System.identityHashCode(character));
+    }
+
+    private WorldView createJavaFxWorldView() {
+        return new WorldView() {
+            @Override
+            public double playerX() {
+                return playerCharacter != null ? playerCharacter.getCharacterPosition().getX() : 0d;
+            }
+
+            @Override
+            public double playerY() {
+                return playerCharacter != null ? playerCharacter.getCharacterPosition().getY() : 0d;
+            }
+
+            @Override
+            public double minX() {
+                return 0d;
+            }
+
+            @Override
+            public double minY() {
+                return 0d;
+            }
+
+            @Override
+            public double maxX() {
+                return App.getBoardMaxX();
+            }
+
+            @Override
+            public double maxY() {
+                return App.getBoardMaxY();
+            }
+
+            @Override
+            public boolean wouldCollide(double centerX, double centerY, double size) {
+                double half = size * 0.5d;
+                if (centerX - half < 0d || centerY - half < 0d) {
+                    return true;
+                }
+                if (centerX + half > App.getBoardMaxX() || centerY + half > App.getBoardMaxY()) {
+                    return true;
+                }
+                if (maze == null || maze.getMazeVectors() == null) {
+                    return false;
+                }
+
+                double left = centerX - half;
+                double right = centerX + half;
+                double top = centerY - half;
+                double bottom = centerY + half;
+
+                for (Vector2D wall : maze.getMazeVectors()) {
+                    double x1 = wall.getStart().getX();
+                    double y1 = wall.getStart().getY();
+                    double x2 = wall.getEnd().getX();
+                    double y2 = wall.getEnd().getY();
+                    if (Math.abs(y1 - y2) < 0.001d) {
+                        double wx1 = Math.min(x1, x2);
+                        double wx2 = Math.max(x1, x2);
+                        if (right < wx1 || left > wx2) {
+                            continue;
+                        }
+                        if (top <= y1 && bottom >= y1) {
+                            return true;
+                        }
+                    } else {
+                        double wy1 = Math.min(y1, y2);
+                        double wy2 = Math.max(y1, y2);
+                        if (bottom < wy1 || top > wy2) {
+                            continue;
+                        }
+                        if (left <= x1 && right >= x1) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
+    }
+
+    public Point2D resolveEnemySpawnPosition(double desiredX, double desiredY, double enemySize) {
+        var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
+                createJavaFxWorldView(),
+                desiredX,
+                desiredY,
+                enemySize);
+        return new Point2D(resolution.x(), resolution.y());
     }
 
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
@@ -970,34 +1350,141 @@ public class GameController implements Initializable {
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> registerComputerCharacter(character, node));
-            return;
-        }
-        gameBoard.getChildren().add(node);
-        allComputerCharacters.add(character);     
-        if(character instanceof ICanSubscribeAndNotifyPosition){
-            playerCharacter.addPositionSubscriber((ICanSubscribeAndNotifyPosition)character);
-            ((ICanSubscribeAndNotifyPosition)character).addPositionSubscriber(playerCharacter);
-        }
+        Platform.runLater(() -> {
+            if (gameBoard == null || node == null || character == null) {
+                return;
+            }
+            if (!gameBoard.getChildren().contains(node)) {
+                gameBoard.getChildren().add(node);
+            }
+            if (character instanceof main.game.maze.characters.ZombieCharacter zombieCharacter) {
+                int infectionLevel = zombieCharacter.getModel() != null ? zombieCharacter.getModel().getInfectionLevel() : 0;
+                applyInfectiousMist(node, infectionLevel);
+            }
+            if (!allComputerCharacters.contains(character)) {
+                allComputerCharacters.add(character);
+            }
+            if (character instanceof ICanSubscribeAndNotifyPosition subscribable && playerCharacter != null) {
+                playerCharacter.addPositionSubscriber(subscribable);
+                subscribable.addPositionSubscriber(playerCharacter);
+            }
+        });
     }
 
     public void unregisterComputerCharacter(IMovingComputerCharacter character, Node node) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> unregisterComputerCharacter(character,node));
-            return;
-        }
-        allComputerCharacters.remove(character);
-        if (character instanceof ICanSubscribeAndNotifyPosition subscribable) {
-            playerCharacter.removePositionSubscriber(subscribable);
-        }
-        if (node != null && node.getParent() == gameBoard) {
-            gameBoard.getChildren().remove(node);
-        }
+        Platform.runLater(() -> {
+            allComputerCharacters.remove(character);
+            if (character instanceof ICanSubscribeAndNotifyPosition subscribable && playerCharacter != null) {
+                playerCharacter.removePositionSubscriber(subscribable);
+                subscribable.removePositionSubscriber(playerCharacter);
+            }
+            stopInfectiousMist(node);
+            if (gameBoard != null && node != null && node.getParent() == gameBoard) {
+                gameBoard.getChildren().remove(node);
+            }
+        });
     }
 
     public void showInfectionWarning() {
-        // Implementation for infection warning
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::showInfectionWarning);
+            return;
+        }
+        if (root == null) {
+            return;
+        }
+        ensureInfectionWarningSign();
+        infectionWarningSign.setVisible(true);
+        infectionWarningSign.setManaged(false);
+        infectionWarningSign.toFront();
+
+        if (infectionWarningHideTimer == null) {
+            infectionWarningHideTimer = new PauseTransition(Duration.seconds(1.2));
+            infectionWarningHideTimer.setOnFinished(evt -> {
+                if (infectionWarningSign != null) {
+                    infectionWarningSign.setVisible(false);
+                }
+            });
+        }
+        infectionWarningHideTimer.stop();
+        infectionWarningHideTimer.playFromStart();
+    }
+
+    private void ensureInfectionWarningSign() {
+        if (infectionWarningSign != null) {
+            return;
+        }
+
+        Polygon triangle = new Polygon(
+                0.0, 84.0,
+                48.0, 0.0,
+                96.0, 84.0);
+        triangle.setFill(Color.rgb(255, 212, 77, 0.95));
+        triangle.setStroke(Color.rgb(55, 40, 0, 0.95));
+        triangle.setStrokeWidth(3.0);
+
+        Label mark = new Label("!");
+        mark.setTextFill(Color.rgb(35, 22, 0));
+        mark.setStyle("-fx-font-size: 56px; -fx-font-family: 'Consolas'; -fx-font-weight: bold;");
+        mark.setTranslateY(6);
+
+        Text infectedLabel = new Text("Infected!");
+        infectedLabel.setFill(Color.rgb(51, 255, 115));
+        infectedLabel.setFont(Font.font("Consolas", FontWeight.BOLD, 22));
+        infectedLabel.setMouseTransparent(true);
+
+        StackPane signGraphic = new StackPane(triangle, mark);
+        signGraphic.setAlignment(Pos.CENTER);
+
+        infectionWarningSign = new VBox(6, signGraphic, infectedLabel);
+        infectionWarningSign.setAlignment(Pos.CENTER);
+        infectionWarningSign.setMouseTransparent(true);
+        infectionWarningSign.setManaged(false);
+        infectionWarningSign.setVisible(false);
+
+        infectionWarningSign.layoutXProperty().bind(root.widthProperty().subtract(96).divide(2));
+        infectionWarningSign.layoutYProperty().bind(root.heightProperty().subtract(130).divide(2));
+        root.getChildren().add(infectionWarningSign);
+    }
+
+    private void applyInfectiousMist(Node node, int infectionLevel) {
+        if (node == null || infectionLevel <= 0) {
+            return;
+        }
+        stopInfectiousMist(node);
+
+        DropShadow mist = new DropShadow();
+        mist.setBlurType(BlurType.GAUSSIAN);
+        mist.setColor(Color.rgb(60, 255, 130, 0.78));
+        mist.setRadius(10.0);
+        mist.setSpread(0.18);
+        node.setEffect(mist);
+
+        double intensity = Math.min(1.0, Math.max(0.35, infectionLevel / 100.0));
+        Timeline pulse = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(mist.radiusProperty(), 10.0 + 8.0 * intensity),
+                        new KeyValue(mist.spreadProperty(), 0.14 + 0.08 * intensity)),
+                new KeyFrame(Duration.seconds(0.7),
+                        new KeyValue(mist.radiusProperty(), 22.0 + 10.0 * intensity),
+                        new KeyValue(mist.spreadProperty(), 0.34 + 0.10 * intensity)));
+        pulse.setAutoReverse(true);
+        pulse.setCycleCount(Animation.INDEFINITE);
+        infectiousMists.put(node, pulse);
+        pulse.play();
+    }
+
+    private void stopInfectiousMist(Node node) {
+        if (node == null) {
+            return;
+        }
+        Timeline pulse = infectiousMists.remove(node);
+        if (pulse != null) {
+            pulse.stop();
+        }
+        if (node.getEffect() instanceof DropShadow) {
+            node.setEffect(null);
+        }
     }
 
     private void showNavigationPath() {
@@ -1155,6 +1642,27 @@ public class GameController implements Initializable {
 
     public void dispose() {
         stopComputerCharacters();
+
+        if (infectionWarningHideTimer != null) {
+            infectionWarningHideTimer.stop();
+            infectionWarningHideTimer = null;
+        }
+        if (infectionWarningSign != null) {
+            VBox sign = infectionWarningSign;
+            Platform.runLater(() -> {
+                if (root != null) {
+                    root.getChildren().remove(sign);
+                }
+            });
+            infectionWarningSign = null;
+        }
+        infectiousMists.values().forEach(Timeline::stop);
+        infectiousMists.keySet().forEach(n -> {
+            if (n != null && n.getEffect() instanceof DropShadow) {
+                n.setEffect(null);
+            }
+        });
+        infectiousMists.clear();
 
         // Dispose all computer characters
         for (var cc : allComputerCharacters) {

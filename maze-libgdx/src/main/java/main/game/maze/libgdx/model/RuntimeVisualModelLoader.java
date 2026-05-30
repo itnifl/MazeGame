@@ -29,6 +29,7 @@ import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
 
@@ -39,6 +40,34 @@ import main.game.maze.service.DifficultyService;
 public final class RuntimeVisualModelLoader {
 
     private static final Logger LOGGER = Logger.getLogger(RuntimeVisualModelLoader.class.getName());
+    private static final String ARENA_REQUIRED_MESSAGE = "arena must not be null";
+    private static final String OPPONENT_MODEL_LOAD_FAILED_MESSAGE = "Failed to load opponent model, spawning no enemies";
+    private static final String PLAYER_CONFIG_FALLBACK_MESSAGE = "Falling back to default player config";
+    private static final String DIFFICULTY_LOAD_FALLBACK_MESSAGE = "Failed to read current difficulty, using defaults";
+    private static final String STYLE_LOAD_FALLBACK_MESSAGE = "Failed to load visual style config, using defaults";
+    private static final String OCL_VALIDATION_WARNING_MESSAGE = "Opponent model OCL validation reported diagnostics: {0}";
+    private static final String OCL_VALIDATION_UNAVAILABLE_MESSAGE = "Opponent model OCL validation unavailable at runtime, continuing with model load";
+    private static final String DEFAULT_WALL_IMAGE = "/main/game/maze/woodWall.png";
+    private static final String DEFAULT_ZOMBIE_IMAGE = "/main/game/maze/zombie1-right.png";
+    private static final String DEFAULT_GHOST_IMAGE = "/main/game/maze/ghost1.png";
+    private static final String DEFAULT_PUMPKIN_IMAGE = "/main/game/maze/pumpkinbomber.png";
+    private static final String DEFAULT_ZOMBIE_TOUCH_SOUND = "/main/game/maze/zombieScream.mp3";
+    private static final String EMPTY_TEXT = "";
+    private static final String GENERATED_ENEMY_ID_SEPARATOR = "_";
+    private static final double MIN_PLAYER_SPEED = 1.0d;
+    private static final float CENTER_RATIO = 0.5f;
+    private static final long ENEMY_SPAWN_RANDOM_SEED = 1337L;
+    private static final float MIN_THREAT_BUDGET = 1f;
+    private static final float MIN_DAMAGE_MULTIPLIER = 0f;
+    private static final int DEFAULT_OPPONENT_MAX_THREAT = 20;
+    private static final int DEFAULT_ZOMBIE_CAP = 2;
+    private static final int DEFAULT_GHOST_CAP = 2;
+    private static final int DEFAULT_PUMPKIN_CAP = 1;
+    private static final float MIN_BORDER_PADDING = 1f;
+    private static final float SPAWN_MARGIN_BORDER_RATIO = 0.25f;
+    private static final float MIN_EXCLUSION_RADIUS = 42f;
+    private static final float MIN_WALL_CLEARANCE = 2f;
+    private static final float WALL_CLEARANCE_SIZE_RATIO = 0.35f;
     private static final float GOAL_SIZE = 50f;
     private static final int SPAWN_MARGIN = 30;
     private static final int MAX_SPAWN_ATTEMPTS_PER_ENEMY = 120;
@@ -50,14 +79,14 @@ public final class RuntimeVisualModelLoader {
 
     public RuntimeVisualModel load(MazeArena arena) {
         if (arena == null) {
-            throw new IllegalArgumentException("arena must not be null");
+            throw new IllegalArgumentException(ARENA_REQUIRED_MESSAGE);
         }
         return load(arena, arena.widthPx(), arena.heightPx(), null);
     }
 
     public RuntimeVisualModel load(MazeArena arena, Difficulty difficulty) {
         if (arena == null) {
-            throw new IllegalArgumentException("arena must not be null");
+            throw new IllegalArgumentException(ARENA_REQUIRED_MESSAGE);
         }
         return load(arena, arena.widthPx(), arena.heightPx(), difficulty);
     }
@@ -71,14 +100,14 @@ public final class RuntimeVisualModelLoader {
         return new RuntimeVisualModel(
                 normalizePath(playerConfig.imageBase()),
             normalizePath(playerConfig.imageDeath()),
-                (float) Math.max(1.0d, playerConfig.speed()),
+                (float) Math.max(MIN_PLAYER_SPEED, playerConfig.speed()),
                 StageConstants.PlayerCharacterXYSize,
             Math.max(1, playerConfig.health()),
                 style.backgroundImageForDifficultyName(difficultyName(difficulty)),
-                wallDefinition != null ? normalizePath(wallDefinition.baseImage) : "/main/game/maze/woodWall.png",
+                wallDefinition != null ? normalizePath(wallDefinition.baseImage) : DEFAULT_WALL_IMAGE,
                 normalizePath(style.goalImagePath()),
-                widthPx * 0.5f,
-                heightPx * 0.5f,
+                widthPx * CENTER_RATIO,
+                heightPx * CENTER_RATIO,
                 GOAL_SIZE,
                 enemies);
     }
@@ -90,7 +119,7 @@ public final class RuntimeVisualModelLoader {
                     PlayerConstants.PlayerModelPath,
                     PlayerConstants.PlayerModelEcorePath);
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING, "Falling back to default player config", ex);
+            LOGGER.log(Level.WARNING, PLAYER_CONFIG_FALLBACK_MESSAGE, ex);
             return PlayerConfig.defaults();
         }
     }
@@ -99,7 +128,7 @@ public final class RuntimeVisualModelLoader {
         try {
             return new DifficultyService().getCurrent();
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING, "Failed to read current difficulty, using defaults", ex);
+            LOGGER.log(Level.WARNING, DIFFICULTY_LOAD_FALLBACK_MESSAGE, ex);
             return null;
         }
     }
@@ -110,23 +139,25 @@ public final class RuntimeVisualModelLoader {
             model = new XmiRulesLoader().loadOpponentModelFromClasspath(OpponentConstants.ZombieModelPath);
             validateOpponentModel(model);
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.WARNING, "Failed to load opponent model, spawning no enemies", ex);
+            LOGGER.log(Level.WARNING, OPPONENT_MODEL_LOAD_FAILED_MESSAGE, ex);
             return List.of();
         }
 
         Map<EnemyTypes, Integer> caps = capsFromDifficulty(difficulty);
-        Map<EnemyTypes, List<CharacterType>> availableByType = buildAvailableByType(model);
+        Map<EnemyTypes, List<CharacterType>> availableByType = EnemySpawnPlanner.availableEnabledByType(model, false);
 
         List<EnemySpawn> out = new ArrayList<>();
-        Random random = new Random(1337L);
-        float threatBudget = difficulty != null ? Math.max(1f, difficulty.getMaxThreat()) : Float.MAX_VALUE;
-        float damageMultiplier = difficulty != null ? (float) Math.max(0d, difficulty.getMonstersDamageMultiplier()) : 1f;
+        Random random = new Random(ENEMY_SPAWN_RANDOM_SEED);
+        float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, difficulty.getMaxThreat()) : Float.MAX_VALUE;
+        float damageMultiplier = difficulty != null ? (float) Math.max(MIN_DAMAGE_MULTIPLIER, difficulty.getMonstersDamageMultiplier()) : 1f;
+        double speedMultiplier = difficulty != null ? difficulty.getMonstersMovementSpeedMultiplier() : 1d;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
-        float startX = arena != null ? arena.startX() : widthPx * 0.5f;
-        float startY = arena != null ? arena.startY() : heightPx * 0.5f;
-        float goalX = arena != null ? arena.goalX() : widthPx * 0.5f;
-        float goalY = arena != null ? arena.goalY() : heightPx * 0.5f;
+        int aggressiveAssigned = 0;
+        float startX = arena != null ? arena.startX() : widthPx * CENTER_RATIO;
+        float startY = arena != null ? arena.startY() : heightPx * CENTER_RATIO;
+        float goalX = arena != null ? arena.goalX() : widthPx * CENTER_RATIO;
+        float goalY = arena != null ? arena.goalY() : heightPx * CENTER_RATIO;
 
         for (Map.Entry<EnemyTypes, Integer> entry : caps.entrySet()) {
             EnemyTypes type = entry.getKey();
@@ -153,14 +184,20 @@ public final class RuntimeVisualModelLoader {
                         continue;
                     }
                     int baseDamage = Math.max(0, attackDamageFor(picked));
-                    int attackDamage = Math.max(0, Math.round(baseDamage * damageMultiplier));
+                    int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
+                    float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
+                        var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
+                                picked.getBehavior(), difficulty, aggressiveAssigned, random);
+                        if (runtimeBehavior == main.game.maze.opponents.BehaviorType.AGGRESSIVE) {
+                            aggressiveAssigned++;
+                        }
                     int infectionLevel = infectionLevelFor(picked);
                     String touchSound = touchSoundFor(picked);
                     float effectiveThreat = instantDeath
                             ? (float) (CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD + 1d)
                             : threat;
                     accepted = new EnemySpawn(
-                            defaultIfBlank(picked.getId(), type.name().toLowerCase(Locale.ROOT) + "_" + i),
+                            defaultIfBlank(picked.getId(), type.name().toLowerCase(Locale.ROOT) + GENERATED_ENEMY_ID_SEPARATOR + i),
                             defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type)),
                             x,
                             y,
@@ -168,7 +205,9 @@ public final class RuntimeVisualModelLoader {
                             effectiveThreat,
                             attackDamage,
                             infectionLevel,
-                            touchSound);
+                            touchSound,
+                            runtimeBehavior,
+                            spawnSpeed);
                     break;
                 }
                 if (accepted != null) {
@@ -188,11 +227,7 @@ public final class RuntimeVisualModelLoader {
     }
 
     private static Map<EnemyTypes, Integer> capsFromDifficulty(Difficulty difficulty) {
-        if (difficulty == null) {
-            return defaultCaps();
-        }
-        Map<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
-        difficulty.getEnemyMaxCount().forEach(e -> caps.put(e.getType(), Math.max(0, e.getMaxCount())));
+        Map<EnemyTypes, Integer> caps = EnemySpawnPlanner.capsFromDifficulty(difficulty);
         if (caps.isEmpty()) {
             return defaultCaps();
         }
@@ -201,38 +236,18 @@ public final class RuntimeVisualModelLoader {
 
     private static Map<EnemyTypes, Integer> defaultCaps() {
         Map<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
-        caps.put(EnemyTypes.ZOMBIE, 2);
-        caps.put(EnemyTypes.GHOST, 2);
-        caps.put(EnemyTypes.PUMPKINBOMBER, 1);
+        caps.put(EnemyTypes.ZOMBIE, DEFAULT_ZOMBIE_CAP);
+        caps.put(EnemyTypes.GHOST, DEFAULT_GHOST_CAP);
+        caps.put(EnemyTypes.PUMPKINBOMBER, DEFAULT_PUMPKIN_CAP);
         return caps;
     }
 
     private static Map<EnemyTypes, List<CharacterType>> buildAvailableByType(OpponentModel model) {
-        Map<EnemyTypes, List<CharacterType>> out = new EnumMap<>(EnemyTypes.class);
-        for (CharacterType ct : model.getCharacterTypes()) {
-            if (!ct.isEnabled()) {
-                continue;
-            }
-            EnemyTypes type = toEnemyType(ct);
-            if (type == null) {
-                continue;
-            }
-            out.computeIfAbsent(type, ignored -> new ArrayList<>()).add(ct);
-        }
-        return out;
+        return EnemySpawnPlanner.availableEnabledByType(model, false);
     }
 
     private static EnemyTypes toEnemyType(CharacterType ct) {
-        if (ct instanceof Zombie) {
-            return EnemyTypes.ZOMBIE;
-        }
-        if (ct instanceof Ghost) {
-            return EnemyTypes.GHOST;
-        }
-        if (ct instanceof PumpkinBomber) {
-            return EnemyTypes.PUMPKINBOMBER;
-        }
-        return null;
+        return EnemySpawnPlanner.toEnemyType(ct);
     }
 
     private static float sizeForType(EnemyTypes type) {
@@ -245,9 +260,9 @@ public final class RuntimeVisualModelLoader {
 
     private static String fallbackEnemyImage(EnemyTypes type) {
         return switch (type) {
-            case ZOMBIE -> "/main/game/maze/zombie1-right.png";
-            case GHOST -> "/main/game/maze/ghost1.png";
-            case PUMPKINBOMBER -> "/main/game/maze/pumpkinbomber.png";
+            case ZOMBIE -> DEFAULT_ZOMBIE_IMAGE;
+            case GHOST -> DEFAULT_GHOST_IMAGE;
+            case PUMPKINBOMBER -> DEFAULT_PUMPKIN_IMAGE;
         };
     }
 
@@ -273,9 +288,9 @@ public final class RuntimeVisualModelLoader {
 
     private static String touchSoundFor(CharacterType type) {
         if (type instanceof Zombie zombie) {
-            return defaultIfBlank(zombie.getTouchSound(), "/main/game/maze/zombieScream.mp3");
+            return defaultIfBlank(zombie.getTouchSound(), DEFAULT_ZOMBIE_TOUCH_SOUND);
         }
-        return "";
+        return EMPTY_TEXT;
     }
 
     private static boolean isValidSpawn(
@@ -289,13 +304,13 @@ public final class RuntimeVisualModelLoader {
             float startY,
             float goalX,
             float goalY) {
-        float half = size * 0.5f;
-        float border = Math.max(half + 1f, SPAWN_MARGIN * 0.25f);
+            float half = size * CENTER_RATIO;
+            float border = Math.max(half + MIN_BORDER_PADDING, SPAWN_MARGIN * SPAWN_MARGIN_BORDER_RATIO);
         if (x < border || x > widthPx - border || y < border || y > heightPx - border) {
             return false;
         }
 
-        float exclusion = Math.max(size, 42f);
+            float exclusion = Math.max(size, MIN_EXCLUSION_RADIUS);
         if (distanceSquared(x, y, startX, startY) <= exclusion * exclusion) {
             return false;
         }
@@ -306,7 +321,7 @@ public final class RuntimeVisualModelLoader {
         if (arena == null) {
             return true;
         }
-        float clearance = Math.max(2f, half * 0.35f);
+        float clearance = Math.max(MIN_WALL_CLEARANCE, half * WALL_CLEARANCE_SIZE_RATIO);
         for (WallSegment wall : arena.walls()) {
             if (distanceSquaredToSegment(x, y, wall) <= clearance * clearance) {
                 return false;
@@ -350,7 +365,7 @@ public final class RuntimeVisualModelLoader {
 
     private static String difficultyName(Difficulty difficulty) {
         if (difficulty == null) {
-            return "";
+            return EMPTY_TEXT;
         }
         return difficulty.eClass().getName().toLowerCase(Locale.ROOT);
     }
@@ -362,7 +377,7 @@ public final class RuntimeVisualModelLoader {
             try {
                 return new PropertiesMazeVisualStyleLoader().load();
             } catch (RuntimeException fallbackEx) {
-                LOGGER.log(Level.WARNING, "Failed to load visual style config, using defaults", fallbackEx);
+                LOGGER.log(Level.WARNING, STYLE_LOAD_FALLBACK_MESSAGE, fallbackEx);
                 return MazeVisualStyleConfig.DEFAULT;
             }
         }
@@ -373,10 +388,10 @@ public final class RuntimeVisualModelLoader {
             BasicDiagnostic diagnostics = new BasicDiagnostic();
             boolean valid = OpponentsValidator.INSTANCE.validate(model, diagnostics, null);
             if (!valid) {
-                LOGGER.log(Level.WARNING, "Opponent model OCL validation reported diagnostics: {0}", diagnostics.getMessage());
+                LOGGER.log(Level.WARNING, OCL_VALIDATION_WARNING_MESSAGE, diagnostics.getMessage());
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Opponent model OCL validation unavailable at runtime, continuing with model load");
+            LOGGER.log(Level.WARNING, OCL_VALIDATION_UNAVAILABLE_MESSAGE);
         }
     }
 

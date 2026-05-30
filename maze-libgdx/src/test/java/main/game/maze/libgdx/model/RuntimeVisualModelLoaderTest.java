@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import main.game.maze.opponents.BehaviorType;
 import org.junit.jupiter.api.Test;
 
 class RuntimeVisualModelLoaderTest {
@@ -38,6 +39,12 @@ class RuntimeVisualModelLoaderTest {
             assertTrue(enemy.x() >= 0f && enemy.x() <= width);
             assertTrue(enemy.y() >= 0f && enemy.y() <= height);
             assertTrue(enemy.size() > 0f);
+            assertNotNull(enemy.behavior());
+            assertTrue(enemy.behavior() == BehaviorType.AGGRESSIVE
+                            || enemy.behavior() == BehaviorType.PASSIVE
+                            || enemy.behavior() == BehaviorType.WANDER
+                            || enemy.behavior() == BehaviorType.PATROL,
+                    "spawn behavior must be one of the generated rules values");
         }
     }
 }

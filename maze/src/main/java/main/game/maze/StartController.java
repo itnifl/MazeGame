@@ -3,6 +3,7 @@ package main.game.maze;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.*;
@@ -55,7 +56,7 @@ public class StartController implements Initializable {
             }
         });
 
-            AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+            AudioEngine.get().playLoop(resolveMenuMusicPath(), AudioChannelConstants.MENU_MUSIC);
     }
 
     @FXML private void onStart() throws IOException {
@@ -94,5 +95,11 @@ public class StartController implements Initializable {
                 return MazeVisualStyleConfig.DEFAULT;
             }
         }
+    }
+
+    private String resolveMenuMusicPath() {
+        return ThreadLocalRandom.current().nextBoolean()
+            ? visualStyle.menuMusicPath()
+            : "/main/game/maze/menumusic1.wav";
     }
 }

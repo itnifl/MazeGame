@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import main.game.maze.mazeworld.generators.MazeArena;
+import main.game.maze.mazeworld.generators.WallSegment;
+
 import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.SampleMaze;
 
@@ -71,5 +74,30 @@ class PlayerStateTest {
         p.attemptMove(0f, 0f, m);
         assertEquals(m.startX(), p.x());
         assertEquals(m.startY(), p.y());
+    }
+
+    @Test
+    void spawnAwayFromWallsMovesToFirstClearSpot() {
+        MazeArena maze = new MazeArena() {
+            @Override public java.util.List<WallSegment> walls() {
+                return java.util.List.of(
+                        new WallSegment(0f, 0f, 120f, 0f),
+                        new WallSegment(0f, 0f, 0f, 120f)
+                );
+            }
+
+            @Override public float widthPx() { return 240f; }
+            @Override public float heightPx() { return 240f; }
+            @Override public float startX() { return 8f; }
+            @Override public float startY() { return 8f; }
+            @Override public float goalX() { return 200f; }
+            @Override public float goalY() { return 200f; }
+        };
+
+        PlayerState spawned = PlayerState.spawnAwayFromWalls(8f, 8f, 16f, maze);
+
+        assertTrue(spawned.x() > 8f || spawned.y() > 8f,
+                "spawn should be moved away from the touching border walls");
+        assertFalse(spawned.collidesWith(maze), "spawned player must not start inside a wall");
     }
 }

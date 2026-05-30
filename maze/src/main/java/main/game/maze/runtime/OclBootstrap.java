@@ -8,13 +8,17 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.impl.EOperationImpl;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
+import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegate;
 import org.eclipse.ocl.ecore.delegate.OCLInvocationDelegateFactory;
 import org.eclipse.ocl.ecore.delegate.OCLSettingDelegateFactory;
+import org.eclipse.ocl.ecore.delegate.OCLValidationDelegate;
 import org.eclipse.ocl.ecore.delegate.OCLValidationDelegateFactory;
+import org.eclipse.ocl.ecore.delegate.ValidationDelegate;
 
 public final class OclBootstrap {
     private static boolean initialized = false;
     private static final String OCL_DELEGATE_URI = "http://www.eclipse.org/emf/2002/Ecore/OCL";
+    private static final String OCL_LPG_DELEGATE_URI = "http://www.eclipse.org/emf/2002/Ecore/OCL/LPG";
     // Some ecores in this repo (e.g. main.game.maze.behaviour/movements.ecore) declare their
     // invocation/setting/validation delegates under the Pivot URI. Pivot itself is not on the
     // runtime classpath, so we alias the Pivot URI to the classic OCL factories. The constraint
@@ -28,6 +32,7 @@ public final class OclBootstrap {
         initialized = true;
 
         registerFor(OCL_DELEGATE_URI);
+        registerFor(OCL_LPG_DELEGATE_URI);
         registerFor(OCL_PIVOT_DELEGATE_URI);
 
         // If any EPackage was loaded BEFORE init() (common in test JVMs where
@@ -40,11 +45,50 @@ public final class OclBootstrap {
 
     private static void registerFor(String uri) {
         EOperation.Internal.InvocationDelegate.Factory.Registry.INSTANCE.put(
-            uri, new OCLInvocationDelegateFactory.Global());
+            uri, new SafeOCLInvocationDelegateFactory(uri));
         EStructuralFeature.Internal.SettingDelegate.Factory.Registry.INSTANCE.put(
-            uri, new OCLSettingDelegateFactory.Global());
+            uri, new SafeOCLSettingDelegateFactory(uri));
         EValidator.ValidationDelegate.Registry.INSTANCE.put(
-            uri, new OCLValidationDelegateFactory.Global());
+            uri, new SafeOCLValidationDelegateFactory(uri));
+    }
+
+    private static final class SafeOCLSettingDelegateFactory extends OCLSettingDelegateFactory {
+        private SafeOCLSettingDelegateFactory(String uri) {
+            super(uri);
+        }
+
+        @Override
+        public EStructuralFeature.Internal.SettingDelegate createSettingDelegate(EStructuralFeature structuralFeature) {
+            EPackage pkg = structuralFeature.getEContainingClass().getEPackage();
+            loadDelegateDomain(pkg);
+            return super.createSettingDelegate(structuralFeature);
+        }
+    }
+
+    private static final class SafeOCLInvocationDelegateFactory extends OCLInvocationDelegateFactory {
+        private SafeOCLInvocationDelegateFactory(String uri) {
+            super(uri);
+        }
+
+        @Override
+        public EOperation.Internal.InvocationDelegate createInvocationDelegate(EOperation operation) {
+            EPackage pkg = operation.getEContainingClass().getEPackage();
+            loadDelegateDomain(pkg);
+            return new OCLInvocationDelegate(getDelegateDomain(pkg), operation);
+        }
+    }
+
+    private static final class SafeOCLValidationDelegateFactory extends OCLValidationDelegateFactory {
+        private SafeOCLValidationDelegateFactory(String uri) {
+            super(uri);
+        }
+
+        @Override
+        public ValidationDelegate createValidationDelegate(EClassifier classifier) {
+            EPackage pkg = classifier.getEPackage();
+            loadDelegateDomain(pkg);
+            return new OCLValidationDelegate(getDelegateDomain(pkg), classifier);
+        }
     }
 
     private static void invalidateCachedDelegates() {

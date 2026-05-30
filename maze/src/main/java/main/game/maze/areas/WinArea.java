@@ -14,6 +14,10 @@ import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 
 public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
     private static final Logger LOGGER = Logger.getLogger(WinArea.class.getName());
+    private static final double INNER_HITBOX_SIZE_RATIO = 1.0 / 3.0;
+    private static final double CENTER_OFFSET_RATIO = 0.5;
+    private static final String WIN_ACTION_MISSING_MESSAGE = "WinGameAction is not defined";
+    private static final String WIN_GAME_ERROR_LOG_MESSAGE = "Error during WinGame";
     private Node areaGraphics;
     private List<ICanSubscribeAndNotifyPosition> winTargets = new ArrayList<ICanSubscribeAndNotifyPosition>();
     private WinGameAction winGameAction;
@@ -30,12 +34,12 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
         // full bounds of the heart image (areaGraphics)
         Bounds full = this.areaGraphics.getBoundsInParent();
 
-        // compute a centered inner box of width/3 and height/3
-        double innerWidth = full.getWidth() / 3.0;
-        double innerHeight = full.getHeight() / 3.0;
+        // compute a centered inner box from a configurable hitbox ratio
+        double innerWidth = full.getWidth() * INNER_HITBOX_SIZE_RATIO;
+        double innerHeight = full.getHeight() * INNER_HITBOX_SIZE_RATIO;
 
-        double innerMinX = full.getMinX() + (full.getWidth() - innerWidth) / 2.0;
-        double innerMinY = full.getMinY() + (full.getHeight() - innerHeight) / 2.0;
+        double innerMinX = full.getMinX() + (full.getWidth() - innerWidth) * CENTER_OFFSET_RATIO;
+        double innerMinY = full.getMinY() + (full.getHeight() - innerHeight) * CENTER_OFFSET_RATIO;
 
         Bounds inner = new javafx.geometry.BoundingBox(
                 innerMinX,
@@ -50,7 +54,7 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
                 try {
                     this.WinGame();
                 } catch (Exception e) {
-                    LOGGER.log(Level.SEVERE, "Error during WinGame", e);
+                    LOGGER.log(Level.SEVERE, WIN_GAME_ERROR_LOG_MESSAGE, e);
                 }
             }
         }
@@ -75,7 +79,7 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
     @Override
     public void WinGame() throws Exception {
         if (winGameAction == null) {
-            throw new Exception("WinGameAction is not defined");
+            throw new Exception(WIN_ACTION_MISSING_MESSAGE);
         }
         winGameAction.WinGame();
     }

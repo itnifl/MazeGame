@@ -74,3 +74,11 @@ The aim is to gain experience with DSLs and model driven engineering on a real p
 <br/><br/>
 <img src="./evaluation.png" alt="Evaluation" width="190%" />
 <br/><br/>
+
+## Recent Traceability Update
+
+| Change | Requirement Mapping | Quality Attribute | Evidence |
+| -- | -- | -- | -- |
+| Aggressive fallback trigger moved to 4 seconds and shortest-path follow preserved for 20 seconds | GR-31, GR-32 | Reliability, Gameplay parity | `maze-common-frontend/src/main/java/main/game/maze/common/movement/AdaptiveAggressiveMovementService.java`, `maze-common-frontend/src/test/java/main/game/maze/common/movement/AdaptiveAggressiveMovementServiceTest.java` |
+| JavaFX aggressive movement no longer reads scene-graph bounds from background movement thread | GR-15, GR-20 | Stability, Thread safety | `maze/src/main/java/main/game/maze/GameController.java` |
+| Wander and patrol now use shared anti-loop movement to avoid repetitive circles | GR-33 | Gameplay quality, Parity, Reliability | `maze-common-frontend/src/main/java/main/game/maze/common/movement/AntiLoopWanderMovementService.java`, `maze/src/main/java/main/game/maze/GameController.java`, `maze-libgdx/src/main/java/main/game/maze/libgdx/GdxGameScreen.java`, `maze-common-frontend/src/test/java/main/game/maze/common/movement/AntiLoopWanderMovementServiceTest.java` |

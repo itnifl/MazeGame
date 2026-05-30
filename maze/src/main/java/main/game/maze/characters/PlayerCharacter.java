@@ -45,7 +45,7 @@ public class PlayerCharacter extends Character
     private List<ICanSubscribeAndNotifyPosition> touchKillers = new ArrayList<>();
     private ICharacterStatePresenter statePresenter;
     private static final long SOUND_COOLDOWN_MS = 250L;
-    private static final double DEAD_PLAYER_SCALE = 1.2;
+    private static final double DEAD_PLAYER_SCALE = 1.8;
     private static final double DEAD_PLAYER_VIEW_ORDER = -1000.0;
     public boolean isWinning = false;
     private IAnimationHandle infectionAnimation = null;
@@ -154,24 +154,17 @@ public class PlayerCharacter extends Character
         }
 
         boolean isImageView = graphics instanceof ImageView;
-        double previousLayoutX = graphics.getLayoutX();
-        double previousLayoutY = graphics.getLayoutY();
-        double previousWidth = graphics.getBoundsInLocal().getWidth();
-        double previousHeight = graphics.getBoundsInLocal().getHeight();
 
         if (deathImage != null && isImageView) {
             setCharacterImage(deathImage);
         }
 
+        // JavaFX setScaleX/Y pivots at the center of the node's untransformed
+        // layoutBounds, so the death sprite already grows symmetrically in place.
+        // No additional layoutX/Y translation is needed (and adding one shifts
+        // the visual off the player's actual position).
         graphics.setScaleX(DEAD_PLAYER_SCALE);
         graphics.setScaleY(DEAD_PLAYER_SCALE);
-
-        if (previousWidth > 0 && previousHeight > 0) {
-            double xOffset = (previousWidth * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
-            double yOffset = (previousHeight * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
-            graphics.setLayoutX(previousLayoutX + xOffset);
-            graphics.setLayoutY(previousLayoutY + yOffset);
-        }
 
         graphics.setViewOrder(DEAD_PLAYER_VIEW_ORDER);
     }
@@ -189,6 +182,15 @@ public class PlayerCharacter extends Character
     @Override
     public int getHitPoints() {
         return hitPoints.get();
+    }
+
+    /**
+     * Maximum hit points configured for this player (from PlayerConfig).
+     * Used by score/UI code that needs to express damage as a fraction of full
+     * HP without assuming a hard-coded 100-point pool.
+     */
+    public int getMaxHitPoints() {
+        return maxHitPoints;
     }
 
     @Override

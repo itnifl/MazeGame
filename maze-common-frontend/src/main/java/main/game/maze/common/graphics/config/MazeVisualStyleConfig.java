@@ -28,8 +28,8 @@ public record MazeVisualStyleConfig(
             "DIRT_BASIC",
             "WOOD_BASIC",
             "STEEL_SOLID",
-            "/main/game/maze/menuMusic.mp3",
-            "/main/game/maze/menuSelect.mp3",
+            "/main/game/maze/menumusic.wav",
+            "/main/game/maze/menuselect.wav",
             "/main/game/maze/backgroundMusic.mp3",
             "/main/game/maze/winGame.mp3");
 

@@ -20,6 +20,36 @@ public final class PlayerState {
     public float y() { return y; }
     public float halfSize() { return halfSize; }
 
+    public static PlayerState spawnAwayFromWalls(float x, float y, float size, MazeArena maze) {
+        PlayerState spawn = new PlayerState(x, y, size);
+        if (maze == null || !spawn.collidesWith(maze)) {
+            return spawn;
+        }
+
+        float step = Math.max(1f, size * 0.25f);
+        float maxRadius = Math.max(maze.widthPx(), maze.heightPx());
+        for (float radius = step; radius <= maxRadius; radius += step) {
+            float[][] candidates = {
+                    {x + radius, y},
+                    {x, y + radius},
+                    {x - radius, y},
+                    {x, y - radius},
+                    {x + radius, y + radius},
+                    {x - radius, y + radius},
+                    {x + radius, y - radius},
+                    {x - radius, y - radius}
+            };
+            for (float[] candidate : candidates) {
+                PlayerState moved = new PlayerState(candidate[0], candidate[1], size);
+                if (!moved.collidesWith(maze)) {
+                    return moved;
+                }
+            }
+        }
+
+        return spawn;
+    }
+
     public void attemptMove(float dx, float dy, MazeArena maze) {
         if (dx != 0f) {
             float candidate = x + dx;
@@ -35,6 +65,10 @@ public final class PlayerState {
         float dx = x - goalX;
         float dy = y - goalY;
         return (dx * dx + dy * dy) <= (goalRadius * goalRadius);
+    }
+
+    public boolean collidesWith(MazeArena maze) {
+        return collides(x, y, maze);
     }
 
     private boolean collides(float cx, float cy, MazeArena maze) {

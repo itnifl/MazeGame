@@ -11,7 +11,7 @@
     easyWallTypeId="DIRT_BASIC"
     normalWallTypeId="WOOD_BASIC"
     hardWallTypeId="STEEL_SOLID"
-    menuMusicPath="/main/game/maze/menuMusic.mp3"
-    menuSelectSoundPath="/main/game/maze/menuSelect.mp3"
+    menuMusicPath="/main/game/maze/menumusic.wav"
+    menuSelectSoundPath="/main/game/maze/menuselect.wav"
     inGameMusicPath="/main/game/maze/backgroundMusic.mp3"
     winSoundPath="/main/game/maze/winGame.mp3"/>
