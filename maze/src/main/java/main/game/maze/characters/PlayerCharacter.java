@@ -154,24 +154,17 @@ public class PlayerCharacter extends Character
         }
 
         boolean isImageView = graphics instanceof ImageView;
-        double previousLayoutX = graphics.getLayoutX();
-        double previousLayoutY = graphics.getLayoutY();
-        double previousWidth = graphics.getBoundsInLocal().getWidth();
-        double previousHeight = graphics.getBoundsInLocal().getHeight();
 
         if (deathImage != null && isImageView) {
             setCharacterImage(deathImage);
         }
 
+        // JavaFX setScaleX/Y pivots at the center of the node's untransformed
+        // layoutBounds, so the death sprite already grows symmetrically in place.
+        // No additional layoutX/Y translation is needed (and adding one shifts
+        // the visual off the player's actual position).
         graphics.setScaleX(DEAD_PLAYER_SCALE);
         graphics.setScaleY(DEAD_PLAYER_SCALE);
-
-        if (previousWidth > 0 && previousHeight > 0) {
-            double xOffset = (previousWidth * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
-            double yOffset = (previousHeight * (DEAD_PLAYER_SCALE - 1.0)) / 2.0;
-            graphics.setLayoutX(previousLayoutX + xOffset);
-            graphics.setLayoutY(previousLayoutY + yOffset);
-        }
 
         graphics.setViewOrder(DEAD_PLAYER_VIEW_ORDER);
     }

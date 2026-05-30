@@ -42,7 +42,22 @@ class GameControllerInfectionWarningTest {
 
         Method ensure = GameController.class.getDeclaredMethod("ensureInfectionWarningSign");
         ensure.setAccessible(true);
-        ensure.invoke(controller);
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Platform.runLater(() -> {
+            try {
+                ensure.invoke(controller);
+            } catch (Exception ex) {
+                failure.set(ex);
+            } finally {
+                latch.countDown();
+            }
+        });
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "FX thread should ensure the infection sign");
+        if (failure.get() != null) {
+            throw new RuntimeException(failure.get());
+        }
 
         Field signField = GameController.class.getDeclaredField("infectionWarningSign");
         signField.setAccessible(true);
