@@ -25,6 +25,8 @@ public final class AdaptiveAggressiveMovementService {
     public static final double STUCK_THRESHOLD_SECONDS = 4.0d;
     public static final double PATH_FOLLOW_SECONDS = 20.0d;
     public static final double WANDER_RECOVERY_SECONDS = 6.0d;
+    public static final double NO_PROGRESS_STUCK_SECONDS = 10.0d;
+    private static final double PROGRESS_EPSILON_UNITS = 1.0d;
     private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
 
     private static final int[][] CARDINAL = {
@@ -61,11 +63,13 @@ public final class AdaptiveAggressiveMovementService {
         String id = enemy.id() == null ? "<anonymous>" : enemy.id();
         RuntimeState state = states.computeIfAbsent(id, ignored -> new RuntimeState());
         double dt = Math.max(0d, deltaSeconds);
+        state.initDistanceIfNeeded(distanceToPlayer(enemy.x(), enemy.y(), world));
 
         if (state.pathSecondsRemaining > 0d) {
             MovementResult whilePath = tickPathMode(enemy, world, state, dt);
             if (state.pathSecondsRemaining <= 0d) {
                 // Full 20 second shortest-path phase completed successfully.
+                state.resetProgress(distanceToPlayer(whilePath.x(), whilePath.y(), world));
                 state.blockedSeconds = 0d;
                 return whilePath;
             }
@@ -81,8 +85,9 @@ public final class AdaptiveAggressiveMovementService {
 
         if (state.wanderRecoverySecondsRemaining > 0d) {
             MovementResult wander = wanderStep(enemy, world, state, id);
+            updateProgressState(state, wander.x(), wander.y(), world, dt);
             state.wanderRecoverySecondsRemaining = Math.max(0d, state.wanderRecoverySecondsRemaining - dt);
-            if (state.wanderRecoverySecondsRemaining <= 0d) {
+            if (state.noProgressSeconds > NO_PROGRESS_STUCK_SECONDS || state.wanderRecoverySecondsRemaining <= 0d) {
                 MovementResult retryPath = startPathAttempt(enemy, world, state);
                 if (state.pathSecondsRemaining > 0d) {
                     state.blockedSeconds = 0d;
@@ -95,8 +100,17 @@ public final class AdaptiveAggressiveMovementService {
         }
 
         MovementResult directional = directionalStep(enemy, world);
+        updateProgressState(state, directional.x(), directional.y(), world, dt);
         if (directional.moved()) {
             state.blockedSeconds = 0d;
+            if (state.noProgressSeconds > NO_PROGRESS_STUCK_SECONDS) {
+                MovementResult pathStart = startPathAttempt(enemy, world, state);
+                if (state.pathSecondsRemaining > 0d) {
+                    return pathStart;
+                }
+                beginWanderRecovery(state);
+                return wanderStep(enemy, world, state, id);
+            }
             return directional;
         }
 
@@ -113,6 +127,24 @@ public final class AdaptiveAggressiveMovementService {
             return wanderAfterNoPath;
         }
         return directional;
+    }
+
+    private static double distanceToPlayer(double x, double y, WorldView world) {
+        return Math.hypot(world.playerX() - x, world.playerY() - y);
+    }
+
+    private static void updateProgressState(RuntimeState state,
+                                            double x,
+                                            double y,
+                                            WorldView world,
+                                            double deltaSeconds) {
+        double dist = distanceToPlayer(x, y, world);
+        if (dist + PROGRESS_EPSILON_UNITS < state.bestDistanceToPlayer) {
+            state.bestDistanceToPlayer = dist;
+            state.noProgressSeconds = 0d;
+            return;
+        }
+        state.noProgressSeconds += Math.max(0d, deltaSeconds);
     }
 
     private static MovementResult tickPathMode(EnemyState enemy,
@@ -430,9 +462,22 @@ public final class AdaptiveAggressiveMovementService {
         private double blockedSeconds;
         private double pathSecondsRemaining;
         private double wanderRecoverySecondsRemaining;
+        private double noProgressSeconds;
+        private double bestDistanceToPlayer = Double.NaN;
         private List<Point> path;
         private int pathIndex;
         private int wanderTick;
+
+        private void initDistanceIfNeeded(double distance) {
+            if (Double.isNaN(bestDistanceToPlayer)) {
+                bestDistanceToPlayer = distance;
+            }
+        }
+
+        private void resetProgress(double distance) {
+            noProgressSeconds = 0d;
+            bestDistanceToPlayer = distance;
+        }
     }
 
     private static final class Point {
