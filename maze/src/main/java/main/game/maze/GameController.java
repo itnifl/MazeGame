@@ -395,7 +395,7 @@ public class GameController implements Initializable {
     }
 
     private static TerminalCommand parseTerminalCommand(String raw) {
-        String command = raw == null ? "" : raw.trim().toLowerCase();
+        String command = raw == null ? "" : raw.trim().toLowerCase(java.util.Locale.ROOT);
         if (command.isEmpty()) {
             return TerminalCommand.EMPTY;
         }
