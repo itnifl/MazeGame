@@ -65,8 +65,6 @@ class EnemyStatsParityTest {
             for (CharacterType base : enemies) {
                 int baseDamage = attackDamageOf(base);
                 double baseSpeed = base.getSpeed();
-                int baseHealth = base.getHealth();
-                double baseThreat = base.getThreatLevel();
                 String tag = label + "/" + base.eClass().getName() + "/" + base.getId();
 
                 int javafxDamage = instantDeath
@@ -78,19 +76,13 @@ class EnemyStatsParityTest {
                         ? Integer.MAX_VALUE
                         : Math.max(1, EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult));
                 double libgdxSpeed = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, speedMult);
-                double javafxThreat = baseThreat;
-                double libgdxThreat = baseThreat;
-                int javafxHealth = baseHealth;
-                int libgdxHealth = baseHealth;
 
                 assertEquals(javafxDamage, libgdxDamage, "damage parity " + tag);
                 assertEquals(javafxSpeed, libgdxSpeed, 1e-9, "speed parity " + tag);
-                assertEquals(javafxThreat, libgdxThreat, 1e-9, "threat parity " + tag);
-                assertEquals(javafxHealth, libgdxHealth, "health parity " + tag);
-                assertions += 4;
+                assertions += 2;
             }
         }
-        assertTrue(assertions >= 4 * 3 * enemies.size(),
+            assertTrue(assertions >= 2 * 3 * enemies.size(),
                 "parity matrix did not run for every (difficulty, enemy)");
     }
 
