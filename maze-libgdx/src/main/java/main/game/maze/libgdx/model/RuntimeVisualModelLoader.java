@@ -188,7 +188,9 @@ public final class RuntimeVisualModelLoader {
                         continue;
                     }
                     int baseDamage = Math.max(0, attackDamageFor(picked));
-                    int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
+                    int attackDamage = instantDeath
+                            ? Integer.MAX_VALUE
+                            : EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
                     float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
                         var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
                                 picked.getBehavior(), difficulty, aggressiveAssigned, random);
