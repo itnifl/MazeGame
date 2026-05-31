@@ -113,6 +113,33 @@ MUST be added to the shared core, not to a single frontend.
   resolved via the same `MazeVisualStyleConfig` keys and the shared
   `AudioEngine`. Per-frontend audio routing is forbidden.
 
+## Ghost phasing (non-tangibility)
+
+- **GR-26**: A ghost with `nonTangibilityEnergy > 0` is considered
+  "phasing". A phasing ghost bypasses all wall-collision checks during
+  movement and when evaluating contact damage; it CAN still deal contact
+  damage to the player when its bounding box overlaps the player.
+- **GR-27**: The phasing state, energy drain rate, and visual opacity
+  calculation for ghosts are defined in the shared service
+  `GhostNonTangibilityService` (in `maze-common-frontend`). Both JavaFX
+  and libGDX MUST use this service exclusively; magic-number inline copies
+  are forbidden.
+  - Energy drain rate: `ENERGY_DECREASE_PER_SEC = 0.14 * (1000 / 60)` units/sec.
+  - Opacity: `clamp(1 − energy/MAX_ENERGY + MIN_OPACITY, MIN_OPACITY, 1.0)` where `MIN_OPACITY = 0.1` and `MAX_ENERGY = 100`.
+- **GR-28**: The wall-ignoring movement path for phasing ghosts is
+  implemented in `GhostPhasingMovementService` (in `maze-common-frontend`).
+  The service uses a random cardinal direction, bounces at board boundaries,
+  and is reset when a new game session starts. Both frontends MUST delegate
+  to this service; per-frontend movement logic for phasing ghosts is
+  forbidden.
+- **GR-29**: `GhostPhasingMovementService` state (per-enemy direction map)
+  MUST be reset on every new game session start so that state does not leak
+  across sessions.
+- **GR-30**: Automated parity tests (`GhostTangibilityParityTest`,
+  `GhostNonTangibilityServiceTest`, `GhostPhasingMovementServiceTest`,
+  `GhostTangibilityTest`) MUST assert that phasing ghosts deal contact
+  damage and that opacity/energy calculations match between both frontends.
+
 ## Locked-in tests (regression contracts)
 
 - **GR-25**: A parity test MUST verify caps derived from `Difficulty` are

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.opponents.BehaviorType;
@@ -19,11 +20,11 @@ import main.game.maze.opponents.BehaviorType;
  * <p>Ghost tangibility rules (shared between both frontends):
  * <ul>
  *   <li>A ghost with {@code nonTangibilityEnergy > 0} is phasing: it passes through
- *       walls and CANNOT harm the player.</li>
+ *       walls but CAN still harm the player on contact.</li>
  *   <li>A ghost with {@code nonTangibilityEnergy == 0} is solid: it can harm the player
  *       on contact.</li>
  *   <li>Energy drains over time from its initial spawn value (default 100) to 0,
- *       at a rate of {@code 0.14} per JavaFX movement-loop tick (~60 ms).</li>
+ *       at a rate defined in {@link GhostNonTangibilityService#ENERGY_DECREASE_PER_SEC}.</li>
  *   <li>While phasing, the ghost is rendered semi-transparent; the opacity formula is
  *       {@code clamp(1.0 - energy/100 + 0.1, 0.1, 1.0)}.</li>
  * </ul>
@@ -44,15 +45,16 @@ class GhostTangibilityParityTest {
     }
 
     // -----------------------------------------------------------------------
-    // Combat rules: phasing ghost cannot harm player
+    // Combat rules: phasing ghost CAN harm player (bypasses wall check only)
     // -----------------------------------------------------------------------
 
     /**
-     * A phasing ghost (energy > 0) must NOT deal damage, mirroring the JavaFX
-     * {@code PlayerCharacter.doPositionEvaluation} phasing guard.
+     * A phasing ghost (energy > 0) MUST deal damage even though it passes through
+     * walls. This mirrors the updated JavaFX {@code GhostCharacter.doPositionEvaluation}
+     * behavior.
      */
     @Test
-    void phasingGhostDealsNoDamage_libgdxMatchesJavaFx() {
+    void phasingGhostDealsDamage_libgdxMatchesJavaFx() {
         PlayerCombatStateService service = new PlayerCombatStateService();
         service.reset(100);
 
@@ -61,10 +63,8 @@ class GhostTangibilityParityTest {
         // Place enemy directly on top of player (x=0,y=0) so distance check passes.
         var frame = service.update(1f / 30f, 0f, 0f, 20f, List.of(phasingGhost));
 
-        assertEquals(1.0f, frame.hpRatio(), 0.001f,
-                "Phasing ghost must not reduce HP — matches JavaFX phasing guard");
-        assertEquals(1f, frame.tintGreen(), 0.001f,
-                "Phasing ghost must not trigger damage flash");
+        assertTrue(frame.hpRatio() < 1.0f,
+                "Phasing ghost must still deal damage on contact — matches updated JavaFX behavior");
     }
 
     /**
@@ -85,11 +85,11 @@ class GhostTangibilityParityTest {
     }
 
     /**
-     * Ghost partially through energy depletion (0 < energy < 100) still counts as
-     * phasing and must not deal damage.
+     * Ghost partially through energy depletion (0 < energy < 100) is still
+     * phasing and must deal damage on contact.
      */
     @Test
-    void partiallyDepletedGhostStillPhases_libgdxMatchesJavaFx() {
+    void partiallyDepletedPhasingGhostDealsDamage() {
         PlayerCombatStateService service = new PlayerCombatStateService();
         service.reset(100);
 
@@ -97,8 +97,8 @@ class GhostTangibilityParityTest {
 
         var frame = service.update(1f / 30f, 0f, 0f, 20f, List.of(halfEnergyGhost));
 
-        assertEquals(1.0f, frame.hpRatio(), 0.001f,
-                "Ghost with energy=50 is still phasing and must not deal damage");
+        assertTrue(frame.hpRatio() < 1.0f,
+                "Ghost with energy=50 is still phasing but must deal damage on contact");
     }
 
     // -----------------------------------------------------------------------
@@ -141,32 +141,27 @@ class GhostTangibilityParityTest {
     @Test
     void renderOpacityFormulaMatchesJavaFx() {
         // energy=100 (fully phasing): opacity = 1 - 1.0 + 0.1 = 0.1
-        assertEquals(0.1f, ghostRenderOpacity(100.0), 0.001f,
+        assertEquals(0.1f, (float) GhostNonTangibilityService.calculateOpacity(100.0), 0.001f,
                 "Fully-phasing ghost (energy=100) must have opacity 0.1 matching JavaFX");
 
         // energy=50: opacity = 1 - 0.5 + 0.1 = 0.6
-        assertEquals(0.6f, ghostRenderOpacity(50.0), 0.001f,
+        assertEquals(0.6f, (float) GhostNonTangibilityService.calculateOpacity(50.0), 0.001f,
                 "Half-depleted ghost (energy=50) must have opacity 0.6 matching JavaFX");
 
         // energy=0: opacity clamped to 1.0 (solid)
-        assertEquals(1.0f, ghostRenderOpacity(0.0), 0.001f,
+        assertEquals(1.0f, (float) GhostNonTangibilityService.calculateOpacity(0.0), 0.001f,
                 "Solid ghost (energy=0) must have opacity 1.0 matching JavaFX");
 
         // energy=90: opacity = 1 - 0.9 + 0.1 = 0.2
-        assertEquals(0.2f, ghostRenderOpacity(90.0), 0.001f,
+        assertEquals(0.2f, (float) GhostNonTangibilityService.calculateOpacity(90.0), 0.001f,
                 "Ghost with energy=90 must have opacity 0.2");
     }
 
     /**
-     * The opacity formula mirrored here so the test does not depend on libgdx
-     * runtime initialization, while keeping the formula in sync with
-     * {@code EnemyRuntime.renderOpacity()}.
+     * Helper that delegates to the shared service formula to ensure parity
+     * between tests and the runtime.
      */
     private static float ghostRenderOpacity(double energy) {
-        if (energy <= 0) {
-            return 1.0f;
-        }
-        float opacity = (float) (1.0 - (energy / 100.0) + 0.1);
-        return Math.max(0.1f, Math.min(1.0f, opacity));
+        return (float) GhostNonTangibilityService.calculateOpacity(energy);
     }
 }

@@ -123,13 +123,10 @@ public final class PlayerCombatStateService {
             return;
         }
         for (EnemySpawn enemy : enemies) {
-            // While a ghost is phasing through walls (non-tangibility energy > 0) it is
-            // in spirit form and cannot physically harm the player.
-            if (enemy.nonTangibilityEnergy() > 0) {
-                continue;
-            }
-            // A wall between the enemy and the player blocks damage.
-            if (maze != null && WallCollisionUtil.wallBetween(
+            boolean isPhasing = enemy.nonTangibilityEnergy() > 0;
+            // Phasing ghosts pass through walls and therefore bypass the wall-blocking check.
+            // Solid enemies are blocked by any wall between them and the player.
+            if (!isPhasing && maze != null && WallCollisionUtil.wallBetween(
                     enemy.x(), enemy.y(), playerX, playerY, maze.walls())) {
                 continue;
             }

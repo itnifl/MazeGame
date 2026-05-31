@@ -126,7 +126,7 @@ Each frame, characters exchange position notifications in two directions:
 - **Enemy moves:** the enemy notifies the player, which calls `PlayerCharacter.doPositionEvaluation`. The player checks for bounds overlap, then calls `GameController.isWallBetween(enemyCentreX, enemyCentreY, playerCentreX, playerCentreY)` before applying damage.
 - **Player moves:** the player notifies each enemy, which calls the enemy's own `doPositionEvaluation`. Each enemy class (`GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`) performs the same wall check via `App.gameController.isWallBetween(...)` before applying damage.
 
-`GameController.isWallBetween` delegates to `WallCollisionUtil.wallBetweenVectors` from the [mazeworld module](../main.game.maze.mazeworld/readme.md). A phasing ghost (non-tangibility energy > 0) is excluded from all damage checks regardless of walls.
+`GameController.isWallBetween` delegates to `WallCollisionUtil.wallBetweenVectors` from the [mazeworld module](../main.game.maze.mazeworld/readme.md). A phasing ghost (non-tangibility energy > 0) bypasses wall collision checks during movement and damage evaluation, but DOES deal contact damage when its bounding box overlaps the player. The phasing check, energy drain, and opacity logic are implemented in the shared `GhostNonTangibilityService` and `GhostPhasingMovementService` (see [maze-common-frontend](../maze-common-frontend/readme.md)).
 
 ## P-key path hint and budget
 

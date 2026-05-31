@@ -16,6 +16,7 @@ import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
@@ -66,20 +67,17 @@ public class GhostCharacter extends ComputerCharacter
             return;
         }
 
-        // While the ghost is phasing through walls (non-tangient energy > 0) it is
-        // in spirit form and cannot physically harm anything.
-        if (getNonTangientEnergy() > 0) {
-            return;
-        }
-
         var myBounds = graphics.getBoundsInParent();
 
         if (!nodeBounds.intersects(myBounds)) {
             return;
         }
 
-        // A wall between the ghost centre and the target centre blocks damage.
-        if (App.gameController != null
+        // Phasing ghosts bypass walls and can still harm the player.
+        // Wall-blocking only applies to solid (non-phasing) ghosts.
+        boolean isPhasing = GhostNonTangibilityService.isPhasing(getNonTangientEnergy());
+        if (!isPhasing
+                && App.gameController != null
                 && App.gameController.isWallBetween(
                         myBounds.getCenterX(), myBounds.getCenterY(),
                         nodeBounds.getCenterX(), nodeBounds.getCenterY())) {

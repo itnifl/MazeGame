@@ -77,6 +77,8 @@ import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GhostNonTangibilityService;
+import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
@@ -204,6 +206,7 @@ public class GameController implements Initializable {
     private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
     private final PatrolMovementService patrolMovementService = new PatrolMovementService();
+    private final GhostPhasingMovementService ghostPhasingMovementService = new GhostPhasingMovementService();
     private AnimationTimer enemyPathOverlayTimer;
     private boolean enemyPathOverlayVisible;
     private long enemyPathOverlayHideAtNanos;
@@ -704,7 +707,8 @@ public class GameController implements Initializable {
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
-        
+        ghostPhasingMovementService.reset();
+
         if (startDifficulty != null) {
             OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
         } else {
@@ -1198,6 +1202,14 @@ public class GameController implements Initializable {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
+        }
+
         // Silent-enemy guard: if both direction components are zero the model never
         // calls changeDirection() on spawn (some enemies were observed standing still
         // in JavaFX). Force a heading before asking the shared service for advice.
@@ -1211,10 +1223,10 @@ public class GameController implements Initializable {
             cc.setDirection(new Point2D(next.directionX(), next.directionY()));
         }
 
-        var successfulMove = computerCharacter.move(nonTangient);
+        var successfulMove = computerCharacter.move(false);
         if (!successfulMove) {
             computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
+            computerCharacter.move(false);
         }
     }
 
@@ -1229,6 +1241,14 @@ public class GameController implements Initializable {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
+        }
+
         MovementResult result = patrolMovementService.tick(buildEnemyState(cc), createJavaFxWorldView(), 0.06d);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doCharacterWanderMove(computerCharacter);
@@ -1236,7 +1256,7 @@ public class GameController implements Initializable {
         }
 
         computerCharacter.setDirection(new Point2D(result.directionX(), result.directionY()));
-        var successfulMove = computerCharacter.move(nonTangient);
+        var successfulMove = computerCharacter.move(false);
         if (!successfulMove) {
             doCharacterWanderMove(computerCharacter);
         }
@@ -1253,6 +1273,14 @@ public class GameController implements Initializable {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
+        }
+
         var result = adaptiveAggressiveMovementService.tick(
                 buildEnemyState(cc),
                 createJavaFxWorldView(),
@@ -1264,10 +1292,10 @@ public class GameController implements Initializable {
         }
 
         cc.setDirection(new Point2D(result.directionX(), result.directionY()));
-        var successfulMove = computerCharacter.move(nonTangient);
+        var successfulMove = computerCharacter.move(false);
         if (!successfulMove) {
             computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
+            computerCharacter.move(false);
         }
     }
 
@@ -1352,26 +1380,14 @@ public class GameController implements Initializable {
     }
 
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
-            var energy = nontangientcc.getNonTangientEnergy();
-            boolean nonTangient = energy > 0; 
-            
-            final int maxEnergy = 100;  
-            final double noneOpacityValue = 1; 
-            final double minOpacityValue = 0.1;
-            final double energyDecreaseValue = 0.14;
-            final int maxRandomValue = 10;
-            final double randomTangientMoveThreshold = 7;
-
-            if(nonTangient) {
-                var opacityEnergy = Math.min(maxEnergy, Math.max(0d, energy));
-                nontangientcc.setCharacterOpacity(noneOpacityValue-(opacityEnergy/maxEnergy)+minOpacityValue);
-                nontangientcc.setNonTangientEnergy(Math.max(0d, energy-energyDecreaseValue));
-            } 
-
-            if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {
-                nonTangient = false;
-            }  
-            return nonTangient; 
+        var energy = nontangientcc.getNonTangientEnergy();
+        boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
+        if (nonTangient) {
+            nontangientcc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy));
+            // 60 ms per tick in the JavaFX movement loop.
+            nontangientcc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, 0.060));
+        }
+        return nonTangient;
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
@@ -1519,11 +1535,15 @@ public class GameController implements Initializable {
             return;
         }
         isRouteHintVisible = true;
-        pathHintKeyDown = true;
-        pathHintPressStartNanos = System.nanoTime();
-        lastRouteHintPenaltyNanos = pathHintPressStartNanos;
+        // Guard against OS key-repeat: only record the start time and launch the
+        // countdown on the very first press event, not on every repeat event.
+        if (!pathHintKeyDown) {
+            pathHintKeyDown = true;
+            pathHintPressStartNanos = System.nanoTime();
+            lastRouteHintPenaltyNanos = pathHintPressStartNanos;
+            startPathHintCountdown();
+        }
         refreshPathCanvasOverlay();
-        startPathHintCountdown();
     }
 
     private void clearNavigationPath() {

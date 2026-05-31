@@ -122,18 +122,49 @@ class PlayerCombatStateServiceTest {
     }
 
     /**
-     * A phasing ghost (nonTangibilityEnergy > 0) must not deal damage regardless of walls.
+     * A phasing ghost (nonTangibilityEnergy > 0) MUST deal damage on contact.
+     * Wall-blocking checks are skipped for phasing ghosts.
      */
     @Test
-    void phasingGhost_noDamage_evenWithoutWall() {
+    void phasingGhostDoesDamage_evenWithoutWall() {
         PlayerCombatStateService service = new PlayerCombatStateService();
         service.reset(100);
 
-        // No wall — but enemy is phasing (nonTangibilityEnergy = 5.0 > 0).
+        // No wall — enemy is phasing (nonTangibilityEnergy = 5.0 > 0).
         EnemySpawn enemy = new EnemySpawn("ghost", "", 10f, 10f, 40f, 0f, 100, 0, "", BehaviorType.WANDER, 1f, 5.0);
         var frame = service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
 
-        assertEquals(1f, frame.hpRatio(), 0.001f,
-                "Phasing ghost (nonTangibilityEnergy > 0) must not deal damage");
+        assertTrue(frame.hpRatio() < 1f,
+                "Phasing ghost (nonTangibilityEnergy > 0) must still deal contact damage");
+    }
+
+    /**
+     * A phasing ghost behind a wall must deal damage because phasing ghosts bypass
+     * wall-blocking checks entirely.
+     */
+    @Test
+    void phasingGhostBypassesWallCheck_dealsDamage() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(100);
+
+        // Vertical wall at x=20 from y=0 to y=40 — same wall that blocks solid enemies.
+        MazeArena arenaWithWall = new MazeArena() {
+            @Override public List<WallSegment> walls() { return List.of(new WallSegment(20, 0, 20, 40)); }
+            @Override public float widthPx()  { return 400; }
+            @Override public float heightPx() { return 400; }
+            @Override public float startX()   { return 10; }
+            @Override public float startY()   { return 10; }
+            @Override public float goalX()    { return 390; }
+            @Override public float goalY()    { return 390; }
+        };
+        service.setMaze(arenaWithWall);
+
+        // Enemy at x=10 (left of wall), player at x=30 (right of wall) — wall between them.
+        // Ghost is phasing (energy=50) so wall check must be skipped.
+        EnemySpawn phasingGhost = new EnemySpawn("ghost_wall", "", 10f, 10f, 40f, 0f, 100, 0, "", BehaviorType.WANDER, 1f, 50.0);
+        var frame = service.update(1f / 30f, 30f, 10f, 25f, List.of(phasingGhost));
+
+        assertTrue(frame.hpRatio() < 1f,
+                "Phasing ghost must deal damage even when a wall separates it from the player");
     }
 }

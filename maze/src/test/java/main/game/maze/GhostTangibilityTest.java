@@ -54,7 +54,7 @@ class GhostTangibilityTest {
     // -----------------------------------------------------------------------
 
     /**
-     * A phasing ghost (energy > 0) must NOT deal damage to the player even when
+     * A phasing ghost (energy > 0) bypasses walls and CAN deal damage even when
      * its bounding box intersects the player's bounds.
      */
     @Test
@@ -72,8 +72,9 @@ class GhostTangibilityTest {
         Bounds playerBounds = new BoundingBox(0, 0, 30, 30);
         ghost.doPositionEvaluation(playerBounds, player);
 
-        assertEquals(hpBefore, player.getHitPoints(),
-                "Phasing ghost must not deal damage even when bounding boxes overlap");
+        // Phasing ghost bypasses wall check and deals damage on contact.
+        assertTrue(player.getHitPoints() < hpBefore,
+                "Phasing ghost must deal damage on contact (bypasses wall check)");
     }
 
     /**

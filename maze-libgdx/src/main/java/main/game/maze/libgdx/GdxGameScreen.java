@@ -38,6 +38,8 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GhostNonTangibilityService;
+import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
@@ -172,6 +174,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
             new AdaptiveAggressiveMovementService();
     private final PatrolMovementService patrolMovementService =
             new PatrolMovementService();
+    private final GhostPhasingMovementService ghostPhasingMovementService =
+            new GhostPhasingMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -516,6 +520,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     antiLoopWanderMovementService,
                     patrolMovementService,
                     adaptiveAggressiveMovementService,
+                    ghostPhasingMovementService,
                     dt);
             }
         }
@@ -1150,19 +1155,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
         font.draw(batch, "Terminal", terminalButtonX + 16f, terminalYDraw + 18f);
 
         font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        font.draw(batch, "Open keyboard command help", terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
+        String commandText = "H Highscore  ESC Restart  P Path "
+                + (showHintInfo ? "[ON]" : "[OFF]")
+                + (pathHintBudgetExhausted ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
+                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
+        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
 
         font.setColor(Color.GOLD);
         font.getData().setScale(1.25f);
         font.draw(batch, "Score: " + score, scoreX + 14f, scoreY + 21f);
         font.getData().setScale(1.0f);
-
-        font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        String commandText = "H Highscore  ESC Restart  P Path "
-                + (showHintInfo ? "[ON]" : "[OFF]")
-                + (pathHintBudgetExhausted ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
-                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
-        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 260f, buttonY + 18f);
 
         if (mode == Mode.WON) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
@@ -1650,6 +1652,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
+        ghostPhasingMovementService.reset();
         pathPenaltyPoints = 0f;
         pathHintTotalUsedSeconds = 0f;
         pathHintBudgetExhausted = false;
@@ -1996,27 +1999,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
     }
 
-    /**
-     * A WorldView decorator that always returns {@code false} for
-     * {@code wouldCollide}, allowing phasing enemies to pass through walls.
-     * All other methods delegate to the wrapped view unchanged.
-     */
-    private static final class PermissiveWorldView implements WorldView {
-        private final WorldView delegate;
-
-        private PermissiveWorldView(WorldView delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override public double playerX()    { return delegate.playerX(); }
-        @Override public double playerY()    { return delegate.playerY(); }
-        @Override public double minX()       { return delegate.minX(); }
-        @Override public double minY()       { return delegate.minY(); }
-        @Override public double maxX()       { return delegate.maxX(); }
-        @Override public double maxY()       { return delegate.maxY(); }
-        @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
-    }
-
     private static final class EnemyRuntime {
         private final EnemySpawn spawn;
         private final String runtimeEnemyId;
@@ -2036,12 +2018,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private String behaviorTypeLabel;
         private String movementTypeLabel;
         // Mirrors JavaFX's ghost non-tangibility energy: starts at the value from the
-        // opponent model and drains to 0 over time at the same rate as the JavaFX loop.
-        // While > 0 the ghost phases through walls and cannot harm the player.
+        // opponent model and drains to 0 over time at the rate defined in GhostNonTangibilityService.
+        // While > 0 the ghost phases through walls and can still harm the player.
         private double nonTangibilityEnergy;
-        // Energy decrease rate matches the JavaFX movement loop at ~16.67 ticks/second
-        // with 0.14 decrease per tick.
-        private static final double ENERGY_DECREASE_PER_SEC = 0.14 * (1000.0 / 60.0);
 
         private EnemyRuntime(EnemySpawn spawn, String runtimeEnemyId, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
@@ -2109,15 +2088,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
                  AntiLoopWanderMovementService wanderService,
                  PatrolMovementService patrolService,
                  AdaptiveAggressiveMovementService adaptiveService,
+                 GhostPhasingMovementService phasingService,
                  float dt) {
-            // Drain non-tangibility energy at the same rate as the JavaFX movement loop.
+            // Drain non-tangibility energy at the shared rate from GhostNonTangibilityService.
             if (nonTangibilityEnergy > 0) {
-                nonTangibilityEnergy = Math.max(0.0, nonTangibilityEnergy - dt * ENERGY_DECREASE_PER_SEC);
+                nonTangibilityEnergy = GhostNonTangibilityService.drainEnergy(nonTangibilityEnergy, dt);
             }
-
-            // While phasing, use a permissive WorldView that ignores wall collisions
-            // so the ghost can pass through walls (mirrors JavaFX force-move).
-            WorldView effectiveWorld = (nonTangibilityEnergy > 0) ? new PermissiveWorldView(world) : world;
 
             // Treat spawn.speed() as world units per simulated tick at the
             // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
@@ -2130,22 +2106,27 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(effectiveWorld, wanderService, patrolService, adaptiveService);
-                x = (float) next.x();
-                y = (float) next.y();
-                directionX = next.directionX();
-                directionY = next.directionY();
+                if (nonTangibilityEnergy > 0) {
+                    // Phasing ghost: single random direction, ignores walls, bounces at board boundary.
+                    EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
+                    MovementResult next = phasingService.tick(state, world);
+                    x = (float) next.x();
+                    y = (float) next.y();
+                    directionX = next.directionX();
+                    directionY = next.directionY();
+                } else {
+                    MovementResult next = nextMove(world, wanderService, patrolService, adaptiveService);
+                    x = (float) next.x();
+                    y = (float) next.y();
+                    directionX = next.directionX();
+                    directionY = next.directionY();
+                }
             }
         }
 
         /** Returns the current render opacity for this enemy (1.0 = fully solid). */
         private float renderOpacity() {
-            if (nonTangibilityEnergy <= 0) {
-                return 1.0f;
-            }
-            // Mirrors JavaFX: opacity = 1 - (energy/maxEnergy) + minOpacity, clamped.
-            float opacity = (float) (1.0 - (nonTangibilityEnergy / 100.0) + 0.1);
-            return Math.max(0.1f, Math.min(1.0f, opacity));
+            return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy);
         }
 
         private MovementResult nextMove(WorldView world,
