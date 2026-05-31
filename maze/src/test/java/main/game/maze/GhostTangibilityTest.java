@@ -8,6 +8,7 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentsFactory;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -186,5 +187,99 @@ class GhostTangibilityTest {
 
         assertEquals(hpBefore, player.getHitPoints(),
                 "Solid ghost far away (wall simulation) must not deal damage");
+    }
+
+    // -----------------------------------------------------------------------
+    // Path-1 contact: ghost moves → player.doPositionEvaluation (task scream fix)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Creates a player whose graphics is a plain {@link Rectangle} (non-ImageView).
+     * With the {@code instanceof ImageView} guard now in
+     * {@code PlayerCharacter.doPositionEvaluation}, the flash is silently skipped
+     * and no ClassCastException is thrown. This lets unit tests exercise the
+     * damage and scream paths without a real sprite.
+     */
+    private PlayerCharacter newPlayerWithRectangle() {
+        return new PlayerCharacter(new Rectangle(0, 0, 30, 30), 0, 0, null);
+    }
+
+    /**
+     * A phasing ghost (energy > 0) must deal damage when evaluated by the player
+     * (path 1: ghost notifier → {@code PlayerCharacter.doPositionEvaluation}).
+     * Before the fix, this path returned early for phasing ghosts with no damage.
+     */
+    @Test
+    @DisplayName("Phasing ghost — player evaluation path — deals damage")
+    void phasingGhostContactViaPlayerEvaluation_dealsDamage() {
+        PlayerCharacter player = newPlayerWithRectangle();
+        int hpBefore = player.getHitPoints();
+
+        Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
+        GhostCharacter ghost = newGhost(ghostGfx);
+        ghost.setNonTangientEnergy(5);   // phasing
+
+        // Ghost bounds fully overlap the player (both start at origin).
+        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        player.doPositionEvaluation(ghostBounds, ghost);
+
+        assertTrue(player.getHitPoints() < hpBefore,
+                "Phasing ghost must deal damage via PlayerCharacter.doPositionEvaluation (no early-return)");
+    }
+
+    /**
+     * A phasing ghost with a wall controller that always reports a wall between ghost and
+     * player must still deal damage — phasing ghosts bypass wall checks.
+     */
+    @Test
+    @DisplayName("Phasing ghost — player evaluation path — bypasses wall check")
+    void phasingGhostContactViaPlayerEvaluation_bypassesWallCheck() {
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;   // always a wall
+            }
+        };
+
+        PlayerCharacter player = newPlayerWithRectangle();
+        int hpBefore = player.getHitPoints();
+
+        Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
+        GhostCharacter ghost = newGhost(ghostGfx);
+        ghost.setNonTangientEnergy(5);   // phasing
+
+        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        player.doPositionEvaluation(ghostBounds, ghost);
+
+        assertTrue(player.getHitPoints() < hpBefore,
+                "Phasing ghost must bypass wall check and deal damage in player's doPositionEvaluation");
+    }
+
+    /**
+     * A solid ghost (energy == 0) with a wall between it and the player must NOT deal damage
+     * via {@code PlayerCharacter.doPositionEvaluation}.
+     */
+    @Test
+    @DisplayName("Solid ghost — player evaluation path — blocked by wall, no damage")
+    void solidGhostContactViaPlayerEvaluation_blockedByWall_noDamage() {
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;   // always a wall
+            }
+        };
+
+        PlayerCharacter player = newPlayerWithRectangle();
+        int hpBefore = player.getHitPoints();
+
+        Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
+        GhostCharacter ghost = newGhost(ghostGfx);
+        ghost.setNonTangientEnergy(0);   // solid
+
+        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        player.doPositionEvaluation(ghostBounds, ghost);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "Solid ghost blocked by wall must not deal damage in player's doPositionEvaluation");
     }
 }

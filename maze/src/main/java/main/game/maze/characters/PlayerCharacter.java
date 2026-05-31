@@ -25,6 +25,7 @@ import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.PlayerConstants;
 import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
@@ -245,22 +246,20 @@ public class PlayerCharacter extends Character
             return;  // Player removed (game over), skip evaluation
         }
 
-        // Non-tangient enemies that are currently phasing through walls (energy > 0)
-        // are in spirit form and cannot physically harm the player.
-        if (entity instanceof INonTangientMazeGameCharacter nonTangient
-                && nonTangient.getNonTangientEnergy() > 0) {
-            return;
-        }
+        // Phasing ghosts bypass walls but still deal contact damage and trigger the scream.
+        // Use the shared service so the decision is never duplicated across frontends.
+        boolean isPhasing = entity instanceof INonTangientMazeGameCharacter nonTangient
+                && GhostNonTangibilityService.isPhasing(nonTangient.getNonTangientEnergy());
 
         var myBounds = graphics.getBoundsInParent();
         if (!nodeBounds.intersects(myBounds)) {
             return;
         }
 
-        // A wall between the enemy centre and the player centre blocks damage.
-        // Enemies that can pass through walls (phasing ghosts) are excluded above,
-        // so here all remaining enemies are subject to wall blocking.
-        if (App.gameController != null
+        // A wall between the enemy centre and the player centre blocks damage for solid enemies.
+        // Phasing ghosts bypass this check.
+        if (!isPhasing
+                && App.gameController != null
                 && App.gameController.isWallBetween(
                         nodeBounds.getCenterX(), nodeBounds.getCenterY(),
                         myBounds.getCenterX(), myBounds.getCenterY())) {
@@ -271,7 +270,9 @@ public class PlayerCharacter extends Character
             var canKillEntity = (ICanKill) entity;
             LOGGER.fine("Player is intersecting with " + canKillEntity);
             this.subtractHitPoints(canKillEntity.getDamage());
-            this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
+            if (this.getCharacterGraphics() instanceof ImageView iv) {
+                this.flashCharacterColor(iv, ColorHueConstants.RED_HUE);
+            }
             doStandardScreamSound();
         }
         if (entity instanceof ZombieCharacter zombieCharacter) {
@@ -361,7 +362,9 @@ public class PlayerCharacter extends Character
         }
         infectionAnimation = AnimationEngine.get().scheduleOnce(1.0, () -> {
             this.subtractHitPoints((int) Math.round(dps));
-            this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
+            if (this.getCharacterGraphics() instanceof ImageView iv) {
+                this.flashCharacterColor(iv, ColorHueConstants.GREEN_HUE);
+            }
             this.doInfectedScreamSound();
             scheduleInfectionTick(dps, remainingTicks - 1);
         });

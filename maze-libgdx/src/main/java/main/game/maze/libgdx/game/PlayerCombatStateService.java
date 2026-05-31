@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 
 import main.game.maze.characters.CollisionDamage;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.mazeworld.WallCollisionUtil;
@@ -123,7 +124,7 @@ public final class PlayerCombatStateService {
             return;
         }
         for (EnemySpawn enemy : enemies) {
-            boolean isPhasing = enemy.nonTangibilityEnergy() > 0;
+            boolean isPhasing = GhostNonTangibilityService.isPhasing(enemy.nonTangibilityEnergy());
             // Phasing ghosts pass through walls and therefore bypass the wall-blocking check.
             // Solid enemies are blocked by any wall between them and the player.
             if (!isPhasing && maze != null && WallCollisionUtil.wallBetween(
