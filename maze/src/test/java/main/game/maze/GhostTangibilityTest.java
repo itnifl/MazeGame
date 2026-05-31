@@ -7,11 +7,17 @@ import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentsFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GhostTangibilityTest {
+
+    @AfterEach
+    void tearDown() {
+        App.gameController = null;
+    }
 
     private GhostCharacter newGhost(Rectangle graphics) {
         Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
@@ -90,8 +96,7 @@ class GhostTangibilityTest {
         PlayerCharacter player = new PlayerCharacter(new Rectangle(5, 5, 30, 30), 0, 0, null);
         int hpBefore = player.getHitPoints();
 
-        // Player's bounds in the parent pane context: x=5, y=5, w=30, h=30 → center (20, 20).
-        // Ghost center: (20, 20). Distance = 0 < touchThreshold (35). Damage expected.
+        // Bounds overlap and App.gameController is null, so the wall check is skipped and damage is applied.
         Bounds playerBounds = new BoundingBox(5, 5, 30, 30);
         ghost.doPositionEvaluation(playerBounds, player);
 
@@ -132,10 +137,39 @@ class GhostTangibilityTest {
     }
 
     /**
-     * A solid ghost whose bounding box does not overlap the player bounds
-     * (simulating a far-away enemy or one on the other side of a wall) must NOT deal damage.
-     * The bounds-intersection check is the primary gate used in unit-test conditions
-     * where App.gameController is null.
+     * A solid ghost whose bounding box DOES overlap the player bounds, but a wall is
+     * reported between them by the game controller, must NOT deal damage.
+     * This exercises the wall-blocking branch in {@code doPositionEvaluation} when
+     * {@code App.gameController} is non-null and reports {@code isWallBetween = true}.
+     */
+    @Test
+    void solidGhostBlockedByWallDoesNoDamage() {
+        Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
+        GhostCharacter ghost = newGhost(ghostGfx);
+        ghost.setNonTangientEnergy(0);   // solid
+
+        // Stub controller that always reports a wall between ghost and player.
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;
+            }
+        };
+
+        // Overlapping bounds: ghost [0,0..40,40] and player [10,10..30,30].
+        PlayerCharacter player = new PlayerCharacter(new Rectangle(10, 10, 30, 30), 0, 0, null);
+        int hpBefore = player.getHitPoints();
+
+        Bounds playerBounds = new BoundingBox(10, 10, 30, 30);
+        ghost.doPositionEvaluation(playerBounds, player);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "Solid ghost blocked by wall must not deal damage even when bounds intersect");
+    }
+
+    /**
+     * A solid ghost whose bounding box does not overlap the player bounds must NOT deal damage.
+     * The bounds-intersection check is the primary gate; no overlap means no contact.
      */
     @Test
     void solidGhostFarFromPlayerCausesNoBoundsOverlapNoDamage() {
