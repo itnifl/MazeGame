@@ -9,16 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GameControllerDifficultyBaseScoreTest {
 
     @Test
-    void easyDifficultyUses10000BaseScore() {
+    void easyDifficultyUses5000BaseScore() {
         GameController gc = new GameController();
-        assertEquals(10000, gc.getBaseScoreForCurrentDifficulty());
+        assertEquals(5000, gc.getBaseScoreForCurrentDifficulty());
     }
 
     @Test
-    void normalDifficultyUses20000BaseScore() {
+    void normalDifficultyUses10000BaseScore() {
         GameController gc = new GameController();
         gc.setStartDifficulty(DifficultiesFactory.eINSTANCE.createNormalDifficulty());
-        assertEquals(20000, gc.getBaseScoreForCurrentDifficulty());
+        assertEquals(10000, gc.getBaseScoreForCurrentDifficulty());
     }
 
     @Test

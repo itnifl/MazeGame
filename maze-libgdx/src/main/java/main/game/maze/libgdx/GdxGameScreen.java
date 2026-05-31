@@ -157,6 +157,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean escLatch;
     private boolean hLatch;
     private boolean oLatch;
+    private boolean tLatch;
     private boolean startMenuDropdownOpen;
     private boolean pausedFromGame;
     private Mode mode = Mode.START_MENU;
@@ -467,8 +468,24 @@ public final class GdxGameScreen extends ApplicationAdapter {
             handleGameMouseInput();
 
             if (terminalInputActive) {
+                if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
+                    tLatch = true;
+                    toggleTerminalPrompt();
+                    return;
+                }
+                if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
+                    tLatch = false;
+                }
                 handleTerminalTypingInput();
             } else {
+                if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
+                    tLatch = true;
+                    toggleTerminalPrompt();
+                    return;
+                }
+                if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
+                    tLatch = false;
+                }
                 if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
                     hLatch = true;
                     loadHighScores();
@@ -1396,7 +1413,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (contains(mx, my, hudLayout.terminalButtonX, hudLayout.terminalButtonY, hudLayout.terminalButtonW, hudLayout.terminalButtonH)) {
             terminalButtonPressedSeconds = BUTTON_PRESS_SECONDS;
-            openTerminalPrompt();
+            toggleTerminalPrompt();
             return;
         }
 
@@ -1429,10 +1446,23 @@ public final class GdxGameScreen extends ApplicationAdapter {
         flashStatus("Terminal opened. Type command and press Enter");
     }
 
+    private void closeTerminalPrompt() {
+        terminalInputActive = false;
+        terminalInputBuffer.setLength(0);
+        flashStatus("Terminal closed");
+    }
+
+    private void toggleTerminalPrompt() {
+        if (terminalInputActive) {
+            closeTerminalPrompt();
+            return;
+        }
+        openTerminalPrompt();
+    }
+
     private void handleTerminalTypingInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            terminalInputActive = false;
-            flashStatus("Terminal closed");
+            closeTerminalPrompt();
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

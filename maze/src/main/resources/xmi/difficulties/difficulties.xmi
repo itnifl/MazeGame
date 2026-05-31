@@ -50,18 +50,18 @@
                 instantDeath="false"
                 monstersMovementSpeedMultiplier="1.15"
                 monstersDamageMultiplier="1.40"
-                maxThreat="32">
+                maxThreat="62">
     <enemyMaxCount>
       <type>GHOST</type>
-      <maxCount>7</maxCount>
+      <maxCount>5</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>ZOMBIE</type>
-      <maxCount>7</maxCount>
+      <maxCount>8</maxCount>
     </enemyMaxCount>
     <enemyMaxCount>
       <type>PUMPKINBOMBER</type>
-      <maxCount>0</maxCount>
+      <maxCount>1</maxCount>
     </enemyMaxCount>
   </difficulties>
 
