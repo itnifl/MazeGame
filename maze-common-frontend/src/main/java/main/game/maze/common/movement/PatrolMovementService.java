@@ -39,6 +39,7 @@ public final class PatrolMovementService {
 
     public void reset() {
         states.clear();
+        wanderService.reset();
     }
 
     public PatrolMovementMode modeForEnemy(String enemyId) {
@@ -382,8 +383,8 @@ public final class PatrolMovementService {
         private double targetX = Double.NaN;
         private double targetY = Double.NaN;
 
-        private void advanceWaypoint(int pathSize) {
-            currentWaypointIndex = Math.floorMod(currentWaypointIndex + 1, pathSize);
+        private void advanceWaypoint(int waypointCount) {
+            currentWaypointIndex = Math.floorMod(currentWaypointIndex + 1, waypointCount);
         }
     }
 

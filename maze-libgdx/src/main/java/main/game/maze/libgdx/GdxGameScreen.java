@@ -441,7 +441,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
+        if (!terminalInputActive && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
             escLatch = true;
             switchToStartMenu(true);
             return;
@@ -454,13 +454,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
             handleGameMouseInput();
 
             if (terminalInputActive) {
-                if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
-                    tLatch = true;
-                    // T only opens the terminal; Esc closes it (handled in handleTerminalTypingInput).
-                }
-                if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
-                    tLatch = false;
-                }
                 handleTerminalTypingInput();
             } else {
                 if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
@@ -1560,42 +1553,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
      * is returned as a fallback.
      */
     private List<ActivePathPoint> enemyDisplayPath(EnemyRuntime enemy) {
-        if (!(maze instanceof RealMaze realMaze) || realMaze.navigationGraph() == null) {
-            return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
-        }
-        // NavGraph uses top-left Y origin; game world uses bottom-left Y origin.
-        if (enemy.spawn.behavior() == BehaviorType.AGGRESSIVE && player != null) {
-            Point2D enemyNavPos = new Point2D(enemy.x, maze.heightPx() - enemy.y);
-            Point2D playerNavPos = new Point2D(player.x(), maze.heightPx() - player.y());
-            var navPath = MazeNavigationGraphService.findPath(
-                    realMaze.navigationGraph(), enemyNavPos, playerNavPos);
-            if (navPath != null && !navPath.isEmpty()) {
-                return toActivePathPoints(navPath);
-            }
-        }
-        if (enemy.spawn.behavior() == BehaviorType.PATROL) {
-            PatrolMovementService.Waypoint wp =
-                    patrolMovementService.currentTargetWaypointFor(enemy.runtimeEnemyId);
-            if (wp != null) {
-                Point2D enemyNavPos = new Point2D(enemy.x, maze.heightPx() - enemy.y);
-                // Patrol waypoints are in game-world (bottom-left Y) space; flip for navGraph.
-                Point2D waypointNavPos = new Point2D(wp.x(), maze.heightPx() - wp.y());
-                var navPath = MazeNavigationGraphService.findPath(
-                        realMaze.navigationGraph(), enemyNavPos, waypointNavPos);
-                if (navPath != null && !navPath.isEmpty()) {
-                    return toActivePathPoints(navPath);
-                }
-            }
-        }
+        // Always return the live snapshot from the movement service.
+        // Points from the service are in game-world (bottom-left Y) space.
+        // drawEnemyPathOverlay() expects the same space, so no Y-flip is needed here.
         return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
-    }
-
-    private static List<ActivePathPoint> toActivePathPoints(List<Point2D> navPath) {
-        List<ActivePathPoint> result = new ArrayList<>(navPath.size());
-        for (Point2D p : navPath) {
-            result.add(new ActivePathPoint(p.getX(), p.getY()));
-        }
-        return result;
     }
 
     private void loadHighScores() {
@@ -1667,6 +1628,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         animatedEnemies.clear();
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
+        patrolMovementService.reset();
         pathPenaltyPoints = 0f;
         currentHpRatio = 1f;
         playerTintRed = 1f;
