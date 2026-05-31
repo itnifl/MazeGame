@@ -21,7 +21,8 @@ public record EnemySpawn(
         int infectionLevel,
         String touchSoundPath,
         BehaviorType behavior,
-        float speed) {
+        float speed,
+        double nonTangibilityEnergy) {
 
     public EnemySpawn(
             String id,
@@ -35,6 +36,23 @@ public record EnemySpawn(
             String touchSoundPath,
             float speed) {
         this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
-                touchSoundPath, BehaviorType.WANDER, speed);
+                touchSoundPath, BehaviorType.WANDER, speed, 0.0);
+    }
+
+    /** Convenience constructor matching the 11-arg canonical form minus nonTangibilityEnergy. */
+    public EnemySpawn(
+            String id,
+            String imagePath,
+            float x,
+            float y,
+            float size,
+            float effectiveThreat,
+            int attackDamage,
+            int infectionLevel,
+            String touchSoundPath,
+            BehaviorType behavior,
+            float speed) {
+        this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
+                touchSoundPath, behavior, speed, 0.0);
     }
 }

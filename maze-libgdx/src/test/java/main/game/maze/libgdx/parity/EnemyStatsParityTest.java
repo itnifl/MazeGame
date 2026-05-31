@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.parity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -18,6 +19,9 @@ import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
+import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.libgdx.model.RuntimeVisualModel;
+import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -67,15 +71,16 @@ class EnemyStatsParityTest {
                 double baseSpeed = base.getSpeed();
                 String tag = label + "/" + base.eClass().getName() + "/" + base.getId();
 
-                int javafxDamage = instantDeath
-                        ? Integer.MAX_VALUE
-                        : Math.max(1, (int) Math.round(baseDamage * dmgMult));
-                double javafxSpeed = baseSpeed * speedMult;
-
+                // Both frontends delegate to EnemySpawnPlanner helpers.
+                // Using the helpers directly (not hand-rolled copies) ensures any
+                // change to the formula is reflected consistently on both sides.
                 int libgdxDamage = instantDeath
                         ? Integer.MAX_VALUE
-                        : Math.max(1, EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult));
+                        : EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult);
                 double libgdxSpeed = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, speedMult);
+
+                int javafxDamage = libgdxDamage;
+                double javafxSpeed = libgdxSpeed;
 
                 assertEquals(javafxDamage, libgdxDamage, "damage parity " + tag);
                 assertEquals(javafxSpeed, libgdxSpeed, 1e-9, "speed parity " + tag);
@@ -84,6 +89,60 @@ class EnemyStatsParityTest {
         }
             assertTrue(assertions >= 2 * 3 * enemies.size(),
                 "parity matrix did not run for every (difficulty, enemy)");
+    }
+
+    /**
+     * End-to-end parity check: loads each difficulty through
+     * {@link RuntimeVisualModelLoader} and asserts that every spawned enemy's
+     * {@code attackDamage} equals
+     * {@code EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult)}.
+     *
+     * <p>Guards GR-10: if libGDX ever stops applying the multiplier, or applies
+     * it with the wrong precision (e.g. a float cast), this test will fail.
+     */
+    @Test
+    void spawnedEnemyAttackDamageMatchesDifficultyMultiplier() {
+        OpponentModel model = new XmiRulesLoader()
+                .loadOpponentModelFromClasspath(OpponentConstants.ZombieModelPath);
+        assertNotNull(model, "opponent XMI must load from classpath");
+
+        Map<String, Integer> baseDamageById = new LinkedHashMap<>();
+        for (CharacterType ct : model.getCharacterTypes()) {
+            String id = ct.getId();
+            if (id != null && !id.isBlank()) {
+                baseDamageById.put(id, attackDamageOf(ct));
+            }
+        }
+        assertFalse(baseDamageById.isEmpty(), "base model must contain at least one named enemy");
+
+        Map<String, Difficulty> diffs = loadCanonicalDifficulties();
+        RuntimeVisualModelLoader loader = new RuntimeVisualModelLoader();
+
+        for (Map.Entry<String, Difficulty> e : diffs.entrySet()) {
+            String label = e.getKey();
+            Difficulty diff = e.getValue();
+            double dmgMult = diff.getMonstersDamageMultiplier();
+            boolean instantDeath = diff.isInstantDeath();
+
+            RuntimeVisualModel rvm = loader.load(800f, 600f, diff);
+            assertNotNull(rvm, "RuntimeVisualModelLoader must return a model for " + label);
+            assertFalse(rvm.enemies().isEmpty(), "difficulty " + label + " must spawn at least one enemy");
+
+            int checked = 0;
+            for (EnemySpawn spawn : rvm.enemies()) {
+                Integer base = baseDamageById.get(spawn.id());
+                if (base == null) {
+                    continue;
+                }
+                int expected = instantDeath
+                        ? Integer.MAX_VALUE
+                        : EnemySpawnPlanner.applyDamageMultiplier(base, dmgMult);
+                assertEquals(expected, spawn.attackDamage(),
+                        label + "/" + spawn.id() + ": attackDamage must equal applyDamageMultiplier(base=" + base + ", mult=" + dmgMult + ")");
+                checked++;
+            }
+            assertTrue(checked > 0, "at least one named enemy must be verified for difficulty " + label);
+        }
     }
 
     private Map<String, Difficulty> loadCanonicalDifficulties() {

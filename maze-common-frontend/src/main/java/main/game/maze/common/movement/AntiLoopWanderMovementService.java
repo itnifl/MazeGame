@@ -9,16 +9,16 @@ import java.util.Random;
 
 /**
  * Wander movement that walks in one cardinal direction until it collides,
- * then picks a random other (non-reverse) cardinal that is currently passable.
+ * then picks a random other cardinal that is currently passable.
  *
  * <p>Two reasons for this contract:
  * <ul>
  *   <li>No shaking. The previous "least-recently-visited" scoring rotated
  *       direction every tick because every freshly visited cell scored higher
  *       than its neighbours, which players experienced as jitter.</li>
- *   <li>No circles. By forcing direction changes only on collision and never
- *       picking the immediate reverse, a wanderer cannot oscillate between two
- *       adjacent cells.</li>
+ *   <li>No circles. The recent-visit cap keeps the movement from staying in
+ *       tiny loops, while still allowing backwards turns when that is the
+ *       random direction chosen after a collision.</li>
  * </ul>
  */
 public final class AntiLoopWanderMovementService {
@@ -107,15 +107,9 @@ public final class AntiLoopWanderMovementService {
                                      WorldView world,
                                      int currentDx,
                                      int currentDy) {
-        int reverseX = -currentDx;
-        int reverseY = -currentDy;
-
         List<int[]> candidates = new ArrayList<>(4);
         for (int[] c : CARDINAL) {
             if (c[0] == currentDx && c[1] == currentDy) {
-                continue;
-            }
-            if (c[0] == reverseX && c[1] == reverseY && (currentDx != 0 || currentDy != 0)) {
                 continue;
             }
             double nx = enemy.x() + c[0] * enemy.speed();
@@ -131,9 +125,6 @@ public final class AntiLoopWanderMovementService {
         }
         if (candidates.isEmpty()) {
             for (int[] c : CARDINAL) {
-                if (c[0] == reverseX && c[1] == reverseY && (currentDx != 0 || currentDy != 0)) {
-                    continue;
-                }
                 if (c[0] == currentDx && c[1] == currentDy) {
                     continue;
                 }

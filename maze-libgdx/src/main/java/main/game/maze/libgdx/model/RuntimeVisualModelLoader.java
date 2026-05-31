@@ -58,7 +58,7 @@ public final class RuntimeVisualModelLoader {
     private static final float CENTER_RATIO = 0.5f;
     private static final long ENEMY_SPAWN_RANDOM_SEED = 1337L;
     private static final float MIN_THREAT_BUDGET = 1f;
-    private static final float MIN_DAMAGE_MULTIPLIER = 0f;
+    // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
     private static final int DEFAULT_OPPONENT_MAX_THREAT = 20;
     private static final int DEFAULT_ZOMBIE_CAP = 2;
     private static final int DEFAULT_GHOST_CAP = 2;
@@ -75,6 +75,10 @@ public final class RuntimeVisualModelLoader {
 
     public RuntimeVisualModel load(float widthPx, float heightPx) {
         return load(null, widthPx, heightPx, null);
+    }
+
+    public RuntimeVisualModel load(float widthPx, float heightPx, Difficulty difficulty) {
+        return load(null, widthPx, heightPx, difficulty);
     }
 
     public RuntimeVisualModel load(MazeArena arena) {
@@ -149,7 +153,7 @@ public final class RuntimeVisualModelLoader {
         List<EnemySpawn> out = new ArrayList<>();
         Random random = new Random(ENEMY_SPAWN_RANDOM_SEED);
         float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, difficulty.getMaxThreat()) : Float.MAX_VALUE;
-        float damageMultiplier = difficulty != null ? (float) Math.max(MIN_DAMAGE_MULTIPLIER, difficulty.getMonstersDamageMultiplier()) : 1f;
+        double damageMultiplier = difficulty != null ? Math.max(0d, difficulty.getMonstersDamageMultiplier()) : 1d;
         double speedMultiplier = difficulty != null ? difficulty.getMonstersMovementSpeedMultiplier() : 1d;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
         float usedThreat = 0f;
@@ -184,7 +188,9 @@ public final class RuntimeVisualModelLoader {
                         continue;
                     }
                     int baseDamage = Math.max(0, attackDamageFor(picked));
-                    int attackDamage = EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
+                    int attackDamage = instantDeath
+                            ? Integer.MAX_VALUE
+                            : EnemySpawnPlanner.applyDamageMultiplier(baseDamage, damageMultiplier);
                     float spawnSpeed = (float) EnemySpawnPlanner.applySpeedMultiplier(picked.getSpeed(), speedMultiplier);
                         var runtimeBehavior = EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
                                 picked.getBehavior(), difficulty, aggressiveAssigned, random);
@@ -207,7 +213,8 @@ public final class RuntimeVisualModelLoader {
                             infectionLevel,
                             touchSound,
                             runtimeBehavior,
-                            spawnSpeed);
+                            spawnSpeed,
+                            nonTangibilityEnergyFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -284,6 +291,13 @@ public final class RuntimeVisualModelLoader {
             return zombie.getInfectionLevel();
         }
         return 0;
+    }
+
+    private static double nonTangibilityEnergyFor(CharacterType type) {
+        if (type instanceof Ghost ghost) {
+            return ghost.getNonTangibilityEnergy();
+        }
+        return 0.0;
     }
 
     private static String touchSoundFor(CharacterType type) {

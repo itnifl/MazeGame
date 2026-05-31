@@ -27,7 +27,7 @@ not static.
 - HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
 - The maze world is bottom-anchored to the bottom HUD bar: when the maze fits the gameplay viewport vertically, its bottom edge is pinned to the top of the bottom command row instead of floating.
 - Camera follows the player when the world is larger than the viewport.
-- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`.
+- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze module readme](../maze/readme.md) for the equivalent JavaFX implementation.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
 - High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
 - Win state shows completion text and allows returning to start menu (`ESC`).
@@ -53,6 +53,14 @@ not static.
 
 The `game.*` classes deliberately avoid any `com.badlogic.gdx.*` import so
 they remain unit-testable in headless CI without a GL context.
+
+## Enemy damage and wall blocking
+
+Combat is handled by `PlayerCombatStateService`. Each frame it checks whether any tangible enemy is within contact range of the player. Before applying damage it calls `WallCollisionUtil.wallBetween` (from the [mazeworld module](../main.game.maze.mazeworld/readme.md)) to test whether any wall separates the enemy centre from the player centre. If a wall blocks the line of sight, damage is not applied for that enemy this frame.
+
+A phasing ghost (non-tangibility energy > 0) bypasses the wall-blocking check in `PlayerCombatStateService`, so it can pass through walls during movement AND still deal contact damage to the player when bounding boxes overlap. Only the wall-collision guard is skipped; damage is not suppressed.
+
+`combatState.setMaze(maze)` must be called at game start (inside `startGameFromSelection`) to provide the current `MazeArena`. The equivalent wall-blocking logic in the JavaFX backend is documented in the [maze module readme](../maze/readme.md).
 
 ## Running
 
@@ -102,3 +110,31 @@ libGDX uses a bottom-left origin (positive y is up). The current gameplay
 subset is written natively for that convention; reconciliation with the
 top-left-origin JavaFX game loop is deferred until the shared character
 pipeline is ported behind the common-graphics facades.
+
+---
+
+## Ghost tangibility (phasing system)
+
+Ghost enemies spawn in a *phasing* state and gradually materialise over time.
+The libGDX implementation mirrors the JavaFX behaviour exactly:
+
+| Aspect | Rule |
+|--------|------|
+| Initial energy | Read from the ghost's `nonTangibilityEnergy` field in the XMI opponent model (default 100). |
+| Drain rate | Delegated to `GhostNonTangibilityService.drainEnergy(...)` (`0.14 × (1000 / 60)` energy per second, shared constant). |
+| Phasing | While energy > 0 the ghost moves through walls using `GhostPhasingMovementService.tick(...)`, which returns `false` for all `wouldCollide` queries. |
+| Opacity | Delegated to `GhostNonTangibilityService.calculateOpacity(...)`: `clamp(1.0 − energy/100 + 0.1, 0.1, 1.0)`. |
+| Damage | A phasing ghost bypasses the wall-blocking check in `PlayerCombatStateService` but DOES deal contact damage when bounding boxes overlap. Wall bypass and damage suppression are independent. |
+
+The `EnemySpawn` record carries `nonTangibilityEnergy` and `EnemyRuntime` holds
+the mutable runtime state. `RuntimeVisualModelLoader` reads the value from the
+`Ghost` EMF model.
+
+---
+
+## Wall thickness parity
+
+Wall render thickness is read from `StageConstants.WallThicknessPx` (5 px,
+shared with the JavaFX renderer). Previously, libGDX used a hard-coded `3f`
+which produced thinner walls than JavaFX. Both frontends now draw walls at the
+same thickness.

@@ -45,6 +45,8 @@ You normally find values such as
 * Default board width and height for the easiest difficulty
 * Medium board width and height for a normal difficulty
 * Large board width and height for a hard difficulty
+* Wall segment length in pixels (`WallSegmentLengthPx`)
+* Wall render thickness in pixels (`WallThicknessPx`, shared by both JavaFX and libGDX frontends to guarantee visual parity)
 
 The application uses small helper functions in the front end layer to select the correct values based on the last chosen difficulty.
 When you change board size, you usually update the constants in this module.
@@ -130,6 +132,29 @@ A typical sequence when a new level is created looks like this
 * During the game, behaviour and rendering continuously ask MazeWorld for the current state
 
 Because of this structure it is easy to swap maze generators, adjust difficulty rules or experiment with new ways of building levels without changing the rest of the game.
+
+---
+
+## Wall Collision Utilities
+
+The module provides `WallCollisionUtil`, a shared, backend-neutral utility class for wall-related geometry tests.
+
+**AABB overlap check (`wouldCollide` / `wouldCollideVectors`)**  
+Tests whether a square of a given size centred at a point overlaps any wall or leaves the board bounds. Used by movement controllers to prevent characters from walking through walls.
+
+**Line-of-sight wall check (`wallBetween` / `wallBetweenVectors`)**  
+Tests whether any wall segment separates two points (e.g. an enemy centre and the player centre) by checking if the straight line between them crosses a wall. Used by combat systems to prevent enemies from dealing damage through walls.
+
+Two method variants are provided to avoid type-erasure conflicts at call sites:
+
+| Method | Wall list type | Used by |
+|---|---|---|
+| `wouldCollide` | `List<WallSegment>` | libGDX movement |
+| `wouldCollideVectors` | `List<Vector2D>` | JavaFX movement |
+| `wallBetween` | `List<WallSegment>` | libGDX combat (`PlayerCombatStateService`) |
+| `wallBetweenVectors` | `List<Vector2D>` | JavaFX combat (`GameController.isWallBetween`) |
+
+Both frontends delegate to `WallCollisionUtil` so the geometry logic lives in exactly one place. See [maze module readme](../maze/readme.md) and [maze-libgdx module readme](../maze-libgdx/readme.md) for how each frontend wires these into its combat pipeline.
 
 ---
 

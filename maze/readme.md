@@ -118,6 +118,27 @@ Current runtime behavior:
 - the maze viewport now follows the player while HUD elements stay fixed on top
 - the bottom command menu and score panel remain visible while the board scrolls
 - start menu music and menu selection sound are optional; missing files are ignored safely
+
+## Enemy damage and wall blocking
+
+Each frame, characters exchange position notifications in two directions:
+
+- **Enemy moves:** the enemy notifies the player, which calls `PlayerCharacter.doPositionEvaluation`. The player checks for bounds overlap, then calls `GameController.isWallBetween(enemyCentreX, enemyCentreY, playerCentreX, playerCentreY)` before applying damage.
+- **Player moves:** the player notifies each enemy, which calls the enemy's own `doPositionEvaluation`. Each enemy class (`GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`) performs the same wall check via `App.gameController.isWallBetween(...)` before applying damage.
+
+`GameController.isWallBetween` delegates to `WallCollisionUtil.wallBetweenVectors` from the [mazeworld module](../main.game.maze.mazeworld/readme.md). A phasing ghost (non-tangibility energy > 0) bypasses wall collision checks during movement and damage evaluation, but DOES deal contact damage when its bounding box overlaps the player. The phasing check, energy drain, and opacity logic are implemented in the shared `GhostNonTangibilityService` and `GhostPhasingMovementService` (see [maze-common-frontend](../maze-common-frontend/readme.md)).
+
+## P-key path hint and budget
+
+Holding `P` reveals the shortest path to the goal but incurs a per-second score penalty. The budget is finite and resets each new game:
+
+| Difficulty | Budget |
+|---|---|
+| Easy | 45 s |
+| Normal | 25 s |
+| Hard | 15 s |
+
+When the budget is exhausted the path hint is hidden and a "Path hint energy spent!" message is shown. The penalty rate is 50 points/second. See [maze-libgdx readme](../maze-libgdx/readme.md) for the equivalent libGDX implementation.
 - HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
 - visual assets and style selection now consume the shared `MazeVisualStyleConfig` model loaded from XMI first with properties fallback, so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
 - screen-scoped music (menu, in-game, win, game-over) is owned by the `AudioEngine` singleton on dedicated channels (`MENU_MUSIC`, `IN_GAME_MUSIC`, `WIN_MUSIC`, `GAME_OVER_MUSIC`) and is explicitly stopped when transitioning to another screen, so win or game-over music never bleeds into the next screen
@@ -166,6 +187,34 @@ When working on the `maze` module:
 - prefer calling services from the other modules instead of hard coding values
 
 By following these ideas, `maze` stays a thin, clear and maintainable game client for the MazeGame project.
+
+---
+
+## Wall rendering and shared constants
+
+Wall thickness is driven by `StageConstants.WallThicknessPx` (currently 5 px), which lives in the shared `main.game.maze.mazeworld` module. Both the JavaFX and libGDX renderers read this constant at startup, guaranteeing visual parity without duplication. If you want to change wall thickness, update `StageConstants.WallThicknessPx` and both frontends pick it up automatically.
+
+Wall segment length follows the same pattern via `StageConstants.WallSegmentLengthPx`.
+
+---
+
+## Enemy collision and ghost tangibility rules
+
+### Solid enemies (Zombie, PumpkinBomber)
+
+A solid enemy damages the player when its bounding box overlaps the player's bounding box. The check is a standard axis-aligned bounding-box intersection (`Bounds.intersects()`). The movement system prevents solid enemies from passing through walls, so bounding-box intersection reliably indicates real contact.
+
+### Ghost tangibility and phasing
+
+A ghost has a `nonTangibilityEnergy` value that starts at 100 (model default) and drains to 0 over time (~43 seconds). While this energy is above 0 the ghost is *phasing*:
+
+- It passes through walls (forced movement, ignoring wall collision).
+- It is rendered semi-transparent; opacity follows `clamp(1.0 - energy/100 + 0.1, 0.1, 1.0)`.
+- It cannot harm the player even when their bounding boxes overlap.
+
+Once energy reaches 0 the ghost becomes solid: fully opaque, blocked by walls, and able to deal damage on bounding-box contact.
+
+The phasing guard is enforced in **both** the JavaFX `PlayerCharacter.doPositionEvaluation` check and the libGDX `PlayerCombatStateService.processEnemyContact` check, using the same energy threshold (`energy > 0`), so both frontends exhibit identical gameplay behaviour.
 
 ---
 

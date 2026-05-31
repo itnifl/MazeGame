@@ -10,9 +10,9 @@ import main.game.maze.difficulties.Difficulty;
 class GameScoringConstantsTest {
 
     @Test
-    void baseScoreIsTenThousandTwentyThousandThirtyThousand() {
-        assertEquals(10000, GameScoringConstants.EASY_BASE_SCORE);
-        assertEquals(20000, GameScoringConstants.NORMAL_BASE_SCORE);
+    void baseScoreIsFiveThousandTenThousandThirtyThousand() {
+        assertEquals(5000, GameScoringConstants.EASY_BASE_SCORE);
+        assertEquals(10000, GameScoringConstants.NORMAL_BASE_SCORE);
         assertEquals(30000, GameScoringConstants.HARD_BASE_SCORE);
     }
 

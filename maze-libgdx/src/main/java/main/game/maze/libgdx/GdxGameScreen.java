@@ -33,12 +33,18 @@ import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GhostNonTangibilityService;
+import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.common.terminal.TerminalCommand;
+import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
@@ -69,20 +75,11 @@ import main.game.maze.service.DifficultyService;
  */
 public final class GdxGameScreen extends ApplicationAdapter {
 
-    enum TerminalCommand {
-        EMPTY,
-        HELP,
-        SHOW_BEHAVIOUR_TYPE,
-        SHOW_MOVEMENT_TYPE,
-        SHOW_ENEMY_PATH,
-        UNKNOWN
-    }
-
     private static final float DEFAULT_CELL_SIZE = 48f;
     private static final int DEFAULT_COLS = 16;
     private static final int DEFAULT_ROWS = 12;
     private static final float DEFAULT_PLAYER_SPEED = DEFAULT_CELL_SIZE * 3.5f;
-    private static final float WALL_THICKNESS = 3f;
+    private static final float WALL_THICKNESS = (float) StageConstants.WallThicknessPx;
     private static final float GOAL_SIZE = 50f;
     private static final float JAVA_FX_TICK_RATE = 30f;
     private static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
@@ -92,11 +89,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float SCORE_PANEL_WIDTH = 170f;
     private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
-    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
-    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
-    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final float MOUSE_STEP_DISTANCE = 20f;
-    private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
+    private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
+    private static final float PATH_HINT_BUDGET_EASY_SEC = 45f;
+    private static final float PATH_HINT_BUDGET_NORMAL_SEC = 25f;
+    private static final float PATH_HINT_BUDGET_HARD_SEC = 15f;
     private static final float PLAYER_ALIVE_SCALE = 1f;
     private static final float PLAYER_DEAD_SCALE = 1.8f;
     private static final float HALF_RATIO = 0.5f;
@@ -111,7 +108,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
     private static final float ENEMY_PATH_OVERLAY_SECONDS = 10f;
-    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep";
     private static final float BUTTON_PRESS_SECONDS = 0.14f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
@@ -125,8 +121,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private final MazeArena providedMaze;
     private final float cellSize;
-    private final int cols;
-    private final int rows;
     private final float playerSize;
     private final boolean useRealMaze;
     private final DifficultyService difficultyService = new DifficultyService();
@@ -155,6 +149,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean escLatch;
     private boolean hLatch;
     private boolean oLatch;
+    private boolean tLatch;
     private boolean startMenuDropdownOpen;
     private boolean pausedFromGame;
     private Mode mode = Mode.START_MENU;
@@ -177,6 +172,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
             new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
             new AdaptiveAggressiveMovementService();
+    private final PatrolMovementService patrolMovementService =
+            new PatrolMovementService();
+    private final GhostPhasingMovementService ghostPhasingMovementService =
+            new GhostPhasingMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -205,6 +204,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
+    /** Total seconds of P-key budget consumed this game. */
+    private float pathHintTotalUsedSeconds;
+    /** True once the P-key budget is exhausted for this game. */
+    private boolean pathHintBudgetExhausted;
     private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
     public GdxGameScreen() {
@@ -222,8 +225,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     public GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
         this.providedMaze = arena;
         this.cellSize = cellSize;
-        this.cols = cols;
-        this.rows = rows;
         this.playerSize = cellSize * 0.5f;
         this.useRealMaze = useRealMaze;
     }
@@ -450,7 +451,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
+        if (!terminalInputActive && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
             escLatch = true;
             switchToStartMenu(true);
             return;
@@ -465,6 +466,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
             if (terminalInputActive) {
                 handleTerminalTypingInput();
             } else {
+                if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
+                    tLatch = true;
+                    openTerminalPrompt();
+                    return;
+                }
+                if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
+                    tLatch = false;
+                }
                 if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
                     hLatch = true;
                     loadHighScores();
@@ -509,7 +518,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 enemy.advance(
                     world,
                     antiLoopWanderMovementService,
+                    patrolMovementService,
                     adaptiveAggressiveMovementService,
+                    ghostPhasingMovementService,
                     dt);
             }
         }
@@ -625,7 +636,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 drawInfectiousEdgeMist(batch, enemy, enemyTexture);
             }
             float half = enemy.size * 0.5f;
+            float opacity = enemy.renderOpacity();
+            if (opacity < 1.0f) {
+                batch.setColor(1f, 1f, 1f, opacity);
+            }
             batch.draw(enemyTexture, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
+            if (opacity < 1.0f) {
+                batch.setColor(Color.WHITE);
+            }
 
             String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
             if (label != null) {
@@ -707,6 +725,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 float by = maze.heightPx() - (float) b.getY();
                 drawPathSegment(shapes, ax, ay, bx, by, 8f);
             }
+        }
+
+        if (showEnemyPathSeconds > 0f) {
+            drawEnemyPathOverlay(shapes);
         }
 
         if (showSpanningTreeInfo && maze instanceof RealMaze realMaze && realMaze.navigationGraph() != null) {
@@ -1133,18 +1155,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
         font.draw(batch, "Terminal", terminalButtonX + 16f, terminalYDraw + 18f);
 
         font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        font.draw(batch, "Open keyboard command help", terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
+        String commandText = "H Highscore  ESC Restart  P Path "
+                + (showHintInfo ? "[ON]" : "[OFF]")
+                + (pathHintBudgetExhausted ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
+                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
+        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
 
         font.setColor(Color.GOLD);
         font.getData().setScale(1.25f);
         font.draw(batch, "Score: " + score, scoreX + 14f, scoreY + 21f);
         font.getData().setScale(1.0f);
-
-        font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        String commandText = "H Highscore  ESC Restart  P Path "
-                + (showHintInfo ? "[ON]" : "[OFF]")
-                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
-        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 260f, buttonY + 18f);
 
         if (mode == Mode.WON) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
@@ -1387,7 +1407,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (contains(mx, my, hudLayout.terminalButtonX, hudLayout.terminalButtonY, hudLayout.terminalButtonW, hudLayout.terminalButtonH)) {
             terminalButtonPressedSeconds = BUTTON_PRESS_SECONDS;
-            openTerminalPrompt();
+            toggleTerminalPrompt();
             return;
         }
 
@@ -1420,10 +1440,23 @@ public final class GdxGameScreen extends ApplicationAdapter {
         flashStatus("Terminal opened. Type command and press Enter");
     }
 
+    private void closeTerminalPrompt() {
+        terminalInputActive = false;
+        terminalInputBuffer.setLength(0);
+        flashStatus("Terminal closed");
+    }
+
+    private void toggleTerminalPrompt() {
+        if (terminalInputActive) {
+            closeTerminalPrompt();
+            return;
+        }
+        openTerminalPrompt();
+    }
+
     private void handleTerminalTypingInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            terminalInputActive = false;
-            flashStatus("Terminal closed");
+            closeTerminalPrompt();
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -1458,7 +1491,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
         if (command == TerminalCommand.HELP) {
-            flashStatus("Commands: " + TERMINAL_HELP_TEXT);
+            flashStatus("Commands: " + TerminalCommandParser.HELP_TEXT, 20f);
             return;
         }
         if (command == TerminalCommand.SHOW_BEHAVIOUR_TYPE) {
@@ -1473,30 +1506,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         if (command == TerminalCommand.SHOW_ENEMY_PATH) {
             showEnemyPathSeconds = ENEMY_PATH_OVERLAY_SECONDS;
-            flashStatus("Showing enemy paths for 10s");
+            flashStatus("Showing enemy paths for 10 seconds");
             return;
         }
         flashStatus("Unknown command. Use /h");
     }
 
+    static String terminalHelpText() {
+        return TerminalCommandParser.HELP_TEXT;
+    }
+
     static TerminalCommand parseTerminalCommand(String raw) {
-        String command = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
-        if (command.isEmpty()) {
-            return TerminalCommand.EMPTY;
-        }
-        if ("/h".equals(command)) {
-            return TerminalCommand.HELP;
-        }
-        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
-            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
-        }
-        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
-            return TerminalCommand.SHOW_MOVEMENT_TYPE;
-        }
-        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
-            return TerminalCommand.SHOW_ENEMY_PATH;
-        }
-        return TerminalCommand.UNKNOWN;
+        return TerminalCommandParser.parse(raw);
     }
 
     private void updatePathHint() {
@@ -1514,6 +1535,44 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (path != null && path.size() > 1) {
             activePathPoints.addAll(path);
         }
+    }
+
+    private void drawEnemyPathOverlay(ShapeRenderer renderer) {
+        if (maze == null) {
+            return;
+        }
+        renderer.setColor(1f, 0.72f, 0.2f, 0.7f);
+        for (EnemyRuntime enemy : animatedEnemies) {
+            List<ActivePathPoint> path = enemyDisplayPath(enemy);
+            if (path.isEmpty()) {
+                continue;
+            }
+            for (int i = 1; i < path.size(); i++) {
+                ActivePathPoint a = path.get(i - 1);
+                ActivePathPoint b = path.get(i);
+                float ax = (float) a.x();
+                float ay = maze.heightPx() - (float) a.y();
+                float bx = (float) b.x();
+                float by = maze.heightPx() - (float) b.y();
+                drawPathSegment(renderer, ax, ay, bx, by, 5f);
+            }
+        }
+    }
+
+    /**
+     * Returns the live runtime path the enemy is currently following,
+     * taken directly from the movement service snapshot.
+     * For AGGRESSIVE enemies this is the path held by {@link AdaptiveAggressiveMovementService};
+     * for PATROL enemies it is the path held by {@link PatrolMovementService}.
+     * Returns an empty list when the enemy has no active path (e.g. during WANDER_RECOVERY).
+     * Points are in game-world coordinate space; {@link #drawEnemyPathOverlay} applies
+     * the Y-flip needed for libGDX screen rendering.
+     */
+    private List<ActivePathPoint> enemyDisplayPath(EnemyRuntime enemy) {
+        // Always return the live snapshot from the movement service.
+        // Points from the service are in game-world (bottom-left Y) space.
+        // drawEnemyPathOverlay() expects the same space, so no Y-flip is needed here.
+        return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
     }
 
     private void loadHighScores() {
@@ -1576,6 +1635,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         moveCount = 0;
         showHintInfo = false;
         showSpanningTreeInfo = false;
+        showCommandsOverlay = false;
+        showBehaviourTypeSeconds = 0f;
+        showMovementTypeSeconds = 0f;
+        showEnemyPathSeconds = 0f;
+        pendingTerminalCommand = null;
+        terminalInputActive = false;
+        terminalInputBuffer.setLength(0);
         startMenuDropdownOpen = false;
         pausedFromGame = false;
         playedWinSound = false;
@@ -1585,12 +1651,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
         animatedEnemies.clear();
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
+        patrolMovementService.reset();
+        ghostPhasingMovementService.reset();
         pathPenaltyPoints = 0f;
+        pathHintTotalUsedSeconds = 0f;
+        pathHintBudgetExhausted = false;
         currentHpRatio = 1f;
         playerTintRed = 1f;
         playerTintGreen = 1f;
         playerTintBlue = 1f;
         combatState.reset(runtimeModel.playerMaxHitPoints());
+        combatState.setMaze(maze);
 
         int idx = 0;
         WorldView spawnWorld = new GdxWorldView(maze, player);
@@ -1778,10 +1849,50 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void applyPathPenalty(float dt) {
-        if (!showHintInfo || mode != Mode.PLAYING) {
+        if (mode != Mode.PLAYING) {
             return;
         }
-        pathPenaltyPoints += dt * ROUTE_HINT_PENALTY_PER_SEC;
+        // If budget is already exhausted, keep hint off and notify once.
+        if (pathHintBudgetExhausted) {
+            if (showHintInfo) {
+                showHintInfo = false;
+                flashStatus("Path hint energy already spent!", 3f);
+            }
+            return;
+        }
+        if (!showHintInfo) {
+            return;
+        }
+        // Consume budget.
+        float budget = pathHintBudgetSeconds(difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex));
+        float remaining = budget - pathHintTotalUsedSeconds;
+        if (remaining <= 0f) {
+            pathHintBudgetExhausted = true;
+            pathHintTotalUsedSeconds = budget;
+            showHintInfo = false;
+            flashStatus("Path hint energy already spent!", 3f);
+            return;
+        }
+        float consumed = Math.min(dt, remaining);
+        pathHintTotalUsedSeconds += consumed;
+        pathPenaltyPoints += consumed * ROUTE_HINT_PENALTY_PER_SEC;
+        if (pathHintTotalUsedSeconds >= budget) {
+            pathHintBudgetExhausted = true;
+            pathHintTotalUsedSeconds = budget;
+            showHintInfo = false;
+            flashStatus("Path hint energy already spent!", 3f);
+        }
+    }
+
+    private float pathHintBudgetSeconds(Difficulty selected) {
+        if (selected instanceof HardDifficulty) return PATH_HINT_BUDGET_HARD_SEC;
+        if (selected instanceof main.game.maze.difficulties.NormalDifficulty) return PATH_HINT_BUDGET_NORMAL_SEC;
+        return PATH_HINT_BUDGET_EASY_SEC;
+    }
+
+    private float pathHintRemainingSeconds() {
+        Difficulty selected = difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex);
+        return Math.max(0f, pathHintBudgetSeconds(selected) - pathHintTotalUsedSeconds);
     }
 
     private List<EnemySpawn> currentEnemyContacts() {
@@ -1814,8 +1925,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void flashStatus(String text) {
+        flashStatus(text, 2.4f);
+    }
+
+    private void flashStatus(String text, float durationSeconds) {
         statusMessage = text;
-        statusMessageTimer = 2.4f;
+        statusMessageTimer = durationSeconds;
     }
 
     @Override
@@ -1902,6 +2017,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private float moveAccumulator;
         private String behaviorTypeLabel;
         private String movementTypeLabel;
+        // Mirrors JavaFX's ghost non-tangibility energy: starts at the value from the
+        // opponent model and drains to 0 over time at the rate defined in GhostNonTangibilityService.
+        // While > 0 the ghost phases through walls and can still harm the player.
+        private double nonTangibilityEnergy;
 
         private EnemyRuntime(EnemySpawn spawn, String runtimeEnemyId, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
@@ -1921,6 +2040,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             this.behaviorTypeLabel = behavior.name();
             this.movementTypeLabel = "WANDER";
+            this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         }
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index, WorldView world) {
@@ -1955,7 +2075,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     spawn.infectionLevel(),
                     spawn.touchSoundPath(),
                     spawn.behavior(),
-                    spawn.speed());
+                    spawn.speed(),
+                    nonTangibilityEnergy);
         }
 
         /**
@@ -1964,9 +2085,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
          * {@code spawn.speed()} translates to a frame-rate-independent move.
          */
         private void advance(WorldView world,
-                     AntiLoopWanderMovementService wanderService,
-                     AdaptiveAggressiveMovementService adaptiveService,
-                     float dt) {
+                 AntiLoopWanderMovementService wanderService,
+                 PatrolMovementService patrolService,
+                 AdaptiveAggressiveMovementService adaptiveService,
+                 GhostPhasingMovementService phasingService,
+                 float dt) {
+            // Drain non-tangibility energy at the shared rate from GhostNonTangibilityService.
+            if (nonTangibilityEnergy > 0) {
+                nonTangibilityEnergy = GhostNonTangibilityService.drainEnergy(nonTangibilityEnergy, dt);
+            }
+
             // Treat spawn.speed() as world units per simulated tick at the
             // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
             // arbitrary frame rates produces matching displacement.
@@ -1978,24 +2106,41 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(world, wanderService, adaptiveService);
-                x = (float) next.x();
-                y = (float) next.y();
-                directionX = next.directionX();
-                directionY = next.directionY();
+                if (nonTangibilityEnergy > 0) {
+                    // Phasing ghost: single random direction, ignores walls, bounces at board boundary.
+                    EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
+                    MovementResult next = phasingService.tick(state, world);
+                    x = (float) next.x();
+                    y = (float) next.y();
+                    directionX = next.directionX();
+                    directionY = next.directionY();
+                } else {
+                    MovementResult next = nextMove(world, wanderService, patrolService, adaptiveService);
+                    x = (float) next.x();
+                    y = (float) next.y();
+                    directionX = next.directionX();
+                    directionY = next.directionY();
+                }
             }
+        }
+
+        /** Returns the current render opacity for this enemy (1.0 = fully solid). */
+        private float renderOpacity() {
+            return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy);
         }
 
         private MovementResult nextMove(WorldView world,
                         AntiLoopWanderMovementService wanderService,
+                        PatrolMovementService patrolService,
                         AdaptiveAggressiveMovementService adaptiveService) {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             if (behavior == BehaviorType.PASSIVE) {
                 behavior = BehaviorType.WANDER;
             }
             behaviorTypeLabel = behavior.name();
+            // Build state once; all three branches use the same fields.
+            EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
             if (behavior == BehaviorType.AGGRESSIVE) {
-                EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
                 MovementResult result = adaptiveService.tick(
                         state,
                         world,
@@ -2010,8 +2155,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 }
                 return result;
             }
-            EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
-            movementTypeLabel = behavior == BehaviorType.PATROL ? "PATROL" : "WANDER";
+            if (behavior == BehaviorType.PATROL) {
+                MovementResult result = patrolService.tick(
+                        state,
+                        world,
+                        1.0d / JAVA_FX_TICK_RATE);
+                movementTypeLabel = patrolService.modeForEnemy(runtimeEnemyId)
+                        == PatrolMovementService.PatrolMovementMode.WANDER_RECOVERY
+                        ? "PATROL_WANDER"
+                        : "PATROL_PATH";
+                return result;
+            }
+            movementTypeLabel = "WANDER";
             return wanderService.tick(state, world);
         }
 
@@ -2026,6 +2181,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 return movementTypeLabel;
             }
             return null;
+        }
+
+        private List<ActivePathPoint> activePathPoints(PatrolMovementService patrolService,
+                                                       AdaptiveAggressiveMovementService adaptiveService) {
+            BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
+            if (behavior == BehaviorType.AGGRESSIVE) {
+                return adaptiveService.currentPathForEnemy(runtimeEnemyId, x, y);
+            }
+            if (behavior == BehaviorType.PATROL) {
+                return patrolService.currentPathForEnemy(runtimeEnemyId, x, y);
+            }
+            return List.of();
         }
 
         private static int[] seededCardinal(String id, long tick) {

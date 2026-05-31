@@ -11,8 +11,8 @@ import main.game.maze.difficulties.NormalDifficulty;
  */
 public final class GameScoringConstants {
 
-    public static final int EASY_BASE_SCORE = 10000;
-    public static final int NORMAL_BASE_SCORE = 20000;
+    public static final int EASY_BASE_SCORE = 5000;
+    public static final int NORMAL_BASE_SCORE = 10000;
     public static final int HARD_BASE_SCORE = 30000;
 
     private GameScoringConstants() {

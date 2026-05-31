@@ -174,10 +174,19 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
-            if (entity instanceof ICanDie victim) {
-                victim.subtractHitPoints(Math.max(1, getDamage() / 2)); // light bump damage
-            }
+        var myBounds = graphics.getBoundsInParent();
+        if (!nodeBounds.intersects(myBounds)) {
+            return;
+        }
+        // A wall between the pumpkin bomber and the target blocks damage.
+        if (App.gameController != null
+                && App.gameController.isWallBetween(
+                        myBounds.getCenterX(), myBounds.getCenterY(),
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY())) {
+            return;
+        }
+        if (entity instanceof ICanDie victim) {
+            victim.subtractHitPoints(Math.max(1, getDamage() / 2)); // light bump damage
         }
     }
 

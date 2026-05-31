@@ -21,5 +21,6 @@ public class StageConstants {
     public final static int ScoreWinBonus = 4000;
     public final static int NaviGraphStepSize = 30;
     public final static int WallSegmentLengthPx = 20;
+    public final static int WallThicknessPx = 5;
     
 }

@@ -51,12 +51,16 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 * Your score will lower for each move you make and the more life you lose.
 * You will get an extra 4 000 in score for reaching the heart.
 * You will lose 4 000 in score for dying.
-* You can press and hold the P key to see the navigation path to your win area, this will lower your score (move around a little if it doesn't work at first).
-* You can press and hold the O key to see all possible navigation pathsin the game, this will lower your score (move around a little if it doesn't work at first).
+* You can press and hold the P key to see the navigation path to your win area; this will lower your score (move around a little if it doesn't work at first). The P key has a time budget per difficulty: 45 s (Easy), 25 s (Normal), 15 s (Hard). Once the budget is spent, the hint is unavailable for the rest of the game.
+* You can press and hold the O key to see all possible navigation paths in the game; this will lower your score (move around a little if it doesn't work at first).
 * Press the H key to show high scores.
 * Press the ESC key to restart the game.
 * You can save your scores when you die or win.
 * Try the game a few times to get to know it.
+
+### Ghost enemies
+
+Ghosts start in a semi-transparent *phasing* state and materialise over time (roughly 43 seconds). While phasing, a ghost passes through walls and cannot harm you. Once fully solid (fully opaque) a ghost deals damage on contact. Watch the opacity: a barely-visible ghost is harmless; a fully opaque ghost is dangerous.
 
 <br/>
 <img src="./gameDemo1.png" alt="Game Demo Screenshot" width="45%" />

@@ -50,17 +50,18 @@ overall feature is marked Done.
 ### F3. Patrol behaviour with explicit waypoints
 
 - **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior (currentIndex, behavior: PatrolPathBehavior)`, `PatrolPoint (point, events)`, `PatrolZone (topLeft, width, height)`, `PatrolPathBehavior {LOOP, BACKWARD, RANDOM}`.
+- **Example**: [maze/src/test/patrol_behavior_example.xmi](maze/src/test/patrol_behavior_example.xmi) demonstrates the expected XMI format with five `<path time="N">` waypoints, where each `path.time` attribute (milliseconds) is the dwell period before the enemy advances to the next point.
 - **Status**: Partial.
 - **Backend**: both.
-- **What the model says**: a patrol is an ordered list of waypoints, optionally
-  scoped to a rectangular zone, with three traversal strategies.
+- **What the model says**: a patrol is an ordered list of `path` entries, each with an optional `time` (dwell ms) and a `point (posX, posY)`, optionally scoped to a rectangular zone, with three traversal strategies (LOOP, BACKWARD, RANDOM).
 - **What the game does today**: `GameController.doCharacterPatrolMove()` exists
   and a `BehaviorType.PATROL` is handled, but waypoints are currently inferred
-  from local geometry rather than read from a configured `PatrolBehavior` with
-  a `path` and a `patrolZone`. The `LOOP / BACKWARD / RANDOM` traversal modes
-  are not implemented.
+  from local geometry rather than read from a configured `PatrolBehavior` loaded
+  from XMI. The `LOOP / BACKWARD / RANDOM` traversal modes and per-waypoint
+  dwell times (`path.time`) are not implemented.
 - **Acceptance**: a `PatrolBehavior` loaded from XMI (or from the DSL) drives
-  the enemy through its declared waypoints using the chosen traversal mode.
+  the enemy through its declared waypoints, respecting the chosen traversal mode
+  and pausing for `path.time` ms at each waypoint.
 
 ### F4. CharacterEvents along a patrol path
 
@@ -308,16 +309,15 @@ overall feature is marked Done.
 - **Acceptance**: a DSL file declaring a `loot_table` is linked to an opponent
   whose `loot` reference points to it, and items drop accordingly.
 
-### F22. DSL `waypoint (x, y) : N ms` wait times
+### F22. Waypoint dwell time (`path.time` in XMI, `N ms` in DSL)
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Waypoint: '(' x ',' y ')' (':' waitTime 'ms')?`.
+- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior.path.time` (integer, milliseconds); [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Waypoint: '(' x ',' y ')' (':' waitTime 'ms')?`.
+- **Example**: the `time` attribute is demonstrated in [maze/src/test/patrol_behavior_example.xmi](maze/src/test/patrol_behavior_example.xmi) (e.g. `<path time="1000">`).
 - **Status**: Missing.
 - **Backend**: both.
-- **What the grammar says**: a waypoint can carry an optional wait duration.
-- **What the game does today**: nothing reads `waitTimeMs` even when patrol
-  behaviour is later wired up.
-- **Acceptance**: an enemy on a patrol with `waitTime` pauses at each
-  waypoint for the configured number of milliseconds.
+- **What the model/grammar says**: both the XMI `<path time="N">` attribute and the DSL `(x, y) : N ms` syntax declare a per-waypoint dwell period; the ecore attribute and DSL grammar both exist but no runtime code reads either value.
+- **What the game does today**: nothing reads `path.time` from XMI or `waitTimeMs` from the DSL even when patrol behaviour is later wired up.
+- **Acceptance**: an enemy on a patrol pauses at each waypoint for the configured number of milliseconds, whether the patrol is loaded from XMI or DSL.
 
 ### F23. DSL `PatrolZoneConfig` bounding rectangle
 

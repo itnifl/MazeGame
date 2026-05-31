@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayDeque;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -72,15 +73,20 @@ class AdaptiveAggressiveMovementServiceTest {
         assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW,
                 service.modeForEnemy("z"),
             "enemy should be in path-follow mode shortly after the 4 second stuck trigger");
+        assertTrue(!service.currentPathForEnemy("z", enemy.x(), enemy.y()).isEmpty(),
+            "path-follow mode should expose the live path the enemy is currently following");
 
+        boolean sawDirectionalAfterWindow = false;
         for (int i = 0; i < 210; i++) {
             MovementResult result = service.tick(enemy, world, 0.1d);
             enemy = advance(enemy, result);
+            if (service.modeForEnemy("z") == AdaptiveAggressiveMovementService.AggressiveMovementMode.DIRECTIONAL) {
+                sawDirectionalAfterWindow = true;
+            }
         }
 
-        assertEquals(AdaptiveAggressiveMovementService.AggressiveMovementMode.DIRECTIONAL,
-                service.modeForEnemy("z"),
-                "enemy should return to directional chase after 20 seconds of path-follow mode");
+        assertTrue(sawDirectionalAfterWindow,
+                "enemy should return to directional chase after the 20 second path-follow window");
     }
 
     @Test
@@ -145,6 +151,137 @@ class AdaptiveAggressiveMovementServiceTest {
                 "repeating circles without player progress for 10 seconds should be treated as stuck");
     }
 
+    @Test
+    void wanderRecoveryDoesNotRevisitHotCellsMoreThanTwoTimesInSlidingWindow() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        ToggleBarrierWorld world = new ToggleBarrierWorld(220d, 120d, 240d, 240d);
+
+        EnemyState enemy = new EnemyState("anti-circle", 32d, 120d, 1, 0, 16d, 4d);
+        List<Long> recent = new java.util.ArrayList<>();
+
+        for (int i = 0; i < 220; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+            if (service.modeForEnemy("anti-circle") != AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) {
+                continue;
+            }
+            recent.add(cell(enemy.x(), enemy.y()));
+            if (recent.size() > 24) {
+                recent.remove(0);
+            }
+            long latest = recent.get(recent.size() - 1);
+            long visits = recent.stream().filter(v -> v == latest).count();
+                assertTrue(visits <= 2,
+                    "wander recovery should not let a hot cell appear more than 2 times in the last 24 steps");
+        }
+    }
+
+    @Test
+    void wanderRecoveryNeverRepeatsSameFourDirectionsThreeTimesInRow() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        CircularArenaWorld world = new CircularArenaWorld(120d, 120d, 240d, 240d);
+
+        EnemyState enemy = new EnemyState("anti-cycle", 40d, 120d, 0, -1, 16d, 4d);
+        ArrayDeque<Integer> movedDirections = new ArrayDeque<>();
+
+        for (int i = 0; i < 240; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+
+            if (!result.moved()) {
+                continue;
+            }
+            int code = directionCode(result.directionX(), result.directionY());
+            if (code < 0) {
+                continue;
+            }
+            movedDirections.addLast(code);
+            while (movedDirections.size() > 12) {
+                movedDirections.removeFirst();
+            }
+            if (movedDirections.size() < 12) {
+                continue;
+            }
+            int[] seq = movedDirections.stream().mapToInt(Integer::intValue).toArray();
+            boolean threeRepeats = true;
+            for (int j = 0; j < 4; j++) {
+                if (seq[j] != seq[j + 4] || seq[j] != seq[j + 8]) {
+                    threeRepeats = false;
+                    break;
+                }
+            }
+            assertFalse(threeRepeats,
+                    "aggressive movement must not repeat the same 4-direction pattern three times in a row");
+        }
+    }
+
+    @Test
+    void movingWithoutSignificantProgressForTenSecondsTriggersShortestPathMode() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        MovingTargetWorld world = new MovingTargetWorld(240d, 240d, 70d);
+
+        EnemyState enemy = new EnemyState("slow", 20d, 120d, 1, 0, 16d, 0.2d);
+        boolean sawPathFollow = false;
+
+        for (int i = 0; i < 220; i++) {
+            world.syncEnemy(enemy.x(), enemy.y());
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+            if (service.modeForEnemy("slow") == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                sawPathFollow = true;
+                break;
+            }
+        }
+
+        assertTrue(sawPathFollow,
+                "aggressive should enter shortest-path mode after 10 seconds without significant progress");
+        assertTrue(!service.currentPathForEnemy("slow", enemy.x(), enemy.y()).isEmpty(),
+                "path-follow mode should expose the shortest path currently in use");
+    }
+
+    @Test
+    void shortestPathCanResolveWhenPlayerCellIsBlocked() {
+        AdaptiveAggressiveMovementService service = new AdaptiveAggressiveMovementService();
+        WorldView world = new GoalBlockedWorld();
+
+        EnemyState enemy = new EnemyState("goal-blocked", 72d, 120d, 1, 0, 16d, 4d);
+        boolean sawPathFollow = false;
+
+        for (int i = 0; i < 140; i++) {
+            MovementResult result = service.tick(enemy, world, 0.1d);
+            enemy = advance(enemy, result);
+            if (service.modeForEnemy("goal-blocked")
+                    == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW) {
+                sawPathFollow = true;
+                break;
+            }
+        }
+
+        assertTrue(sawPathFollow,
+                "even when the player cell is blocked, path-follow should resolve to a nearest walkable goal");
+        List<ActivePathPoint> path = service.currentPathForEnemy("goal-blocked", enemy.x(), enemy.y());
+        assertTrue(!path.isEmpty(), "resolved path should be available for overlay and movement");
+        ActivePathPoint end = path.get(path.size() - 1);
+        assertFalse(world.wouldCollide(end.x(), end.y(), enemy.size()),
+                "resolved shortest-path endpoint must be walkable");
+    }
+
+    private static int directionCode(int dx, int dy) {
+        if (dx > 0 && dy == 0) {
+            return 0;
+        }
+        if (dx < 0 && dy == 0) {
+            return 1;
+        }
+        if (dx == 0 && dy > 0) {
+            return 2;
+        }
+        if (dx == 0 && dy < 0) {
+            return 3;
+        }
+        return -1;
+    }
+
     private static EnemyState advance(EnemyState s, MovementResult r) {
         return new EnemyState(s.id(), r.x(), r.y(), r.directionX(), r.directionY(), s.size(), s.speed());
     }
@@ -153,6 +290,12 @@ class AdaptiveAggressiveMovementServiceTest {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return Math.hypot(dx, dy);
+    }
+
+    private static long cell(double x, double y) {
+        long qx = Math.round(x / 4d);
+        long qy = Math.round(y / 4d);
+        return (qx << 32) ^ (qy & 0xffffffffL);
     }
 
     private record FlatWorldView(double playerX, double playerY,
@@ -325,6 +468,117 @@ class AdaptiveAggressiveMovementServiceTest {
             double dy = centerY - 120d;
             double r = Math.hypot(dx, dy);
             return r < 54d || r > 78d;
+        }
+    }
+
+    private static final class GoalBlockedWorld implements WorldView {
+        @Override
+        public double playerX() {
+            return 180d;
+        }
+
+        @Override
+        public double playerY() {
+            return 120d;
+        }
+
+        @Override
+        public double minX() {
+            return 0d;
+        }
+
+        @Override
+        public double minY() {
+            return 0d;
+        }
+
+        @Override
+        public double maxX() {
+            return 240d;
+        }
+
+        @Override
+        public double maxY() {
+            return 240d;
+        }
+
+        @Override
+        public boolean wouldCollide(double centerX, double centerY, double size) {
+            double half = size * 0.5d;
+            if (centerX - half < 0d || centerY - half < 0d) {
+                return true;
+            }
+            if (centerX + half > maxX() || centerY + half > maxY()) {
+                return true;
+            }
+
+            // Vertical wall blocks direct directional chase so shortest-path fallback must engage.
+            if (Math.abs(centerX - 120d) <= half && centerY >= 40d && centerY <= 200d) {
+                return true;
+            }
+
+            // Blocked square around player location to exercise nearest-walkable goal fallback.
+            return centerX >= 172d && centerX <= 188d && centerY >= 112d && centerY <= 128d;
+        }
+    }
+
+    private static final class MovingTargetWorld implements WorldView {
+        private final double maxX;
+        private final double maxY;
+        private final double offsetX;
+        private double enemyX;
+        private double enemyY;
+
+        private MovingTargetWorld(double maxX, double maxY, double offsetX) {
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.offsetX = offsetX;
+            this.enemyX = 20d;
+            this.enemyY = 120d;
+        }
+
+        private void syncEnemy(double x, double y) {
+            this.enemyX = x;
+            this.enemyY = y;
+        }
+
+        @Override
+        public double playerX() {
+            return Math.min(maxX - 10d, enemyX + offsetX);
+        }
+
+        @Override
+        public double playerY() {
+            return enemyY;
+        }
+
+        @Override
+        public double minX() {
+            return 0d;
+        }
+
+        @Override
+        public double minY() {
+            return 0d;
+        }
+
+        @Override
+        public double maxX() {
+            return maxX;
+        }
+
+        @Override
+        public double maxY() {
+            return maxY;
+        }
+
+        @Override
+        public boolean wouldCollide(double centerX, double centerY, double size) {
+            double half = size * 0.5d;
+            if (centerX - half < 0d || centerY - half < 0d) {
+                return true;
+            }
+            return centerX + half > maxX || centerY + half > maxY;
         }
     }
 }

@@ -20,10 +20,12 @@ import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.PlayerConstants;
 import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
@@ -243,25 +245,46 @@ public class PlayerCharacter extends Character
         if (graphics == null) {
             return;  // Player removed (game over), skip evaluation
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
-            if (entity instanceof ICanKill) {
-                var canKillEntity = (ICanKill) entity;
-                LOGGER.fine("Player is intersecting with " + canKillEntity);
-                this.subtractHitPoints(canKillEntity.getDamage());
-                this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
-                doStandardScreamSound();
-            }
-            if (entity instanceof ZombieCharacter zombieCharacter) {
-                calculateInfection(zombieCharacter);
-            }
 
-            if (entity instanceof ICanLetYouWin) {
-                try {
-                    this.isWinning = true;
-                    ((ICanLetYouWin) entity).WinGame();
-                } catch (Exception ex) {
-                    //Swallow exception
-                }
+        // Phasing ghosts bypass walls but still deal contact damage and trigger the scream.
+        // Use the shared service so the decision is never duplicated across frontends.
+        boolean isPhasing = entity instanceof INonTangientMazeGameCharacter nonTangient
+                && GhostNonTangibilityService.isPhasing(nonTangient.getNonTangientEnergy());
+
+        var myBounds = graphics.getBoundsInParent();
+        if (!nodeBounds.intersects(myBounds)) {
+            return;
+        }
+
+        // A wall between the enemy centre and the player centre blocks damage for solid enemies.
+        // Phasing ghosts bypass this check.
+        if (!isPhasing
+                && App.gameController != null
+                && App.gameController.isWallBetween(
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY(),
+                        myBounds.getCenterX(), myBounds.getCenterY())) {
+            return;
+        }
+
+        if (entity instanceof ICanKill) {
+            var canKillEntity = (ICanKill) entity;
+            LOGGER.fine("Player is intersecting with " + canKillEntity);
+            this.subtractHitPoints(canKillEntity.getDamage());
+            if (this.getCharacterGraphics() instanceof ImageView iv) {
+                this.flashCharacterColor(iv, ColorHueConstants.RED_HUE);
+            }
+            doStandardScreamSound();
+        }
+        if (entity instanceof ZombieCharacter zombieCharacter) {
+            calculateInfection(zombieCharacter);
+        }
+
+        if (entity instanceof ICanLetYouWin) {
+            try {
+                this.isWinning = true;
+                ((ICanLetYouWin) entity).WinGame();
+            } catch (Exception ex) {
+                //Swallow exception
             }
         }
     }
@@ -339,7 +362,9 @@ public class PlayerCharacter extends Character
         }
         infectionAnimation = AnimationEngine.get().scheduleOnce(1.0, () -> {
             this.subtractHitPoints((int) Math.round(dps));
-            this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.GREEN_HUE);
+            if (this.getCharacterGraphics() instanceof ImageView iv) {
+                this.flashCharacterColor(iv, ColorHueConstants.GREEN_HUE);
+            }
             this.doInfectedScreamSound();
             scheduleInfectionTick(dps, remainingTicks - 1);
         });

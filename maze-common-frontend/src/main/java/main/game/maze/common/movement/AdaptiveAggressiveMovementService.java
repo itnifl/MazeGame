@@ -26,13 +26,16 @@ public final class AdaptiveAggressiveMovementService {
     public static final double PATH_FOLLOW_SECONDS = 20.0d;
     public static final double WANDER_RECOVERY_SECONDS = 6.0d;
     public static final double NO_PROGRESS_STUCK_SECONDS = 10.0d;
-    private static final double PROGRESS_EPSILON_UNITS = 1.0d;
+    private static final double SIGNIFICANT_PROGRESS_UNITS = 6.0d;
     private static final double AXIS_HYSTERESIS_UNITS = 6.0d;
     /** Hard anti-circle cap: never visit the same cell more than this many times
      * in the recent history window before forcing a fresh shortest-path retry. */
-    private static final int MAX_CELL_VISITS = 3;
+    private static final int MAX_CELL_VISITS = 2;
     private static final int CELL_HISTORY_SIZE = 24;
     private static final double CELL_GRID_MIN = 2.0d;
+    private static final int FOUR_CYCLE_BLOCK = 4;
+    private static final int MAX_FOUR_CYCLE_REPEATS = 3;
+    private static final int DIRECTION_HISTORY_WINDOW = FOUR_CYCLE_BLOCK * MAX_FOUR_CYCLE_REPEATS;
 
     private static final int[][] CARDINAL = {
             {1, 0}, {-1, 0}, {0, 1}, {0, -1}
@@ -59,6 +62,21 @@ public final class AdaptiveAggressiveMovementService {
             return AggressiveMovementMode.WANDER_RECOVERY;
         }
         return AggressiveMovementMode.DIRECTIONAL;
+    }
+
+    public List<ActivePathPoint> currentPathForEnemy(String enemyId, double currentX, double currentY) {
+        String id = enemyId == null ? "<anonymous>" : enemyId;
+        RuntimeState state = states.get(id);
+        if (state == null || state.path == null || state.pathIndex >= state.path.size()) {
+            return List.of();
+        }
+        List<ActivePathPoint> snapshot = new ArrayList<>();
+        snapshot.add(new ActivePathPoint(currentX, currentY));
+        for (int i = state.pathIndex; i < state.path.size(); i++) {
+            Point point = state.path.get(i);
+            snapshot.add(new ActivePathPoint(point.x, point.y));
+        }
+        return snapshot.size() > 1 ? snapshot : List.of();
     }
 
     public MovementResult tick(EnemyState enemy, WorldView world, double deltaSeconds) {
@@ -144,8 +162,8 @@ public final class AdaptiveAggressiveMovementService {
                                             WorldView world,
                                             double deltaSeconds) {
         double dist = distanceToPlayer(x, y, world);
-        if (dist + PROGRESS_EPSILON_UNITS < state.bestDistanceToPlayer) {
-            state.bestDistanceToPlayer = dist;
+        if (state.progressCheckpointDistance - dist >= SIGNIFICANT_PROGRESS_UNITS) {
+            state.progressCheckpointDistance = dist;
             state.noProgressSeconds = 0d;
             return;
         }
@@ -208,6 +226,7 @@ public final class AdaptiveAggressiveMovementService {
     private static void beginWanderRecovery(RuntimeState state) {
         clearPath(state);
         state.wanderRecoverySecondsRemaining = WANDER_RECOVERY_SECONDS;
+        state.noProgressSeconds = 0d;
     }
 
     private static void clearPath(RuntimeState state) {
@@ -283,49 +302,38 @@ public final class AdaptiveAggressiveMovementService {
                 : true;
         if (!blockedByVisitCap) {
             MovementResult forward = tryStep(enemy, world, dx, dy);
-            if (forward.moved()) {
+            if (forward.moved() && !wouldCreateThreeConsecutiveFourDirectionRepeats(state, dx, dy)) {
                 state.wanderTick++;
                 rememberCell(state, cellKey(forward.x(), forward.y(), enemy.speed()));
+                rememberDirection(state, dx, dy);
                 return forward;
             }
         }
 
-        int reverseX = -dx;
-        int reverseY = -dy;
         int startIndex = Math.floorMod(
                 (enemyId == null ? 0 : enemyId.hashCode()) + state.wanderTick,
                 CARDINAL.length);
 
-        // Two passes: first respecting the visit cap, then ignoring it but still
-        // banning the immediate reverse. Last resort is reverse.
+        // Two passes: first respecting the visit cap, then ignoring it.
+        // Reverse is allowed in both passes to break tight-area circles faster.
         for (int pass = 0; pass < 2; pass++) {
             for (int i = 0; i < CARDINAL.length; i++) {
                 int idx = Math.floorMod(startIndex + i, CARDINAL.length);
                 int cdx = CARDINAL[idx][0];
                 int cdy = CARDINAL[idx][1];
-                if (cdx == reverseX && cdy == reverseY && (dx != 0 || dy != 0)) {
-                    continue;
-                }
                 if (pass == 0 && visitCountAfterStep(state, enemy, cdx, cdy) >= MAX_CELL_VISITS) {
                     continue;
                 }
                 MovementResult candidate = tryStep(enemy, world, cdx, cdy);
-                if (candidate.moved()) {
+                if (candidate.moved() && !wouldCreateThreeConsecutiveFourDirectionRepeats(state, cdx, cdy)) {
                     state.wanderTick++;
                     rememberCell(state, cellKey(candidate.x(), candidate.y(), enemy.speed()));
+                    rememberDirection(state, cdx, cdy);
                     return candidate;
                 }
             }
         }
-        // Absolute last resort: try reverse so we never hard-freeze.
-        if (dx != 0 || dy != 0) {
-            MovementResult rev = tryStep(enemy, world, reverseX, reverseY);
-            if (rev.moved()) {
-                state.wanderTick++;
-                rememberCell(state, cellKey(rev.x(), rev.y(), enemy.speed()));
-                return rev;
-            }
-        }
+        // If all cardinals are blocked, keep direction but report no movement.
         state.wanderTick++;
         return new MovementResult(enemy.x(), enemy.y(), dx, dy, false);
     }
@@ -334,6 +342,58 @@ public final class AdaptiveAggressiveMovementService {
         double nx = enemy.x() + dx * enemy.speed();
         double ny = enemy.y() + dy * enemy.speed();
         return state.visitCounts.getOrDefault(cellKey(nx, ny, enemy.speed()), 0);
+    }
+
+    private static boolean wouldCreateThreeConsecutiveFourDirectionRepeats(RuntimeState state, int dx, int dy) {
+        int dir = encodeDirection(dx, dy);
+        if (dir < 0) {
+            return false;
+        }
+        if (state.recentDirections.size() < DIRECTION_HISTORY_WINDOW - 1) {
+            return false;
+        }
+
+        int[] seq = new int[DIRECTION_HISTORY_WINDOW];
+        int i = 0;
+        for (int existing : state.recentDirections) {
+            seq[i++] = existing;
+        }
+        seq[i] = dir;
+
+        for (int j = 0; j < FOUR_CYCLE_BLOCK; j++) {
+            int expected = seq[j];
+            if (seq[j + FOUR_CYCLE_BLOCK] != expected || seq[j + 2 * FOUR_CYCLE_BLOCK] != expected) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void rememberDirection(RuntimeState state, int dx, int dy) {
+        int dir = encodeDirection(dx, dy);
+        if (dir < 0) {
+            return;
+        }
+        state.recentDirections.addLast(dir);
+        while (state.recentDirections.size() > DIRECTION_HISTORY_WINDOW - 1) {
+            state.recentDirections.removeFirst();
+        }
+    }
+
+    private static int encodeDirection(int dx, int dy) {
+        if (dx > 0 && dy == 0) {
+            return 0;
+        }
+        if (dx < 0 && dy == 0) {
+            return 1;
+        }
+        if (dx == 0 && dy > 0) {
+            return 2;
+        }
+        if (dx == 0 && dy < 0) {
+            return 3;
+        }
+        return -1;
     }
 
     private static long cellKey(double x, double y, double speed) {
@@ -527,22 +587,23 @@ public final class AdaptiveAggressiveMovementService {
         private double pathSecondsRemaining;
         private double wanderRecoverySecondsRemaining;
         private double noProgressSeconds;
-        private double bestDistanceToPlayer = Double.NaN;
+        private double progressCheckpointDistance = Double.NaN;
         private List<Point> path;
         private int pathIndex;
         private int wanderTick;
         private final ArrayDeque<Long> recentCells = new ArrayDeque<>();
         private final Map<Long, Integer> visitCounts = new HashMap<>();
+        private final ArrayDeque<Integer> recentDirections = new ArrayDeque<>();
 
         private void initDistanceIfNeeded(double distance) {
-            if (Double.isNaN(bestDistanceToPlayer)) {
-                bestDistanceToPlayer = distance;
+            if (Double.isNaN(progressCheckpointDistance)) {
+                progressCheckpointDistance = distance;
             }
         }
 
         private void resetProgress(double distance) {
             noProgressSeconds = 0d;
-            bestDistanceToPlayer = distance;
+            progressCheckpointDistance = distance;
         }
     }
 

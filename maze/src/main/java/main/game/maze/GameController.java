@@ -3,12 +3,14 @@ package main.game.maze;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -72,17 +74,24 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
+import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GhostNonTangibilityService;
+import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.HardDifficulty;
-import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.common.terminal.TerminalCommand;
+import main.game.maze.common.terminal.TerminalCommandParser;
+import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 import main.game.maze.constants.PlayerConstants;
@@ -123,6 +132,8 @@ public class GameController implements Initializable {
     private Button commandsMenuButton;
     @FXML
     private Button terminalMenuButton;
+    @FXML
+    private Label pathHintTimerLabel;
 
     private static final String COMMANDS_BUTTON_STYLE = "-fx-background-color: rgba(143,255,224,0.85); -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
@@ -157,11 +168,29 @@ public class GameController implements Initializable {
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
-    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
-    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
-    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
-    private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
+    private static final double ROUTE_HINT_PENALTY_PER_MS = 0.05;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
+
+    // Path-hint energy budget (per difficulty, in seconds)
+    private static final long PATH_HINT_BUDGET_EASY_NANOS  = 45L * 1_000_000_000L;
+    private static final long PATH_HINT_BUDGET_NORMAL_NANOS = 25L * 1_000_000_000L;
+    private static final long PATH_HINT_BUDGET_HARD_NANOS  = 15L * 1_000_000_000L;
+    /** Total nanoseconds of path-hint budget consumed this game. */
+    private long pathHintTotalUsedNanos = 0L;
+    /** Nanos when the P key was most recently pressed (0 if not held). */
+    private long pathHintPressStartNanos = 0L;
+    /** True while P is physically held down and a budget press is in progress. */
+    private boolean pathHintKeyDown = false;
+    /** Timeline that ticks every 100ms while P is held to update the countdown label. */
+    private Timeline pathHintCountdownTicker;
+    /** Auto-clears the "energy already spent" message after a short delay. */
+    private PauseTransition pathHintExhaustedClearTimer;
+    /** Nanos of the most recent movement-loop heartbeat; used by the watchdog. */
+    private final AtomicLong lastMovementLoopNanos = new AtomicLong(0L);
+    /** Fires every second while the movement thread should be alive. */
+    private Timeline movementWatchdogTimer;
+    /** If no heartbeat is seen within this window the thread is considered stalled. */
+    private static final long MOVEMENT_STALL_THRESHOLD_NANOS = 6_000_000_000L; // 6 s
     private boolean isRouteHintVisible = false;
     private long lastRouteHintPenaltyNanos = 0L;
     private double routeHintPenaltyAccumulator = 0.0;
@@ -173,17 +202,14 @@ public class GameController implements Initializable {
     private final Map<Node, Timeline> infectiousMists = new HashMap<>();
     private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
     private PauseTransition enemyDebugLabelHideTimer;
+    private PauseTransition hudMessageClearTimer;
     private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
-
-    private enum TerminalCommand {
-        HELP,
-        SHOW_BEHAVIOUR_TYPE,
-        SHOW_MOVEMENT_TYPE,
-        SHOW_ENEMY_PATH,
-        UNKNOWN,
-        EMPTY
-    }
+    private final PatrolMovementService patrolMovementService = new PatrolMovementService();
+    private final GhostPhasingMovementService ghostPhasingMovementService = new GhostPhasingMovementService();
+    private AnimationTimer enemyPathOverlayTimer;
+    private boolean enemyPathOverlayVisible;
+    private long enemyPathOverlayHideAtNanos;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -298,6 +324,23 @@ public class GameController implements Initializable {
         return routeHintPenaltyPoints;
     }
 
+    /**
+     * Returns {@code true} if any maze wall separates the straight line between
+     * {@code (ex, ey)} (enemy centre) and {@code (px, py)} (player centre).
+     * Used by character collision handlers to prevent damage through walls.
+     * Returns {@code false} when the maze is not yet initialised.
+     */
+    public boolean isWallBetween(double ex, double ey, double px, double py) {
+        if (maze == null) {
+            return false;
+        }
+        var walls = maze.getMazeVectors();
+        if (walls == null || walls.isEmpty()) {
+            return false;
+        }
+        return WallCollisionUtil.wallBetweenVectors(ex, ey, px, py, walls);
+    }
+
     private void applyRouteHintPenalty(long now) {
         if (!isRouteHintVisible) {
             lastRouteHintPenaltyNanos = now;
@@ -377,7 +420,7 @@ public class GameController implements Initializable {
         var dialog = new TextInputDialog();
         dialog.setTitle("Maze Terminal");
         dialog.setHeaderText("Enter command");
-        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath");
+        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath, /sep (shows enemy paths for 10 seconds)");
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
         if (window != null) {
             dialog.initOwner(window);
@@ -392,7 +435,7 @@ public class GameController implements Initializable {
     private void executeTerminalCommand(String raw) {
         TerminalCommand command = parseTerminalCommand(raw);
         switch (command) {
-            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep");
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)", Duration.seconds(20));
             case SHOW_BEHAVIOUR_TYPE -> {
                 setHudMessage("Showing behaviour type above enemies");
                 showEnemyDebugLabels(true);
@@ -402,7 +445,7 @@ public class GameController implements Initializable {
                 showEnemyDebugLabels(false);
             }
             case SHOW_ENEMY_PATH -> {
-                setHudMessage("Showing enemy paths for 10s");
+                setHudMessage("Showing enemy paths for 10 seconds");
                 showEnemyPathsOverlay();
             }
             case EMPTY -> setHudMessage("No command entered");
@@ -411,37 +454,32 @@ public class GameController implements Initializable {
     }
 
     private static TerminalCommand parseTerminalCommand(String raw) {
-        String command = raw == null ? "" : raw.trim().toLowerCase(java.util.Locale.ROOT);
-        if (command.isEmpty()) {
-            return TerminalCommand.EMPTY;
-        }
-        if ("/h".equals(command)) {
-            return TerminalCommand.HELP;
-        }
-        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
-            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
-        }
-        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
-            return TerminalCommand.SHOW_MOVEMENT_TYPE;
-        }
-        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
-            return TerminalCommand.SHOW_ENEMY_PATH;
-        }
-        return TerminalCommand.UNKNOWN;
+        return TerminalCommandParser.parse(raw);
     }
 
     private void showEnemyPathsOverlay() {
-        // Lightweight overlay: count how many enemy paths we could compute and
-        // surface the count as a HUD echo. Full Canvas-line rendering is
-        // wired in a follow-up; for now the user gets confirmation that the
-        // command fired plus the visible count of trackable enemies.
-        int trackable = 0;
-        for (var cc : allComputerCharacters) {
-            if (cc instanceof ComputerCharacter) {
-                trackable++;
-            }
+        enemyPathOverlayVisible = true;
+        enemyPathOverlayHideAtNanos = System.nanoTime() + 10_000_000_000L;
+        ensureEnemyPathOverlayTimer();
+        refreshPathCanvasOverlay();
+    }
+
+    private void ensureEnemyPathOverlayTimer() {
+        if (enemyPathOverlayTimer != null) {
+            enemyPathOverlayTimer.start();
+            return;
         }
-        setHudMessage("Enemy path overlay: tracking " + trackable + " enemies for 10s");
+        enemyPathOverlayTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (now >= enemyPathOverlayHideAtNanos) {
+                    enemyPathOverlayVisible = false;
+                    stop();
+                }
+                refreshPathCanvasOverlay();
+            }
+        };
+        enemyPathOverlayTimer.start();
     }
 
     private void showEnemyDebugLabels(boolean behaviourType) {
@@ -491,6 +529,12 @@ public class GameController implements Initializable {
             }
             return "AGGRESSIVE_CHASE";
         }
+        if (behaviour == BehaviorType.PATROL) {
+            String id = enemyRuntimeId(character);
+            return patrolMovementService.modeForEnemy(id) == PatrolMovementService.PatrolMovementMode.WANDER_RECOVERY
+                    ? "PATROL_WANDER"
+                    : "PATROL_PATH";
+        }
         if (behaviour == BehaviorType.PASSIVE) {
             return "WANDER";
         }
@@ -512,9 +556,20 @@ public class GameController implements Initializable {
     }
 
     private void setHudMessage(String text) {
+        if (hudMessageClearTimer != null) {
+            hudMessageClearTimer.stop();
+            hudMessageClearTimer = null;
+        }
         if (mouseCoordsLabel != null) {
             mouseCoordsLabel.setText(text);
         }
+    }
+
+    private void setHudMessage(String text, Duration visibleFor) {
+        setHudMessage(text);
+        hudMessageClearTimer = new PauseTransition(visibleFor);
+        hudMessageClearTimer.setOnFinished(e -> setHudMessage(""));
+        hudMessageClearTimer.play();
     }
 
     private void openDifficultyPickerAndMaybeRestart() {
@@ -566,41 +621,19 @@ public class GameController implements Initializable {
         action.Load();
     }
 
-    private void movePlayerRight() {
+    private void stepPlayer(java.util.function.IntPredicate step) {
         int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
         for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveRight(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
+            if (step.test(playerMovementSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
             }
         }
     }
 
-    private void movePlayerLeft() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveLeft(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerDown() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveDown(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerUp() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveUp(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }        
-        }
-    }
+    private void movePlayerRight() { stepPlayer(speed -> playerCharacter.moveRight(speed, false)); }
+    private void movePlayerLeft()  { stepPlayer(speed -> playerCharacter.moveLeft(speed, false)); }
+    private void movePlayerDown()  { stepPlayer(speed -> playerCharacter.moveDown(speed, false)); }
+    private void movePlayerUp()    { stepPlayer(speed -> playerCharacter.moveUp(speed, false)); }
 
     public void setupGame() {
         hpBar.setProgress(1.0);
@@ -673,7 +706,9 @@ public class GameController implements Initializable {
         gameBoard.requestFocus();
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
-        
+        patrolMovementService.reset();
+        ghostPhasingMovementService.reset();
+
         if (startDifficulty != null) {
             OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
         } else {
@@ -707,6 +742,14 @@ public class GameController implements Initializable {
         routeHintPenaltyAccumulator = 0.0;
         isRouteHintVisible = false;
         lastRouteHintPenaltyNanos = 0L;
+        pathHintTotalUsedNanos = 0L;
+        pathHintKeyDown = false;
+        stopPathHintCountdown();
+        clearPathHintTimerLabel();
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+            pathHintExhaustedClearTimer = null;
+        }
         updateScoreHud(score);
 
         gameBoard.setFocusTraversable(true);
@@ -923,7 +966,7 @@ public class GameController implements Initializable {
         vectorWallMap.clear();
 
         // Configuration for drawing
-        double wallWidth = 5.0; // Defined in requirements
+        double wallWidth = StageConstants.WallThicknessPx; // Defined in requirements
         double wallLength = StageConstants.WallSegmentLengthPx; // Defined in requirements
         
         // Use WOOD_BASIC as default for now, or fetch from logic if available
@@ -1028,12 +1071,12 @@ public class GameController implements Initializable {
     }
 
     public void runComputerCharacters() {
-        if (runComputerCharactersThread != null) {
-            runComputerCharacters.cancel();
-        }
-        if (runComputerCharacters != null) {
-            runComputerCharacters.cancel();
-        }
+        // Stop any existing movement loop and watchdog before starting a fresh one.
+        stopOpponentMovement();
+
+        // Seed the watchdog timestamp so it does not fire before the new thread
+        // has had a chance to begin its first iteration.
+        lastMovementLoopNanos.set(System.nanoTime());
 
         runComputerCharacters = new Task<Boolean>() {
             @Override
@@ -1073,18 +1116,76 @@ public class GameController implements Initializable {
                             }
                         }
                         Thread.sleep(60);
+                        // Heartbeat: let the watchdog know the loop is still alive.
+                        lastMovementLoopNanos.set(System.nanoTime());
                     } while (true);
                 } catch (InterruptedException ie) {
                     LOGGER.fine("Computer character movement loop interrupted");
                     return false;
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error in computer character movement loop", ex);
+                    LOGGER.log(Level.SEVERE,
+                            "Fatal error in computer character movement loop; "
+                            + "watchdog will attempt a restart.", ex);
                     throw ex;
                 }
             }
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
+        runComputerCharactersThread.setDaemon(true);
+        runComputerCharactersThread.setName("enemy-movement-loop");
         runComputerCharactersThread.start();
+        startMovementWatchdog();
+    }
+
+    /**
+     * Starts (or restarts) the movement-loop watchdog.
+     * The watchdog runs on the FX thread once per second. If the background
+     * movement thread has not produced a heartbeat for
+     * {@value #MOVEMENT_STALL_THRESHOLD_NANOS} ns and there is at least one
+     * registered computer character, the thread is considered stalled: a
+     * WARNING is logged and {@link #runComputerCharacters()} is invoked to
+     * replace the defunct thread.
+     */
+    private void startMovementWatchdog() {
+        stopMovementWatchdog();
+        movementWatchdogTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            if (allComputerCharacters.isEmpty()) {
+                // No characters registered yet; nothing to watch.
+                return;
+            }
+            long stallNanos = System.nanoTime() - lastMovementLoopNanos.get();
+            if (stallNanos > MOVEMENT_STALL_THRESHOLD_NANOS) {
+                LOGGER.log(Level.WARNING,
+                        "Enemy movement thread appears stalled — no heartbeat for {0} ms "
+                        + "(threshold={1} ms). Restarting movement loop.",
+                        new Object[]{stallNanos / 1_000_000L,
+                                     MOVEMENT_STALL_THRESHOLD_NANOS / 1_000_000L});
+                runComputerCharacters();
+            }
+        }));
+        movementWatchdogTimer.setCycleCount(Animation.INDEFINITE);
+        movementWatchdogTimer.play();
+    }
+
+    /** Stops and discards the movement-loop watchdog timer, if running. */
+    private void stopMovementWatchdog() {
+        if (movementWatchdogTimer != null) {
+            movementWatchdogTimer.stop();
+            movementWatchdogTimer = null;
+        }
+    }
+
+    private EnemyState buildEnemyState(ComputerCharacter cc) {
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        return new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
     }
 
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
@@ -1097,8 +1198,16 @@ public class GameController implements Initializable {
         }
 
         var nonTangient = false;
-        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
+        }
+
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
         }
 
         // Silent-enemy guard: if both direction components are zero the model never
@@ -1108,92 +1217,72 @@ public class GameController implements Initializable {
             computerCharacter.changeDirection();
         }
 
-        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = approximateEnemySize(cc);
-        EnemyState state = new EnemyState(
-                enemyRuntimeId(cc),
-                cc.getCharacterPosition().getX(),
-                cc.getCharacterPosition().getY(),
-                directionSign(cc.getDirectionX()),
-                directionSign(cc.getDirectionY()),
-                size,
-                speed);
-        MovementResult next = antiLoopWanderMovementService.tick(state, createJavaFxWorldView());
+        MovementResult next = antiLoopWanderMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
 
         if (next.directionX() != 0 || next.directionY() != 0) {
             cc.setDirection(new Point2D(next.directionX(), next.directionY()));
         }
 
-        var successfulMove = computerCharacter.move(nonTangient);
+        var successfulMove = computerCharacter.move(false);
         if (!successfulMove) {
             computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
+            computerCharacter.move(false);
         }
     }
 
     private void doCharacterPatrolMove(IMovingComputerCharacter computerCharacter) {
-        // Check if character is in wander fallback mode
-        if (PatrolController.isInWanderFallback(computerCharacter)) {
-            doCharacterWanderMove(computerCharacter);
-            return;
-        }
-
-        var nonTangient = false;
-        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
-        }
-        
-        var direction = PatrolController.getDirectionToNextPatrolPoint(computerCharacter);
-        
-        // If no valid patrol direction, enter wander fallback
-        if (direction == null) {
-            PatrolController.triggerWanderFallback(computerCharacter);
-            doCharacterWanderMove(computerCharacter);
-            return;
-        }
-        
-        computerCharacter.setDirection(direction);
-        var successfulMove = computerCharacter.move(nonTangient);
-        
-        // If move failed, enter wander fallback to get unstuck
-        if (!successfulMove) {
-            PatrolController.triggerWanderFallback(computerCharacter);
-            computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
-        }
-    }
-
-    private void doCharacterAggressiveMove(IMovingComputerCharacter computerCharacter) {
-        if (playerCharacter == null) {
-            doCharacterWanderMove(computerCharacter);
-            return;
-        }
         if (!(computerCharacter instanceof ComputerCharacter cc)) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
+
         var nonTangient = false;
         if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        if (maze == null) {
+
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
+        }
+
+        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), createJavaFxWorldView(), 0.06d);
+        if (result.directionX() == 0 && result.directionY() == 0) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
 
-        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = approximateEnemySize(cc);
-        EnemyState state = new EnemyState(
-                enemyRuntimeId(cc),
-                cc.getCharacterPosition().getX(),
-                cc.getCharacterPosition().getY(),
-                directionSign(cc.getDirectionX()),
-                directionSign(cc.getDirectionY()),
-                size,
-                speed);
+        computerCharacter.setDirection(new Point2D(result.directionX(), result.directionY()));
+        var successfulMove = computerCharacter.move(false);
+        if (!successfulMove) {
+            doCharacterWanderMove(computerCharacter);
+        }
+    }
+
+    private void doCharacterAggressiveMove(IMovingComputerCharacter computerCharacter) {
+        if (playerCharacter == null || !(computerCharacter instanceof ComputerCharacter cc) || maze == null) {
+            doCharacterWanderMove(computerCharacter);
+            return;
+        }
+
+        var nonTangient = false;
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+            nonTangient = doNonTangientEnergyCalculation(nontangientcc);
+        }
+
+        // Phasing ghost: use dedicated service that ignores walls but respects board boundaries.
+        if (nonTangient) {
+            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
+            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+            computerCharacter.move(true);
+            return;
+        }
 
         var result = adaptiveAggressiveMovementService.tick(
-                state,
+                buildEnemyState(cc),
                 createJavaFxWorldView(),
                 0.06d);
 
@@ -1203,10 +1292,10 @@ public class GameController implements Initializable {
         }
 
         cc.setDirection(new Point2D(result.directionX(), result.directionY()));
-        var successfulMove = computerCharacter.move(nonTangient);
+        var successfulMove = computerCharacter.move(false);
         if (!successfulMove) {
             computerCharacter.changeDirection();
-            computerCharacter.move(nonTangient);
+            computerCharacter.move(false);
         }
     }
 
@@ -1271,48 +1360,12 @@ public class GameController implements Initializable {
 
             @Override
             public boolean wouldCollide(double centerX, double centerY, double size) {
-                double half = size * 0.5d;
-                if (centerX - half < 0d || centerY - half < 0d) {
-                    return true;
-                }
-                if (centerX + half > App.getBoardMaxX() || centerY + half > App.getBoardMaxY()) {
-                    return true;
-                }
                 if (maze == null || maze.getMazeVectors() == null) {
                     return false;
                 }
-
-                double left = centerX - half;
-                double right = centerX + half;
-                double top = centerY - half;
-                double bottom = centerY + half;
-
-                for (Vector2D wall : maze.getMazeVectors()) {
-                    double x1 = wall.getStart().getX();
-                    double y1 = wall.getStart().getY();
-                    double x2 = wall.getEnd().getX();
-                    double y2 = wall.getEnd().getY();
-                    if (Math.abs(y1 - y2) < 0.001d) {
-                        double wx1 = Math.min(x1, x2);
-                        double wx2 = Math.max(x1, x2);
-                        if (right < wx1 || left > wx2) {
-                            continue;
-                        }
-                        if (top <= y1 && bottom >= y1) {
-                            return true;
-                        }
-                    } else {
-                        double wy1 = Math.min(y1, y2);
-                        double wy2 = Math.max(y1, y2);
-                        if (bottom < wy1 || top > wy2) {
-                            continue;
-                        }
-                        if (left <= x1 && right >= x1) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                return WallCollisionUtil.wouldCollideVectors(centerX, centerY, size,
+                        App.getBoardMaxX(), App.getBoardMaxY(),
+                        maze.getMazeVectors());
             }
         };
     }
@@ -1327,26 +1380,14 @@ public class GameController implements Initializable {
     }
 
     private boolean doNonTangientEnergyCalculation(INonTangientMazeGameCharacter nontangientcc) {
-            var energy = nontangientcc.getNonTangientEnergy();
-            boolean nonTangient = energy > 0; 
-            
-            final int maxEnergy = 100;  
-            final double noneOpacityValue = 1; 
-            final double minOpacityValue = 0.1;
-            final double energyDecreaseValue = 0.14;
-            final int maxRandomValue = 10;
-            final double randomTangientMoveThreshold = 7;
-
-            if(nonTangient) {
-                var opacityEnergy = Math.min(maxEnergy, Math.max(0d, energy));
-                nontangientcc.setCharacterOpacity(noneOpacityValue-(opacityEnergy/maxEnergy)+minOpacityValue);
-                nontangientcc.setNonTangientEnergy(Math.max(0d, energy-energyDecreaseValue));
-            } 
-
-            if((int)(Math.random() * maxRandomValue) >= randomTangientMoveThreshold) {
-                nonTangient = false;
-            }  
-            return nonTangient; 
+        var energy = nontangientcc.getNonTangientEnergy();
+        boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
+        if (nonTangient) {
+            nontangientcc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy));
+            // 60 ms per tick in the JavaFX movement loop.
+            nontangientcc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, 0.060));
+        }
+        return nonTangient;
     }
 
     public void registerComputerCharacter(IMovingComputerCharacter character, Node node) {
@@ -1488,7 +1529,120 @@ public class GameController implements Initializable {
     }
 
     private void showNavigationPath() {
-        if (maze == null || pathCanvas == null || heart == null || playerCharacter == null) {
+        long remainingNanos = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        if (remainingNanos <= 0) {
+            showPathHintExhaustedMessage();
+            return;
+        }
+        isRouteHintVisible = true;
+        // Guard against OS key-repeat: only record the start time and launch the
+        // countdown on the very first press event, not on every repeat event.
+        if (!pathHintKeyDown) {
+            pathHintKeyDown = true;
+            pathHintPressStartNanos = System.nanoTime();
+            lastRouteHintPenaltyNanos = pathHintPressStartNanos;
+            startPathHintCountdown();
+        }
+        refreshPathCanvasOverlay();
+    }
+
+    private void clearNavigationPath() {
+        if (pathHintKeyDown) {
+            long heldNanos = System.nanoTime() - pathHintPressStartNanos;
+            pathHintTotalUsedNanos = Math.min(pathHintTotalUsedNanos + heldNanos, pathHintBudgetNanos());
+            pathHintKeyDown = false;
+        }
+        isRouteHintVisible = false;
+        stopPathHintCountdown();
+        clearPathHintTimerLabel();
+        refreshPathCanvasOverlay();
+    }
+
+    /** Returns the path-hint energy budget in nanoseconds based on the active difficulty. */
+    private long pathHintBudgetNanos() {
+        if (startDifficulty instanceof HardDifficulty) return PATH_HINT_BUDGET_HARD_NANOS;
+        if (startDifficulty instanceof EasyDifficulty) return PATH_HINT_BUDGET_EASY_NANOS;
+        return PATH_HINT_BUDGET_NORMAL_NANOS;
+    }
+
+    /**
+     * Starts a 100ms-tick Timeline that updates the path-hint countdown label
+     * and auto-clears the path when the budget is exhausted mid-hold.
+     */
+    private void startPathHintCountdown() {
+        stopPathHintCountdown();
+        pathHintCountdownTicker = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            long usedSoFar = pathHintTotalUsedNanos + (System.nanoTime() - pathHintPressStartNanos);
+            long budgetNanos = pathHintBudgetNanos();
+            long remainingNanos = budgetNanos - usedSoFar;
+            if (remainingNanos <= 0) {
+                pathHintTotalUsedNanos = budgetNanos;
+                pathHintKeyDown = false;
+                isRouteHintVisible = false;
+                stopPathHintCountdown();
+                refreshPathCanvasOverlay();
+                showPathHintExhaustedMessage();
+                return;
+            }
+            updatePathHintTimerLabel(remainingNanos);
+        }));
+        pathHintCountdownTicker.setCycleCount(Animation.INDEFINITE);
+        pathHintCountdownTicker.play();
+        // Show initial value immediately without waiting for first tick.
+        long initial = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        updatePathHintTimerLabel(initial);
+    }
+
+    private void stopPathHintCountdown() {
+        if (pathHintCountdownTicker != null) {
+            pathHintCountdownTicker.stop();
+            pathHintCountdownTicker = null;
+        }
+    }
+
+    private void updatePathHintTimerLabel(long remainingNanos) {
+        if (pathHintTimerLabel == null) return;
+        double secs = remainingNanos / 1_000_000_000.0;
+        pathHintTimerLabel.setText(String.format("Path hint: %.1fs left", secs));
+        pathHintTimerLabel.setVisible(true);
+    }
+
+    private void clearPathHintTimerLabel() {
+        if (pathHintTimerLabel == null) return;
+        pathHintTimerLabel.setText("");
+        pathHintTimerLabel.setVisible(false);
+    }
+
+    private void showPathHintExhaustedMessage() {
+        if (pathHintTimerLabel == null) return;
+        // Stop any previously scheduled auto-clear so we don't get double-clear.
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+        }
+        pathHintTimerLabel.setText("Path hint energy already spent!");
+        pathHintTimerLabel.setVisible(true);
+        pathHintExhaustedClearTimer = new PauseTransition(Duration.seconds(3));
+        pathHintExhaustedClearTimer.setOnFinished(ev -> clearPathHintTimerLabel());
+        pathHintExhaustedClearTimer.play();
+    }
+
+    private void refreshPathCanvasOverlay() {
+        if (pathCanvas == null) {
+            return;
+        }
+        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+        if (isRouteHintVisible) {
+            drawPlayerNavigationPath(gc);
+        }
+        if (enemyPathOverlayVisible) {
+            drawEnemyNavigationPaths(gc);
+        }
+        gc.setGlobalAlpha(1.0);
+    }
+
+    private void drawPlayerNavigationPath(GraphicsContext gc) {
+        if (maze == null || heart == null || playerCharacter == null) {
             isRouteHintVisible = false;
             return;
         }
@@ -1501,49 +1655,67 @@ public class GameController implements Initializable {
 
         Point2D start = new Point2D(
                 playerCharacter.getCharacterPosition().getX(),
-                playerCharacter.getCharacterPosition().getY()
-        );
-
+                playerCharacter.getCharacterPosition().getY());
         double heartW = heart.getBoundsInLocal().getWidth();
         double heartH = heart.getBoundsInLocal().getHeight();
-        double hx = heart.getLayoutX() + heartW / 2.0;
-        double hy = heart.getLayoutY() + heartH / 2.0;
-        Point2D goal = new Point2D(hx, hy);
+        Point2D goal = new Point2D(
+                heart.getLayoutX() + heartW / 2.0,
+                heart.getLayoutY() + heartH / 2.0);
 
         var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
         if (path == null || path.size() < 2) {
             isRouteHintVisible = false;
-            clearNavigationPath();
             return;
         }
-
-        isRouteHintVisible = true;
-        lastRouteHintPenaltyNanos = System.nanoTime();
-
-        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
 
         gc.setLineWidth(8.0);
         gc.setStroke(Color.DODGERBLUE);
         gc.setGlobalAlpha(0.6);
-
         Point2D prev = path.get(0);
         for (int i = 1; i < path.size(); i++) {
             Point2D p = path.get(i);
             gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
             prev = p;
         }
-
-        gc.setGlobalAlpha(1.0); 
     }
 
-    private void clearNavigationPath() {
-        isRouteHintVisible = false;
-        if (pathCanvas == null) {
+    private void drawEnemyNavigationPaths(GraphicsContext gc) {
+        if (maze == null) {
             return;
         }
-        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
+        gc.setLineWidth(5.0);
+        gc.setStroke(Color.ORANGE);
+        gc.setGlobalAlpha(0.65);
+
+        for (var cc : allComputerCharacters) {
+            if (!(cc instanceof ComputerCharacter computerCharacter)) {
+                continue;
+            }
+            List<ActivePathPoint> path = activeEnemyPath(computerCharacter);
+            if (path.isEmpty()) {
+                continue;
+            }
+            ActivePathPoint prev = path.get(0);
+            for (int i = 1; i < path.size(); i++) {
+                ActivePathPoint p = path.get(i);
+                gc.strokeLine(prev.x(), prev.y(), p.x(), p.y());
+                prev = p;
+            }
+        }
+    }
+
+    private List<ActivePathPoint> activeEnemyPath(ComputerCharacter character) {
+        String id = enemyRuntimeId(character);
+        double x = character.getCharacterPosition().getX();
+        double y = character.getCharacterPosition().getY();
+        BehaviorType behaviour = character.getCharacterBehaviour();
+        if (behaviour == BehaviorType.AGGRESSIVE) {
+            return adaptiveAggressiveMovementService.currentPathForEnemy(id, x, y);
+        }
+        if (behaviour == BehaviorType.PATROL) {
+            return patrolMovementService.currentPathForEnemy(id, x, y);
+        }
+        return List.of();
     }
 
     private void showSpanningTree() {
@@ -1628,6 +1800,7 @@ public class GameController implements Initializable {
      * Stops only opponent movement loop.
      */
     public void stopOpponentMovement() {
+        stopMovementWatchdog();
         if (runComputerCharacters != null) runComputerCharacters.cancel();
         if (runComputerCharactersThread != null) {
             runComputerCharactersThread.interrupt();
@@ -1642,6 +1815,22 @@ public class GameController implements Initializable {
 
     public void dispose() {
         stopComputerCharacters();
+        stopPathHintCountdown();
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+            pathHintExhaustedClearTimer = null;
+        }
+
+        if (enemyPathOverlayTimer != null) {
+            enemyPathOverlayTimer.stop();
+            enemyPathOverlayTimer = null;
+        }
+        enemyPathOverlayVisible = false;
+
+        if (hudMessageClearTimer != null) {
+            hudMessageClearTimer.stop();
+            hudMessageClearTimer = null;
+        }
 
         if (infectionWarningHideTimer != null) {
             infectionWarningHideTimer.stop();

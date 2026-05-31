@@ -22,12 +22,29 @@ runtime renderer is JavaFX, libGDX, or something else.
   loading disabled, XInclude off, entity expansion off) so loading from
   arbitrary file paths is safe.
 - Shared enemy movement helpers:
-  `AdaptiveAggressiveMovementService`, `AntiLoopWanderMovementService`, and
-  `EnemySpawnUnstuckService`.
+  `AdaptiveAggressiveMovementService`, `AntiLoopWanderMovementService`,
+  `EnemySpawnUnstuckService`, `GhostNonTangibilityService`, and
+  `GhostPhasingMovementService`.
   Aggressive enemies switch to shortest-path follow mode after 4 seconds of
   blocked movement and keep it for up to 20 seconds before returning to
   directional chase. Wander and patrol use anti-loop scoring to avoid short
   repeating circles when alternate cardinal moves exist.
+  Ghost phasing (non-tangibility) is governed by two shared services:
+  - `GhostNonTangibilityService`: stateless utility that determines whether a
+    ghost is phasing (`energy > 0`), computes the per-tick energy drain, and
+    calculates the semi-transparent rendering opacity. Both frontends MUST use
+    this service exclusively.
+  - `GhostPhasingMovementService`: stateful per-ghost wall-ignoring movement.
+    A phasing ghost picks a random cardinal direction and bounces at board
+    boundaries, bypassing all wall collision checks. Call `reset()` when a new
+    game session starts so per-enemy direction state does not leak across
+    sessions. Both frontends MUST delegate phasing movement to this service.
+- Shared live path snapshot support for enemy overlays:
+  `ActivePathPoint`,
+  `AdaptiveAggressiveMovementService.currentPathForEnemy(...)`, and
+  `PatrolMovementService.currentPathForEnemy(...)`.
+  Frontends use these APIs for `/showenemypath` and `/sep` so overlays show
+  the active runtime path being followed, rather than a newly computed path.
 
 ## Default behaviour with no backend installed
 

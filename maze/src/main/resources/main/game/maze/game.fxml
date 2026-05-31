@@ -42,6 +42,11 @@
 
     <Label fx:id="mouseCoordsLabel" layoutX="1.0" layoutY="23.0" prefHeight="20" prefWidth="100" style="-fx-text-fill: white;" />
 
+    <AnchorPane prefHeight="20" prefWidth="310" AnchorPane.bottomAnchor="70" AnchorPane.rightAnchor="10">
+        <Label fx:id="pathHintTimerLabel" text="" visible="false"
+               style="-fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-size: 13px; -fx-font-weight: bold;" />
+    </AnchorPane>
+
     <AnchorPane prefHeight="20" prefWidth="210" AnchorPane.bottomAnchor="46" AnchorPane.rightAnchor="10">
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" style="-fx-text-fill: white;" />
     </AnchorPane>

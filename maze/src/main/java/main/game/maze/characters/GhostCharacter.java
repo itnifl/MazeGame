@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import main.game.maze.actions.MovementNotifierAction;
+import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
@@ -15,6 +16,7 @@ import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.opponents.Ghost;
 
 public class GhostCharacter extends ComputerCharacter
@@ -64,12 +66,28 @@ public class GhostCharacter extends ComputerCharacter
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
-            if (entity instanceof ICanDie) {
-                var canDieEntity = (ICanDie) entity;
-                LOGGER.fine("Ghost is intersecting with " + canDieEntity);
-                canDieEntity.subtractHitPoints(getDamage());
-            }
+
+        var myBounds = graphics.getBoundsInParent();
+
+        if (!nodeBounds.intersects(myBounds)) {
+            return;
+        }
+
+        // Phasing ghosts bypass walls and can still harm the player.
+        // Wall-blocking only applies to solid (non-phasing) ghosts.
+        boolean isPhasing = GhostNonTangibilityService.isPhasing(getNonTangientEnergy());
+        if (!isPhasing
+                && App.gameController != null
+                && App.gameController.isWallBetween(
+                        myBounds.getCenterX(), myBounds.getCenterY(),
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY())) {
+            return;
+        }
+
+        if (entity instanceof ICanDie) {
+            var canDieEntity = (ICanDie) entity;
+            LOGGER.fine("Ghost is intersecting with " + canDieEntity);
+            canDieEntity.subtractHitPoints(getDamage());
         }
     }
 
