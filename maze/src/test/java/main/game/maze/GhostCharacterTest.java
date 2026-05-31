@@ -16,6 +16,9 @@ class GhostCharacterTest {
     void testDoPositionEvaluationWithAnyICanDie() {
         Rectangle gCharacterGraphics = new Rectangle();
         GhostCharacter ghost = new GhostCharacter(gCharacterGraphics, 0, 0, OpponentsFactory.eINSTANCE.createGhost());
+        // Factory-default ghost has nonTangibilityEnergy=100 (phasing). Set to 0 so it
+        // is solid and can physically harm the player.
+        ghost.setNonTangientEnergy(0);
 
         ImageView pCharacterGraphics = new ImageView();
         PlayerCharacter entity = new PlayerCharacter(pCharacterGraphics, 0, 0, null);

@@ -20,6 +20,7 @@ import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
+import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.PlayerConstants;
@@ -243,25 +244,48 @@ public class PlayerCharacter extends Character
         if (graphics == null) {
             return;  // Player removed (game over), skip evaluation
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
-            if (entity instanceof ICanKill) {
-                var canKillEntity = (ICanKill) entity;
-                LOGGER.fine("Player is intersecting with " + canKillEntity);
-                this.subtractHitPoints(canKillEntity.getDamage());
-                this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
-                doStandardScreamSound();
-            }
-            if (entity instanceof ZombieCharacter zombieCharacter) {
-                calculateInfection(zombieCharacter);
-            }
 
-            if (entity instanceof ICanLetYouWin) {
-                try {
-                    this.isWinning = true;
-                    ((ICanLetYouWin) entity).WinGame();
-                } catch (Exception ex) {
-                    //Swallow exception
-                }
+        // Non-tangient enemies that are currently phasing through walls (energy > 0)
+        // are in spirit form and cannot physically harm the player.
+        if (entity instanceof INonTangientMazeGameCharacter nonTangient
+                && nonTangient.getNonTangientEnergy() > 0) {
+            return;
+        }
+
+        var myBounds = graphics.getBoundsInParent();
+        if (!nodeBounds.intersects(myBounds)) {
+            return;
+        }
+
+        // Use center-to-center distance to avoid false collisions where the enemy's
+        // bounding rectangle overlaps the player's across a thin wall.
+        double dx = nodeBounds.getCenterX() - myBounds.getCenterX();
+        double dy = nodeBounds.getCenterY() - myBounds.getCenterY();
+        double dist = Math.hypot(dx, dy);
+        // Approximate combined touch radius: enemy half-size + player half-size.
+        // NodeBounds width/2 is a good proxy for enemy half-size.
+        double touchThreshold = (nodeBounds.getWidth() + myBounds.getWidth()) / 2.0;
+        if (dist > touchThreshold) {
+            return;
+        }
+
+        if (entity instanceof ICanKill) {
+            var canKillEntity = (ICanKill) entity;
+            LOGGER.fine("Player is intersecting with " + canKillEntity);
+            this.subtractHitPoints(canKillEntity.getDamage());
+            this.flashCharacterColor((ImageView) this.getCharacterGraphics(), ColorHueConstants.RED_HUE);
+            doStandardScreamSound();
+        }
+        if (entity instanceof ZombieCharacter zombieCharacter) {
+            calculateInfection(zombieCharacter);
+        }
+
+        if (entity instanceof ICanLetYouWin) {
+            try {
+                this.isWinning = true;
+                ((ICanLetYouWin) entity).WinGame();
+            } catch (Exception ex) {
+                //Swallow exception
             }
         }
     }

@@ -64,7 +64,26 @@ public class GhostCharacter extends ComputerCharacter
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
+
+        // While the ghost is phasing through walls (non-tangient energy > 0) it is
+        // in spirit form and cannot physically harm anything.
+        if (getNonTangientEnergy() > 0) {
+            return;
+        }
+
+        var myBounds = graphics.getBoundsInParent();
+
+        // Use a center-to-center distance check to prevent false positives when
+        // the ghost is solid but positioned on the far side of a thin wall.
+        double dx = myBounds.getCenterX() - nodeBounds.getCenterX();
+        double dy = myBounds.getCenterY() - nodeBounds.getCenterY();
+        double dist = Math.hypot(dx, dy);
+        double touchThreshold = (this.characterXYSizeFromPoint + StageConstants.PlayerCharacterXYSize) / 2.0;
+        if (dist > touchThreshold) {
+            return;
+        }
+
+        if (nodeBounds.intersects(myBounds)) {
             if (entity instanceof ICanDie) {
                 var canDieEntity = (ICanDie) entity;
                 LOGGER.fine("Ghost is intersecting with " + canDieEntity);

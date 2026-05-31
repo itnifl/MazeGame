@@ -81,6 +81,8 @@ import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.difficulties.EasyDifficulty;
+import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
@@ -128,6 +130,8 @@ public class GameController implements Initializable {
     private Button commandsMenuButton;
     @FXML
     private Button terminalMenuButton;
+    @FXML
+    private Label pathHintTimerLabel;
 
     private static final String COMMANDS_BUTTON_STYLE = "-fx-background-color: rgba(143,255,224,0.85); -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
@@ -164,6 +168,21 @@ public class GameController implements Initializable {
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
+
+    // Path-hint energy budget (per difficulty, in seconds)
+    private static final long PATH_HINT_BUDGET_EASY_NANOS  = 45L * 1_000_000_000L;
+    private static final long PATH_HINT_BUDGET_NORMAL_NANOS = 25L * 1_000_000_000L;
+    private static final long PATH_HINT_BUDGET_HARD_NANOS  = 15L * 1_000_000_000L;
+    /** Total nanoseconds of path-hint budget consumed this game. */
+    private long pathHintTotalUsedNanos = 0L;
+    /** Nanos when the P key was most recently pressed (0 if not held). */
+    private long pathHintPressStartNanos = 0L;
+    /** True while P is physically held down and a budget press is in progress. */
+    private boolean pathHintKeyDown = false;
+    /** Timeline that ticks every 100ms while P is held to update the countdown label. */
+    private Timeline pathHintCountdownTicker;
+    /** Auto-clears the "energy already spent" message after a short delay. */
+    private PauseTransition pathHintExhaustedClearTimer;
     /** Nanos of the most recent movement-loop heartbeat; used by the watchdog. */
     private final AtomicLong lastMovementLoopNanos = new AtomicLong(0L);
     /** Fires every second while the movement thread should be alive. */
@@ -701,6 +720,14 @@ public class GameController implements Initializable {
         routeHintPenaltyAccumulator = 0.0;
         isRouteHintVisible = false;
         lastRouteHintPenaltyNanos = 0L;
+        pathHintTotalUsedNanos = 0L;
+        pathHintKeyDown = false;
+        stopPathHintCountdown();
+        clearPathHintTimerLabel();
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+            pathHintExhaustedClearTimer = null;
+        }
         updateScoreHud(score);
 
         gameBoard.setFocusTraversable(true);
@@ -1468,14 +1495,97 @@ public class GameController implements Initializable {
     }
 
     private void showNavigationPath() {
+        long remainingNanos = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        if (remainingNanos <= 0) {
+            showPathHintExhaustedMessage();
+            return;
+        }
         isRouteHintVisible = true;
-        lastRouteHintPenaltyNanos = System.nanoTime();
+        pathHintKeyDown = true;
+        pathHintPressStartNanos = System.nanoTime();
+        lastRouteHintPenaltyNanos = pathHintPressStartNanos;
         refreshPathCanvasOverlay();
+        startPathHintCountdown();
     }
 
     private void clearNavigationPath() {
+        if (pathHintKeyDown) {
+            long heldNanos = System.nanoTime() - pathHintPressStartNanos;
+            pathHintTotalUsedNanos = Math.min(pathHintTotalUsedNanos + heldNanos, pathHintBudgetNanos());
+            pathHintKeyDown = false;
+        }
         isRouteHintVisible = false;
+        stopPathHintCountdown();
+        clearPathHintTimerLabel();
         refreshPathCanvasOverlay();
+    }
+
+    /** Returns the path-hint energy budget in nanoseconds based on the active difficulty. */
+    private long pathHintBudgetNanos() {
+        if (startDifficulty instanceof HardDifficulty) return PATH_HINT_BUDGET_HARD_NANOS;
+        if (startDifficulty instanceof EasyDifficulty) return PATH_HINT_BUDGET_EASY_NANOS;
+        return PATH_HINT_BUDGET_NORMAL_NANOS;
+    }
+
+    /**
+     * Starts a 100ms-tick Timeline that updates the path-hint countdown label
+     * and auto-clears the path when the budget is exhausted mid-hold.
+     */
+    private void startPathHintCountdown() {
+        stopPathHintCountdown();
+        pathHintCountdownTicker = new Timeline(new KeyFrame(Duration.millis(100), e -> {
+            long usedSoFar = pathHintTotalUsedNanos + (System.nanoTime() - pathHintPressStartNanos);
+            long budgetNanos = pathHintBudgetNanos();
+            long remainingNanos = budgetNanos - usedSoFar;
+            if (remainingNanos <= 0) {
+                pathHintTotalUsedNanos = budgetNanos;
+                pathHintKeyDown = false;
+                isRouteHintVisible = false;
+                stopPathHintCountdown();
+                refreshPathCanvasOverlay();
+                showPathHintExhaustedMessage();
+                return;
+            }
+            updatePathHintTimerLabel(remainingNanos);
+        }));
+        pathHintCountdownTicker.setCycleCount(Animation.INDEFINITE);
+        pathHintCountdownTicker.play();
+        // Show initial value immediately without waiting for first tick.
+        long initial = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        updatePathHintTimerLabel(initial);
+    }
+
+    private void stopPathHintCountdown() {
+        if (pathHintCountdownTicker != null) {
+            pathHintCountdownTicker.stop();
+            pathHintCountdownTicker = null;
+        }
+    }
+
+    private void updatePathHintTimerLabel(long remainingNanos) {
+        if (pathHintTimerLabel == null) return;
+        double secs = remainingNanos / 1_000_000_000.0;
+        pathHintTimerLabel.setText(String.format("Path hint: %.1fs left", secs));
+        pathHintTimerLabel.setVisible(true);
+    }
+
+    private void clearPathHintTimerLabel() {
+        if (pathHintTimerLabel == null) return;
+        pathHintTimerLabel.setText("");
+        pathHintTimerLabel.setVisible(false);
+    }
+
+    private void showPathHintExhaustedMessage() {
+        if (pathHintTimerLabel == null) return;
+        // Stop any previously scheduled auto-clear so we don't get double-clear.
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+        }
+        pathHintTimerLabel.setText("Path hint energy already spent!");
+        pathHintTimerLabel.setVisible(true);
+        pathHintExhaustedClearTimer = new PauseTransition(Duration.seconds(3));
+        pathHintExhaustedClearTimer.setOnFinished(ev -> clearPathHintTimerLabel());
+        pathHintExhaustedClearTimer.play();
     }
 
     private void refreshPathCanvasOverlay() {
@@ -1667,6 +1777,11 @@ public class GameController implements Initializable {
 
     public void dispose() {
         stopComputerCharacters();
+        stopPathHintCountdown();
+        if (pathHintExhaustedClearTimer != null) {
+            pathHintExhaustedClearTimer.stop();
+            pathHintExhaustedClearTimer = null;
+        }
 
         if (enemyPathOverlayTimer != null) {
             enemyPathOverlayTimer.stop();
