@@ -99,13 +99,45 @@ class GhostTangibilityTest {
     }
 
     /**
-     * A solid ghost whose bounding box does not overlap the player bounds
-     * (i.e. the ghost is far away on the other side of a wall) must NOT deal damage.
-     * The bounds-intersection check is the primary gate; any two characters
-     * far apart simply never intersect.
+     * A solid ghost whose bounding box DOES overlap the player, while
+     * {@code App.gameController} is {@code null} (no JavaFX context in unit tests),
+     * MUST apply damage. The null-safe guard in {@code doPositionEvaluation}
+     * skips the wall check entirely in this case.
+     *
+     * <p>Full integration of the wall-blocking branch (wall between ghost and
+     * player prevents damage) is covered by
+     * {@link main.game.maze.WallCollisionUtilWallBetweenTest} which tests
+     * {@code WallCollisionUtil.wallBetweenVectors} directly, and by
+     * {@link main.game.maze.libgdx.game.PlayerCombatStateServiceTest} for the
+     * libGDX path.
      */
     @Test
-    void solidGhostThroughWallDoesNoDamage() {
+    void solidGhostOverlappingBoundsWithNullControllerAppliesDamage() {
+        // Ghost at (0,0) 40x40; player at (10,10) 30x30 — bounding boxes overlap.
+        Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
+        GhostCharacter ghost = newGhost(ghostGfx);
+        ghost.setNonTangientEnergy(0);   // solid
+
+        App.gameController = null;   // explicit: no wall check available in unit tests
+
+        PlayerCharacter player = new PlayerCharacter(new Rectangle(10, 10, 30, 30), 0, 0, null);
+        int hpBefore = player.getHitPoints();
+
+        Bounds playerBounds = new BoundingBox(10, 10, 30, 30);
+        ghost.doPositionEvaluation(playerBounds, player);
+
+        assertTrue(player.getHitPoints() < hpBefore,
+                "Solid ghost with overlapping bounds and no wall-check controller must apply damage");
+    }
+
+    /**
+     * A solid ghost whose bounding box does not overlap the player bounds
+     * (simulating a far-away enemy or one on the other side of a wall) must NOT deal damage.
+     * The bounds-intersection check is the primary gate used in unit-test conditions
+     * where App.gameController is null.
+     */
+    @Test
+    void solidGhostFarFromPlayerCausesNoBoundsOverlapNoDamage() {
         // Ghost at (0,0) 40x40; player bounds at (200,0) 30x30 — no overlap.
         Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
         GhostCharacter ghost = newGhost(ghostGfx);

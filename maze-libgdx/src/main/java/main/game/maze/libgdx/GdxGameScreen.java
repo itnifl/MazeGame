@@ -170,7 +170,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
             new AdaptiveAggressiveMovementService();
-        private final PatrolMovementService patrolMovementService =
+    private final PatrolMovementService patrolMovementService =
             new PatrolMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
@@ -1558,13 +1558,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     /**
-     * Returns the display path for an enemy. For AGGRESSIVE enemies the path
-     * is computed via {@link MazeNavigationGraphService#findPath} to the
-     * player; for PATROL enemies the path is computed via the same algorithm
-     * to the current waypoint. In both cases the overlay never crosses walls
-     * because it uses the same nav-graph as the P-key route hint. If the
-     * nav-graph is unavailable or returns no path, the service's stored path
-     * is returned as a fallback.
+     * Returns the live runtime path the enemy is currently following,
+     * taken directly from the movement service snapshot.
+     * For AGGRESSIVE enemies this is the path held by {@link AdaptiveAggressiveMovementService};
+     * for PATROL enemies it is the path held by {@link PatrolMovementService}.
+     * Returns an empty list when the enemy has no active path (e.g. during WANDER_RECOVERY).
+     * Points are in game-world coordinate space; {@link #drawEnemyPathOverlay} applies
+     * the Y-flip needed for libGDX screen rendering.
      */
     private List<ActivePathPoint> enemyDisplayPath(EnemyRuntime enemy) {
         // Always return the live snapshot from the movement service.
