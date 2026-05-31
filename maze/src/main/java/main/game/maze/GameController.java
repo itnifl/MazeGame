@@ -944,7 +944,7 @@ public class GameController implements Initializable {
         vectorWallMap.clear();
 
         // Configuration for drawing
-        double wallWidth = 5.0; // Defined in requirements
+        double wallWidth = StageConstants.WallThicknessPx; // Defined in requirements
         double wallLength = StageConstants.WallSegmentLengthPx; // Defined in requirements
         
         // Use WOOD_BASIC as default for now, or fetch from logic if available

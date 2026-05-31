@@ -45,6 +45,8 @@ You normally find values such as
 * Default board width and height for the easiest difficulty
 * Medium board width and height for a normal difficulty
 * Large board width and height for a hard difficulty
+* Wall segment length in pixels (`WallSegmentLengthPx`)
+* Wall render thickness in pixels (`WallThicknessPx`, shared by both JavaFX and libGDX frontends to guarantee visual parity)
 
 The application uses small helper functions in the front end layer to select the correct values based on the last chosen difficulty.
 When you change board size, you usually update the constants in this module.

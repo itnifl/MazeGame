@@ -213,7 +213,8 @@ public final class RuntimeVisualModelLoader {
                             infectionLevel,
                             touchSound,
                             runtimeBehavior,
-                            spawnSpeed);
+                            spawnSpeed,
+                            nonTangibilityEnergyFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -290,6 +291,13 @@ public final class RuntimeVisualModelLoader {
             return zombie.getInfectionLevel();
         }
         return 0;
+    }
+
+    private static double nonTangibilityEnergyFor(CharacterType type) {
+        if (type instanceof Ghost ghost) {
+            return ghost.getNonTangibilityEnergy();
+        }
+        return 0.0;
     }
 
     private static String touchSoundFor(CharacterType type) {

@@ -169,6 +169,34 @@ By following these ideas, `maze` stays a thin, clear and maintainable game clien
 
 ---
 
+## Wall rendering and shared constants
+
+Wall thickness is driven by `StageConstants.WallThicknessPx` (currently 5 px), which lives in the shared `main.game.maze.mazeworld` module. Both the JavaFX and libGDX renderers read this constant at startup, guaranteeing visual parity without duplication. If you want to change wall thickness, update `StageConstants.WallThicknessPx` and both frontends pick it up automatically.
+
+Wall segment length follows the same pattern via `StageConstants.WallSegmentLengthPx`.
+
+---
+
+## Enemy collision and ghost tangibility rules
+
+### Solid enemies (Zombie, PumpkinBomber)
+
+A solid enemy damages the player when its bounding box overlaps the player's bounding box. The check is a standard axis-aligned bounding-box intersection (`Bounds.intersects()`). The movement system prevents solid enemies from passing through walls, so bounding-box intersection reliably indicates real contact.
+
+### Ghost tangibility and phasing
+
+A ghost has a `nonTangibilityEnergy` value that starts at 100 (model default) and drains to 0 over time (~43 seconds). While this energy is above 0 the ghost is *phasing*:
+
+- It passes through walls (forced movement, ignoring wall collision).
+- It is rendered semi-transparent; opacity follows `clamp(1.0 - energy/100 + 0.1, 0.1, 1.0)`.
+- It cannot harm the player even when their bounding boxes overlap.
+
+Once energy reaches 0 the ghost becomes solid: fully opaque, blocked by walls, and able to deal damage on bounding-box contact.
+
+The phasing guard is enforced in **both** the JavaFX `PlayerCharacter.doPositionEvaluation` check and the libGDX `PlayerCombatStateService.processEnemyContact` check, using the same energy threshold (`energy > 0`), so both frontends exhibit identical gameplay behaviour.
+
+---
+
 ## Player ecore model
 
 `Player.ecore` (under `src/main/resources/xmi/player/`) and its XMI instance

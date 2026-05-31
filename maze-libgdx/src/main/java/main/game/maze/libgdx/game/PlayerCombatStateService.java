@@ -110,6 +110,11 @@ public final class PlayerCombatStateService {
             return;
         }
         for (EnemySpawn enemy : enemies) {
+            // While a ghost is phasing through walls (non-tangibility energy > 0) it is
+            // in spirit form and cannot physically harm the player.
+            if (enemy.nonTangibilityEnergy() > 0) {
+                continue;
+            }
             float enemyRadius = enemy.size() * 0.5f;
             float allowed = playerRadius + enemyRadius + 2f;
             if (distanceSquared(playerX, playerY, enemy.x(), enemy.y()) > allowed * allowed) {

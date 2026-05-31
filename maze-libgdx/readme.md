@@ -102,3 +102,31 @@ libGDX uses a bottom-left origin (positive y is up). The current gameplay
 subset is written natively for that convention; reconciliation with the
 top-left-origin JavaFX game loop is deferred until the shared character
 pipeline is ported behind the common-graphics facades.
+
+---
+
+## Ghost tangibility (phasing system)
+
+Ghost enemies spawn in a *phasing* state and gradually materialise over time.
+The libGDX implementation mirrors the JavaFX behaviour exactly:
+
+| Aspect | Rule |
+|--------|------|
+| Initial energy | Read from the ghost's `nonTangibilityEnergy` field in the XMI opponent model (default 100). |
+| Drain rate | `0.14 × (1000 / 60)` energy per second ≈ 2.33/s (same rate as the JavaFX movement loop at 60 ms per tick). |
+| Phasing | While energy > 0 the ghost moves through walls using a `PermissiveWorldView` that returns `false` for all `wouldCollide` queries. |
+| Opacity | `clamp(1.0 − energy/100 + 0.1, 0.1, 1.0)` — matches the JavaFX formula in `GameController.doNonTangientEnergyCalculation`. |
+| Damage | A phasing ghost is excluded from `PlayerCombatStateService.processEnemyContact`; only solid ghosts (energy == 0) can harm the player. |
+
+The `EnemySpawn` record carries `nonTangibilityEnergy` and `EnemyRuntime` holds
+the mutable runtime state. `RuntimeVisualModelLoader` reads the value from the
+`Ghost` EMF model.
+
+---
+
+## Wall thickness parity
+
+Wall render thickness is read from `StageConstants.WallThicknessPx` (5 px,
+shared with the JavaFX renderer). Previously, libGDX used a hard-coded `3f`
+which produced thinner walls than JavaFX. Both frontends now draw walls at the
+same thickness.

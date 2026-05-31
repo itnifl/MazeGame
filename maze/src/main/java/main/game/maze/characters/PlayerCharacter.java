@@ -257,18 +257,6 @@ public class PlayerCharacter extends Character
             return;
         }
 
-        // Use center-to-center distance to avoid false collisions where the enemy's
-        // bounding rectangle overlaps the player's across a thin wall.
-        double dx = nodeBounds.getCenterX() - myBounds.getCenterX();
-        double dy = nodeBounds.getCenterY() - myBounds.getCenterY();
-        double dist = Math.hypot(dx, dy);
-        // Approximate combined touch radius: enemy half-size + player half-size.
-        // NodeBounds width/2 is a good proxy for enemy half-size.
-        double touchThreshold = (nodeBounds.getWidth() + myBounds.getWidth()) / 2.0;
-        if (dist > touchThreshold) {
-            return;
-        }
-
         if (entity instanceof ICanKill) {
             var canKillEntity = (ICanKill) entity;
             LOGGER.fine("Player is intersecting with " + canKillEntity);

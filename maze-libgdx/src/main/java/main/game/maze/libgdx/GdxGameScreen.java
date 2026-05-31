@@ -77,7 +77,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final int DEFAULT_COLS = 16;
     private static final int DEFAULT_ROWS = 12;
     private static final float DEFAULT_PLAYER_SPEED = DEFAULT_CELL_SIZE * 3.5f;
-    private static final float WALL_THICKNESS = 3f;
+    private static final float WALL_THICKNESS = (float) StageConstants.WallThicknessPx;
     private static final float GOAL_SIZE = 50f;
     private static final float JAVA_FX_TICK_RATE = 30f;
     private static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
@@ -625,7 +625,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 drawInfectiousEdgeMist(batch, enemy, enemyTexture);
             }
             float half = enemy.size * 0.5f;
+            float opacity = enemy.renderOpacity();
+            if (opacity < 1.0f) {
+                batch.setColor(1f, 1f, 1f, opacity);
+            }
             batch.draw(enemyTexture, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
+            if (opacity < 1.0f) {
+                batch.setColor(Color.WHITE);
+            }
 
             String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
             if (label != null) {
@@ -1932,6 +1939,27 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
     }
 
+    /**
+     * A WorldView decorator that always returns {@code false} for
+     * {@code wouldCollide}, allowing phasing enemies to pass through walls.
+     * All other methods delegate to the wrapped view unchanged.
+     */
+    private static final class PermissiveWorldView implements WorldView {
+        private final WorldView delegate;
+
+        private PermissiveWorldView(WorldView delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override public double playerX()    { return delegate.playerX(); }
+        @Override public double playerY()    { return delegate.playerY(); }
+        @Override public double minX()       { return delegate.minX(); }
+        @Override public double minY()       { return delegate.minY(); }
+        @Override public double maxX()       { return delegate.maxX(); }
+        @Override public double maxY()       { return delegate.maxY(); }
+        @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
+    }
+
     private static final class EnemyRuntime {
         private final EnemySpawn spawn;
         private final String runtimeEnemyId;
@@ -1950,6 +1978,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private float moveAccumulator;
         private String behaviorTypeLabel;
         private String movementTypeLabel;
+        // Mirrors JavaFX's ghost non-tangibility energy: starts at the value from the
+        // opponent model and drains to 0 over time at the same rate as the JavaFX loop.
+        // While > 0 the ghost phases through walls and cannot harm the player.
+        private double nonTangibilityEnergy;
+        // Energy decrease rate matches the JavaFX movement loop at ~16.67 ticks/second
+        // with 0.14 decrease per tick.
+        private static final double ENERGY_DECREASE_PER_SEC = 0.14 * (1000.0 / 60.0);
 
         private EnemyRuntime(EnemySpawn spawn, String runtimeEnemyId, String imagePath, float size, float baseX, float baseY, float speed, float phase) {
             this.spawn = spawn;
@@ -1969,6 +2004,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
             this.behaviorTypeLabel = behavior.name();
             this.movementTypeLabel = "WANDER";
+            this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         }
 
         private static EnemyRuntime fromSpawn(EnemySpawn spawn, int index, WorldView world) {
@@ -2003,7 +2039,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     spawn.infectionLevel(),
                     spawn.touchSoundPath(),
                     spawn.behavior(),
-                    spawn.speed());
+                    spawn.speed(),
+                    nonTangibilityEnergy);
         }
 
         /**
@@ -2016,6 +2053,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
                  PatrolMovementService patrolService,
                  AdaptiveAggressiveMovementService adaptiveService,
                  float dt) {
+            // Drain non-tangibility energy at the same rate as the JavaFX movement loop.
+            if (nonTangibilityEnergy > 0) {
+                nonTangibilityEnergy = Math.max(0.0, nonTangibilityEnergy - dt * ENERGY_DECREASE_PER_SEC);
+            }
+
+            // While phasing, use a permissive WorldView that ignores wall collisions
+            // so the ghost can pass through walls (mirrors JavaFX force-move).
+            WorldView effectiveWorld = (nonTangibilityEnergy > 0) ? new PermissiveWorldView(world) : world;
+
             // Treat spawn.speed() as world units per simulated tick at the
             // JavaFX cadence (~60ms). Scale by dt so libGDX rendering at
             // arbitrary frame rates produces matching displacement.
@@ -2027,12 +2073,22 @@ public final class GdxGameScreen extends ApplicationAdapter {
             moveAccumulator -= ticks;
             int budget = Math.min(ticks, MAX_ENEMY_TICKS_PER_FRAME);
             for (int i = 0; i < budget; i++) {
-                MovementResult next = nextMove(world, wanderService, patrolService, adaptiveService);
+                MovementResult next = nextMove(effectiveWorld, wanderService, patrolService, adaptiveService);
                 x = (float) next.x();
                 y = (float) next.y();
                 directionX = next.directionX();
                 directionY = next.directionY();
             }
+        }
+
+        /** Returns the current render opacity for this enemy (1.0 = fully solid). */
+        private float renderOpacity() {
+            if (nonTangibilityEnergy <= 0) {
+                return 1.0f;
+            }
+            // Mirrors JavaFX: opacity = 1 - (energy/maxEnergy) + minOpacity, clamped.
+            float opacity = (float) (1.0 - (nonTangibilityEnergy / 100.0) + 0.1);
+            return Math.max(0.1f, Math.min(1.0f, opacity));
         }
 
         private MovementResult nextMove(WorldView world,
