@@ -1591,11 +1591,7 @@ public class GameController implements Initializable {
                         playerCharacter.getCharacterPosition().getY());
                 var navPath = MazeNavigationGraphService.findPath(navGraph, enemyPos, playerPos);
                 if (navPath != null && !navPath.isEmpty()) {
-                    List<ActivePathPoint> result = new ArrayList<>();
-                    for (Point2D p : navPath) {
-                        result.add(new ActivePathPoint(p.getX(), p.getY()));
-                    }
-                    return result;
+                    return toActivePathPoints(navPath);
                 }
             }
             return adaptiveAggressiveMovementService.currentPathForEnemy(id, x, y);
@@ -1610,17 +1606,21 @@ public class GameController implements Initializable {
                     Point2D waypointPos = new Point2D(wp.x(), wp.y());
                     var navPath = MazeNavigationGraphService.findPath(navGraph, enemyPos, waypointPos);
                     if (navPath != null && !navPath.isEmpty()) {
-                        List<ActivePathPoint> result = new ArrayList<>();
-                        for (Point2D p : navPath) {
-                            result.add(new ActivePathPoint(p.getX(), p.getY()));
-                        }
-                        return result;
+                        return toActivePathPoints(navPath);
                     }
                 }
             }
             return patrolMovementService.currentPathForEnemy(id, x, y);
         }
         return List.of();
+    }
+
+    private static List<ActivePathPoint> toActivePathPoints(List<Point2D> navPath) {
+        List<ActivePathPoint> result = new ArrayList<>(navPath.size());
+        for (Point2D p : navPath) {
+            result.add(new ActivePathPoint(p.getX(), p.getY()));
+        }
+        return result;
     }
 
     private void showSpanningTree() {

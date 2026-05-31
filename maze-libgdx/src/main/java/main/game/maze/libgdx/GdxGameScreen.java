@@ -1581,10 +1581,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     /**
-     * Returns the display path for an enemy.
-     * For AGGRESSIVE enemies, a fresh wall-safe path is computed via the navigation graph
-     * (same algorithm as the P-key route hint) so the overlay never crosses walls.
-     * For other behaviour types the stored service path is returned unchanged.
+     * Returns the display path for an enemy. For AGGRESSIVE enemies the path
+     * is computed via {@link MazeNavigationGraphService#findPath} to the
+     * player; for PATROL enemies the path is computed via the same algorithm
+     * to the current waypoint. In both cases the overlay never crosses walls
+     * because it uses the same nav-graph as the P-key route hint. If the
+     * nav-graph is unavailable or returns no path, the service's stored path
+     * is returned as a fallback.
      */
     private List<ActivePathPoint> enemyDisplayPath(EnemyRuntime enemy) {
         if (!(maze instanceof RealMaze realMaze) || realMaze.navigationGraph() == null) {
@@ -1597,11 +1600,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             var navPath = MazeNavigationGraphService.findPath(
                     realMaze.navigationGraph(), enemyNavPos, playerNavPos);
             if (navPath != null && !navPath.isEmpty()) {
-                List<ActivePathPoint> result = new ArrayList<>();
-                for (Point2D p : navPath) {
-                    result.add(new ActivePathPoint(p.getX(), p.getY()));
-                }
-                return result;
+                return toActivePathPoints(navPath);
             }
         }
         if (enemy.spawn.behavior() == BehaviorType.PATROL) {
@@ -1614,15 +1613,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 var navPath = MazeNavigationGraphService.findPath(
                         realMaze.navigationGraph(), enemyNavPos, waypointNavPos);
                 if (navPath != null && !navPath.isEmpty()) {
-                    List<ActivePathPoint> result = new ArrayList<>();
-                    for (Point2D p : navPath) {
-                        result.add(new ActivePathPoint(p.getX(), p.getY()));
-                    }
-                    return result;
+                    return toActivePathPoints(navPath);
                 }
             }
         }
         return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
+    }
+
+    private static List<ActivePathPoint> toActivePathPoints(List<Point2D> navPath) {
+        List<ActivePathPoint> result = new ArrayList<>(navPath.size());
+        for (Point2D p : navPath) {
+            result.add(new ActivePathPoint(p.getX(), p.getY()));
+        }
+        return result;
     }
 
     private void loadHighScores() {
