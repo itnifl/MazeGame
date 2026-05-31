@@ -64,6 +64,20 @@ public final class PatrolMovementService {
         return snapshot.size() > 1 ? snapshot : List.of();
     }
 
+    /**
+     * Returns the waypoint that the enemy is currently navigating toward, or
+     * {@code null} if the enemy has no active path state yet. Use this to feed
+     * a wall-safe overlay via {@code MazeNavigationGraphService.findPath}.
+     */
+    public Waypoint currentTargetWaypointFor(String enemyId) {
+        String id = enemyId == null ? "<anonymous>" : enemyId;
+        RuntimeState state = states.get(id);
+        if (state == null || Double.isNaN(state.targetX) || Double.isNaN(state.targetY)) {
+            return null;
+        }
+        return new Waypoint(state.targetX, state.targetY);
+    }
+
     public MovementResult tick(EnemyState enemy, WorldView world, double deltaSeconds) {
         if (enemy == null || world == null) {
             return new MovementResult(0d, 0d, 0, 0, false);

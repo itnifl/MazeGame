@@ -1,9 +1,9 @@
 package main.game.maze.libgdx.movement;
 
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
-import main.game.maze.mazeworld.generators.WallSegment;
 
 /**
  * libGDX-side {@link WorldView} adapter. Bridges the backend-neutral
@@ -63,38 +63,7 @@ public final class GdxWorldView implements WorldView {
 
     @Override
     public boolean wouldCollide(double centerX, double centerY, double size) {
-        double half = size * 0.5d;
-        if (centerX - half < 0d || centerY - half < 0d) {
-            return true;
-        }
-        if (centerX + half > maze.widthPx() || centerY + half > maze.heightPx()) {
-            return true;
-        }
-        double left = centerX - half;
-        double right = centerX + half;
-        double bottom = centerY - half;
-        double top = centerY + half;
-        for (WallSegment w : maze.walls()) {
-            if (w.isHorizontal()) {
-                double wx1 = Math.min(w.x1, w.x2);
-                double wx2 = Math.max(w.x1, w.x2);
-                if (right < wx1 || left > wx2) {
-                    continue;
-                }
-                if (bottom <= w.y1 && top >= w.y1) {
-                    return true;
-                }
-            } else {
-                double wy1 = Math.min(w.y1, w.y2);
-                double wy2 = Math.max(w.y1, w.y2);
-                if (top < wy1 || bottom > wy2) {
-                    continue;
-                }
-                if (left <= w.x1 && right >= w.x1) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return WallCollisionUtil.wouldCollide(centerX, centerY, size,
+                maze.widthPx(), maze.heightPx(), maze.walls());
     }
 }

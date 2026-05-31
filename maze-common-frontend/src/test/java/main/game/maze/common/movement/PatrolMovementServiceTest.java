@@ -1,6 +1,8 @@
 package main.game.maze.common.movement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -59,6 +61,28 @@ class PatrolMovementServiceTest {
 
         assertTrue(sawWanderRecovery, "patrol must wander for 5 seconds when no shortest path exists");
         assertTrue(sawPathFollowAfterOpen, "after the barrier opens patrol must retry and re-enter path follow mode");
+    }
+
+    @Test
+    void currentTargetWaypointForReturnsNullBeforeFirstTick() {
+        PatrolMovementService service = new PatrolMovementService(
+                List.of(new PatrolMovementService.Waypoint(160d, 80d)));
+        assertNull(service.currentTargetWaypointFor("new-enemy"),
+                "before any tick the enemy has no target waypoint yet");
+    }
+
+    @Test
+    void currentTargetWaypointForReturnsActiveWaypointAfterTick() {
+        PatrolMovementService service = new PatrolMovementService(
+                List.of(new PatrolMovementService.Waypoint(160d, 80d)));
+        WorldView world = new GapBarrierWorld(200d, 200d, 80d, 150d, false);
+        EnemyState enemy = new EnemyState("wp-enemy", 40d, 80d, 1, 0, 8d, 8d);
+        service.tick(enemy, world, 0.1d);
+
+        PatrolMovementService.Waypoint wp = service.currentTargetWaypointFor("wp-enemy");
+        assertNotNull(wp, "after a tick the service should expose the active target waypoint");
+        assertEquals(160d, wp.x(), 1e-9, "target waypoint X must match the configured waypoint");
+        assertEquals(80d, wp.y(), 1e-9, "target waypoint Y must match the configured waypoint");
     }
 
     private record GapBarrierWorld(double maxX, double maxY, double wallX, double gapStartsAtY, boolean barrierOpen)

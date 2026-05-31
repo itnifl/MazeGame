@@ -470,8 +470,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             if (terminalInputActive) {
                 if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
                     tLatch = true;
-                    toggleTerminalPrompt();
-                    return;
+                    // T only opens the terminal; Esc closes it (handled in handleTerminalTypingInput).
                 }
                 if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
                     tLatch = false;
@@ -480,7 +479,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             } else {
                 if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
                     tLatch = true;
-                    toggleTerminalPrompt();
+                    openTerminalPrompt();
                     return;
                 }
                 if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
@@ -1497,7 +1496,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
         if (command == TerminalCommand.HELP) {
-            flashStatus("Commands: " + TERMINAL_HELP_TEXT);
+            flashStatus("Commands: " + TERMINAL_HELP_TEXT, 20f);
             return;
         }
         if (command == TerminalCommand.SHOW_BEHAVIOUR_TYPE) {
@@ -1565,7 +1564,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
         renderer.setColor(1f, 0.72f, 0.2f, 0.7f);
         for (EnemyRuntime enemy : animatedEnemies) {
-            List<ActivePathPoint> path = enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
+            List<ActivePathPoint> path = enemyDisplayPath(enemy);
             if (path.isEmpty()) {
                 continue;
             }
@@ -1579,6 +1578,51 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 drawPathSegment(renderer, ax, ay, bx, by, 5f);
             }
         }
+    }
+
+    /**
+     * Returns the display path for an enemy.
+     * For AGGRESSIVE enemies, a fresh wall-safe path is computed via the navigation graph
+     * (same algorithm as the P-key route hint) so the overlay never crosses walls.
+     * For other behaviour types the stored service path is returned unchanged.
+     */
+    private List<ActivePathPoint> enemyDisplayPath(EnemyRuntime enemy) {
+        if (!(maze instanceof RealMaze realMaze) || realMaze.navigationGraph() == null) {
+            return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
+        }
+        // NavGraph uses top-left Y origin; game world uses bottom-left Y origin.
+        if (enemy.spawn.behavior() == BehaviorType.AGGRESSIVE && player != null) {
+            Point2D enemyNavPos = new Point2D(enemy.x, maze.heightPx() - enemy.y);
+            Point2D playerNavPos = new Point2D(player.x(), maze.heightPx() - player.y());
+            var navPath = MazeNavigationGraphService.findPath(
+                    realMaze.navigationGraph(), enemyNavPos, playerNavPos);
+            if (navPath != null && !navPath.isEmpty()) {
+                List<ActivePathPoint> result = new ArrayList<>();
+                for (Point2D p : navPath) {
+                    result.add(new ActivePathPoint(p.getX(), p.getY()));
+                }
+                return result;
+            }
+        }
+        if (enemy.spawn.behavior() == BehaviorType.PATROL) {
+            PatrolMovementService.Waypoint wp =
+                    patrolMovementService.currentTargetWaypointFor(enemy.runtimeEnemyId);
+            if (wp != null) {
+                Point2D enemyNavPos = new Point2D(enemy.x, maze.heightPx() - enemy.y);
+                // Patrol waypoints are in game-world (bottom-left Y) space; flip for navGraph.
+                Point2D waypointNavPos = new Point2D(wp.x(), maze.heightPx() - wp.y());
+                var navPath = MazeNavigationGraphService.findPath(
+                        realMaze.navigationGraph(), enemyNavPos, waypointNavPos);
+                if (navPath != null && !navPath.isEmpty()) {
+                    List<ActivePathPoint> result = new ArrayList<>();
+                    for (Point2D p : navPath) {
+                        result.add(new ActivePathPoint(p.getX(), p.getY()));
+                    }
+                    return result;
+                }
+            }
+        }
+        return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
     }
 
     private void loadHighScores() {
@@ -1879,8 +1923,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void flashStatus(String text) {
+        flashStatus(text, 2.4f);
+    }
+
+    private void flashStatus(String text, float durationSeconds) {
         statusMessage = text;
-        statusMessageTimer = 2.4f;
+        statusMessageTimer = durationSeconds;
     }
 
     @Override

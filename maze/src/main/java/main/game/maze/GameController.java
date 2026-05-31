@@ -3,6 +3,7 @@ package main.game.maze;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -85,6 +86,7 @@ import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 import main.game.maze.constants.PlayerConstants;
@@ -159,9 +161,6 @@ public class GameController implements Initializable {
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
-    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
-    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
-    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
     private boolean isRouteHintVisible = false;
@@ -175,6 +174,7 @@ public class GameController implements Initializable {
     private final Map<Node, Timeline> infectiousMists = new HashMap<>();
     private final List<Node> activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
     private PauseTransition enemyDebugLabelHideTimer;
+    private PauseTransition hudMessageClearTimer;
     private final AntiLoopWanderMovementService antiLoopWanderMovementService = new AntiLoopWanderMovementService();
     private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
     private final PatrolMovementService patrolMovementService = new PatrolMovementService();
@@ -398,7 +398,7 @@ public class GameController implements Initializable {
     private void executeTerminalCommand(String raw) {
         TerminalCommand command = parseTerminalCommand(raw);
         switch (command) {
-            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)");
+            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)", Duration.seconds(20));
             case SHOW_BEHAVIOUR_TYPE -> {
                 setHudMessage("Showing behaviour type above enemies");
                 showEnemyDebugLabels(true);
@@ -535,9 +535,20 @@ public class GameController implements Initializable {
     }
 
     private void setHudMessage(String text) {
+        if (hudMessageClearTimer != null) {
+            hudMessageClearTimer.stop();
+            hudMessageClearTimer = null;
+        }
         if (mouseCoordsLabel != null) {
             mouseCoordsLabel.setText(text);
         }
+    }
+
+    private void setHudMessage(String text, Duration visibleFor) {
+        setHudMessage(text);
+        hudMessageClearTimer = new PauseTransition(visibleFor);
+        hudMessageClearTimer.setOnFinished(e -> setHudMessage(""));
+        hudMessageClearTimer.play();
     }
 
     private void openDifficultyPickerAndMaybeRestart() {
@@ -1297,48 +1308,12 @@ public class GameController implements Initializable {
 
             @Override
             public boolean wouldCollide(double centerX, double centerY, double size) {
-                double half = size * 0.5d;
-                if (centerX - half < 0d || centerY - half < 0d) {
-                    return true;
-                }
-                if (centerX + half > App.getBoardMaxX() || centerY + half > App.getBoardMaxY()) {
-                    return true;
-                }
                 if (maze == null || maze.getMazeVectors() == null) {
                     return false;
                 }
-
-                double left = centerX - half;
-                double right = centerX + half;
-                double top = centerY - half;
-                double bottom = centerY + half;
-
-                for (Vector2D wall : maze.getMazeVectors()) {
-                    double x1 = wall.getStart().getX();
-                    double y1 = wall.getStart().getY();
-                    double x2 = wall.getEnd().getX();
-                    double y2 = wall.getEnd().getY();
-                    if (Math.abs(y1 - y2) < 0.001d) {
-                        double wx1 = Math.min(x1, x2);
-                        double wx2 = Math.max(x1, x2);
-                        if (right < wx1 || left > wx2) {
-                            continue;
-                        }
-                        if (top <= y1 && bottom >= y1) {
-                            return true;
-                        }
-                    } else {
-                        double wy1 = Math.min(y1, y2);
-                        double wy2 = Math.max(y1, y2);
-                        if (bottom < wy1 || top > wy2) {
-                            continue;
-                        }
-                        if (left <= x1 && right >= x1) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                return WallCollisionUtil.wouldCollideVectors(centerX, centerY, size,
+                        App.getBoardMaxX(), App.getBoardMaxY(),
+                        maze.getMazeVectors());
             }
         };
     }
@@ -1608,9 +1583,41 @@ public class GameController implements Initializable {
         double y = character.getCharacterPosition().getY();
         BehaviorType behaviour = character.getCharacterBehaviour();
         if (behaviour == BehaviorType.AGGRESSIVE) {
+            var navGraph = maze != null ? maze.getNavigationGraph() : null;
+            if (navGraph != null && playerCharacter != null) {
+                Point2D enemyPos = new Point2D(x, y);
+                Point2D playerPos = new Point2D(
+                        playerCharacter.getCharacterPosition().getX(),
+                        playerCharacter.getCharacterPosition().getY());
+                var navPath = MazeNavigationGraphService.findPath(navGraph, enemyPos, playerPos);
+                if (navPath != null && !navPath.isEmpty()) {
+                    List<ActivePathPoint> result = new ArrayList<>();
+                    for (Point2D p : navPath) {
+                        result.add(new ActivePathPoint(p.getX(), p.getY()));
+                    }
+                    return result;
+                }
+            }
             return adaptiveAggressiveMovementService.currentPathForEnemy(id, x, y);
         }
         if (behaviour == BehaviorType.PATROL) {
+            var navGraph = maze != null ? maze.getNavigationGraph() : null;
+            if (navGraph != null) {
+                PatrolMovementService.Waypoint wp =
+                        patrolMovementService.currentTargetWaypointFor(id);
+                if (wp != null) {
+                    Point2D enemyPos = new Point2D(x, y);
+                    Point2D waypointPos = new Point2D(wp.x(), wp.y());
+                    var navPath = MazeNavigationGraphService.findPath(navGraph, enemyPos, waypointPos);
+                    if (navPath != null && !navPath.isEmpty()) {
+                        List<ActivePathPoint> result = new ArrayList<>();
+                        for (Point2D p : navPath) {
+                            result.add(new ActivePathPoint(p.getX(), p.getY()));
+                        }
+                        return result;
+                    }
+                }
+            }
             return patrolMovementService.currentPathForEnemy(id, x, y);
         }
         return List.of();
