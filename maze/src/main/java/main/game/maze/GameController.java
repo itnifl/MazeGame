@@ -80,12 +80,12 @@ import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.HardDifficulty;
-import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.common.terminal.TerminalCommand;
+import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
@@ -181,15 +181,6 @@ public class GameController implements Initializable {
     private AnimationTimer enemyPathOverlayTimer;
     private boolean enemyPathOverlayVisible;
     private long enemyPathOverlayHideAtNanos;
-
-    private enum TerminalCommand {
-        HELP,
-        SHOW_BEHAVIOUR_TYPE,
-        SHOW_MOVEMENT_TYPE,
-        SHOW_ENEMY_PATH,
-        UNKNOWN,
-        EMPTY
-    }
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -417,23 +408,7 @@ public class GameController implements Initializable {
     }
 
     private static TerminalCommand parseTerminalCommand(String raw) {
-        String command = raw == null ? "" : raw.trim().toLowerCase(java.util.Locale.ROOT);
-        if (command.isEmpty()) {
-            return TerminalCommand.EMPTY;
-        }
-        if ("/h".equals(command)) {
-            return TerminalCommand.HELP;
-        }
-        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
-            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
-        }
-        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
-            return TerminalCommand.SHOW_MOVEMENT_TYPE;
-        }
-        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
-            return TerminalCommand.SHOW_ENEMY_PATH;
-        }
-        return TerminalCommand.UNKNOWN;
+        return TerminalCommandParser.parse(raw);
     }
 
     private void showEnemyPathsOverlay() {
@@ -600,41 +575,19 @@ public class GameController implements Initializable {
         action.Load();
     }
 
-    private void movePlayerRight() {
+    private void stepPlayer(java.util.function.IntPredicate step) {
         int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
         for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveRight(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
+            if (step.test(playerMovementSpeed - (x * StageConstants.SpeedReducer))) {
                 return;
             }
         }
     }
 
-    private void movePlayerLeft() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveLeft(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerDown() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveDown(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerUp() {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (playerCharacter.moveUp(playerMovementSpeed - (x * StageConstants.SpeedReducer), false)) {
-                return;
-            }        
-        }
-    }
+    private void movePlayerRight() { stepPlayer(speed -> playerCharacter.moveRight(speed, false)); }
+    private void movePlayerLeft()  { stepPlayer(speed -> playerCharacter.moveLeft(speed, false)); }
+    private void movePlayerDown()  { stepPlayer(speed -> playerCharacter.moveDown(speed, false)); }
+    private void movePlayerUp()    { stepPlayer(speed -> playerCharacter.moveUp(speed, false)); }
 
     public void setupGame() {
         hpBar.setProgress(1.0);
@@ -1121,6 +1074,19 @@ public class GameController implements Initializable {
         runComputerCharactersThread.start();
     }
 
+    private EnemyState buildEnemyState(ComputerCharacter cc) {
+        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
+        double size = approximateEnemySize(cc);
+        return new EnemyState(
+                enemyRuntimeId(cc),
+                cc.getCharacterPosition().getX(),
+                cc.getCharacterPosition().getY(),
+                directionSign(cc.getDirectionX()),
+                directionSign(cc.getDirectionY()),
+                size,
+                speed);
+    }
+
     private void doCharacterWanderMove(IMovingComputerCharacter computerCharacter) {
         if (!(computerCharacter instanceof ComputerCharacter cc) || maze == null) {
             var successfulMove = computerCharacter.move(false);
@@ -1131,7 +1097,7 @@ public class GameController implements Initializable {
         }
 
         var nonTangient = false;
-        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
@@ -1142,17 +1108,7 @@ public class GameController implements Initializable {
             computerCharacter.changeDirection();
         }
 
-        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = approximateEnemySize(cc);
-        EnemyState state = new EnemyState(
-                enemyRuntimeId(cc),
-                cc.getCharacterPosition().getX(),
-                cc.getCharacterPosition().getY(),
-                directionSign(cc.getDirectionX()),
-                directionSign(cc.getDirectionY()),
-                size,
-                speed);
-        MovementResult next = antiLoopWanderMovementService.tick(state, createJavaFxWorldView());
+        MovementResult next = antiLoopWanderMovementService.tick(buildEnemyState(cc), createJavaFxWorldView());
 
         if (next.directionX() != 0 || next.directionY() != 0) {
             cc.setDirection(new Point2D(next.directionX(), next.directionY()));
@@ -1172,22 +1128,11 @@ public class GameController implements Initializable {
         }
 
         var nonTangient = false;
-        if(computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
+        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
 
-        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = approximateEnemySize(cc);
-        EnemyState state = new EnemyState(
-                enemyRuntimeId(cc),
-                cc.getCharacterPosition().getX(),
-                cc.getCharacterPosition().getY(),
-                directionSign(cc.getDirectionX()),
-                directionSign(cc.getDirectionY()),
-                size,
-                speed);
-
-        MovementResult result = patrolMovementService.tick(state, createJavaFxWorldView(), 0.06d);
+        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), createJavaFxWorldView(), 0.06d);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doCharacterWanderMove(computerCharacter);
             return;
@@ -1201,36 +1146,18 @@ public class GameController implements Initializable {
     }
 
     private void doCharacterAggressiveMove(IMovingComputerCharacter computerCharacter) {
-        if (playerCharacter == null) {
+        if (playerCharacter == null || !(computerCharacter instanceof ComputerCharacter cc) || maze == null) {
             doCharacterWanderMove(computerCharacter);
             return;
         }
-        if (!(computerCharacter instanceof ComputerCharacter cc)) {
-            doCharacterWanderMove(computerCharacter);
-            return;
-        }
+
         var nonTangient = false;
         if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
             nonTangient = doNonTangientEnergyCalculation(nontangientcc);
         }
-        if (maze == null) {
-            doCharacterWanderMove(computerCharacter);
-            return;
-        }
-
-        double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
-        double size = approximateEnemySize(cc);
-        EnemyState state = new EnemyState(
-                enemyRuntimeId(cc),
-                cc.getCharacterPosition().getX(),
-                cc.getCharacterPosition().getY(),
-                directionSign(cc.getDirectionX()),
-                directionSign(cc.getDirectionY()),
-                size,
-                speed);
 
         var result = adaptiveAggressiveMovementService.tick(
-                state,
+                buildEnemyState(cc),
                 createJavaFxWorldView(),
                 0.06d);
 

@@ -3,53 +3,54 @@ package main.game.maze.libgdx;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import main.game.maze.common.terminal.TerminalCommand;
 import org.junit.jupiter.api.Test;
 
 class GdxGameScreenTerminalCommandTest {
 
     @Test
     void parsesHelpCommand() {
-        assertEquals(GdxGameScreen.TerminalCommand.HELP,
+        assertEquals(TerminalCommand.HELP,
                 GdxGameScreen.parseTerminalCommand("/h"));
     }
 
     @Test
     void parsesBehaviourCommandCaseInsensitive() {
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_BEHAVIOUR_TYPE,
+        assertEquals(TerminalCommand.SHOW_BEHAVIOUR_TYPE,
                 GdxGameScreen.parseTerminalCommand("  /SHOWBEHAVIOURTYPE  "));
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_BEHAVIOUR_TYPE,
+        assertEquals(TerminalCommand.SHOW_BEHAVIOUR_TYPE,
             GdxGameScreen.parseTerminalCommand("/sbt"));
     }
 
     @Test
     void parsesMovementCommand() {
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_MOVEMENT_TYPE,
+        assertEquals(TerminalCommand.SHOW_MOVEMENT_TYPE,
                 GdxGameScreen.parseTerminalCommand("/showmovementtype"));
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_MOVEMENT_TYPE,
+        assertEquals(TerminalCommand.SHOW_MOVEMENT_TYPE,
             GdxGameScreen.parseTerminalCommand("/smt"));
     }
 
     @Test
     void parsesUnknownAndEmptyCommands() {
-        assertEquals(GdxGameScreen.TerminalCommand.UNKNOWN,
+        assertEquals(TerminalCommand.UNKNOWN,
                 GdxGameScreen.parseTerminalCommand("/noop"));
-        assertEquals(GdxGameScreen.TerminalCommand.EMPTY,
+        assertEquals(TerminalCommand.EMPTY,
                 GdxGameScreen.parseTerminalCommand("   "));
     }
 
     @Test
     void parsesShowEnemyPathCommand() {
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+        assertEquals(TerminalCommand.SHOW_ENEMY_PATH,
                 GdxGameScreen.parseTerminalCommand("/showenemypath"));
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+        assertEquals(TerminalCommand.SHOW_ENEMY_PATH,
                 GdxGameScreen.parseTerminalCommand("/sep"));
-        assertEquals(GdxGameScreen.TerminalCommand.SHOW_ENEMY_PATH,
+        assertEquals(TerminalCommand.SHOW_ENEMY_PATH,
                 GdxGameScreen.parseTerminalCommand("  /SEP  "));
     }
 
-        @Test
-        void helpTextMentionsEnemyPathDuration() {
-                assertTrue(GdxGameScreen.terminalHelpText().contains("10 seconds"),
-                                "terminal help must say that /sep shows enemy paths for 10 seconds");
-        }
+    @Test
+    void helpTextMentionsEnemyPathDuration() {
+        assertTrue(GdxGameScreen.terminalHelpText().contains("10 seconds"),
+                "terminal help must say that /sep shows enemy paths for 10 seconds");
+    }
 }

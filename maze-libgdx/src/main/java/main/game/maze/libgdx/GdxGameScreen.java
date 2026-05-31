@@ -41,6 +41,8 @@ import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.common.terminal.TerminalCommand;
+import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
@@ -71,15 +73,6 @@ import main.game.maze.service.DifficultyService;
  */
 public final class GdxGameScreen extends ApplicationAdapter {
 
-    enum TerminalCommand {
-        EMPTY,
-        HELP,
-        SHOW_BEHAVIOUR_TYPE,
-        SHOW_MOVEMENT_TYPE,
-        SHOW_ENEMY_PATH,
-        UNKNOWN
-    }
-
     private static final float DEFAULT_CELL_SIZE = 48f;
     private static final int DEFAULT_COLS = 16;
     private static final int DEFAULT_ROWS = 12;
@@ -94,9 +87,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float SCORE_PANEL_WIDTH = 170f;
     private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
-    private static final int EASY_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.EASY_BASE_SCORE;
-    private static final int NORMAL_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.NORMAL_BASE_SCORE;
-    private static final int HARD_BASE_SCORE = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
     private static final float MOUSE_STEP_DISTANCE = 20f;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
     private static final float PLAYER_ALIVE_SCALE = 1f;
@@ -127,8 +117,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private final MazeArena providedMaze;
     private final float cellSize;
-    private final int cols;
-    private final int rows;
     private final float playerSize;
     private final boolean useRealMaze;
     private final DifficultyService difficultyService = new DifficultyService();
@@ -227,8 +215,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     public GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
         this.providedMaze = arena;
         this.cellSize = cellSize;
-        this.cols = cols;
-        this.rows = rows;
         this.playerSize = cellSize * 0.5f;
         this.useRealMaze = useRealMaze;
     }
@@ -1522,23 +1508,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     static TerminalCommand parseTerminalCommand(String raw) {
-        String command = raw == null ? "" : raw.trim().toLowerCase(Locale.ROOT);
-        if (command.isEmpty()) {
-            return TerminalCommand.EMPTY;
-        }
-        if ("/h".equals(command)) {
-            return TerminalCommand.HELP;
-        }
-        if ("/showbehaviourtype".equals(command) || "/sbt".equals(command)) {
-            return TerminalCommand.SHOW_BEHAVIOUR_TYPE;
-        }
-        if ("/showmovementtype".equals(command) || "/smt".equals(command)) {
-            return TerminalCommand.SHOW_MOVEMENT_TYPE;
-        }
-        if ("/showenemypath".equals(command) || "/sep".equals(command)) {
-            return TerminalCommand.SHOW_ENEMY_PATH;
-        }
-        return TerminalCommand.UNKNOWN;
+        return TerminalCommandParser.parse(raw);
     }
 
     private void updatePathHint() {
