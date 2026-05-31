@@ -103,7 +103,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
     private static final float ENEMY_PATH_OVERLAY_SECONDS = 10f;
-    private static final String TERMINAL_HELP_TEXT = "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)";
     private static final float BUTTON_PRESS_SECONDS = 0.14f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
 
@@ -1482,7 +1481,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
         if (command == TerminalCommand.HELP) {
-            flashStatus("Commands: " + TERMINAL_HELP_TEXT, 20f);
+            flashStatus("Commands: " + TerminalCommandParser.HELP_TEXT, 20f);
             return;
         }
         if (command == TerminalCommand.SHOW_BEHAVIOUR_TYPE) {
@@ -1504,7 +1503,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     static String terminalHelpText() {
-        return TERMINAL_HELP_TEXT;
+        return TerminalCommandParser.HELP_TEXT;
     }
 
     static TerminalCommand parseTerminalCommand(String raw) {
@@ -1626,6 +1625,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         moveCount = 0;
         showHintInfo = false;
         showSpanningTreeInfo = false;
+        showCommandsOverlay = false;
+        showBehaviourTypeSeconds = 0f;
+        showMovementTypeSeconds = 0f;
+        showEnemyPathSeconds = 0f;
+        pendingTerminalCommand = null;
+        terminalInputActive = false;
+        terminalInputBuffer.setLength(0);
         startMenuDropdownOpen = false;
         pausedFromGame = false;
         playedWinSound = false;

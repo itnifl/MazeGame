@@ -11,6 +11,7 @@ public class GameControllerDifficultyBaseScoreTest {
     @Test
     void easyDifficultyUses5000BaseScore() {
         GameController gc = new GameController();
+        gc.setStartDifficulty(DifficultiesFactory.eINSTANCE.createEasyDifficulty());
         assertEquals(5000, gc.getBaseScoreForCurrentDifficulty());
     }
 

@@ -226,6 +226,7 @@ public final class AdaptiveAggressiveMovementService {
     private static void beginWanderRecovery(RuntimeState state) {
         clearPath(state);
         state.wanderRecoverySecondsRemaining = WANDER_RECOVERY_SECONDS;
+        state.noProgressSeconds = 0d;
     }
 
     private static void clearPath(RuntimeState state) {
