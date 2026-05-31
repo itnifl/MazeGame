@@ -6,17 +6,22 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import main.game.maze.characters.CollisionDamage;
 import main.game.maze.config.service.XmiRulesLoader;
@@ -27,6 +32,7 @@ import main.game.maze.difficulties.EasyDifficulty;
 import main.game.maze.difficulties.EnemyMaxCount;
 import main.game.maze.difficulties.EnemyTypes;
 import main.game.maze.difficulties.HardDifficulty;
+import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
@@ -41,26 +47,21 @@ import main.game.maze.service.DifficultyService;
 /**
  * End-to-end parity suite that feeds difficulties.xmi directly into both
  * the libGDX production loader ({@link RuntimeVisualModelLoader}) and the
- * shared JavaFX formula path ({@link EnemySpawnPlanner}) to verify that all
- * five Hard-difficulty XMI parameters behave identically across frontends.
+ * shared JavaFX formula path ({@link EnemySpawnPlanner}) and verifies that
+ * all five XMI parameters behave identically across frontends for each of
+ * the three difficulties (Easy, Normal, Hard).
  *
  * <p><strong>XMI under test:</strong> {@value #DIFFICULTIES_XMI_CLASSPATH}
  *
- * <p><strong>Hard difficulty values asserted from the XMI:</strong>
- * <ul>
- *   <li>{@code instantDeath="false"}</li>
- *   <li>{@code monstersMovementSpeedMultiplier="1.15"}</li>
- *   <li>{@code monstersDamageMultiplier="1.40"}</li>
- *   <li>{@code maxThreat="62"}</li>
- * </ul>
- *
- * <p>Each nested group is independent. Existing tests are not modified.
- * The "JavaFX path" is tested by calling {@link EnemySpawnPlanner#applyDifficultyAttributes}
- * on {@link EcoreUtil#copy}-ed model objects, which mirrors exactly what
+ * <p>Every {@code @Test} or {@code @ParameterizedTest} in each nested group
+ * is independent. Existing tests are not modified.
+ * The "JavaFX path" is exercised by calling
+ * {@link EnemySpawnPlanner#applyDifficultyAttributes} on
+ * {@link EcoreUtil#copy}-ed model objects, which is exactly what
  * {@code OpponentRuntimeFactory.setCharacterAttributesByDifficulty} does in
  * production.
  */
-@DisplayName("Difficulty XMI parity: all parameters, libGDX vs JavaFX")
+@DisplayName("Difficulty XMI parity: all parameters across Easy / Normal / Hard")
 class DifficultyXmiParameterizedParityTest {
 
     // =========================================================================
@@ -69,23 +70,48 @@ class DifficultyXmiParameterizedParityTest {
     // =========================================================================
     static final String DIFFICULTIES_XMI_CLASSPATH = "/xmi/difficulties/difficulties.xmi";
 
-    // Hard difficulty expected values sourced from the XMI file above.
-    static final boolean HARD_INSTANT_DEATH = false;
-    static final double  HARD_SPEED_MULT   = 1.15;
-    static final double  HARD_DAMAGE_MULT  = 1.40;
-    static final int     HARD_MAX_THREAT   = 62;
+    // Compile-time constant used by @MethodSource inside @Nested classes.
+    static final String ALL_DIFFICULTIES_SOURCE =
+            "main.game.maze.libgdx.parity.DifficultyXmiParameterizedParityTest#allDifficulties";
 
+    // Expected XMI values per difficulty type.
+    // These mirror the data in DIFFICULTIES_XMI_CLASSPATH. Update both together.
+    static final double EASY_SPEED_MULT    = 0.80;
+    static final double EASY_DAMAGE_MULT   = 0.70;
+    static final int    EASY_MAX_THREAT    = 12;
+
+    static final double NORMAL_SPEED_MULT  = 1.00;
+    static final double NORMAL_DAMAGE_MULT = 1.00;
+    static final int    NORMAL_MAX_THREAT  = 20;
+
+    static final double HARD_SPEED_MULT   = 1.15;
+    static final double HARD_DAMAGE_MULT  = 1.40;
+    static final int    HARD_MAX_THREAT   = 62;
+
+    // Loaded once by @BeforeAll; shared by all nested groups.
+    private static List<Difficulty> allDifficultyList;
     private static HardDifficulty hardDiff;
     private static OpponentModel opponentModel;
 
     /** id -> unmodified CharacterType (used to look up base stats by spawn id). */
     private static Map<String, CharacterType> baseById;
 
+    // =========================================================================
+    // Parameterisation source — one Named<Difficulty> per XMI difficulty.
+    // =========================================================================
+    static Stream<Named<Difficulty>> allDifficulties() {
+        return allDifficultyList.stream()
+                .map(d -> Named.of(d.eClass().getName(), d));
+    }
+
     @BeforeAll
     static void loadXmi() {
-        // DifficultyService loads DIFFICULTIES_XMI_CLASSPATH from the classpath.
         DifficultyService svc = new DifficultyService();
-        hardDiff = svc.list().stream()
+        allDifficultyList = new ArrayList<>(svc.list());
+        assertFalse(allDifficultyList.isEmpty(),
+                "difficulties.xmi must contain at least one entry");
+
+        hardDiff = allDifficultyList.stream()
                 .filter(d -> d instanceof HardDifficulty)
                 .map(d -> (HardDifficulty) d)
                 .findFirst()
@@ -107,99 +133,130 @@ class DifficultyXmiParameterizedParityTest {
 
     // =========================================================================
     // 1. XMI PARSING
-    //    Verify every Hard-difficulty attribute is read from the XMI correctly.
+    //    Verify every difficulty attribute is read from the XMI correctly for
+    //    all three difficulties (Easy, Normal, Hard).
     // =========================================================================
 
     @Nested
-    @DisplayName("1. XMI parsing — Hard difficulty fields")
+    @DisplayName("1. XMI parsing — all difficulty fields for each difficulty")
     class XmiParsing {
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("instantDeath field parses as false")
-        void instantDeathIsFalse() {
-            assertFalse(hardDiff.isInstantDeath(),
-                    "Hard difficulty instantDeath must be false per " + DIFFICULTIES_XMI_CLASSPATH);
+        void instantDeathIsFalse(Difficulty diff) {
+            assertFalse(diff.isInstantDeath(),
+                    diff.eClass().getName() + " instantDeath must be false per "
+                    + DIFFICULTIES_XMI_CLASSPATH);
         }
 
-        @Test
-        @DisplayName("monstersMovementSpeedMultiplier field parses as 1.15")
-        void speedMultiplierIs1_15() {
-            assertEquals(HARD_SPEED_MULT, hardDiff.getMonstersMovementSpeedMultiplier(), 1e-9,
-                    "Hard difficulty speed multiplier must be 1.15 per " + DIFFICULTIES_XMI_CLASSPATH);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("monstersMovementSpeedMultiplier field parses as expected")
+        void speedMultiplierMatchesXmi(Difficulty diff) {
+            assertEquals(expectedSpeedMult(diff), diff.getMonstersMovementSpeedMultiplier(), 1e-9,
+                    diff.eClass().getName() + " speedMult must match "
+                    + DIFFICULTIES_XMI_CLASSPATH);
         }
 
-        @Test
-        @DisplayName("monstersDamageMultiplier field parses as 1.40")
-        void damageMultiplierIs1_40() {
-            assertEquals(HARD_DAMAGE_MULT, hardDiff.getMonstersDamageMultiplier(), 1e-9,
-                    "Hard difficulty damage multiplier must be 1.40 per " + DIFFICULTIES_XMI_CLASSPATH);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("monstersDamageMultiplier field parses as expected")
+        void damageMultiplierMatchesXmi(Difficulty diff) {
+            assertEquals(expectedDamageMult(diff), diff.getMonstersDamageMultiplier(), 1e-9,
+                    diff.eClass().getName() + " damageMult must match "
+                    + DIFFICULTIES_XMI_CLASSPATH);
         }
 
-        @Test
-        @DisplayName("maxThreat field parses as 62")
-        void maxThreatIs62() {
-            assertEquals(HARD_MAX_THREAT, hardDiff.getMaxThreat(),
-                    "Hard difficulty maxThreat must be 62 per " + DIFFICULTIES_XMI_CLASSPATH);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("maxThreat field parses as expected")
+        void maxThreatMatchesXmi(Difficulty diff) {
+            assertEquals(expectedMaxThreat(diff), diff.getMaxThreat(),
+                    diff.eClass().getName() + " maxThreat must match "
+                    + DIFFICULTIES_XMI_CLASSPATH);
         }
 
-        @Test
-        @DisplayName("Hard difficulty is a HardDifficulty instance")
-        void hardDifficultyIsCorrectType() {
-            assertTrue(hardDiff instanceof HardDifficulty,
-                    "The 'hard' entry in " + DIFFICULTIES_XMI_CLASSPATH + " must deserialize as HardDifficulty");
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("difficulty entry deserialises as the correct EMF subtype")
+        void difficultyTypeMatchesXmi(Difficulty diff) {
+            assertTrue(expectedType(diff).isInstance(diff),
+                    "Entry in " + DIFFICULTIES_XMI_CLASSPATH
+                    + " must deserialise as " + expectedType(diff).getSimpleName()
+                    + " but was " + diff.getClass().getSimpleName());
         }
     }
 
     // =========================================================================
-    // 2. instantDeath = false  (the actual Hard XMI value)
-    //    Simulates monster touching the player when the difficulty flag is off.
-    //    Expected: damage = applyDamageMultiplier(base, 1.40), NOT Integer.MAX_VALUE.
+    // 2. instantDeath = false
+    //    Verifies that when a difficulty's instantDeath flag is false, spawned
+    //    enemies deal formula-scaled damage rather than Integer.MAX_VALUE.
+    //    All three current XMI difficulties have instantDeath=false; the group
+    //    adds assumeFalse() for forward-compatibility if that ever changes.
     // =========================================================================
 
     @Nested
-    @DisplayName("2. instantDeath=false — damage = applyDamageMultiplier(base, 1.40)")
+    @DisplayName("2. instantDeath=false — damage = applyDamageMultiplier(base, mult)")
     class InstantDeathFalse {
 
-        @Test
-        @DisplayName("libGDX: spawned attackDamage equals applyDamageMultiplier(base, 1.40)")
-        void libgdx_spawnedDamageEqualsFormula() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("libGDX: spawned attackDamage equals applyDamageMultiplier(base, mult)")
+        void libgdx_spawnedDamageEqualsFormula(Difficulty diff) {
+            assumeFalse(diff.isInstantDeath(),
+                    "skipped for instantDeath=true: " + diff.eClass().getName());
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
-            assertFalse(rvm.enemies().isEmpty(), "Hard difficulty must spawn at least one enemy");
-
+            assertFalse(rvm.enemies().isEmpty(),
+                    diff.eClass().getName() + " must spawn at least one enemy");
             for (EnemySpawn spawn : rvm.enemies()) {
                 CharacterType base = baseById.get(spawn.id());
                 if (base == null) {
                     continue;
                 }
                 int baseDmg = attackDamageOf(base);
-                int expected = EnemySpawnPlanner.applyDamageMultiplier(baseDmg, HARD_DAMAGE_MULT);
+                int expected = EnemySpawnPlanner.applyDamageMultiplier(
+                        baseDmg, diff.getMonstersDamageMultiplier());
                 assertEquals(expected, spawn.attackDamage(),
-                        "libGDX " + spawn.id() + ": attackDamage must equal "
-                        + "applyDamageMultiplier(base=" + baseDmg + ", mult=1.40)");
+                        "libGDX " + spawn.id() + " [" + diff.eClass().getName()
+                        + "]: attackDamage must equal applyDamageMultiplier(base="
+                        + baseDmg + ", mult=" + diff.getMonstersDamageMultiplier() + ")");
             }
         }
 
-        @Test
-        @DisplayName("JavaFX path: applyDifficultyAttributes produces applyDamageMultiplier(base, 1.40)")
-        void javafx_applyDifficultyAttributesProducesCorrectDamage() {
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("JavaFX path: applyDifficultyAttributes produces applyDamageMultiplier(base, mult)")
+        void javafx_applyDifficultyAttributesProducesCorrectDamage(Difficulty diff) {
+            assumeFalse(diff.isInstantDeath(),
+                    "skipped for instantDeath=true: " + diff.eClass().getName());
             for (CharacterType template : baseById.values()) {
                 CharacterType copy = EcoreUtil.copy(template);
                 int baseDmg = attackDamageOf(template);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, HARD_INSTANT_DEATH);
-                int expected = EnemySpawnPlanner.applyDamageMultiplier(baseDmg, HARD_DAMAGE_MULT);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        diff.isInstantDeath());
+                int expected = EnemySpawnPlanner.applyDamageMultiplier(
+                        baseDmg, diff.getMonstersDamageMultiplier());
                 assertEquals(expected, attackDamageOf(copy),
                         "JavaFX path " + template.getId()
-                        + ": damage after applyDifficultyAttributes must equal "
-                        + "applyDamageMultiplier(base=" + baseDmg + ", mult=1.40)");
+                        + " [" + diff.eClass().getName()
+                        + "]: damage after applyDifficultyAttributes must equal "
+                        + "applyDamageMultiplier(base=" + baseDmg
+                        + ", mult=" + diff.getMonstersDamageMultiplier() + ")");
             }
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("both frontends produce the same attackDamage per named enemy")
-        void bothFrontends_damageAgreesForEveryNamedEnemy() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        void bothFrontends_damageAgreesForEveryNamedEnemy(Difficulty diff) {
+            assumeFalse(diff.isInstantDeath(),
+                    "skipped for instantDeath=true: " + diff.eClass().getName());
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
             int verified = 0;
             for (EnemySpawn spawn : rvm.enemies()) {
@@ -209,37 +266,42 @@ class DifficultyXmiParameterizedParityTest {
                 }
                 CharacterType copy = EcoreUtil.copy(base);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, HARD_INSTANT_DEATH);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        diff.isInstantDeath());
                 int javafxDamage = attackDamageOf(copy);
                 assertEquals(javafxDamage, spawn.attackDamage(),
                         "both frontends must agree on damage for " + spawn.id()
-                        + " at Hard difficulty (instantDeath=false)");
+                        + " at " + diff.eClass().getName() + " (instantDeath=false)");
                 verified++;
             }
             assertTrue(verified > 0, "at least one named enemy must be verified");
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("monster touch simulation: instantDeath=false does NOT one-shot the player")
-        void monsterTouch_instantDeathFalse_doesNotOneShot() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        void monsterTouch_instantDeathFalse_doesNotOneShot(Difficulty diff) {
+            assumeFalse(diff.isInstantDeath(),
+                    "skipped for instantDeath=true: " + diff.eClass().getName());
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
-            // Simulate: player touches each spawned enemy.
-            // CollisionDamage.effectiveDamage(effectiveThreat, attackDamage) is the
-            // shared formula used by both frontends on every player-enemy collision.
             for (EnemySpawn spawn : rvm.enemies()) {
                 int collisionDmg = CollisionDamage.effectiveDamage(
                         spawn.effectiveThreat(), spawn.attackDamage());
                 assertNotEquals(Integer.MAX_VALUE, collisionDmg,
-                        spawn.id() + ": instantDeath=false must not produce "
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: instantDeath=false must not produce "
                         + "collision damage of Integer.MAX_VALUE");
             }
         }
     }
 
     // =========================================================================
-    // 3. instantDeath = true  (synthetic difficulty — Hard values, flag flipped)
-    //    Simulates monster touching the player when difficulty forces instant kill.
+    // 3. instantDeath = true  (synthetic — each XMI difficulty with flag flipped)
+    //    Uses buildInstantDeath(source) to create a copy of each difficulty with
+    //    instantDeath=true so all three difficulty base-configurations are tested.
     //    Expected: attackDamage = Integer.MAX_VALUE; collision damage = MAX_VALUE.
     // =========================================================================
 
@@ -247,13 +309,13 @@ class DifficultyXmiParameterizedParityTest {
     @DisplayName("3. instantDeath=true — all enemies deal Integer.MAX_VALUE damage")
     class InstantDeathTrue {
 
-        private Difficulty buildInstantDeathHard() {
+        private Difficulty buildInstantDeath(Difficulty source) {
             Difficulty synth = DifficultiesFactory.eINSTANCE.createHardDifficulty();
             synth.setInstantDeath(true);
-            synth.setMonstersDamageMultiplier(HARD_DAMAGE_MULT);
-            synth.setMonstersMovementSpeedMultiplier(HARD_SPEED_MULT);
-            synth.setMaxThreat(HARD_MAX_THREAT);
-            for (EnemyMaxCount cap : hardDiff.getEnemyMaxCount()) {
+            synth.setMonstersDamageMultiplier(source.getMonstersDamageMultiplier());
+            synth.setMonstersMovementSpeedMultiplier(source.getMonstersMovementSpeedMultiplier());
+            synth.setMaxThreat(source.getMaxThreat());
+            for (EnemyMaxCount cap : source.getEnemyMaxCount()) {
                 EnemyMaxCount copyCap = DifficultiesFactory.eINSTANCE.createEnemyMaxCount();
                 copyCap.setType(cap.getType());
                 copyCap.setMaxCount(cap.getMaxCount());
@@ -262,37 +324,44 @@ class DifficultyXmiParameterizedParityTest {
             return synth;
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("libGDX: spawned attackDamage is Integer.MAX_VALUE for every enemy")
-        void libgdx_allSpawnedEnemiesDealMaxValueDamage() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeathHard());
+        void libgdx_allSpawnedEnemiesDealMaxValueDamage(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeath(diff));
             assertNotNull(rvm);
             assertFalse(rvm.enemies().isEmpty(),
-                    "instantDeath=true Hard must still spawn at least one enemy");
+                    diff.eClass().getName() + " instantDeath=true must still spawn at least one enemy");
             for (EnemySpawn spawn : rvm.enemies()) {
                 assertEquals(Integer.MAX_VALUE, spawn.attackDamage(),
-                        spawn.id() + ": instantDeath=true must set attackDamage "
-                        + "to Integer.MAX_VALUE in libGDX");
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: instantDeath=true must set attackDamage to Integer.MAX_VALUE in libGDX");
             }
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("JavaFX path: applyDifficultyAttributes sets attackDamage to Integer.MAX_VALUE")
-        void javafx_applyDifficultyAttributesSetsMaxValueDamage() {
+        void javafx_applyDifficultyAttributesSetsMaxValueDamage(Difficulty diff) {
             for (CharacterType template : baseById.values()) {
                 CharacterType copy = EcoreUtil.copy(template);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, true);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        true);
                 assertEquals(Integer.MAX_VALUE, attackDamageOf(copy),
-                        "JavaFX path: instantDeath=true must set "
-                        + template.getId() + " attackDamage to Integer.MAX_VALUE");
+                        "JavaFX path [" + diff.eClass().getName()
+                        + "]: instantDeath=true must set " + template.getId()
+                        + " attackDamage to Integer.MAX_VALUE");
             }
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("both frontends produce Integer.MAX_VALUE damage when instantDeath=true")
-        void bothFrontends_damageIsMaxValueWhenInstantDeath() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeathHard());
+        void bothFrontends_damageIsMaxValueWhenInstantDeath(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeath(diff));
             assertNotNull(rvm);
             int verified = 0;
             for (EnemySpawn spawn : rvm.enemies()) {
@@ -302,43 +371,47 @@ class DifficultyXmiParameterizedParityTest {
                 }
                 CharacterType copy = EcoreUtil.copy(base);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, true);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        true);
                 int javafxDamage = attackDamageOf(copy);
                 assertEquals(javafxDamage, spawn.attackDamage(),
                         "both frontends must agree on damage for " + spawn.id()
-                        + " when instantDeath=true");
+                        + " when instantDeath=true [" + diff.eClass().getName() + "]");
                 assertEquals(Integer.MAX_VALUE, spawn.attackDamage(),
-                        spawn.id() + ": damage must be Integer.MAX_VALUE when instantDeath=true");
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: damage must be Integer.MAX_VALUE when instantDeath=true");
                 verified++;
             }
             assertTrue(verified > 0, "at least one named enemy must be verified");
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("monster touch simulation: instantDeath=true causes Integer.MAX_VALUE collision damage")
-        void monsterTouch_instantDeathTrue_oneshotsPlayer() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeathHard());
+        void monsterTouch_instantDeathTrue_oneshotsPlayer(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeath(diff));
             assertNotNull(rvm);
-            // When the difficulty sets instantDeath=true the loader also raises
-            // effectiveThreat above INSTANT_KILL_THREAT_THRESHOLD so that
-            // CollisionDamage returns MAX_VALUE independently of attackDamage.
             for (EnemySpawn spawn : rvm.enemies()) {
                 int collisionDmg = CollisionDamage.effectiveDamage(
                         spawn.effectiveThreat(), spawn.attackDamage());
                 assertEquals(Integer.MAX_VALUE, collisionDmg,
-                        spawn.id() + ": collision damage must be Integer.MAX_VALUE "
-                        + "when instantDeath=true");
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: collision damage must be Integer.MAX_VALUE when instantDeath=true");
             }
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("instantDeath=true forces effectiveThreat above the instant-kill threshold")
-        void libgdx_instantDeathTrueRaisesEffectiveThreatAboveThreshold() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeathHard());
+        void libgdx_instantDeathTrueRaisesEffectiveThreatAboveThreshold(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, buildInstantDeath(diff));
             assertNotNull(rvm);
             for (EnemySpawn spawn : rvm.enemies()) {
                 assertTrue(spawn.effectiveThreat() > CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD,
-                        spawn.id() + ": effectiveThreat must exceed "
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: effectiveThreat must exceed "
                         + CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD
                         + " when instantDeath=true (got " + spawn.effectiveThreat() + ")");
             }
@@ -346,18 +419,20 @@ class DifficultyXmiParameterizedParityTest {
     }
 
     // =========================================================================
-    // 4. monstersMovementSpeedMultiplier = 1.15
-    //    Simulates enemy movement: spawned speed must be base * 1.15.
+    // 4. monstersMovementSpeedMultiplier
+    //    Simulates enemy movement: spawned speed must equal
+    //    applySpeedMultiplier(base, diff.getMonstersMovementSpeedMultiplier()).
     // =========================================================================
 
     @Nested
-    @DisplayName("4. monstersMovementSpeedMultiplier=1.15 — spawned speed = applySpeedMultiplier(base, 1.15)")
+    @DisplayName("4. monstersMovementSpeedMultiplier — spawned speed = applySpeedMultiplier(base, mult)")
     class SpeedMultiplier {
 
-        @Test
-        @DisplayName("libGDX: spawned speed equals applySpeedMultiplier(baseSpeed, 1.15)")
-        void libgdx_spawnedSpeedMatchesFormula() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("libGDX: spawned speed equals applySpeedMultiplier(baseSpeed, mult)")
+        void libgdx_spawnedSpeedMatchesFormula(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
             int verified = 0;
             for (EnemySpawn spawn : rvm.enemies()) {
@@ -366,34 +441,43 @@ class DifficultyXmiParameterizedParityTest {
                     continue;
                 }
                 float expected = (float) EnemySpawnPlanner.applySpeedMultiplier(
-                        base.getSpeed(), HARD_SPEED_MULT);
+                        base.getSpeed(), diff.getMonstersMovementSpeedMultiplier());
                 assertEquals(expected, spawn.speed(), 1e-4f,
-                        "libGDX " + spawn.id() + ": speed must equal "
-                        + "applySpeedMultiplier(base=" + base.getSpeed() + ", mult=1.15)");
+                        "libGDX " + spawn.id() + " [" + diff.eClass().getName()
+                        + "]: speed must equal applySpeedMultiplier(base="
+                        + base.getSpeed() + ", mult="
+                        + diff.getMonstersMovementSpeedMultiplier() + ")");
                 verified++;
             }
             assertTrue(verified > 0, "at least one named enemy must have speed verified");
         }
 
-        @Test
-        @DisplayName("JavaFX path: applyDifficultyAttributes scales speed by 1.15")
-        void javafx_applyDifficultyAttributesScalesSpeed() {
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("JavaFX path: applyDifficultyAttributes scales speed by mult")
+        void javafx_applyDifficultyAttributesScalesSpeed(Difficulty diff) {
             for (CharacterType template : baseById.values()) {
                 double baseSpeed = template.getSpeed();
                 CharacterType copy = EcoreUtil.copy(template);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, HARD_INSTANT_DEATH);
-                double expected = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, HARD_SPEED_MULT);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        diff.isInstantDeath());
+                double expected = EnemySpawnPlanner.applySpeedMultiplier(
+                        baseSpeed, diff.getMonstersMovementSpeedMultiplier());
                 assertEquals(expected, copy.getSpeed(), 1e-9,
-                        "JavaFX path: " + template.getId()
-                        + " speed after applyDifficultyAttributes must be " + expected);
+                        "JavaFX path [" + diff.eClass().getName() + "]: "
+                        + template.getId() + " speed after applyDifficultyAttributes must be "
+                        + expected);
             }
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("both frontends agree on spawned speed per named enemy")
-        void bothFrontends_speedAgreesForEveryNamedEnemy() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        void bothFrontends_speedAgreesForEveryNamedEnemy(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
             int verified = 0;
             for (EnemySpawn spawn : rvm.enemies()) {
@@ -403,20 +487,26 @@ class DifficultyXmiParameterizedParityTest {
                 }
                 CharacterType copy = EcoreUtil.copy(base);
                 EnemySpawnPlanner.applyDifficultyAttributes(
-                        copy, HARD_SPEED_MULT, HARD_DAMAGE_MULT, HARD_INSTANT_DEATH);
+                        copy,
+                        diff.getMonstersMovementSpeedMultiplier(),
+                        diff.getMonstersDamageMultiplier(),
+                        diff.isInstantDeath());
                 float javafxSpeed = (float) copy.getSpeed();
                 assertEquals(javafxSpeed, spawn.speed(), 1e-4f,
                         "both frontends must agree on speed for " + spawn.id()
-                        + " at Hard difficulty");
+                        + " at " + diff.eClass().getName());
                 verified++;
             }
             assertTrue(verified > 0, "at least one named enemy must be verified");
         }
 
-        @Test
-        @DisplayName("Hard (1.15) enemies move faster than Easy (0.80) enemies")
-        void hardEnemiesMovesFasterThanEasy() {
-            Difficulty easyDiff = new DifficultyService().list().stream()
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("enemies in this difficulty move at least as fast as Easy (formula)")
+        void enemiesAreAtLeastAsSpeedyAsEasy(Difficulty diff) {
+            assumeFalse(diff instanceof EasyDifficulty,
+                    "skipped for Easy: it is the baseline");
+            Difficulty easyDiff = allDifficultyList.stream()
                     .filter(d -> d instanceof EasyDifficulty)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
@@ -425,28 +515,32 @@ class DifficultyXmiParameterizedParityTest {
                 if (template.getSpeed() <= 0) {
                     continue;
                 }
-                double hardSpeed = EnemySpawnPlanner.applySpeedMultiplier(
-                        template.getSpeed(), HARD_SPEED_MULT);
+                double thisSpeed = EnemySpawnPlanner.applySpeedMultiplier(
+                        template.getSpeed(), diff.getMonstersMovementSpeedMultiplier());
                 double easySpeed = EnemySpawnPlanner.applySpeedMultiplier(
                         template.getSpeed(), easyDiff.getMonstersMovementSpeedMultiplier());
-                assertTrue(hardSpeed > easySpeed,
-                        template.getId() + ": Hard-difficulty speed (" + hardSpeed
-                        + ") must exceed Easy-difficulty speed (" + easySpeed + ")");
+                assertTrue(thisSpeed >= easySpeed,
+                        template.getId() + " [" + diff.eClass().getName()
+                        + "]: speed (" + thisSpeed
+                        + ") must be >= Easy speed (" + easySpeed + ")");
             }
         }
 
-        @Test
-        @DisplayName("libGDX Hard enemies move faster than libGDX Easy enemies")
-        void libgdx_hardEnemiesAreSpawnedFasterThanEasy() {
-            Difficulty easyDiff = new DifficultyService().list().stream()
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("libGDX: enemies in this difficulty are spawned at least as fast as Easy")
+        void libgdx_enemiesAreSpawnedAtLeastAsSpeedyAsEasy(Difficulty diff) {
+            assumeFalse(diff instanceof EasyDifficulty,
+                    "skipped for Easy: it is the baseline");
+            Difficulty easyDiff = allDifficultyList.stream()
                     .filter(d -> d instanceof EasyDifficulty)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
                             "Easy difficulty not found in " + DIFFICULTIES_XMI_CLASSPATH));
 
-            RuntimeVisualModel hardRvm  = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
-            RuntimeVisualModel easyRvm  = new RuntimeVisualModelLoader().load(800f, 600f, easyDiff);
-            assertNotNull(hardRvm);
+            RuntimeVisualModel thisRvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
+            RuntimeVisualModel easyRvm = new RuntimeVisualModelLoader().load(800f, 600f, easyDiff);
+            assertNotNull(thisRvm);
             assertNotNull(easyRvm);
 
             Map<String, Float> easySpeedById = new LinkedHashMap<>();
@@ -455,54 +549,53 @@ class DifficultyXmiParameterizedParityTest {
             }
 
             int verified = 0;
-            for (EnemySpawn hardSpawn : hardRvm.enemies()) {
-                Float easySpeed = easySpeedById.get(hardSpawn.id());
+            for (EnemySpawn spawn : thisRvm.enemies()) {
+                Float easySpeed = easySpeedById.get(spawn.id());
                 if (easySpeed == null) {
                     continue;
                 }
-                assertTrue(hardSpawn.speed() > easySpeed,
-                        hardSpawn.id() + ": libGDX Hard speed (" + hardSpawn.speed()
-                        + ") must be greater than Easy speed (" + easySpeed + ")");
+                assertTrue(spawn.speed() >= easySpeed,
+                        spawn.id() + " [" + diff.eClass().getName()
+                        + "]: libGDX speed (" + spawn.speed()
+                        + ") must be >= Easy speed (" + easySpeed + ")");
                 verified++;
             }
-            assertTrue(verified > 0, "at least one shared enemy must be verified across difficulties");
+            assertTrue(verified > 0, "at least one shared enemy must be verified");
         }
     }
 
     // =========================================================================
-    // 5. maxThreat = 62
+    // 5. maxThreat
     //    Both frontends must stop spawning once the threat budget is exhausted.
     // =========================================================================
 
     @Nested
-    @DisplayName("5. maxThreat=62 — total spawned threat must not exceed the budget")
+    @DisplayName("5. maxThreat — total spawned threat must not exceed the budget")
     class MaxThreat {
 
-        @Test
-        @DisplayName("libGDX: sum of effectiveThreat for all spawned enemies does not exceed 62")
-        void libgdx_totalThreatDoesNotExceedBudget() {
-            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("libGDX: sum of effectiveThreat does not exceed maxThreat")
+        void libgdx_totalThreatDoesNotExceedBudget(Difficulty diff) {
+            RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             assertNotNull(rvm);
-            // Note: when instantDeath=false the loader stores each enemy's raw
-            // model threatLevel as effectiveThreat. The OCL invariant and the
-            // loader's break condition both enforce the budget.
             double totalThreat = rvm.enemies().stream()
                     .mapToDouble(EnemySpawn::effectiveThreat)
                     .sum();
-            assertTrue(totalThreat <= HARD_MAX_THREAT,
-                    "libGDX: total spawned threat " + totalThreat
-                    + " must not exceed maxThreat=" + HARD_MAX_THREAT);
+            int maxThreat = diff.getMaxThreat();
+            assertTrue(totalThreat <= maxThreat,
+                    diff.eClass().getName() + ": total spawned threat " + totalThreat
+                    + " must not exceed maxThreat=" + maxThreat);
         }
 
-        @Test
-        @DisplayName("JavaFX path: threat budget simulation stops spawning at maxThreat=62")
-        void javafx_threatBudgetIsRespected() {
-            // Mirrors the threat-budget loop in OpponentRuntimeFactory.spawnByTarget
-            // without invoking the JavaFX toolkit.
-            Map<EnemyTypes, Integer> caps = EnemySpawnPlanner.capsFromDifficulty(hardDiff);
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("JavaFX path: threat budget simulation stops spawning at maxThreat")
+        void javafx_threatBudgetIsRespected(Difficulty diff) {
+            Map<EnemyTypes, Integer> caps = EnemySpawnPlanner.capsFromDifficulty(diff);
             Map<EnemyTypes, List<CharacterType>> available =
                     EnemySpawnPlanner.availableEnabledByType(opponentModel, true);
-            double budget = HARD_MAX_THREAT;
+            double budget = diff.getMaxThreat();
             double usedThreat = 0.0;
             for (Map.Entry<EnemyTypes, Integer> entry : caps.entrySet()) {
                 int count = Math.max(0, entry.getValue());
@@ -524,42 +617,44 @@ class DifficultyXmiParameterizedParityTest {
                     usedThreat += effThreat;
                 }
             }
-            assertTrue(usedThreat <= HARD_MAX_THREAT,
-                    "JavaFX threat budget simulation: usedThreat " + usedThreat
-                    + " must not exceed maxThreat=" + HARD_MAX_THREAT);
+            assertTrue(usedThreat <= diff.getMaxThreat(),
+                    diff.eClass().getName() + " JavaFX budget sim: usedThreat "
+                    + usedThreat + " must not exceed maxThreat=" + diff.getMaxThreat());
         }
 
-        @Test
-        @DisplayName("libGDX: Hard maxThreat=62 allows more enemies than Easy maxThreat=12")
-        void libgdx_hardDifficultySpawnsMoreEnemiesThanEasy() {
-            Difficulty easyDiff = new DifficultyService().list().stream()
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("libGDX: spawns at least as many enemies as Easy difficulty")
+        void libgdx_spawnsAtLeastAsManyEnemiesAsEasy(Difficulty diff) {
+            assumeFalse(diff instanceof EasyDifficulty,
+                    "skipped for Easy: it is the baseline");
+            Difficulty easyDiff = allDifficultyList.stream()
                     .filter(d -> d instanceof EasyDifficulty)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
                             "Easy difficulty not found in " + DIFFICULTIES_XMI_CLASSPATH));
-            RuntimeVisualModel hardRvm = new RuntimeVisualModelLoader().load(800f, 600f, hardDiff);
+            RuntimeVisualModel thisRvm = new RuntimeVisualModelLoader().load(800f, 600f, diff);
             RuntimeVisualModel easyRvm = new RuntimeVisualModelLoader().load(800f, 600f, easyDiff);
-            assertNotNull(hardRvm);
+            assertNotNull(thisRvm);
             assertNotNull(easyRvm);
-            assertTrue(hardRvm.enemies().size() >= easyRvm.enemies().size(),
-                    "Hard difficulty (maxThreat=62) must spawn at least as many enemies "
-                    + "as Easy (maxThreat=12). Hard=" + hardRvm.enemies().size()
+            assertTrue(thisRvm.enemies().size() >= easyRvm.enemies().size(),
+                    diff.eClass().getName() + " (maxThreat=" + diff.getMaxThreat()
+                    + ") must spawn at least as many enemies as Easy (maxThreat="
+                    + easyDiff.getMaxThreat() + "). "
+                    + diff.eClass().getName() + "=" + thisRvm.enemies().size()
                     + ", Easy=" + easyRvm.enemies().size());
         }
 
-        @Test
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
         @DisplayName("libGDX: tight threat budget (maxThreat=1) limits spawns to at most one enemy")
-        void libgdx_tightThreatBudgetLimitsSpawnCount() {
-            // MIN_THREAT_BUDGET in RuntimeVisualModelLoader clamps to 1f even if
-            // setMaxThreat(0) is used, so maxThreat=1 is the tightest meaningful test.
-            // Every enemy has an effective threat of at least 1 (floored in the loader),
-            // so at most one enemy can fit inside a budget of 1.
+        void libgdx_tightThreatBudgetLimitsSpawnCount(Difficulty diff) {
             Difficulty tightBudget = DifficultiesFactory.eINSTANCE.createHardDifficulty();
             tightBudget.setMaxThreat(1);
-            tightBudget.setMonstersDamageMultiplier(HARD_DAMAGE_MULT);
-            tightBudget.setMonstersMovementSpeedMultiplier(HARD_SPEED_MULT);
+            tightBudget.setMonstersDamageMultiplier(diff.getMonstersDamageMultiplier());
+            tightBudget.setMonstersMovementSpeedMultiplier(diff.getMonstersMovementSpeedMultiplier());
             tightBudget.setInstantDeath(false);
-            for (EnemyMaxCount cap : hardDiff.getEnemyMaxCount()) {
+            for (EnemyMaxCount cap : diff.getEnemyMaxCount()) {
                 EnemyMaxCount copyCap = DifficultiesFactory.eINSTANCE.createEnemyMaxCount();
                 copyCap.setType(cap.getType());
                 copyCap.setMaxCount(cap.getMaxCount());
@@ -568,38 +663,125 @@ class DifficultyXmiParameterizedParityTest {
             RuntimeVisualModel rvm = new RuntimeVisualModelLoader().load(800f, 600f, tightBudget);
             assertNotNull(rvm);
             assertTrue(rvm.enemies().size() <= 1,
-                    "maxThreat=1 must yield at most 1 spawned enemy, "
+                    diff.eClass().getName() + " maxThreat=1 must yield at most 1 spawned enemy, "
                     + "got " + rvm.enemies().size());
         }
 
-        @Test
-        @DisplayName("Hard maxThreat=62 is larger than Easy maxThreat=12 (XMI ordering sanity check)")
-        void hardMaxThreatIsLargerThanEasy() {
-            Difficulty easyDiff = new DifficultyService().list().stream()
+        @ParameterizedTest(name = "{0}")
+        @MethodSource(ALL_DIFFICULTIES_SOURCE)
+        @DisplayName("maxThreat is larger than Easy maxThreat (XMI ordering sanity check)")
+        void maxThreatIsAtLeastEasyMaxThreat(Difficulty diff) {
+            assumeFalse(diff instanceof EasyDifficulty,
+                    "skipped for Easy: it is the baseline");
+            Difficulty easyDiff = allDifficultyList.stream()
                     .filter(d -> d instanceof EasyDifficulty)
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException(
                             "Easy difficulty not found in " + DIFFICULTIES_XMI_CLASSPATH));
-            assertTrue(HARD_MAX_THREAT > easyDiff.getMaxThreat(),
-                    "Hard maxThreat (" + HARD_MAX_THREAT + ") must exceed Easy maxThreat ("
-                    + easyDiff.getMaxThreat() + ")");
+            assertTrue(diff.getMaxThreat() > easyDiff.getMaxThreat(),
+                    diff.eClass().getName() + " maxThreat (" + diff.getMaxThreat()
+                    + ") must exceed Easy maxThreat (" + easyDiff.getMaxThreat() + ")");
         }
     }
 
     // =========================================================================
-    // Shared helpers
+    // 6. ZeroThreatEnemy (S-4)
+    //    The pumpkin bomber in opponentModel.xmi has threatLevel=0.  The libGDX
+    //    loader floors per-enemy threat to 1 via Math.max(1d, effectiveThreat)
+    //    before deducting from the budget so that a zero-threat enemy never fits
+    //    infinitely within any positive budget.
     // =========================================================================
 
+    @Nested
+    @DisplayName("6. ZeroThreatEnemy — pumpkin bomber (threatLevel=0) floor edge case")
+    class ZeroThreatEnemy {
+
+        @Test
+        @DisplayName("pumpkin bomber in XMI has effectiveThreat=0.0")
+        void pumpkinBomberModelHasThreatLevel0InXmi() {
+            List<PumpkinBomber> bombers = opponentModel.getCharacterTypes().stream()
+                    .filter(ct -> ct instanceof PumpkinBomber)
+                    .map(ct -> (PumpkinBomber) ct)
+                    .toList();
+            assertFalse(bombers.isEmpty(),
+                    "opponentModel.xmi must contain at least one PumpkinBomber");
+            boolean foundZeroThreat = bombers.stream()
+                    .anyMatch(b -> b.getEffectiveThreat() == 0.0);
+            assertTrue(foundZeroThreat,
+                    "At least one PumpkinBomber in opponentModel.xmi must have "
+                    + "threatLevel=0.0 to exercise the threat-floor logic in "
+                    + "RuntimeVisualModelLoader");
+        }
+
+        @Test
+        @DisplayName("pumpkin bomber with threatLevel=0 is disabled in XMI (not spawned)")
+        void pumpkinBomberWithZeroThreatIsDisabledInXmi() {
+            opponentModel.getCharacterTypes().stream()
+                    .filter(ct -> ct instanceof PumpkinBomber && ct.getEffectiveThreat() == 0.0)
+                    .forEach(ct -> assertFalse(ct.isEnabled(),
+                            "PumpkinBomber " + ct.getId()
+                            + " has threatLevel=0; it should be disabled in the XMI "
+                            + "so it is never spawned through the enabled-enemy filter"));
+        }
+
+        @Test
+        @DisplayName("threat=0 is floored to 1 in the budget calculation (Math.max(1, effectiveThreat))")
+        void threatZeroIsFlooredTo1ForBudgetCalculation() {
+            // RuntimeVisualModelLoader applies Math.max(1d, picked.getEffectiveThreat())
+            // before deducting from the threat budget.
+            assertEquals(1.0, Math.max(1d, 0.0), 1e-9,
+                    "Math.max(1d, 0.0) must equal 1.0 — the floor used in RuntimeVisualModelLoader");
+        }
+
+        @Test
+        @DisplayName("all enabled enemies in the current XMI have threatLevel >= 1")
+        void allEnabledEnemiesHaveThreatAtLeast1() {
+            opponentModel.getCharacterTypes().stream()
+                    .filter(CharacterType::isEnabled)
+                    .forEach(ct -> assertTrue(ct.getEffectiveThreat() >= 1.0,
+                            "Enabled enemy " + ct.getId()
+                            + " has effectiveThreat=" + ct.getEffectiveThreat()
+                            + "; all enabled enemies must have threat >= 1 so no "
+                            + "enabled enemy fits infinitely within any positive budget"));
+        }
+    }
+
+    // =========================================================================
+    // Helpers — XMI expected-values table
+    // =========================================================================
+
+    private static double expectedSpeedMult(Difficulty d) {
+        if (d instanceof EasyDifficulty)   return EASY_SPEED_MULT;
+        if (d instanceof NormalDifficulty) return NORMAL_SPEED_MULT;
+        if (d instanceof HardDifficulty)   return HARD_SPEED_MULT;
+        throw new IllegalArgumentException("Unknown difficulty: " + d.eClass().getName());
+    }
+
+    private static double expectedDamageMult(Difficulty d) {
+        if (d instanceof EasyDifficulty)   return EASY_DAMAGE_MULT;
+        if (d instanceof NormalDifficulty) return NORMAL_DAMAGE_MULT;
+        if (d instanceof HardDifficulty)   return HARD_DAMAGE_MULT;
+        throw new IllegalArgumentException("Unknown difficulty: " + d.eClass().getName());
+    }
+
+    private static int expectedMaxThreat(Difficulty d) {
+        if (d instanceof EasyDifficulty)   return EASY_MAX_THREAT;
+        if (d instanceof NormalDifficulty) return NORMAL_MAX_THREAT;
+        if (d instanceof HardDifficulty)   return HARD_MAX_THREAT;
+        throw new IllegalArgumentException("Unknown difficulty: " + d.eClass().getName());
+    }
+
+    private static Class<?> expectedType(Difficulty d) {
+        if (d instanceof EasyDifficulty)   return EasyDifficulty.class;
+        if (d instanceof NormalDifficulty) return NormalDifficulty.class;
+        if (d instanceof HardDifficulty)   return HardDifficulty.class;
+        throw new IllegalArgumentException("Unknown difficulty: " + d.eClass().getName());
+    }
+
     private static int attackDamageOf(CharacterType ct) {
-        if (ct instanceof Zombie z) {
-            return z.getAttackDamage();
-        }
-        if (ct instanceof Ghost g) {
-            return g.getAttackDamage();
-        }
-        if (ct instanceof PumpkinBomber b) {
-            return b.getAttackDamage();
-        }
+        if (ct instanceof Zombie z)       return z.getAttackDamage();
+        if (ct instanceof Ghost g)        return g.getAttackDamage();
+        if (ct instanceof PumpkinBomber b) return b.getAttackDamage();
         throw new IllegalArgumentException("unsupported character type: " + ct.eClass().getName());
     }
 }

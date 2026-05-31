@@ -26,7 +26,9 @@ public class DifficultiesReferenceTest {
   @Test
   void currentDifficultyHrefResolvesAndHasExpectedMaxThreat() throws Exception {
     ResourceSet rs = new ResourceSetImpl();
-    Resource r = rs.getResource(URI.createURI("./src/test/resources/difficultiesBasic.xmi", true), true);
+    java.net.URL resourceUrl = DifficultiesReferenceTest.class.getResource("/difficultiesBasic.xmi");
+    assertNotNull(resourceUrl, "/difficultiesBasic.xmi must be present on the test classpath");
+    Resource r = rs.getResource(URI.createURI(resourceUrl.toString()), true);
     r.load(null);
 
     org.eclipse.emf.ecore.util.EcoreUtil.resolveAll(r);

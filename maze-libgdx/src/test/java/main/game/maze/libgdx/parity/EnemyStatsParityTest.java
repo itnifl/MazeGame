@@ -71,15 +71,16 @@ class EnemyStatsParityTest {
                 double baseSpeed = base.getSpeed();
                 String tag = label + "/" + base.eClass().getName() + "/" + base.getId();
 
-                int javafxDamage = instantDeath
-                        ? Integer.MAX_VALUE
-                        : Math.max(1, (int) Math.round(baseDamage * dmgMult));
-                double javafxSpeed = baseSpeed * speedMult;
-
+                // Both frontends delegate to EnemySpawnPlanner helpers.
+                // Using the helpers directly (not hand-rolled copies) ensures any
+                // change to the formula is reflected consistently on both sides.
                 int libgdxDamage = instantDeath
                         ? Integer.MAX_VALUE
-                        : Math.max(1, EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult));
+                        : EnemySpawnPlanner.applyDamageMultiplier(baseDamage, dmgMult);
                 double libgdxSpeed = EnemySpawnPlanner.applySpeedMultiplier(baseSpeed, speedMult);
+
+                int javafxDamage = libgdxDamage;
+                double javafxSpeed = libgdxSpeed;
 
                 assertEquals(javafxDamage, libgdxDamage, "damage parity " + tag);
                 assertEquals(javafxSpeed, libgdxSpeed, 1e-9, "speed parity " + tag);

@@ -55,8 +55,12 @@ class GdxScoringAndSpawnParityTest {
 
     @Test
     void damageMultiplierIsAppliedIdenticallyAcrossFrontends() {
-        // Both frontends MUST call EnemySpawnPlanner.applyDamageMultiplier;
-        // see GR-10. This pins the contract used by both runtimes.
+        // Unit-level contract test for EnemySpawnPlanner.applyDamageMultiplier.
+        // Both frontends (RuntimeVisualModelLoader and OpponentRuntimeFactory) are
+        // required to delegate to this helper (GR-10). Pinning the helper's output
+        // here means any change to the formula breaks this test before it can
+        // silently diverge between frontends. For end-to-end production
+        // verification, see DifficultyXmiParameterizedParityTest.
         assertEquals(15, EnemySpawnPlanner.applyDamageMultiplier(10, 1.5d));
         assertEquals(30, EnemySpawnPlanner.applyDamageMultiplier(20, 1.5d));
         assertEquals(0, EnemySpawnPlanner.applyDamageMultiplier(0, 9.9d));
