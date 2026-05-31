@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
@@ -163,6 +164,12 @@ public class GameController implements Initializable {
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
+    /** Nanos of the most recent movement-loop heartbeat; used by the watchdog. */
+    private final AtomicLong lastMovementLoopNanos = new AtomicLong(0L);
+    /** Fires every second while the movement thread should be alive. */
+    private Timeline movementWatchdogTimer;
+    /** If no heartbeat is seen within this window the thread is considered stalled. */
+    private static final long MOVEMENT_STALL_THRESHOLD_NANOS = 6_000_000_000L; // 6 s
     private boolean isRouteHintVisible = false;
     private long lastRouteHintPenaltyNanos = 0L;
     private double routeHintPenaltyAccumulator = 0.0;
@@ -1015,12 +1022,12 @@ public class GameController implements Initializable {
     }
 
     public void runComputerCharacters() {
-        if (runComputerCharactersThread != null) {
-            runComputerCharacters.cancel();
-        }
-        if (runComputerCharacters != null) {
-            runComputerCharacters.cancel();
-        }
+        // Stop any existing movement loop and watchdog before starting a fresh one.
+        stopOpponentMovement();
+
+        // Seed the watchdog timestamp so it does not fire before the new thread
+        // has had a chance to begin its first iteration.
+        lastMovementLoopNanos.set(System.nanoTime());
 
         runComputerCharacters = new Task<Boolean>() {
             @Override
@@ -1060,18 +1067,63 @@ public class GameController implements Initializable {
                             }
                         }
                         Thread.sleep(60);
+                        // Heartbeat: let the watchdog know the loop is still alive.
+                        lastMovementLoopNanos.set(System.nanoTime());
                     } while (true);
                 } catch (InterruptedException ie) {
                     LOGGER.fine("Computer character movement loop interrupted");
                     return false;
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Error in computer character movement loop", ex);
+                    LOGGER.log(Level.SEVERE,
+                            "Fatal error in computer character movement loop; "
+                            + "watchdog will attempt a restart.", ex);
                     throw ex;
                 }
             }
         };
         runComputerCharactersThread = new Thread(runComputerCharacters);
+        runComputerCharactersThread.setDaemon(true);
+        runComputerCharactersThread.setName("enemy-movement-loop");
         runComputerCharactersThread.start();
+        startMovementWatchdog();
+    }
+
+    /**
+     * Starts (or restarts) the movement-loop watchdog.
+     * The watchdog runs on the FX thread once per second. If the background
+     * movement thread has not produced a heartbeat for
+     * {@value #MOVEMENT_STALL_THRESHOLD_NANOS} ns and there is at least one
+     * registered computer character, the thread is considered stalled: a
+     * WARNING is logged and {@link #runComputerCharacters()} is invoked to
+     * replace the defunct thread.
+     */
+    private void startMovementWatchdog() {
+        stopMovementWatchdog();
+        movementWatchdogTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            if (allComputerCharacters.isEmpty()) {
+                // No characters registered yet; nothing to watch.
+                return;
+            }
+            long stallNanos = System.nanoTime() - lastMovementLoopNanos.get();
+            if (stallNanos > MOVEMENT_STALL_THRESHOLD_NANOS) {
+                LOGGER.log(Level.WARNING,
+                        "Enemy movement thread appears stalled — no heartbeat for {0} ms "
+                        + "(threshold={1} ms). Restarting movement loop.",
+                        new Object[]{stallNanos / 1_000_000L,
+                                     MOVEMENT_STALL_THRESHOLD_NANOS / 1_000_000L});
+                runComputerCharacters();
+            }
+        }));
+        movementWatchdogTimer.setCycleCount(Animation.INDEFINITE);
+        movementWatchdogTimer.play();
+    }
+
+    /** Stops and discards the movement-loop watchdog timer, if running. */
+    private void stopMovementWatchdog() {
+        if (movementWatchdogTimer != null) {
+            movementWatchdogTimer.stop();
+            movementWatchdogTimer = null;
+        }
     }
 
     private EnemyState buildEnemyState(ComputerCharacter cc) {
@@ -1600,6 +1652,7 @@ public class GameController implements Initializable {
      * Stops only opponent movement loop.
      */
     public void stopOpponentMovement() {
+        stopMovementWatchdog();
         if (runComputerCharacters != null) runComputerCharacters.cancel();
         if (runComputerCharactersThread != null) {
             runComputerCharactersThread.interrupt();

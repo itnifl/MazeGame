@@ -2044,8 +2044,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 behavior = BehaviorType.WANDER;
             }
             behaviorTypeLabel = behavior.name();
+            // Build state once; all three branches use the same fields.
+            EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
             if (behavior == BehaviorType.AGGRESSIVE) {
-                EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
                 MovementResult result = adaptiveService.tick(
                         state,
                         world,
@@ -2061,7 +2062,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 return result;
             }
             if (behavior == BehaviorType.PATROL) {
-                EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
                 MovementResult result = patrolService.tick(
                         state,
                         world,
@@ -2072,7 +2072,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
                         : "PATROL_PATH";
                 return result;
             }
-            EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);
             movementTypeLabel = "WANDER";
             return wanderService.tick(state, world);
         }
