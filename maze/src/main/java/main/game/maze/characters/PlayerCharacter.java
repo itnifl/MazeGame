@@ -257,6 +257,16 @@ public class PlayerCharacter extends Character
             return;
         }
 
+        // A wall between the enemy centre and the player centre blocks damage.
+        // Enemies that can pass through walls (phasing ghosts) are excluded above,
+        // so here all remaining enemies are subject to wall blocking.
+        if (App.gameController != null
+                && App.gameController.isWallBetween(
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY(),
+                        myBounds.getCenterX(), myBounds.getCenterY())) {
+            return;
+        }
+
         if (entity instanceof ICanKill) {
             var canKillEntity = (ICanKill) entity;
             LOGGER.fine("Player is intersecting with " + canKillEntity);

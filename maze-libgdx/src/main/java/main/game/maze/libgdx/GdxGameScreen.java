@@ -88,7 +88,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
     private static final float MOUSE_STEP_DISTANCE = 20f;
-    private static final float ROUTE_HINT_PENALTY_PER_SEC = 5f;
+    private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
+    private static final float PATH_HINT_BUDGET_EASY_SEC = 45f;
+    private static final float PATH_HINT_BUDGET_NORMAL_SEC = 25f;
+    private static final float PATH_HINT_BUDGET_HARD_SEC = 15f;
     private static final float PLAYER_ALIVE_SCALE = 1f;
     private static final float PLAYER_DEAD_SCALE = 1.8f;
     private static final float HALF_RATIO = 0.5f;
@@ -197,6 +200,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
+    /** Total seconds of P-key budget consumed this game. */
+    private float pathHintTotalUsedSeconds;
+    /** True once the P-key budget is exhausted for this game. */
+    private boolean pathHintBudgetExhausted;
     private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
     public GdxGameScreen() {
@@ -1153,6 +1160,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
         String commandText = "H Highscore  ESC Restart  P Path "
                 + (showHintInfo ? "[ON]" : "[OFF]")
+                + (pathHintBudgetExhausted ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
                 + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
         font.draw(batch, commandText, terminalButtonX + terminalButtonW + 260f, buttonY + 18f);
 
@@ -1643,11 +1651,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
         pathPenaltyPoints = 0f;
+        pathHintTotalUsedSeconds = 0f;
+        pathHintBudgetExhausted = false;
         currentHpRatio = 1f;
         playerTintRed = 1f;
         playerTintGreen = 1f;
         playerTintBlue = 1f;
         combatState.reset(runtimeModel.playerMaxHitPoints());
+        combatState.setMaze(maze);
 
         int idx = 0;
         WorldView spawnWorld = new GdxWorldView(maze, player);
@@ -1835,10 +1846,50 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void applyPathPenalty(float dt) {
-        if (!showHintInfo || mode != Mode.PLAYING) {
+        if (mode != Mode.PLAYING) {
             return;
         }
-        pathPenaltyPoints += dt * ROUTE_HINT_PENALTY_PER_SEC;
+        // If budget is already exhausted, keep hint off and notify once.
+        if (pathHintBudgetExhausted) {
+            if (showHintInfo) {
+                showHintInfo = false;
+                flashStatus("Path hint energy already spent!", 3f);
+            }
+            return;
+        }
+        if (!showHintInfo) {
+            return;
+        }
+        // Consume budget.
+        float budget = pathHintBudgetSeconds(difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex));
+        float remaining = budget - pathHintTotalUsedSeconds;
+        if (remaining <= 0f) {
+            pathHintBudgetExhausted = true;
+            pathHintTotalUsedSeconds = budget;
+            showHintInfo = false;
+            flashStatus("Path hint energy already spent!", 3f);
+            return;
+        }
+        float consumed = Math.min(dt, remaining);
+        pathHintTotalUsedSeconds += consumed;
+        pathPenaltyPoints += consumed * ROUTE_HINT_PENALTY_PER_SEC;
+        if (pathHintTotalUsedSeconds >= budget) {
+            pathHintBudgetExhausted = true;
+            pathHintTotalUsedSeconds = budget;
+            showHintInfo = false;
+            flashStatus("Path hint energy already spent!", 3f);
+        }
+    }
+
+    private float pathHintBudgetSeconds(Difficulty selected) {
+        if (selected instanceof HardDifficulty) return PATH_HINT_BUDGET_HARD_SEC;
+        if (selected instanceof main.game.maze.difficulties.NormalDifficulty) return PATH_HINT_BUDGET_NORMAL_SEC;
+        return PATH_HINT_BUDGET_EASY_SEC;
+    }
+
+    private float pathHintRemainingSeconds() {
+        Difficulty selected = difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex);
+        return Math.max(0f, pathHintBudgetSeconds(selected) - pathHintTotalUsedSeconds);
     }
 
     private List<EnemySpawn> currentEnemyContacts() {

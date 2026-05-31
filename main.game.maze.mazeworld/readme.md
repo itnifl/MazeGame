@@ -135,6 +135,29 @@ Because of this structure it is easy to swap maze generators, adjust difficulty 
 
 ---
 
+## Wall Collision Utilities
+
+The module provides `WallCollisionUtil`, a shared, backend-neutral utility class for wall-related geometry tests.
+
+**AABB overlap check (`wouldCollide` / `wouldCollideVectors`)**  
+Tests whether a square of a given size centred at a point overlaps any wall or leaves the board bounds. Used by movement controllers to prevent characters from walking through walls.
+
+**Line-of-sight wall check (`wallBetween` / `wallBetweenVectors`)**  
+Tests whether any wall segment separates two points (e.g. an enemy centre and the player centre) by checking if the straight line between them crosses a wall. Used by combat systems to prevent enemies from dealing damage through walls.
+
+Two method variants are provided to avoid type-erasure conflicts at call sites:
+
+| Method | Wall list type | Used by |
+|---|---|---|
+| `wouldCollide` | `List<WallSegment>` | libGDX movement |
+| `wouldCollideVectors` | `List<Vector2D>` | JavaFX movement |
+| `wallBetween` | `List<WallSegment>` | libGDX combat (`PlayerCombatStateService`) |
+| `wallBetweenVectors` | `List<Vector2D>` | JavaFX combat (`GameController.isWallBetween`) |
+
+Both frontends delegate to `WallCollisionUtil` so the geometry logic lives in exactly one place. See [maze module readme](../maze/readme.md) and [maze-libgdx module readme](../maze-libgdx/readme.md) for how each frontend wires these into its combat pipeline.
+
+---
+
 ## Design Guidelines For Extending MazeWorld
 
 When you extend or refactor this module, keeping a few principles in mind helps maintain clarity and flexibility.

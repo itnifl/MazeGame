@@ -99,13 +99,14 @@ class GhostTangibilityTest {
     }
 
     /**
-     * A solid ghost whose bounding box brushes the player across a thin wall
-     * (centers are more than touchThreshold apart) must NOT deal damage.
+     * A solid ghost whose bounding box does not overlap the player bounds
+     * (i.e. the ghost is far away on the other side of a wall) must NOT deal damage.
+     * The bounds-intersection check is the primary gate; any two characters
+     * far apart simply never intersect.
      */
     @Test
     void solidGhostThroughWallDoesNoDamage() {
-        // Ghost at (0,0) 40x40; player at (200,0) 30x30.
-        // Centers: ghost(20,20) vs player(215,15). Distance ≈ 195 >> threshold 35.
+        // Ghost at (0,0) 40x40; player bounds at (200,0) 30x30 — no overlap.
         Rectangle ghostGfx = new Rectangle(0, 0, 40, 40);
         GhostCharacter ghost = newGhost(ghostGfx);
         ghost.setNonTangientEnergy(0);   // solid

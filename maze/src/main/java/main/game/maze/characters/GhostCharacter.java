@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import main.game.maze.actions.MovementNotifierAction;
+import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
@@ -73,22 +74,22 @@ public class GhostCharacter extends ComputerCharacter
 
         var myBounds = graphics.getBoundsInParent();
 
-        // Use a center-to-center distance check to prevent false positives when
-        // the ghost is solid but positioned on the far side of a thin wall.
-        double dx = myBounds.getCenterX() - nodeBounds.getCenterX();
-        double dy = myBounds.getCenterY() - nodeBounds.getCenterY();
-        double dist = Math.hypot(dx, dy);
-        double touchThreshold = (this.characterXYSizeFromPoint + StageConstants.PlayerCharacterXYSize) / 2.0;
-        if (dist > touchThreshold) {
+        if (!nodeBounds.intersects(myBounds)) {
             return;
         }
 
-        if (nodeBounds.intersects(myBounds)) {
-            if (entity instanceof ICanDie) {
-                var canDieEntity = (ICanDie) entity;
-                LOGGER.fine("Ghost is intersecting with " + canDieEntity);
-                canDieEntity.subtractHitPoints(getDamage());
-            }
+        // A wall between the ghost centre and the target centre blocks damage.
+        if (App.gameController != null
+                && App.gameController.isWallBetween(
+                        myBounds.getCenterX(), myBounds.getCenterY(),
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY())) {
+            return;
+        }
+
+        if (entity instanceof ICanDie) {
+            var canDieEntity = (ICanDie) entity;
+            LOGGER.fine("Ghost is intersecting with " + canDieEntity);
+            canDieEntity.subtractHitPoints(getDamage());
         }
     }
 

@@ -7,6 +7,8 @@ import main.game.maze.characters.CollisionDamage;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.mazeworld.WallCollisionUtil;
+import main.game.maze.mazeworld.generators.MazeArena;
 
 /**
  * Backend-local gameplay state for player hurt, infection, and hit feedback.
@@ -19,6 +21,9 @@ public final class PlayerCombatStateService {
     private static final float CONTACT_INTERVAL_SEC = 1f / 30f;
     private static final float FLASH_DURATION_SEC = 0.20f;
     private final DoubleSupplier randomSource;
+
+    /** The current maze; used to test whether a wall separates enemy from player. */
+    private MazeArena maze;
 
     private int maxHitPoints = 100;
     private float currentHitPoints = 100f;
@@ -39,6 +44,14 @@ public final class PlayerCombatStateService {
 
     PlayerCombatStateService(DoubleSupplier randomSource) {
         this.randomSource = randomSource;
+    }
+
+    /**
+     * Provides the active {@link MazeArena} so walls can be used to block
+     * enemy damage.  Call this whenever a new game starts.
+     */
+    public void setMaze(MazeArena maze) {
+        this.maze = maze;
     }
 
     public void reset(int maxHitPoints) {
@@ -113,6 +126,11 @@ public final class PlayerCombatStateService {
             // While a ghost is phasing through walls (non-tangibility energy > 0) it is
             // in spirit form and cannot physically harm the player.
             if (enemy.nonTangibilityEnergy() > 0) {
+                continue;
+            }
+            // A wall between the enemy and the player blocks damage.
+            if (maze != null && WallCollisionUtil.wallBetween(
+                    enemy.x(), enemy.y(), playerX, playerY, maze.walls())) {
                 continue;
             }
             float enemyRadius = enemy.size() * 0.5f;

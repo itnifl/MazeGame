@@ -101,17 +101,26 @@ public class ZombieCharacter extends ComputerCharacter
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        if (nodeBounds.intersects(graphics.getBoundsInParent())) {
-            if (entity instanceof ICanDie) {
-                var canDieEntity = (ICanDie) entity;
-                LOGGER.fine("Zombie is intersecting with " + canDieEntity);
-                canDieEntity.subtractHitPoints(getDamage());                
-            }
-            AudioEngine.get().playRateLimited(
-                zombieModel.getTouchSound(),
-                "zombie.touch." + System.identityHashCode(this),
-                ZOMBIE_SCREAM_COOLDOWN_MS);
-        }        
+        var myBounds = graphics.getBoundsInParent();
+        if (!nodeBounds.intersects(myBounds)) {
+            return;
+        }
+        // A wall between the zombie and the target blocks damage.
+        if (App.gameController != null
+                && App.gameController.isWallBetween(
+                        myBounds.getCenterX(), myBounds.getCenterY(),
+                        nodeBounds.getCenterX(), nodeBounds.getCenterY())) {
+            return;
+        }
+        if (entity instanceof ICanDie) {
+            var canDieEntity = (ICanDie) entity;
+            LOGGER.fine("Zombie is intersecting with " + canDieEntity);
+            canDieEntity.subtractHitPoints(getDamage());                
+        }
+        AudioEngine.get().playRateLimited(
+            zombieModel.getTouchSound(),
+            "zombie.touch." + System.identityHashCode(this),
+            ZOMBIE_SCREAM_COOLDOWN_MS);
     }
 
     @Override

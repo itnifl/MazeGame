@@ -166,7 +166,7 @@ public class GameController implements Initializable {
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
-    private static final double ROUTE_HINT_PENALTY_PER_MS = 0.005;
+    private static final double ROUTE_HINT_PENALTY_PER_MS = 0.05;
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
 
     // Path-hint energy budget (per difficulty, in seconds)
@@ -319,6 +319,23 @@ public class GameController implements Initializable {
 
     public int getDynamicScorePenalty() {
         return routeHintPenaltyPoints;
+    }
+
+    /**
+     * Returns {@code true} if any maze wall separates the straight line between
+     * {@code (ex, ey)} (enemy centre) and {@code (px, py)} (player centre).
+     * Used by character collision handlers to prevent damage through walls.
+     * Returns {@code false} when the maze is not yet initialised.
+     */
+    public boolean isWallBetween(double ex, double ey, double px, double py) {
+        if (maze == null) {
+            return false;
+        }
+        var walls = maze.getMazeVectors();
+        if (walls == null || walls.isEmpty()) {
+            return false;
+        }
+        return WallCollisionUtil.wallBetweenVectors(ex, ey, px, py, walls);
     }
 
     private void applyRouteHintPenalty(long now) {

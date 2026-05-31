@@ -27,7 +27,7 @@ not static.
 - HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
 - The maze world is bottom-anchored to the bottom HUD bar: when the maze fits the gameplay viewport vertically, its bottom edge is pinned to the top of the bottom command row instead of floating.
 - Camera follows the player when the world is larger than the viewport.
-- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`.
+- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze module readme](../maze/readme.md) for the equivalent JavaFX implementation.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
 - High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
 - Win state shows completion text and allows returning to start menu (`ESC`).
@@ -53,6 +53,14 @@ not static.
 
 The `game.*` classes deliberately avoid any `com.badlogic.gdx.*` import so
 they remain unit-testable in headless CI without a GL context.
+
+## Enemy damage and wall blocking
+
+Combat is handled by `PlayerCombatStateService`. Each frame it checks whether any tangible enemy is within contact range of the player. Before applying damage it calls `WallCollisionUtil.wallBetween` (from the [mazeworld module](../main.game.maze.mazeworld/readme.md)) to test whether any wall separates the enemy centre from the player centre. If a wall blocks the line of sight, damage is not applied for that enemy this frame.
+
+A phasing ghost (non-tangibility energy > 0) is excluded from all checks before the wall test runs, so it cannot harm the player while in spirit form regardless of walls.
+
+`combatState.setMaze(maze)` must be called at game start (inside `startGameFromSelection`) to provide the current `MazeArena`. The equivalent wall-blocking logic in the JavaFX backend is documented in the [maze module readme](../maze/readme.md).
 
 ## Running
 

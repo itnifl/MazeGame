@@ -118,6 +118,27 @@ Current runtime behavior:
 - the maze viewport now follows the player while HUD elements stay fixed on top
 - the bottom command menu and score panel remain visible while the board scrolls
 - start menu music and menu selection sound are optional; missing files are ignored safely
+
+## Enemy damage and wall blocking
+
+Each frame, characters exchange position notifications in two directions:
+
+- **Enemy moves:** the enemy notifies the player, which calls `PlayerCharacter.doPositionEvaluation`. The player checks for bounds overlap, then calls `GameController.isWallBetween(enemyCentreX, enemyCentreY, playerCentreX, playerCentreY)` before applying damage.
+- **Player moves:** the player notifies each enemy, which calls the enemy's own `doPositionEvaluation`. Each enemy class (`GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`) performs the same wall check via `App.gameController.isWallBetween(...)` before applying damage.
+
+`GameController.isWallBetween` delegates to `WallCollisionUtil.wallBetweenVectors` from the [mazeworld module](../main.game.maze.mazeworld/readme.md). A phasing ghost (non-tangibility energy > 0) is excluded from all damage checks regardless of walls.
+
+## P-key path hint and budget
+
+Holding `P` reveals the shortest path to the goal but incurs a per-second score penalty. The budget is finite and resets each new game:
+
+| Difficulty | Budget |
+|---|---|
+| Easy | 45 s |
+| Normal | 25 s |
+| Hard | 15 s |
+
+When the budget is exhausted the path hint is hidden and a "Path hint energy spent!" message is shown. The penalty rate is 50 points/second. See [maze-libgdx readme](../maze-libgdx/readme.md) for the equivalent libGDX implementation.
 - HUD layering uses stable view ordering to avoid pulse-time child list reorder exceptions
 - visual assets and style selection now consume the shared `MazeVisualStyleConfig` model loaded from XMI first with properties fallback, so JavaFX and libGDX use the same backgrounds, wall mapping, icon, and menu or gameplay audio paths
 - screen-scoped music (menu, in-game, win, game-over) is owned by the `AudioEngine` singleton on dedicated channels (`MENU_MUSIC`, `IN_GAME_MUSIC`, `WIN_MUSIC`, `GAME_OVER_MUSIC`) and is explicitly stopped when transitioning to another screen, so win or game-over music never bleeds into the next screen
