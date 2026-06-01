@@ -25,7 +25,7 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 - **New to MDD?** Start with the [Technology Layman's Guide](technology-laymans-guide.md)
 - **Want to write levels?** Start with the [DSL Tutorial](dsl-tutorial.md)
 - **Need syntax help?** Check the [DSL Reference Guide](dsl-reference.md)
-- **Examples:** See `maze/src/main/resources/levels/*.mazegame`
+- **Examples:** See `main.game.maze.dsl/src/main/resources/levels/*.mazegame`
 
 ## Related Documentation
 

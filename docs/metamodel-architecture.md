@@ -556,7 +556,7 @@ Workflow {
 | OpponentModel.xmi | `main.game.maze.opponents/src/main/resources/OpponentModel.xmi` |
 | difficulties.xmi | `maze/src/main/resources/xmi/difficulties/difficulties.xmi` |
 | walls.xmi | `main.game.maze.walls/xmi/walls.xmi` |
-| DSL levels | `maze/src/main/resources/levels/*.mazegame` |
+| DSL levels | `main.game.maze.dsl/src/main/resources/levels/*.mazegame` |
 
 ### Code Generation Templates
 

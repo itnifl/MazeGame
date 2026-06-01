@@ -41,13 +41,11 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 * DSL configuration files (`.mazegame`):
 
-  * `maze/src/main/resources/levels/tutorial.mazegame`
-  * `maze/src/main/resources/levels/challenge.mazegame`
-  * `maze/src/main/resources/levels/survival.mazegame`
+  * `main.game.maze.dsl/src/main/resources/levels/tutorial.mazegame`
+  * `main.game.maze.dsl/src/main/resources/levels/challenge.mazegame`
+  * `main.game.maze.dsl/src/main/resources/levels/survival.mazegame`
 
 * Sample test models:
-
-  * `main.game.maze.difficulties/src/test/resources/difficultiesBasic.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentsBasic.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelSuccessMaxThreat.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelFailMaxThreat.xmi`
@@ -590,9 +588,9 @@ The DSL is implemented across four Eclipse plugin modules:
 ### 9．3 Open and explore a DSL file
 
 1. Open one of the example DSL files:
-   * `maze/src/main/resources/levels/tutorial.mazegame`
-   * `maze/src/main/resources/levels/challenge.mazegame`
-   * `maze/src/main/resources/levels/survival.mazegame`
+   * `main.game.maze.dsl/src/main/resources/levels/tutorial.mazegame`
+   * `main.game.maze.dsl/src/main/resources/levels/challenge.mazegame`
+   * `main.game.maze.dsl/src/main/resources/levels/survival.mazegame`
 
 2. Show the key elements:
    * **game** declaration with name

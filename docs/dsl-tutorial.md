@@ -14,7 +14,7 @@ Learn how to create game levels using the MazeGame Domain-Specific Language step
 
 ### Step 1: Create a New File
 
-1. Navigate to `maze/src/main/resources/levels/`
+1. Navigate to `main.game.maze.dsl/src/main/resources/levels/`
 2. Create a new file named `myfirst.mazegame`
 
 ### Step 2: Add the Game Declaration
@@ -436,6 +436,6 @@ Create three versions of the same level:
 ## Next Steps
 
 - Read the [DSL Reference Guide](dsl-reference.md) for complete syntax documentation
-- Study the example files in `maze/src/main/resources/levels/`
+- Study the example files in `main.game.maze.dsl/src/main/resources/levels/`
 - Explore the generated code to understand the mapping
 - Modify the generator to add custom output formats
