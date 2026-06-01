@@ -33,18 +33,23 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Phase 3: consume the real maze data model from the Tycho-packaged
-         mazeworld bundle (its jar is published to the local m2 repo by
-         Tycho, so we can depend on it as a plain Maven jar). -->
     <dependency>
       <groupId>main.game.maze</groupId>
-      <artifactId>main.game.maze.mazeworld</artifactId>
+      <artifactId>maze-common-backend</artifactId>
       <version>${project.version}</version>
     </dependency>
 
+    <!-- WallRegistry generated class -->
     <dependency>
       <groupId>main.game.maze</groupId>
-      <artifactId>main.game.maze</artifactId>
+      <artifactId>maze-module-generator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- mazeworld bundle for maze data model -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
       <version>${project.version}</version>
     </dependency>
 

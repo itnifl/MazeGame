@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import main.game.maze.App;
 import main.game.maze.HighScoreController;
 import main.game.maze.actions.base.ActionScreens;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 
 public class HighscoreAction extends ActionScreens {
     private AnchorPane root;
@@ -30,7 +30,7 @@ public class HighscoreAction extends ActionScreens {
         // is guaranteed to be parent-less, so it can safely be reinstated on Continue.
         final Parent originalSceneRoot = scene.getRoot();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.HighscoreScreen));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.HighscoreScreen));
 
         try {
             AnchorPane screen = fxmlLoader.load();

@@ -14,7 +14,7 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.AudioChannelConstants;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 
 public class WinGameAction extends CharacterActionScreens implements ICanLetYouWin {
     private AnchorPane root;
@@ -40,7 +40,7 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
             App.gameController.stopComputerCharacters();
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.WinGameScreen));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.WinGameScreen));
 
         runnableOnWin.run();
 

@@ -18,7 +18,7 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.service.DifficultyService;
 
@@ -67,7 +67,7 @@ public class StartController implements Initializable {
         svc.setCurrent(selected);
 
         // Load game screen, inject chosen Difficulty, then start the game
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.GameScreen));
         AnchorPane root = loader.load();
         GameController gc = loader.getController();
         gc.setStartDifficulty(selected); // <-- inject the EMF Difficulty from the model

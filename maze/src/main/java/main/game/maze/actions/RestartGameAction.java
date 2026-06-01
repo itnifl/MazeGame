@@ -13,7 +13,7 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.common.graphics.AudioEngine;
 
 public class RestartGameAction extends ActionScreens {
@@ -29,7 +29,7 @@ public class RestartGameAction extends ActionScreens {
             App.gameController = null;
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameScreen));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.GameScreen));
 
         try {
             if (root == null || root.getScene() == null) {

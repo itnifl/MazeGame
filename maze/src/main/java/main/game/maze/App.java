@@ -19,7 +19,7 @@ import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
 
 // NEW imports:
@@ -53,7 +53,7 @@ public class App extends Application {
             OpponentsPackage.eINSTANCE.eClass();
             DifficultiesPackage.eINSTANCE.eClass();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameConstants.StartScreen));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.StartScreen));
             AnchorPane root = loader.load();
             StartController startController = loader.getController();
 

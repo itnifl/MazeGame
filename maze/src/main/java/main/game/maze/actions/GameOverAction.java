@@ -20,7 +20,7 @@ import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ResourceFileConstants;
-import main.game.maze.constants.ScreenNameConstants;
+import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 
 public class GameOverAction extends CharacterActionScreens implements IDeathSubscriber {
@@ -83,7 +83,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
         startGameOverMusic();
         runnableOnGameOver.run();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameConstants.GameOverScreen));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.GameOverScreen));
 
         try {
             AnchorPane gameOverScreen = fxmlLoader.load();

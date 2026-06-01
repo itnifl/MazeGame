@@ -49,6 +49,7 @@
 
     <!-- 6: backend-agnostiske grafikk-/lyd-abstraksjoner og backends -->
     <module>maze-common-frontend</module>
+    <module>maze-common-backend</module>
     <module>maze-javafx</module>
     <module>maze-libgdx</module>
 
