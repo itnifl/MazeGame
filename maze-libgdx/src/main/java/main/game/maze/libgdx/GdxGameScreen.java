@@ -49,7 +49,7 @@ import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.dto.Score;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.constants.DataFileConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
@@ -1579,7 +1579,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private void loadHighScores() {
         highScoreRows.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader(ResourceFileConstants.HighscoreFilePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(DataFileConstants.HighscoreFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(":");

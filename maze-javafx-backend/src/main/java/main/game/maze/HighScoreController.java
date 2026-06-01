@@ -16,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import main.game.maze.actions.RestartGameAction;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.constants.DataFileConstants;
 import main.game.maze.dto.Score;
 
 public class HighScoreController implements Initializable {
@@ -71,7 +71,7 @@ public class HighScoreController implements Initializable {
 
     private List<Score> loadScoresFromFile() {
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(ResourceFileConstants.HighscoreFilePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(DataFileConstants.HighscoreFilePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(":");

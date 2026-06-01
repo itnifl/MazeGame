@@ -174,10 +174,10 @@
           <argLine>--add-modules=ALL-MODULE-PATH</argLine>
           <forkCount>1</forkCount>
           <reuseForks>true</reuseForks>
-          <!-- Test resources (scores.txt, testScores.txt) are copied to
+          <!-- Test resources (data/scores.txt, testScores.txt) are copied to
                target/test-classes by Maven. Set that as the working dir so
                HighScoreControllerTest and WriteScoresTest find them via
-               relative paths (ResourceFileConstants.HighscoreFilePath = "scores.txt"). -->
+               relative paths (DataFileConstants.HighscoreFilePath = "data/scores.txt"). -->
           <workingDirectory>${project.build.testOutputDirectory}</workingDirectory>
         </configuration>
       </plugin>

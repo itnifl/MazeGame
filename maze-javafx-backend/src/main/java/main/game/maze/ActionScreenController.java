@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import main.game.maze.actions.RestartGameAction;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.constants.DataFileConstants;
 
 public class ActionScreenController {
     private static final Logger LOGGER = Logger.getLogger(ActionScreenController.class.getName());
@@ -37,13 +37,19 @@ public class ActionScreenController {
             String playerName = result.get();
             int score = Integer.parseInt(scoreLabel.getText());
 
-            writeScore(playerName, score, ResourceFileConstants.HighscoreFilePath);
+            writeScore(playerName, score, DataFileConstants.HighscoreFilePath);
         }
     }
 
     public void writeScore(String playerName, int score, String filename) {
-        try (FileWriter writer = new FileWriter(filename, true)) {
-            writer.write(playerName + ": " + score + "\n");
+        try {
+            java.io.File file = new java.io.File(filename);
+            if (file.getParentFile() != null) {
+                file.getParentFile().mkdirs();
+            }
+            try (FileWriter writer = new FileWriter(file, true)) {
+                writer.write(playerName + ": " + score + "\n");
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, String.format("Unable to write score file: %s", filename), e);
         }
