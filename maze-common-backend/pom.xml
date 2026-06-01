@@ -19,6 +19,13 @@
   </properties>
 
   <dependencies>
+    <!-- mazeworld: Point2D and VectorFacing needed by character interfaces -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- EMF runtime (XMI loading for DifficultyService) -->
     <dependency>
       <groupId>org.eclipse.emf</groupId>

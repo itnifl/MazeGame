@@ -47,6 +47,7 @@ import main.game.maze.common.terminal.TerminalCommand;
 import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
+import main.game.maze.dto.Score;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
@@ -200,7 +201,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean loadingPending;
     private long loadingStartedAtNanos;
     private final List<Point2D> activePathPoints = new ArrayList<>();
-    private final List<ScoreRow> highScoreRows = new ArrayList<>();
+    private final List<Score> highScoreRows = new ArrayList<>();
     private final MenuLayout menuLayout = new MenuLayout();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
@@ -1276,9 +1277,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
             float y = panelY + panelH - 66f;
             int max = Math.min(10, highScoreRows.size());
             for (int i = 0; i < max; i++) {
-                ScoreRow row = highScoreRows.get(i);
+                Score row = highScoreRows.get(i);
                 font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
-                font.draw(batch, String.format(Locale.ROOT, "%d. %s: %d", i + 1, row.name, row.score), panelX + 22f, y);
+                font.draw(batch, String.format(Locale.ROOT, "%d. %s: %d", i + 1, row.getName(), row.getTheScore()), panelX + 22f, y);
                 y -= 28f;
             }
         }
@@ -1586,7 +1587,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 }
                 String name = data[0].trim();
                 int score = Integer.parseInt(data[1].trim());
-                highScoreRows.add(new ScoreRow(name, score));
+                highScoreRows.add(new Score(name, score));
             }
         } catch (Exception ignored) {
             // Missing score file or malformed lines should not break runtime.
@@ -1984,20 +1985,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         private float terminalButtonH;
     }
 
-    private static final class ScoreRow implements Comparable<ScoreRow> {
-        private final String name;
-        private final int score;
 
-        private ScoreRow(String name, int score) {
-            this.name = name;
-            this.score = score;
-        }
-
-        @Override
-        public int compareTo(ScoreRow other) {
-            return Integer.compare(this.score, other.score);
-        }
-    }
 
     private static final class EnemyRuntime {
         private final EnemySpawn spawn;
