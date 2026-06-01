@@ -84,10 +84,10 @@ Then, in VS Code:
 * Make sure the VM arguments include something like:
 
   ```text
-  --module-path "${project_loc:main.game.maze}/target/libs" --add-modules javafx.controls,javafx.fxml,javafx.media
+  --module-path "${project_loc:maze-javafx-backend}/target/libs" --add-modules javafx.controls,javafx.fxml,javafx.media
   ```
 
-(depending on your JavaFX setup in `maze/pom.xml`).
+(depending on your JavaFX setup in `maze-javafx-backend/pom.xml`).
 
 **After starting the game**
 
@@ -401,14 +401,14 @@ This JAR now contains:
 * generated helper code based on `walls.xmi` and other models,
 * any hand written generator side helpers in `maze-module-generator`.
 
-This JAR is a plain Maven artifact and can be used from the `maze` game module.
+This JAR is a plain Maven artifact and can be used from the `maze-javafx-backend` game runtime module.
 
 ---
 
 ## 6．How `maze-module-generator` is used in the game
 
-The `maze` module declares an explicit dependency on the FreeMarker-generated module.
-In `maze/pom.xml` you will find:
+The `maze-javafx-backend` module declares an explicit dependency on the FreeMarker-generated module.
+In `maze-javafx-backend/pom.xml` you will find:
 
 ```xml
 <!-- This is our FreeMarker-generated module -->
@@ -442,7 +442,7 @@ So the runtime flow looks like this:
 
 * Runtime:
 
-  * The `maze` module depends on `maze-module-generator` in `maze/pom.xml`.
+  * The `maze-javafx-backend` module depends on `maze-module-generator` in `maze-javafx-backend/pom.xml`.
   * When you run the game, the JVM simply loads classes from `maze-module-generator-1.0.0-SNAPSHOT.jar` like any other library.
   * These generated classes encapsulate model knowledge so game code can access it through a clean, Java friendly API.
 
@@ -450,7 +450,7 @@ In a live demo, you can summarise this as:
 
 > "`walls.xmi` and the other XMI models are turned into Java code by FreeMarker.
 > That code is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
-> The `maze` game module imports that JAR through a normal Maven dependency and uses the generated classes at runtime.”
+> The `maze-javafx-backend` runtime module imports that JAR through a normal Maven dependency and uses the generated classes at runtime.”
 
 ---
 
@@ -509,7 +509,7 @@ Use this as a compact spoken script.
 
 * Explain that FreeMarker templates run via `maze-generator.freemarker-runner`, and their output is compiled into `maze-module-generator-1.0.0-SNAPSHOT.jar`.
 
-* Point at the dependency in `maze/pom.xml`:
+* Point at the dependency in `maze-javafx-backend/pom.xml`:
 
   ```xml
   <!-- This is our FreeMarker-generated module -->

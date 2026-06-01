@@ -19,16 +19,15 @@ JavaFX implementations of the facades defined in
 
 Call `JavaFxBackend.install()` from your `Application#start` method before any
 game code touches the singletons. The desktop entry point
-[App.java](../maze/src/main/java/main/game/maze/App.java) already does this.
+[App.java](../maze-javafx-backend/src/main/java/main/game/maze/App.java) already does this.
 
 ## Running the JavaFX backend
 
 From the workspace root, use the `Launch MazeGame (JavaFX)` configuration in
-[.vscode/launch.json](../.vscode/launch.json), or from the command line:
+[.vscode/launch.json](../.vscode/launch.json). For command line build validation:
 
 ```powershell
-mvn -pl maze -am package
-mvn -pl maze javafx:run
+mvn -pl maze-javafx-backend -am package
 ```
 
 ## Tests

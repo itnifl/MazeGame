@@ -315,8 +315,8 @@ function Ensure-LaunchBytecodeLevel {
         return
     }
 
-    Write-Host "Detected stale or incompatible bytecode (major=$major). Rebuilding maze dependency graph with Java 21..." -ForegroundColor Yellow
-    & $Mvn -pl maze -am -DskipTests=true clean compile
+    Write-Host "Detected stale or incompatible bytecode (major=$major). Rebuilding JavaFX runtime dependency graph with Java 21..." -ForegroundColor Yellow
+    & $Mvn -pl maze-javafx-backend -am -DskipTests=true clean compile
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to prepare launch classes with Java 21. Maven exited with code $exit."
@@ -331,7 +331,7 @@ function Ensure-LaunchBytecodeLevel {
 }
 
 function Ensure-LaunchJavaFxLibs {
-    $libsDir = Join-Path 'maze' 'target/libs'
+    $libsDir = Join-Path 'maze-javafx-backend' 'target/libs'
     $requiredPatterns = @(
         'javafx-controls*.jar',
         'javafx-fxml*.jar',
@@ -349,12 +349,12 @@ function Ensure-LaunchJavaFxLibs {
     }
 
     if ($missing.Count -eq 0) {
-        Write-Host 'Launch JavaFX libs check passed: required modules exist in maze/target/libs.' -ForegroundColor Green
+        Write-Host 'Launch JavaFX libs check passed: required modules exist in maze-javafx-backend/target/libs.' -ForegroundColor Green
         return
     }
 
     Write-Host ("Missing JavaFX launch libs ({0}). Restoring runtime dependencies..." -f ($missing -join ', ')) -ForegroundColor Yellow
-    & $Mvn -pl maze -am -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs
+    & $Mvn -pl maze-javafx-backend -am -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to restore JavaFX runtime dependencies for launch. Maven exited with code $exit."
@@ -467,7 +467,7 @@ function Test-MazeAppModuleStale([string]$moduleDir) {
 }
 
 function Ensure-RuntimeModulesCompiled {
-    # Runtime closure rooted at maze/pom.xml. Order matters: producers before consumers.
+    # Runtime closure rooted at maze-javafx-backend/pom.xml. Order matters: producers before consumers.
     $pluginModules = @(
         'main.game.maze.difficulties',
         'main.game.maze.opponents',
@@ -491,7 +491,7 @@ function Ensure-RuntimeModulesCompiled {
         }
     }
 
-    # Launcher is now in maze-javafx-backend (thin assembly module maze has no sources).
+    # Launcher is in maze-javafx-backend.
     $mazeBackendDir = Join-Path $scriptRoot 'maze-javafx-backend'
     $mazeCheck = Test-MazeAppModuleStale $mazeBackendDir
     $mazeStale = $mazeCheck.Stale

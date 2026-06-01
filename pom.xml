@@ -56,8 +56,6 @@
     <!-- 7: selve JavaFX-spillet - controllers, characters, game logic -->
     <module>maze-javafx-backend</module>
 
-    <!-- 8: assembly/launcher module -->
-    <module>maze</module>    
   </modules>
 
   <repositories>

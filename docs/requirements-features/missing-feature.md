@@ -82,7 +82,7 @@ overall feature is marked Done.
 - **Backend**: both.
 - **What the model says**: each behaviour can pick its path-finding algorithm
   and (for A*) its heuristic.
-- **What the game does today**: the maze module ships A* / Dijkstra debug
+- **What the game does today**: the JavaFX runtime module ships A* / Dijkstra debug
   overlays, but `MovementBehavior.pathcalculator` is not consulted at runtime;
   enemy movement uses a hard-coded local strategy.
 - **Acceptance**: a `ChaseBehavior` configured with `AstarPathCalculator

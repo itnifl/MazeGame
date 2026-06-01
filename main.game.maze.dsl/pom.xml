@@ -15,6 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
     <xtext.version>2.42.0</xtext.version>
+    <xtext.codegen.skip>true</xtext.codegen.skip>
   </properties>
 
   <dependencies>
@@ -49,6 +50,9 @@
               <goal>java</goal>
             </goals>
             <configuration>
+              <!-- Xtext generated sources are committed. Keep regeneration opt-in
+                   to avoid flaky MWE2 classpath resolution during regular builds. -->
+              <skip>${xtext.codegen.skip}</skip>
               <mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
               <arguments>
                 <!-- Plain relative path (no file: scheme) resolved from repo root where mvn is invoked.

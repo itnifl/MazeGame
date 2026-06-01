@@ -19,7 +19,7 @@
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
-* 🖥️ [maze](maze/readme.md)
+* 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md)
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
@@ -132,7 +132,7 @@ VS Code Java runtime:
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
-⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
+⚡ Finally, in Visual Studio Code select [App.java](maze-javafx-backend/src/main/java/main/game/maze/App.java) and run it.
 
 ### Graphics backends (JavaFX vs libGDX)
 
@@ -141,8 +141,8 @@ sibling modules so the renderer can be swapped:
 
 - [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic
   interfaces and inert defaults used by the gameplay code.
-- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend used
-  by `main.game.maze.App`.
+- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend adapters
+  used by the JavaFX runtime entry point in `maze-javafx-backend`.
 - [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend (WIP). The
   interface adapters are in place; the actual game loop is still being ported.
 
@@ -187,8 +187,8 @@ make mirror
 Other handy targets:
 
 ```bash
-# build only the app module, then full build with tests
-mvn -U -pl :main.game.maze -am clean package
+# build only the JavaFX runtime module, then full build with tests
+mvn -U -pl maze-javafx-backend -am clean package
 mvn -U clean install
 
 # run all unit tests
@@ -293,10 +293,10 @@ See: [main.game.maze.dsl.ui/readme.md](main.game.maze.dsl.ui/readme.md)
 Automated test module for DSL parsing, validation, and integration behavior.
 See: [main.game.maze.dsl.tests/readme.md](main.game.maze.dsl.tests/readme.md)
 
-### maze
+### maze-javafx-backend
 
-JavaFX game client that starts the application, runs the game loop, and renders maze and actors.  
-See: [maze/readme.md](maze/readme.md)
+JavaFX game runtime module with `App`, `Launcher`, controllers, character logic, actions, and runtime wiring for the game.  
+See: [maze-javafx-backend/readme.md](maze-javafx-backend/readme.md)
 
 ### maze-feature
 

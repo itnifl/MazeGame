@@ -66,7 +66,7 @@ Backend modules expose an `install()` method that swaps the singletons:
 - `main.game.maze.javafx.JavaFxBackend.install()` (see [maze-javafx](../maze-javafx/readme.md))
 - `main.game.maze.libgdx.GdxBackend.install()` (see [maze-libgdx](../maze-libgdx/readme.md))
 
-Production code (for example [App.java](../maze/src/main/java/main/game/maze/App.java))
+Production code (for example [App.java](../maze-javafx-backend/src/main/java/main/game/maze/App.java))
 calls the appropriate `install()` before any gameplay code touches the
 singletons.
 

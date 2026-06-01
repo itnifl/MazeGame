@@ -1,15 +1,14 @@
 # maze-javafx-backend
 
-JavaFX-specific game logic module. Contains all controllers, character implementations, actions, and
-runtime factories that depend on the JavaFX UI toolkit.
+JavaFX game runtime module. This module is now the top level runtime module for the JavaFX client, including the application entry point, launcher shim, controllers, actions, and character logic.
 
 ## What lives here
 
 | Package | Contents |
 |---|---|
-| `main.game.maze` | `App` (JavaFX Application entry point), `GameController`, all screen controllers |
+| `main.game.maze` | `App` (JavaFX `Application` entry point), `Launcher`, `GameController`, screen controllers |
 | `main.game.maze.characters` | `Character`, `ComputerCharacter`, `GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`, `PlayerCharacter`, `ProgressBarStatePresenter` |
-| `main.game.maze.characters.interfaces` | `ICharacterAction` (uses `javafx.scene.Node`), `ICanSubscribeAndNotifyPosition` (uses `javafx.geometry.Bounds`) |
+| `main.game.maze.characters.interfaces` | `ICharacterAction`, `ICanSubscribeAndNotifyPosition` |
 | `main.game.maze.actions` | `GameOverAction`, `HighscoreAction`, `MovementNotifierAction`, `RestartGameAction`, `WinGameAction` |
 | `main.game.maze.actions.base` | `ActionScreens`, `CharacterActionScreens` |
 | `main.game.maze.areas` | `WinArea` |
@@ -20,27 +19,84 @@ runtime factories that depend on the JavaFX UI toolkit.
 ## Dependency chain
 
 ```
-maze (launcher)
-  └── maze-javafx-backend           ← this module
-        ├── maze-javafx             (FxCharacterView, FXML resources, ScreenNameFXMLConstants)
-        ├── maze-common-backend     (interfaces, DTOs, constants, DifficultyService, OclBootstrap)
-        ├── maze-common-frontend    (AudioEngine, ICharacterView)
-        ├── main.game.maze.mazeworld
-        ├── main.game.maze.difficulties
-        ├── main.game.maze.opponents
-        ├── main.game.maze.behaviour
-        └── maze-module-generator   (CharacterRegistrar, WallRegistry)
+maze-javafx-backend
+  ├── maze-javafx             (FxCharacterView, JavaFX backend adapters, FXML resources)
+  ├── maze-common-backend     (interfaces, DTOs, constants, DifficultyService, OclBootstrap)
+  ├── maze-common-frontend    (AudioEngine, ICharacterView and shared frontend services)
+  ├── main.game.maze.mazeworld
+  ├── main.game.maze.difficulties
+  ├── main.game.maze.opponents
+  ├── main.game.maze.behaviour
+  └── maze-module-generator   (CharacterRegistrar, WallRegistry)
 ```
 
-## Why a separate module?
+## Runtime notes
 
-Keeps game logic with JavaFX dependencies isolated from the launcher (`maze`), which becomes a
-thin assembly module containing only `Launcher.java` and static resources (images, sounds, level
-definitions). This makes it straightforward to test game logic without the launcher jar and to
-reuse controllers in other JavaFX host applications.
+### Start menu and viewport
+
+The JavaFX client starts on `startScreen.fxml`, where the player selects difficulty before loading the game scene.
+
+Current runtime behavior:
+
+- difficulty is selected from the shared `DifficultyService` model list
+- selected difficulty sets board size before game setup
+- when the chosen board is larger than the display, the stage enters fullscreen
+- the maze viewport follows the player while HUD elements remain fixed
+- command menu and score panel stay visible while the board scrolls
+
+### Enemy damage and wall blocking
+
+Enemies and player exchange position notifications in both directions.
+
+- enemy movement path: enemy notifies player, `PlayerCharacter.doPositionEvaluation` runs, and `GameController.isWallBetween(...)` prevents through wall damage
+- player movement path: player notifies enemies, each enemy class runs its own position evaluation and the same wall check before damage
+
+`GameController.isWallBetween` delegates to `WallCollisionUtil.wallBetweenVectors` in the MazeWorld module.
+
+### Path hint budget
+
+Holding `P` reveals the shortest path to the goal with a score penalty and a finite budget.
+
+| Difficulty | Budget |
+|---|---|
+| Easy | 45 s |
+| Normal | 25 s |
+| Hard | 15 s |
+
+Penalty rate is 50 points per second while active.
+
+### Shutdown behavior
+
+When the window is closed, the game disposes active controller resources, disposes audio channels, exits JavaFX, and then terminates the JVM process.
+
+### Wall rendering constants
+
+Wall thickness and segment length come from `StageConstants` in `main.game.maze.mazeworld`.
+
+- `StageConstants.WallThicknessPx`
+- `StageConstants.WallSegmentLengthPx`
+
+Both JavaFX and libGDX frontends read the same values to preserve visual parity.
+
+### Ghost tangibility rules
+
+Ghosts phase while `nonTangibilityEnergy > 0`.
+
+- while phasing: can pass through walls, rendered semi transparent, cannot damage player
+- after energy reaches zero: becomes solid, blocked by walls, can damage on contact
+
+Both frontends use shared services in `maze-common-frontend` to keep behavior aligned.
+
+## Running
+
+Use the VS Code launch configuration `Launch MazeGame (JavaFX)` in [.vscode/launch.json](../.vscode/launch.json).
+
+For command line build and test:
+
+```powershell
+mvn -pl maze-javafx-backend -am clean verify
+```
 
 ## Tests
 
-Tests for the classes in this module live in `maze/src/test/` because the `maze` assembly module
-depends on this module transitively, giving the test sources access to all classes here without
-moving the test files.
+This module owns its own tests under `maze-javafx-backend/src/test`.

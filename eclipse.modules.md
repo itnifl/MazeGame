@@ -45,10 +45,10 @@ From Maven’s point of view they are also just normal reactor artifacts.
 
 ## ２．Runtime side: Maze game as plain Maven module
 
-The **`maze`** module (the JavaFX app) is a normal Maven module.
+The **`maze-javafx-backend`** module (the JavaFX app runtime) is a normal Maven module.
 It does not run OSGi; it just depends on the JARs as regular libraries.
 
-In `maze/pom.xml` you will see dependencies like:
+In `maze-javafx-backend/pom.xml` you will see dependencies like:
 
 ```xml
 <dependency>

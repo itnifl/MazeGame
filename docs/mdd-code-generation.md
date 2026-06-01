@@ -300,7 +300,7 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
 | Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
-| Add `src-gen` to `maze/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
+| Add `src-gen` to `maze-javafx-backend/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
 
 ---
