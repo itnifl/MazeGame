@@ -133,15 +133,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private int moveCount;
     private boolean showHintInfo;
     private boolean showSpanningTreeInfo;
-    private boolean showCommandsOverlay;
+    private final GdxHudInteractionState hudInteractionState = new GdxHudInteractionState();
     private float showBehaviourTypeSeconds;
     private float showMovementTypeSeconds;
     private float showEnemyPathSeconds;
-    private String pendingTerminalCommand;
-    private boolean terminalInputActive;
-    private final StringBuilder terminalInputBuffer = new StringBuilder();
-    private float commandButtonPressedSeconds;
-    private float terminalButtonPressedSeconds;
+    private final GdxTerminalController terminalController = new GdxTerminalController(TERMINAL_INPUT_MAX_CHARS);
     private String statusMessage = "";
     private float statusMessageTimer;
     private float enemyAnimationClock;
@@ -276,21 +272,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean keyTyped(char character) {
-                if (!terminalInputActive) {
-                    return false;
-                }
-                if (character == '\b' || character == '\r' || character == '\n' || character == 27) {
-                    // ENTER / BACKSPACE / ESC handled by polled keyDown in handleTerminalTypingInput.
-                    return false;
-                }
-                if (character < 32) {
-                    return false;
-                }
-                if (terminalInputBuffer.length() >= TERMINAL_INPUT_MAX_CHARS) {
-                    return true;
-                }
-                terminalInputBuffer.append(character);
-                return true;
+                return terminalController.onKeyTyped(character);
             }
         });
     }
@@ -374,16 +356,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void update(float dt) {
-        if (commandButtonPressedSeconds > 0f) {
-            commandButtonPressedSeconds = Math.max(0f, commandButtonPressedSeconds - dt);
-        }
-        if (terminalButtonPressedSeconds > 0f) {
-            terminalButtonPressedSeconds = Math.max(0f, terminalButtonPressedSeconds - dt);
-        }
+        hudInteractionState.tick(dt);
 
-        if (pendingTerminalCommand != null) {
-            String command = pendingTerminalCommand;
-            pendingTerminalCommand = null;
+        String command = terminalController.consumePendingCommand();
+        if (command != null) {
             executeTerminalCommand(command);
         }
 
@@ -453,7 +429,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
 
-        if (!terminalInputActive && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
+        if (!terminalController.isActive() && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
             escLatch = true;
             switchToStartMenu(true);
             return;
@@ -465,7 +441,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (!combatState.isDead()) {
             handleGameMouseInput();
 
-            if (terminalInputActive) {
+            if (terminalController.isActive()) {
                 handleTerminalTypingInput();
             } else {
                 if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
@@ -1094,8 +1070,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float terminalButtonY = buttonY;
         float terminalButtonW = 112f;
         float terminalButtonH = 26f;
-        float commandsPressOffset = commandButtonPressedSeconds > 0f ? -2f : 0f;
-        float terminalPressOffset = terminalButtonPressedSeconds > 0f ? -2f : 0f;
+        float commandsPressOffset = hudInteractionState.commandPressOffsetY();
+        float terminalPressOffset = hudInteractionState.terminalPressOffsetY();
         float commandYDraw = buttonY + commandsPressOffset;
         float terminalYDraw = terminalButtonY + terminalPressOffset;
         float rowPanelX = 8f;
@@ -1123,13 +1099,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
         shapes.setColor(0f, 0f, 0f, 0.12f);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
 
-        if (commandButtonPressedSeconds > 0f) {
+        if (hudInteractionState.commandButtonPressedSeconds() > 0f) {
             shapes.setColor(0.42f, 0.86f, 0.74f, 0.92f);
         } else {
             shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
         }
         shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
-        if (terminalButtonPressedSeconds > 0f) {
+        if (hudInteractionState.terminalButtonPressedSeconds() > 0f) {
             shapes.setColor(0.88f, 0.76f, 0.30f, 0.95f);
         } else {
             shapes.setColor(1f, 0.90f, 0.43f, 0.90f);
@@ -1179,7 +1155,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             font.draw(batch, statusMessage, 12f, BOTTOM_BAR_HEIGHT + 18f);
         }
 
-        if (terminalInputActive) {
+        if (terminalController.isActive()) {
             float panelX = 22f;
             float panelY = BOTTOM_BAR_HEIGHT + 26f;
             float panelW = Math.max(360f, w * 0.58f);
@@ -1198,13 +1174,13 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
             batch.begin();
             font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
-            font.draw(batch, "Terminal: " + terminalInputBuffer, panelX + 10f, panelY + 35f);
+            font.draw(batch, "Terminal: " + terminalController.bufferText(), panelX + 10f, panelY + 35f);
             font.setColor(new Color(0.78f, 0.90f, 1f, 1f));
             font.draw(batch, "Enter: run  Backspace: delete  Esc: close", panelX + 10f, panelY + 16f);
         }
         batch.end();
 
-        if (showCommandsOverlay) {
+        if (hudInteractionState.commandsOverlayVisible()) {
             drawCommandsOverlay();
         }
     }
@@ -1402,19 +1378,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float my = hudCamera.viewportHeight - Gdx.input.getY();
 
         if (contains(mx, my, hudLayout.commandButtonX, hudLayout.commandButtonY, hudLayout.commandButtonW, hudLayout.commandButtonH)) {
-            commandButtonPressedSeconds = BUTTON_PRESS_SECONDS;
-            showCommandsOverlay = !showCommandsOverlay;
+            hudInteractionState.pressCommandsButton(BUTTON_PRESS_SECONDS);
             return;
         }
 
         if (contains(mx, my, hudLayout.terminalButtonX, hudLayout.terminalButtonY, hudLayout.terminalButtonW, hudLayout.terminalButtonH)) {
-            terminalButtonPressedSeconds = BUTTON_PRESS_SECONDS;
+            hudInteractionState.pressTerminalButton(BUTTON_PRESS_SECONDS);
             toggleTerminalPrompt();
             return;
         }
 
-        if (showCommandsOverlay) {
-            showCommandsOverlay = false;
+        if (hudInteractionState.commandsOverlayVisible()) {
+            hudInteractionState.hideCommandsOverlay();
             return;
         }
 
@@ -1437,19 +1412,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void openTerminalPrompt() {
-        terminalInputActive = true;
-        terminalInputBuffer.setLength(0);
+        terminalController.open();
         flashStatus("Terminal opened. Type command and press Enter");
     }
 
     private void closeTerminalPrompt() {
-        terminalInputActive = false;
-        terminalInputBuffer.setLength(0);
+        terminalController.close();
         flashStatus("Terminal closed");
     }
 
     private void toggleTerminalPrompt() {
-        if (terminalInputActive) {
+        if (terminalController.isActive()) {
             closeTerminalPrompt();
             return;
         }
@@ -1462,28 +1435,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            pendingTerminalCommand = terminalInputBuffer.toString();
-            terminalInputBuffer.setLength(0);
-            terminalInputActive = false;
+            terminalController.submit();
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
-            if (terminalInputBuffer.length() > 0) {
-                terminalInputBuffer.setLength(terminalInputBuffer.length() - 1);
-            }
+            terminalController.backspace();
             return;
         }
         // All other character input is fed by InputAdapter#keyTyped which
         // respects the OS keyboard layout (æ, ø, å, etc.).
-    }
-
-    private void appendIfJustPressed(int key, char ch) {
-        if (terminalInputBuffer.length() >= TERMINAL_INPUT_MAX_CHARS) {
-            return;
-        }
-        if (Gdx.input.isKeyJustPressed(key)) {
-            terminalInputBuffer.append(ch);
-        }
     }
 
     private void executeTerminalCommand(String raw) {
@@ -1515,7 +1475,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     static String terminalHelpText() {
-        return TerminalCommandParser.HELP_TEXT;
+        return GdxTerminalController.helpText();
     }
 
     static TerminalCommand parseTerminalCommand(String raw) {
@@ -1637,13 +1597,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
         moveCount = 0;
         showHintInfo = false;
         showSpanningTreeInfo = false;
-        showCommandsOverlay = false;
+        hudInteractionState.reset();
         showBehaviourTypeSeconds = 0f;
         showMovementTypeSeconds = 0f;
         showEnemyPathSeconds = 0f;
-        pendingTerminalCommand = null;
-        terminalInputActive = false;
-        terminalInputBuffer.setLength(0);
+        terminalController.reset();
         startMenuDropdownOpen = false;
         pausedFromGame = false;
         playedWinSound = false;
