@@ -47,6 +47,7 @@ import main.game.maze.common.terminal.TerminalCommand;
 import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.constants.AudioChannelConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.dto.Score;
 import main.game.maze.constants.ResourceFileConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -545,7 +546,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 if (!playedGameOverSound) {
                     playedGameOverSound = true;
                     AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                    AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
+                    AudioEngine.get().playLoop(AudioResourceConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
                 }
             }
         }
@@ -558,7 +559,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 playedWinSound = true;
                 AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
                 AudioEngine.get().playLoop(visualStyle.winSoundPath(), AudioChannelConstants.WIN_MUSIC);
-                AudioEngine.get().play(ResourceFileConstants.WinGameSoundComment);
+                AudioEngine.get().play(AudioResourceConstants.WinGameSoundComment);
             }
         }
     }

@@ -24,7 +24,7 @@ import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.constants.ColorHueConstants;
 import main.game.maze.constants.PlayerConstants;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
@@ -299,7 +299,7 @@ public class PlayerCharacter extends Character
             return;
         }
         AudioEngine.get().playRateLimited(
-            ResourceFileConstants.PlayerScreamSound,
+            AudioResourceConstants.PlayerScreamSound,
             "player.scream",
             SOUND_COOLDOWN_MS);
     }
@@ -309,7 +309,7 @@ public class PlayerCharacter extends Character
             return;
         }
         AudioEngine.get().playRateLimited(
-            ResourceFileConstants.PlayerInfectedSound,
+            AudioResourceConstants.PlayerInfectedSound,
             "player.infected",
             SOUND_COOLDOWN_MS);
     }

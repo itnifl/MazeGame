@@ -12,7 +12,7 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.constants.AudioChannelConstants;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.common.graphics.AudioEngine;
 
@@ -79,7 +79,7 @@ public class RestartGameAction extends ActionScreens {
             } catch (RuntimeException ignored) {
                 return MazeVisualStyleConfig.DEFAULT.inGameMusicPath() != null
                         ? MazeVisualStyleConfig.DEFAULT.inGameMusicPath()
-                        : ResourceFileConstants.BackgroundMusic;
+                        : AudioResourceConstants.BackgroundMusic;
             }
         }
     }

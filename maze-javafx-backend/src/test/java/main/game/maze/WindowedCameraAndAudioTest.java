@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.NoopAudioEngine;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 
 /**
  * Locks in the JavaFX window/scroll/audio behavior the player relies on:
@@ -100,7 +100,7 @@ class WindowedCameraAndAudioTest {
     @Test
     void gameOverMusicIsStartedOnGameOver() {
         GameOverAction.startGameOverMusic();
-        assertTrue(fakeAudio.playedResources().contains(ResourceFileConstants.GameOverSound),
+        assertTrue(fakeAudio.playedResources().contains(AudioResourceConstants.GameOverSound),
                 "GameOverAction must start the GAME_OVER_MUSIC loop so the player hears the game-over track");
     }
 }

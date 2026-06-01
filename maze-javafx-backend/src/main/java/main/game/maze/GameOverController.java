@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.AudioChannelConstants;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 
 public class GameOverController extends ActionScreenController implements Initializable {
 
@@ -16,7 +16,7 @@ public class GameOverController extends ActionScreenController implements Initia
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        AudioEngine.get().playLoop(ResourceFileConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
+        AudioEngine.get().playLoop(AudioResourceConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
     }
 
     public void showDeathPenaltyLabel() {
