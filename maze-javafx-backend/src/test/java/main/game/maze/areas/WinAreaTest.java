@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.areas;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;

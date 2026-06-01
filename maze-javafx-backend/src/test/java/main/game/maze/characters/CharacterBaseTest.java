@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.characters;
 
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;

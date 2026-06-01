@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.characters;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -10,6 +10,8 @@ import main.game.maze.opponents.OpponentsFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import main.game.maze.App;
+import main.game.maze.GameController;
 
 import static org.junit.jupiter.api.Assertions.*;
 

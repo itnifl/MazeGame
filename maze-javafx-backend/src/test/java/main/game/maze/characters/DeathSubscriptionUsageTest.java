@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.characters;
 
 import javafx.application.Platform;
 import main.game.maze.characters.PlayerCharacter;
@@ -7,6 +7,8 @@ import main.game.maze.interfaces.IDeathSubscriber;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import main.game.maze.App;
+import main.game.maze.GameController;
 
 import java.util.ArrayList;
 import java.util.List;

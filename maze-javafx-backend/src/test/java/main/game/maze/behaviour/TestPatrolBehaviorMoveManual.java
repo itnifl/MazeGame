@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.behaviour;
 
 import main.game.maze.behaviour.BehaviourFactory;
 import main.game.maze.behaviour.DijkstraPathCalculator;

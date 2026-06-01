@@ -1,4 +1,6 @@
-package main.game.maze;
+package main.game.maze.actions;
+
+import main.game.maze.App;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;

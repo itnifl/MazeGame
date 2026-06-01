@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.behaviour;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package main.game.maze;
+package main.game.maze.service;
 
 import javafx.scene.layout.Pane;
 import main.game.maze.mazeworld.generators.SpriteWallNudger;
