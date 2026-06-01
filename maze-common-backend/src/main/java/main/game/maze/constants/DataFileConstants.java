@@ -1,5 +1,5 @@
 package main.game.maze.constants;
 
-public class ResourceFileConstants {
-    public static final String HighscoreFilePath = "scores.txt";
+public class DataFileConstants {
+    public static final String HighscoreFilePath = "data/scores.txt";
 }

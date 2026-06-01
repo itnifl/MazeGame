@@ -49,7 +49,9 @@
 
   <dependencies>
     <!-- All game logic, controllers, characters and their transitive deps
-         come from maze-javafx-backend. maze is now the thin launcher module. -->
+         come from maze-javafx-backend. maze is now the assembly module only:
+         Launcher lives in maze-javafx-backend; this module produces the fat-jar
+         and seeds the runtime data directory. -->
     <dependency>
       <groupId>main.game.maze</groupId>
       <artifactId>maze-javafx-backend</artifactId>
@@ -131,6 +133,28 @@
                     <includeScope>runtime</includeScope>
                 </configuration>
             </execution>
+            <!-- Seed data/scores.txt from maze-common-frontend (owner module).
+                 overWrite=false keeps any existing runtime scores intact. -->
+            <execution>
+                <id>seed-scores</id>
+                <phase>generate-resources</phase>
+                <goals>
+                    <goal>unpack</goal>
+                </goals>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>main.game.maze</groupId>
+                            <artifactId>maze-common-frontend</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                            <includes>data/scores.txt</includes>
+                            <outputDirectory>${project.basedir}</outputDirectory>
+                            <overWrite>false</overWrite>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+            </execution>
         </executions> 
       </plugin> 
     </plugins>
@@ -151,10 +175,11 @@
                   <versionRange>[3.6.1,)</versionRange>
                   <goals>
                     <goal>copy-dependencies</goal>
+                    <goal>unpack</goal>
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <!-- Do not run this mojo during Eclipse/VS Code workspace builds -->
+                  <!-- Do not run these mojos during Eclipse/VS Code workspace builds -->
                   <ignore/>
                 </action>
               </pluginExecution>

@@ -450,16 +450,17 @@ function Test-PluginModuleStale([string]$moduleDir) {
 }
 
 function Test-MazeAppModuleStale([string]$moduleDir) {
+    # Launcher.java moved to maze-javafx-backend; check for Launcher.class there.
     $classesDir = Join-Path $moduleDir 'target/classes'
-    $appClass = Join-Path $classesDir 'main/game/maze/App.class'
-    if (-not (Test-Path $appClass)) {
-        return @{ Stale = $true; Reason = "App.class missing under $classesDir" }
+    $launcherClass = Join-Path $classesDir 'main/game/maze/Launcher.class'
+    if (-not (Test-Path $launcherClass)) {
+        return @{ Stale = $true; Reason = "Launcher.class missing under $classesDir" }
     }
 
     $sourceTime = Get-NewestSourceWriteTime $moduleDir
-    $classTime  = (Get-Item $appClass).LastWriteTimeUtc
+    $classTime  = (Get-Item $launcherClass).LastWriteTimeUtc
     if ($sourceTime -gt $classTime) {
-        return @{ Stale = $true; Reason = "source newer than App.class ($sourceTime > $classTime)" }
+        return @{ Stale = $true; Reason = "source newer than Launcher.class ($sourceTime > $classTime)" }
     }
 
     return @{ Stale = $false; Reason = '' }
@@ -490,13 +491,14 @@ function Ensure-RuntimeModulesCompiled {
         }
     }
 
-    $mazeDir = Join-Path $scriptRoot 'maze'
-    $mazeCheck = Test-MazeAppModuleStale $mazeDir
+    # Launcher is now in maze-javafx-backend (thin assembly module maze has no sources).
+    $mazeBackendDir = Join-Path $scriptRoot 'maze-javafx-backend'
+    $mazeCheck = Test-MazeAppModuleStale $mazeBackendDir
     $mazeStale = $mazeCheck.Stale
     if ($mazeStale) {
-        Write-Host ("Module 'maze' needs rebuild: {0}" -f $mazeCheck.Reason) -ForegroundColor Yellow
+        Write-Host ("Module 'maze-javafx-backend' needs rebuild: {0}" -f $mazeCheck.Reason) -ForegroundColor Yellow
     } else {
-        Write-Host "Module 'maze' up to date." -ForegroundColor DarkGreen
+        Write-Host "Module 'maze-javafx-backend' up to date." -ForegroundColor DarkGreen
     }
 
     if ($stale.Count -eq 0 -and -not $mazeStale) {
@@ -505,7 +507,7 @@ function Ensure-RuntimeModulesCompiled {
     }
 
     $rebuildList = @($stale)
-    if ($mazeStale) { $rebuildList += 'maze' }
+    if ($mazeStale) { $rebuildList += 'maze-javafx-backend' }
     $plArg = ($rebuildList -join ',')
 
     Write-Host "=== Rebuilding stale modules: $plArg ===" -ForegroundColor Cyan
@@ -524,9 +526,9 @@ function Ensure-RuntimeModulesCompiled {
         }
     }
     if ($mazeStale) {
-        $recheck = Test-MazeAppModuleStale $mazeDir
+        $recheck = Test-MazeAppModuleStale $mazeBackendDir
         if ($recheck.Stale) {
-            throw "Module 'maze' is still stale after rebuild: $($recheck.Reason)"
+            throw "Module 'maze-javafx-backend' is still stale after rebuild: $($recheck.Reason)"
         }
     }
 

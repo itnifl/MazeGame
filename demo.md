@@ -49,7 +49,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentsBasic.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelSuccessMaxThreat.xmi`
   * `main.game.maze.opponents/src/test/java/main/game/maze/opponents/opponentModelFailMaxThreat.xmi`
-  * `maze/src/test/patrol_behavior_example.xmi` (behaviour / movements patrol example)
+  * `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` (behaviour / movements patrol example)
 
 * Main application class:
 
@@ -264,7 +264,7 @@ Relevant files and modules:
 
 * Sample patrol model instance:
 
-  * `maze/src/test/patrol_behavior_example.xmi`
+  * `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi`
     Contains a `behaviour:PatrolBehavior` with a path and waypoints.
 
 * Helper and controller code (typical setup):
@@ -287,7 +287,7 @@ Relevant files and modules:
 
 1．Open `patrol_behavior_example.xmi`:
 
-* File: `maze/src/test/patrol_behavior_example.xmi`
+* File: `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi`
 * Show that it describes:
 
   * a patrol path
@@ -493,7 +493,7 @@ Use this as a compact spoken script.
 
 4．**Show the behaviour / movements module**
 
-* Open `maze/src/test/patrol_behavior_example.xmi` and briefly show the patrol definition.
+* Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition.
 * Run `TestPatrolMovementController`.
 * Explain:
 
