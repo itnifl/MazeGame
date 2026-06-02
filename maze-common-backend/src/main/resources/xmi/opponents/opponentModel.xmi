@@ -6,7 +6,7 @@
     xmlns:opponents="http://main.game.maze/opponents"
     xmlns:diff="http://main.game.maze/difficulties" 
     name="MazeGame">
-    <name>Testing Game</name>
+    <name>MazeGame</name>
   
   <selectedDifficulty
       xsi:type="diff:NormalDifficulty"

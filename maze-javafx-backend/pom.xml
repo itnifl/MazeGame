@@ -229,6 +229,18 @@
               <skip>${mdep.skip}</skip>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-system-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/libs</outputDirectory>
+              <includeScope>system</includeScope>
+              <skip>${mdep.skip}</skip>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
