@@ -3,7 +3,10 @@ name: Build & Test (JavaFX only)
 on:  
   pull_request:
     paths:
-      - "maze/**"
+      - "maze-javafx/**"
+      - "maze-javafx-backend/**"
+      - "maze-common-backend/**"
+      - "maze-common-frontend/**"
       - ".github/workflows/**"
 
 jobs:
@@ -27,7 +30,7 @@ jobs:
       - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze \
+            -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze-javafx \
             -am \
             -DskipTests=true \
             clean verify
@@ -55,4 +58,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maze-game
-          path: maze/target/**/*.jar
+          path: maze-javafx-backend/target/**/*.jar
