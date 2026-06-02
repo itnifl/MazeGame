@@ -50,7 +50,7 @@ overall feature is marked Done.
 ### F3. Patrol behaviour with explicit waypoints
 
 - **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior (currentIndex, behavior: PatrolPathBehavior)`, `PatrolPoint (point, events)`, `PatrolZone (topLeft, width, height)`, `PatrolPathBehavior {LOOP, BACKWARD, RANDOM}`.
-- **Example**: [maze/src/test/patrol_behavior_example.xmi](maze/src/test/patrol_behavior_example.xmi) demonstrates the expected XMI format with five `<path time="N">` waypoints, where each `path.time` attribute (milliseconds) is the dwell period before the enemy advances to the next point.
+- **Example**: [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) demonstrates the expected XMI format with five `<path time="N">` waypoints, where each `path.time` attribute (milliseconds) is the dwell period before the enemy advances to the next point.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: a patrol is an ordered list of `path` entries, each with an optional `time` (dwell ms) and a `point (posX, posY)`, optionally scoped to a rectangular zone, with three traversal strategies (LOOP, BACKWARD, RANDOM).
@@ -82,7 +82,7 @@ overall feature is marked Done.
 - **Backend**: both.
 - **What the model says**: each behaviour can pick its path-finding algorithm
   and (for A*) its heuristic.
-- **What the game does today**: the maze module ships A* / Dijkstra debug
+- **What the game does today**: the JavaFX runtime module ships A* / Dijkstra debug
   overlays, but `MovementBehavior.pathcalculator` is not consulted at runtime;
   enemy movement uses a hard-coded local strategy.
 - **Acceptance**: a `ChaseBehavior` configured with `AstarPathCalculator
@@ -312,7 +312,7 @@ overall feature is marked Done.
 ### F22. Waypoint dwell time (`path.time` in XMI, `N ms` in DSL)
 
 - **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior.path.time` (integer, milliseconds); [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Waypoint: '(' x ',' y ')' (':' waitTime 'ms')?`.
-- **Example**: the `time` attribute is demonstrated in [maze/src/test/patrol_behavior_example.xmi](maze/src/test/patrol_behavior_example.xmi) (e.g. `<path time="1000">`).
+- **Example**: the `time` attribute is demonstrated in [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) (e.g. `<path time="1000">`).
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model/grammar says**: both the XMI `<path time="N">` attribute and the DSL `(x, y) : N ms` syntax declare a per-waypoint dwell period; the ecore attribute and DSL grammar both exist but no runtime code reads either value.

@@ -321,9 +321,9 @@ The Eclipse editor provides:
 ## Example Files
 
 See example configurations in:
-- `maze/src/main/resources/levels/tutorial.mazegame`
-- `maze/src/main/resources/levels/challenge.mazegame`
-- `maze/src/main/resources/levels/survival.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/tutorial.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/challenge.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/survival.mazegame`
 
 ## Setup & Development Workflow
 

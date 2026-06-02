@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<AnchorPane fx:id="screenRoot" prefHeight="600" prefWidth="800" 
+    xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" 
+    fx:controller="main.game.maze.GameOverController">
+   <children>
+        <ImageView AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+                AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+                preserveRatio="false" pickOnBounds="true"
+                fitWidth="${screenRoot.width}" fitHeight="${screenRoot.height}">
+            <image>
+                <Image url="@/main/game/maze/zombieBackground.png"/>
+            </image>
+        </ImageView>
+        <Pane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+              style="-fx-background-color: rgba(0,0,0,0.35);" />
+        <StackPane alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+            <children>
+                <VBox alignment="CENTER" maxWidth="520" maxHeight="300" spacing="8"
+                      style="-fx-background-color: rgba(0,0,0,0.88); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 22 28 22 28;">
+                    <children>
+                        <Label style="-fx-font-size: 44px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="GAME OVER" />
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #d7fff5; -fx-font-family: 'Consolas';" text="Press Restart to try again" />
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas';" text="Your score" />
+                        <Label fx:id="scoreLabel" style="-fx-font-size: 30px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="0" />
+                        <Label fx:id="deathPenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including death penalty" />
+                        <Label fx:id="damagePenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including damage penalty" />
+                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart" />
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+   </children>
+</AnchorPane>

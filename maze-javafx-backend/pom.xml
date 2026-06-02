@@ -1,0 +1,262 @@
+<!-- maze-javafx-backend/pom.xml -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>maze-javafx-backend</artifactId>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+    <junit.jupiter.version>5.13.4</junit.jupiter.version>
+    <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
+    <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
+    <mdep.skip>false</mdep.skip>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>efxclipse-releases</id>
+      <url>https://download.eclipse.org/efxclipse/releases/4.0.0</url>
+    </repository>
+    <repository>
+      <id>eclipse-releases</id>
+      <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>eclipse-releases</id>
+      <url>https://repo.eclipse.org/content/repositories/releases/</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>openjfx-repo</id>
+      <url>https://maven.openjfx.io</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <!-- Shared backend: interfaces, constants, DTOs, services -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-common-backend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- JavaFX rendering layer: FxCharacterView, audio/animation engines, FXML resources -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-javafx</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Domain modules -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.difficulties</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.opponents</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.behaviour</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Acceleo-generated code: CharacterRegistrar, WallRegistry -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-module-generator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Shared frontend interfaces: AudioEngine, ICharacterView, etc. -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-common-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- EMF (needed by OpponentRuntimeFactory and App for OclBootstrap) -->
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+
+    <!-- JavaFX -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-base</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e: do not run copy-dependencies during workspace incremental builds.
+             Reactor artifacts may not be packaged yet (MDEP-187), but CLI Maven still runs this at package. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <versionRange>[3.6.1,)</versionRange>
+                    <goals>
+                      <goal>copy-dependencies</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.plugin.version}</version>
+        <configuration>
+          <useModulePath>true</useModulePath>
+          <argLine>--add-modules=ALL-MODULE-PATH</argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <!-- Test resources (data/scores.txt, testScores.txt) are copied to
+               target/test-classes by Maven. Set that as the working dir so
+               HighScoreControllerTest and WriteScoresTest find them via
+               relative paths (DataFileConstants.HighscoreFilePath = "data/scores.txt"). -->
+          <workingDirectory>${project.build.testOutputDirectory}</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/libs</outputDirectory>
+              <includeScope>runtime</includeScope>
+              <skip>${mdep.skip}</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-system-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/libs</outputDirectory>
+              <includeScope>system</includeScope>
+              <skip>${mdep.skip}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>m2e</id>
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+      <properties>
+        <mdep.skip>true</mdep.skip>
+      </properties>
+    </profile>
+  </profiles>
+</project>

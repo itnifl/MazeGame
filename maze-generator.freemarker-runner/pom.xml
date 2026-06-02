@@ -42,7 +42,7 @@
               <applicationArgs>
                 <arg>-application</arg>
                 <arg>maze-generator.freemarker.main.game.maze.gen.HeadlessWallsApp</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/walls/default.walls.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/main.game.maze.walls/xmi/default.walls.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
               
@@ -61,8 +61,8 @@
               <applicationArgs>
                 <arg>-application</arg>
                 <arg>maze-generator.freemarker.main.game.maze.gen.RunAcceleo</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
-                <arg>${maven.multiModuleProjectDirectory}/maze/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-common-backend/src/main/resources/xmi/opponents/opponentModel.xmi</arg>
+                <arg>${maven.multiModuleProjectDirectory}/maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi</arg>
                 <arg>${maven.multiModuleProjectDirectory}/maze-module-generator/src-gen</arg>
               </applicationArgs>
               

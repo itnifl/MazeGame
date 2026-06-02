@@ -64,7 +64,7 @@ game MyFirstLevel {
 
 Place your `.mazegame` files in:
 ```
-maze/src/main/resources/levels/
+main.game.maze.dsl/src/main/resources/levels/
 ```
 
 ---
@@ -516,9 +516,9 @@ game Tutorial {
 ### Full Configuration
 
 See complete examples in:
-- `maze/src/main/resources/levels/tutorial.mazegame`
-- `maze/src/main/resources/levels/challenge.mazegame`
-- `maze/src/main/resources/levels/survival.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/tutorial.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/challenge.mazegame`
+- `main.game.maze.dsl/src/main/resources/levels/survival.mazegame`
 
 ---
 

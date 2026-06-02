@@ -49,11 +49,13 @@
 
     <!-- 6: backend-agnostiske grafikk-/lyd-abstraksjoner og backends -->
     <module>maze-common-frontend</module>
+    <module>maze-common-backend</module>
     <module>maze-javafx</module>
     <module>maze-libgdx</module>
 
-    <!-- 7: selve JavaFX-spillet -->
-    <module>maze</module>    
+    <!-- 7: selve JavaFX-spillet - controllers, characters, game logic -->
+    <module>maze-javafx-backend</module>
+
   </modules>
 
   <repositories>

@@ -9,10 +9,9 @@
             "preLaunchTask": "Ensure Java 21",
             "envFile": "${workspaceFolder}/.vscode/maze.launch.env",
             "mainClass": "main.game.maze.App",
-            "projectName": "main.game.maze",
             "vmArgs": [
                 "--module-path",
-                "${workspaceFolder}/maze/target/libs",
+                "${workspaceFolder}/maze-javafx-backend/target/libs",
                 "--add-modules",
                 "javafx.controls,javafx.fxml,javafx.media"
             ]

@@ -1,0 +1,108 @@
+<!-- maze-common-backend/pom.xml -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>main.game.maze</groupId>
+    <artifactId>MazeGame</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>maze-common-backend</artifactId>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
+
+  <dependencies>
+    <!-- mazeworld: Point2D and VectorFacing needed by character interfaces -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- EMF runtime (XMI loading for DifficultyService) -->
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+      <version>${emf.version}</version>
+    </dependency>
+
+    <!-- OCL delegate factories (OclBootstrap) -->
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl</artifactId>
+      <version>3.4.0-v20140524-1358</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.ecore</artifactId>
+      <version>3.3.0-v20130520-1222</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.common</artifactId>
+      <version>1.2.0-v20140528-1458</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>lpg.runtime</groupId>
+      <artifactId>java</artifactId>
+      <version>2.0.17-v201004271640</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/java-2.0.17-v201004271640.jar</systemPath>
+    </dependency>
+
+    <!-- Game model dependencies -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.difficulties</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.opponents</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

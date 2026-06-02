@@ -27,7 +27,7 @@ not static.
 - HP bar is visible at the top and the playable area is bounded below it and above the bottom row.
 - The maze world is bottom-anchored to the bottom HUD bar: when the maze fits the gameplay viewport vertically, its bottom edge is pinned to the top of the bottom command row instead of floating.
 - Camera follows the player when the world is larger than the viewport.
-- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze module readme](../maze/readme.md) for the equivalent JavaFX implementation.
+- Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze-javafx-backend readme](../maze-javafx-backend/readme.md) for the equivalent JavaFX implementation.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
 - High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
 - Win state shows completion text and allows returning to start menu (`ESC`).
@@ -60,7 +60,7 @@ Combat is handled by `PlayerCombatStateService`. Each frame it checks whether an
 
 A phasing ghost (non-tangibility energy > 0) bypasses the wall-blocking check in `PlayerCombatStateService`, so it can pass through walls during movement AND still deal contact damage to the player when bounding boxes overlap. Only the wall-collision guard is skipped; damage is not suppressed.
 
-`combatState.setMaze(maze)` must be called at game start (inside `startGameFromSelection`) to provide the current `MazeArena`. The equivalent wall-blocking logic in the JavaFX backend is documented in the [maze module readme](../maze/readme.md).
+`combatState.setMaze(maze)` must be called at game start (inside `startGameFromSelection`) to provide the current `MazeArena`. The equivalent wall-blocking logic in the JavaFX backend is documented in the [maze-javafx-backend readme](../maze-javafx-backend/readme.md).
 
 ## Running
 

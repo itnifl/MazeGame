@@ -5,7 +5,6 @@ Thumbs.db
 
 #General:
 *.class
-scores.txt
 
 # Maven build output:
 **/target/
@@ -32,8 +31,6 @@ main.game.maze.opponents/icons/
 *.aird
 
 /maze/.m2
-.vscode\settings.json
-.vscode/maze.launch.env
 /releng/local-p2/plugins
 /releng/local-p2/features
 releng/local-p2/artifacts.jar
@@ -112,3 +109,4 @@ main.game.maze.dsl/model/
 *_runs.json
 build.log
 .github/copilot-instructions.md
+.vscode/maze.launch.env

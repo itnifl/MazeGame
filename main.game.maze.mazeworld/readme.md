@@ -154,7 +154,7 @@ Two method variants are provided to avoid type-erasure conflicts at call sites:
 | `wallBetween` | `List<WallSegment>` | libGDX combat (`PlayerCombatStateService`) |
 | `wallBetweenVectors` | `List<Vector2D>` | JavaFX combat (`GameController.isWallBetween`) |
 
-Both frontends delegate to `WallCollisionUtil` so the geometry logic lives in exactly one place. See [maze module readme](../maze/readme.md) and [maze-libgdx module readme](../maze-libgdx/readme.md) for how each frontend wires these into its combat pipeline.
+Both frontends delegate to `WallCollisionUtil` so the geometry logic lives in exactly one place. See [maze-javafx-backend module readme](../maze-javafx-backend/readme.md) and [maze-libgdx module readme](../maze-libgdx/readme.md) for how each frontend wires these into its combat pipeline.
 
 ---
 
@@ -186,4 +186,4 @@ Following these ideas helps main dot game dot maze dot mazeworld remain a stable
 | [Walls Module](../main.game.maze.walls/readme.md) | Wall definitions and properties |
 | [Behaviour Module](../main.game.maze.behaviour/readme.md) | Movement and pathfinding logic |
 | [Difficulties Module](../main.game.maze.difficulties/readme.md) | Board size and density parameters |
-| [Game Module](../maze/readme.md) | Main game application |
+| [Game Module](../maze-javafx-backend/readme.md) | Main game application |

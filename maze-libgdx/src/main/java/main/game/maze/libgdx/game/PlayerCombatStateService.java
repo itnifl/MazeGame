@@ -6,7 +6,7 @@ import java.util.function.DoubleSupplier;
 import main.game.maze.characters.CollisionDamage;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.movement.GhostNonTangibilityService;
-import main.game.maze.constants.ResourceFileConstants;
+import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
@@ -111,7 +111,7 @@ public final class PlayerCombatStateService {
             applyDamage(Math.round(infectionDamagePerTick));
             startFlash(0.55f, 1f, 0.55f);
             AudioEngine.get().playRateLimited(
-                    ResourceFileConstants.PlayerInfectedSound,
+                    AudioResourceConstants.PlayerInfectedSound,
                     "player.infected",
                     PLAYER_SOUND_COOLDOWN_MS);
             infectionTicksRemaining--;
@@ -142,7 +142,7 @@ public final class PlayerCombatStateService {
             startFlash(1f, 0.45f, 0.45f);
 
             AudioEngine.get().playRateLimited(
-                    ResourceFileConstants.PlayerScreamSound,
+                    AudioResourceConstants.PlayerScreamSound,
                     "player.scream",
                     PLAYER_SOUND_COOLDOWN_MS);
 

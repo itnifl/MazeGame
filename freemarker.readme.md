@@ -70,13 +70,13 @@ mvn -B -U -e -pl maze-module-generator -am -DskipTests clean verify
 Build the game afterward, using the freshly generated JAR:
 
 ```bash
-mvn -B -U -e -pl maze -am -DskipTests=false clean verify
+mvn -B -U -e -pl maze-javafx-backend -am -DskipTests=false clean verify
 ```
 
 Quick one liner to do both from a clean checkout:
 
 ```bash
-mvn -B -U -e -pl maze-module-generator,maze -am -DskipTests=false clean verify
+mvn -B -U -e -pl maze-module-generator,maze-javafx-backend -am -DskipTests=false clean verify
 ```
 
 Depending on your setup you may also run the full reactor and let the generator step be triggered transitively.

@@ -17,11 +17,11 @@ import main.game.maze.runtime.OclBootstrap;
 /**
  * Launches the MazeGame libGDX backend.
  *
- * <p>Phase 3 (current): renders either the shared {@code GameMazeWorld}
- * (Phase 3 RealMaze adapter) or the standalone {@code SampleMaze} placeholder
+ * <p>Renders either the shared {@code GameMazeWorld}
+ * or the standalone {@code SampleMaze} placeholder
  * depending on the runtime config.
  *
- * <p>Phase 4 (F16) entrypoint: runtime parameters (window size, maze grid,
+ * <p>runtime parameters (window size, maze grid,
  * which arena backs the game) come from a {@link MazeConfigLoader} so the
  * game can be reconfigured without recompiling. Defaults to a properties
  * file lookup; falls back to {@link MazeRuntimeConfig#DEFAULT}.

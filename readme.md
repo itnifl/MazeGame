@@ -19,7 +19,7 @@
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
-* 🖥️ [maze](maze/readme.md)
+* 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md)
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
@@ -132,7 +132,7 @@ VS Code Java runtime:
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
-⚡ Finally, in Visual Studio Code select the `App.java` file in the `maze` module and run it.
+⚡ Finally, in Visual Studio Code select [App.java](maze-javafx-backend/src/main/java/main/game/maze/App.java) and run it.
 
 ### Graphics backends (JavaFX vs libGDX)
 
@@ -141,18 +141,28 @@ sibling modules so the renderer can be swapped:
 
 - [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic
   interfaces and inert defaults used by the gameplay code.
-- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend used
-  by `main.game.maze.App`.
-- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend (WIP). The
-  interface adapters are in place; the actual game loop is still being ported.
+- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend adapters
+  used by the JavaFX runtime entry point in `maze-javafx-backend`.
+- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend with a
+  working launcher and game screen runtime.
 
 To launch either backend, use the configurations in
 [.vscode/launch.json](.vscode/launch.json):
 
+The launch configurations read `.vscode/maze.launch.env`, which is generated
+from discovered Java 21 paths by the helper scripts.
+
+If you install or switch Java versions, regenerate the file before launching:
+
+```powershell
+.\make-javafx.ps1 -Target write-launch-env
+# or
+.\make-javafx.ps1 -Target prepare-run
+```
+
 - **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.App`.
-- **Launch MazeGame (libGDX backend, WIP)** — runs
-  `main.game.maze.libgdx.GdxAppLauncher`, which opens a 1024x768 LWJGL3 window
-  showing placeholder status text until the game loop has been ported.
+- **Launch MazeGame (libGDX backend)** — runs
+  `main.game.maze.libgdx.GdxAppLauncher`.
 
 ## Build commands (exact)
 
@@ -187,8 +197,8 @@ make mirror
 Other handy targets:
 
 ```bash
-# build only the app module, then full build with tests
-mvn -U -pl :main.game.maze -am clean package
+# build only the JavaFX runtime module, then full build with tests
+mvn -U -pl maze-javafx-backend -am clean package
 mvn -U clean install
 
 # run all unit tests
@@ -206,6 +216,12 @@ mvn -pl main.game.maze.opponents -am test
 # Default: toolchain info, update mirror if needed, clear Tycho cache, full build
 .\make-javafx.ps1
 
+# Generate launch environment file for VS Code debug/run
+.\make-javafx.ps1 -Target write-launch-env
+
+# Prepare launch dependencies and refresh launch environment file
+.\make-javafx.ps1 -Target prepare-run
+
 # Explicit target:
 .\make-javafx.ps1 -Target toolchain
 .\make-javafx.ps1 -Target mirror
@@ -213,6 +229,21 @@ mvn -pl main.game.maze.opponents -am test
 .\make-javafx.ps1 -Target clear-cache
 .\make-javafx.ps1 -Target build
 
+```
+
+### make-libgdx.ps1 usage - Windows Powershell
+```
+# Generate launch environment file for VS Code debug/run
+.\make-libgdx.ps1 -Target write-launch-env
+
+# Prepare runtime artifacts and refresh launch environment file
+.\make-libgdx.ps1 -Target prepare-run
+
+# Full clean verify build for libGDX modules
+.\make-libgdx.ps1 -Target build
+
+# Build and run libGDX backend
+.\make-libgdx.ps1 -Target run
 ```
 
 #### Makefile usage - Other
@@ -293,10 +324,10 @@ See: [main.game.maze.dsl.ui/readme.md](main.game.maze.dsl.ui/readme.md)
 Automated test module for DSL parsing, validation, and integration behavior.
 See: [main.game.maze.dsl.tests/readme.md](main.game.maze.dsl.tests/readme.md)
 
-### maze
+### maze-javafx-backend
 
-JavaFX game client that starts the application, runs the game loop, and renders maze and actors.  
-See: [maze/readme.md](maze/readme.md)
+JavaFX game runtime module with `App`, `Launcher`, controllers, character logic, actions, and runtime wiring for the game.  
+See: [maze-javafx-backend/readme.md](maze-javafx-backend/readme.md)
 
 ### maze-feature
 
