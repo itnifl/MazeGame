@@ -3,6 +3,7 @@ package main.game.maze.actions.base;
 import java.util.concurrent.atomic.AtomicInteger;
 import main.game.maze.App;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.game.score.ScoringEngine;
 import main.game.maze.mazeworld.constants.StageConstants;
 
 public class CharacterActionScreens extends ActionScreens {
@@ -11,6 +12,7 @@ public class CharacterActionScreens extends ActionScreens {
     protected int baseScore = StageConstants.MaxScore;
     protected AtomicInteger playerMoveCount = new AtomicInteger(0);
     protected PlayerCharacter playerCharacter;
+    private final ScoringEngine scoringEngine = new ScoringEngine();
 
     public void setBaseScore(int baseScore) {
         this.baseScore = baseScore;
@@ -19,16 +21,15 @@ public class CharacterActionScreens extends ActionScreens {
     public int updateScore() {
         int maxHp = playerCharacter.getMaxHitPoints();
         int currentHp = playerCharacter.getHitPoints();
-        int hpReduction = Math.max(0, maxHp - currentHp);
-        var scoreDeathPenalty = currentHp <= 0 ? StageConstants.ScoreDeathPenalty : ZERO_PENALTY;
         var dynamicPenalty = (App.gameController != null) ? App.gameController.getDynamicScorePenalty() : ZERO_PENALTY;
 
-        this.score = baseScore - (playerMoveCount.get() * StageConstants.ScoreSubtractFactor)
-            - (hpReduction * StageConstants.ScoreSubtractFactor) - scoreDeathPenalty - dynamicPenalty;
-
-        if (playerCharacter.isWinning) {
-            this.score += StageConstants.ScoreWinBonus;
-        }
+        this.score = scoringEngine.characterScreenScore(
+                baseScore,
+                playerMoveCount.get(),
+                maxHp,
+                currentHp,
+                dynamicPenalty,
+                playerCharacter.isWinning);
         return score;
     }
 

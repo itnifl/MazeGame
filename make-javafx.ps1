@@ -332,6 +332,28 @@ function Ensure-LaunchBytecodeLevel {
 
 function Ensure-LaunchJavaFxLibs {
     $libsDir = Join-Path 'maze-javafx-backend' 'target/libs'
+    $modulePathKeepPatterns = @(
+        'javafx-*.jar',
+        'jna-*.jar',
+        'jna-platform-*.jar'
+    )
+
+    function Prune-ModulePathLibs([string]$dirPath, [string[]]$keepPatterns) {
+        $allJars = Get-ChildItem -Path $dirPath -File -Filter '*.jar' -ErrorAction SilentlyContinue
+        foreach ($jar in $allJars) {
+            $keep = $false
+            foreach ($pattern in $keepPatterns) {
+                if ($jar.Name -like $pattern) {
+                    $keep = $true
+                    break
+                }
+            }
+            if (-not $keep) {
+                Remove-Item $jar.FullName -Force -ErrorAction SilentlyContinue
+            }
+        }
+    }
+
     $requiredPatterns = @(
         'javafx-controls*.jar',
         'javafx-fxml*.jar',
@@ -349,12 +371,13 @@ function Ensure-LaunchJavaFxLibs {
     }
 
     if ($missing.Count -eq 0) {
+        Prune-ModulePathLibs -dirPath $libsDir -keepPatterns $modulePathKeepPatterns
         Write-Host 'Launch JavaFX libs check passed: required modules exist in maze-javafx-backend/target/libs.' -ForegroundColor Green
         return
     }
 
     Write-Host ("Missing JavaFX launch libs ({0}). Restoring runtime dependencies..." -f ($missing -join ', ')) -ForegroundColor Yellow
-    & $Mvn -pl maze-javafx-backend -am -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs
+    & $Mvn -pl maze-javafx-backend -am -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs -DexcludeGroupIds=p2.osgi.bundle -DexcludeArtifactIds=com.sun.jna
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to restore JavaFX runtime dependencies for launch. Maven exited with code $exit."
@@ -366,6 +389,8 @@ function Ensure-LaunchJavaFxLibs {
             throw "JavaFX launch dependency still missing after restore: $pattern"
         }
     }
+
+    Prune-ModulePathLibs -dirPath $libsDir -keepPatterns $modulePathKeepPatterns
 
     Write-Host 'JavaFX runtime dependencies restored for launch.' -ForegroundColor Green
 }

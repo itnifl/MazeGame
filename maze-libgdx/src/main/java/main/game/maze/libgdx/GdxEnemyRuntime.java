@@ -11,10 +11,11 @@ import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.opponents.BehaviorType;
 
-final class GdxEnemyRuntime {
+final class GdxEnemyRuntime implements EnemyRuntime {
     final EnemySpawn spawn;
     final String runtimeEnemyId;
     final String imagePath;
@@ -111,7 +112,7 @@ final class GdxEnemyRuntime {
     /**
      * Advance this enemy one frame through the shared movement service.
      */
-    void advance(WorldView world,
+    public void advance(WorldView world,
                  AntiLoopWanderMovementService wanderService,
                  PatrolMovementService patrolService,
                  AdaptiveAggressiveMovementService adaptiveService,

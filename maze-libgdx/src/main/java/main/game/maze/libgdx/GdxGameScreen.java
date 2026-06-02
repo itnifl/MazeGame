@@ -18,10 +18,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -31,18 +28,20 @@ import java.util.concurrent.ThreadLocalRandom;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
-import main.game.maze.common.movement.AntiLoopWanderMovementService;
-import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.ActivePathPoint;
+import main.game.maze.game.audio.GameAudioDirector;
+import main.game.maze.game.runtime.EnemyDirectorService;
+import main.game.maze.game.score.FileHighScoreRepository;
+import main.game.maze.game.score.HighScoreRepository;
+import main.game.maze.game.score.PathHintBudget;
+import main.game.maze.game.score.ScoringEngine;
+import main.game.maze.game.status.StatusMessageBus;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
-import main.game.maze.common.movement.GhostPhasingMovementService;
-import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.terminal.TerminalCommand;
 import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.libgdx.movement.GdxWorldView;
-import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.dto.Score;
 import main.game.maze.constants.DataFileConstants;
@@ -88,9 +87,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final long SEED = 1L;
     private static final float MOUSE_STEP_DISTANCE = 20f;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
-    private static final float PATH_HINT_BUDGET_EASY_SEC = 45f;
-    private static final float PATH_HINT_BUDGET_NORMAL_SEC = 25f;
-    private static final float PATH_HINT_BUDGET_HARD_SEC = 15f;
     private static final float PLAYER_ALIVE_SCALE = 1f;
     private static final float PLAYER_DEAD_SCALE = 1.8f;
     private static final float HALF_RATIO = 0.5f;
@@ -130,20 +126,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean showHintInfo;
     private boolean showSpanningTreeInfo;
     private final GdxHudInteractionState hudInteractionState = new GdxHudInteractionState();
+    private final GdxPlayerInputController playerInputController = new GdxPlayerInputController();
     private float showBehaviourTypeSeconds;
     private float showMovementTypeSeconds;
     private float showEnemyPathSeconds;
     private final GdxTerminalController terminalController = new GdxTerminalController(TERMINAL_INPUT_MAX_CHARS);
-    private String statusMessage = "";
-    private float statusMessageTimer;
+    private final StatusMessageBus statusMessageBus = new StatusMessageBus();
     private final StringBuilder winNameInput = new StringBuilder();
     private boolean winScoreSaved;
     private String winScoreStatus = "";
     private float enemyAnimationClock;
-    private boolean escLatch;
-    private boolean hLatch;
-    private boolean oLatch;
-    private boolean tLatch;
+    private final GdxModeInputController modeInputController = new GdxModeInputController();
     private boolean startMenuDropdownOpen;
     private boolean pausedFromGame;
     private boolean highScoresReturnToStartMenu;
@@ -168,17 +161,14 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private Viewport viewport;
     private RuntimeVisualModel runtimeModel;
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
+        private final ScoringEngine scoringEngine = new ScoringEngine();
+        private final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();
+        private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
+        private final HighScoreRepository highScoreRepository =
+            new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
-    private final AntiLoopWanderMovementService antiLoopWanderMovementService =
-            new AntiLoopWanderMovementService();
-    private final AdaptiveAggressiveMovementService adaptiveAggressiveMovementService =
-            new AdaptiveAggressiveMovementService();
-    private final PatrolMovementService patrolMovementService =
-            new PatrolMovementService();
-    private final GhostPhasingMovementService ghostPhasingMovementService =
-            new GhostPhasingMovementService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
     private Texture goalTexture;
@@ -208,10 +198,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
     private final HudLayout hudLayout = new HudLayout();
     private float pathPenaltyPoints;
-    /** Total seconds of P-key budget consumed this game. */
-    private float pathHintTotalUsedSeconds;
-    /** True once the P-key budget is exhausted for this game. */
-    private boolean pathHintBudgetExhausted;
+    private PathHintBudget pathHintBudget = new PathHintBudget(PathHintBudget.EASY_SECONDS);
     private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
     public GdxGameScreen() {
@@ -263,7 +250,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        AudioEngine.get().playLoop(visualStyle.menuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+        switchToMenuMusic();
 
         installTerminalKeyboardProcessor();
     }
@@ -382,41 +369,29 @@ public final class GdxGameScreen extends ApplicationAdapter {
             showEnemyPathSeconds = Math.max(0f, showEnemyPathSeconds - dt);
         }
 
-        if (statusMessageTimer > 0f) {
-            statusMessageTimer -= dt;
-            if (statusMessageTimer <= 0f) {
-                statusMessage = "";
-            }
-        }
+        statusMessageBus.tick(dt);
 
         if (mode == Mode.START_MENU) {
-            if (pausedFromGame && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
-                escLatch = true;
+            boolean escPressed = Gdx.input.isKeyPressed(Input.Keys.ESCAPE);
+            if (pausedFromGame && modeInputController.consumeEsc(escPressed)) {
                 pausedFromGame = false;
                 mode = Mode.PLAYING;
                 switchToInGameMusic();
                 flashStatus("Resumed game");
                 return;
             }
-            if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                escLatch = false;
-            }
             handleStartMenuInput();
             return;
         }
 
         if (mode == Mode.HIGH_SCORES) {
-            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
-                escLatch = true;
+            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
                 if (highScoresReturnToStartMenu) {
                     highScoresReturnToStartMenu = false;
                     switchToStartMenu(false);
                 } else {
                     mode = Mode.PLAYING;
                 }
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                escLatch = false;
             }
             return;
         }
@@ -426,34 +401,23 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 handleWinScoreEntryInput();
             }
             handleWonMouseInput();
-            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
-                escLatch = true;
+            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
                 switchToStartMenu(false);
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                escLatch = false;
             }
             return;
         }
 
         if (mode == Mode.GAME_OVER) {
-            if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
-                escLatch = true;
+            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
                 switchToStartMenu(false);
-            }
-            if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                escLatch = false;
             }
             return;
         }
 
-        if (!terminalController.isActive() && Gdx.input.isKeyPressed(Input.Keys.ESCAPE) && !escLatch) {
-            escLatch = true;
+        if (!terminalController.isActive()
+                && modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
             switchToStartMenu(true);
             return;
-        }
-        if (!Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            escLatch = false;
         }
 
         if (!combatState.isDead()) {
@@ -462,46 +426,33 @@ public final class GdxGameScreen extends ApplicationAdapter {
             if (terminalController.isActive()) {
                 handleTerminalTypingInput();
             } else {
-                if (Gdx.input.isKeyPressed(Input.Keys.T) && !tLatch) {
-                    tLatch = true;
+                if (modeInputController.consumeT(Gdx.input.isKeyPressed(Input.Keys.T))) {
                     openTerminalPrompt();
                     return;
                 }
-                if (!Gdx.input.isKeyPressed(Input.Keys.T)) {
-                    tLatch = false;
-                }
-                if (Gdx.input.isKeyPressed(Input.Keys.H) && !hLatch) {
-                    hLatch = true;
+                if (modeInputController.consumeH(Gdx.input.isKeyPressed(Input.Keys.H))) {
                     loadHighScores();
                     mode = Mode.HIGH_SCORES;
-                }
-                if (!Gdx.input.isKeyPressed(Input.Keys.H)) {
-                    hLatch = false;
                 }
 
                 showHintInfo = Gdx.input.isKeyPressed(Input.Keys.P);
                 applyPathPenalty(dt);
                 updatePathHint();
 
-                if (Gdx.input.isKeyPressed(Input.Keys.O) && !oLatch) {
-                    oLatch = true;
+                if (modeInputController.consumeO(Gdx.input.isKeyPressed(Input.Keys.O))) {
                     showSpanningTreeInfo = !showSpanningTreeInfo;
                 }
-                if (!Gdx.input.isKeyPressed(Input.Keys.O)) {
-                    oLatch = false;
-                }
 
-                float dx = 0f, dy = 0f;
-                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) dx -= 1f;
-                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) dx += 1f;
-                if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S)) dy -= 1f;
-                if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W)) dy += 1f;
-                if (dx != 0f && dy != 0f) {
-                    float inv = (float) (1.0 / Math.sqrt(2.0));
-                    dx *= inv; dy *= inv;
-                }
-                if (dx != 0f || dy != 0f) {
-                    player.attemptMove(dx * activePlayerSpeed * dt, dy * activePlayerSpeed * dt, maze);
+                GdxPlayerInputController.MovementIntent movementIntent = playerInputController.resolveMovement(
+                        Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A),
+                        Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D),
+                        Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S),
+                        Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W));
+                if (movementIntent.hasMovement()) {
+                    player.attemptMove(
+                            movementIntent.dx() * activePlayerSpeed * dt,
+                            movementIntent.dy() * activePlayerSpeed * dt,
+                            maze);
                     moveCount++;
                 }
             }
@@ -510,15 +461,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         enemyAnimationClock += dt;
         if (!animatedEnemies.isEmpty() && maze != null && player != null) {
             WorldView world = new GdxWorldView(maze, player);
-            for (GdxEnemyRuntime enemy : animatedEnemies) {
-                enemy.advance(
-                    world,
-                    antiLoopWanderMovementService,
-                    patrolMovementService,
-                    adaptiveAggressiveMovementService,
-                    ghostPhasingMovementService,
-                    dt);
-            }
+            enemyDirectorService.advanceAll(animatedEnemies, world, dt);
         }
 
         var combatFrame = combatState.update(dt, player.x(), player.y(), player.halfSize(), currentEnemyContacts());
@@ -539,8 +482,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 mode = Mode.GAME_OVER;
                 if (!playedGameOverSound) {
                     playedGameOverSound = true;
-                    AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                    AudioEngine.get().playLoop(AudioResourceConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
+                    gameAudioDirector.switchToGameOverMusic(AudioResourceConstants.GameOverSound);
                 }
             }
         }
@@ -554,9 +496,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             winScoreStatus = "";
             if (!playedWinSound) {
                 playedWinSound = true;
-                AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-                AudioEngine.get().playLoop(visualStyle.winSoundPath(), AudioChannelConstants.WIN_MUSIC);
-                AudioEngine.get().play(AudioResourceConstants.WinGameSoundComment);
+                gameAudioDirector.switchToWinMusic(visualStyle.winSoundPath());
             }
         }
     }
@@ -1029,9 +969,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 font.draw(batch, dims, panelX + 20f, panelY + 26f);
         }
 
-        if (statusMessage != null && !statusMessage.isBlank()) {
+        if (statusMessageBus.hasMessage()) {
             font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
-            font.draw(batch, statusMessage, panelX + 16f, panelY + 44f);
+            font.draw(batch, statusMessageBus.currentMessage(), panelX + 16f, panelY + 44f);
         }
         if (loadingPending) {
             font.setColor(Color.GOLD);
@@ -1173,7 +1113,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
         String commandText = "H Highscore  ESC Restart  P Path "
                 + (showHintInfo ? "[ON]" : "[OFF]")
-                + (pathHintBudgetExhausted ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
+            + (pathHintBudget.exhausted() ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
                 + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
         font.draw(batch, commandText, terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
 
@@ -1188,9 +1128,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         } else if (mode == Mode.GAME_OVER) {
             font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
             font.draw(batch, "You were defeated. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
-        } else if (statusMessage != null && !statusMessage.isBlank()) {
+        } else if (statusMessageBus.hasMessage()) {
             font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-            font.draw(batch, statusMessage, 12f, BOTTOM_BAR_HEIGHT + 18f);
+            font.draw(batch, statusMessageBus.currentMessage(), 12f, BOTTOM_BAR_HEIGHT + 18f);
         }
 
         if (terminalController.isActive()) {
@@ -1629,7 +1569,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private boolean writeHighScore(String playerName, int score) {
-        return main.game.maze.dto.HighScoreFile.upsert(playerName, score, DataFileConstants.HighscoreFilePath);
+        return highScoreRepository.upsertScore(playerName, score);
     }
 
     static String terminalHelpText() {
@@ -1692,27 +1632,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         // Always return the live snapshot from the movement service.
         // Points from the service are in game-world (bottom-left Y) space.
         // drawEnemyPathOverlay() expects the same space, so no Y-flip is needed here.
-        return enemy.activePathPoints(patrolMovementService, adaptiveAggressiveMovementService);
+        return enemy.activePathPoints(enemyDirectorService.patrolService(), enemyDirectorService.adaptiveService());
     }
 
     private void loadHighScores() {
         highScoreRows.clear();
-        try (BufferedReader reader = new BufferedReader(new FileReader(DataFileConstants.HighscoreFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(":");
-                if (data.length != 2) {
-                    continue;
-                }
-                String name = data[0].trim();
-                int score = Integer.parseInt(data[1].trim());
-                highScoreRows.add(new Score(name, score));
-            }
-        } catch (Exception ignored) {
-            // Missing score file or malformed lines should not break runtime.
-        }
-        Collections.sort(highScoreRows);
-        Collections.reverse(highScoreRows);
+        highScoreRows.addAll(highScoreRepository.loadScores());
     }
 
     private static boolean contains(float px, float py, float x, float y, float w, float h) {
@@ -1760,6 +1685,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         showMovementTypeSeconds = 0f;
         showEnemyPathSeconds = 0f;
         terminalController.reset();
+        modeInputController.reset();
         startMenuDropdownOpen = false;
         pausedFromGame = false;
         playedWinSound = false;
@@ -1767,13 +1693,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         deathSequenceStarted = false;
         deathDisplayRemainingSeconds = 0f;
         animatedEnemies.clear();
-        antiLoopWanderMovementService.reset();
-        adaptiveAggressiveMovementService.reset();
-        patrolMovementService.reset();
-        ghostPhasingMovementService.reset();
+        enemyDirectorService.reset();
         pathPenaltyPoints = 0f;
-        pathHintTotalUsedSeconds = 0f;
-        pathHintBudgetExhausted = false;
+        pathHintBudget = PathHintBudget.forDifficulty(selected);
         winNameInput.setLength(0);
         winScoreSaved = false;
         winScoreStatus = "";
@@ -1953,19 +1875,11 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void switchToInGameMusic() {
-        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+        gameAudioDirector.switchToInGameMusic(visualStyle.inGameMusicPath());
     }
 
     private void switchToMenuMusic() {
-        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-        AudioEngine.get().playLoop(resolveMenuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+        gameAudioDirector.switchToMenuMusic(resolveMenuMusicPath());
     }
 
     private String resolveMenuMusicPath() {
@@ -1979,7 +1893,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
         // If budget is already exhausted, keep hint off and notify once.
-        if (pathHintBudgetExhausted) {
+        if (pathHintBudget.exhausted()) {
             if (showHintInfo) {
                 showHintInfo = false;
                 flashStatus("Path hint energy already spent!", 3f);
@@ -1989,36 +1903,21 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (!showHintInfo) {
             return;
         }
-        // Consume budget.
-        float budget = pathHintBudgetSeconds(difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex));
-        float remaining = budget - pathHintTotalUsedSeconds;
-        if (remaining <= 0f) {
-            pathHintBudgetExhausted = true;
-            pathHintTotalUsedSeconds = budget;
+        float consumed = pathHintBudget.consume(dt);
+        if (consumed <= 0f) {
             showHintInfo = false;
             flashStatus("Path hint energy already spent!", 3f);
             return;
         }
-        float consumed = Math.min(dt, remaining);
-        pathHintTotalUsedSeconds += consumed;
         pathPenaltyPoints += consumed * ROUTE_HINT_PENALTY_PER_SEC;
-        if (pathHintTotalUsedSeconds >= budget) {
-            pathHintBudgetExhausted = true;
-            pathHintTotalUsedSeconds = budget;
+        if (pathHintBudget.exhausted()) {
             showHintInfo = false;
             flashStatus("Path hint energy already spent!", 3f);
         }
     }
 
-    private float pathHintBudgetSeconds(Difficulty selected) {
-        if (selected instanceof HardDifficulty) return PATH_HINT_BUDGET_HARD_SEC;
-        if (selected instanceof main.game.maze.difficulties.NormalDifficulty) return PATH_HINT_BUDGET_NORMAL_SEC;
-        return PATH_HINT_BUDGET_EASY_SEC;
-    }
-
     private float pathHintRemainingSeconds() {
-        Difficulty selected = difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex);
-        return Math.max(0f, pathHintBudgetSeconds(selected) - pathHintTotalUsedSeconds);
+        return pathHintBudget.remainingSeconds();
     }
 
     private List<EnemySpawn> currentEnemyContacts() {
@@ -2033,9 +1932,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private int currentScore() {
-        int movePenalty = moveCount * 10;
-        int hintPenalty = (int) Math.floor(pathPenaltyPoints);
-        return Math.max(0, baseScore - movePenalty - hintPenalty);
+        return scoringEngine.gameplayScore(baseScore, moveCount, pathPenaltyPoints);
     }
 
     private MazeVisualStyleConfig loadVisualStyle() {
@@ -2051,20 +1948,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void flashStatus(String text) {
-        flashStatus(text, 2.4f);
+        statusMessageBus.publish(text);
     }
 
     private void flashStatus(String text, float durationSeconds) {
-        statusMessage = text;
-        statusMessageTimer = durationSeconds;
+        statusMessageBus.publish(text, durationSeconds);
     }
 
     @Override
     public void dispose() {
-        AudioEngine.get().stopChannel(AudioChannelConstants.IN_GAME_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.MENU_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
-        AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
+        gameAudioDirector.stopAll();
         for (Texture texture : texturesByPath.values()) {
             texture.dispose();
         }

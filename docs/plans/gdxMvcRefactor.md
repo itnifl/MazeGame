@@ -23,6 +23,22 @@ deleted from the repo).
   libGDX `writeHighScore`). Covered by `HighScoreFileTest`.
 - Small Phase 4 slice already in: `GdxStartMenuInputController` extracted from
   `GdxGameScreen` with `GdxStartMenuInputControllerTest`.
+- Phase 1 and 2 shared-domain slice implemented:
+  - Added `PathHintBudget` and integrated libGDX P-key budget consumption.
+  - Added `StatusMessageBus` and integrated libGDX transient HUD/start-menu status messages.
+  - Added `ScoringEngine` and integrated both libGDX runtime score computation and JavaFX action-screen scoring.
+  - Added `HighScoreRepository` + `FileHighScoreRepository` and migrated libGDX and JavaFX high-score load/upsert paths to the repository.
+  - Added unit tests for all new shared classes under `maze-common-backend`.
+- Phase 3 slice implemented:
+  - Added shared runtime contracts and orchestration: `EnemyRuntime`, `EnemyDirectorService`.
+  - `GdxEnemyRuntime` now implements `EnemyRuntime`; `GdxGameScreen` delegates enemy ticking through `EnemyDirectorService`.
+  - Added shared audio orchestration: `GameAudioDirector`; libGDX now delegates menu/in-game/win/game-over channel transitions through it.
+  - Added unit tests: `EnemyDirectorServiceTest`, `GameAudioDirectorTest`.
+- Phase 4 slice implemented:
+  - Added `GdxPlayerInputController` for normalized movement intent extraction.
+  - Added `GdxModeInputController` for ESC/H/O/T edge-latch handling.
+  - `GdxGameScreen` now delegates movement intent and key-latch transitions through these controllers.
+  - Added unit tests: `GdxPlayerInputControllerTest`, `GdxModeInputControllerTest`.
 
 ### Remaining
 
