@@ -10,7 +10,7 @@
 <AnchorPane fx:id="highScoreRoot" fx:controller="main.game.maze.HighScoreController" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" prefWidth="800" prefHeight="600">
     <StackPane alignment="CENTER" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                style="-fx-background-color: linear-gradient(to bottom, #14102a 0%, #251552 50%, #120c1f 100%);">
-          <VBox alignment="CENTER" spacing="14" maxWidth="520"
+          <VBox alignment="CENTER" spacing="14" maxWidth="520" maxHeight="460"
               style="-fx-background-color: rgba(16, 10, 30, 0.88); -fx-border-color: #33ffbb; -fx-border-width: 3; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 24, 0.2, 0, 10);">
             <padding>
                 <Insets top="26" right="28" bottom="24" left="28" />

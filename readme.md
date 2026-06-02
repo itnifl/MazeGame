@@ -143,16 +143,26 @@ sibling modules so the renderer can be swapped:
   interfaces and inert defaults used by the gameplay code.
 - [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend adapters
   used by the JavaFX runtime entry point in `maze-javafx-backend`.
-- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend (WIP). The
-  interface adapters are in place; the actual game loop is still being ported.
+- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend with a
+  working launcher and game screen runtime.
 
 To launch either backend, use the configurations in
 [.vscode/launch.json](.vscode/launch.json):
 
+The launch configurations read `.vscode/maze.launch.env`, which is generated
+from discovered Java 21 paths by the helper scripts.
+
+If you install or switch Java versions, regenerate the file before launching:
+
+```powershell
+.\make-javafx.ps1 -Target write-launch-env
+# or
+.\make-javafx.ps1 -Target prepare-run
+```
+
 - **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.App`.
-- **Launch MazeGame (libGDX backend, WIP)** — runs
-  `main.game.maze.libgdx.GdxAppLauncher`, which opens a 1024x768 LWJGL3 window
-  showing placeholder status text until the game loop has been ported.
+- **Launch MazeGame (libGDX backend)** — runs
+  `main.game.maze.libgdx.GdxAppLauncher`.
 
 ## Build commands (exact)
 
@@ -206,6 +216,12 @@ mvn -pl main.game.maze.opponents -am test
 # Default: toolchain info, update mirror if needed, clear Tycho cache, full build
 .\make-javafx.ps1
 
+# Generate launch environment file for VS Code debug/run
+.\make-javafx.ps1 -Target write-launch-env
+
+# Prepare launch dependencies and refresh launch environment file
+.\make-javafx.ps1 -Target prepare-run
+
 # Explicit target:
 .\make-javafx.ps1 -Target toolchain
 .\make-javafx.ps1 -Target mirror
@@ -213,6 +229,21 @@ mvn -pl main.game.maze.opponents -am test
 .\make-javafx.ps1 -Target clear-cache
 .\make-javafx.ps1 -Target build
 
+```
+
+### make-libgdx.ps1 usage - Windows Powershell
+```
+# Generate launch environment file for VS Code debug/run
+.\make-libgdx.ps1 -Target write-launch-env
+
+# Prepare runtime artifacts and refresh launch environment file
+.\make-libgdx.ps1 -Target prepare-run
+
+# Full clean verify build for libGDX modules
+.\make-libgdx.ps1 -Target build
+
+# Build and run libGDX backend
+.\make-libgdx.ps1 -Target run
 ```
 
 #### Makefile usage - Other

@@ -14,9 +14,20 @@ import main.game.maze.constants.ScreenNameFXMLConstants;
 
 public class HighscoreAction extends ActionScreens {
     private AnchorPane root;
+    private Runnable onContinueOverride;
+    private HighScoreController controller;
 
     public HighscoreAction(AnchorPane root) {
         this.root = root;
+    }
+
+    public HighscoreAction(AnchorPane root, Runnable onContinueOverride) {
+        this.root = root;
+        this.onContinueOverride = onContinueOverride;
+    }
+
+    public HighScoreController getController() {
+        return controller;
     }
 
     public void Load() {
@@ -35,6 +46,7 @@ public class HighscoreAction extends ActionScreens {
         try {
             AnchorPane screen = fxmlLoader.load();
             HighScoreController controller = fxmlLoader.getController();
+            this.controller = controller;
 
             // Make sure the highscore content fills the wrapper pane on resize.
             AnchorPane.setTopAnchor(screen, 0.0);
@@ -46,6 +58,10 @@ public class HighscoreAction extends ActionScreens {
             newRoot.getChildren().add(screen);
 
             controller.setOnContinue(() -> {
+                if (onContinueOverride != null) {
+                    onContinueOverride.run();
+                    return;
+                }
                 if (originalSceneRoot == null) {
                     return;
                 }

@@ -21,6 +21,8 @@ import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.service.DifficultyService;
+import main.game.maze.actions.HighscoreAction;
+import main.game.maze.actions.StartScreenAction;
 
 public class StartController implements Initializable {
     @FXML private ComboBox<Difficulty> difficultyCombo;
@@ -30,7 +32,7 @@ public class StartController implements Initializable {
     private final MazeVisualStyleConfig visualStyle = loadVisualStyle();
     private Stage stage;
 
-    void setStage(Stage s) { this.stage = s; }
+    public void setStage(Stage s) { this.stage = s; }
 
     @Override public void initialize(URL url, ResourceBundle rb) {
         var diffs = FXCollections.observableArrayList(svc.list());
@@ -83,6 +85,22 @@ public class StartController implements Initializable {
         AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+    }
+
+    @FXML private void onHighScores() {
+        if (stage == null || stage.getScene() == null) {
+            return;
+        }
+        var root = stage.getScene().getRoot();
+        if (!(root instanceof AnchorPane currentAnchor)) {
+            return;
+        }
+        new HighscoreAction(currentAnchor, () -> {
+            var sceneRoot = stage.getScene().getRoot();
+            if (sceneRoot instanceof AnchorPane anchor) {
+                new StartScreenAction(anchor).Load();
+            }
+        }).Load();
     }
 
     private MazeVisualStyleConfig loadVisualStyle() {

@@ -3,7 +3,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.VBox ?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
@@ -19,23 +18,26 @@
                 preserveRatio="false" pickOnBounds="true"
                 fitWidth="${screenRoot.width}" fitHeight="${screenRoot.height}">
             <image>
-                <!-- put the image next to this FXML in an `images/` folder -->
-                <Image url="@zombieBackground.png"/>
+                <Image url="@/main/game/maze/zombieBackground.png"/>
             </image>
         </ImageView>
-            <VBox alignment="TOP_CENTER"
-                AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
-                AnchorPane.rightAnchor="0"  AnchorPane.topAnchor="0"
-                style="-fx-padding: 24 0 0 0;" spacing="6">
-          <children>
-              <Label style="-fx-font-size: 60px; -fx-text-fill: red; -fx-font-weight: bold;" text="Game Over!" />
-              <Label style="-fx-font-size: 18px; -fx-text-fill: black;" text="Your score: " />
-              <Label fx:id="scoreLabel" style="-fx-font-size: 24px; -fx-text-fill: black; -fx-font-weight: bold;" text="0" />
-              <Label fx:id="deathPenaltyNoticeLabel" prefHeight="25.0" prefWidth="206.0" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" text="- Including death penalty" />
-              <Label fx:id="damagePenaltyNoticeLabel" style="-fx-font-size: 16px; -fx-text-fill: red; -fx-font-weight: bold; -fx-visibility: hidden;" text="- Including damage penalty" />
-              <Button onAction="#saveScore" style="-fx-padding: 5px; -fx-spacing: 10px;" text="Save Score" />            
-              <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 16px; -fx-spacing: 10px;" text="Restart" />
-          </children>
-       </VBox>
+        <Pane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+              style="-fx-background-color: rgba(0,0,0,0.35);" />
+        <StackPane alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+            <children>
+                <VBox alignment="CENTER" maxWidth="520" maxHeight="300" spacing="8"
+                      style="-fx-background-color: rgba(0,0,0,0.88); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 22 28 22 28;">
+                    <children>
+                        <Label style="-fx-font-size: 44px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="GAME OVER" />
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #d7fff5; -fx-font-family: 'Consolas';" text="Press Restart to try again" />
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas';" text="Your score" />
+                        <Label fx:id="scoreLabel" style="-fx-font-size: 30px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="0" />
+                        <Label fx:id="deathPenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including death penalty" />
+                        <Label fx:id="damagePenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including damage penalty" />
+                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart" />
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
    </children>
 </AnchorPane>

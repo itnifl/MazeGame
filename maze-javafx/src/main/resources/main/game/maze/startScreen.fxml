@@ -22,6 +22,7 @@
 
             <HBox alignment="CENTER" spacing="14">
                 <Button text="Start Mission" onAction="#onStart" prefWidth="170" style="-fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                <Button text="High Scores" onAction="#onHighScores" prefWidth="170" style="-fx-background-color: #8fffe0; -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
             </HBox>
 
             <Label text="Arrow keys to move, P path hint, O spanning tree, H high score, ESC restart menu" style="-fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-text-fill: #d7fff5;" wrapText="true" maxWidth="520" />

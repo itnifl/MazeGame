@@ -35,7 +35,7 @@
         </ImageView>
 
         <ImageView fx:id="heart" fitHeight="50" layoutX="400" layoutY="300" preserveRatio="true">
-            <image><Image url="@heart2.png" /></image>
+            <image><Image url="@/main/game/maze/heart2.png" /></image>
         </ImageView>        
     </Pane>    
     <ProgressBar fx:id="hpBar" layoutX="1" layoutY="1" prefHeight="20" prefWidth="800" style="-fx-accent: #c0392b;" />

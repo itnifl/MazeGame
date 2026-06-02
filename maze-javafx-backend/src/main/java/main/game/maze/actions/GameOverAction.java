@@ -89,6 +89,11 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
             AnchorPane gameOverScreen = fxmlLoader.load();
             GameOverController controller = fxmlLoader.getController();
 
+            AnchorPane.setTopAnchor(gameOverScreen, 0.0);
+            AnchorPane.setRightAnchor(gameOverScreen, 0.0);
+            AnchorPane.setBottomAnchor(gameOverScreen, 0.0);
+            AnchorPane.setLeftAnchor(gameOverScreen, 0.0);
+
             var newRoot = new AnchorPane();
             newRoot.getChildren().add(gameOverScreen);
 

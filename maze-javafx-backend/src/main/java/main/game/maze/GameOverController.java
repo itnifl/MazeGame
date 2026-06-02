@@ -21,5 +21,6 @@ public class GameOverController extends ActionScreenController implements Initia
 
     public void showDeathPenaltyLabel() {
         deathPenaltyNoticeLabel.setVisible(true);
+        deathPenaltyNoticeLabel.setManaged(true);
     }
 }
