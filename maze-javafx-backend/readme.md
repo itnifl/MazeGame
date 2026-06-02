@@ -18,7 +18,7 @@ JavaFX game runtime module. This module is now the top level runtime module for 
 
 ## Dependency chain
 
-```
+```text
 maze-javafx-backend
   ├── maze-javafx             (FxCharacterView, JavaFX backend adapters, FXML resources)
   ├── maze-common-backend     (interfaces, DTOs, constants, DifficultyService, OclBootstrap)
