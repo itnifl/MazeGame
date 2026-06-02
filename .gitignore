@@ -109,3 +109,4 @@ main.game.maze.dsl/model/
 *_runs.json
 build.log
 .github/copilot-instructions.md
+.vscode/maze.launch.env
