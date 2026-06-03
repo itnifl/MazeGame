@@ -49,10 +49,11 @@ deleted from the repo).
 - Phase 6 slice implemented:
   - Reduced `GdxGameScreen.update(...)` branching complexity by extracting mode-specific update handling into dedicated private handlers for start menu, high scores, won, and game-over modes.
   - Reduced `GdxGameScreen.draw(...)` branching complexity by extracting mode-specific overlay rendering calls into dedicated private helpers.
+  - Adopted shared `GameSession` and `GameMode` in libGDX `GdxGameScreen` as the primary holder for runtime mode and session flags (loading, paused-from-game, high-score return, win-save, base score, move count).
 
 ### Remaining
 
-Everything below is open. Remaining phases are 6 through 8.
+Everything below is open. Remaining phases are 7 through 8.
 
 ## Architectural goals
 

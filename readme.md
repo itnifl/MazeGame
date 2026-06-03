@@ -164,6 +164,50 @@ If you install or switch Java versions, regenerate the file before launching:
 - **Launch MazeGame (libGDX backend)** — runs
   `main.game.maze.libgdx.GdxAppLauncher`.
 
+### libGDX MVC overview
+
+```mermaid
+flowchart LR
+  subgraph Model
+    GS[GameSession and GameMode]
+    RH[HighScoreRepository]
+    SC[ScoringEngine and PathHintBudget]
+    RT[EnemyDirectorService and RuntimeVisualModel]
+    SB[StatusMessageBus]
+  end
+
+  subgraph Controller
+    GGS[GdxGameScreen lifecycle host]
+    SMI[GdxStartMenuInputController]
+    MI[GdxModeInputController]
+    PI[GdxPlayerInputController]
+    TI[GdxTerminalController]
+  end
+
+  subgraph View
+    SMV[GdxStartMenuView]
+    HV[GdxHudView]
+    WV[GdxGameWorldView]
+    OV[GdxOverlayView]
+  end
+
+  GGS --> GS
+  GGS --> RH
+  GGS --> SC
+  GGS --> RT
+  GGS --> SB
+
+  GGS --> SMI
+  GGS --> MI
+  GGS --> PI
+  GGS --> TI
+
+  GGS --> SMV
+  GGS --> HV
+  GGS --> WV
+  GGS --> OV
+```
+
 ## Build commands (exact)
 
 For a focused build command guide with fastest paths and no mirror rebuild options, see [build-tool-readme.md](build-tool-readme.md).
