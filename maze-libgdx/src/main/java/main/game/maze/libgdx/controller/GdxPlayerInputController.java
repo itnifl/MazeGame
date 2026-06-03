@@ -1,11 +1,11 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 /**
  * Translates movement key state into normalized movement intent.
  */
-final class GdxPlayerInputController {
+public final class GdxPlayerInputController {
 
-    MovementIntent resolveMovement(boolean left, boolean right, boolean down, boolean up) {
+    public MovementIntent resolveMovement(boolean left, boolean right, boolean down, boolean up) {
         float dx = 0f;
         float dy = 0f;
 
@@ -30,8 +30,8 @@ final class GdxPlayerInputController {
         return new MovementIntent(dx, dy);
     }
 
-    record MovementIntent(float dx, float dy) {
-        boolean hasMovement() {
+    public record MovementIntent(float dx, float dy) {
+        public boolean hasMovement() {
             return dx != 0f || dy != 0f;
         }
     }

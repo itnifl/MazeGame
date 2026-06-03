@@ -1,15 +1,15 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 /**
  * Owns start menu keyboard and mouse input transitions.
  */
-final class GdxStartMenuInputController {
+public final class GdxStartMenuInputController {
 
     private boolean upLatch;
     private boolean downLatch;
     private boolean enterLatch;
 
-    KeyboardResult handleKeyboard(
+    public KeyboardResult handleKeyboard(
             boolean upPressed,
             boolean downPressed,
             boolean enterPressed,
@@ -38,7 +38,7 @@ final class GdxStartMenuInputController {
         return new KeyboardResult(nextIndex, startRequested, playSelectSound);
     }
 
-    MouseResult handleLeftClick(
+    public MouseResult handleLeftClick(
             float mouseX,
             float mouseY,
             MenuLayoutValues layout,
@@ -93,13 +93,13 @@ final class GdxStartMenuInputController {
         return px >= x && px <= x + w && py >= y && py <= y + h;
     }
 
-    record KeyboardResult(int selectedDifficultyIndex, boolean startRequested, boolean playSelectSound) {
+    public record KeyboardResult(int selectedDifficultyIndex, boolean startRequested, boolean playSelectSound) {
     }
 
-    record MouseResult(int selectedDifficultyIndex, boolean dropdownOpen, boolean startRequested, boolean highScoresRequested, boolean playSelectSound) {
+    public record MouseResult(int selectedDifficultyIndex, boolean dropdownOpen, boolean startRequested, boolean highScoresRequested, boolean playSelectSound) {
     }
 
-    record MenuLayoutValues(
+    public record MenuLayoutValues(
             float comboX,
             float comboY,
             float comboW,

@@ -48,10 +48,17 @@ import main.game.maze.constants.DataFileConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.HardDifficulty;
 import main.game.maze.difficulties.NormalDifficulty;
+import main.game.maze.libgdx.backend.GdxBackend;
+import main.game.maze.libgdx.controller.GdxHudInteractionState;
+import main.game.maze.libgdx.controller.GdxModeInputController;
+import main.game.maze.libgdx.controller.GdxPlayerInputController;
+import main.game.maze.libgdx.controller.GdxStartMenuInputController;
+import main.game.maze.libgdx.controller.GdxTerminalController;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.view.GdxGameWorldView;
 import main.game.maze.libgdx.view.GdxHudView;
 import main.game.maze.libgdx.view.GdxOverlayView;
@@ -346,7 +353,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     /** Package-private viewport-strip record exposed for unit tests. */
-    record GameStripBounds(int x, int y, int width, int height) {}
+    public record GameStripBounds(int x, int y, int width, int height) {}
 
     @Override
     public void render() {
@@ -553,17 +560,17 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
-            Texture enemyTexture = loadTexture(enemy.imagePath);
+            Texture enemyTexture = loadTexture(enemy.imagePath());
             String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
             enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
                     enemyTexture,
-                    enemy.x,
-                    enemy.y,
-                    enemy.size,
+                enemy.x(),
+                enemy.y(),
+                enemy.size(),
                     enemy.renderOpacity(),
-                    enemy.infectious,
-                    enemy.infectionStrength,
-                    enemy.phase,
+                enemy.infectious(),
+                enemy.infectionStrength(),
+                enemy.phase(),
                     label,
                     enemyDisplayPath(enemy)));
         }

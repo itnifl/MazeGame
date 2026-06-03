@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.game;
 
 import java.util.List;
 import main.game.maze.common.movement.ActivePathPoint;
@@ -15,24 +15,24 @@ import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.opponents.BehaviorType;
 
-final class GdxEnemyRuntime implements EnemyRuntime {
-    final EnemySpawn spawn;
-    final String runtimeEnemyId;
-    final String imagePath;
-    final float size;
-    final float speed;
-    final boolean infectious;
-    final float infectionStrength;
+public final class GdxEnemyRuntime implements EnemyRuntime {
+    private final EnemySpawn spawn;
+    private final String runtimeEnemyId;
+    private final String imagePath;
+    private final float size;
+    private final float speed;
+    private final boolean infectious;
+    private final float infectionStrength;
     // Cosmetic-only seed for the infectious mist pulse so neighbouring
     // enemies do not shimmer in perfect lockstep. Not used by movement.
-    final float phase;
-    float x;
-    float y;
-    int directionX;
-    int directionY;
-    float moveAccumulator;
-    String behaviorTypeLabel;
-    String movementTypeLabel;
+    private final float phase;
+    private float x;
+    private float y;
+    private int directionX;
+    private int directionY;
+    private float moveAccumulator;
+    private String behaviorTypeLabel;
+    private String movementTypeLabel;
     // Mirrors JavaFX ghost non-tangibility energy from the opponent model.
     double nonTangibilityEnergy;
     private final float javaFxTickRate;
@@ -70,7 +70,7 @@ final class GdxEnemyRuntime implements EnemyRuntime {
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
     }
 
-    static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
+    public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
                                      int index,
                                      WorldView world,
                                      float javaFxTickRate,
@@ -93,7 +93,7 @@ final class GdxEnemyRuntime implements EnemyRuntime {
                 phase);
     }
 
-    EnemySpawn contactSnapshot() {
+    public EnemySpawn contactSnapshot() {
         return new EnemySpawn(
                 spawn.id(),
                 spawn.imagePath(),
@@ -107,6 +107,34 @@ final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.behavior(),
                 spawn.speed(),
                 nonTangibilityEnergy);
+    }
+
+    public String imagePath() {
+        return imagePath;
+    }
+
+    public float x() {
+        return x;
+    }
+
+    public float y() {
+        return y;
+    }
+
+    public float size() {
+        return size;
+    }
+
+    public boolean infectious() {
+        return infectious;
+    }
+
+    public float infectionStrength() {
+        return infectionStrength;
+    }
+
+    public float phase() {
+        return phase;
     }
 
     /**
@@ -147,7 +175,7 @@ final class GdxEnemyRuntime implements EnemyRuntime {
         }
     }
 
-    float renderOpacity() {
+    public float renderOpacity() {
         return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy);
     }
 
@@ -185,7 +213,7 @@ final class GdxEnemyRuntime implements EnemyRuntime {
         return wanderService.tick(state, world);
     }
 
-    String debugLabel(boolean showBehaviorType, boolean showMovementType) {
+    public String debugLabel(boolean showBehaviorType, boolean showMovementType) {
         if (showBehaviorType && showMovementType) {
             return behaviorTypeLabel + " | " + movementTypeLabel;
         }
@@ -198,7 +226,7 @@ final class GdxEnemyRuntime implements EnemyRuntime {
         return null;
     }
 
-    List<ActivePathPoint> activePathPoints(PatrolMovementService patrolService,
+    public List<ActivePathPoint> activePathPoints(PatrolMovementService patrolService,
                                            AdaptiveAggressiveMovementService adaptiveService) {
         BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
         if (behavior == BehaviorType.AGGRESSIVE) {

@@ -1,32 +1,32 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 /**
  * Edge-trigger key latch helper for mode-level keyboard actions.
  */
-final class GdxModeInputController {
+public final class GdxModeInputController {
 
     private boolean escLatch;
     private boolean hLatch;
     private boolean oLatch;
     private boolean tLatch;
 
-    boolean consumeEsc(boolean escPressed) {
+    public boolean consumeEsc(boolean escPressed) {
         return consumeEdge(escPressed, Key.ESC);
     }
 
-    boolean consumeH(boolean hPressed) {
+    public boolean consumeH(boolean hPressed) {
         return consumeEdge(hPressed, Key.H);
     }
 
-    boolean consumeO(boolean oPressed) {
+    public boolean consumeO(boolean oPressed) {
         return consumeEdge(oPressed, Key.O);
     }
 
-    boolean consumeT(boolean tPressed) {
+    public boolean consumeT(boolean tPressed) {
         return consumeEdge(tPressed, Key.T);
     }
 
-    void reset() {
+    public void reset() {
         escLatch = false;
         hLatch = false;
         oLatch = false;

@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.backend;
 
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.AnimationEngine;

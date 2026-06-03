@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.view;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import main.game.maze.common.graphics.IBoundingBox;
