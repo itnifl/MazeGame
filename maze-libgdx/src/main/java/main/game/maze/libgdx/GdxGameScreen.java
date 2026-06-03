@@ -161,10 +161,10 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private Viewport viewport;
     private RuntimeVisualModel runtimeModel;
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
-        private final ScoringEngine scoringEngine = new ScoringEngine();
-        private final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();
-        private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
-        private final HighScoreRepository highScoreRepository =
+    private final ScoringEngine scoringEngine = new ScoringEngine();
+    private final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();
+    private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
+    private final HighScoreRepository highScoreRepository =
             new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
     private final Map<String, Texture> texturesByPath = new HashMap<>();
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();

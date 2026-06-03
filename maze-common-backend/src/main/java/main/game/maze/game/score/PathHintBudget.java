@@ -36,7 +36,7 @@ public final class PathHintBudget {
     }
 
     public float consume(float requestedSeconds) {
-        if (requestedSeconds <= 0f || exhausted) {
+        if (!Float.isFinite(requestedSeconds) || requestedSeconds <= 0f || exhausted) {
             return 0f;
         }
         float remaining = remainingSeconds();

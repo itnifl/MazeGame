@@ -2,6 +2,7 @@ package main.game.maze;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -31,7 +32,7 @@ public class HighScoreController implements Initializable {
     private Runnable onContinue;
 
     private List<Score> scores = new ArrayList<>();
-        private final HighScoreRepository highScoreRepository =
+    private final HighScoreRepository highScoreRepository =
             new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
 
     @Override
@@ -67,7 +68,9 @@ public class HighScoreController implements Initializable {
     }
 
     private List<Score> loadScoresFromFile() {
-        return new ArrayList<>(highScoreRepository.loadScores());
+        List<Score> loadedScores = new ArrayList<>(highScoreRepository.loadScores());
+        loadedScores.sort(Collections.reverseOrder());
+        return loadedScores;
     }
 
     @FXML

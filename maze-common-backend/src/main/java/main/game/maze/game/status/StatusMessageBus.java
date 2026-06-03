@@ -26,7 +26,8 @@ public final class StatusMessageBus {
         if (secondsRemaining <= 0f) {
             return;
         }
-        secondsRemaining = Math.max(0f, secondsRemaining - Math.max(0f, dt));
+        float safeDt = (Float.isFinite(dt) && dt > 0f) ? dt : 0f;
+        secondsRemaining = Math.max(0f, secondsRemaining - safeDt);
         if (secondsRemaining == 0f) {
             clear();
         }

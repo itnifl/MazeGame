@@ -42,7 +42,7 @@ deleted from the repo).
 
 ### Remaining
 
-Everything below is open. Phases 1 through 8 follow.
+Everything below is open. Phases 5 through 8 follow.
 
 ## Architectural goals
 
