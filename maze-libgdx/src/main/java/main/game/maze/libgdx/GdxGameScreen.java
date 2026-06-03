@@ -53,6 +53,7 @@ import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
 import main.game.maze.libgdx.view.GdxHudView;
+import main.game.maze.libgdx.view.GdxOverlayView;
 import main.game.maze.libgdx.view.GdxStartMenuView;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.libgdx.view.layout.MenuLayout;
@@ -97,8 +98,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final String INFECTION_WARNING_TEXT = "Infected!";
     private static final float INFECTION_TRIANGLE_WIDTH = 120f;
     private static final float INFECTION_TRIANGLE_HEIGHT = 106f;
-    private static final float INFECTION_PULSE_BASE = 0.5f;
-    private static final float INFECTION_PULSE_AMPLITUDE = 0.5f;
     private static final float INFECTION_PULSE_SPEED = 3.2f;
     private static final int INFECTION_GLOW_LAYERS = 6;
     private static final int INFECTION_EDGE_LAYERS = 4;
@@ -200,6 +199,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<Score> highScoreRows = new ArrayList<>();
     private MenuLayout menuLayout = MenuLayout.zero();
     private final GdxHudView hudView = new GdxHudView();
+    private final GdxOverlayView overlayView = new GdxOverlayView();
     private final GdxStartMenuView startMenuView = new GdxStartMenuView();
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
     private HudLayout hudLayout = HudLayout.zero();
@@ -703,66 +703,69 @@ public final class GdxGameScreen extends ApplicationAdapter {
         applyFullWindowGlViewport();
         drawHud();
         if (mode == Mode.HIGH_SCORES) {
-            drawHighScoresOverlay();
+            overlayView.renderHighScoresOverlay(
+                    new GdxOverlayView.RenderContext(batch, shapes, font, hudCamera),
+                    highScoreRows);
         }
         if (mode == Mode.WON) {
-            drawCenteredStateOverlay("YOU WIN", "Type your name then click Save Score, or Back to Menu.", winBackgroundTexture, Color.GREEN);
+            GdxOverlayView.WinButtons winButtons = overlayView.renderCenteredStateOverlay(
+                    new GdxOverlayView.CenteredOverlayContext(
+                            batch,
+                            shapes,
+                            font,
+                            glyphLayout,
+                            hudCamera,
+                            "YOU WIN",
+                            "Type your name then click Save Score, or Back to Menu.",
+                            winBackgroundTexture,
+                            Color.GREEN,
+                            true,
+                            winScoreSaved,
+                            winScoreStatus,
+                            winNameInput.toString(),
+                            currentScore()));
+            winSaveButtonX = winButtons.saveX();
+            winSaveButtonY = winButtons.saveY();
+            winSaveButtonW = winButtons.saveW();
+            winSaveButtonH = winButtons.saveH();
+            winBackButtonX = winButtons.backX();
+            winBackButtonY = winButtons.backY();
+            winBackButtonW = winButtons.backW();
+            winBackButtonH = winButtons.backH();
         }
         if (mode == Mode.GAME_OVER) {
-            drawCenteredStateOverlay("GAME OVER", "Press ESC to return to start menu", gameOverBackgroundTexture, Color.RED);
+            overlayView.renderCenteredStateOverlay(
+                    new GdxOverlayView.CenteredOverlayContext(
+                            batch,
+                            shapes,
+                            font,
+                            glyphLayout,
+                            hudCamera,
+                            "GAME OVER",
+                            "Press ESC to return to start menu",
+                            gameOverBackgroundTexture,
+                            Color.RED,
+                            false,
+                            false,
+                            "",
+                            "",
+                            currentScore()));
         }
         if (mode == Mode.PLAYING && infectionWarningVisible) {
-            drawInfectionWarningSign();
+            overlayView.renderInfectionWarningSign(
+                    new GdxOverlayView.InfectionWarningContext(
+                            batch,
+                            shapes,
+                            font,
+                            glyphLayout,
+                            hudCamera,
+                            enemyAnimationClock,
+                            INFECTION_PULSE_SPEED,
+                            INFECTION_TRIANGLE_WIDTH,
+                            INFECTION_TRIANGLE_HEIGHT,
+                            INFECTION_GLOW_LAYERS,
+                            INFECTION_WARNING_TEXT));
         }
-    }
-
-    private void drawInfectionWarningSign() {
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-        float triangleW = INFECTION_TRIANGLE_WIDTH;
-        float triangleH = INFECTION_TRIANGLE_HEIGHT;
-        float cx = w * HALF_RATIO;
-        float cy = h * HALF_RATIO;
-
-        shapes.setProjectionMatrix(hudCamera.combined);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Pulsing green outer glow around the warning triangle edges.
-        float pulse = INFECTION_PULSE_BASE + INFECTION_PULSE_AMPLITUDE * (float) Math.sin(enemyAnimationClock * INFECTION_PULSE_SPEED);
-        int glowLayers = INFECTION_GLOW_LAYERS;
-        for (int i = glowLayers; i >= 1; i--) {
-            float spread = 6f + i * 4f + pulse * 4f;
-            float alpha = (0.10f + 0.10f * pulse) * (i / (float) glowLayers) * 0.55f;
-            shapes.setColor(0.20f, 1.0f, 0.45f, alpha);
-            shapes.triangle(
-                    cx, cy + triangleH * 0.5f + spread,
-                    cx - triangleW * 0.5f - spread, cy - triangleH * 0.5f - spread * 0.5f,
-                    cx + triangleW * 0.5f + spread, cy - triangleH * 0.5f - spread * 0.5f);
-        }
-
-        shapes.setColor(1f, 0.84f, 0.30f, 0.96f);
-        shapes.triangle(
-                cx, cy + triangleH * 0.5f,
-                cx - triangleW * 0.5f, cy - triangleH * 0.5f,
-                cx + triangleW * 0.5f, cy - triangleH * 0.5f);
-        shapes.setColor(0.22f, 0.14f, 0.00f, 0.98f);
-        shapes.rect(cx - 5f, cy - 22f, 10f, 44f);
-        shapes.circle(cx, cy - 35f, 6f);
-        shapes.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
-        batch.setProjectionMatrix(hudCamera.combined);
-        batch.begin();
-        font.setColor(new Color(0.20f, 1.0f, 0.45f, 1f));
-        font.getData().setScale(1.3f);
-        glyphLayout.setText(font, INFECTION_WARNING_TEXT);
-        float tx = cx - glyphLayout.width * 0.5f;
-        float ty = cy - triangleH * 0.5f - 18f;
-        font.draw(batch, INFECTION_WARNING_TEXT, tx, ty);
-        font.getData().setScale(1.0f);
-        batch.end();
     }
 
     private void drawInfectiousMist(ShapeRenderer renderer, GdxEnemyRuntime enemy) {
@@ -893,142 +896,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 terminalController.isActive(),
                 terminalController.bufferText(),
                 hudInteractionState.commandsOverlayVisible()));
-    }
-
-    private void drawHighScoresOverlay() {
-        batch.setProjectionMatrix(hudCamera.combined);
-        shapes.setProjectionMatrix(hudCamera.combined);
-
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.03f, 0.04f, 0.08f, 0.18f);
-        shapes.rect(0f, 0f, w, h);
-        float panelW = Math.min(560f, w - 70f);
-        float panelH = Math.min(460f, h - 90f);
-        float panelX = (w - panelW) * 0.5f;
-        float panelY = (h - panelH) * 0.5f;
-        shapes.setColor(0f, 0f, 0f, 0.35f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.95f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-        shapes.end();
-
-        batch.begin();
-        font.setColor(Color.GOLD);
-        font.getData().setScale(1.7f);
-        font.draw(batch, "High Scores", panelX + 22f, panelY + panelH - 24f);
-        font.getData().setScale(1.0f);
-
-        if (highScoreRows.isEmpty()) {
-            font.setColor(new Color(0.62f, 0.73f, 0.83f, 1f));
-            font.draw(batch, "No saved scores yet", panelX + 22f, panelY + panelH - 68f);
-        } else {
-            float y = panelY + panelH - 66f;
-            int max = Math.min(10, highScoreRows.size());
-            for (int i = 0; i < max; i++) {
-                Score row = highScoreRows.get(i);
-                font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
-                font.draw(batch, String.format(Locale.ROOT, "%d. %s: %d", i + 1, row.getName(), row.getTheScore()), panelX + 22f, y);
-                y -= 28f;
-            }
-        }
-
-        font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-        font.draw(batch, "Press ESC to continue", panelX + 22f, panelY + 24f);
-        batch.end();
-    }
-
-    private void drawCenteredStateOverlay(String title, String subtitle, Texture backdrop, Color titleColor) {
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-
-        batch.setProjectionMatrix(hudCamera.combined);
-        if (backdrop != null) {
-            batch.begin();
-            batch.setColor(Color.WHITE);
-            batch.draw(backdrop, 0f, 0f, w, h);
-            batch.end();
-        }
-
-        float panelW = Math.min(600f, w - 80f);
-        float panelH = mode == Mode.WON ? 280f : 180f;
-        float panelX = (w - panelW) * 0.5f;
-        float panelY = (h - panelH) * 0.5f;
-
-        float saveBtnW = 160f;
-        float saveBtnH = 36f;
-        float backBtnW = 160f;
-        float backBtnH = 36f;
-        float btnGap = 16f;
-        float btnRowY = panelY + 18f;
-        float saveBtnX = panelX + (panelW - saveBtnW - backBtnW - btnGap) * 0.5f;
-        float backBtnX = saveBtnX + saveBtnW + btnGap;
-
-        if (mode == Mode.WON) {
-            winSaveButtonX = saveBtnX;
-            winSaveButtonY = btnRowY;
-            winSaveButtonW = saveBtnW;
-            winSaveButtonH = saveBtnH;
-            winBackButtonX = backBtnX;
-            winBackButtonY = btnRowY;
-            winBackButtonW = backBtnW;
-            winBackButtonH = backBtnH;
-        }
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0f, 0f, 0f, 0.88f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-        if (mode == Mode.WON) {
-            if (!winScoreSaved) {
-                shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
-            } else {
-                shapes.setColor(0.30f, 0.40f, 0.38f, 1f);
-            }
-            shapes.rect(winSaveButtonX, winSaveButtonY, winSaveButtonW, winSaveButtonH);
-            shapes.setColor(1f, 0.90f, 0.43f, 1f);
-            shapes.rect(winBackButtonX, winBackButtonY, winBackButtonW, winBackButtonH);
-        }
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.95f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-        shapes.end();
-
-        batch.begin();
-        font.setColor(titleColor);
-        font.getData().setScale(2.0f);
-        font.draw(batch, title, panelX + 34f, panelY + panelH - 30f);
-        font.getData().setScale(1.0f);
-        font.setColor(new Color(0.9f, 0.96f, 1f, 1f));
-        font.draw(batch, subtitle, panelX + 34f, panelY + panelH - 70f);
-        if (mode == Mode.WON) {
-            font.setColor(new Color(1f, 0.90f, 0.43f, 1f));
-            font.draw(batch, "Score: " + currentScore(), panelX + 34f, panelY + panelH - 100f);
-            if (winScoreSaved) {
-                font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-                font.draw(batch, winScoreStatus, panelX + 34f, panelY + panelH - 130f);
-            } else {
-                font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
-                font.draw(batch, "Name: " + winNameInput + "_", panelX + 34f, panelY + panelH - 130f);
-                if (winScoreStatus != null && !winScoreStatus.isBlank()) {
-                    font.setColor(new Color(1f, 0.55f, 0.45f, 1f));
-                    font.draw(batch, winScoreStatus, panelX + 34f, panelY + panelH - 158f);
-                }
-            }
-            font.setColor(new Color(0.06f, 0.21f, 0.18f, 1f));
-            glyphLayout.setText(font, "Save Score");
-            font.draw(batch, "Save Score", winSaveButtonX + (winSaveButtonW - glyphLayout.width) * 0.5f, winSaveButtonY + 24f);
-            font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
-            glyphLayout.setText(font, "Back to Menu");
-            font.draw(batch, "Back to Menu", winBackButtonX + (winBackButtonW - glyphLayout.width) * 0.5f, winBackButtonY + 24f);
-        }
-        batch.end();
     }
 
     private void handleStartMenuInput() {
