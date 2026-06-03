@@ -39,6 +39,9 @@ deleted from the repo).
   - Added `GdxModeInputController` for ESC/H/O/T edge-latch handling.
   - `GdxGameScreen` now delegates movement intent and key-latch transitions through these controllers.
   - Added unit tests: `GdxPlayerInputControllerTest`, `GdxModeInputControllerTest`.
+- Phase 5 slice implemented:
+  - Promoted `MenuLayout` and `HudLayout` from inner host-screen state holders to top-level immutable records under `maze-libgdx/.../view/layout/`.
+  - `GdxGameScreen` now computes per-frame layout snapshots and consumes record accessors for input hit-testing.
 
 ### Remaining
 

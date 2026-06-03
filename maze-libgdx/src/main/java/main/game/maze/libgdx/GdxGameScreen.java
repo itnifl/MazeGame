@@ -52,6 +52,8 @@ import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.view.layout.HudLayout;
+import main.game.maze.libgdx.view.layout.MenuLayout;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
@@ -194,9 +196,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private long loadingStartedAtNanos;
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
-    private final MenuLayout menuLayout = new MenuLayout();
+    private MenuLayout menuLayout = MenuLayout.zero();
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
-    private final HudLayout hudLayout = new HudLayout();
+    private HudLayout hudLayout = HudLayout.zero();
     private float pathPenaltyPoints;
     private PathHintBudget pathHintBudget = new PathHintBudget(PathHintBudget.EASY_SECONDS);
     private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
@@ -849,18 +851,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float highScoresButtonX = buttonX;
         float highScoresButtonY = buttonY - highScoresButtonH - 12f;
 
-        menuLayout.comboX = comboX;
-        menuLayout.comboY = comboY;
-        menuLayout.comboW = comboW;
-        menuLayout.comboH = comboH;
-        menuLayout.buttonX = buttonX;
-        menuLayout.buttonY = buttonY;
-        menuLayout.buttonW = buttonW;
-        menuLayout.buttonH = buttonH;
-        menuLayout.highScoresButtonX = highScoresButtonX;
-        menuLayout.highScoresButtonY = highScoresButtonY;
-        menuLayout.highScoresButtonW = highScoresButtonW;
-        menuLayout.highScoresButtonH = highScoresButtonH;
+        menuLayout = new MenuLayout(
+            comboX,
+            comboY,
+            comboW,
+            comboH,
+            buttonX,
+            buttonY,
+            buttonW,
+            buttonH,
+            highScoresButtonX,
+            highScoresButtonY,
+            highScoresButtonW,
+            highScoresButtonH);
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.11f, 0.05f, 0.18f, 1f);
@@ -1055,14 +1058,15 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float rowPanelW = w - 16f;
         float rowPanelH = bottomRowHeight();
 
-        hudLayout.commandButtonX = buttonX;
-        hudLayout.commandButtonY = commandYDraw;
-        hudLayout.commandButtonW = buttonW;
-        hudLayout.commandButtonH = buttonH;
-        hudLayout.terminalButtonX = terminalButtonX;
-        hudLayout.terminalButtonY = terminalYDraw;
-        hudLayout.terminalButtonW = terminalButtonW;
-        hudLayout.terminalButtonH = terminalButtonH;
+        hudLayout = new HudLayout(
+            buttonX,
+            commandYDraw,
+            buttonW,
+            buttonH,
+            terminalButtonX,
+            terminalYDraw,
+            terminalButtonW,
+            terminalButtonH);
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         // HP bar like JavaFX.
@@ -1363,18 +1367,18 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 mx,
                 my,
                 new GdxStartMenuInputController.MenuLayoutValues(
-                        menuLayout.comboX,
-                        menuLayout.comboY,
-                        menuLayout.comboW,
-                        menuLayout.comboH,
-                        menuLayout.buttonX,
-                        menuLayout.buttonY,
-                        menuLayout.buttonW,
-                        menuLayout.buttonH,
-                        menuLayout.highScoresButtonX,
-                        menuLayout.highScoresButtonY,
-                        menuLayout.highScoresButtonW,
-                        menuLayout.highScoresButtonH),
+                    menuLayout.comboX(),
+                    menuLayout.comboY(),
+                    menuLayout.comboW(),
+                    menuLayout.comboH(),
+                    menuLayout.buttonX(),
+                    menuLayout.buttonY(),
+                    menuLayout.buttonW(),
+                    menuLayout.buttonH(),
+                    menuLayout.highScoresButtonX(),
+                    menuLayout.highScoresButtonY(),
+                    menuLayout.highScoresButtonW(),
+                    menuLayout.highScoresButtonH()),
                 difficulties.size(),
                 selectedDifficultyIndex,
                 startMenuDropdownOpen);
@@ -1405,12 +1409,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float mx = Gdx.input.getX();
         float my = hudCamera.viewportHeight - Gdx.input.getY();
 
-        if (contains(mx, my, hudLayout.commandButtonX, hudLayout.commandButtonY, hudLayout.commandButtonW, hudLayout.commandButtonH)) {
+        if (contains(mx, my, hudLayout.commandButtonX(), hudLayout.commandButtonY(), hudLayout.commandButtonW(), hudLayout.commandButtonH())) {
             hudInteractionState.pressCommandsButton(BUTTON_PRESS_SECONDS);
             return;
         }
 
-        if (contains(mx, my, hudLayout.terminalButtonX, hudLayout.terminalButtonY, hudLayout.terminalButtonW, hudLayout.terminalButtonH)) {
+        if (contains(mx, my, hudLayout.terminalButtonX(), hudLayout.terminalButtonY(), hudLayout.terminalButtonW(), hudLayout.terminalButtonH())) {
             hudInteractionState.pressTerminalButton(BUTTON_PRESS_SECONDS);
             toggleTerminalPrompt();
             return;
@@ -1980,33 +1984,5 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return new Texture(file);
         });
     }
-
-    private static final class MenuLayout {
-        private float comboX;
-        private float comboY;
-        private float comboW;
-        private float comboH;
-        private float buttonX;
-        private float buttonY;
-        private float buttonW;
-        private float buttonH;
-        private float highScoresButtonX;
-        private float highScoresButtonY;
-        private float highScoresButtonW;
-        private float highScoresButtonH;
-    }
-
-    private static final class HudLayout {
-        private float commandButtonX;
-        private float commandButtonY;
-        private float commandButtonW;
-        private float commandButtonH;
-        private float terminalButtonX;
-        private float terminalButtonY;
-        private float terminalButtonW;
-        private float terminalButtonH;
-    }
-
-
 
 }
