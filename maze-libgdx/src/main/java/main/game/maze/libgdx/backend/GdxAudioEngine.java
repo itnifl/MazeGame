@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.backend;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;

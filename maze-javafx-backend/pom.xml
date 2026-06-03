@@ -226,6 +226,8 @@
             <configuration>
               <outputDirectory>${project.build.directory}/libs</outputDirectory>
               <includeScope>runtime</includeScope>
+              <excludeGroupIds>p2.osgi.bundle</excludeGroupIds>
+              <excludeArtifactIds>com.sun.jna</excludeArtifactIds>
               <skip>${mdep.skip}</skip>
             </configuration>
           </execution>
@@ -238,6 +240,8 @@
             <configuration>
               <outputDirectory>${project.build.directory}/libs</outputDirectory>
               <includeScope>system</includeScope>
+              <excludeGroupIds>p2.osgi.bundle</excludeGroupIds>
+              <excludeArtifactIds>com.sun.jna</excludeArtifactIds>
               <skip>${mdep.skip}</skip>
             </configuration>
           </execution>

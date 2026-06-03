@@ -1,15 +1,15 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 /**
  * Tracks transient HUD interaction state, so the screen class can focus on
  * gameplay flow instead of button timing details.
  */
-final class GdxHudInteractionState {
+public final class GdxHudInteractionState {
     private float commandButtonPressedSeconds;
     private float terminalButtonPressedSeconds;
     private boolean commandsOverlayVisible;
 
-    void tick(float dt) {
+    public void tick(float dt) {
         if (commandButtonPressedSeconds > 0f) {
             commandButtonPressedSeconds = Math.max(0f, commandButtonPressedSeconds - dt);
         }
@@ -18,40 +18,40 @@ final class GdxHudInteractionState {
         }
     }
 
-    void pressCommandsButton(float pressDurationSeconds) {
+    public void pressCommandsButton(float pressDurationSeconds) {
         commandButtonPressedSeconds = pressDurationSeconds;
         commandsOverlayVisible = !commandsOverlayVisible;
     }
 
-    void pressTerminalButton(float pressDurationSeconds) {
+    public void pressTerminalButton(float pressDurationSeconds) {
         terminalButtonPressedSeconds = pressDurationSeconds;
     }
 
-    boolean commandsOverlayVisible() {
+    public boolean commandsOverlayVisible() {
         return commandsOverlayVisible;
     }
 
-    void hideCommandsOverlay() {
+    public void hideCommandsOverlay() {
         commandsOverlayVisible = false;
     }
 
-    float commandButtonPressedSeconds() {
+    public float commandButtonPressedSeconds() {
         return commandButtonPressedSeconds;
     }
 
-    float terminalButtonPressedSeconds() {
+    public float terminalButtonPressedSeconds() {
         return terminalButtonPressedSeconds;
     }
 
-    float commandPressOffsetY() {
+    public float commandPressOffsetY() {
         return commandButtonPressedSeconds > 0f ? -2f : 0f;
     }
 
-    float terminalPressOffsetY() {
+    public float terminalPressOffsetY() {
         return terminalButtonPressedSeconds > 0f ? -2f : 0f;
     }
 
-    void reset() {
+    public void reset() {
         commandButtonPressedSeconds = 0f;
         terminalButtonPressedSeconds = 0f;
         commandsOverlayVisible = false;

@@ -19,6 +19,12 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-common-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- mazeworld: Point2D and VectorFacing needed by character interfaces -->
     <dependency>
       <groupId>main.game.maze</groupId>

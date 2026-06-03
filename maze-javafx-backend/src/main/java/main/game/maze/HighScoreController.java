@@ -1,8 +1,5 @@
 package main.game.maze;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +15,8 @@ import javafx.scene.layout.VBox;
 import main.game.maze.actions.RestartGameAction;
 import main.game.maze.constants.DataFileConstants;
 import main.game.maze.dto.Score;
+import main.game.maze.game.score.FileHighScoreRepository;
+import main.game.maze.game.score.HighScoreRepository;
 
 public class HighScoreController implements Initializable {
 
@@ -33,13 +32,12 @@ public class HighScoreController implements Initializable {
     private Runnable onContinue;
 
     private List<Score> scores = new ArrayList<>();
+    private final HighScoreRepository highScoreRepository =
+            new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         scores = loadScoresFromFile();
-
-        // sort scores in descending order
-        scores.sort(Collections.reverseOrder());
 
         // add score labels to the VBox
         if (highScoresVBox != null) {
@@ -70,22 +68,9 @@ public class HighScoreController implements Initializable {
     }
 
     private List<Score> loadScoresFromFile() {
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(DataFileConstants.HighscoreFilePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(":");
-                if (data.length == 2) {
-                    String name = data[0].trim();
-                    int score = Integer.parseInt(data[1].trim());
-                    scores.add(new Score(name, score));
-                }
-            }
-        } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
-        }
-        Collections.sort(scores);
-        return scores;
+        List<Score> loadedScores = new ArrayList<>(highScoreRepository.loadScores());
+        loadedScores.sort(Collections.reverseOrder());
+        return loadedScores;
     }
 
     @FXML

@@ -2,6 +2,8 @@ package main.game.maze.libgdx;
 
 import main.game.maze.common.graphics.IAudioEngine;
 import main.game.maze.common.graphics.IUiScheduler;
+import main.game.maze.libgdx.backend.GdxAudioEngine;
+import main.game.maze.libgdx.backend.GdxUiScheduler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

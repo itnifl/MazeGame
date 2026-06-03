@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import main.game.maze.actions.RestartGameAction;
-import main.game.maze.dto.HighScoreFile;
+import main.game.maze.game.score.FileHighScoreRepository;
 
 public class ActionScreenController {
     private static final Logger LOGGER = Logger.getLogger(ActionScreenController.class.getName());
@@ -43,7 +43,7 @@ public class ActionScreenController {
      * is higher. Otherwise the entry is appended.
      */
     public boolean upsertScore(String playerName, int score, String filename) {
-        return HighScoreFile.upsert(playerName, score, filename);
+        return new FileHighScoreRepository(filename).upsertScore(playerName, score);
     }
 
     public void setScoreLabel(int score) {

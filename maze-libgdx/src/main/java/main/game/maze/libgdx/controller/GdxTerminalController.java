@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 import main.game.maze.common.terminal.TerminalCommandParser;
 
@@ -6,25 +6,25 @@ import main.game.maze.common.terminal.TerminalCommandParser;
  * Keeps terminal prompt state and user input buffering isolated from screen
  * rendering and gameplay logic.
  */
-final class GdxTerminalController {
+public final class GdxTerminalController {
     private final int maxChars;
     private final StringBuilder buffer = new StringBuilder();
     private boolean active;
     private String pendingCommand;
 
-    GdxTerminalController(int maxChars) {
+    public GdxTerminalController(int maxChars) {
         this.maxChars = maxChars;
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return active;
     }
 
-    String bufferText() {
+    public String bufferText() {
         return buffer.toString();
     }
 
-    boolean onKeyTyped(char character) {
+    public boolean onKeyTyped(char character) {
         if (!active) {
             return false;
         }
@@ -42,17 +42,17 @@ final class GdxTerminalController {
         return true;
     }
 
-    void open() {
+    public void open() {
         active = true;
         buffer.setLength(0);
     }
 
-    void close() {
+    public void close() {
         active = false;
         buffer.setLength(0);
     }
 
-    void toggle() {
+    public void toggle() {
         if (active) {
             close();
             return;
@@ -60,29 +60,29 @@ final class GdxTerminalController {
         open();
     }
 
-    void submit() {
+    public void submit() {
         pendingCommand = buffer.toString();
         buffer.setLength(0);
         active = false;
     }
 
-    void backspace() {
+    public void backspace() {
         if (buffer.length() > 0) {
             buffer.setLength(buffer.length() - 1);
         }
     }
 
-    String consumePendingCommand() {
+    public String consumePendingCommand() {
         String command = pendingCommand;
         pendingCommand = null;
         return command;
     }
 
-    static String helpText() {
+    public static String helpText() {
         return TerminalCommandParser.HELP_TEXT;
     }
 
-    void reset() {
+    public void reset() {
         active = false;
         pendingCommand = null;
         buffer.setLength(0);

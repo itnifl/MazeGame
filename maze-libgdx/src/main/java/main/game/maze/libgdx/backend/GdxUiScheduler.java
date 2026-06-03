@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.backend;
 
 import com.badlogic.gdx.Gdx;
 import main.game.maze.common.graphics.IUiScheduler;
