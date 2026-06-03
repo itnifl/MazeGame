@@ -48,6 +48,7 @@ deleted from the repo).
   - Extracted high-scores overlay, centered win/game-over overlays, and infection warning sign rendering into dedicated `GdxOverlayView`, including win-button bounds projection back to host-screen input handling.
 - Phase 6 slice implemented:
   - Reduced `GdxGameScreen.update(...)` branching complexity by extracting mode-specific update handling into dedicated private handlers for start menu, high scores, won, and game-over modes.
+  - Reduced `GdxGameScreen.draw(...)` branching complexity by extracting mode-specific overlay rendering calls into dedicated private helpers.
 
 ### Remaining
 

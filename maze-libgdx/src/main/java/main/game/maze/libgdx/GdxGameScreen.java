@@ -601,70 +601,90 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         applyFullWindowGlViewport();
         drawHud();
-        if (mode == Mode.HIGH_SCORES) {
-            overlayView.renderHighScoresOverlay(
-                    new GdxOverlayView.RenderContext(batch, shapes, font, hudCamera),
-                    highScoreRows);
+        drawHighScoresOverlayIfNeeded();
+        drawWinOverlayIfNeeded();
+        drawGameOverOverlayIfNeeded();
+        drawInfectionOverlayIfNeeded();
+    }
+
+    private void drawHighScoresOverlayIfNeeded() {
+        if (mode != Mode.HIGH_SCORES) {
+            return;
         }
-        if (mode == Mode.WON) {
-            GdxOverlayView.WinButtons winButtons = overlayView.renderCenteredStateOverlay(
-                    new GdxOverlayView.CenteredOverlayContext(
-                            batch,
-                            shapes,
-                            font,
-                            glyphLayout,
-                            hudCamera,
-                            "YOU WIN",
-                            "Type your name then click Save Score, or Back to Menu.",
-                            winBackgroundTexture,
-                            Color.GREEN,
-                            true,
-                            winScoreSaved,
-                            winScoreStatus,
-                            winNameInput.toString(),
-                            currentScore()));
-            winSaveButtonX = winButtons.saveX();
-            winSaveButtonY = winButtons.saveY();
-            winSaveButtonW = winButtons.saveW();
-            winSaveButtonH = winButtons.saveH();
-            winBackButtonX = winButtons.backX();
-            winBackButtonY = winButtons.backY();
-            winBackButtonW = winButtons.backW();
-            winBackButtonH = winButtons.backH();
+        overlayView.renderHighScoresOverlay(
+                new GdxOverlayView.RenderContext(batch, shapes, font, hudCamera),
+                highScoreRows);
+    }
+
+    private void drawWinOverlayIfNeeded() {
+        if (mode != Mode.WON) {
+            return;
         }
-        if (mode == Mode.GAME_OVER) {
-            overlayView.renderCenteredStateOverlay(
-                    new GdxOverlayView.CenteredOverlayContext(
-                            batch,
-                            shapes,
-                            font,
-                            glyphLayout,
-                            hudCamera,
-                            "GAME OVER",
-                            "Press ESC to return to start menu",
-                            gameOverBackgroundTexture,
-                            Color.RED,
-                            false,
-                            false,
-                            "",
-                            "",
-                            currentScore()));
+        GdxOverlayView.WinButtons winButtons = overlayView.renderCenteredStateOverlay(
+                new GdxOverlayView.CenteredOverlayContext(
+                        batch,
+                        shapes,
+                        font,
+                        glyphLayout,
+                        hudCamera,
+                        "YOU WIN",
+                        "Type your name then click Save Score, or Back to Menu.",
+                        winBackgroundTexture,
+                        Color.GREEN,
+                        true,
+                        winScoreSaved,
+                        winScoreStatus,
+                        winNameInput.toString(),
+                        currentScore()));
+        winSaveButtonX = winButtons.saveX();
+        winSaveButtonY = winButtons.saveY();
+        winSaveButtonW = winButtons.saveW();
+        winSaveButtonH = winButtons.saveH();
+        winBackButtonX = winButtons.backX();
+        winBackButtonY = winButtons.backY();
+        winBackButtonW = winButtons.backW();
+        winBackButtonH = winButtons.backH();
+    }
+
+    private void drawGameOverOverlayIfNeeded() {
+        if (mode != Mode.GAME_OVER) {
+            return;
         }
-        if (mode == Mode.PLAYING && infectionWarningVisible) {
-            overlayView.renderInfectionWarningSign(
-                    new GdxOverlayView.InfectionWarningContext(
-                            batch,
-                            shapes,
-                            font,
-                            glyphLayout,
-                            hudCamera,
-                            enemyAnimationClock,
-                            INFECTION_PULSE_SPEED,
-                            INFECTION_TRIANGLE_WIDTH,
-                            INFECTION_TRIANGLE_HEIGHT,
-                            INFECTION_GLOW_LAYERS,
-                            INFECTION_WARNING_TEXT));
+        overlayView.renderCenteredStateOverlay(
+                new GdxOverlayView.CenteredOverlayContext(
+                        batch,
+                        shapes,
+                        font,
+                        glyphLayout,
+                        hudCamera,
+                        "GAME OVER",
+                        "Press ESC to return to start menu",
+                        gameOverBackgroundTexture,
+                        Color.RED,
+                        false,
+                        false,
+                        "",
+                        "",
+                        currentScore()));
+    }
+
+    private void drawInfectionOverlayIfNeeded() {
+        if (mode != Mode.PLAYING || !infectionWarningVisible) {
+            return;
         }
+        overlayView.renderInfectionWarningSign(
+                new GdxOverlayView.InfectionWarningContext(
+                        batch,
+                        shapes,
+                        font,
+                        glyphLayout,
+                        hudCamera,
+                        enemyAnimationClock,
+                        INFECTION_PULSE_SPEED,
+                        INFECTION_TRIANGLE_WIDTH,
+                        INFECTION_TRIANGLE_HEIGHT,
+                        INFECTION_GLOW_LAYERS,
+                        INFECTION_WARNING_TEXT));
     }
 
     private void applyFullWindowGlViewport() {
