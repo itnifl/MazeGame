@@ -46,6 +46,8 @@ deleted from the repo).
   - Extracted gameplay HUD and commands overlay rendering into dedicated `GdxHudView`, with `GdxGameScreen` delegating HUD layout and draw orchestration.
   - Extracted gameplay world rendering into dedicated `GdxGameWorldView`, including maze background tiling, world entities, fallback rendering, and path or tree world overlays.
   - Extracted high-scores overlay, centered win/game-over overlays, and infection warning sign rendering into dedicated `GdxOverlayView`, including win-button bounds projection back to host-screen input handling.
+- Phase 6 slice implemented:
+  - Reduced `GdxGameScreen.update(...)` branching complexity by extracting mode-specific update handling into dedicated private handlers for start menu, high scores, won, and game-over modes.
 
 ### Remaining
 

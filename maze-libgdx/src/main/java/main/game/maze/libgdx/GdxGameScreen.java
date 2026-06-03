@@ -379,46 +379,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         statusMessageBus.tick(dt);
 
-        if (mode == Mode.START_MENU) {
-            boolean escPressed = Gdx.input.isKeyPressed(Input.Keys.ESCAPE);
-            if (pausedFromGame && modeInputController.consumeEsc(escPressed)) {
-                pausedFromGame = false;
-                mode = Mode.PLAYING;
-                switchToInGameMusic();
-                flashStatus("Resumed game");
-                return;
-            }
-            handleStartMenuInput();
+        if (handleStartMenuModeUpdate()) {
             return;
         }
 
-        if (mode == Mode.HIGH_SCORES) {
-            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-                if (highScoresReturnToStartMenu) {
-                    highScoresReturnToStartMenu = false;
-                    switchToStartMenu(false);
-                } else {
-                    mode = Mode.PLAYING;
-                }
-            }
+        if (handleHighScoresModeUpdate()) {
             return;
         }
 
-        if (mode == Mode.WON) {
-            if (!winScoreSaved) {
-                handleWinScoreEntryInput();
-            }
-            handleWonMouseInput();
-            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-                switchToStartMenu(false);
-            }
+        if (handleWonModeUpdate()) {
             return;
         }
 
-        if (mode == Mode.GAME_OVER) {
-            if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-                switchToStartMenu(false);
-            }
+        if (handleGameOverModeUpdate()) {
             return;
         }
 
@@ -507,6 +480,61 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 gameAudioDirector.switchToWinMusic(visualStyle.winSoundPath());
             }
         }
+    }
+
+    private boolean handleStartMenuModeUpdate() {
+        if (mode != Mode.START_MENU) {
+            return false;
+        }
+        boolean escPressed = Gdx.input.isKeyPressed(Input.Keys.ESCAPE);
+        if (pausedFromGame && modeInputController.consumeEsc(escPressed)) {
+            pausedFromGame = false;
+            mode = Mode.PLAYING;
+            switchToInGameMusic();
+            flashStatus("Resumed game");
+            return true;
+        }
+        handleStartMenuInput();
+        return true;
+    }
+
+    private boolean handleHighScoresModeUpdate() {
+        if (mode != Mode.HIGH_SCORES) {
+            return false;
+        }
+        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
+            if (highScoresReturnToStartMenu) {
+                highScoresReturnToStartMenu = false;
+                switchToStartMenu(false);
+            } else {
+                mode = Mode.PLAYING;
+            }
+        }
+        return true;
+    }
+
+    private boolean handleWonModeUpdate() {
+        if (mode != Mode.WON) {
+            return false;
+        }
+        if (!winScoreSaved) {
+            handleWinScoreEntryInput();
+        }
+        handleWonMouseInput();
+        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
+            switchToStartMenu(false);
+        }
+        return true;
+    }
+
+    private boolean handleGameOverModeUpdate() {
+        if (mode != Mode.GAME_OVER) {
+            return false;
+        }
+        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
+            switchToStartMenu(false);
+        }
+        return true;
     }
 
     private void draw() {
