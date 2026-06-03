@@ -52,6 +52,7 @@ import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.view.GdxHudView;
 import main.game.maze.libgdx.view.GdxStartMenuView;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.libgdx.view.layout.MenuLayout;
@@ -198,6 +199,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
     private MenuLayout menuLayout = MenuLayout.zero();
+    private final GdxHudView hudView = new GdxHudView();
     private final GdxStartMenuView startMenuView = new GdxStartMenuView();
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
     private HudLayout hudLayout = HudLayout.zero();
@@ -856,172 +858,41 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void drawHud() {
-        batch.setProjectionMatrix(hudCamera.combined);
-        shapes.setProjectionMatrix(hudCamera.combined);
+        GdxHudView.HudMessageMode messageMode = switch (mode) {
+            case WON -> GdxHudView.HudMessageMode.WON;
+            case GAME_OVER -> GdxHudView.HudMessageMode.GAME_OVER;
+            default -> GdxHudView.HudMessageMode.STATUS;
+        };
+        String statusMessage = statusMessageBus.hasMessage() ? statusMessageBus.currentMessage() : "";
 
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-
-        float scoreX = w - SCORE_PANEL_WIDTH - 6f;
-        float scoreY = h - TOP_MARGIN - SCORE_PANEL_HEIGHT;
-
-        float buttonX = 14f;
-        float buttonY = 7f;
-        float buttonW = 112f;
-        float buttonH = 26f;
-        float terminalButtonX = buttonX + buttonW + 12f;
-        float terminalButtonY = buttonY;
-        float terminalButtonW = 112f;
-        float terminalButtonH = 26f;
-        float commandsPressOffset = hudInteractionState.commandPressOffsetY();
-        float terminalPressOffset = hudInteractionState.terminalPressOffsetY();
-        float commandYDraw = buttonY + commandsPressOffset;
-        float terminalYDraw = terminalButtonY + terminalPressOffset;
-        float rowPanelX = 8f;
-        float rowPanelY = bottomRowY();
-        float rowPanelW = w - 16f;
-        float rowPanelH = bottomRowHeight();
-
-        hudLayout = new HudLayout(
-            buttonX,
-            commandYDraw,
-            buttonW,
-            buttonH,
-            terminalButtonX,
-            terminalYDraw,
-            terminalButtonW,
-            terminalButtonH);
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        // HP bar like JavaFX.
-        shapes.setColor(1f, 1f, 1f, 0.96f);
-        shapes.rect(1f, hpBarBottomY(h), w - 2f, HP_BAR_HEIGHT);
-        shapes.setColor(0.76f, 0.22f, 0.17f, 0.92f);
-        shapes.rect(1f, hpBarBottomY(h), (w - 2f) * currentHpRatio, HP_BAR_HEIGHT);
-
-        // Score panel and bottom row share the same visual language.
-        shapes.setColor(0f, 0f, 0f, 0.45f);
-        shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
-        shapes.setColor(0f, 0f, 0f, 0.12f);
-        shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
-
-        if (hudInteractionState.commandButtonPressedSeconds() > 0f) {
-            shapes.setColor(0.42f, 0.86f, 0.74f, 0.92f);
-        } else {
-            shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
-        }
-        shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
-        if (hudInteractionState.terminalButtonPressedSeconds() > 0f) {
-            shapes.setColor(0.88f, 0.76f, 0.30f, 0.95f);
-        } else {
-            shapes.setColor(1f, 0.90f, 0.43f, 0.90f);
-        }
-        shapes.rect(terminalButtonX, terminalYDraw, terminalButtonW, terminalButtonH);
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
-        shapes.rect(1f, hpBarBottomY(h), w - 2f, HP_BAR_HEIGHT);
-        shapes.rect(scoreX, scoreY, SCORE_PANEL_WIDTH, SCORE_PANEL_HEIGHT);
-        shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
-        shapes.rect(0f, BOTTOM_BAR_HEIGHT, w, h - BOTTOM_BAR_HEIGHT - HP_BAR_HEIGHT);
-        shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
-        shapes.rect(terminalButtonX, terminalYDraw, terminalButtonW, terminalButtonH);
-        shapes.end();
-
-        batch.begin();
-        int score = currentScore();
-
-        font.setColor(new Color(0.07f, 0.22f, 0.19f, 1f));
-        font.draw(batch, "Commands", buttonX + 10f, commandYDraw + 18f);
-
-        font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
-        font.draw(batch, "Terminal", terminalButtonX + 16f, terminalYDraw + 18f);
-
-        font.setColor(new Color(0.84f, 1f, 0.96f, 1f));
-        String commandText = "H Highscore  ESC Restart  P Path "
-                + (showHintInfo ? "[ON]" : "[OFF]")
-            + (pathHintBudget.exhausted() ? " [SPENT]" : String.format(" [%.0fs left]", pathHintRemainingSeconds()))
-                + "  O Tree " + (showSpanningTreeInfo ? "[ON]" : "[OFF]");
-        font.draw(batch, commandText, terminalButtonX + terminalButtonW + 14f, buttonY + 18f);
-
-        font.setColor(Color.GOLD);
-        font.getData().setScale(1.25f);
-        font.draw(batch, "Score: " + score, scoreX + 14f, scoreY + 21f);
-        font.getData().setScale(1.0f);
-
-        if (mode == Mode.WON) {
-            font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-            font.draw(batch, "You reached the heart. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
-        } else if (mode == Mode.GAME_OVER) {
-            font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
-            font.draw(batch, "You were defeated. Press ESC to return to menu.", 12f, BOTTOM_BAR_HEIGHT + 18f);
-        } else if (statusMessageBus.hasMessage()) {
-            font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
-            font.draw(batch, statusMessageBus.currentMessage(), 12f, BOTTOM_BAR_HEIGHT + 18f);
-        }
-
-        if (terminalController.isActive()) {
-            float panelX = 22f;
-            float panelY = BOTTOM_BAR_HEIGHT + 26f;
-            float panelW = Math.max(360f, w * 0.58f);
-            float panelH = 56f;
-            batch.end();
-
-            shapes.begin(ShapeRenderer.ShapeType.Filled);
-            shapes.setColor(0.02f, 0.04f, 0.09f, 0.93f);
-            shapes.rect(panelX, panelY, panelW, panelH);
-            shapes.end();
-
-            shapes.begin(ShapeRenderer.ShapeType.Line);
-            shapes.setColor(1f, 0.90f, 0.43f, 0.94f);
-            shapes.rect(panelX, panelY, panelW, panelH);
-            shapes.end();
-
-            batch.begin();
-            font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
-            font.draw(batch, "Terminal: " + terminalController.bufferText(), panelX + 10f, panelY + 35f);
-            font.setColor(new Color(0.78f, 0.90f, 1f, 1f));
-            font.draw(batch, "Enter: run  Backspace: delete  Esc: close", panelX + 10f, panelY + 16f);
-        }
-        batch.end();
-
-        if (hudInteractionState.commandsOverlayVisible()) {
-            drawCommandsOverlay();
-        }
-    }
-
-    private void drawCommandsOverlay() {
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0f, 0f, 0f, 0.38f);
-        shapes.rect(0f, 0f, w, h);
-        shapes.setColor(0.08f, 0.06f, 0.17f, 0.92f);
-        shapes.rect(20f, 60f, w - 40f, h - 140f);
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 0.95f);
-        shapes.rect(20f, 60f, w - 40f, h - 140f);
-        shapes.end();
-
-        batch.begin();
-        font.setColor(new Color(1f, 0.90f, 0.43f, 1f));
-        font.getData().setScale(1.4f);
-        font.draw(batch, "Commands", 40f, h - 95f);
-        font.getData().setScale(1.0f);
-
-        font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
-        font.draw(batch, "Arrow Keys: Move player", 40f, h - 130f);
-        font.draw(batch, "H: Open high score screen", 40f, h - 156f);
-        font.draw(batch, "ESC: Difficulty and restart prompt", 40f, h - 182f);
-        font.draw(batch, "P: Show shortest path to heart (hold)", 40f, h - 208f);
-        font.draw(batch, "O: Toggle tree info", 40f, h - 234f);
-        font.draw(batch, "Warning: Showing shortest path continuously reduces score over time.", 40f, h - 260f);
-        font.draw(batch, "Click anywhere to close", 40f, h - 292f);
-        batch.end();
+        hudLayout = hudView.render(new GdxHudView.RenderContext(
+                batch,
+                shapes,
+                font,
+                hudCamera,
+                TOP_MARGIN,
+                SCORE_PANEL_WIDTH,
+                SCORE_PANEL_HEIGHT,
+                BOTTOM_BAR_HEIGHT,
+                HP_BAR_HEIGHT,
+                hpBarBottomY(hudCamera.viewportHeight),
+                bottomRowY(),
+                bottomRowHeight(),
+                currentHpRatio,
+                hudInteractionState.commandPressOffsetY(),
+                hudInteractionState.terminalPressOffsetY(),
+                hudInteractionState.commandButtonPressedSeconds(),
+                hudInteractionState.terminalButtonPressedSeconds(),
+                showHintInfo,
+                pathHintBudget.exhausted(),
+                pathHintRemainingSeconds(),
+                showSpanningTreeInfo,
+                currentScore(),
+                messageMode,
+                statusMessage,
+                terminalController.isActive(),
+                terminalController.bufferText(),
+                hudInteractionState.commandsOverlayVisible()));
     }
 
     private void drawHighScoresOverlay() {

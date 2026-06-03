@@ -43,6 +43,7 @@ deleted from the repo).
   - Promoted `MenuLayout` and `HudLayout` from inner host-screen state holders to top-level immutable records under `maze-libgdx/.../view/layout/`.
   - `GdxGameScreen` now computes per-frame layout snapshots and consumes record accessors for input hit-testing.
   - Extracted start-menu rendering into dedicated `GdxStartMenuView`, keeping host-screen code focused on wiring and state.
+  - Extracted gameplay HUD and commands overlay rendering into dedicated `GdxHudView`, with `GdxGameScreen` delegating HUD layout and draw orchestration.
 
 ### Remaining
 
