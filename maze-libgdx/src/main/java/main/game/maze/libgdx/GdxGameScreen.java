@@ -52,6 +52,7 @@ import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.view.GdxStartMenuView;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.libgdx.view.layout.MenuLayout;
 import main.game.maze.mazeworld.Point2D;
@@ -197,6 +198,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
     private MenuLayout menuLayout = MenuLayout.zero();
+    private final GdxStartMenuView startMenuView = new GdxStartMenuView();
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
     private HudLayout hudLayout = HudLayout.zero();
     private float pathPenaltyPoints;
@@ -823,212 +825,34 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void drawStartMenu() {
-        batch.setProjectionMatrix(hudCamera.combined);
-        shapes.setProjectionMatrix(hudCamera.combined);
-
-        float w = hudCamera.viewportWidth;
-        float h = hudCamera.viewportHeight;
-
-        float panelW = Math.min(760f, w - 80f);
-        float panelH = 420f;
-        float panelX = (w - panelW) * 0.5f;
-        float panelY = (h - panelH) * 0.5f - 20f;
-
-        float titleY = h - 60f;
-
-        float comboW = Math.min(430f, panelW - 120f);
-        float comboH = 52f;
-        float comboX = panelX + (panelW - comboW) * 0.5f;
-        float comboY = panelY + panelH - 132f;
-
-        float buttonW = 250f;
-        float buttonH = 52f;
-        float buttonX = panelX + (panelW - buttonW) * 0.5f;
-        float buttonY = comboY - 78f;
-
-        float highScoresButtonW = buttonW;
-        float highScoresButtonH = 40f;
-        float highScoresButtonX = buttonX;
-        float highScoresButtonY = buttonY - highScoresButtonH - 12f;
-
-        menuLayout = new MenuLayout(
-            comboX,
-            comboY,
-            comboW,
-            comboH,
-            buttonX,
-            buttonY,
-            buttonW,
-            buttonH,
-            highScoresButtonX,
-            highScoresButtonY,
-            highScoresButtonW,
-            highScoresButtonH);
-
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.11f, 0.05f, 0.18f, 1f);
-        shapes.rect(0f, h * 0.45f, w, h * 0.55f);
-        shapes.setColor(0.05f, 0.10f, 0.18f, 1f);
-        shapes.rect(0f, h * 0.18f, w, h * 0.27f);
-        shapes.setColor(0.07f, 0.16f, 0.12f, 1f);
-        shapes.rect(0f, 0f, w, h * 0.18f);
-
-        shapes.setColor(0f, 0f, 0f, 0.44f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-
-        shapes.setColor(0.06f, 0.13f, 0.22f, 1f);
-        shapes.rect(comboX, comboY, comboW, comboH);
-        shapes.setColor(1f, 0.90f, 0.43f, 1f);
-        shapes.rect(buttonX, buttonY, buttonW, buttonH);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
-        shapes.rect(highScoresButtonX, highScoresButtonY, highScoresButtonW, highScoresButtonH);
-        if (startMenuDropdownOpen && !difficulties.isEmpty()) {
-            float optH = comboH;
-            shapes.setColor(0.03f, 0.09f, 0.15f, 1f);
-            shapes.rect(comboX, comboY - difficulties.size() * optH, comboW, difficulties.size() * optH);
-            for (int i = 0; i < difficulties.size(); i++) {
-                float oy = comboY - (i + 1) * optH;
-                if (i == selectedDifficultyIndex) {
-                    shapes.setColor(0.08f, 0.20f, 0.34f, 1f);
-                } else {
-                    shapes.setColor(0.04f, 0.11f, 0.19f, 1f);
-                }
-                shapes.rect(comboX, oy, comboW, optH);
-            }
-        }
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
-        shapes.rect(panelX, panelY, panelW, panelH);
-        shapes.rect(comboX, comboY, comboW, comboH);
-        if (startMenuDropdownOpen && !difficulties.isEmpty()) {
-            float optH = comboH;
-            for (int i = 0; i < difficulties.size(); i++) {
-                float oy = comboY - (i + 1) * optH;
-                shapes.rect(comboX, oy, comboW, optH);
-            }
-        }
-        shapes.end();
-
-        batch.begin();
-        font.setColor(Color.GOLD);
-        font.getData().setScale(2.8f);
-        glyphLayout.setText(font, "Maze Game");
-        float iconSize = menuIconTexture != null ? 42f : 0f;
-        float iconGap = menuIconTexture != null ? 16f : 0f;
-        float blockWidth = glyphLayout.width + iconSize + iconGap;
-        float blockX = panelX + (panelW - blockWidth) * 0.5f;
-        if (menuIconTexture != null) {
-            batch.draw(menuIconTexture, blockX, titleY - 35f, iconSize, iconSize);
-        }
-        font.draw(batch, "Maze Game", blockX + iconSize + iconGap, titleY);
-        font.getData().setScale(1.0f);
-
-        font.setColor(Color.WHITE);
-        font.getData().setScale(1.55f);
-        glyphLayout.setText(font, "Select Difficulty");
-        font.draw(batch, "Select Difficulty", panelX + (panelW - glyphLayout.width) * 0.5f, panelY + panelH - 52f);
-        font.getData().setScale(1.0f);
-
-        String selectedText = selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()
-                ? displayName(difficulties.get(selectedDifficultyIndex))
-                : "Easy";
-        font.setColor(new Color(0.95f, 0.98f, 1f, 1f));
-        font.draw(batch, selectedText, comboX + 18f, comboY + 33f);
-        font.setColor(new Color(0.95f, 0.98f, 1f, 1f));
-        font.draw(batch, startMenuDropdownOpen ? "^" : "v", comboX + comboW - 20f, comboY + 33f);
-
-        if (startMenuDropdownOpen && !difficulties.isEmpty()) {
-            float optH = comboH;
-            for (int i = 0; i < difficulties.size(); i++) {
-            float oy = comboY - (i + 1) * optH;
-            font.setColor(i == selectedDifficultyIndex
-                ? new Color(0.95f, 1f, 0.98f, 1f)
-                : new Color(0.84f, 0.94f, 0.98f, 1f));
-            font.draw(batch, displayName(difficulties.get(i)), comboX + 18f, oy + 33f);
-            }
+        List<String> difficultyNames = new ArrayList<>(difficulties.size());
+        for (Difficulty difficulty : difficulties) {
+            difficultyNames.add(displayName(difficulty));
         }
 
-        font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
-        font.draw(batch, pausedFromGame ? "Restart Mission" : "Start Mission", buttonX + 56f, buttonY + 33f);
-
-        font.setColor(new Color(0.06f, 0.21f, 0.18f, 1f));
-        glyphLayout.setText(font, "High Scores");
-        font.draw(batch, "High Scores", highScoresButtonX + (highScoresButtonW - glyphLayout.width) * 0.5f, highScoresButtonY + 26f);
-
-        float hintY = highScoresButtonY - 22f;
-        font.setColor(new Color(0.93f, 0.97f, 1f, 1f));
-        font.draw(batch, "Arrow keys to move, P path hint, O spanning tree, H high score, ESC", panelX + 38f, hintY);
-        font.draw(batch, pausedFromGame ? "return to game" : "restart menu", panelX + 38f, hintY - 24f);
-
-        font.setColor(new Color(1f, 0.90f, 0.43f, 1f));
-        font.draw(batch, "Collect the heart, avoid enemies, and maximize your score", panelX + 92f, panelY - 38f);
-
+        String selectedDifficultySummary = "";
         if (selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()) {
-            font.setColor(new Color(0.80f, 1f, 0.94f, 0.95f));
-            String dims = "Difficulty: " + displayName(difficulties.get(selectedDifficultyIndex))
-                    + "  " + boardSizeLabel(difficulties.get(selectedDifficultyIndex));
-                font.draw(batch, dims, panelX + 20f, panelY + 26f);
+            Difficulty selectedDifficulty = difficulties.get(selectedDifficultyIndex);
+            selectedDifficultySummary = "Difficulty: " + displayName(selectedDifficulty)
+                    + "  " + boardSizeLabel(selectedDifficulty);
         }
 
-        if (statusMessageBus.hasMessage()) {
-            font.setColor(new Color(1f, 0.35f, 0.30f, 1f));
-            font.draw(batch, statusMessageBus.currentMessage(), panelX + 16f, panelY + 44f);
-        }
-        if (loadingPending) {
-            font.setColor(Color.GOLD);
-            font.getData().setScale(2.0f);
-            glyphLayout.setText(font, "Loading ...");
-            float lx = (w - glyphLayout.width) * 0.5f;
-            float ly = titleY - 70f;
-            font.draw(batch, "Loading ...", lx, ly);
-            font.getData().setScale(1.0f);
-        }
-        batch.end();
+        String statusMessage = statusMessageBus.hasMessage() ? statusMessageBus.currentMessage() : "";
 
-        if (startMenuDropdownOpen && !difficulties.isEmpty()) {
-            drawStartMenuDropdownOverlay(comboX, comboY, comboW, comboH);
-        }
-    }
-
-    private void drawStartMenuDropdownOverlay(float comboX, float comboY, float comboW, float comboH) {
-        float optH = comboH;
-        float optionsHeight = difficulties.size() * optH;
-
-        shapes.setProjectionMatrix(hudCamera.combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.03f, 0.09f, 0.15f, 1f);
-        shapes.rect(comboX, comboY - optionsHeight, comboW, optionsHeight);
-        for (int i = 0; i < difficulties.size(); i++) {
-            float oy = comboY - (i + 1) * optH;
-            if (i == selectedDifficultyIndex) {
-                shapes.setColor(0.08f, 0.20f, 0.34f, 1f);
-            } else {
-                shapes.setColor(0.04f, 0.11f, 0.19f, 1f);
-            }
-            shapes.rect(comboX, oy, comboW, optH);
-        }
-        shapes.end();
-
-        shapes.begin(ShapeRenderer.ShapeType.Line);
-        shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
-        for (int i = 0; i < difficulties.size(); i++) {
-            float oy = comboY - (i + 1) * optH;
-            shapes.rect(comboX, oy, comboW, optH);
-        }
-        shapes.end();
-
-        batch.setProjectionMatrix(hudCamera.combined);
-        batch.begin();
-        for (int i = 0; i < difficulties.size(); i++) {
-            float oy = comboY - (i + 1) * optH;
-            font.setColor(i == selectedDifficultyIndex
-                ? new Color(0.95f, 1f, 0.98f, 1f)
-                : new Color(0.84f, 0.94f, 0.98f, 1f));
-            font.draw(batch, displayName(difficulties.get(i)), comboX + 18f, oy + 33f);
-        }
-        batch.end();
+        menuLayout = startMenuView.render(new GdxStartMenuView.RenderContext(
+                batch,
+                shapes,
+                font,
+                glyphLayout,
+                hudCamera,
+                menuIconTexture,
+                difficultyNames,
+                selectedDifficultyIndex,
+                startMenuDropdownOpen,
+                pausedFromGame,
+                loadingPending,
+                selectedDifficultySummary,
+                statusMessage));
     }
 
     private void drawHud() {
