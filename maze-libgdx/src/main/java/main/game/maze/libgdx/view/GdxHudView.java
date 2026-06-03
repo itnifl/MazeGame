@@ -121,7 +121,7 @@ public final class GdxHudView {
                 font.draw(batch, "You were defeated. Press ESC to return to menu.", 12f, context.bottomBarHeight() + 18f);
             }
             case STATUS -> {
-                if (!context.statusMessage().isBlank()) {
+                if (context.statusMessage() != null && !context.statusMessage().isBlank()) {
                     font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
                     font.draw(batch, context.statusMessage(), 12f, context.bottomBarHeight() + 18f);
                 }
