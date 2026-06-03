@@ -44,11 +44,12 @@ deleted from the repo).
   - `GdxGameScreen` now computes per-frame layout snapshots and consumes record accessors for input hit-testing.
   - Extracted start-menu rendering into dedicated `GdxStartMenuView`, keeping host-screen code focused on wiring and state.
   - Extracted gameplay HUD and commands overlay rendering into dedicated `GdxHudView`, with `GdxGameScreen` delegating HUD layout and draw orchestration.
+  - Extracted gameplay world rendering into dedicated `GdxGameWorldView`, including maze background tiling, world entities, fallback rendering, and path or tree world overlays.
   - Extracted high-scores overlay, centered win/game-over overlays, and infection warning sign rendering into dedicated `GdxOverlayView`, including win-button bounds projection back to host-screen input handling.
 
 ### Remaining
 
-Everything below is open. Phases 5 through 8 follow.
+Everything below is open. Remaining phases are 6 through 8.
 
 ## Architectural goals
 

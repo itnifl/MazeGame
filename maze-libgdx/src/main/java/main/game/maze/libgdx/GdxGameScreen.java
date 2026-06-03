@@ -52,6 +52,7 @@ import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.view.GdxGameWorldView;
 import main.game.maze.libgdx.view.GdxHudView;
 import main.game.maze.libgdx.view.GdxOverlayView;
 import main.game.maze.libgdx.view.GdxStartMenuView;
@@ -198,6 +199,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
     private MenuLayout menuLayout = MenuLayout.zero();
+    private final GdxGameWorldView gameWorldView = new GdxGameWorldView();
     private final GdxHudView hudView = new GdxHudView();
     private final GdxOverlayView overlayView = new GdxOverlayView();
     private final GdxStartMenuView startMenuView = new GdxStartMenuView();
@@ -521,184 +523,53 @@ public final class GdxGameScreen extends ApplicationAdapter {
             return;
         }
 
-        viewport.apply();
-        camera.update();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-
-        if (backgroundTexture != null) {
-            float tileW = Math.max(1f, backgroundTexture.getWidth());
-            float tileH = Math.max(1f, backgroundTexture.getHeight());
-            float viewMinX = camera.position.x - viewport.getWorldWidth() * 0.5f;
-            float viewMinY = camera.position.y - viewport.getWorldHeight() * 0.5f;
-            float viewMaxX = camera.position.x + viewport.getWorldWidth() * 0.5f;
-            float viewMaxY = camera.position.y + viewport.getWorldHeight() * 0.5f;
-
-            float minX = Math.min(0f, viewMinX);
-            float minY = Math.min(0f, viewMinY);
-            float maxX = Math.max(maze.widthPx(), viewMaxX);
-            float maxY = Math.max(maze.heightPx(), viewMaxY);
-
-            float startX = (float) Math.floor(minX / tileW) * tileW;
-            float startY = (float) Math.floor(minY / tileH) * tileH;
-
-            for (float x = startX; x < maxX; x += tileW) {
-                for (float y = startY; y < maxY; y += tileH) {
-                    batch.draw(backgroundTexture, x, y, tileW, tileH);
-                }
-            }
-        }
-
-        // Goal / heart.
-        if (goalTexture != null) {
-            float hs = activeGoalSize * 0.5f;
-            batch.draw(goalTexture, activeGoalX - hs, activeGoalY - hs, activeGoalSize, activeGoalSize);
-        }
-
-        // Walls mapped from generated WallRegistry + difficulty.
-        float t = WALL_THICKNESS;
-        if (wallTexture != null) {
-            for (WallSegment w : maze.walls()) {
-                if (w.isHorizontal()) {
-                    float x = Math.min(w.x1, w.x2);
-                    float len = Math.abs(w.x2 - w.x1);
-                    batch.draw(wallTexture, x - t * 0.5f, w.y1 - t * 0.5f, len + t, t);
-                } else {
-                    float y = Math.min(w.y1, w.y2);
-                    float len = Math.abs(w.y2 - w.y1);
-                    batch.draw(wallTexture, w.x1 - t * 0.5f, y - t * 0.5f, t, len + t);
-                }
-            }
-        }
-
-        // Enemies loaded from opponents model and animated in-game.
+        List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             Texture enemyTexture = loadTexture(enemy.imagePath);
-            if (enemyTexture == null) {
-                continue;
-            }
-            if (enemy.infectious) {
-                drawInfectiousEdgeMist(batch, enemy, enemyTexture);
-            }
-            float half = enemy.size * 0.5f;
-            float opacity = enemy.renderOpacity();
-            if (opacity < 1.0f) {
-                batch.setColor(1f, 1f, 1f, opacity);
-            }
-            batch.draw(enemyTexture, enemy.x - half, enemy.y - half, enemy.size, enemy.size);
-            if (opacity < 1.0f) {
-                batch.setColor(Color.WHITE);
-            }
-
             String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
-            if (label != null) {
-                font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
-                font.draw(batch, label, enemy.x - enemy.size * 0.5f, enemy.y + enemy.size * 0.75f);
-            }
+            enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
+                    enemyTexture,
+                    enemy.x,
+                    enemy.y,
+                    enemy.size,
+                    enemy.renderOpacity(),
+                    enemy.infectious,
+                    enemy.infectionStrength,
+                    enemy.phase,
+                    label,
+                    enemyDisplayPath(enemy)));
         }
 
-        // Player from player Ecore/XMI model.
-        float playerDrawSize = player.halfSize() * 2f;
-        Texture activePlayerTexture = combatState.isDead() ? playerDeathTexture : playerTexture;
-        batch.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
-        if (activePlayerTexture != null) {
-            float scale = combatState.isDead() ? PLAYER_DEAD_SCALE : PLAYER_ALIVE_SCALE;
-            float drawSize = playerDrawSize * scale;
-            float halfDraw = drawSize * HALF_RATIO;
-            batch.draw(activePlayerTexture, player.x() - halfDraw, player.y() - halfDraw, drawSize, drawSize);
-        }
-        batch.setColor(Color.WHITE);
-
-        batch.end();
-
-        shapes.setProjectionMatrix(camera.combined);
-        shapes.begin(ShapeRenderer.ShapeType.Filled);
-
-        // Goal fallback.
-        if (goalTexture == null) {
-            shapes.setColor(0.15f, 0.55f, 0.2f, 1f);
-            float hs = activeGoalSize * 0.5f;
-            shapes.rect(activeGoalX - hs, activeGoalY - hs, activeGoalSize, activeGoalSize);
-        }
-
-        // Wall fallback.
-        if (wallTexture == null) {
-            shapes.setColor(0.85f, 0.85f, 0.9f, 1f);
-            for (WallSegment w : maze.walls()) {
-                if (w.isHorizontal()) {
-                    float x = Math.min(w.x1, w.x2);
-                    float len = Math.abs(w.x2 - w.x1);
-                    shapes.rect(x - t * 0.5f, w.y1 - t * 0.5f, len + t, t);
-                } else {
-                    float y = Math.min(w.y1, w.y2);
-                    float len = Math.abs(w.y2 - w.y1);
-                    shapes.rect(w.x1 - t * 0.5f, y - t * 0.5f, t, len + t);
-                }
-            }
-        }
-
-        // Enemy fallback if any texture was missing.
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
-            if (loadTexture(enemy.imagePath) != null) {
-                continue;
-            }
-            if (enemy.infectious) {
-                drawInfectiousMist(shapes, enemy);
-            }
-            shapes.setColor(0.65f, 0.2f, 0.2f, 1f);
-            float half = enemy.size * 0.5f;
-            shapes.rect(enemy.x - half, enemy.y - half, enemy.size, enemy.size);
-        }
-
-        // Player fallback.
-        if (activePlayerTexture == null) {
-            shapes.setColor(playerTintRed, playerTintGreen, playerTintBlue, 1f);
-            float scale = combatState.isDead() ? PLAYER_DEAD_SCALE : PLAYER_ALIVE_SCALE;
-            float drawSize = playerDrawSize * scale;
-            float halfDraw = drawSize * HALF_RATIO;
-            shapes.rect(player.x() - halfDraw, player.y() - halfDraw, drawSize, drawSize);
-        }
-
-        if (!activePathPoints.isEmpty()) {
-            shapes.setColor(0.12f, 0.58f, 0.95f, 0.72f);
-            for (int i = 1; i < activePathPoints.size(); i++) {
-                Point2D a = activePathPoints.get(i - 1);
-                Point2D b = activePathPoints.get(i);
-                float ax = (float) a.getX();
-                float ay = maze.heightPx() - (float) a.getY();
-                float bx = (float) b.getX();
-                float by = maze.heightPx() - (float) b.getY();
-                drawPathSegment(shapes, ax, ay, bx, by, 8f);
-            }
-        }
-
-        if (showEnemyPathSeconds > 0f) {
-            drawEnemyPathOverlay(shapes);
-        }
-
-        if (showSpanningTreeInfo && maze instanceof RealMaze realMaze && realMaze.navigationGraph() != null) {
-            Point2D playerPos = new Point2D(player.x(), maze.heightPx() - player.y());
-            MazeNavigationGraphService.rebuildSpanningTreeFrom(realMaze.navigationGraph(), playerPos);
-            var grid = realMaze.navigationGraph().getGrid();
-            int cols = realMaze.navigationGraph().getCols();
-            int rows = realMaze.navigationGraph().getRows();
-            shapes.setColor(1f, 0.23f, 0.20f, 0.58f);
-            for (int c = 0; c < cols; c++) {
-                for (int r = 0; r < rows; r++) {
-                    var node = grid[c][r];
-                    if (node == null || node.getTreeParent() == null) {
-                        continue;
-                    }
-                    float x1 = (float) node.getX();
-                    float y1 = maze.heightPx() - (float) node.getY();
-                    float x2 = (float) node.getTreeParent().getX();
-                    float y2 = maze.heightPx() - (float) node.getTreeParent().getY();
-                    drawPathSegment(shapes, x1, y1, x2, y2, 4f);
-                }
-            }
-        }
-
-        shapes.end();
+        gameWorldView.render(new GdxGameWorldView.RenderContext(
+                batch,
+                shapes,
+                font,
+                camera,
+                viewport,
+                maze,
+                player,
+                backgroundTexture,
+                goalTexture,
+                wallTexture,
+                playerTexture,
+                playerDeathTexture,
+                activeGoalX,
+                activeGoalY,
+                activeGoalSize,
+                WALL_THICKNESS,
+                playerTintRed,
+                playerTintGreen,
+                playerTintBlue,
+                combatState.isDead(),
+                PLAYER_ALIVE_SCALE,
+                PLAYER_DEAD_SCALE,
+                HALF_RATIO,
+                enemyAnimationClock,
+                INFECTION_EDGE_LAYERS,
+                enemyViewModels,
+                activePathPoints,
+                showEnemyPathSeconds,
+                showSpanningTreeInfo));
 
         applyFullWindowGlViewport();
         drawHud();
@@ -766,58 +637,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
                             INFECTION_GLOW_LAYERS,
                             INFECTION_WARNING_TEXT));
         }
-    }
-
-    private void drawInfectiousMist(ShapeRenderer renderer, GdxEnemyRuntime enemy) {
-        float pulse = 0.5f + 0.5f * (float) Math.sin(enemyAnimationClock * (1.8f + enemy.infectionStrength) + enemy.phase);
-        float centerX = enemy.x;
-        float centerY = enemy.y;
-        float baseRadius = enemy.size * (0.65f + 0.14f * enemy.infectionStrength);
-        float outerRadius = baseRadius + pulse * enemy.size * 0.42f;
-        float midRadius = baseRadius * 0.78f + pulse * enemy.size * 0.22f;
-
-        // Faint haze; alpha kept low so sprite drawn on top stays clearly visible.
-        renderer.setColor(0.20f, 1.0f, 0.46f, 0.10f + 0.10f * pulse * enemy.infectionStrength);
-        renderer.circle(centerX, centerY, outerRadius, 28);
-        renderer.setColor(0.56f, 1.0f, 0.72f, 0.08f + 0.10f * pulse * enemy.infectionStrength);
-        renderer.circle(centerX, centerY, midRadius, 24);
-    }
-
-    private void drawInfectiousEdgeMist(SpriteBatch spriteBatch, GdxEnemyRuntime enemy, Texture enemyTexture) {
-        float pulse = 0.5f + 0.5f * (float) Math.sin(enemyAnimationClock * (1.8f + enemy.infectionStrength) + enemy.phase);
-        float intensity = Math.max(0.35f, Math.min(1f, enemy.infectionStrength));
-
-        int prevSrcBlend = spriteBatch.getBlendSrcFunc();
-        int prevDstBlend = spriteBatch.getBlendDstFunc();
-        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-
-        for (int i = 0; i < INFECTION_EDGE_LAYERS; i++) {
-            float layerFraction = i / (float) (INFECTION_EDGE_LAYERS - 1);
-            float scale = 1.04f + layerFraction * (0.22f + 0.08f * pulse) + 0.06f * pulse * intensity;
-            float alpha = (0.34f - layerFraction * 0.07f) * (0.78f + 0.22f * pulse) * intensity;
-
-            float drawSize = enemy.size * scale;
-            float halfDraw = drawSize * HALF_RATIO;
-
-            float edgeOffset = (1.5f + 2.3f * layerFraction) * (0.95f + 1.05f * pulse);
-            spriteBatch.setColor(0.30f, 1.0f, 0.52f, alpha);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - edgeOffset, enemy.y - halfDraw, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + edgeOffset, enemy.y - halfDraw, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw, enemy.y - halfDraw - edgeOffset, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw, enemy.y - halfDraw + edgeOffset, drawSize, drawSize);
-
-            float diagonalOffset = edgeOffset * 0.75f;
-            float diagonalAlpha = alpha * 0.9f;
-            spriteBatch.setColor(0.30f, 1.0f, 0.52f, diagonalAlpha);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - diagonalOffset, enemy.y - halfDraw - diagonalOffset, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + diagonalOffset, enemy.y - halfDraw - diagonalOffset, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw - diagonalOffset, enemy.y - halfDraw + diagonalOffset, drawSize, drawSize);
-            spriteBatch.draw(enemyTexture, enemy.x - halfDraw + diagonalOffset, enemy.y - halfDraw + diagonalOffset, drawSize, drawSize);
-        }
-
-        spriteBatch.setBlendFunction(prevSrcBlend, prevDstBlend);
-
-        spriteBatch.setColor(Color.WHITE);
     }
 
     private void applyFullWindowGlViewport() {
@@ -1163,41 +982,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
     }
 
-    private void drawEnemyPathOverlay(ShapeRenderer renderer) {
-        if (maze == null) {
-            return;
-        }
-        renderer.setColor(1f, 0.72f, 0.2f, 0.7f);
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
-            List<ActivePathPoint> path = enemyDisplayPath(enemy);
-            if (path.isEmpty()) {
-                continue;
-            }
-            for (int i = 1; i < path.size(); i++) {
-                ActivePathPoint a = path.get(i - 1);
-                ActivePathPoint b = path.get(i);
-                float ax = (float) a.x();
-                float ay = maze.heightPx() - (float) a.y();
-                float bx = (float) b.x();
-                float by = maze.heightPx() - (float) b.y();
-                drawPathSegment(renderer, ax, ay, bx, by, 5f);
-            }
-        }
-    }
-
     /**
      * Returns the live runtime path the enemy is currently following,
      * taken directly from the movement service snapshot.
      * For AGGRESSIVE enemies this is the path held by {@link AdaptiveAggressiveMovementService};
      * for PATROL enemies it is the path held by {@link PatrolMovementService}.
      * Returns an empty list when the enemy has no active path (e.g. during WANDER_RECOVERY).
-     * Points are in game-world coordinate space; {@link #drawEnemyPathOverlay} applies
+    * Points are in game-world coordinate space; {@link GdxGameWorldView} applies
      * the Y-flip needed for libGDX screen rendering.
      */
     private List<ActivePathPoint> enemyDisplayPath(GdxEnemyRuntime enemy) {
         // Always return the live snapshot from the movement service.
         // Points from the service are in game-world (bottom-left Y) space.
-        // drawEnemyPathOverlay() expects the same space, so no Y-flip is needed here.
+        // GdxGameWorldView expects the same space, so no Y-flip is needed here.
         return enemy.activePathPoints(enemyDirectorService.patrolService(), enemyDirectorService.adaptiveService());
     }
 
@@ -1208,19 +1005,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private static boolean contains(float px, float py, float x, float y, float w, float h) {
         return px >= x && px <= x + w && py >= y && py <= y + h;
-    }
-
-    private static void drawPathSegment(ShapeRenderer renderer, float x1, float y1, float x2, float y2, float thickness) {
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float len = (float) Math.sqrt(dx * dx + dy * dy);
-        if (len <= 0.001f) {
-            return;
-        }
-        float nx = -dy / len * (thickness * 0.5f);
-        float ny = dx / len * (thickness * 0.5f);
-        renderer.triangle(x1 - nx, y1 - ny, x1 + nx, y1 + ny, x2 + nx, y2 + ny);
-        renderer.triangle(x1 - nx, y1 - ny, x2 + nx, y2 + ny, x2 - nx, y2 - ny);
     }
 
     private void startGameFromSelection() {
