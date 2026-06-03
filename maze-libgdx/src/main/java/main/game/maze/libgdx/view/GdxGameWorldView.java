@@ -296,8 +296,9 @@ public final class GdxGameWorldView {
         int prevDstBlend = batch.getBlendDstFunc();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 
-        for (int i = 0; i < infectionEdgeLayers; i++) {
-            float layerFraction = i / (float) (infectionEdgeLayers - 1);
+        int layers = Math.max(1, infectionEdgeLayers);
+        for (int i = 0; i < layers; i++) {
+            float layerFraction = layers == 1 ? 0f : i / (float) (layers - 1);
             float scale = 1.04f + layerFraction * (0.22f + 0.08f * pulse) + 0.06f * pulse * intensity;
             float alpha = (0.34f - layerFraction * 0.07f) * (0.78f + 0.22f * pulse) * intensity;
 

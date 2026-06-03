@@ -53,7 +53,12 @@ deleted from the repo).
 
 ### Remaining
 
-Everything below is open. Remaining phases are 7 through 8.
+Remaining open phase is 7.
+
+- Phase 8 slice implemented:
+  - Updated root README with a libGDX MVC overview diagram.
+  - Updated RTM with SR-22 partial traceability entry for session aggregate adoption.
+  - Added deferred follow-up requirements in `docs/requirements-features/suggested-requirements.md` (SR-22 and SR-23).
 
 ## Architectural goals
 

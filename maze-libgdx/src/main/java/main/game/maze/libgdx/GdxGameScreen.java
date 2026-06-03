@@ -1028,10 +1028,12 @@ public final class GdxGameScreen extends ApplicationAdapter {
     /**
      * Returns the live runtime path the enemy is currently following,
      * taken directly from the movement service snapshot.
-     * For AGGRESSIVE enemies this is the path held by {@link AdaptiveAggressiveMovementService};
-     * for PATROL enemies it is the path held by {@link PatrolMovementService}.
+     * For AGGRESSIVE enemies this is the path held by
+     * {@link main.game.maze.common.movement.AdaptiveAggressiveMovementService};
+     * for PATROL enemies it is the path held by
+     * {@link main.game.maze.common.movement.PatrolMovementService}.
      * Returns an empty list when the enemy has no active path (e.g. during WANDER_RECOVERY).
-    * Points are in game-world coordinate space; {@link GdxGameWorldView} applies
+     * Points are in game-world coordinate space; {@link GdxGameWorldView} applies
      * the Y-flip needed for libGDX screen rendering.
      */
     private List<ActivePathPoint> enemyDisplayPath(GdxEnemyRuntime enemy) {

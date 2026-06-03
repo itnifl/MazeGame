@@ -1,5 +1,6 @@
 package main.game.maze.game.score;
 
+import java.util.Objects;
 import java.util.List;
 import main.game.maze.dto.HighScoreFile;
 import main.game.maze.dto.Score;
@@ -9,7 +10,7 @@ public final class FileHighScoreRepository implements HighScoreRepository {
     private final String filePath;
 
     public FileHighScoreRepository(String filePath) {
-        this.filePath = filePath;
+        this.filePath = Objects.requireNonNull(filePath, "filePath must not be null");
     }
 
     @Override
