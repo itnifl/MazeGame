@@ -48,7 +48,7 @@ public final class GdxAppLauncher {
             : style.menuIconImagePath();
         appConfig.setWindowIcon(iconPath);
 
-        new Lwjgl3Application(new GdxGameScreen(null, cfg), appConfig);
+        new Lwjgl3Application(new GdxGame(cfg), appConfig);
     }
 
     static MazeRuntimeConfig loadOrDefault() {

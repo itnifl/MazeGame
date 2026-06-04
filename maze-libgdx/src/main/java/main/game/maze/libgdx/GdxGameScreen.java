@@ -166,7 +166,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
     private final HighScoreRepository highScoreRepository =
             new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
-    private final Map<String, Texture> texturesByPath = new HashMap<>();
+        private final GdxAssetService assetService;
+        private final boolean ownsAssetService;
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();
     private final PlayerCombatStateService combatState = new PlayerCombatStateService();
     private Texture playerTexture;
@@ -205,22 +206,37 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
     public GdxGameScreen() {
-        this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true);
+        this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
+                new GdxAssetService(), true);
     }
 
     public GdxGameScreen(MazeArena arena) {
-        this(arena, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true);
+        this(arena, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
+                new GdxAssetService(), true);
     }
 
     public GdxGameScreen(MazeArena arena, MazeRuntimeConfig cfg) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze());
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+                new GdxAssetService(), true);
     }
 
     public GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
+        this(arena, cellSize, cols, rows, playerSpeed, useRealMaze, new GdxAssetService(), true);
+    }
+
+    GdxGameScreen(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+                assetService, ownsAssetService);
+    }
+
+    private GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze,
+            GdxAssetService assetService, boolean ownsAssetService) {
         this.providedMaze = arena;
         this.cellSize = cellSize;
         this.playerSize = cellSize * 0.5f;
         this.useRealMaze = useRealMaze;
+        this.assetService = assetService;
+        this.ownsAssetService = ownsAssetService;
     }
 
     @Override
@@ -1353,27 +1369,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
     @Override
     public void dispose() {
         gameAudioDirector.stopAll();
-        for (Texture texture : texturesByPath.values()) {
-            texture.dispose();
+        if (ownsAssetService) {
+            assetService.dispose();
         }
-        texturesByPath.clear();
         if (batch != null) batch.dispose();
         if (shapes != null) shapes.dispose();
         if (font != null) font.dispose();
     }
 
     private Texture loadTexture(String classpathPath) {
-        if (classpathPath == null || classpathPath.isBlank() || Gdx.files == null) {
-            return null;
-        }
-        return texturesByPath.computeIfAbsent(classpathPath, path -> {
-            String relative = path.startsWith("/") ? path.substring(1) : path;
-            var file = Gdx.files.internal(relative);
-            if (!file.exists()) {
-                return null;
-            }
-            return new Texture(file);
-        });
+        return assetService.getTexture(classpathPath);
     }
 
 }
