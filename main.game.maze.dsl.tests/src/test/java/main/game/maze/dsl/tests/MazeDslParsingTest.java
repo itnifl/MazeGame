@@ -228,3 +228,5 @@ public class MazeDslParsingTest {
         assertNotNull(result.getOpponents());
     }
 }
+
+

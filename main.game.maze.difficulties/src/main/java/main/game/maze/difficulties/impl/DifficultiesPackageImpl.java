@@ -447,3 +447,5 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 	}
 
 } //DifficultiesPackageImpl
+
+

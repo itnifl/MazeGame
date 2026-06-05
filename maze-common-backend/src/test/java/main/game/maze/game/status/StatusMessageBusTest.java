@@ -24,3 +24,5 @@ class StatusMessageBusTest {
         assertEquals("", bus.currentMessage());
     }
 }
+
+

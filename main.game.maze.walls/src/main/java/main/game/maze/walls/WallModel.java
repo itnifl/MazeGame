@@ -36,3 +36,5 @@ public interface WallModel extends EObject {
 	EList<WallMaterial> getMaterials();
 
 } // WallModel
+
+

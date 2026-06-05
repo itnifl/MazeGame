@@ -159,3 +159,5 @@ public interface MazeDslFactory extends EFactory
   MazeDslPackage getMazeDslPackage();
 
 } //MazeDslFactory
+
+

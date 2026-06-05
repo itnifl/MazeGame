@@ -20,3 +20,5 @@ public abstract class AbstractMazeDslValidator extends AbstractDeclarativeValida
 		return result;
 	}
 }
+
+

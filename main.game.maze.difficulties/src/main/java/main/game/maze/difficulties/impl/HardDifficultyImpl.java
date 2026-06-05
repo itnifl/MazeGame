@@ -34,3 +34,5 @@ public class HardDifficultyImpl extends DifficultyImpl implements HardDifficulty
 	}
 
 } //HardDifficultyImpl
+
+

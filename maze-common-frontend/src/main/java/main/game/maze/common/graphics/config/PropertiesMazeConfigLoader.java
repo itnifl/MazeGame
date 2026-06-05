@@ -112,3 +112,5 @@ public final class PropertiesMazeConfigLoader implements MazeConfigLoader {
         throw new IllegalStateException("Invalid boolean for " + key + ": " + v);
     }
 }
+
+

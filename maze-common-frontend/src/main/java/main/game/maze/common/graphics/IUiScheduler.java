@@ -19,3 +19,5 @@ public interface IUiScheduler {
     /** True when called from the UI thread. */
     boolean isUiThread();
 }
+
+

@@ -1,5 +1,9 @@
 package main.game.maze.libgdx;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,3 +35,6 @@ class GdxModeInputControllerTest {
         assertTrue(controller.consumeH(true));
     }
 }
+
+
+

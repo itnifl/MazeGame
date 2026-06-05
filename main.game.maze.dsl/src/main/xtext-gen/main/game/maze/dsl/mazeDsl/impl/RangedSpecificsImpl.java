@@ -410,3 +410,5 @@ public class RangedSpecificsImpl extends CharacterSpecificsImpl implements Range
   }
 
 } //RangedSpecificsImpl
+
+

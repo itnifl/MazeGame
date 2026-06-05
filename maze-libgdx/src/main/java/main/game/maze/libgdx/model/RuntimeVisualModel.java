@@ -24,3 +24,5 @@ public record RuntimeVisualModel(
                 enemies = List.copyOf(Objects.requireNonNull(enemies, "enemies must not be null"));
         }
 }
+
+

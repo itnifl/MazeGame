@@ -292,3 +292,4 @@ public class DfsMazeGenerator implements IMazeGenerator {
     }
 
 }
+

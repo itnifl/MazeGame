@@ -93,3 +93,5 @@ public class MazeDslOutlineTreeProvider extends DefaultOutlineTreeProvider {
         return "Loot: " + lootTable.getName() + " [" + lootTable.getItems().size() + " items]";
     }
 }
+
+

@@ -353,3 +353,5 @@ public class LootItemConfigImpl extends MinimalEObjectImpl.Container implements 
   }
 
 } //LootItemConfigImpl
+
+

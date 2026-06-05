@@ -34,3 +34,5 @@ public class EasyDifficultyImpl extends DifficultyImpl implements EasyDifficulty
 	}
 
 } //EasyDifficultyImpl
+
+

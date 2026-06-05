@@ -207,3 +207,5 @@ public enum DistanceMethod implements Enumerator {
 	}
 	
 } //DistanceMethod
+
+

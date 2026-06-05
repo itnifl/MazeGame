@@ -355,3 +355,5 @@ public class OpponentModelImpl extends MinimalEObjectImpl.Container implements O
 	}
 
 } //OpponentModelImpl
+
+

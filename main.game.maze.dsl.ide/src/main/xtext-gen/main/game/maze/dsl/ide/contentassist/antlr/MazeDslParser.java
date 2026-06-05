@@ -183,3 +183,5 @@ public class MazeDslParser extends AbstractContentAssistParser {
 		this.nameMappings = nameMappings;
 	}
 }
+
+

@@ -66,3 +66,5 @@ public interface PathCalculator extends EObject {
 	EList<MazeNavigationGraph.Node> compute(MazeNavigationGraph.Node start, MazeNavigationGraph.Node target);
 
 } // PathCalculator
+
+

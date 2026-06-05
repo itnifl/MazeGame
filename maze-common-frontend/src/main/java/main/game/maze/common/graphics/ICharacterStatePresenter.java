@@ -7,3 +7,4 @@ public interface ICharacterStatePresenter {
     void showHealthRatio(double ratio);
     void dispose();
 }
+

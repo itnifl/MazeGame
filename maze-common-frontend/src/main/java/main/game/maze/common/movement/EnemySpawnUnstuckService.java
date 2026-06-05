@@ -67,3 +67,4 @@ public final class EnemySpawnUnstuckService {
     public record SpawnResolution(double x, double y, boolean moved) {
     }
 }
+

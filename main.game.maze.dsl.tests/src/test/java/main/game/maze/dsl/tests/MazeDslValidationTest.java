@@ -225,3 +225,5 @@ public class MazeDslValidationTest {
             MazeDslValidator.WAYPOINT_OUTSIDE_ZONE);
     }
 }
+
+

@@ -15,3 +15,5 @@ package main.game.maze.difficulties;
  */
 public interface NormalDifficulty extends Difficulty {
 } // NormalDifficulty
+
+

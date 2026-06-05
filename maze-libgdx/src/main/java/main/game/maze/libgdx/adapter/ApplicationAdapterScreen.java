@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.adapter;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Screen;
@@ -53,3 +53,6 @@ final class ApplicationAdapterScreen implements Screen {
         delegate.dispose();
     }
 }
+
+
+

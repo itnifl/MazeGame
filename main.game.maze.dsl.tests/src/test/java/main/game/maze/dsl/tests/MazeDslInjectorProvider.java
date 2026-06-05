@@ -34,3 +34,5 @@ public class MazeDslInjectorProvider implements IInjectorProvider, IRegistryConf
         getInjector();
     }
 }
+
+

@@ -215,3 +215,5 @@ public class DifficultyGameDataImpl extends MinimalEObjectImpl.Container impleme
 	}
 
 } //DifficultyGameDataImpl
+
+

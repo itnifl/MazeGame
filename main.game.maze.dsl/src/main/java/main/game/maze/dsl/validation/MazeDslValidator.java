@@ -232,3 +232,5 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
         }
     }
 }
+
+

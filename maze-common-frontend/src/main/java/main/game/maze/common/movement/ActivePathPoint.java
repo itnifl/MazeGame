@@ -6,3 +6,4 @@ package main.game.maze.common.movement;
  */
 public record ActivePathPoint(double x, double y) {
 }
+

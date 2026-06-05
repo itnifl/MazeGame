@@ -102,3 +102,4 @@ public final class JavaFxAnimationEngine implements IAnimationEngine {
         });
     }
 }
+

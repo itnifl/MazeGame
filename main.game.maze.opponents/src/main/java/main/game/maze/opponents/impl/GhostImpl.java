@@ -274,3 +274,5 @@ public class GhostImpl extends CharacterTypeImpl implements Ghost {
 	}
 
 } //GhostImpl
+
+

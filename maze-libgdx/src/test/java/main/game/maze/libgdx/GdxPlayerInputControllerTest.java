@@ -1,5 +1,9 @@
 package main.game.maze.libgdx;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,3 +38,6 @@ class GdxPlayerInputControllerTest {
         assertEquals(0.7071f, intent.dy(), 0.001f);
     }
 }
+
+
+

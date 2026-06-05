@@ -1,4 +1,4 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -15,14 +15,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import main.game.maze.common.graphics.AudioEngine;
@@ -38,43 +35,42 @@ import main.game.maze.game.score.HighScoreRepository;
 import main.game.maze.game.score.PathHintBudget;
 import main.game.maze.game.score.ScoringEngine;
 import main.game.maze.game.status.StatusMessageBus;
-import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
-import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.terminal.TerminalCommand;
-import main.game.maze.common.terminal.TerminalCommandParser;
+import main.game.maze.common.scoring.GameScoringConstants;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.dto.Score;
 import main.game.maze.constants.DataFileConstants;
+import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.HardDifficulty;
-import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.libgdx.backend.GdxBackend;
-import main.game.maze.libgdx.controller.GdxHudInteractionState;
-import main.game.maze.libgdx.controller.GdxModeInputController;
-import main.game.maze.libgdx.controller.GdxPlayerInputController;
-import main.game.maze.libgdx.controller.GdxStartMenuInputController;
-import main.game.maze.libgdx.controller.GdxTerminalController;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
+import main.game.maze.libgdx.helper.DifficultyBoardConfig;
+import main.game.maze.libgdx.helper.GdxDebugOverlayState;
+import main.game.maze.libgdx.helper.GdxScoreSupport;
+import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
+import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.service.GdxAssetService;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.view.GdxGameWorldView;
+import main.game.maze.libgdx.view.GdxGameOverOverlayView;
 import main.game.maze.libgdx.view.GdxHudView;
-import main.game.maze.libgdx.view.GdxOverlayView;
-import main.game.maze.libgdx.view.GdxStartMenuView;
+import main.game.maze.libgdx.view.GdxHighScoresOverlayView;
+import main.game.maze.libgdx.view.GdxInfectionOverlayView;
+import main.game.maze.libgdx.view.GdxWinOverlayView;
 import main.game.maze.libgdx.view.layout.HudLayout;
-import main.game.maze.libgdx.view.layout.MenuLayout;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.RealMaze;
 import main.game.maze.mazeworld.generators.SampleMaze;
-import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
+import main.game.maze.service.DifficultyPresentationSupport;
 import main.game.maze.service.DifficultyService;
 
 /**
@@ -84,7 +80,7 @@ import main.game.maze.service.DifficultyService;
  * helpers under {@code main.game.maze.mazeworld.generators} so it can be tested
  * headlessly.
  */
-public final class GdxGameScreen extends ApplicationAdapter {
+public final class GdxGameScreenController extends ApplicationAdapter {
 
     private static final float DEFAULT_CELL_SIZE = 48f;
     private static final int DEFAULT_COLS = 16;
@@ -122,33 +118,26 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private final float cellSize;
     private final float playerSize;
     private final boolean useRealMaze;
+    private final boolean autoStartOnCreate;
+    private final boolean immediateStartOnCreate;
+    private final Runnable returnToMenuAction;
+    /** If non-null, overrides {@link DifficultyService#getCurrent()} when starting a game. */
+    private final Difficulty forcedDifficulty;
     private final DifficultyService difficultyService = new DifficultyService();
     private final GameSession session = new GameSession();
-    private final MazeVisualStyleConfig visualStyle = loadVisualStyle();
-    private final List<Difficulty> difficulties = new ArrayList<>();
-    private int selectedDifficultyIndex;
+    private final MazeVisualStyleConfig visualStyle = GdxVisualStyleSupport.loadOrDefault();
     private boolean showHintInfo;
     private boolean showSpanningTreeInfo;
-    private final GdxHudInteractionState hudInteractionState = new GdxHudInteractionState();
+    private final GdxHudInteractionStateController hudInteractionState = new GdxHudInteractionStateController();
     private final GdxPlayerInputController playerInputController = new GdxPlayerInputController();
-    private float showBehaviourTypeSeconds;
-    private float showMovementTypeSeconds;
-    private float showEnemyPathSeconds;
+    private final GdxDebugOverlayState debugOverlayState = new GdxDebugOverlayState();
     private final GdxTerminalController terminalController = new GdxTerminalController(TERMINAL_INPUT_MAX_CHARS);
+    private final GdxWinOverlayController winOverlayController = new GdxWinOverlayController();
+    private final GdxHighScoresOverlayController highScoresOverlayController = new GdxHighScoresOverlayController();
+    private final GdxGameOverOverlayController gameOverOverlayController = new GdxGameOverOverlayController();
     private final StatusMessageBus statusMessageBus = new StatusMessageBus();
-    private final StringBuilder winNameInput = new StringBuilder();
-    private String winScoreStatus = "";
     private float enemyAnimationClock;
     private final GdxModeInputController modeInputController = new GdxModeInputController();
-    private boolean startMenuDropdownOpen;
-    private float winSaveButtonX;
-    private float winSaveButtonY;
-    private float winSaveButtonW;
-    private float winSaveButtonH;
-    private float winBackButtonX;
-    private float winBackButtonY;
-    private float winBackButtonW;
-    private float winBackButtonH;
 
     private MazeArena maze;
     private PlayerState player;
@@ -175,7 +164,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private Texture goalTexture;
     private Texture wallTexture;
     private Texture backgroundTexture;
-    private Texture menuIconTexture;
     private Texture winBackgroundTexture;
     private Texture gameOverBackgroundTexture;
     private float activePlayerSpeed;
@@ -191,52 +179,81 @@ public final class GdxGameScreen extends ApplicationAdapter {
     private boolean playedGameOverSound;
     private boolean deathSequenceStarted;
     private float deathDisplayRemainingSeconds;
-    private long loadingStartedAtNanos;
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
-    private MenuLayout menuLayout = MenuLayout.zero();
     private final GdxGameWorldView gameWorldView = new GdxGameWorldView();
     private final GdxHudView hudView = new GdxHudView();
-    private final GdxOverlayView overlayView = new GdxOverlayView();
-    private final GdxStartMenuView startMenuView = new GdxStartMenuView();
-    private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
+    private final GdxHighScoresOverlayView highScoresOverlayView = new GdxHighScoresOverlayView();
+    private final GdxWinOverlayView winOverlayView = new GdxWinOverlayView();
+    private final GdxGameOverOverlayView gameOverOverlayView = new GdxGameOverOverlayView();
+    private final GdxInfectionOverlayView infectionOverlayView = new GdxInfectionOverlayView();
     private HudLayout hudLayout = HudLayout.zero();
     private float pathPenaltyPoints;
     private PathHintBudget pathHintBudget = new PathHintBudget(PathHintBudget.EASY_SECONDS);
-    private static final long START_MENU_LOADING_DELAY_NANOS = 1_000_000_000L;
 
-    public GdxGameScreen() {
+    public GdxGameScreenController() {
         this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
-                new GdxAssetService(), true);
+                new GdxAssetService(), true, false, false, null, null);
     }
 
-    public GdxGameScreen(MazeArena arena) {
+    public GdxGameScreenController(MazeArena arena) {
         this(arena, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
-                new GdxAssetService(), true);
+                new GdxAssetService(), true, false, false, null, null);
     }
 
-    public GdxGameScreen(MazeArena arena, MazeRuntimeConfig cfg) {
+    public GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg) {
         this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                new GdxAssetService(), true);
+                new GdxAssetService(), true, false, false, null, null);
     }
 
-    public GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
-        this(arena, cellSize, cols, rows, playerSpeed, useRealMaze, new GdxAssetService(), true);
+    public GdxGameScreenController(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
+        this(arena, cellSize, cols, rows, playerSpeed, useRealMaze, new GdxAssetService(), true, false, false, null, null);
     }
 
-    GdxGameScreen(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService) {
+    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService) {
         this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, ownsAssetService);
+                assetService, ownsAssetService, false, false, null, null);
     }
 
-    private GdxGameScreen(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze,
-            GdxAssetService assetService, boolean ownsAssetService) {
+    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
+            boolean autoStartOnCreate) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+            assetService, ownsAssetService, autoStartOnCreate, false, null, null);
+    }
+
+    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
+            boolean autoStartOnCreate, boolean immediateStartOnCreate) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, null, null);
+    }
+
+    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
+            boolean autoStartOnCreate, boolean immediateStartOnCreate, Runnable returnToMenuAction) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, returnToMenuAction, null);
+    }
+
+    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
+            boolean autoStartOnCreate, boolean immediateStartOnCreate, Runnable returnToMenuAction,
+            Difficulty forcedDifficulty) {
+        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
+                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, returnToMenuAction,
+                forcedDifficulty);
+    }
+
+    private GdxGameScreenController(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze,
+            GdxAssetService assetService, boolean ownsAssetService, boolean autoStartOnCreate,
+            boolean immediateStartOnCreate, Runnable returnToMenuAction, Difficulty forcedDifficulty) {
         this.providedMaze = arena;
         this.cellSize = cellSize;
         this.playerSize = cellSize * 0.5f;
         this.useRealMaze = useRealMaze;
         this.assetService = assetService;
         this.ownsAssetService = ownsAssetService;
+        this.autoStartOnCreate = autoStartOnCreate;
+        this.immediateStartOnCreate = immediateStartOnCreate;
+        this.returnToMenuAction = returnToMenuAction;
+        this.forcedDifficulty = forcedDifficulty;
     }
 
     @Override
@@ -251,27 +268,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         camera = new OrthographicCamera();
         hudCamera = new OrthographicCamera();
-        menuIconTexture = loadTexture(visualStyle.menuIconImagePath());
-        winBackgroundTexture = loadTexture("/main/game/maze/zombieGameOverBackground1.png");
-        gameOverBackgroundTexture = loadTexture("/main/game/maze/zombieBackground.png");
-
-        difficulties.clear();
-        difficulties.addAll(difficultyService.list());
-        Difficulty current = difficultyService.getCurrent();
-        selectedDifficultyIndex = 0;
-        if (current != null) {
-            for (int i = 0; i < difficulties.size(); i++) {
-                if (displayName(difficulties.get(i)).equals(displayName(current))) {
-                    selectedDifficultyIndex = i;
-                    break;
-                }
-            }
-        }
+        winBackgroundTexture = loadTexture(ImageResourceConstants.WinOverlayBackdropImage);
+        gameOverBackgroundTexture = loadTexture(ImageResourceConstants.GameOverOverlayBackdropImage);
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         switchToMenuMusic();
 
         installTerminalKeyboardProcessor();
+
+        if (immediateStartOnCreate) {
+            startGameFromSelection();
+        } else if (autoStartOnCreate) {
+            startGameFromSelection();
+        }
     }
 
     /**
@@ -285,7 +294,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
             @Override
             public boolean keyTyped(char character) {
                 if (session.mode() == GameMode.WON && !session.winScoreSaved()) {
-                    return onWinScoreKeyTyped(character);
+                    return winOverlayController.onKeyTyped(character, WIN_NAME_MAX_CHARS);
                 }
                 return terminalController.onKeyTyped(character);
             }
@@ -364,10 +373,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
         float dt = Math.min(Gdx.graphics.getDeltaTime(), 1f / 30f);
         update(dt);
         draw();
-        if (session.loadingPending() && TimeUtils.timeSinceNanos(loadingStartedAtNanos) >= START_MENU_LOADING_DELAY_NANOS) {
-            session.setLoadingPending(false);
-            startGameFromSelection();
-        }
     }
 
     private void update(float dt) {
@@ -378,21 +383,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
             executeTerminalCommand(command);
         }
 
-        if (showBehaviourTypeSeconds > 0f) {
-            showBehaviourTypeSeconds = Math.max(0f, showBehaviourTypeSeconds - dt);
-        }
-        if (showMovementTypeSeconds > 0f) {
-            showMovementTypeSeconds = Math.max(0f, showMovementTypeSeconds - dt);
-        }
-        if (showEnemyPathSeconds > 0f) {
-            showEnemyPathSeconds = Math.max(0f, showEnemyPathSeconds - dt);
-        }
+        debugOverlayState.tick(dt);
 
         statusMessageBus.tick(dt);
-
-        if (handleStartMenuModeUpdate()) {
-            return;
-        }
 
         if (handleHighScoresModeUpdate()) {
             return;
@@ -408,7 +401,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (!terminalController.isActive()
                 && modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-            switchToStartMenu(true);
+            requestReturnToMenu(true);
             return;
         }
 
@@ -456,6 +449,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
             enemyDirectorService.advanceAll(animatedEnemies, world, dt);
         }
 
+        if (player == null) {
+            return;
+        }
         var combatFrame = combatState.update(dt, player.x(), player.y(), player.halfSize(), currentEnemyContacts());
         currentHpRatio = combatFrame.hpRatio();
         playerTintRed = combatFrame.tintRed();
@@ -483,9 +479,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         if (session.mode() == GameMode.PLAYING && !combatFrame.dead() && player.reached(activeGoalX, activeGoalY, activeGoalSize * 0.5f)) {
             session.setMode(GameMode.WON);
-            winNameInput.setLength(0);
-            session.setWinScoreSaved(false);
-            winScoreStatus = "";
+            winOverlayController.reset(session);
             if (!playedWinSound) {
                 playedWinSound = true;
                 gameAudioDirector.switchToWinMusic(visualStyle.winSoundPath());
@@ -493,70 +487,37 @@ public final class GdxGameScreen extends ApplicationAdapter {
         }
     }
 
-    private boolean handleStartMenuModeUpdate() {
-        if (session.mode() != GameMode.START_MENU) {
-            return false;
-        }
-        boolean escPressed = Gdx.input.isKeyPressed(Input.Keys.ESCAPE);
-        if (session.pausedFromGame() && modeInputController.consumeEsc(escPressed)) {
-            session.setPausedFromGame(false);
-            session.setMode(GameMode.PLAYING);
-            switchToInGameMusic();
-            flashStatus("Resumed game");
-            return true;
-        }
-        handleStartMenuInput();
-        return true;
-    }
-
     private boolean handleHighScoresModeUpdate() {
-        if (session.mode() != GameMode.HIGH_SCORES) {
-            return false;
-        }
-        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-            if (session.highScoresReturnToStartMenu()) {
-                session.setHighScoresReturnToStartMenu(false);
-                switchToStartMenu(false);
-            } else {
-                session.setMode(GameMode.PLAYING);
-            }
-        }
-        return true;
+        return highScoresOverlayController.update(
+                session,
+                modeInputController,
+                Gdx.input.isKeyPressed(Input.Keys.ESCAPE),
+                () -> requestReturnToMenu(false),
+                () -> session.setMode(GameMode.PLAYING));
     }
 
     private boolean handleWonModeUpdate() {
-        if (session.mode() != GameMode.WON) {
-            return false;
-        }
-        if (!session.winScoreSaved()) {
-            handleWinScoreEntryInput();
-        }
-        handleWonMouseInput();
-        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-            switchToStartMenu(false);
-        }
-        return true;
+        return winOverlayController.update(
+                session,
+                modeInputController,
+                hudCamera,
+                highScoreRepository,
+                currentScore(),
+                () -> requestReturnToMenu(false),
+                this::openHighScoresFromWin);
     }
 
     private boolean handleGameOverModeUpdate() {
-        if (session.mode() != GameMode.GAME_OVER) {
-            return false;
-        }
-        if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
-            switchToStartMenu(false);
-        }
-        return true;
+        return gameOverOverlayController.update(
+                session,
+                modeInputController,
+                Gdx.input.isKeyPressed(Input.Keys.ESCAPE),
+                () -> requestReturnToMenu(false));
     }
 
     private void draw() {
         ScreenUtils.clear(0.07f, 0.07f, 0.12f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if (session.mode() == GameMode.START_MENU) {
-            applyFullWindowGlViewport();
-            drawStartMenu();
-            return;
-        }
 
         if (maze == null || player == null || runtimeModel == null || viewport == null) {
             return;
@@ -565,7 +526,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             Texture enemyTexture = loadTexture(enemy.imagePath());
-            String label = enemy.debugLabel(showBehaviourTypeSeconds > 0f, showMovementTypeSeconds > 0f);
+            String label = enemy.debugLabel(debugOverlayState.showBehaviourType(), debugOverlayState.showMovementType());
             enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
                     enemyTexture,
                 enemy.x(),
@@ -607,7 +568,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 INFECTION_EDGE_LAYERS,
                 enemyViewModels,
                 activePathPoints,
-                showEnemyPathSeconds,
+                debugOverlayState.enemyPathSecondsRemaining(),
                 showSpanningTreeInfo));
 
         applyFullWindowGlViewport();
@@ -622,8 +583,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (session.mode() != GameMode.HIGH_SCORES) {
             return;
         }
-        overlayView.renderHighScoresOverlay(
-                new GdxOverlayView.RenderContext(batch, shapes, font, hudCamera),
+        highScoresOverlayView.render(
+            new GdxHighScoresOverlayView.RenderContext(batch, shapes, font, hudCamera),
                 highScoreRows);
     }
 
@@ -631,51 +592,33 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (session.mode() != GameMode.WON) {
             return;
         }
-        GdxOverlayView.WinButtons winButtons = overlayView.renderCenteredStateOverlay(
-                new GdxOverlayView.CenteredOverlayContext(
+        GdxWinOverlayView.WinButtons winButtons = winOverlayView.render(
+            new GdxWinOverlayView.WinOverlayContext(
                         batch,
                         shapes,
                         font,
                         glyphLayout,
                         hudCamera,
-                        "YOU WIN",
-                        "Type your name then click Save Score, or Back to Menu.",
                         winBackgroundTexture,
-                        Color.GREEN,
-                        true,
                         session.winScoreSaved(),
-                        winScoreStatus,
-                        winNameInput.toString(),
+                winOverlayController.winScoreStatusText(),
+                winOverlayController.winNameInputText(),
                         currentScore()));
-        winSaveButtonX = winButtons.saveX();
-        winSaveButtonY = winButtons.saveY();
-        winSaveButtonW = winButtons.saveW();
-        winSaveButtonH = winButtons.saveH();
-        winBackButtonX = winButtons.backX();
-        winBackButtonY = winButtons.backY();
-        winBackButtonW = winButtons.backW();
-        winBackButtonH = winButtons.backH();
+        winOverlayController.onOverlayRendered(winButtons);
     }
 
     private void drawGameOverOverlayIfNeeded() {
         if (session.mode() != GameMode.GAME_OVER) {
             return;
         }
-        overlayView.renderCenteredStateOverlay(
-                new GdxOverlayView.CenteredOverlayContext(
+        gameOverOverlayView.render(
+            new GdxGameOverOverlayView.RenderContext(
                         batch,
                         shapes,
                         font,
                         glyphLayout,
                         hudCamera,
-                        "GAME OVER",
-                        "Press ESC to return to start menu",
                         gameOverBackgroundTexture,
-                        Color.RED,
-                        false,
-                        false,
-                        "",
-                        "",
                         currentScore()));
     }
 
@@ -683,8 +626,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
         if (session.mode() != GameMode.PLAYING || !infectionWarningVisible) {
             return;
         }
-        overlayView.renderInfectionWarningSign(
-                new GdxOverlayView.InfectionWarningContext(
+        infectionOverlayView.render(
+            new GdxInfectionOverlayView.InfectionWarningContext(
                         batch,
                         shapes,
                         font,
@@ -705,37 +648,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
         Gdx.gl.glViewport(0, 0,
                 Math.max(1, Gdx.graphics.getBackBufferWidth()),
                 Math.max(1, Gdx.graphics.getBackBufferHeight()));
-    }
-
-    private void drawStartMenu() {
-        List<String> difficultyNames = new ArrayList<>(difficulties.size());
-        for (Difficulty difficulty : difficulties) {
-            difficultyNames.add(displayName(difficulty));
-        }
-
-        String selectedDifficultySummary = "";
-        if (selectedDifficultyIndex >= 0 && selectedDifficultyIndex < difficulties.size()) {
-            Difficulty selectedDifficulty = difficulties.get(selectedDifficultyIndex);
-            selectedDifficultySummary = "Difficulty: " + displayName(selectedDifficulty)
-                    + "  " + boardSizeLabel(selectedDifficulty);
-        }
-
-        String statusMessage = statusMessageBus.hasMessage() ? statusMessageBus.currentMessage() : "";
-
-        menuLayout = startMenuView.render(new GdxStartMenuView.RenderContext(
-                batch,
-                shapes,
-                font,
-                glyphLayout,
-                hudCamera,
-                menuIconTexture,
-                difficultyNames,
-                selectedDifficultyIndex,
-                startMenuDropdownOpen,
-                session.pausedFromGame(),
-                session.loadingPending(),
-                selectedDifficultySummary,
-                statusMessage));
     }
 
     private void drawHud() {
@@ -774,72 +686,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
                 terminalController.isActive(),
                 terminalController.bufferText(),
                 hudInteractionState.commandsOverlayVisible()));
-    }
-
-    private void handleStartMenuInput() {
-        if (session.loadingPending()) {
-            return;
-        }
-        handleStartMenuMouseInput();
-        var keyboardResult = startMenuInputController.handleKeyboard(
-                Gdx.input.isKeyPressed(Input.Keys.UP),
-                Gdx.input.isKeyPressed(Input.Keys.DOWN),
-                Gdx.input.isKeyPressed(Input.Keys.ENTER),
-                selectedDifficultyIndex,
-                difficulties.size());
-        selectedDifficultyIndex = keyboardResult.selectedDifficultyIndex();
-        if (keyboardResult.playSelectSound()) {
-            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-        }
-        if (keyboardResult.startRequested()) {
-            beginStartLoading();
-        }
-    }
-
-    private void handleStartMenuMouseInput() {
-        if (!Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
-            return;
-        }
-        float mx = Gdx.input.getX();
-        float my = hudCamera.viewportHeight - Gdx.input.getY();
-
-        var mouseResult = startMenuInputController.handleLeftClick(
-                mx,
-                my,
-                new GdxStartMenuInputController.MenuLayoutValues(
-                    menuLayout.comboX(),
-                    menuLayout.comboY(),
-                    menuLayout.comboW(),
-                    menuLayout.comboH(),
-                    menuLayout.buttonX(),
-                    menuLayout.buttonY(),
-                    menuLayout.buttonW(),
-                    menuLayout.buttonH(),
-                    menuLayout.highScoresButtonX(),
-                    menuLayout.highScoresButtonY(),
-                    menuLayout.highScoresButtonW(),
-                    menuLayout.highScoresButtonH()),
-                difficulties.size(),
-                selectedDifficultyIndex,
-                startMenuDropdownOpen);
-        selectedDifficultyIndex = mouseResult.selectedDifficultyIndex();
-        startMenuDropdownOpen = mouseResult.dropdownOpen();
-        if (mouseResult.playSelectSound()) {
-            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
-        }
-        if (mouseResult.startRequested()) {
-            beginStartLoading();
-        }
-        if (mouseResult.highScoresRequested()) {
-            loadHighScores();
-            session.setHighScoresReturnToStartMenu(true);
-            session.setMode(GameMode.HIGH_SCORES);
-        }
-    }
-
-    private void beginStartLoading() {
-        session.setLoadingPending(true);
-        loadingStartedAtNanos = TimeUtils.nanoTime();
     }
 
     private void handleGameMouseInput() {
@@ -919,109 +765,27 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void executeTerminalCommand(String raw) {
-        TerminalCommand command = parseTerminalCommand(raw);
-        if (command == TerminalCommand.EMPTY) {
-            flashStatus("No command entered");
+        GdxTerminalCommandSupport.Outcome outcome = GdxTerminalCommandSupport.evaluate(raw);
+        debugOverlayState.applyTerminalAction(outcome.action(), ENEMY_LABEL_SECONDS, ENEMY_PATH_OVERLAY_SECONDS);
+        if (outcome.statusSeconds() > 0f) {
+            flashStatus(outcome.statusText(), outcome.statusSeconds());
             return;
         }
-        if (command == TerminalCommand.HELP) {
-            flashStatus("Commands: " + TerminalCommandParser.HELP_TEXT, 20f);
-            return;
-        }
-        if (command == TerminalCommand.SHOW_BEHAVIOUR_TYPE) {
-            showBehaviourTypeSeconds = ENEMY_LABEL_SECONDS;
-            flashStatus("Showing behaviour type above enemies");
-            return;
-        }
-        if (command == TerminalCommand.SHOW_MOVEMENT_TYPE) {
-            showMovementTypeSeconds = ENEMY_LABEL_SECONDS;
-            flashStatus("Showing movement type above enemies");
-            return;
-        }
-        if (command == TerminalCommand.SHOW_ENEMY_PATH) {
-            showEnemyPathSeconds = ENEMY_PATH_OVERLAY_SECONDS;
-            flashStatus("Showing enemy paths for 10 seconds");
-            return;
-        }
-        flashStatus("Unknown command. Use /h");
+        flashStatus(outcome.statusText());
     }
 
-    private boolean onWinScoreKeyTyped(char character) {
-        if (character < 32 || character == 127) {
-            return false;
-        }
-        if (winNameInput.length() >= WIN_NAME_MAX_CHARS) {
-            return true;
-        }
-        if (Character.isLetterOrDigit(character) || character == ' ' || character == '_' || character == '-') {
-            winNameInput.append(character);
-            return true;
-        }
-        return false;
-    }
-
-    private void handleWinScoreEntryInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) && winNameInput.length() > 0) {
-            winNameInput.deleteCharAt(winNameInput.length() - 1);
-            return;
-        }
-        if (!Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            return;
-        }
-        String playerName = winNameInput.toString().trim();
-        if (playerName.isEmpty()) {
-            winScoreStatus = "Enter a name before saving.";
-            return;
-        }
-        if (writeHighScore(playerName, currentScore())) {
-            session.setWinScoreSaved(true);
-            winScoreStatus = "Saved score for " + playerName + ".";
-            loadHighScores();
-            session.setHighScoresReturnToStartMenu(true);
-            session.setMode(GameMode.HIGH_SCORES);
-        } else {
-            winScoreStatus = "Could not save score.";
-        }
-    }
-
-    private void handleWonMouseInput() {
-        if (!Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
-            return;
-        }
-        float mx = Gdx.input.getX();
-        float my = hudCamera.viewportHeight - Gdx.input.getY();
-        if (!session.winScoreSaved() && contains(mx, my, winSaveButtonX, winSaveButtonY, winSaveButtonW, winSaveButtonH)) {
-            String playerName = winNameInput.toString().trim();
-            if (playerName.isEmpty()) {
-                winScoreStatus = "Type a name first.";
-                return;
-            }
-            if (writeHighScore(playerName, currentScore())) {
-                session.setWinScoreSaved(true);
-                winScoreStatus = "Saved score for " + playerName + ".";
-                loadHighScores();
-                session.setHighScoresReturnToStartMenu(true);
-                session.setMode(GameMode.HIGH_SCORES);
-            } else {
-                winScoreStatus = "Could not save score.";
-            }
-            return;
-        }
-        if (contains(mx, my, winBackButtonX, winBackButtonY, winBackButtonW, winBackButtonH)) {
-            switchToStartMenu(false);
-        }
-    }
-
-    private boolean writeHighScore(String playerName, int score) {
-        return highScoreRepository.upsertScore(playerName, score);
+    private void openHighScoresFromWin() {
+        loadHighScores();
+        session.setHighScoresReturnToStartMenu(true);
+        session.setMode(GameMode.HIGH_SCORES);
     }
 
     static String terminalHelpText() {
-        return GdxTerminalController.helpText();
+        return GdxTerminalCommandSupport.helpText();
     }
 
     static TerminalCommand parseTerminalCommand(String raw) {
-        return TerminalCommandParser.parse(raw);
+        return GdxTerminalCommandSupport.parse(raw);
     }
 
     private void updatePathHint() {
@@ -1061,7 +825,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private void loadHighScores() {
         highScoreRows.clear();
-        highScoreRows.addAll(highScoreRepository.loadScores());
+        highScoreRows.addAll(GdxScoreSupport.loadHighScores(highScoreRepository));
     }
 
     private static boolean contains(float px, float py, float x, float y, float w, float h) {
@@ -1069,11 +833,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private void startGameFromSelection() {
-        Difficulty selected = difficulties.isEmpty() ? null : difficulties.get(selectedDifficultyIndex);
-        if (selected != null) {
-            difficultyService.setCurrent(selected);
-        }
-        resizeWindowForDifficulty(selected);
+        Difficulty selected = forcedDifficulty != null ? forcedDifficulty : difficultyService.getCurrent();
 
         maze = providedMaze != null ? providedMaze : buildArenaForDifficulty(selected);
         runtimeModel = runtimeModelLoader.load(maze, selected);
@@ -1092,12 +852,9 @@ public final class GdxGameScreen extends ApplicationAdapter {
         showHintInfo = false;
         showSpanningTreeInfo = false;
         hudInteractionState.reset();
-        showBehaviourTypeSeconds = 0f;
-        showMovementTypeSeconds = 0f;
-        showEnemyPathSeconds = 0f;
+        debugOverlayState.reset();
         terminalController.reset();
         modeInputController.reset();
-        startMenuDropdownOpen = false;
         session.setPausedFromGame(false);
         playedWinSound = false;
         playedGameOverSound = false;
@@ -1107,9 +864,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
         enemyDirectorService.reset();
         pathPenaltyPoints = 0f;
         pathHintBudget = PathHintBudget.forDifficulty(selected);
-        winNameInput.setLength(0);
-        session.setWinScoreSaved(false);
-        winScoreStatus = "";
+        winOverlayController.reset(session);
         currentHpRatio = 1f;
         playerTintRed = 1f;
         playerTintGreen = 1f;
@@ -1128,6 +883,8 @@ public final class GdxGameScreen extends ApplicationAdapter {
                     MAX_ENEMY_TICKS_PER_FRAME));
         }
 
+        resizeWindowForDifficulty(selected);
+
         if (viewport == null) {
             viewport = new ScreenViewport(camera);
         }
@@ -1143,6 +900,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
         switchToInGameMusic();
         flashStatus("Started " + (selected != null ? displayName(selected) : "Default") + " difficulty");
+            updateCameraFollow();
     }
 
     static float toJavaFxLikeSpeed(float playerSpeed) {
@@ -1205,42 +963,19 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private int boardWidth(Difficulty selected) {
-        if (selected instanceof HardDifficulty) {
-            return StageConstants.BoardMaxXLarge;
-        }
-        if (selected instanceof NormalDifficulty) {
-            return StageConstants.BoardMaxXMedium;
-        }
-        return StageConstants.BoardMaxX;
+        return DifficultyBoardConfig.boardWidth(selected);
     }
 
     private int boardHeight(Difficulty selected) {
-        if (selected instanceof HardDifficulty) {
-            return StageConstants.BoardMaxYLarge;
-        }
-        if (selected instanceof NormalDifficulty) {
-            return StageConstants.BoardMaxYMedium;
-        }
-        return StageConstants.BoardMaxY;
-    }
-
-    private String boardSizeLabel(Difficulty selected) {
-        return boardWidth(selected) + "x" + boardHeight(selected);
+        return DifficultyBoardConfig.boardHeight(selected);
     }
 
     private int baseScoreForDifficulty(Difficulty selected) {
-        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(selected);
+        return GameScoringConstants.baseScoreFor(selected);
     }
 
     private String displayName(Difficulty difficulty) {
-        if (difficulty == null) {
-            return "Easy";
-        }
-        String modelName = difficulty.eClass().getName();
-        if (modelName.endsWith("Difficulty")) {
-            return modelName.substring(0, modelName.length() - "Difficulty".length());
-        }
-        return modelName.toLowerCase(Locale.ROOT);
+        return DifficultyPresentationSupport.displayNameOr(difficulty, "Easy");
     }
 
     private void updateCameraFollow() {
@@ -1277,12 +1012,16 @@ public final class GdxGameScreen extends ApplicationAdapter {
         return value;
     }
 
-    private void switchToStartMenu(boolean fromGame) {
+    private void requestReturnToMenu(boolean fromGame) {
+        if (returnToMenuAction != null) {
+            returnToMenuAction.run();
+            return;
+        }
+        // Compatibility fallback for direct adapter usage without a Game router.
         session.setPausedFromGame(fromGame);
-        startMenuDropdownOpen = false;
-        session.setMode(GameMode.START_MENU);
+        session.setMode(GameMode.PLAYING);
         switchToMenuMusic();
-        flashStatus(fromGame ? "Paused in start menu. Press ESC to resume." : "Returned to start menu");
+        flashStatus("Return-to-menu requires screen routing from GdxGame.");
     }
 
     private void switchToInGameMusic() {
@@ -1295,7 +1034,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
 
     private String resolveMenuMusicPath() {
         String primary = visualStyle.menuMusicPath();
-        String alternate = "/main/game/maze/menumusic1.wav";
+        String alternate = AudioResourceConstants.MenuMusicAlternate;
         return ThreadLocalRandom.current().nextBoolean() ? primary : alternate;
     }
 
@@ -1343,19 +1082,7 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
     private int currentScore() {
-        return scoringEngine.gameplayScore(session.baseScore(), session.moveCount(), pathPenaltyPoints);
-    }
-
-    private MazeVisualStyleConfig loadVisualStyle() {
-        try {
-            return new XmiMazeVisualStyleLoader().load();
-        } catch (RuntimeException ex) {
-            try {
-                return new PropertiesMazeVisualStyleLoader().load();
-            } catch (RuntimeException ignored) {
-                return MazeVisualStyleConfig.DEFAULT;
-            }
-        }
+        return GdxScoreSupport.currentScore(scoringEngine, session, pathPenaltyPoints);
     }
 
     private void flashStatus(String text) {
@@ -1382,3 +1109,6 @@ public final class GdxGameScreen extends ApplicationAdapter {
     }
 
 }
+
+
+

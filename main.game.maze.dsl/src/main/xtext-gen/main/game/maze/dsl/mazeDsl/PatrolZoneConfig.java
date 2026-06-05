@@ -115,3 +115,5 @@ public interface PatrolZoneConfig extends EObject
   void setHeight(double value);
 
 } // PatrolZoneConfig
+
+

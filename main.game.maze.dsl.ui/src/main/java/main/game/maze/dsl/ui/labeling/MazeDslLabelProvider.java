@@ -57,3 +57,5 @@ public class MazeDslLabelProvider extends DefaultEObjectLabelProvider {
         return type + " max " + element.getMaxCount();
     }
 }
+
+

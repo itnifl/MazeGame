@@ -161,3 +161,5 @@ public class CharacterBaseTest {
         assertEquals(50, nullGraphicsChar.getCharacterPosition().getX(), 0.01);
     }
 }
+
+

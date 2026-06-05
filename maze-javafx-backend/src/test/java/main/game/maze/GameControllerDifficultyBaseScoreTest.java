@@ -37,3 +37,5 @@ public class GameControllerDifficultyBaseScoreTest {
         assertEquals(20000, scoring.resetScore());
     }
 }
+
+

@@ -114,3 +114,5 @@ public final class FxCharacterView implements ICharacterView {
         return node == null;
     }
 }
+
+

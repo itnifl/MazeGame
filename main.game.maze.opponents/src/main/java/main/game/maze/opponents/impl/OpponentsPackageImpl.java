@@ -1051,3 +1051,5 @@ public class OpponentsPackageImpl extends EPackageImpl implements OpponentsPacka
 	}
 
 } //OpponentsPackageImpl
+
+

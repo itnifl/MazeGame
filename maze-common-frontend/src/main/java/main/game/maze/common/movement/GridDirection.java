@@ -42,3 +42,5 @@ public final class GridDirection {
         return new int[] {dirX, dirY};
     }
 }
+
+

@@ -72,3 +72,5 @@ public interface Position extends EObject {
 	Point2D toPoint2D();
 
 } // Position
+
+

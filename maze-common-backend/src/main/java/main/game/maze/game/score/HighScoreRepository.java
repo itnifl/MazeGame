@@ -11,3 +11,5 @@ public interface HighScoreRepository {
 
     boolean upsertScore(String playerName, int score);
 }
+
+

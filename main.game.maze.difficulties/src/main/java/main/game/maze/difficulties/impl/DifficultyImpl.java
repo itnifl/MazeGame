@@ -391,3 +391,5 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 	}
 
 } //DifficultyImpl
+
+

@@ -203,3 +203,5 @@ public class LootTableImpl extends MinimalEObjectImpl.Container implements LootT
 	}
 
 } //LootTableImpl
+
+

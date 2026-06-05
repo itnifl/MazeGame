@@ -51,3 +51,5 @@ public class EnemyCountsTest {
     assertEquals(0, counts.get("PUMPKINBOMBER").intValue());
   }
 }
+
+

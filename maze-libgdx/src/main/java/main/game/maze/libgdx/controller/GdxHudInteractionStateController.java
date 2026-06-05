@@ -4,7 +4,7 @@ package main.game.maze.libgdx.controller;
  * Tracks transient HUD interaction state, so the screen class can focus on
  * gameplay flow instead of button timing details.
  */
-public final class GdxHudInteractionState {
+public final class GdxHudInteractionStateController {
     private float commandButtonPressedSeconds;
     private float terminalButtonPressedSeconds;
     private boolean commandsOverlayVisible;
@@ -57,3 +57,4 @@ public final class GdxHudInteractionState {
         commandsOverlayVisible = false;
     }
 }
+

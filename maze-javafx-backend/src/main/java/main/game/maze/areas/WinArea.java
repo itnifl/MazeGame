@@ -88,3 +88,5 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
         this.winGameAction = winGameAction;
     }
 }
+
+

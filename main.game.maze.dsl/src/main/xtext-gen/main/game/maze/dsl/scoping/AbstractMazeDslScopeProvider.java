@@ -7,3 +7,5 @@ import org.eclipse.xtext.scoping.impl.DelegatingScopeProvider;
 
 public abstract class AbstractMazeDslScopeProvider extends DelegatingScopeProvider {
 }
+
+

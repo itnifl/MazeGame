@@ -139,3 +139,5 @@ public interface Zombie extends CharacterType {
 	void setTouchSound(String value);
 
 } // Zombie
+
+

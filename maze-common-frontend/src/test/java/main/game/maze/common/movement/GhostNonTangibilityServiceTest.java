@@ -73,3 +73,5 @@ class GhostNonTangibilityServiceTest {
         assertTrue(opacity >= 0.1 && opacity <= 1.0, "opacity must stay within [0.1, 1.0]");
     }
 }
+
+

@@ -11,3 +11,5 @@ public final class PlayerConstants {
     public static final int DefaultHealth = 100;
     public static final double DefaultSpeed = 10.0;
 }
+
+

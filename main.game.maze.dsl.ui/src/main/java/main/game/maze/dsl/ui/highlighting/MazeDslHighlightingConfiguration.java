@@ -76,3 +76,5 @@ public class MazeDslHighlightingConfiguration extends DefaultHighlightingConfigu
         return style;
     }
 }
+
+

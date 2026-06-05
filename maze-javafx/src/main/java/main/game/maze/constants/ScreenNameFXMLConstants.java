@@ -7,3 +7,5 @@ public class ScreenNameFXMLConstants {
     public final static String GameScreen = "/main/game/maze/game.fxml";
     public final static String StartScreen = "/main/game/maze/startScreen.fxml";
 }
+
+

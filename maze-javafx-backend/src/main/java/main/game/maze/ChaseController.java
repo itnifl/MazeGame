@@ -49,3 +49,5 @@ public final class ChaseController {
         return new Point2D(step[0], step[1]);
     }
 }
+
+

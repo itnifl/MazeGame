@@ -26,3 +26,5 @@ public class BehaviourResourceImpl extends XMIResourceImpl {
 	}
 
 } //BehaviourResourceImpl
+
+

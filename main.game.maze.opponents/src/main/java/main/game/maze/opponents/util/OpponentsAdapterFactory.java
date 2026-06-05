@@ -244,3 +244,5 @@ public class OpponentsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 } //OpponentsAdapterFactory
+
+

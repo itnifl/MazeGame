@@ -228,3 +228,4 @@ public abstract class PathCalculatorImpl extends MinimalEObjectImpl.Container im
 		return super.eInvoke(operationID, arguments);
 	}
 }
+

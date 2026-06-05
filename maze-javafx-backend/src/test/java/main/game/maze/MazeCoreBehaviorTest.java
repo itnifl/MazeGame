@@ -147,3 +147,5 @@ public class MazeCoreBehaviorTest {
         assertTrue(player.getPositionSubscribers().isEmpty(), "WinArea should be unsubscribed on dispose()");
     }
 }
+
+

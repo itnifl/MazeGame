@@ -58,3 +58,5 @@ public abstract class AbstractMazeDslIdeModule extends DefaultIdeModule {
 	}
 	
 }
+
+

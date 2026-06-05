@@ -88,3 +88,4 @@ public final class GdxTerminalController {
         buffer.setLength(0);
     }
 }
+

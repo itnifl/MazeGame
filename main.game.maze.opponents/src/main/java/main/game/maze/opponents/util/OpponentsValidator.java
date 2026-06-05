@@ -298,3 +298,5 @@ public class OpponentsValidator extends EObjectValidator {
 	}
 
 } //OpponentsValidator
+
+

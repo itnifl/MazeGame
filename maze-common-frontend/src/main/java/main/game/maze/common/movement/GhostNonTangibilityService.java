@@ -70,3 +70,5 @@ public final class GhostNonTangibilityService {
         return Math.max(0.1, Math.min(1.0, opacity));
     }
 }
+
+

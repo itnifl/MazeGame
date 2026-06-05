@@ -233,3 +233,5 @@ public class VisionEventImpl extends CharacterEventImpl implements VisionEvent {
 	}
 
 } //VisionEventImpl
+
+

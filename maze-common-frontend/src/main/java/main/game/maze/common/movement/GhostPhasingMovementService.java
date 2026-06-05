@@ -87,3 +87,5 @@ public final class GhostPhasingMovementService {
         return CARDINALS[random.nextInt(CARDINALS.length)];
     }
 }
+
+

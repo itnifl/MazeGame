@@ -46,3 +46,5 @@ public interface CharacterSpecifics extends EObject
   void setAttackDamage(int value);
 
 } // CharacterSpecifics
+
+

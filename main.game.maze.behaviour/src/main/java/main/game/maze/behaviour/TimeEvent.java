@@ -44,3 +44,5 @@ public interface TimeEvent extends CharacterEvent {
 	void setTime(int value);
 
 } // TimeEvent
+
+

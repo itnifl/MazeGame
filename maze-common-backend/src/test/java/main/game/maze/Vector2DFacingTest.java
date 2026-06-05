@@ -26,3 +26,5 @@ public class Vector2DFacingTest {
             new Vector2D(new Point2D(2,2), new Point2D(2,2)).getFacingFromVector());
     }
 }
+
+

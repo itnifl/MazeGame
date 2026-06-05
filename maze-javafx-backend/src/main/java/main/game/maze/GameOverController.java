@@ -24,3 +24,5 @@ public class GameOverController extends ActionScreenController implements Initia
         deathPenaltyNoticeLabel.setManaged(true);
     }
 }
+
+

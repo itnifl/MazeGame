@@ -67,3 +67,5 @@ public interface Direction extends EObject {
 	void setEndPosition(Position value);
 
 } // Direction
+
+

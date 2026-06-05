@@ -1,5 +1,9 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,7 +24,7 @@ class GdxGameScreenLayoutTest {
         int w = 1024;
         int h = 768;
 
-        GdxGameScreen.GameStripBounds strip = GdxGameScreen.computeGameStripBounds(w, h);
+        GdxGameScreenController.GameStripBounds strip = GdxGameScreenController.computeGameStripBounds(w, h);
 
         assertEquals(0, strip.x(), "strip starts at left edge");
         assertEquals(0, strip.y(), "strip starts at bottom edge");
@@ -32,8 +36,8 @@ class GdxGameScreenLayoutTest {
     void hpBarRendersAtWindowTop() {
         float h = 600f;
 
-        float hpBarBottom = GdxGameScreen.hpBarBottomY(h);
-        float hpBarTop = hpBarBottom + GdxGameScreen.hpBarHeight();
+        float hpBarBottom = GdxGameScreenController.hpBarBottomY(h);
+        float hpBarTop = hpBarBottom + GdxGameScreenController.hpBarHeight();
 
         assertTrue(hpBarTop <= h, "HP bar top edge must not extend past window top");
         assertTrue(h - hpBarTop <= 0.001f,
@@ -42,11 +46,11 @@ class GdxGameScreenLayoutTest {
 
     @Test
     void bottomBarRendersAtWindowBottom() {
-        float rowY = GdxGameScreen.bottomRowY();
-        float rowH = GdxGameScreen.bottomRowHeight();
+        float rowY = GdxGameScreenController.bottomRowY();
+        float rowH = GdxGameScreenController.bottomRowHeight();
 
         assertTrue(rowY >= 0f, "bottom row must not render below the window");
-        assertTrue(rowY + rowH <= GdxGameScreen.bottomBarHeight(),
+        assertTrue(rowY + rowH <= GdxGameScreenController.bottomBarHeight(),
                 "bottom row must fit inside the reserved bottom strip -> bar sticks to bottom");
         assertTrue(rowY <= 0.001f,
                 "bottom row anchors at y=0 of the HUD -> bar sticks to bottom");
@@ -55,8 +59,11 @@ class GdxGameScreenLayoutTest {
     @Test
     void smallWindowKeepsBothBarsClampedAndStripNonNegative() {
         // Even with a degenerate window, computeGameStripBounds must remain valid.
-        GdxGameScreen.GameStripBounds strip = GdxGameScreen.computeGameStripBounds(10, 10);
+        GdxGameScreenController.GameStripBounds strip = GdxGameScreenController.computeGameStripBounds(10, 10);
         assertTrue(strip.height() >= 1, "strip height never collapses below 1");
         assertTrue(strip.width() >= 1, "strip width never collapses below 1");
     }
 }
+
+
+

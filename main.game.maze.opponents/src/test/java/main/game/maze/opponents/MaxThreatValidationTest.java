@@ -89,3 +89,5 @@ class MaxThreatValidationTest {
         () -> "Expected a validation error when sum exceeds maxThreat, got: " + badDiag);
   }
 }
+
+

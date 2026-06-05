@@ -920,3 +920,5 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	}
 
 } //CharacterTypeImpl
+
+

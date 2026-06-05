@@ -235,3 +235,5 @@ public class ZombieSpecificsImpl extends CharacterSpecificsImpl implements Zombi
   }
 
 } //ZombieSpecificsImpl
+
+

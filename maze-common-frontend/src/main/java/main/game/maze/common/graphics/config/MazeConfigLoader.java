@@ -12,3 +12,5 @@ package main.game.maze.common.graphics.config;
 public interface MazeConfigLoader {
     MazeRuntimeConfig load();
 }
+
+

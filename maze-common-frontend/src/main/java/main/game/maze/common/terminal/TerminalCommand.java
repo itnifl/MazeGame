@@ -12,3 +12,5 @@ public enum TerminalCommand {
     SHOW_ENEMY_PATH,
     UNKNOWN
 }
+
+

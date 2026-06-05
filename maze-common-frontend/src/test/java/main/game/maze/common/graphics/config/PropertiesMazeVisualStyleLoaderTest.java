@@ -94,3 +94,5 @@ class PropertiesMazeVisualStyleLoaderTest {
         assertSame(MazeVisualStyleConfig.DEFAULT, cfg);
     }
 }
+
+

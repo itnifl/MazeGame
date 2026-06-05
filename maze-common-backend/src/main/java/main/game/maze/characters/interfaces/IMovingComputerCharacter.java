@@ -7,3 +7,5 @@ public interface IMovingComputerCharacter {
     public void changeDirection();
     void setDirection(Point2D direction);
 }
+
+

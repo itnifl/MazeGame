@@ -26,3 +26,5 @@ public class OpponentsResourceImpl extends XMIResourceImpl {
 	}
 
 } //OpponentsResourceImpl
+
+

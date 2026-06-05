@@ -92,3 +92,5 @@ public interface Waypoint extends EObject
   void setWaitTime(int value);
 
 } // Waypoint
+
+

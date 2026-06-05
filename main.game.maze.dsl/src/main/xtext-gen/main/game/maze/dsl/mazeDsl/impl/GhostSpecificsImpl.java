@@ -235,3 +235,5 @@ public class GhostSpecificsImpl extends CharacterSpecificsImpl implements GhostS
   }
 
 } //GhostSpecificsImpl
+
+

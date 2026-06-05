@@ -475,3 +475,5 @@ public class DifficultyConfigImpl extends MinimalEObjectImpl.Container implement
   }
 
 } //DifficultyConfigImpl
+
+

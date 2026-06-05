@@ -84,3 +84,5 @@ public interface LootTableConfig extends EObject
   EList<LootItemConfig> getItems();
 
 } // LootTableConfig
+
+

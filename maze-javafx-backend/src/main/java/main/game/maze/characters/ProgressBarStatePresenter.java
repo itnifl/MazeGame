@@ -32,3 +32,5 @@ public final class ProgressBarStatePresenter implements ICharacterStatePresenter
         });
     }
 }
+
+

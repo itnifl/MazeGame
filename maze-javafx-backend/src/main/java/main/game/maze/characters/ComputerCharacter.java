@@ -163,3 +163,5 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         return characterModel.getBehavior();
     }
 }
+
+

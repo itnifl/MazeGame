@@ -1334,3 +1334,5 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
   }
 
 } //MazeDslPackageImpl
+
+

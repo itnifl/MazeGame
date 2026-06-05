@@ -42,3 +42,5 @@ public final class CharacterRegistrar {
         return "Ghost".equals(typeName) || "Zombie".equals(typeName) || "PumpkinBomber".equals(typeName);
     }
 }
+
+

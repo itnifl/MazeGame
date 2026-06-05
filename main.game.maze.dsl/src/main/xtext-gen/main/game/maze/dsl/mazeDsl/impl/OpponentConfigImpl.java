@@ -812,3 +812,5 @@ public class OpponentConfigImpl extends MinimalEObjectImpl.Container implements 
   }
 
 } //OpponentConfigImpl
+
+

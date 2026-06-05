@@ -208,3 +208,5 @@ public class DifficultiesAdapterFactory extends AdapterFactoryImpl {
 	}
 
 } //DifficultiesAdapterFactory
+
+

@@ -436,3 +436,5 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
   }
 
 } //GameConfigurationImpl
+
+

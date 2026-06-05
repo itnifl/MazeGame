@@ -156,3 +156,5 @@ public interface DifficultyConfig extends EObject
   EList<EnemyLimit> getEnemyLimits();
 
 } // DifficultyConfig
+
+

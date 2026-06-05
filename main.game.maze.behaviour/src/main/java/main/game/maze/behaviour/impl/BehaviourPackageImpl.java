@@ -1519,3 +1519,5 @@ public class BehaviourPackageImpl extends EPackageImpl implements BehaviourPacka
 	}
 
 } //BehaviourPackageImpl
+
+

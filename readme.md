@@ -177,7 +177,7 @@ flowchart LR
   end
 
   subgraph Controller
-    GGS[GdxGameScreen lifecycle host]
+    GGS[GdxGameScreenController lifecycle host]
     SMI[GdxStartMenuInputController]
     MI[GdxModeInputController]
     PI[GdxPlayerInputController]

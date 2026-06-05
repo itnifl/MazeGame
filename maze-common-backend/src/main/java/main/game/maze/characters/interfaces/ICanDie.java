@@ -9,3 +9,5 @@ public interface ICanDie {
     public void addHitPoints(int hp);
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber);
 }
+
+

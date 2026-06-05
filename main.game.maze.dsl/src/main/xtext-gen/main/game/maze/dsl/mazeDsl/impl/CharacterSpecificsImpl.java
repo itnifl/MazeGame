@@ -178,3 +178,5 @@ public class CharacterSpecificsImpl extends MinimalEObjectImpl.Container impleme
   }
 
 } //CharacterSpecificsImpl
+
+

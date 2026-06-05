@@ -104,3 +104,5 @@ public class WinAreaTest {
         assertEquals(5, winArea.getPositionSubscribers().size());
     }
 }
+
+

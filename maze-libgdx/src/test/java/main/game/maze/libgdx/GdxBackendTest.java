@@ -1,5 +1,9 @@
 package main.game.maze.libgdx;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import main.game.maze.common.graphics.IAudioEngine;
 import main.game.maze.common.graphics.IUiScheduler;
 import main.game.maze.libgdx.backend.GdxAudioEngine;
@@ -48,3 +52,6 @@ class GdxBackendTest {
         assertDoesNotThrow(engine::dispose);
     }
 }
+
+
+

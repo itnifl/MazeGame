@@ -162,3 +162,5 @@ public class RandomBehaviorImpl extends MovementBehaviorImpl implements RandomBe
 	}
 
 } //RandomBehaviorImpl
+
+

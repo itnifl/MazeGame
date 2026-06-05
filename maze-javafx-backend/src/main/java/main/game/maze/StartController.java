@@ -17,9 +17,11 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.service.DifficultyPresentationSupport;
 import main.game.maze.service.DifficultyService;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.StartScreenAction;
@@ -39,9 +41,7 @@ public class StartController implements Initializable {
         difficultyCombo.setItems(diffs);
         difficultyCombo.setConverter(new StringConverter<>() {
             @Override public String toString(Difficulty d) {
-                if (d == null) return "";
-                String n = d.eClass().getName(); // e.g., NormalDifficulty
-                return n.endsWith("Difficulty") ? n.substring(0, n.length()-10) : n;
+                return DifficultyPresentationSupport.displayName(d);
             }
             @Override public Difficulty fromString(String s) { return null; }
         });
@@ -118,6 +118,8 @@ public class StartController implements Initializable {
     private String resolveMenuMusicPath() {
         return ThreadLocalRandom.current().nextBoolean()
             ? visualStyle.menuMusicPath()
-            : "/main/game/maze/menumusic1.wav";
+            : AudioResourceConstants.MenuMusicAlternate;
     }
 }
+
+

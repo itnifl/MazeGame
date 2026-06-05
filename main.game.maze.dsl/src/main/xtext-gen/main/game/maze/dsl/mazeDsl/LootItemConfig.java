@@ -118,3 +118,5 @@ public interface LootItemConfig extends EObject
   void setWeight(int value);
 
 } // LootItemConfig
+
+

@@ -47,3 +47,5 @@ public interface RandomBehavior extends MovementBehavior {
 	void setRegenPerSecond(double value);
 
 } // RandomBehavior
+
+

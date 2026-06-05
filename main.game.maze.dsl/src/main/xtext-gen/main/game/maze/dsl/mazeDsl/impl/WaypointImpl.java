@@ -294,3 +294,5 @@ public class WaypointImpl extends MinimalEObjectImpl.Container implements Waypoi
   }
 
 } //WaypointImpl
+
+

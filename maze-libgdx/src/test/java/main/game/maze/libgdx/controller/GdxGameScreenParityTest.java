@@ -1,5 +1,9 @@
-package main.game.maze.libgdx;
+package main.game.maze.libgdx.controller;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,15 +20,15 @@ class GdxGameScreenParityTest {
 
     @Test
     void playerSpeedMatchesJavaFxTickModel() {
-        assertEquals(300f, GdxGameScreen.toJavaFxLikeSpeed(10f), 0.001f);
+        assertEquals(300f, GdxGameScreenController.toJavaFxLikeSpeed(10f), 0.001f);
     }
 
     @Test
     void boardSizesMatchJavaFxConstants() throws Exception {
-        GdxGameScreen screen = new GdxGameScreen(null, 48f, 16, 12, 160f, true);
+        GdxGameScreenController screen = new GdxGameScreenController(null, 48f, 16, 12, 160f, true);
 
-        Method widthMethod = GdxGameScreen.class.getDeclaredMethod("boardWidth", main.game.maze.difficulties.Difficulty.class);
-        Method heightMethod = GdxGameScreen.class.getDeclaredMethod("boardHeight", main.game.maze.difficulties.Difficulty.class);
+        Method widthMethod = GdxGameScreenController.class.getDeclaredMethod("boardWidth", main.game.maze.difficulties.Difficulty.class);
+        Method heightMethod = GdxGameScreenController.class.getDeclaredMethod("boardHeight", main.game.maze.difficulties.Difficulty.class);
         widthMethod.setAccessible(true);
         heightMethod.setAccessible(true);
 
@@ -45,7 +49,7 @@ class GdxGameScreenParityTest {
 
     @Test
     void mouseHitTestingUsesSameRectLogic() throws Exception {
-        Method contains = GdxGameScreen.class.getDeclaredMethod(
+        Method contains = GdxGameScreenController.class.getDeclaredMethod(
                 "contains", float.class, float.class, float.class, float.class, float.class, float.class);
         contains.setAccessible(true);
 
@@ -61,12 +65,15 @@ class GdxGameScreenParityTest {
         EnemySpawn nonInfectious = new EnemySpawn("a", "/a.png", 10f, 10f, 20f, 1f, 1, 0, "", 1f);
         EnemySpawn infectious = new EnemySpawn("b", "/b.png", 10f, 10f, 20f, 1f, 1, 25, "", 1f);
 
-        assertFalse(GdxGameScreen.isInfectious(nonInfectious));
-        assertTrue(GdxGameScreen.isInfectious(infectious));
+        assertFalse(GdxGameScreenController.isInfectious(nonInfectious));
+        assertTrue(GdxGameScreenController.isInfectious(infectious));
     }
 
     @Test
     void deathDisplayDelayMatchesJavaFxRule() {
-        assertEquals(3f, GdxGameScreen.deathDisplayDelaySeconds(), 0.001f);
+        assertEquals(3f, GdxGameScreenController.deathDisplayDelaySeconds(), 0.001f);
     }
 }
+
+
+

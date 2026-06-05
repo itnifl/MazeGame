@@ -70,3 +70,6 @@ class RealMazeTest {
         assertEquals(heightPx - (float) first.getEnd().getY(),   translated.y2, 0.001f);
     }
 }
+
+
+

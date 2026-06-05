@@ -86,3 +86,4 @@ public class LocalPathCalculatorImpl extends PathCalculatorImpl implements Local
 		return currentPosition;
 	}
 } //LocalPathCalculatorImpl
+

@@ -152,3 +152,5 @@ public class WallModelImpl extends MinimalEObjectImpl.Container implements WallM
 	}
 
 } //WallModelImpl
+
+

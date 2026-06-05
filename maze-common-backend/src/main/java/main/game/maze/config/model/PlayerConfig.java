@@ -31,3 +31,5 @@ public record PlayerConfig(
                 PlayerConstants.DefaultDeathImage);
     }
 }
+
+

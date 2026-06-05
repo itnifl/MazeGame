@@ -15,3 +15,5 @@ package main.game.maze.opponents;
  */
 public interface PumpkinBomber extends RangedEnemy {
 } // PumpkinBomber
+
+

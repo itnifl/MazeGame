@@ -345,3 +345,5 @@ public class AttackEventImpl extends CharacterEventImpl implements AttackEvent {
 	}
 
 } //AttackEventImpl
+
+

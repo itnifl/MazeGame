@@ -83,3 +83,5 @@ public interface CharacterEvent extends EObject {
 	void notifySubscribers();
 
 } // CharacterEvent
+
+

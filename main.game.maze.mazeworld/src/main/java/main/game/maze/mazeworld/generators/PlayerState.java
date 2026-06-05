@@ -78,3 +78,5 @@ public final class PlayerState {
                 maze.widthPx(), maze.heightPx(), maze.walls());
     }
 }
+
+

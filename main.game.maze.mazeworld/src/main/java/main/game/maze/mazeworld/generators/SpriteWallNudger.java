@@ -8,7 +8,7 @@ import java.util.List;
  * <ul>
  *   <li>JavaFX {@code CharacterIntersectionFixerService} to keep initial
  *       sprite placements out of walls.</li>
- *   <li>libGDX {@code GdxGameScreen} to keep the goal/heart sprite from
+ *   <li>libGDX {@code GdxGameScreenController} to keep the goal/heart sprite from
  *       being bisected by a generated wall.</li>
  * </ul>
  * The geometry is shared (segment vs AABB hit-test + 1px directional nudge)
@@ -141,3 +141,5 @@ public final class SpriteWallNudger {
                Math.min(yi, yj) <= yk && yk <= Math.max(yi, yj);
     }
 }
+
+

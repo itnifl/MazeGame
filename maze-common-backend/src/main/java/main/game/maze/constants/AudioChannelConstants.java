@@ -6,3 +6,4 @@ public class AudioChannelConstants {
     public static final String WIN_MUSIC = "music.win";
     public static final String GAME_OVER_MUSIC = "music.gameOver";
 }
+

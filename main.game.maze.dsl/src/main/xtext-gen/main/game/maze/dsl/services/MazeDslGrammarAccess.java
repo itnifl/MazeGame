@@ -2036,3 +2036,5 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return gaTerminals.getANY_OTHERRule();
 	}
 }
+
+

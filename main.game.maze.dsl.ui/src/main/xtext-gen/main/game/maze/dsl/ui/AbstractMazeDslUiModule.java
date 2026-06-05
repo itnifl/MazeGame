@@ -284,3 +284,5 @@ public abstract class AbstractMazeDslUiModule extends DefaultUiModule {
 	}
 	
 }
+
+

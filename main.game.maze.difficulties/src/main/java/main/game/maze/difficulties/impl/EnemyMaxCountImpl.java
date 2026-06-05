@@ -220,3 +220,5 @@ public class EnemyMaxCountImpl extends MinimalEObjectImpl.Container implements E
 	}
 
 } //EnemyMaxCountImpl
+
+

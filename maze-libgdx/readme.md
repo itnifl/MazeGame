@@ -6,7 +6,7 @@ libGDX implementations of the facades defined in
 
 ## Status
 
-Phase 4 parity work (current): the launcher now opens a retro start menu,
+Phase 4 parity work (completed): the launcher now opens a retro start menu,
 lets the player choose difficulty from the shared EMF model, then builds a
 matching arena size and starts gameplay with visible score and command HUD.
 The runtime uses the shared `RealMaze` adapter for walls plus model-derived
@@ -39,8 +39,11 @@ not static.
 
 | Class | Purpose |
 | --- | --- |
-| `GdxAppLauncher` | `main()` that boots `Lwjgl3Application` with `GdxGameScreen`. |
-| `GdxGameScreen` | `ApplicationAdapter` that owns the camera, batch, shape renderer, font, and per-frame update + draw. |
+| `GdxAppLauncher` | `main()` that boots `Lwjgl3Application` with `GdxGame` as screen router root. |
+| `GdxGame` | `Game` root that owns shared runtime context and routes between menu, play, and compatibility screens. |
+| `GdxGameScreenController` | Legacy gameplay `ApplicationAdapter` still used through a compatibility screen while extraction continues. |
+| `DifficultyBoardConfig` | Dedicated board dimension and board-size label policy per selected difficulty. |
+| `DifficultyPresentationSupport` (shared backend) | Shared difficulty display-name and board dimension policy used by libGDX and JavaFX. |
 | `game.MazeArena` | Pure-Java arena facade (walls, start, goal, pixel dimensions) implemented by both maze backends. |
 | `game.SampleMaze` | Pure-Java maze generator (no libGDX deps); produces the immutable wall list. |
 | `game.RealMaze` | Pure-Java `MazeArena` adapter over the shared `GameMazeWorld` (Phase 3, F11). |

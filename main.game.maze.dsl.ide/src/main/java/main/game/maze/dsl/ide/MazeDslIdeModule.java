@@ -13,3 +13,5 @@ public class MazeDslIdeModule extends AbstractMazeDslIdeModule {
     // Custom IDE bindings can be added here
     // For example, language server protocol support
 }
+
+

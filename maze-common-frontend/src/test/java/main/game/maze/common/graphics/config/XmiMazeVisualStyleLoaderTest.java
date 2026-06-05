@@ -49,3 +49,5 @@ class XmiMazeVisualStyleLoaderTest {
         assertThrows(IllegalArgumentException.class, () -> XmiMazeVisualStyleLoader.fromFile(null));
     }
 }
+
+

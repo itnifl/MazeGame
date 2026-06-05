@@ -14,3 +14,5 @@ public class MazeDslAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 		return classLoader.getResourceAsStream("main/game/maze/dsl/parser/antlr/internal/InternalMazeDsl.tokens");
 	}
 }
+
+

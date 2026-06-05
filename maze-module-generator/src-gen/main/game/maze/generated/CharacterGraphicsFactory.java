@@ -54,3 +54,5 @@ public final class CharacterGraphicsFactory {
         };
     }
 }
+
+

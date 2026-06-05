@@ -285,3 +285,5 @@ class GhostTangibilityTest {
                 "Solid ghost blocked by wall must not deal damage in player's doPositionEvaluation");
     }
 }
+
+

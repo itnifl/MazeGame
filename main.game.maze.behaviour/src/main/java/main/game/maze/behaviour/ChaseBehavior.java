@@ -71,3 +71,5 @@ public interface ChaseBehavior extends MovementBehavior {
 	void setPathcalculator(PathCalculator value);
 
 } // ChaseBehavior
+
+

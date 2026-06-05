@@ -5,3 +5,5 @@ public interface INonTangientMazeGameCharacter {
     public void setNonTangientEnergy(double value);
     public void setCharacterOpacity(double value);
 }
+
+

@@ -41,3 +41,5 @@ public interface ICharacterView {
     /** True when the sprite is no longer usable (disposed/detached). */
     boolean isDisposed();
 }
+
+

@@ -68,3 +68,5 @@ public interface ZombieSpecifics extends CharacterSpecifics
   void setResurrectionTime(int value);
 
 } // ZombieSpecifics
+
+

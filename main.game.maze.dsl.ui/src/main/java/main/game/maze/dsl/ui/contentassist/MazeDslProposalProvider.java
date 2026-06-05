@@ -68,3 +68,5 @@ public class MazeDslProposalProvider extends AbstractMazeDslProposalProvider {
         acceptor.accept(createCompletionProposal("100", "Hard - max 100 threat", null, context));
     }
 }
+
+

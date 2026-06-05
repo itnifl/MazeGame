@@ -235,3 +235,5 @@ public class RunWallsAcceleo {
         return (value != null && !value.isBlank()) ? value : defaultValue;
     }
 }
+
+

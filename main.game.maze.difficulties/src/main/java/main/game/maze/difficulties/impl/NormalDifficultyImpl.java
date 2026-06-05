@@ -34,3 +34,5 @@ public class NormalDifficultyImpl extends DifficultyImpl implements NormalDiffic
 	}
 
 } //NormalDifficultyImpl
+
+

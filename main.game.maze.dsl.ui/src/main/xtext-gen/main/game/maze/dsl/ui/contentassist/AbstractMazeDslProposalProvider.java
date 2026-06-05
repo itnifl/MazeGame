@@ -257,3 +257,5 @@ public abstract class AbstractMazeDslProposalProvider extends TerminalsProposalP
 		// subclasses may override
 	}
 }
+
+

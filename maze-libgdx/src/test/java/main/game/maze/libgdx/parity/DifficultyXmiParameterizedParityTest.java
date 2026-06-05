@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import main.game.maze.characters.CollisionDamage;
 import main.game.maze.config.service.XmiRulesLoader;
+import main.game.maze.constants.DifficultyResourceConstants;
 import main.game.maze.constants.OpponentConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.DifficultiesFactory;
@@ -68,7 +69,7 @@ class DifficultyXmiParameterizedParityTest {
     // Classpath path fed to every test in this suite.
     // Change this constant to point tests at a different difficulties.xmi.
     // =========================================================================
-    static final String DIFFICULTIES_XMI_CLASSPATH = "/xmi/difficulties/difficulties.xmi";
+    static final String DIFFICULTIES_XMI_CLASSPATH = DifficultyResourceConstants.DifficultiesXmiPath;
 
     // Compile-time constant used by @MethodSource inside @Nested classes.
     static final String ALL_DIFFICULTIES_SOURCE =
@@ -781,3 +782,6 @@ class DifficultyXmiParameterizedParityTest {
         throw new IllegalArgumentException("unsupported character type: " + ct.eClass().getName());
     }
 }
+
+
+

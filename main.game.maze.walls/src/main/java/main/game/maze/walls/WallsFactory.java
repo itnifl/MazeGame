@@ -49,3 +49,5 @@ public interface WallsFactory extends EFactory {
 	WallsPackage getWallsPackage();
 
 } //WallsFactory
+
+

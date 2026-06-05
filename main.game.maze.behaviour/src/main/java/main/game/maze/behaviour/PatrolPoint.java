@@ -78,3 +78,5 @@ public interface PatrolPoint extends EObject {
 	void triggerEvents();
 
 } // PatrolPoint
+
+

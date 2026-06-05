@@ -85,3 +85,5 @@ public interface OpponentsFactory extends EFactory {
 	OpponentsPackage getOpponentsPackage();
 
 } //OpponentsFactory
+
+
