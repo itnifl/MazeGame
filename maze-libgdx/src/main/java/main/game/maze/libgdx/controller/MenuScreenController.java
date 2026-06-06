@@ -21,7 +21,6 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.libgdx.GdxGameContext;
-import main.game.maze.libgdx.controller.GdxStartMenuInputController;
 import main.game.maze.libgdx.helper.DifficultyBoardConfig;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
