@@ -254,5 +254,3 @@ public class OpponentsFactoryImpl extends EFactoryImpl implements OpponentsFacto
 	}	
 
 } //OpponentsFactoryImpl
-
-

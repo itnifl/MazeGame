@@ -21,5 +21,3 @@ public class Vector2DNormalizeMagnitudeTest {
         assertEquals(4.0/5.0, dy/20.0, 1e-6);
     }
 }
-
-

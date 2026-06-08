@@ -275,5 +275,3 @@ public enum WallMaterialBaseType implements Enumerator {
 	}
 
 } //WallMaterialBaseType
-
-

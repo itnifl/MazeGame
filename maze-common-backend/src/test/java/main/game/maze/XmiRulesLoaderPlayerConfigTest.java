@@ -27,5 +27,3 @@ class XmiRulesLoaderPlayerConfigTest {
         assertEquals("/main/game/maze/you2-dead.png", config.imageDeath());
     }
 }
-
-

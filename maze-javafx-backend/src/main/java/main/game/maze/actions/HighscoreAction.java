@@ -91,5 +91,3 @@ public class HighscoreAction extends ActionScreens {
     }
 
 }
-
-

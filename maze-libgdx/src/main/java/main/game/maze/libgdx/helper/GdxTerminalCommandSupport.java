@@ -54,5 +54,3 @@ public final class GdxTerminalCommandSupport {
         return new Outcome(Action.UNKNOWN, "Unknown command. Use /h", 0f);
     }
 }
-
-

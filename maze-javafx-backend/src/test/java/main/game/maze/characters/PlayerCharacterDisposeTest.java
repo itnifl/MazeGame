@@ -54,5 +54,3 @@ public class PlayerCharacterDisposeTest {
         assertNull(sprite.getEffect(), "Sprite visual effect should be cleared on dispose()");
     }
 }
-
-

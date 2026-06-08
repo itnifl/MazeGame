@@ -362,5 +362,3 @@ public class WallsPackageImpl extends EPackageImpl implements WallsPackage {
 	}
 
 } //WallsPackageImpl
-
-

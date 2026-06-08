@@ -76,5 +76,3 @@ public interface DifficultiesFactory extends EFactory {
 	DifficultiesPackage getDifficultiesPackage();
 
 } //DifficultiesFactory
-
-

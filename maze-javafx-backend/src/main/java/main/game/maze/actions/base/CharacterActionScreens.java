@@ -38,5 +38,3 @@ public class CharacterActionScreens extends ActionScreens {
         return baseScore;
     }
 }
-
-

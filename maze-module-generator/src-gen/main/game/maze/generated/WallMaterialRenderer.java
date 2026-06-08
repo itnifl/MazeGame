@@ -59,5 +59,3 @@ public final class WallMaterialRenderer {
         };
     }
 }
-
-

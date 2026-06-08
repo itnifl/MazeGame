@@ -253,5 +253,3 @@ public enum LootItemType implements Enumerator {
 	}
 	
 } //LootItemType
-
-

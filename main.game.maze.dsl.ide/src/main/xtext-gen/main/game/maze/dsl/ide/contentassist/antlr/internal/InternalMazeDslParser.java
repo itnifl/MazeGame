@@ -19279,4 +19279,3 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
 
 }
-

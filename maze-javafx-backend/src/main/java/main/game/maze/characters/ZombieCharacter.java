@@ -162,5 +162,3 @@ public class ZombieCharacter extends ComputerCharacter
         return this.zombieModel;
     }
 }
-
-

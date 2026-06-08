@@ -24,5 +24,3 @@ public class StageConstants {
     public final static int WallThicknessPx = 5;
     
 }
-
-

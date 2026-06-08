@@ -48,6 +48,3 @@ public abstract class AbstractGdxScreenController implements Screen {
         // optional
     }
 }
-
-
-

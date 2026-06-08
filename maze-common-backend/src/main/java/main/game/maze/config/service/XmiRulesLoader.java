@@ -203,5 +203,3 @@ public final class XmiRulesLoader {
     }
   }
 }
-
-

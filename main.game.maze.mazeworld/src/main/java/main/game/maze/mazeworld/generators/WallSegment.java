@@ -18,5 +18,3 @@ public final class WallSegment {
         return Math.abs(y1 - y2) < 1e-4f;
     }
 }
-
-

@@ -233,5 +233,3 @@ public class HealthEventImpl extends CharacterEventImpl implements HealthEvent {
 	}
 
 } //HealthEventImpl
-
-

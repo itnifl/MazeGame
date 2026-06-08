@@ -8,5 +8,3 @@ import main.game.maze.libgdx.service.GdxAssetService;
  */
 public record GdxGameContext(MazeRuntimeConfig runtimeConfig, GdxAssetService assets) {
 }
-
-

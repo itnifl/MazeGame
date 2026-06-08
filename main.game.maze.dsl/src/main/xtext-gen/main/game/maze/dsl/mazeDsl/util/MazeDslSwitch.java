@@ -420,5 +420,3 @@ public class MazeDslSwitch<T> extends Switch<T>
   }
 
 } //MazeDslSwitch
-
-

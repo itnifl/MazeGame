@@ -402,4 +402,3 @@ public final class PatrolMovementService {
         }
     }
 }
-

@@ -23,5 +23,3 @@ public final class DifficultyBoardConfig {
         return boardWidth(selected) + "x" + boardHeight(selected);
     }
 }
-
-

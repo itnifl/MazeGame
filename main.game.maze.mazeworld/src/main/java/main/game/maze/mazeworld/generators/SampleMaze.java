@@ -107,5 +107,3 @@ public final class SampleMaze implements MazeArena {
         }
     }
 }
-
-

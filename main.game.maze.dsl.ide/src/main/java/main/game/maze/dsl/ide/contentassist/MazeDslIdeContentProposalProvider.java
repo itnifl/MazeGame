@@ -14,5 +14,3 @@ public class MazeDslIdeContentProposalProvider extends IdeContentProposalProvide
 
     // Additional IDE-specific content assist can be added here
 }
-
-

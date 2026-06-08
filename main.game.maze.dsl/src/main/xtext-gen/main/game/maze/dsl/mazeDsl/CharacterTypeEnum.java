@@ -246,5 +246,3 @@ public enum CharacterTypeEnum implements Enumerator
   }
   
 } //CharacterTypeEnum
-
-

@@ -280,5 +280,3 @@ public interface RangedEnemy extends CharacterType {
 	void setThrowSound(String value);
 
 } // RangedEnemy
-
-

@@ -29,5 +29,3 @@ public class Vector2DIntersectionEdgeCasesTest {
         assertFalse(a.doIntersect(b, 1));
     }
 }
-
-

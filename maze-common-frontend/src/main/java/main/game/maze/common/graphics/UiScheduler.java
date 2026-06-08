@@ -29,5 +29,3 @@ public final class UiScheduler {
         instance = new SynchronousUiScheduler();
     }
 }
-
-

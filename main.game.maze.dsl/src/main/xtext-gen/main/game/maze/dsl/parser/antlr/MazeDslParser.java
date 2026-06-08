@@ -38,5 +38,3 @@ public class MazeDslParser extends AbstractAntlrParser {
 		this.grammarAccess = grammarAccess;
 	}
 }
-
-

@@ -66,5 +66,3 @@ public interface VisionEvent extends CharacterEvent {
 	void setRadiusPercentage(double value);
 
 } // VisionEvent
-
-

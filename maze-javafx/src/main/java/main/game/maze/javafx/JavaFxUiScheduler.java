@@ -39,5 +39,3 @@ public final class JavaFxUiScheduler implements IUiScheduler {
         }
     }
 }
-
-

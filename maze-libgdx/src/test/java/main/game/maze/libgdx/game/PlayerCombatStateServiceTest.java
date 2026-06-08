@@ -168,6 +168,3 @@ class PlayerCombatStateServiceTest {
                 "Phasing ghost must deal damage even when a wall separates it from the player");
     }
 }
-
-
-

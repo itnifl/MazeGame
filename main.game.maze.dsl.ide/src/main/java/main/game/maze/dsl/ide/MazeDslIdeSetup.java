@@ -21,5 +21,3 @@ public class MazeDslIdeSetup extends MazeDslStandaloneSetup {
         return Guice.createInjector(Modules2.mixin(new MazeDslRuntimeModule(), new MazeDslIdeModule()));
     }
 }
-
-

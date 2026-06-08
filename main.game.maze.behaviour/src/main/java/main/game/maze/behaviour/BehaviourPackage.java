@@ -3135,5 +3135,3 @@ public interface BehaviourPackage extends EPackage {
 	}
 
 } //BehaviourPackage
-
-

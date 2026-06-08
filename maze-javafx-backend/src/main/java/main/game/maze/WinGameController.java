@@ -70,6 +70,3 @@ public class WinGameController extends ActionScreenController implements Initial
         return screenRoot;
     }
 }
-
-
-

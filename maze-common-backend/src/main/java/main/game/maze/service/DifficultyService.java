@@ -73,5 +73,3 @@ public final class DifficultyService {
     public Difficulty getCurrent() { return data.getCurrentDifficulty(); }
     public void setCurrent(Difficulty d) { data.setCurrentDifficulty(d); }
 }
-
-

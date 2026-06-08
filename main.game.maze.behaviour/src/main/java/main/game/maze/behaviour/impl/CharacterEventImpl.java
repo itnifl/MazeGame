@@ -269,5 +269,3 @@ public abstract class CharacterEventImpl extends MinimalEObjectImpl.Container im
 	}
 
 } //CharacterEventImpl
-
-

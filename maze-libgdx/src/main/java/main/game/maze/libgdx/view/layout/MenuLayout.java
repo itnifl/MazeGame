@@ -21,5 +21,3 @@ public record MenuLayout(
         return new MenuLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
     }
 }
-
-

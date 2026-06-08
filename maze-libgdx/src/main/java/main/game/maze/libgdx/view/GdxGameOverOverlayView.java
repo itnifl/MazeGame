@@ -69,5 +69,3 @@ public final class GdxGameOverOverlayView {
             int score) {
     }
 }
-
-

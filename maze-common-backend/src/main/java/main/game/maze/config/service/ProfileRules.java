@@ -19,5 +19,3 @@ public record ProfileRules(
         Map<EnemyTypes, Integer> countsOverride,
         Map<EnemyTypes, Integer> caps
 ) { }
-
-

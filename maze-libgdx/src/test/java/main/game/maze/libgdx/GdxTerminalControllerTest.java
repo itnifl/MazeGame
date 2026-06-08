@@ -52,5 +52,3 @@ class GdxTerminalControllerTest {
         assertEquals("ab", controller.bufferText());
     }
 }
-
-

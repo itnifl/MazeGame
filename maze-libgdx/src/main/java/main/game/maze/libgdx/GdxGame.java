@@ -82,5 +82,3 @@ public class GdxGame extends Game {
         context = null;
     }
 }
-
-

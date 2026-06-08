@@ -371,5 +371,3 @@ public interface CharacterType extends EObject {
 	void setSpriteScale(double value);
 
 } // CharacterType
-
-

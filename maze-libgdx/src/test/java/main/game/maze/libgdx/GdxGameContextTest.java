@@ -20,6 +20,3 @@ class GdxGameContextTest {
         assertSame(assets, context.assets());
     }
 }
-
-
-

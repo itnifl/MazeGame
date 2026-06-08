@@ -300,5 +300,3 @@ public class LootTableConfigImpl extends MinimalEObjectImpl.Container implements
   }
 
 } //LootTableConfigImpl
-
-

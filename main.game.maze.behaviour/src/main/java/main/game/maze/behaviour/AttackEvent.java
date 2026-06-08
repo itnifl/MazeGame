@@ -112,5 +112,3 @@ public interface AttackEvent extends CharacterEvent {
 	void setDamagePercentage(int value);
 
 } // AttackEvent
-
-

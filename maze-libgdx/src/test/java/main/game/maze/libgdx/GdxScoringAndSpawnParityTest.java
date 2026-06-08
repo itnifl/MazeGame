@@ -77,6 +77,3 @@ class GdxScoringAndSpawnParityTest {
         d.getEnemyMaxCount().add(c);
     }
 }
-
-
-

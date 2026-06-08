@@ -292,6 +292,3 @@ public class Character  {
         }
     }
 }
-
-
-

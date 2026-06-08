@@ -107,5 +107,3 @@ public interface PatrolConfig extends EObject
   EList<Waypoint> getWaypoints();
 
 } // PatrolConfig
-
-

@@ -52,6 +52,3 @@ class GdxBackendTest {
         assertDoesNotThrow(engine::dispose);
     }
 }
-
-
-

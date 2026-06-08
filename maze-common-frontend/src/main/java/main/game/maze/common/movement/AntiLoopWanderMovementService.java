@@ -185,5 +185,3 @@ public final class AntiLoopWanderMovementService {
         }
     }
 }
-
-

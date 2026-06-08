@@ -88,5 +88,3 @@ public class PatrolControllerTest {
         assertEquals(83, count, "Re-trigger should reset to 83 ticks (~5 seconds)");
     }
 }
-
-

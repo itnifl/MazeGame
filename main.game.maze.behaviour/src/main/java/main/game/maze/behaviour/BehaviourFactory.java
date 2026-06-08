@@ -166,5 +166,3 @@ public interface BehaviourFactory extends EFactory {
 	BehaviourPackage getBehaviourPackage();
 
 } //BehaviourFactory
-
-

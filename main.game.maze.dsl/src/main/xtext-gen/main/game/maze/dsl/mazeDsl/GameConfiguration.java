@@ -123,5 +123,3 @@ public interface GameConfiguration extends EObject
   EList<LootTableConfig> getLootTables();
 
 } // GameConfiguration
-
-

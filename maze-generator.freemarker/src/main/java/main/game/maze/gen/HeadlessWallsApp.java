@@ -37,5 +37,3 @@ public class HeadlessWallsApp implements IApplication {
     public void stop() {
     }
 }
-
-

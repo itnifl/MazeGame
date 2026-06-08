@@ -72,5 +72,3 @@ public interface EnemyLimit extends EObject
   void setMaxCount(int value);
 
 } // EnemyLimit
-
-

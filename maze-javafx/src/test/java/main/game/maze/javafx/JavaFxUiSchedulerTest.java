@@ -35,5 +35,3 @@ class JavaFxUiSchedulerTest {
         assertTrue(AnimationEngine.get() instanceof JavaFxAnimationEngine);
     }
 }
-
-

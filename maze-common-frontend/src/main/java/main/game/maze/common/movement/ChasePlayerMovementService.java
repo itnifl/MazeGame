@@ -76,5 +76,3 @@ public final class ChasePlayerMovementService implements EnemyMovementService {
         return new MovementResult(nx, ny, dx, dy, true);
     }
 }
-
-

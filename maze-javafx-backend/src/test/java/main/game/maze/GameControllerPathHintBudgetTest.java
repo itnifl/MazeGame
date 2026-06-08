@@ -179,5 +179,3 @@ class GameControllerPathHintBudgetTest {
         assertEquals(5_000_000_000L, used, "No additional time should be accumulated when key is not flagged down");
     }
 }
-
-

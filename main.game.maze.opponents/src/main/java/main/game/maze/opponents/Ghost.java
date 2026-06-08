@@ -92,5 +92,3 @@ public interface Ghost extends CharacterType {
 	void setNonTangibilityEnergy(double value);
 
 } // Ghost
-
-

@@ -15,5 +15,3 @@ package main.game.maze.behaviour;
  */
 public interface LocalPathCalculator extends PathCalculator {
 } // LocalPathCalculator
-
-

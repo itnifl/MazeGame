@@ -55,5 +55,3 @@ public interface AstarPathCalculator extends PathCalculator {
 	double heuristicDistance(MazeNavigationGraph.Node node, MazeNavigationGraph.Node target);
 
 } // AstarPathCalculator
-
-

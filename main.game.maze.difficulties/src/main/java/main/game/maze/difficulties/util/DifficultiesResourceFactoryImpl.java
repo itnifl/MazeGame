@@ -39,5 +39,3 @@ public class DifficultiesResourceFactoryImpl extends ResourceFactoryImpl {
 	}
 
 } //DifficultiesResourceFactoryImpl
-
-

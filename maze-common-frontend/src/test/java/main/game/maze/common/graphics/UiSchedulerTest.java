@@ -54,5 +54,3 @@ class UiSchedulerTest {
         assertThrows(IllegalArgumentException.class, () -> UiScheduler.set(null));
     }
 }
-
-

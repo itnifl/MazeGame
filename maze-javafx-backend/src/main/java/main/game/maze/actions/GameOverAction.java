@@ -134,5 +134,3 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
     }
 
 }
-
-

@@ -260,5 +260,3 @@ public class OpponentsSwitch<T> extends Switch<T> {
 	}
 
 } //OpponentsSwitch
-
-

@@ -4,5 +4,3 @@ public interface ICharacterAnimations {
     void PlayHappyAnimation();
     void PlayDieAnimation();
 }
-
-

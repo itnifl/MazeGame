@@ -5238,4 +5238,3 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000004L});
 
 }
-

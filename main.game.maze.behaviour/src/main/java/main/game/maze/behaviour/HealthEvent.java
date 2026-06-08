@@ -67,5 +67,3 @@ public interface HealthEvent extends CharacterEvent {
 	void setHealthPercentage(int value);
 
 } // HealthEvent
-
-

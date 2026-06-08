@@ -142,4 +142,3 @@ public class Point2D {
       return "Point2D [x = " + var10000 + ", y = " + this.getY() + "]";
    }
 }
-

@@ -2350,5 +2350,3 @@ public interface MazeDslPackage extends EPackage
   }
 
 } //MazeDslPackage
-
-

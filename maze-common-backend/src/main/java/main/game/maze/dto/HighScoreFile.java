@@ -137,5 +137,3 @@ public final class HighScoreFile {
         }
     }
 }
-
-

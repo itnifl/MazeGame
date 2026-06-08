@@ -169,6 +169,3 @@ class GhostTangibilityParityTest {
         return (float) GhostNonTangibilityService.calculateOpacity(energy);
     }
 }
-
-
-

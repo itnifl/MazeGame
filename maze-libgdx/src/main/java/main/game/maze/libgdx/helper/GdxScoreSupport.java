@@ -26,5 +26,3 @@ public final class GdxScoreSupport {
         return repository.upsertScore(playerName, score);
     }
 }
-
-

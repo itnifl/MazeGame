@@ -158,5 +158,3 @@ class GhostPhasingMovementServiceTest {
         return w;
     }
 }
-
-

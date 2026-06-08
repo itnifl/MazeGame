@@ -39,4 +39,3 @@ class DifficultyPresentationSupportTest {
         assertEquals("Easy", DifficultyPresentationSupport.displayNameOr(null, "Easy"));
     }
 }
-

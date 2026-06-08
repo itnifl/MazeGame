@@ -28,5 +28,3 @@ public final class GameScoringConstants {
         return EASY_BASE_SCORE;
     }
 }
-
-

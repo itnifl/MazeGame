@@ -16,5 +16,3 @@ public interface EnemyMovementService {
      */
     MovementResult tick(EnemyState enemy, WorldView world);
 }
-
-

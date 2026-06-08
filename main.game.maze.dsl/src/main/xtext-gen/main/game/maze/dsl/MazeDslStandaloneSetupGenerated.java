@@ -40,5 +40,3 @@ public class MazeDslStandaloneSetupGenerated implements ISetup {
 		IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("mazegame", serviceProvider);
 	}
 }
-
-

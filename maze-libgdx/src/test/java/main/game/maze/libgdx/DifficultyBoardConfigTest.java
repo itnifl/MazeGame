@@ -41,5 +41,3 @@ class DifficultyBoardConfigTest {
                 DifficultyBoardConfig.boardSizeLabel(hard));
     }
 }
-
-

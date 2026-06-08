@@ -103,5 +103,3 @@ public final class XmiMazeVisualStyleLoader {
         return value.trim();
     }
 }
-
-

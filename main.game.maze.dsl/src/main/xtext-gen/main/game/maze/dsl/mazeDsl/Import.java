@@ -46,5 +46,3 @@ public interface Import extends EObject
   void setImportURI(String value);
 
 } // Import
-
-

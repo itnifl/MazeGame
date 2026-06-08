@@ -61,6 +61,3 @@ class GdxGameScreenParityTest {
         assertEquals(3f, GdxGameScreenController.deathDisplayDelaySeconds(), 0.001f);
     }
 }
-
-
-

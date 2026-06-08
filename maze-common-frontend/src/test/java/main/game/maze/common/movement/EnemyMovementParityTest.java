@@ -244,5 +244,3 @@ class EnemyMovementParityTest {
     private record SimpleWall(double x1, double y1, double x2, double y2, boolean horizontal) {
     }
 }
-
-

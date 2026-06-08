@@ -11,5 +11,3 @@ public class AudioResourceConstants {
     public static final String PlayerScreamSound    = "/main/game/maze/playerScream.mp3";
     public static final String PlayerInfectedSound  = "/main/game/maze/playerGrunt.mp3";
 }
-
-

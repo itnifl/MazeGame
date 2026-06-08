@@ -100,5 +100,3 @@ public final class PropertiesMazeVisualStyleLoader {
         return v.trim();
     }
 }
-
-

@@ -177,5 +177,3 @@ public class TimeEventImpl extends CharacterEventImpl implements TimeEvent {
 	}
 
 } //TimeEventImpl
-
-

@@ -64,6 +64,3 @@ class GdxGameScreenLayoutTest {
         assertTrue(strip.width() >= 1, "strip width never collapses below 1");
     }
 }
-
-
-

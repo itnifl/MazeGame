@@ -36,5 +36,3 @@ public final class GdxPlayerInputController {
         }
     }
 }
-
-

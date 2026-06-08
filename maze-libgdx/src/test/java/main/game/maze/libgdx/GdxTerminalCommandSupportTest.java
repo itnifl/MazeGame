@@ -52,6 +52,3 @@ class GdxTerminalCommandSupportTest {
         assertTrue(GdxTerminalCommandSupport.helpText().contains("/sep"));
     }
 }
-
-
-

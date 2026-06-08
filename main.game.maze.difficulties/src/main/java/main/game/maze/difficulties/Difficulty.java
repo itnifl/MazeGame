@@ -129,5 +129,3 @@ public interface Difficulty extends EObject {
 	void setMaxThreat(int value);
 
 } // Difficulty
-
-

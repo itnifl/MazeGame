@@ -154,5 +154,3 @@ public interface PatrolBehavior extends MovementBehavior {
 	void nextIndex();
 
 } // PatrolBehavior
-
-

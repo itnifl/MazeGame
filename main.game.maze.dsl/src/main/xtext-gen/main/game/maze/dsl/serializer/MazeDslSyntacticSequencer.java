@@ -41,5 +41,3 @@ public class MazeDslSyntacticSequencer extends AbstractSyntacticSequencer {
 	}
 
 }
-
-

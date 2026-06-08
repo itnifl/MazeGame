@@ -58,6 +58,3 @@ class GdxAssetServiceTest {
         assertEquals(true, service.updateLoading());
     }
 }
-
-
-

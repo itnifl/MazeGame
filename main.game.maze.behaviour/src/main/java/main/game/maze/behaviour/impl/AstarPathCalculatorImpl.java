@@ -294,5 +294,3 @@ public class AstarPathCalculatorImpl extends PathCalculatorImpl implements Astar
 	}
 
 } //AstarPathCalculatorImpl
-
-

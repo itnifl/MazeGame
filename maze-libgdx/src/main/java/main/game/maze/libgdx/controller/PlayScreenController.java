@@ -26,6 +26,3 @@ public final class PlayScreenController extends AbstractLegacyAdapterScreen {
                 forcedDifficulty));
     }
 }
-
-
-

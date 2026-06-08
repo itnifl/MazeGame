@@ -33,5 +33,3 @@ public final class TerminalCommandParser {
         return TerminalCommand.UNKNOWN;
     }
 }
-
-

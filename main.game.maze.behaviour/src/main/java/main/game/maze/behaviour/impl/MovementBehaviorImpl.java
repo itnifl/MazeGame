@@ -796,5 +796,3 @@ public abstract class MovementBehaviorImpl extends MinimalEObjectImpl.Container 
 	}
 
 } //MovementBehaviorImpl
-
-

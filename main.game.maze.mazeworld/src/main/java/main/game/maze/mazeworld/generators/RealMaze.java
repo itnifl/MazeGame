@@ -122,5 +122,3 @@ public final class RealMaze implements MazeArena {
         return v * v;
     }
 }
-
-

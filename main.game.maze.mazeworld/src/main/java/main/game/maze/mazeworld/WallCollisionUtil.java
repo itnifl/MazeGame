@@ -160,5 +160,3 @@ public final class WallCollisionUtil {
         }
     }
 }
-
-

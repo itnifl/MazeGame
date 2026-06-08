@@ -132,5 +132,3 @@ public class WallsSwitch<T> extends Switch<T> {
 	}
 
 } //WallsSwitch
-
-

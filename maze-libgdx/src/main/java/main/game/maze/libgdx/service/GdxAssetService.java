@@ -77,6 +77,3 @@ public class GdxAssetService {
         return classpathPath.startsWith("/") ? classpathPath.substring(1) : classpathPath;
     }
 }
-
-
-

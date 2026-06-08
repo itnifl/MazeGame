@@ -226,5 +226,3 @@ public class PositionImpl extends MinimalEObjectImpl.Container implements Positi
 	}
 
 } //PositionImpl
-
-

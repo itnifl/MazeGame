@@ -36,5 +36,3 @@ public class MaxThreatInvariantTest {
     assertTrue(diag.getSeverity() >= Diagnostic.ERROR);
   }
 }
-
-

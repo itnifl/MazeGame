@@ -267,4 +267,3 @@ public class TestPatrolBehaviorMoveManual {
         return Math.hypot(dx, dy);
     }
 }
-

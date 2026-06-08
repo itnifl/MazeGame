@@ -283,8 +283,3 @@ class GdxGameRoutingTest {
         assertFalse((boolean) immStart.get(inner), "High-scores route must NOT set immediateStartOnCreate");
     }
 }
-
-
-
-
-

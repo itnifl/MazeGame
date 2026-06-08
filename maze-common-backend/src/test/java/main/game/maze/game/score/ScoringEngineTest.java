@@ -24,5 +24,3 @@ class ScoringEngineTest {
         assertEquals(-120, deadScore);
     }
 }
-
-

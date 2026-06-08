@@ -140,5 +140,3 @@ public interface RangedSpecifics extends CharacterSpecifics
   void setSplashRadius(double value);
 
 } // RangedSpecifics
-
-

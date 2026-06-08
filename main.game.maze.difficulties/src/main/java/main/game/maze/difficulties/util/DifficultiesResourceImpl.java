@@ -26,5 +26,3 @@ public class DifficultiesResourceImpl extends XMIResourceImpl {
 	}
 
 } //DifficultiesResourceImpl
-
-

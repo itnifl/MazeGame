@@ -14,5 +14,3 @@ public final class Launcher {
         App.launch(App.class, args);
     }
 }
-
-

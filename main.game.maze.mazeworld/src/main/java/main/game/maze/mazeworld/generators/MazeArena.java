@@ -17,5 +17,3 @@ public interface MazeArena {
     float goalX();
     float goalY();
 }
-
-

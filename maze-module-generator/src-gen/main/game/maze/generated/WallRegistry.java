@@ -88,5 +88,3 @@ public final class WallRegistry {
     private WallRegistry() {
     }
 }
-
-

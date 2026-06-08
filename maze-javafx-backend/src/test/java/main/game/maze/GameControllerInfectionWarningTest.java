@@ -102,4 +102,3 @@ class GameControllerInfectionWarningTest {
                 "infectious characters should carry a neon mist effect");
     }
 }
-

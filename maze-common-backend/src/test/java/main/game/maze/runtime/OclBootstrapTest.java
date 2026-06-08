@@ -25,5 +25,3 @@ class OclBootstrapTest {
         assertNotNull(EValidator.ValidationDelegate.Registry.INSTANCE.get(PIVOT_URI));
     }
 }
-
-

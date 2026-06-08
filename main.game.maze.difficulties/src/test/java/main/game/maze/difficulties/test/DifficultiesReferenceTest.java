@@ -42,5 +42,3 @@ public class DifficultiesReferenceTest {
     assertEquals(20, cur.getMaxThreat(), "Normal difficulty maxThreat should be 20");
   }
 }
-
-

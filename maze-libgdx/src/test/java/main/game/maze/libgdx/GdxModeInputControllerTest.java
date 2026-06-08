@@ -35,6 +35,3 @@ class GdxModeInputControllerTest {
         assertTrue(controller.consumeH(true));
     }
 }
-
-
-

@@ -251,5 +251,3 @@ public enum BehaviorType implements Enumerator {
 	}
 	
 } //BehaviorType
-
-

@@ -84,6 +84,3 @@ class GdxVisualStyleSupportTest {
         assertEquals("/main/game/maze/ghost1.png", loaded.menuIconImagePath());
     }
 }
-
-
-

@@ -450,5 +450,3 @@ public class WallMaterialImpl extends MinimalEObjectImpl.Container implements Wa
 	}
 
 } //WallMaterialImpl
-
-

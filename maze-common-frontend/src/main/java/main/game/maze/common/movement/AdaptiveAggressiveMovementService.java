@@ -621,5 +621,3 @@ public final class AdaptiveAggressiveMovementService {
         }
     }
 }
-
-

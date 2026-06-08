@@ -117,5 +117,3 @@ class PropertiesMazeConfigLoaderTest {
         assertTrue(PropertiesMazeConfigLoader.fromFile(p).load().useRealMaze());
     }
 }
-
-

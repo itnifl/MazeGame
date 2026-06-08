@@ -64,6 +64,3 @@ class GdxWinScoreSupportTest {
         assertFalse(GdxWinScoreSupport.saveScore(repository, new StringBuilder("Other"), 7));
     }
 }
-
-
-

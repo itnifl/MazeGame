@@ -108,5 +108,3 @@ public final class GdxCharacterView implements ICharacterView {
         return actor == null;
     }
 }
-
-

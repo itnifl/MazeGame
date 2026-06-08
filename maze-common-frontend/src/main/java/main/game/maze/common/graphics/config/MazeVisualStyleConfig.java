@@ -82,5 +82,3 @@ public record MazeVisualStyleConfig(
         return value;
     }
 }
-
-

@@ -39,5 +39,3 @@ public class OpponentsResourceFactoryImpl extends ResourceFactoryImpl {
 	}
 
 } //OpponentsResourceFactoryImpl
-
-

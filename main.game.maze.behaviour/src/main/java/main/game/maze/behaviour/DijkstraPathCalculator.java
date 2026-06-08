@@ -47,5 +47,3 @@ public interface DijkstraPathCalculator extends PathCalculator {
 	void setMaxPathLength(int value);
 
 } // DijkstraPathCalculator
-
-

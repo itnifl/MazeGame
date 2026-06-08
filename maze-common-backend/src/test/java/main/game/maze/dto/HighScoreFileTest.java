@@ -90,5 +90,3 @@ class HighScoreFileTest {
         assertEquals(350, scores.get(0).getTheScore());
     }
 }
-
-

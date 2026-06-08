@@ -39,5 +39,3 @@ public final class GdxWinScoreSupport {
         return GdxScoreSupport.saveHighScore(repository, playerName(input), score);
     }
 }
-
-

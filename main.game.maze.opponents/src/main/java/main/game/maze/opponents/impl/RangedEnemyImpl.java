@@ -723,5 +723,3 @@ public abstract class RangedEnemyImpl extends CharacterTypeImpl implements Range
 	}
 
 } //RangedEnemyImpl
-
-

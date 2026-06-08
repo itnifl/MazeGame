@@ -91,5 +91,3 @@ public final class CharacterAttributeSetter {
     }
 
 }
-
-

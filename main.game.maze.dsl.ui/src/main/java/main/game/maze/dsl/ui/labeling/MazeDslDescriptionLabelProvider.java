@@ -12,5 +12,3 @@ public class MazeDslDescriptionLabelProvider extends DefaultDescriptionLabelProv
     // - text(IEObjectDescription ele)
     // - image(IEObjectDescription ele)
 }
-
-

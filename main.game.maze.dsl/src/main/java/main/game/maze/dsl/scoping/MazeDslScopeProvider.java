@@ -54,5 +54,3 @@ public class MazeDslScopeProvider extends AbstractMazeDslScopeProvider {
         return null;
     }
 }
-
-

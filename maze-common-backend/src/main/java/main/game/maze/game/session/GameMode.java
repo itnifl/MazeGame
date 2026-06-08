@@ -10,5 +10,3 @@ public enum GameMode {
     WON,
     GAME_OVER
 }
-
-

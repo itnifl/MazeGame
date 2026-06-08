@@ -17,5 +17,3 @@ public class MazeDslRuntimeModule extends AbstractMazeDslRuntimeModule {
     //     return MazeDslScopeProvider.class;
     // }
 }
-
-

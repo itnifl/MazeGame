@@ -141,5 +141,3 @@ public final class SpriteWallNudger {
                Math.min(yi, yj) <= yk && yk <= Math.max(yi, yj);
     }
 }
-
-

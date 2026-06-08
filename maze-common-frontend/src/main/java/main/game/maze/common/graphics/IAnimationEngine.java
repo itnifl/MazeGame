@@ -25,4 +25,3 @@ public interface IAnimationEngine {
     /** Releases backend resources held by this engine. */
     void dispose();
 }
-

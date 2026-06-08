@@ -329,6 +329,3 @@ class CharacterAttributeSetterTest {
         }
     }
 }
-
-
-

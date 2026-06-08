@@ -17,5 +17,3 @@ public record HudLayout(
         return new HudLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
     }
 }
-
-

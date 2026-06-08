@@ -170,5 +170,3 @@ public class MazeDslGeneratorTest {
         assertTrue(content.contains("createEnemy3()"));
     }
 }
-
-

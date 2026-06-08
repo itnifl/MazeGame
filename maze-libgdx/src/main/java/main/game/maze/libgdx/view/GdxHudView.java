@@ -232,5 +232,3 @@ public final class GdxHudView {
             boolean commandsOverlayVisible) {
     }
 }
-
-

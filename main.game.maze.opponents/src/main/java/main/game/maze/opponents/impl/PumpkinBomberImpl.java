@@ -35,5 +35,3 @@ public class PumpkinBomberImpl extends RangedEnemyImpl implements PumpkinBomber 
 	}
 
 } //PumpkinBomberImpl
-
-

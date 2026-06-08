@@ -53,6 +53,3 @@ final class ApplicationAdapterScreen implements Screen {
         delegate.dispose();
     }
 }
-
-
-

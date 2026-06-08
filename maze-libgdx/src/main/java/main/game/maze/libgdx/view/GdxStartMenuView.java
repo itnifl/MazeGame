@@ -251,5 +251,3 @@ public final class GdxStartMenuView {
             String statusMessage) {
     }
 }
-
-

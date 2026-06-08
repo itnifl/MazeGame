@@ -73,6 +73,3 @@ class GdxScoreSupportTest {
         assertFalse(GdxScoreSupport.saveHighScore(repository, "Other", 7));
     }
 }
-
-
-

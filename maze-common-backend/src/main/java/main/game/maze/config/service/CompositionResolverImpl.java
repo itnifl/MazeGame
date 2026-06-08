@@ -246,5 +246,3 @@ public final class CompositionResolverImpl implements CompositionResolver {
         }
     }
 }
-
-

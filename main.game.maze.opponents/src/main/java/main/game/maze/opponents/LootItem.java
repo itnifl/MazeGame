@@ -132,5 +132,3 @@ public interface LootItem extends EObject {
 	void setGraphicBase(String value);
 
 } // LootItem
-
-

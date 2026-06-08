@@ -122,5 +122,3 @@ public interface OpponentModel extends EObject {
 	void setGameSetCurrentThreatLevel(double value);
 
 } // OpponentModel
-
-

@@ -47,5 +47,3 @@ public final class GdxUiScheduler implements IUiScheduler {
         return Thread.currentThread() == renderThread;
     }
 }
-
-

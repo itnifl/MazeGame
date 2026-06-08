@@ -83,5 +83,3 @@ public class GameControllerRoutePenaltyTest {
         assertTrue(gc.getDynamicScorePenalty() > 0, "Penalty should accrue while hint is visible");
     }
 }
-
-

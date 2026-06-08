@@ -38,6 +38,3 @@ class GdxPlayerInputControllerTest {
         assertEquals(0.7071f, intent.dy(), 0.001f);
     }
 }
-
-
-

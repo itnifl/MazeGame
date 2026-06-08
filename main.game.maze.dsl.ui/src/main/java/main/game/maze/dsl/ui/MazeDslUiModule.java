@@ -34,5 +34,3 @@ public class MazeDslUiModule extends AbstractMazeDslUiModule {
         return MazeDslHighlightingConfiguration.class;
     }
 }
-
-

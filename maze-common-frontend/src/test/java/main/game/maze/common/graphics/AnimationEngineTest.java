@@ -101,5 +101,3 @@ class AnimationEngineTest {
         assertSame(replacement, AnimationEngine.get());
     }
 }
-
-

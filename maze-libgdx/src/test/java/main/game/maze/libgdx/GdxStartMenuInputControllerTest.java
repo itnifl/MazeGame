@@ -125,6 +125,3 @@ class GdxStartMenuInputControllerTest {
                 36f);
     }
 }
-
-
-

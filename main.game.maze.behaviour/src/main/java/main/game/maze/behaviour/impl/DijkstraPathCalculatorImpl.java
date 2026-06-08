@@ -219,5 +219,3 @@ public class DijkstraPathCalculatorImpl extends PathCalculatorImpl implements Di
 	}
 
 } //DijkstraPathCalculatorImpl
-
-

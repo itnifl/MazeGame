@@ -455,5 +455,3 @@ private static double spawnByTarget(
     }
 
 }
-
-

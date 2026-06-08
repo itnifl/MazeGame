@@ -258,5 +258,3 @@ public class PatrolPointImpl extends MinimalEObjectImpl.Container implements Pat
 	}
 
 } //PatrolPointImpl
-
-

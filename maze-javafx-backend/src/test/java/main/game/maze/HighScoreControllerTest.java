@@ -38,5 +38,3 @@ public class HighScoreControllerTest {
         assertDoesNotThrow(controller::continueGame);
     }
 }
-
-

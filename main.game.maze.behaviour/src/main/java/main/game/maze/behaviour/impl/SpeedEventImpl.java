@@ -233,5 +233,3 @@ public class SpeedEventImpl extends CharacterEventImpl implements SpeedEvent {
 	}
 
 } //SpeedEventImpl
-
-

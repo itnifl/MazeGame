@@ -136,5 +136,3 @@ public class WallsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 } //WallsAdapterFactory
-
-

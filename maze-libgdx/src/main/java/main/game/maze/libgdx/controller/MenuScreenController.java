@@ -258,6 +258,3 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     }
 
 }
-
-
-

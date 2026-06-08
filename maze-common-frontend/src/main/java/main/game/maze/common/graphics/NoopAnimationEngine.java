@@ -40,4 +40,3 @@ public final class NoopAnimationEngine implements IAnimationEngine {
         // nothing to release
     }
 }
-

@@ -5,4 +5,3 @@ public interface IAnimationHandle {
     void stop();
     boolean isRunning();
 }
-

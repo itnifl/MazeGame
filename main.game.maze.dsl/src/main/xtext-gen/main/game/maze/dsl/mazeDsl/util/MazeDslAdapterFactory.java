@@ -391,5 +391,3 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
   }
 
 } //MazeDslAdapterFactory
-
-

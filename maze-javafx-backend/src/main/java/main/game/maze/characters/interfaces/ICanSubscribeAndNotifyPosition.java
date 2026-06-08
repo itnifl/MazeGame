@@ -10,5 +10,3 @@ public interface ICanSubscribeAndNotifyPosition {
     public void removePositionSubscriber(ICanSubscribeAndNotifyPosition entity);
     public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers();
 }
-
-

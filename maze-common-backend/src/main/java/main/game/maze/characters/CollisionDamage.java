@@ -20,5 +20,3 @@ public final class CollisionDamage {
         return Math.max(0, baseDamage);
     }
 }
-
-

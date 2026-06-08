@@ -376,5 +376,3 @@ public class LootItemImpl extends MinimalEObjectImpl.Container implements LootIt
 	}
 
 } //LootItemImpl
-
-

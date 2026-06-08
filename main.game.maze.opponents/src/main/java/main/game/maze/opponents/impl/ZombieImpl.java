@@ -408,5 +408,3 @@ public class ZombieImpl extends CharacterTypeImpl implements Zombie {
 	}
 
 } //ZombieImpl
-
-

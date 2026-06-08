@@ -2488,5 +2488,3 @@ public interface OpponentsPackage extends EPackage {
 	}
 
 } //OpponentsPackage
-
-

@@ -28,5 +28,3 @@ public class OpponentRegistry {
         return new String[] { "Ghost Zombie", "Ghost Zombie", "Ghost Zombie", "Classic Zombie", "Angry Zombie", "Classic Zombie", "Pumpkin Bomber Example" };
     }
 }
-
-

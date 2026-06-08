@@ -121,5 +121,3 @@ public class StartController implements Initializable {
             : AudioResourceConstants.MenuMusicAlternate;
     }
 }
-
-

@@ -34,5 +34,3 @@ class GameControllerScoringParityTest {
         assertEquals(GameScoringConstants.EASY_BASE_SCORE, controller.getBaseScoreForCurrentDifficulty());
     }
 }
-
-

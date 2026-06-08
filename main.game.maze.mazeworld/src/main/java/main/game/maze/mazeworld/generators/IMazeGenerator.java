@@ -17,4 +17,3 @@ public interface IMazeGenerator {
      */
     List<Vector2D> generateMaze();
 }
-

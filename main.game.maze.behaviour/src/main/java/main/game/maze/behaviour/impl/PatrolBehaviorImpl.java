@@ -584,5 +584,3 @@ public class PatrolBehaviorImpl extends MovementBehaviorImpl implements PatrolBe
 		return Math.hypot(dx, dy);
 	}
 } //PatrolBehaviorImpl
-
-

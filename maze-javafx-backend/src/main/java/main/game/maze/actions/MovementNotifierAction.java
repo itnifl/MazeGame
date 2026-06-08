@@ -43,5 +43,3 @@ public class MovementNotifierAction implements INotifyMovement {
     }
     
 }
-
-

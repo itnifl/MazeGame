@@ -59,5 +59,3 @@ public interface DifficultyGameData extends EObject {
 	void setCurrentDifficulty(Difficulty value);
 
 } // DifficultyGameData
-
-

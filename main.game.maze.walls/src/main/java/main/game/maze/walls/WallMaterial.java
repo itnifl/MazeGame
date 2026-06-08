@@ -167,5 +167,3 @@ public interface WallMaterial extends EObject {
 	void setBaseImage(String value);
 
 } // WallMaterial
-
-

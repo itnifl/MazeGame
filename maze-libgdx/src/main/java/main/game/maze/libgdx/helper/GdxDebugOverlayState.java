@@ -51,5 +51,3 @@ public final class GdxDebugOverlayState {
         return enemyPathSeconds;
     }
 }
-
-

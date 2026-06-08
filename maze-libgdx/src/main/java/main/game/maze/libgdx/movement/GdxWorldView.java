@@ -67,5 +67,3 @@ public final class GdxWorldView implements WorldView {
                 maze.widthPx(), maze.heightPx(), maze.walls());
     }
 }
-
-

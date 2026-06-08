@@ -73,5 +73,3 @@ public class CharacterDisposeTest {
         assertNull(sprite.getEffect(), "Any lingering visual effect should be cleared");
     }
 }
-
-

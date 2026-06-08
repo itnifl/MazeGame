@@ -352,5 +352,3 @@ public class PatrolZoneConfigImpl extends MinimalEObjectImpl.Container implement
   }
 
 } //PatrolZoneConfigImpl
-
-

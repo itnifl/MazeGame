@@ -101,6 +101,3 @@ class PlayerStateTest {
         assertFalse(spawned.collidesWith(maze), "spawned player must not start inside a wall");
     }
 }
-
-
-

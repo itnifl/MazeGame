@@ -28,5 +28,3 @@ public final class GdxHighScoresOverlayController {
         return true;
     }
 }
-
-

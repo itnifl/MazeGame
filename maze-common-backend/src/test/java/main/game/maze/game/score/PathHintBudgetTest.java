@@ -32,5 +32,3 @@ class PathHintBudgetTest {
         assertEquals(1f, budget.usedSeconds(), 0.0001f);
     }
 }
-
-

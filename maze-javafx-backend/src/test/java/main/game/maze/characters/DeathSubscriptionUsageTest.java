@@ -131,5 +131,3 @@ public class DeathSubscriptionUsageTest {
         assertSame(m, b.last);
     }    
 }
-
-

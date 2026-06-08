@@ -77,5 +77,3 @@ public final class GdxHighScoresOverlayView {
             OrthographicCamera hudCamera) {
     }
 }
-
-

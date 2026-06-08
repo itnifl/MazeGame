@@ -405,5 +405,3 @@ public interface WallsPackage extends EPackage {
 	}
 
 } //WallsPackage
-
-

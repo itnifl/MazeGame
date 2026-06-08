@@ -208,5 +208,3 @@ public class Point2DOperationsTest {
         assertTrue(str.contains("4.5"), "Should contain y coordinate");
     }
 }
-
-

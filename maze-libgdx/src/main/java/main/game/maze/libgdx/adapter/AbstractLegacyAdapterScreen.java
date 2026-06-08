@@ -51,5 +51,3 @@ public abstract class AbstractLegacyAdapterScreen extends AbstractGdxScreenContr
         delegate.dispose();
     }
 }
-
-

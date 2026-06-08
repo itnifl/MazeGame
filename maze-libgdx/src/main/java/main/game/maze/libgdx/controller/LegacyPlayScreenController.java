@@ -40,6 +40,3 @@ public final class LegacyPlayScreenController extends AbstractLegacyAdapterScree
         super(context, controller);
     }
 }
-
-
-

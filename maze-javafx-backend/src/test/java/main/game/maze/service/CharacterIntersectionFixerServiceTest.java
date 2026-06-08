@@ -127,5 +127,3 @@ public class CharacterIntersectionFixerServiceTest {
         return (boolean) m.invoke(null, xi, yi, xj, yj, xk, yk);
     }
 }
-
-

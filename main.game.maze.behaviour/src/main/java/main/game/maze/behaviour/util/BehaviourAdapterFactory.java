@@ -424,5 +424,3 @@ public class BehaviourAdapterFactory extends AdapterFactoryImpl {
 	}
 
 } //BehaviourAdapterFactory
-
-

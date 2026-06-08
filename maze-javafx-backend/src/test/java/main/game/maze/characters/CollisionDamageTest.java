@@ -40,5 +40,3 @@ public class CollisionDamageTest {
         assertEquals(Integer.MAX_VALUE, CollisionDamage.effectiveDamage(101.0, -50));
     }
 }
-
-

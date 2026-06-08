@@ -16,5 +16,3 @@ public interface CompositionResolver {
      */
     Map<EnemyTypes, Integer> resolve(String profile);
 }
-
-

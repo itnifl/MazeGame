@@ -68,5 +68,3 @@ public final class GdxAppLauncher {
                         "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT"));
     }
 }
-
-

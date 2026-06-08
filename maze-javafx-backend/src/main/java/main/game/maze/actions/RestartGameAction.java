@@ -85,5 +85,3 @@ public class RestartGameAction extends ActionScreens {
     }
 
 }
-
-

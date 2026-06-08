@@ -119,5 +119,3 @@ public final class GdxWinOverlayView {
             float backH) {
     }
 }
-
-

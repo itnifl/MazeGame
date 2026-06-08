@@ -40,5 +40,3 @@ public record MazeRuntimeConfig(
         if (!Float.isFinite(playerSpeed) || playerSpeed <= 0f) throw new IllegalArgumentException("playerSpeed must be a positive finite value");
     }
 }
-
-

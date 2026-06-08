@@ -45,5 +45,3 @@ class GdxHudInteractionStateTest {
         assertFalse(state.commandsOverlayVisible());
     }
 }
-
-

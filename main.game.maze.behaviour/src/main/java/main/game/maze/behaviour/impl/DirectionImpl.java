@@ -219,5 +219,3 @@ public class DirectionImpl extends MinimalEObjectImpl.Container implements Direc
 	}
 
 } //DirectionImpl
-
-

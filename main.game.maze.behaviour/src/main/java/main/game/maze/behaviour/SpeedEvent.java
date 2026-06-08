@@ -67,5 +67,3 @@ public interface SpeedEvent extends CharacterEvent {
 	void setSpeedPercentage(double value);
 
 } // SpeedEvent
-
-

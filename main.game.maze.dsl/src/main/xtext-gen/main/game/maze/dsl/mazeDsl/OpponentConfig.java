@@ -282,5 +282,3 @@ public interface OpponentConfig extends EObject
   void setLootRef(LootTableConfig value);
 
 } // OpponentConfig
-
-

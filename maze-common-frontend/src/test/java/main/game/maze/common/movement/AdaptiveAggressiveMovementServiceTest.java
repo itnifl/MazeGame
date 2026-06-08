@@ -582,5 +582,3 @@ class AdaptiveAggressiveMovementServiceTest {
         }
     }
 }
-
-

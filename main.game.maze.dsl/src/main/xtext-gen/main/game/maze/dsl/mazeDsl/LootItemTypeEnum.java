@@ -269,5 +269,3 @@ public enum LootItemTypeEnum implements Enumerator
   }
   
 } //LootItemTypeEnum
-
-

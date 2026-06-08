@@ -230,5 +230,3 @@ public enum PatrolPathBehavior implements Enumerator {
 	}
 	
 } //PatrolPathBehavior
-
-

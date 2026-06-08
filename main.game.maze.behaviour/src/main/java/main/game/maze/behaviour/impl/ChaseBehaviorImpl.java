@@ -244,5 +244,3 @@ public class ChaseBehaviorImpl extends MovementBehaviorImpl implements ChaseBeha
 	}
 
 } //ChaseBehaviorImpl
-
-

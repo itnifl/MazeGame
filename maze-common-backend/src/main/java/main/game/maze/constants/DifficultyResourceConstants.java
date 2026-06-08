@@ -6,5 +6,3 @@ public final class DifficultyResourceConstants {
 
     public static final String DifficultiesXmiPath = "/xmi/difficulties/difficulties.xmi";
 }
-
-

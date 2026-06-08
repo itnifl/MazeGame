@@ -63,6 +63,3 @@ class GdxDebugOverlayStateTest {
         assertEquals(0f, state.enemyPathSecondsRemaining());
     }
 }
-
-
-

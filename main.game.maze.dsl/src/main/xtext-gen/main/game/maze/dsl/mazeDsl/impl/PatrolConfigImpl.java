@@ -374,5 +374,3 @@ public class PatrolConfigImpl extends MinimalEObjectImpl.Container implements Pa
   }
 
 } //PatrolConfigImpl
-
-

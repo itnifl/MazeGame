@@ -249,4 +249,3 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         };
     }
 }
-

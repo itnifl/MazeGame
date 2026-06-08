@@ -49,5 +49,3 @@ public class DefaultsAndRoundtripTest {
     assertNotNull(root2);
   }
 }
-
-

@@ -49,5 +49,3 @@ public interface LootTable extends EObject {
 	EList<Integer> getWeightCapacity();
 
 } // LootTable
-
-

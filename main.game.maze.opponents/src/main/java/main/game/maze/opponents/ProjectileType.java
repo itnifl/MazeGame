@@ -230,5 +230,3 @@ public enum ProjectileType implements Enumerator {
 	}
 	
 } //ProjectileType
-
-

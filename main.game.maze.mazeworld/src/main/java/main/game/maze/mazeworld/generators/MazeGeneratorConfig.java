@@ -66,5 +66,3 @@ public final class MazeGeneratorConfig {
         return minGapBetweenWallsPx;
     }
 }
-
-

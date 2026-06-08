@@ -68,5 +68,3 @@ public interface GhostSpecifics extends CharacterSpecifics
   void setNonTangibilityEnergy(double value);
 
 } // GhostSpecifics
-
-

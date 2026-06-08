@@ -58,6 +58,3 @@ class GdxGameScreenTerminalCommandTest {
                 "terminal help must say that /sep shows enemy paths for 10 seconds");
     }
 }
-
-
-

@@ -88,5 +88,3 @@ public final class GdxInfectionOverlayView {
             String warningText) {
     }
 }
-
-

@@ -28,5 +28,3 @@ public class Score implements Comparable<Score> {
         return name + ": " + theScore;
     }
 }
-
-

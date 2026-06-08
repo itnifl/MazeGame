@@ -22,5 +22,3 @@ public final class GdxGameOverOverlayController {
         return true;
     }
 }
-
-

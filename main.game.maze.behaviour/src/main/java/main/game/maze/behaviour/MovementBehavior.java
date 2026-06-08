@@ -324,5 +324,3 @@ public interface MovementBehavior extends EObject {
 	void update(VisionEvent visionEvent);
 
 } // MovementBehavior
-
-

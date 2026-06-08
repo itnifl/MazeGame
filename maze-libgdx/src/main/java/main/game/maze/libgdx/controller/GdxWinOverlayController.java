@@ -142,5 +142,3 @@ public final class GdxWinOverlayController {
         return px >= x && px <= x + w && py >= y && py <= y + h;
     }
 }
-
-
