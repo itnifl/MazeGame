@@ -54,7 +54,7 @@ public final class GdxGameStartFlowApplySupport {
         return viewport;
     }
 
-    public static RuntimeTexturesState runtimeTextures(main.game.maze.libgdx.helper.GdxRuntimeTextureSupport.RuntimeTextures textures) {
+    public static RuntimeTexturesState runtimeTextures(GdxRuntimeTextureSupport.RuntimeTextures textures) {
         return new RuntimeTexturesState(
                 textures.playerTexture(),
                 textures.playerDeathTexture(),
@@ -79,10 +79,10 @@ public final class GdxGameStartFlowApplySupport {
             Texture backgroundTexture) {
     }
 
-        public record AppliedStartFlow(
+    public record AppliedStartFlow(
             MazeArena maze,
             PlayerState player,
             Viewport viewport,
             RuntimeTexturesState runtimeTextures) {
-        }
+    }
 }

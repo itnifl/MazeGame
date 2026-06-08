@@ -41,14 +41,19 @@ public final class GdxGameRenderPipeline {
         ScreenUtils.clear(0.07f, 0.07f, 0.12f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Overlays that need no active world are rendered before the guard.
-        if (state.session().mode() == GameMode.HIGH_SCORES) {
+        boolean worldAvailable = state.maze() != null && state.player() != null && state.viewport() != null;
+
+        // High scores can be opened from the start menu with no active world. In that
+        // case render the (semi-transparent) overlay against the cleared background.
+        // When a world IS available (high scores opened mid-game), fall through to the
+        // normal path so the world and HUD remain visible behind the overlay.
+        if (state.session().mode() == GameMode.HIGH_SCORES && !worldAvailable) {
             applyFullWindowGlViewport();
             drawHighScoresOverlayIfNeeded(state);
             return state.hudLayout();
         }
 
-        if (state.maze() == null || state.player() == null || state.viewport() == null) {
+        if (!worldAvailable) {
             return state.hudLayout();
         }
 
