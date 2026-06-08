@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.difficulties.DifficultiesFactory;
@@ -24,20 +22,13 @@ class GdxGameScreenParityTest {
     }
 
     @Test
-    void boardSizesMatchJavaFxConstants() throws Exception {
-        GdxGameScreenController screen = new GdxGameScreenController(null, 48f, 16, 12, 160f, true);
-
-        Method widthMethod = GdxGameScreenController.class.getDeclaredMethod("boardWidth", main.game.maze.difficulties.Difficulty.class);
-        Method heightMethod = GdxGameScreenController.class.getDeclaredMethod("boardHeight", main.game.maze.difficulties.Difficulty.class);
-        widthMethod.setAccessible(true);
-        heightMethod.setAccessible(true);
-
-        int easyW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createEasyDifficulty());
-        int easyH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createEasyDifficulty());
-        int normalW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createNormalDifficulty());
-        int normalH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createNormalDifficulty());
-        int hardW = (int) widthMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createHardDifficulty());
-        int hardH = (int) heightMethod.invoke(screen, DifficultiesFactory.eINSTANCE.createHardDifficulty());
+    void boardSizesMatchJavaFxConstants() {
+        int easyW = DifficultyBoardConfig.boardWidth(DifficultiesFactory.eINSTANCE.createEasyDifficulty());
+        int easyH = DifficultyBoardConfig.boardHeight(DifficultiesFactory.eINSTANCE.createEasyDifficulty());
+        int normalW = DifficultyBoardConfig.boardWidth(DifficultiesFactory.eINSTANCE.createNormalDifficulty());
+        int normalH = DifficultyBoardConfig.boardHeight(DifficultiesFactory.eINSTANCE.createNormalDifficulty());
+        int hardW = DifficultyBoardConfig.boardWidth(DifficultiesFactory.eINSTANCE.createHardDifficulty());
+        int hardH = DifficultyBoardConfig.boardHeight(DifficultiesFactory.eINSTANCE.createHardDifficulty());
 
         assertEquals(StageConstants.BoardMaxX, easyW);
         assertEquals(StageConstants.BoardMaxY, easyH);
@@ -48,13 +39,9 @@ class GdxGameScreenParityTest {
     }
 
     @Test
-    void mouseHitTestingUsesSameRectLogic() throws Exception {
-        Method contains = GdxGameScreenController.class.getDeclaredMethod(
-                "contains", float.class, float.class, float.class, float.class, float.class, float.class);
-        contains.setAccessible(true);
-
-        boolean inside = (boolean) contains.invoke(null, 10f, 10f, 5f, 5f, 20f, 20f);
-        boolean outside = (boolean) contains.invoke(null, 30.1f, 30.1f, 5f, 5f, 20f, 20f);
+    void mouseHitTestingUsesSameRectLogic() {
+        boolean inside = GdxGameInteractionSupport.contains(10f, 10f, 5f, 5f, 20f, 20f);
+        boolean outside = GdxGameInteractionSupport.contains(30.1f, 30.1f, 5f, 5f, 20f, 20f);
 
         assertTrue(inside);
         assertFalse(outside);

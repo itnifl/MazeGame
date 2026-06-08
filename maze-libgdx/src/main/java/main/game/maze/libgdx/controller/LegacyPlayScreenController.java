@@ -26,6 +26,19 @@ public final class LegacyPlayScreenController extends AbstractLegacyAdapterScree
                 false,
                 returnToMenuAction));
     }
+
+    /**
+     * Creates a screen that boots a game session and immediately opens the high-scores overlay.
+     */
+    public static LegacyPlayScreenController forHighScores(GdxGameContext context, Runnable returnToMenuAction) {
+        GdxGameScreenController controller = GdxGameScreenController.forHighScores(
+                context.runtimeConfig(), context.assets(), returnToMenuAction);
+        return new LegacyPlayScreenController(context, controller);
+    }
+
+    private LegacyPlayScreenController(GdxGameContext context, GdxGameScreenController controller) {
+        super(context, controller);
+    }
 }
 
 

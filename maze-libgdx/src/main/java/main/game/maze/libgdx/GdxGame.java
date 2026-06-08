@@ -40,12 +40,12 @@ public class GdxGame extends Game {
         context = new GdxGameContext(cfg, assetService);
         Screen initialScreen = initialScreenFactory != null
                 ? initialScreenFactory.apply(assetService)
-                : new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToLegacyPlay(false));
+                : new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores());
         routeToScreen(initialScreen);
     }
 
     void routeToMenuScreen() {
-        routeToScreen(new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToLegacyPlay(false)));
+        routeToScreen(new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores()));
     }
 
     void routeToPlayScreen() {
@@ -58,6 +58,10 @@ public class GdxGame extends Game {
 
     void routeToLegacyPlay(boolean autoStartOnCreate) {
         routeToScreen(new LegacyPlayScreenController(context, autoStartOnCreate, this::routeToMenuScreen));
+    }
+
+    void routeToHighScores() {
+        routeToScreen(LegacyPlayScreenController.forHighScores(context, this::routeToMenuScreen));
     }
 
     GdxGameContext context() {

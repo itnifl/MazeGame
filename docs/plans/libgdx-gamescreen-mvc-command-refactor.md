@@ -1,9 +1,148 @@
 # libGDX `GdxGameScreenController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** Proposed
+**Status:** In Progress (partially completed)
 **Branch:** `feature/refactorLibgdxForStandardImplementation`
-**Scope:** libGDX module only this round (JavaFX `GameController` is a documented follow-up).
+**Scope:** libGDX module only this round 
 **Date:** 2026-06-06
+**Last Updated:** 2026-06-08
+
+## 0. Execution Status Log
+
+### Completed
+
+1. Command plus registry input boundary was implemented with `InputSnapshotReader`, `InputFrame`, `KeyBindingRegistry`, `InputRouter`, and command implementations.
+2. Mode routing was extracted with `GameModeRouter`, `PlayingModeController`, `LibgdxPlayingBridge`, and overlay coordination classes.
+3. Render orchestration was extracted with `GdxGameRenderPipeline` and state assembly support.
+4. Startup flow extraction was implemented with `GameSessionStartFlowCoordinator` and related bootstrap and start collaborators.
+5. Runtime helper extractions were implemented for layout, interaction, and runtime math responsibilities.
+6. Parity compatibility seams were preserved or restored where reflection based tests required them.
+7. Requirements traceability updates were applied in `docs/requirements-features/requirements-traceability-matrix.md`.
+
+### Pending
+
+1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains significantly above the `< 200` line target.
+2. Phase level completion markers are not yet formalized in this file.
+3. Follow up structural cleanup is still needed before this plan can be marked fully completed.
+
+### Validation Snapshot
+
+1. Full repository `mvn test` run under Java 21 completed with `BUILD SUCCESS`.
+2. Focused libGDX regression suites used during extraction rounds are green.
+
+### 2026-06-08 Increment (ten micro-steps)
+
+1. `create()` split into focused initialization helpers for graphics resources, cameras/overlays, resize-to-window, and optional auto-start.
+2. `render()` now uses `clampedFrameDelta()` helper for frame-time clamping.
+3. `applyStartFlow(...)` split into `applyStartState(...)`, `ensureViewportInitialized(...)`, `applyRuntimeTextures(...)`, and `flashStartedDifficulty(...)`.
+4. Return-to-menu compatibility fallback moved into `returnToMenuFallback(...)`.
+5. `dispose()` now delegates graphics cleanup to `disposeGraphicsResources(...)`.
+6. `updateFrameState(...)` now delegates terminal command execution to `executePendingTerminalCommand(...)`.
+7. `updateFrameState(...)` now delegates transient overlay ticking to `tickTransientOverlayState(...)`.
+8. `draw()` now delegates render-state construction via `buildRenderAssemblyInput()`.
+9. Compile and focused libGDX tests remained green after each batch.
+10. Controller remains behavior-compatible, but the `< 200` line objective is still pending.
+
+### 2026-06-08 Increment (collaborator extraction follow-up)
+
+1. Terminal typing control-key handling was moved from `GdxGameScreenController` into `GdxGameInteractionSupport.handleTerminalTypingInput(...)`.
+2. `LibgdxPlayingBridge` wiring now invokes the interaction helper directly for terminal typing behavior.
+3. Controller mode update flow now delegates through `updateByMode(...)` to keep `update(...)` orchestration thinner.
+4. Overlay mode routing now uses controller-local `currentScore()` helper for consistent score reads.
+5. Render assembly now uses `currentScore()` helper to avoid duplicated score computation call sites.
+6. Difficulty status text now uses `difficultyLabel(...)` helper to reduce inline formatting logic.
+7. Removed obsolete controller-local `handleTerminalTypingInput()` implementation after helper migration.
+8. Compile and focused libGDX tests remained green.
+
+### 2026-06-08 Increment (expanded orchestration cleanup)
+
+1. Input binding registration split into `bindMenuAndOverlayActions()` and `bindMovementActions()`.
+2. Win overlay high-score transition extracted to `openHighScoresFromWin()`.
+3. Frame-state update split into `readInputFrame()` and `tickHudInteraction(...)` helpers.
+4. Movement flow split into `resolveMovementIntent()`, `canApplyMovement(...)`, and `applyMovementIntent(...)`.
+5. Death-sequence flow split into `ensureDeathSequenceStarted()`, `transitionToGameOverIfNeeded()`, and `playGameOverSoundOnce()`.
+6. Difficulty selection split into `selectedDifficulty()`.
+7. Arena construction callback extracted to `buildArenaForSelectedDifficulty(...)`.
+8. All compile and focused libGDX tests remained green.
+9. Important outcome: controller line count increased after this batch due internal method extraction.
+10. Next required direction: move logic to dedicated collaborators/classes rather than adding more controller-local helper methods.
+
+### 2026-06-08 Increment (lifecycle collaborator extraction)
+
+1. Added `GdxGameLifecycleSupport` as a dedicated lifecycle collaborator for graphics and overlay resource setup/disposal.
+2. `create()` in `GdxGameScreenController` now delegates resource creation and overlay resource loading to the new collaborator.
+3. `dispose()` in `GdxGameScreenController` now delegates graphics cleanup to the new collaborator.
+4. Removed controller-local lifecycle helper methods that were replaced by collaborator calls.
+5. Compile and focused libGDX tests remained green after the extraction.
+6. Controller line count reduced compared to previous increment.
+
+### 2026-06-08 Increment (start-flow apply collaborator extraction)
+
+1. Added `GdxGameStartFlowApplySupport` to own start-state unpacking, viewport initialization, runtime texture mapping, and started-difficulty status text formatting.
+2. `GdxGameScreenController.applyStartFlow(...)` now delegates these concerns to the new collaborator.
+3. Removed controller-local start-flow apply helper methods that became redundant (`applyStartState`, `ensureViewportInitialized`, `applyRuntimeTextures`, `flashStartedDifficulty`, `difficultyLabel`).
+4. Compile and focused libGDX tests remained green.
+5. Controller line count reduced again after this extraction.
+
+### 2026-06-08 Increment (input and frame-state collaborators)
+
+1. Added `GdxGameInputBindingsSupport` and moved all key-binding plus command registration out of the controller.
+2. Added `GdxGameFrameStateSupport` and moved frame-state responsibilities (input snapshot polling, HUD tick, pending terminal command execution, debug/status ticking) out of the controller.
+3. `GdxGameScreenController` now delegates `configureInputBindings()` and `updateFrameState(...)` to these collaborators.
+4. Removed redundant controller-local binding and frame-state helper methods after migration.
+5. Compile and focused libGDX tests remained green.
+6. Full repository `mvn test` under Java 21 remained green after this extraction.
+
+### 2026-06-08 Increment (update-flow collaborator extraction)
+
+1. Added `GdxGameUpdateFlowSupport` and moved movement-from-input flow out of `GdxGameScreenController`.
+2. Added death-sequence flow handling in the same collaborator, including delayed transition to game-over and one-time game-over music trigger.
+3. `GdxGameScreenController.applyMovementFromFrame(...)` and `applyDeathSequence(...)` now delegate to the collaborator.
+4. Removed redundant controller-local helper methods for movement/death flow that became unnecessary after extraction.
+5. Compile and focused libGDX tests remained green.
+6. Full repository `mvn test` under Java 21 remained green with `BUILD SUCCESS`.
+7. Controller line count reduced to 847 in this increment.
+
+### 2026-06-08 Increment (render coordinator extraction)
+
+1. Added `render.GdxGameRenderCoordinator` to own render-state snapshot assembly orchestration on top of the existing pipeline and assembler.
+2. `GdxGameScreenController.draw()` now delegates render-state construction and pipeline invocation to the new coordinator.
+3. Removed the large controller-local `buildRenderAssemblyInput()` method after migrating that mapping logic.
+4. Updated the libGDX module readme to describe the new render coordinator boundary.
+5. Added `GdxGamePlayingBridgeFactory` to own `LibgdxPlayingBridge` construction wiring.
+6. Added `GdxGameStartFlowRequestFactory` to own `StartFlowRequest` construction wiring.
+7. `make-libgdx.ps1 quick` completed successfully after migration fixes.
+8. Controller line count after this increment: 811.
+
+### 2026-06-08 Increment (render coordinator rewire after external edits)
+
+1. Rewired `GdxGameScreenController` to delegate draw-state mapping through `render.GdxGameRenderCoordinator`.
+2. Removed the controller-local `buildRenderAssemblyInput()` block again after it reappeared during external file edits.
+3. Preserved existing render behavior by keeping `GdxGameRenderStateAssembler` and `GdxGameRenderPipeline` usage inside the coordinator.
+4. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`.
+5. Controller line count after this increment: 794.
+
+### 2026-06-08 Increment (combat/enemy/win support extraction)
+
+1. Added `helper.GdxGameCombatAndEnemyFlowSupport` to own enemy advance, combat frame projection, and win trigger transition checks.
+2. `GdxGameScreenController` now delegates `advanceEnemies(...)`, `updateCombat(...)`, `shouldTriggerWin()`, and `triggerWin()` to the new support class.
+3. During this increment, one intermediate patch corrupted controller method boundaries; this was repaired in the same increment and revalidated.
+4. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS` after the repair.
+5. Controller line count after this increment: 776.
+
+### 2026-06-08 Increment (start-flow apply orchestration extraction)
+
+1. Extended `GdxGameStartFlowApplySupport` with a single `apply(...)` orchestration entrypoint that now handles difficulty window resize, viewport init and bounds update, goal recentering, session mode switch, in-game music transition, difficulty status message, and camera follow update.
+2. `GdxGameScreenController.applyStartFlow(...)` now delegates the orchestration through the helper and only maps the returned applied state to controller fields.
+3. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`.
+4. Controller line count after this increment: 776 (no net reduction in this micro-step, but responsibility moved out of the controller method body).
+
+### 2026-06-08 Increment (mouse interaction coordinator extraction)
+
+1. Added `helper.GdxGameMouseInteractionCoordinator` to encapsulate gameplay mouse interaction wiring using live state suppliers.
+2. `GdxGameScreenController` now wires `playingBridge` mouse handling through `mouseInteractionCoordinator::handle`.
+3. Removed controller-local `handleGameMouseInput(...)` method after migration.
+4. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`.
+5. Controller line count after this increment: 771.
 
 ---
 
@@ -67,11 +206,12 @@ The plan generalizes the latch into a reusable `EdgeKeyTracker` and wraps action
 - Preserve exact runtime behavior (no gameplay or visual change).
 - Keep all currently passing tests green; add new headless unit tests for every new class.
 - Update requirements docs (SR-* entries), the RTM, and the libGDX module readme.
+- Use subfolders under maze-libgdx\src\main\java\main\game\maze\libgdx
 
 ### Non-Goals
 
-- No JavaFX `GameController` refactor this round. CRR-5 parity is **preserved** because no
-  new gameplay is introduced; the equivalent JavaFX restructuring is tracked as a follow-up.
+- No JavaFX `GameController` refactor at all. CRR-5 parity is **preserved** because no
+  new gameplay is introduced; the equivalent JavaFX restructuring is not now.
 - No new gameplay features, no new keys/commands beyond what already exists.
 - No changes to shared movement/scoring/session services beyond consuming them.
 

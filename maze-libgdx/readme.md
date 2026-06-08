@@ -57,6 +57,29 @@ not static.
 The `game.*` classes deliberately avoid any `com.badlogic.gdx.*` import so
 they remain unit-testable in headless CI without a GL context.
 
+## Current refactor architecture
+
+The libGDX gameplay path now includes dedicated boundaries that reduce direct
+controller responsibilities while preserving current behavior:
+
+- Input command routing:
+	- `input.InputSnapshotReader` captures per-frame keyboard and mouse state.
+	- `input.KeyBindingRegistry` maps logical gameplay actions to key bindings.
+	- `input.InputRouter` resolves triggered actions and invokes command objects.
+	- `input.command.*` contains focused command implementations for menu return,
+		terminal toggle, high score opening, spanning tree toggle, and movement.
+- Mode update routing:
+	- `controller.state.GameModeRouter` dispatches mode handlers in deterministic order.
+	- `GdxGameScreenController` now delegates mode checks through this router.
+- Render orchestration:
+	- `render.GdxGameRenderPipeline` orchestrates world, HUD, and overlay rendering
+		through existing view classes by consuming an immutable `RenderState` snapshot.
+	- `render.GdxGameRenderCoordinator` now owns the large render-snapshot mapping step,
+		keeping `GdxGameScreenController` focused on lifecycle flow instead of render-state assembly.
+
+This keeps behavior parity intact while making future extraction of gameplay state
+and bootstrap flows lower risk.
+
 ## Enemy damage and wall blocking
 
 Combat is handled by `PlayerCombatStateService`. Each frame it checks whether any tangible enemy is within contact range of the player. Before applying damage it calls `WallCollisionUtil.wallBetween` (from the [mazeworld module](../main.game.maze.mazeworld/readme.md)) to test whether any wall separates the enemy centre from the player centre. If a wall blocks the line of sight, damage is not applied for that enemy this frame.

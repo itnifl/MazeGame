@@ -6,6 +6,7 @@ import main.game.maze.libgdx.helper.*;
 import main.game.maze.libgdx.service.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -244,7 +245,46 @@ class GdxGameRoutingTest {
     private static final class Holder<T> {
         private T value;
     }
+
+    @Test
+    void routeToHighScoresUsesLegacyPlayScreen() {
+        RecordingAssetService assets = new RecordingAssetService();
+        TestableGdxGame game = new TestableGdxGame(MazeRuntimeConfig.DEFAULT, assets, null);
+        game.create();
+
+        game.routeToHighScores();
+
+        assertInstanceOf(LegacyPlayScreenController.class, game.routedScreen,
+                "routeToHighScores() must route to a LegacyPlayScreenController");
+    }
+
+    @Test
+    void menuHighScoresDoesNotStartAGame() throws Exception {
+        RecordingAssetService assets = new RecordingAssetService();
+        TestableGdxGame game = new TestableGdxGame(MazeRuntimeConfig.DEFAULT, assets, null);
+        game.create();
+        game.routeToHighScores();
+
+        LegacyPlayScreenController screen = (LegacyPlayScreenController) game.routedScreen;
+        // Read the inner GdxGameScreenController via reflection.
+        Class<?> base = screen.getClass().getSuperclass();
+        java.lang.reflect.Field del1 = base.getDeclaredField("delegate");
+        del1.setAccessible(true);
+        Object appAdapterScreen = del1.get(screen);
+        java.lang.reflect.Field del2 = appAdapterScreen.getClass().getDeclaredField("delegate");
+        del2.setAccessible(true);
+        Object inner = del2.get(appAdapterScreen);
+        java.lang.reflect.Field autoStart = inner.getClass().getDeclaredField("autoStartOnCreate");
+        autoStart.setAccessible(true);
+        java.lang.reflect.Field immStart = inner.getClass().getDeclaredField("immediateStartOnCreate");
+        immStart.setAccessible(true);
+
+        assertFalse((boolean) autoStart.get(inner), "High-scores route must NOT set autoStartOnCreate");
+        assertFalse((boolean) immStart.get(inner), "High-scores route must NOT set immediateStartOnCreate");
+    }
 }
+
+
 
 
 
