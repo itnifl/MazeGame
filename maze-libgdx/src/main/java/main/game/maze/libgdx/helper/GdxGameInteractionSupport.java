@@ -124,10 +124,6 @@ public final class GdxGameInteractionSupport {
             float enemyPathOverlaySeconds) {
         GdxTerminalCommandSupport.Outcome outcome = GdxTerminalCommandSupport.evaluate(raw);
         debugOverlayState.applyTerminalAction(outcome.action(), enemyLabelSeconds, enemyPathOverlaySeconds);
-        if (outcome.statusSeconds() > 0f) {
-            statusMessage.accept(outcome.statusText());
-            return;
-        }
         statusMessage.accept(outcome.statusText());
     }
 

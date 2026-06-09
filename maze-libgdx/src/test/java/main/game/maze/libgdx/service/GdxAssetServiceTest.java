@@ -45,7 +45,7 @@ class GdxAssetServiceTest {
     }
 
     @Test
-    void loadingProgressDefaultsToZeroWithoutQueuedAssets() {
+    void loadingProgressDefaultsToOneWithoutQueuedAssets() {
         GdxAssetService service = new GdxAssetService();
 
         assertEquals(1f, service.loadingProgress());
