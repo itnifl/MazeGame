@@ -30,7 +30,7 @@
 
 ### Pending
 
-1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~656 lines). This is the single largest outstanding item, and reaching `< 200` is an aggressive goal that requires several further behavior-preserving increments.
+1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~568 lines). This is the single largest outstanding item, and reaching `< 200` is an aggressive goal that requires several further behavior-preserving increments.
 2. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
 
 ### Architecture Note (screen router)
@@ -45,6 +45,15 @@ legacy gameplay host being decomposed behind that router.
 
 1. Full repository `mvn test` run under Java 21 completed with `BUILD SUCCESS`.
 2. Focused libGDX regression suites used during extraction rounds are green.
+
+### 2026-06-09 Increment (composition-root assembler extraction)
+
+1. Extracted the ~85-line collaborator-wiring block from the controller constructor into a dedicated composition root, `controller.GdxGameScreenAssembler`, returning a `GdxGameCollaborators` value object holding the six wired collaborators (overlay mode coordinator, input command context, mouse interaction coordinator, playing-mode bridge, start-flow request factory, render coordinator).
+2. The assembler lives in the controller package so it reads the controller's package-private state and behavior callbacks directly. This isolates the object-graph assembly responsibility (SRP) without widening the controller API to `public` or adding accessor boilerplate. Trade-off (named cost): roughly 30 controller members move from `private` to package-private, loosening encapsulation to the package level.
+3. The controller constructor now does six plain field assignments from the returned record plus the existing binding/route configuration calls.
+4. Added `GdxGameScreenAssemblerTest` (2 tests): every collaborator is wired, and each `assemble` call yields a fresh graph.
+5. `make-libgdx.ps1 quick` is green: `BUILD SUCCESS`, 242 tests, 0 failures.
+6. Controller line count after this increment: 568 (down from 656).
 
 ### 2026-06-09 Increment (terminal keyboard processor extraction)
 
