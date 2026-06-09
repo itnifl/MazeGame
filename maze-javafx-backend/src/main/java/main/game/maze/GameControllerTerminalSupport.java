@@ -7,7 +7,7 @@ import main.game.maze.common.terminal.TerminalCommandParser;
 final class GameControllerTerminalSupport {
 
     static final String PROMPT_CONTENT_TEXT = TerminalCommandParser.HELP_TEXT;
-    static final String HELP_MESSAGE = "Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)";
+    static final String HELP_MESSAGE = "Commands: " + TerminalCommandParser.HELP_TEXT;
     static final String SHOW_BEHAVIOUR_MESSAGE = "Showing behaviour type above enemies";
     static final String SHOW_MOVEMENT_MESSAGE = "Showing movement type above enemies";
     static final String SHOW_ENEMY_PATH_MESSAGE = "Showing enemy paths for 10 seconds";

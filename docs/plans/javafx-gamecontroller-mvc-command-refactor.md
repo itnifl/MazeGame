@@ -47,7 +47,7 @@ parallel copies.
   - `GameControllerTerminalSupportTest` (3 tests)
   - `GameControllerInputSupportTest` (3 tests)
 5. Validation:
-  - Focused tests: 8/8 passing
+  - Focused tests: 6/6 passing
   - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`
 6. Controller line count snapshot after this increment: ~1867 lines.
 
