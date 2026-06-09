@@ -51,6 +51,22 @@ parallel copies.
   - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`
 6. Controller line count snapshot after this increment: ~1867 lines.
 
+### 2026-06-09 Increment Log (implemented, nr 1 follow-up)
+
+1. Added immutable JavaFX input snapshot model in `JavaFxInputFrame` with held and edge key queries plus mouse snapshot fields.
+2. Added `JavaFxInputSnapshotReader` to build frame snapshots from controller key state and consume edge-key state once per tick.
+3. Integrated snapshot flow in `GameController`:
+  - Added `edgeKeys` tracking in `handleKeyPressed`.
+  - Added per-tick `currentInputFrame` update in the movement timer.
+  - Switched movement checks from direct `pressedKeys.contains(...)` to `currentInputFrame.isHeld(...)`.
+  - Added mouse snapshot capture in `handleMouseClicked` and one-shot click consumption after snapshot read.
+4. Added unit tests:
+  - `JavaFxInputSnapshotReaderTest` (3 tests)
+5. Validation:
+  - Focused tests: `JavaFxInputSnapshotReaderTest` passing.
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`.
+6. Controller line count snapshot after this increment: ~1880 lines.
+
 ---
 
 ## 1. Motivation (concrete code smells)

@@ -162,6 +162,12 @@ public class GameController implements Initializable {
 
     // Key state tracking for smooth movement
     private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
+    private final Set<KeyCode> edgeKeys = EnumSet.noneOf(KeyCode.class);
+    private final JavaFxInputSnapshotReader inputSnapshotReader = new JavaFxInputSnapshotReader();
+    private JavaFxInputFrame currentInputFrame = JavaFxInputFrame.empty();
+    private double mouseX;
+    private double mouseY;
+    private boolean leftMouseClicked;
     private final GameControllerInputSupport.GameKeyActionSink keyActionSink = new GameControllerInputSupport.GameKeyActionSink() {
         @Override
         public void showHighScore() {
@@ -308,6 +314,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
+        edgeKeys.add(event.getCode());
         GameControllerInputSupport.handleKeyPressed(event.getCode(), pressedKeys, keyActionSink);
     }
 
@@ -606,6 +613,9 @@ public class GameController implements Initializable {
     @FXML
     private void handleMouseClicked(MouseEvent event) {
         LOGGER.fine("Game has been clicked");
+        mouseX = event.getX();
+        mouseY = event.getY();
+        leftMouseClicked = true;
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
     }
 
@@ -820,6 +830,9 @@ public class GameController implements Initializable {
                     return;
                 }
 
+                currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
+                leftMouseClicked = false;
+
                 applyRouteHintPenalty(now);
                 
                 // Throttle movement to avoid being too fast
@@ -829,19 +842,19 @@ public class GameController implements Initializable {
                 lastMoveTime = now;
                 
                 boolean moved = false;
-                if (pressedKeys.contains(KeyCode.UP)) {
+                if (currentInputFrame.isHeld(KeyCode.UP)) {
                     movePlayerUp();
                     moved = true;
                 }
-                if (pressedKeys.contains(KeyCode.DOWN)) {
+                if (currentInputFrame.isHeld(KeyCode.DOWN)) {
                     movePlayerDown();
                     moved = true;
                 }
-                if (pressedKeys.contains(KeyCode.LEFT)) {
+                if (currentInputFrame.isHeld(KeyCode.LEFT)) {
                     movePlayerLeft();
                     moved = true;
                 }
-                if (pressedKeys.contains(KeyCode.RIGHT)) {
+                if (currentInputFrame.isHeld(KeyCode.RIGHT)) {
                     movePlayerRight();
                     moved = true;
                 }
