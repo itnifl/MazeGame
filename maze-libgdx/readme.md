@@ -84,6 +84,25 @@ controller responsibilities while preserving current behavior:
 This keeps behavior parity intact while making future extraction of gameplay state
 and bootstrap flows lower risk.
 
+## Programming patterns
+
+The libGDX module applies several established design patterns to keep the
+gameplay path modular, testable, and aligned with the MVC and SOLID goals of
+the wider refactor:
+
+| Pattern | Where it is used | Purpose |
+| --- | --- | --- |
+| Model-View-Controller (MVC) | `model.GameWorldModel` (state), `view.Gdx*View` (rendering), `controller.*` (lifecycle/wiring) | Separates mutable gameplay state, drawing, and control flow so each layer can change independently. |
+| Command | `input.command.GameCommand` + implementations (`MovePlayerCommand`, `ReturnToMenuCommand`, `ToggleTerminalCommand`, `OpenHighScoresCommand`, `ToggleSpanningTreeCommand`, `ApplyPathHintCommand`) | Each logical input action is an isolated, headlessly testable object; new actions are added without editing a central dispatch switch (open/closed). |
+| Registry / Strategy | `input.KeyBindingRegistry`, `input.InputRouter` | Maps logical actions to key bindings and resolves which command to invoke per frame, removing scattered `Gdx.input` polling. |
+| Factory | `helper.GdxGamePlayingBridgeFactory`, `helper.GdxGameStartFlowRequestFactory`, `GdxGameScreenController.forHighScores(...)`, `controller.LegacyPlayScreenController.forHighScores(...)` | Centralizes construction/wiring of collaborators and start-flow requests instead of inlining it in the controller. |
+| Coordinator / Mediator | `render.GdxGameRenderCoordinator`, `controller.state.GdxOverlayModeCoordinator`, `helper.GdxGameMouseInteractionCoordinator`, `audio.GdxGameAudioCoordinator` | Each coordinator owns one cross-cutting concern (render assembly, overlay routing, mouse wiring, audio transitions) so the screen controller stays thin. |
+| Adapter | `adapter.AbstractLegacyAdapterScreen`, `adapter.ApplicationAdapterScreen`, `game.RealMaze`, `movement.GdxWorldView`, `GdxBackend` (installs libGDX impls behind shared facades) | Wraps legacy/external types behind the interfaces the rest of the code expects, enabling gradual migration and parity. |
+| State | `controller.state.GameModeRouter`, `controller.state.PlayingModeController`, `GameMode` | Per-mode update handlers are dispatched in deterministic order based on the current `GameMode`. |
+| Snapshot / Value object (immutable) | `render.RenderState`, `input.InputFrame` (Java records) | Per-frame inputs and render data are passed as immutable snapshots, avoiding shared-mutable-state bugs across the loop. |
+| Facade | `service.GdxAssetService`, shared `common-graphics` facades (`UiScheduler`, `AudioEngine`) | Hides libGDX resource/loading details behind a small surface so screens never call `new Texture(...)` directly. |
+| Singleton | `AudioEngine.get()` (shared channel routing) | One shared audio engine instance routes menu/in-game/win/game-over channels consistently across screens. |
+
 ## Enemy damage and wall blocking
 
 Combat is handled by `PlayerCombatStateService`. Each frame it checks whether any tangible enemy is within contact range of the player. Before applying damage it calls `WallCollisionUtil.wallBetween` (from the [mazeworld module](../main.game.maze.mazeworld/readme.md)) to test whether any wall separates the enemy centre from the player centre. If a wall blocks the line of sight, damage is not applied for that enemy this frame.
