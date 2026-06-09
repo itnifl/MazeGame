@@ -177,7 +177,11 @@ flowchart LR
   end
 
   subgraph Controller
-    GGS[GdxGameScreenController lifecycle host]
+    GG[GdxGame screen router]
+    MSC[MenuScreenController]
+    PSC[PlayScreenController]
+    LSC[LegacyPlayScreenController compatibility]
+    GGS[GdxGameScreenController legacy lifecycle host]
     SMI[GdxStartMenuInputController]
     MI[GdxModeInputController]
     PI[GdxPlayerInputController]
@@ -188,8 +192,16 @@ flowchart LR
     SMV[GdxStartMenuView]
     HV[GdxHudView]
     WV[GdxGameWorldView]
-    OV[GdxOverlayView]
+    HSV[GdxHighScoresOverlayView]
+    WIV[GdxWinOverlayView]
+    GOV[GdxGameOverOverlayView]
+    IFV[GdxInfectionOverlayView]
   end
+
+  GG --> MSC
+  GG --> PSC
+  GG --> LSC
+  LSC --> GGS
 
   GGS --> GS
   GGS --> RH
@@ -205,7 +217,10 @@ flowchart LR
   GGS --> SMV
   GGS --> HV
   GGS --> WV
-  GGS --> OV
+  GGS --> HSV
+  GGS --> WIV
+  GGS --> GOV
+  GGS --> IFV
 ```
 
 ## Build commands (exact)
