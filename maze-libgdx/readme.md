@@ -6,7 +6,7 @@ libGDX implementations of the facades defined in
 
 ## Status
 
-Phase 4 parity work (current): the launcher now opens a retro start menu,
+Phase 4 parity work (completed): the launcher now opens a retro start menu,
 lets the player choose difficulty from the shared EMF model, then builds a
 matching arena size and starts gameplay with visible score and command HUD.
 The runtime uses the shared `RealMaze` adapter for walls plus model-derived
@@ -30,6 +30,8 @@ not static.
 - Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze-javafx-backend readme](../maze-javafx-backend/readme.md) for the equivalent JavaFX implementation.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
 - High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
+- Start menu can open high scores directly without starting a game session (`GdxGame.routeToHighScores()` via `LegacyPlayScreenController.forHighScores(...)`).
+- High score overlay rendering now has two explicit paths: it renders on a cleared background when no world is active (opened from start menu), and renders on top of the active world plus HUD when opened during gameplay.
 - Win state shows completion text and allows returning to start menu (`ESC`).
 - `ESC` while in overlays (help, high score, controls) returns to gameplay first, then start menu only from gameplay state.
 - Menu music and menu selection sound are optional; if files are missing the game continues without audio failures.
@@ -39,8 +41,11 @@ not static.
 
 | Class | Purpose |
 | --- | --- |
-| `GdxAppLauncher` | `main()` that boots `Lwjgl3Application` with `GdxGameScreen`. |
-| `GdxGameScreen` | `ApplicationAdapter` that owns the camera, batch, shape renderer, font, and per-frame update + draw. |
+| `GdxAppLauncher` | `main()` that boots `Lwjgl3Application` with `GdxGame` as screen router root. |
+| `GdxGame` | `Game` root that owns shared runtime context and routes between menu, play, and compatibility screens. |
+| `GdxGameScreenController` | Legacy gameplay `ApplicationAdapter` still used through a compatibility screen while extraction continues. |
+| `DifficultyBoardConfig` | Dedicated board dimension and board-size label policy per selected difficulty. |
+| `DifficultyPresentationSupport` (shared backend) | Shared difficulty display-name and board dimension policy used by libGDX and JavaFX. |
 | `game.MazeArena` | Pure-Java arena facade (walls, start, goal, pixel dimensions) implemented by both maze backends. |
 | `game.SampleMaze` | Pure-Java maze generator (no libGDX deps); produces the immutable wall list. |
 | `game.RealMaze` | Pure-Java `MazeArena` adapter over the shared `GameMazeWorld` (Phase 3, F11). |
@@ -53,6 +58,53 @@ not static.
 
 The `game.*` classes deliberately avoid any `com.badlogic.gdx.*` import so
 they remain unit-testable in headless CI without a GL context.
+
+## Current refactor architecture
+
+The libGDX gameplay path now includes dedicated boundaries that reduce direct
+controller responsibilities while preserving current behavior:
+
+- Input command routing:
+	- `input.InputSnapshotReader` captures per-frame keyboard and mouse state.
+	- `input.KeyBindingRegistry` maps logical gameplay actions to key bindings.
+	- `input.InputRouter` resolves triggered actions and invokes command objects.
+	- `input.command.*` contains focused command implementations for menu return,
+		terminal toggle, high score opening, spanning tree toggle, and movement.
+- Mode update routing:
+	- `controller.state.GameModeRouter` dispatches mode handlers in deterministic order.
+	- `GdxGameScreenController` now delegates mode checks through this router.
+- Render orchestration:
+	- `render.GdxGameRenderPipeline` orchestrates world, HUD, and overlay rendering
+		through existing view classes by consuming an immutable `RenderState` snapshot.
+	- The high-score branch in `render.GdxGameRenderPipeline` handles both start-menu and in-game overlay contexts to avoid blank-screen regressions and to preserve semi-transparent overlay composition.
+	- `render.GdxGameRenderCoordinator` now owns the large render-snapshot mapping step,
+		keeping `GdxGameScreenController` focused on lifecycle flow instead of render-state assembly.
+	- `helper.GdxGameInteractionSupport.executeTerminalCommand(...)` now applies terminal outcomes and forwards status text through one unified status-message call path.
+
+This keeps behavior parity intact while making future extraction of gameplay state
+and bootstrap flows lower risk.
+
+## Programming patterns
+
+The libGDX module applies several established design patterns to keep the
+gameplay path modular, testable, and aligned with the MVC and SOLID goals of
+the wider refactor:
+
+| Pattern | Where it is used | Purpose |
+| --- | --- | --- |
+| Model-View-Controller (MVC) | `model.GameWorldModel` (state), `view.Gdx*View` (rendering), `controller.*` (lifecycle/wiring) | Separates mutable gameplay state, drawing, and control flow so each layer can change independently. |
+| Command | `input.command.GameCommand` + implementations (`MovePlayerCommand`, `ReturnToMenuCommand`, `ToggleTerminalCommand`, `OpenHighScoresCommand`, `ToggleSpanningTreeCommand`, `ApplyPathHintCommand`) | Each logical input action is an isolated, headlessly testable object; new actions are added without editing a central dispatch switch (open/closed). |
+| Registry / Strategy | `input.KeyBindingRegistry`, `input.InputRouter`, `helper.GdxGameInputBindingsSupport` | Maps logical actions to key bindings, registers their commands, and builds the platform keyboard `InputProcessor`, removing scattered `Gdx.input` polling and inline input wiring from the controller. |
+| Factory | `helper.GdxGamePlayingBridgeFactory`, `helper.GdxGameStartFlowRequestFactory`, `GdxGameScreenController.forHighScores(...)`, `controller.LegacyPlayScreenController.forHighScores(...)` | Centralizes construction/wiring of collaborators and start-flow requests instead of inlining it in the controller. |
+| Builder / parameter object (immutable) | `controller.GdxGameScreenOptions` + its `Builder` | Replaces the previous `GdxGameScreenController` telescoping-constructor chain (SR-41); self-documenting builder calls supply arena, runtime config, asset-service ownership, start/overlay flags, return-to-menu action, and forced difficulty through one canonical constructor. |
+| Pure helper / metrics value object | `controller.GdxGameScreenMetrics` (+ its `GameStripBounds` record), `render.GdxGameRenderConstants` | Hold the screen's stateless layout geometry, HUD bar sizing, death-display timing, JavaFX speed-parity factor, and render tuning values outside the controller (SRP), so they are unit-testable in isolation and the controller stays thinner. |
+| Composition root | `controller.GdxGameScreenAssembler` (+ its `GdxGameCollaborators` record) | Owns the collaborator object-graph assembly that used to live inline in the controller constructor; builds the overlay / input / mouse / playing-bridge / start-flow / render collaborators and returns them as one value object, keeping the constructor down to plain field assignments (SRP). |
+| Coordinator / Mediator | `render.GdxGameRenderCoordinator`, `controller.state.GdxOverlayModeCoordinator`, `helper.GdxGameMouseInteractionCoordinator`, `audio.GdxGameAudioCoordinator` | Each coordinator owns one cross-cutting concern (render assembly, overlay routing, mouse wiring, audio transitions) so the screen controller stays thin. |
+| Adapter | `adapter.AbstractLegacyAdapterScreen`, `adapter.ApplicationAdapterScreen`, `game.RealMaze`, `movement.GdxWorldView`, `GdxBackend` (installs libGDX impls behind shared facades) | Wraps legacy/external types behind the interfaces the rest of the code expects, enabling gradual migration and parity. |
+| State | `controller.state.GameModeRouter`, `controller.state.PlayingModeController`, `GameMode` | Per-mode update handlers are dispatched in deterministic order based on the current `GameMode`. |
+| Snapshot / Value object (immutable) | `render.RenderState`, `input.InputFrame` (Java records) | Per-frame inputs and render data are passed as immutable snapshots, avoiding shared-mutable-state bugs across the loop. |
+| Facade | `service.GdxAssetService`, shared `common-graphics` facades (`UiScheduler`, `AudioEngine`) | Hides libGDX resource/loading details behind a small surface so screens never call `new Texture(...)` directly. |
+| Singleton | `AudioEngine.get()` (shared channel routing) | One shared audio engine instance routes menu/in-game/win/game-over channels consistently across screens. |
 
 ## Enemy damage and wall blocking
 

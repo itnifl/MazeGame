@@ -1,5 +1,9 @@
 package main.game.maze.libgdx;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

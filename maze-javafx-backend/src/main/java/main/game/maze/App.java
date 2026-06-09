@@ -23,10 +23,9 @@ import main.game.maze.mazeworld.constants.StageConstants;
 
 // NEW imports:
 import main.game.maze.service.DifficultyService;
+import main.game.maze.service.DifficultyPresentationSupport;
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.difficulties.HardDifficulty;
-import main.game.maze.difficulties.NormalDifficulty;
 import main.game.maze.opponents.OpponentsPackage;
 import main.game.maze.runtime.OclBootstrap;
 import main.game.maze.javafx.JavaFxBackend;
@@ -107,23 +106,11 @@ public class App extends Application {
     }
 
     public static int getBoardMaxX() {
-        if (App.lastChosenDifficulty instanceof HardDifficulty) {
-            return StageConstants.BoardMaxXLarge;
-        } else if (App.lastChosenDifficulty instanceof NormalDifficulty) {
-            return StageConstants.BoardMaxXMedium;
-        } else {
-            return StageConstants.BoardMaxX;
-        }
+        return DifficultyPresentationSupport.boardWidth(App.lastChosenDifficulty);
     }
 
     public static int getBoardMaxY() {
-        if (App.lastChosenDifficulty instanceof HardDifficulty) {
-            return StageConstants.BoardMaxYLarge;
-        } else if (App.lastChosenDifficulty instanceof NormalDifficulty) {
-            return StageConstants.BoardMaxYMedium;
-        } else {
-            return StageConstants.BoardMaxY;
-        }
+        return DifficultyPresentationSupport.boardHeight(App.lastChosenDifficulty);
     }
 
 
@@ -214,9 +201,7 @@ public class App extends Application {
 
     // Helper to show clean names (Easy/Normal/Hard) directly from the model type
     public static String displayName(Difficulty d) {
-        if (d == null) return "";
-        String n = d.eClass().getName(); // e.g., NormalDifficulty
-        return n.endsWith("Difficulty") ? n.substring(0, n.length() - 10) : n;
+        return DifficultyPresentationSupport.displayName(d);
     }
 
     private void shutdownResources() {

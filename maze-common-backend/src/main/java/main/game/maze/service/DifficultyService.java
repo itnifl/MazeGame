@@ -16,13 +16,14 @@ import org.eclipse.emf.ecore.util.BasicExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
+import main.game.maze.constants.DifficultyResourceConstants;
 import main.game.maze.difficulties.DifficultiesPackage;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.DifficultyGameData;
 
 public final class DifficultyService {
     private static final Logger LOGGER = Logger.getLogger(DifficultyService.class.getName());
-    private static final String DIFFICULTIES_XMI = "/xmi/difficulties/difficulties.xmi";
+    private static final String DIFFICULTIES_XMI = DifficultyResourceConstants.DifficultiesXmiPath;
     private final DifficultyGameData data;
 
     public DifficultyService() {

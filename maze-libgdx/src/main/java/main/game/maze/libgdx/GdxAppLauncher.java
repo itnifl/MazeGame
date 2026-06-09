@@ -10,8 +10,7 @@ import main.game.maze.common.graphics.config.MazeConfigLoader;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeConfigLoader;
-import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
-import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.runtime.OclBootstrap;
 
 /**
@@ -48,7 +47,7 @@ public final class GdxAppLauncher {
             : style.menuIconImagePath();
         appConfig.setWindowIcon(iconPath);
 
-        new Lwjgl3Application(new GdxGameScreen(null, cfg), appConfig);
+        new Lwjgl3Application(new GdxGame(cfg), appConfig);
     }
 
     static MazeRuntimeConfig loadOrDefault() {
@@ -62,16 +61,10 @@ public final class GdxAppLauncher {
     }
 
     private static MazeVisualStyleConfig loadStyleOrDefault() {
-        try {
-            return new XmiMazeVisualStyleLoader().load();
-        } catch (RuntimeException ex) {
-            try {
-                return new PropertiesMazeVisualStyleLoader().load();
-            } catch (RuntimeException fallbackEx) {
-                LOGGER.log(Level.WARNING,
-                    "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT", fallbackEx);
-                return MazeVisualStyleConfig.DEFAULT;
-            }
-        }
+        return GdxVisualStyleSupport.loadOrDefault(
+                () -> new main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader().load(),
+                () -> new main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader().load(),
+                () -> LOGGER.log(Level.WARNING,
+                        "Failed to load visual style config; falling back to MazeVisualStyleConfig.DEFAULT"));
     }
 }

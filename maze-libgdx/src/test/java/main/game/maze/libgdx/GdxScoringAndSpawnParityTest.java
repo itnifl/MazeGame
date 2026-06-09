@@ -1,5 +1,9 @@
 package main.game.maze.libgdx;
 
+import main.game.maze.libgdx.adapter.*;
+import main.game.maze.libgdx.controller.*;
+import main.game.maze.libgdx.helper.*;
+import main.game.maze.libgdx.service.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Method;
@@ -26,8 +30,12 @@ class GdxScoringAndSpawnParityTest {
 
     @Test
     void libgdxBaseScoreUsesSharedConstantsForAllDifficulties() throws Exception {
-        GdxGameScreen screen = new GdxGameScreen(null, 48f, 16, 12, 160f, true);
-        Method m = GdxGameScreen.class.getDeclaredMethod("baseScoreForDifficulty", Difficulty.class);
+        GdxGameScreenController screen = new GdxGameScreenController(
+                GdxGameScreenOptions.builder()
+                        .cellSize(48f)
+                        .useRealMaze(true)
+                        .build());
+        Method m = GdxGameScreenController.class.getDeclaredMethod("baseScoreForDifficulty", Difficulty.class);
         m.setAccessible(true);
 
         for (Difficulty d : new Difficulty[] {

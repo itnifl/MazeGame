@@ -44,4 +44,3 @@ public class DifficultiesModelSmokeTest {
     assertEquals(Diagnostic.OK, diag2.getSeverity(), () -> "Validation failed: " + diag2);
   }
 }
-
