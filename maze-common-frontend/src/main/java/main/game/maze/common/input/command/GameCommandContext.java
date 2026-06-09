@@ -1,7 +1,8 @@
-package main.game.maze.libgdx.input.command;
+package main.game.maze.common.input.command;
 
 /**
  * Minimal command-facing facade over game state and side effects.
+ * Frontend-neutral; both libGDX and JavaFX command contexts implement this interface.
  */
 public interface GameCommandContext {
 

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.EnumSet;
 import java.util.Set;
 import javafx.scene.input.KeyCode;
+import main.game.maze.common.input.InputFrame;
 import org.junit.jupiter.api.Test;
 
 class JavaFxInputSnapshotReaderTest {
@@ -17,7 +18,7 @@ class JavaFxInputSnapshotReaderTest {
         Set<KeyCode> held = EnumSet.of(KeyCode.UP, KeyCode.LEFT);
         Set<KeyCode> edge = EnumSet.of(KeyCode.H, KeyCode.P);
 
-        JavaFxInputFrame frame = reader.read(held, edge, 12.5, 42.25, true);
+        InputFrame<KeyCode> frame = reader.read(held, edge, 12.5, 42.25, true);
 
         assertTrue(frame.isHeld(KeyCode.UP));
         assertTrue(frame.isHeld(KeyCode.LEFT));
@@ -34,7 +35,7 @@ class JavaFxInputSnapshotReaderTest {
         Set<KeyCode> held = EnumSet.noneOf(KeyCode.class);
         Set<KeyCode> edge = EnumSet.of(KeyCode.ESCAPE);
 
-        JavaFxInputFrame frame = reader.read(held, edge, 0d, 0d, false);
+        InputFrame<KeyCode> frame = reader.read(held, edge, 0d, 0d, false);
 
         assertTrue(frame.isEdge(KeyCode.ESCAPE));
         assertTrue(edge.isEmpty(), "edge source set should be consumed after snapshot");
@@ -46,7 +47,7 @@ class JavaFxInputSnapshotReaderTest {
         Set<KeyCode> held = EnumSet.of(KeyCode.RIGHT);
         Set<KeyCode> edge = EnumSet.of(KeyCode.O);
 
-        JavaFxInputFrame frame = reader.read(held, edge, 1d, 2d, false);
+        InputFrame<KeyCode> frame = reader.read(held, edge, 1d, 2d, false);
         held.clear();
 
         assertTrue(frame.isHeld(KeyCode.RIGHT));

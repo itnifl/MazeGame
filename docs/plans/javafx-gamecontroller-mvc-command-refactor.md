@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 3 partial)
+**Status:** In progress (Phase 0 complete; Phase 3 partial)
 **Branch (planned):** `feature/refactorJavafxForStandardImplementation`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Date:** 2026-06-09
@@ -88,7 +88,47 @@ Note: this small line-count reduction is expected in a behavior-preserving extra
 
 This increment is a direct preparatory step toward SR-43 and the Phase 3 Command + Registry architecture; routing still terminates in existing `GameController` side-effect sinks to preserve behavior while responsibilities are peeled away incrementally.
 
+### 2026-06-09 Increment Log (implemented, Phase 0 shared input core promotion)
+
+This increment implements **Phase 0** (the Section 4 shared promotion strategy) for real, and
+resolves the SR-42 design decision: the shared core uses **concrete generic classes consumed
+directly** (parameterized on the physical key type `K`), not subclassing and not a neutral
+`int` + adapter. The earlier discarded spike failed because it tried to make per-frontend
+classes *extend* the shared classes, but the shared classes are `final`.
+
+1. Promoted the input core into `maze-common-frontend` under `main.game.maze.common.input`:
+  - `GameAction` (neutral enum), `KeyBindingRegistry<K>` (with `BindingKind`, `KeyBinding<K>`,
+    `trackedKeys()`), `InputFrame<K>` (held/edge keys, mouse x/y as `double`, left click),
+    `InputRouter<K>`, `EdgeKeyTracker<K>`.
+  - `main.game.maze.common.input.command`: `GameCommand<K>`
+    (`execute(GameCommandContext, InputFrame<K>)`) and neutral `GameCommandContext`.
+2. Migrated libGDX to consume the shared types with `K = Integer`:
+  - Deleted the libGDX-local `input` core copies and their duplicate tests.
+  - `InputSnapshotReader` now returns `InputFrame<Integer>` using the shared
+    `EdgeKeyTracker<Integer>`; `LibgdxInputCommandContext implements` the shared
+    `GameCommandContext`; command classes implement `GameCommand<Integer>`.
+  - Helpers parameterized on `Integer` (`GdxGameInputBindingsSupport`,
+    `GdxGameFrameStateSupport` using `trackedKeys()`, `GdxGameInteractionSupport` casting
+    `double` mouse to `float` at its three call sites, `GdxGamePlayingBridgeFactory`,
+    `GdxGameMouseInteractionCoordinator`, `GdxGameUpdateFlowSupport`,
+    `GdxGameScreenController`).
+3. Wired JavaFX to consume the shared core with `K = javafx.scene.input.KeyCode`:
+  - `JavaFxInputSnapshotReader` now produces the shared `InputFrame<KeyCode>`.
+  - Removed the JavaFX-local `JavaFxInputFrame` record; `GameController` movement polling
+    now uses `InputFrame<KeyCode>` directly.
+  - Full JavaFX `KeyBindingRegistry`/`InputRouter` dispatch is intentionally deferred to
+    Phase 3 (the JavaFX action set does not map 1:1 to `GameCommandContext` yet).
+4. Tests:
+  - Shared: `EdgeKeyTrackerTest`, `KeyBindingRegistryTest`, `InputRouterTest` moved to
+    `maze-common-frontend` (each also covers a non-`Integer` key type).
+  - JavaFX: `JavaFxInputSnapshotReaderTest` updated to the shared `InputFrame<KeyCode>`.
+5. Validation:
+  - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
+  - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
+  - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
 ---
+
 
 ## 1. Motivation (concrete code smells)
 

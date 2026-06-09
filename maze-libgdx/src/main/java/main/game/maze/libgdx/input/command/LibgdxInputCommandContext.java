@@ -2,6 +2,7 @@ package main.game.maze.libgdx.input.command;
 
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
+import main.game.maze.common.input.command.GameCommandContext;
 
 /**
  * Functional adapter for libGDX command handling with per-frame lifecycle.

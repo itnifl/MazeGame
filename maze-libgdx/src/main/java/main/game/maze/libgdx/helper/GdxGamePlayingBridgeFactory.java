@@ -5,10 +5,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.controller.GdxTerminalController;
 import main.game.maze.libgdx.controller.state.LibgdxPlayingBridge;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
-import main.game.maze.libgdx.input.InputFrame;
 
 /**
  * Creates the playing-mode bridge wiring so the controller constructor stays compact.
@@ -20,10 +20,10 @@ public final class GdxGamePlayingBridgeFactory {
 
     public static LibgdxPlayingBridge create(
             GdxTerminalController terminalController,
-            Supplier<InputFrame> inputFrameSupplier,
+            Supplier<InputFrame<Integer>> inputFrameSupplier,
             Runnable returnToMenu,
             PlayerCombatStateService combatState,
-            Consumer<InputFrame> handleMouseInput,
+            Consumer<InputFrame<Integer>> handleMouseInput,
             Consumer<String> flashStatus,
             Function<Float, Boolean> routeGameplayInput,
             Consumer<Float> advanceAnimationClock,

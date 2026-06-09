@@ -1,7 +1,8 @@
-package main.game.maze.libgdx.input;
+package main.game.maze.common.input;
 
 /**
- * Logical actions produced from key bindings.
+ * Logical game actions produced from key bindings.
+ * Frontend-neutral; both libGDX and JavaFX frontends consume this enum.
  */
 public enum GameAction {
     RETURN_TO_MENU,

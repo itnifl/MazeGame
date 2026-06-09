@@ -72,6 +72,7 @@ import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
+import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.ActivePathPoint;
@@ -164,7 +165,7 @@ public class GameController implements Initializable {
     private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
     private final Set<KeyCode> edgeKeys = EnumSet.noneOf(KeyCode.class);
     private final JavaFxInputSnapshotReader inputSnapshotReader = new JavaFxInputSnapshotReader();
-    private JavaFxInputFrame currentInputFrame = JavaFxInputFrame.empty();
+    private InputFrame<KeyCode> currentInputFrame = new InputFrame<>(Set.of(), Set.of(), 0d, 0d, false);
     private double mouseX;
     private double mouseY;
     private boolean leftMouseClicked;

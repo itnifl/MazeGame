@@ -38,7 +38,7 @@ JavaFX controller decomposition is in progress to mirror the libGDX MVC plus com
 
 - terminal command parsing and dispatch are extracted into `GameControllerTerminalSupport`
 - keyboard action dispatch is extracted into `GameControllerInputSupport`
-- immutable per tick key and mouse snapshots are provided by `JavaFxInputFrame` and `JavaFxInputSnapshotReader`
+- immutable per tick key and mouse snapshots are provided by the shared generic `InputFrame<KeyCode>` (in `maze-common-frontend` under `main.game.maze.common.input`), built by `JavaFxInputSnapshotReader`
 - first command objects are routed through `JavaFxGameCommand` and `JavaFxInputCommandContext`
 
 Current extraction steps preserve behavior by routing side effects back into `GameController` through small sink interfaces. This keeps gameplay and threading behavior stable while controller ownership is reduced incrementally.

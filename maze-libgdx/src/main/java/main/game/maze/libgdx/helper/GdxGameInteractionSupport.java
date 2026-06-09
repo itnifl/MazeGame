@@ -8,9 +8,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.controller.GdxHudInteractionStateController;
 import main.game.maze.libgdx.controller.GdxTerminalController;
-import main.game.maze.libgdx.input.InputFrame;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.mazeworld.generators.MazeArena;
@@ -28,7 +28,7 @@ public final class GdxGameInteractionSupport {
     }
 
     public static void handleGameMouseInput(
-            InputFrame inputFrame,
+            InputFrame<Integer> inputFrame,
             HudLayout hudLayout,
             float hudViewportHeight,
             GdxHudInteractionStateController hudInteractionState,
@@ -45,8 +45,8 @@ public final class GdxGameInteractionSupport {
         if (!inputFrame.leftMouseClicked()) {
             return;
         }
-        float mx = inputFrame.mouseX();
-        float my = hudViewportHeight - inputFrame.mouseY();
+        float mx = (float) inputFrame.mouseX();
+        float my = hudViewportHeight - (float) inputFrame.mouseY();
 
         if (contains(mx, my, hudLayout.commandButtonX(), hudLayout.commandButtonY(), hudLayout.commandButtonW(), hudLayout.commandButtonH())) {
             hudInteractionState.pressCommandsButton(BUTTON_PRESS_SECONDS);
@@ -69,7 +69,7 @@ public final class GdxGameInteractionSupport {
         }
 
         if (player != null && viewport != null) {
-            Vector3 worldClick = new Vector3(inputFrame.mouseX(), inputFrame.mouseY(), 0f);
+            Vector3 worldClick = new Vector3((float) inputFrame.mouseX(), (float) inputFrame.mouseY(), 0f);
             viewport.unproject(worldClick);
             float vx = worldClick.x - player.x();
             float vy = worldClick.y - player.y();
