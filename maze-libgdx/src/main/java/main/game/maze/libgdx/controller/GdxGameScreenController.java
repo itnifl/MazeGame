@@ -3,7 +3,6 @@ package main.game.maze.libgdx.controller;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -370,15 +369,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
      * Input.Keys.* constants map only US-layout ASCII.
      */
     private void installTerminalKeyboardProcessor() {
-        Gdx.input.setInputProcessor(new InputAdapter() {
-            @Override
-            public boolean keyTyped(char character) {
-                if (session.mode() == GameMode.WON && !session.winScoreSaved()) {
-                    return winOverlayController.onKeyTyped(character, WIN_NAME_MAX_CHARS);
-                }
-                return terminalController.onKeyTyped(character);
-            }
-        });
+        Gdx.input.setInputProcessor(GdxGameInputBindingsSupport.createTerminalKeyboardProcessor(
+                () -> session.mode() == GameMode.WON && !session.winScoreSaved(),
+                character -> winOverlayController.onKeyTyped((char) character, WIN_NAME_MAX_CHARS),
+                character -> terminalController.onKeyTyped((char) character)));
     }
 
     @Override

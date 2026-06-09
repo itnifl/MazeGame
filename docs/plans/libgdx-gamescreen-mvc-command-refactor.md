@@ -30,7 +30,7 @@
 
 ### Pending
 
-1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~662 lines). This is the single largest outstanding item, and reaching `< 200` is an aggressive goal that requires several further behavior-preserving increments.
+1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~656 lines). This is the single largest outstanding item, and reaching `< 200` is an aggressive goal that requires several further behavior-preserving increments.
 2. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
 
 ### Architecture Note (screen router)
@@ -45,6 +45,14 @@ legacy gameplay host being decomposed behind that router.
 
 1. Full repository `mvn test` run under Java 21 completed with `BUILD SUCCESS`.
 2. Focused libGDX regression suites used during extraction rounds are green.
+
+### 2026-06-09 Increment (terminal keyboard processor extraction)
+
+1. Moved the platform keyboard `InputProcessor` construction (the `keyTyped` win-name vs terminal routing) out of the controller into `helper.GdxGameInputBindingsSupport.createTerminalKeyboardProcessor(...)`, taking a capture predicate plus two `IntPredicate` char consumers, so the input concern lives in the input-support class.
+2. Replaced the controller's anonymous `InputAdapter` with a single factory call and removed the now-unused `InputAdapter` import.
+3. Added `GdxGameInputBindingsSupportTest` (3 tests) covering win-name routing, terminal routing, and per-keystroke re-evaluation of the capture predicate.
+4. `make-libgdx.ps1 quick` is green: `BUILD SUCCESS`, 240 tests, 0 failures.
+5. Controller line count after this increment: 656 (down from 662).
 
 ### 2026-06-09 Increment (render-constants extraction)
 

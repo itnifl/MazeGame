@@ -1,6 +1,10 @@
 package main.game.maze.libgdx.helper;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntPredicate;
 import main.game.maze.libgdx.input.GameAction;
 import main.game.maze.libgdx.input.KeyBindingRegistry;
 import main.game.maze.libgdx.input.KeyBindingRegistry.BindingKind;
@@ -38,5 +42,31 @@ public final class GdxGameInputBindingsSupport {
                 .bind(GameAction.MOVE_PLAYER, Input.Keys.UP, BindingKind.HELD)
                 .bind(GameAction.MOVE_PLAYER, Input.Keys.W, BindingKind.HELD)
                 .command(GameAction.MOVE_PLAYER, new MovePlayerCommand());
+    }
+
+    /**
+     * Builds the platform keyboard {@link InputProcessor} that feeds typed
+     * characters to the right consumer. The OS-localized keyboard layout drives
+     * {@code keyTyped}, so this is how æ/ø/å and accented letters reach the
+     * terminal and win-name fields (libGDX {@code Input.Keys.*} constants map
+     * only US-layout ASCII).
+     *
+     * @param captureWinName  true when typed chars should go to the win-name field
+     * @param onWinNameChar   consumes a typed char as the win name; returns whether it was handled
+     * @param onTerminalChar  consumes a typed char as terminal input; returns whether it was handled
+     */
+    public static InputProcessor createTerminalKeyboardProcessor(
+            BooleanSupplier captureWinName,
+            IntPredicate onWinNameChar,
+            IntPredicate onTerminalChar) {
+        return new InputAdapter() {
+            @Override
+            public boolean keyTyped(char character) {
+                if (captureWinName.getAsBoolean()) {
+                    return onWinNameChar.test(character);
+                }
+                return onTerminalChar.test(character);
+            }
+        };
     }
 }
