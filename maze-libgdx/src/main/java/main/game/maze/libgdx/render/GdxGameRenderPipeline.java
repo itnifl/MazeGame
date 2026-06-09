@@ -41,13 +41,13 @@ public final class GdxGameRenderPipeline {
         ScreenUtils.clear(0.07f, 0.07f, 0.12f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        boolean worldAvailable = state.maze() != null && state.player() != null && state.viewport() != null;
+        boolean worldAvailable = hasRenderableWorld(state.maze(), state.player(), state.viewport());
 
         // High scores can be opened from the start menu with no active world. In that
         // case render the (semi-transparent) overlay against the cleared background.
         // When a world IS available (high scores opened mid-game), fall through to the
         // normal path so the world and HUD remain visible behind the overlay.
-        if (state.session().mode() == GameMode.HIGH_SCORES && !worldAvailable) {
+        if (isHighScoresOnlyOverlay(state.session().mode(), worldAvailable)) {
             applyFullWindowGlViewport();
             drawHighScoresOverlayIfNeeded(state);
             return state.hudLayout();
@@ -218,6 +218,23 @@ public final class GdxGameRenderPipeline {
         Gdx.gl.glViewport(0, 0,
                 Math.max(1, Gdx.graphics.getBackBufferWidth()),
                 Math.max(1, Gdx.graphics.getBackBufferHeight()));
+    }
+
+    /**
+     * Pure decision: a gameplay world can only be drawn when the maze, player,
+     * and viewport are all present. Extracted for headless unit testing.
+     */
+    static boolean hasRenderableWorld(MazeArena maze, PlayerState player, Viewport viewport) {
+        return maze != null && player != null && viewport != null;
+    }
+
+    /**
+     * Pure decision: the high-scores overlay is rendered on its own (against the
+     * cleared background) only when high-scores mode is active and no gameplay
+     * world is available. Extracted for headless unit testing.
+     */
+    static boolean isHighScoresOnlyOverlay(GameMode mode, boolean hasRenderableWorld) {
+        return mode == GameMode.HIGH_SCORES && !hasRenderableWorld;
     }
 
     public record RenderState(

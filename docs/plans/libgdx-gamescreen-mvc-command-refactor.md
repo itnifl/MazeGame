@@ -4,7 +4,7 @@
 **Branch:** `feature/refactorLibgdxForStandardImplementation`
 **Scope:** libGDX module only this round 
 **Date:** 2026-06-06
-**Last Updated:** 2026-06-08
+**Last Updated:** 2026-06-09
 
 ## 0. Execution Status Log
 
@@ -18,11 +18,29 @@
 6. Parity compatibility seams were preserved or restored where reflection based tests required them.
 7. Requirements traceability updates were applied in `docs/requirements-features/requirements-traceability-matrix.md`.
 
+### Phase Completion Markers
+
+| Phase | Title | Status |
+|-------|-------|--------|
+| Phase 1 | Model extraction (`GameWorldModel`, `GameSessionBootstrapper`) | Done (with `GameWorldModelTest`, `GameSessionBootstrapperTest`) |
+| Phase 2 | Render pipeline (`GdxGameRenderPipeline` + coordinator) | Done (with `GdxGameRenderPipelineTest` over pure decision helpers) |
+| Phase 3 | Command + registry input system | Done (with `EdgeKeyTrackerTest`, `KeyBindingRegistryTest`, `InputRouterTest`) |
+| Phase 4 | Per-mode state machine + slim coordinator | Partial — router/`PlayingModeController`/`GdxGameAudioCoordinator` done; coordinator still above `< 200` lines |
+| Phase 5 | Documentation, requirements, RTM | Done — SR-35..41 in suggested-requirements, RTM rows updated, readmes refreshed |
+
 ### Pending
 
-1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains significantly above the `< 200` line target.
-2. Phase level completion markers are not yet formalized in this file.
-3. Follow up structural cleanup is still needed before this plan can be marked fully completed.
+1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~794 lines). This is the single largest outstanding item.
+2. Telescoping-constructor chain on `GdxGameScreenController` (consecutive boolean flags) is tracked as SR-41 and not yet migrated to a builder/options object.
+3. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
+
+### Architecture Note (screen router)
+
+Since this plan was first written, screen routing was introduced: `GdxGame` (libGDX `Game`
+root) now routes between `MenuScreenController`, `PlayingModeController`, and a
+`LegacyPlayScreenController` that hosts `GdxGameScreenController`. The original assumption
+that `GdxGameScreenController` is the sole lifecycle root no longer holds; it is now the
+legacy gameplay host being decomposed behind that router.
 
 ### Validation Snapshot
 
@@ -143,6 +161,15 @@
 3. Removed controller-local `handleGameMouseInput(...)` method after migration.
 4. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`.
 5. Controller line count after this increment: 771.
+
+### 2026-06-09 Increment (missing collaborator tests + render decision extraction)
+
+1. Added `GdxGameAudioCoordinatorTest` (SR-40) using a recording `IAudioEngine` fake to assert in-game/win/game-over/menu music routing and `stopAll` channel coverage.
+2. Added `GameSessionBootstrapperTest` (SR-39) using the production `RuntimeVisualModelLoader` with a provided maze, asserting runtime-state computation plus session, world-model, and collaborator resets.
+3. Extracted two pure, package-private static decisions in `GdxGameRenderPipeline` (`hasRenderableWorld(...)`, `isHighScoresOnlyOverlay(...)`) so the GL-bound `render(...)` routing logic becomes headless-testable; behavior unchanged.
+4. Added `GdxGameRenderPipelineTest` (SR-37) covering those decision helpers.
+5. Updated the requirements traceability matrix rows SR-36..40 from "planned" to the implemented collaborators and added SR-41 (telescoping-constructor code smell).
+6. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`; libGDX suite at 229 tests green.
 
 ---
 
