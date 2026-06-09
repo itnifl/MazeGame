@@ -18,7 +18,7 @@ class GdxGameScreenParityTest {
 
     @Test
     void playerSpeedMatchesJavaFxTickModel() {
-        assertEquals(300f, GdxGameScreenController.toJavaFxLikeSpeed(10f), 0.001f);
+        assertEquals(300f, GdxGameScreenMetrics.toJavaFxLikeSpeed(10f), 0.001f);
     }
 
     @Test
@@ -52,12 +52,12 @@ class GdxGameScreenParityTest {
         EnemySpawn nonInfectious = new EnemySpawn("a", "/a.png", 10f, 10f, 20f, 1f, 1, 0, "", 1f);
         EnemySpawn infectious = new EnemySpawn("b", "/b.png", 10f, 10f, 20f, 1f, 1, 25, "", 1f);
 
-        assertFalse(GdxGameScreenController.isInfectious(nonInfectious));
-        assertTrue(GdxGameScreenController.isInfectious(infectious));
+        assertFalse(GdxGameScreenMetrics.isInfectious(nonInfectious));
+        assertTrue(GdxGameScreenMetrics.isInfectious(infectious));
     }
 
     @Test
     void deathDisplayDelayMatchesJavaFxRule() {
-        assertEquals(3f, GdxGameScreenController.deathDisplayDelaySeconds(), 0.001f);
+        assertEquals(3f, GdxGameScreenMetrics.deathDisplayDelaySeconds(), 0.001f);
     }
 }

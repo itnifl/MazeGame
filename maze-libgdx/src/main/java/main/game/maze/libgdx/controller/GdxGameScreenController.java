@@ -60,9 +60,9 @@ import main.game.maze.libgdx.input.InputSnapshotReader;
 import main.game.maze.libgdx.input.KeyBindingRegistry;
 import main.game.maze.libgdx.input.command.LibgdxInputCommandContext;
 import main.game.maze.libgdx.lifecycle.GameSessionStartFlowCoordinator;
-import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.model.RuntimeVisualModelLoader;
+import main.game.maze.libgdx.render.GdxGameRenderConstants;
 import main.game.maze.libgdx.render.GdxGameRenderCoordinator;
 import main.game.maze.libgdx.service.GdxAssetService;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
@@ -76,7 +76,6 @@ import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
-import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.service.DifficultyService;
 
 /**
@@ -88,27 +87,10 @@ import main.game.maze.service.DifficultyService;
  */
 public final class GdxGameScreenController extends ApplicationAdapter {
 
-    private static final float WALL_THICKNESS = (float) StageConstants.WallThicknessPx;
     private static final float GOAL_SIZE = 50f;
-    private static final float JAVA_FX_TICK_RATE = 30f;
     private static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
-    private static final float BOTTOM_BAR_HEIGHT = 40f;
-    private static final float HP_BAR_HEIGHT = 20f;
-    private static final float TOP_MARGIN = 22f;
-    private static final float SCORE_PANEL_WIDTH = 170f;
-    private static final float SCORE_PANEL_HEIGHT = 30f;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
-    private static final float PLAYER_ALIVE_SCALE = 1f;
-    private static final float PLAYER_DEAD_SCALE = 1.8f;
-    private static final float HALF_RATIO = 0.5f;
-    private static final String INFECTION_WARNING_TEXT = "Infected!";
-    private static final float INFECTION_TRIANGLE_WIDTH = 120f;
-    private static final float INFECTION_TRIANGLE_HEIGHT = 106f;
-    private static final float INFECTION_PULSE_SPEED = 3.2f;
-    private static final int INFECTION_GLOW_LAYERS = 6;
-    private static final int INFECTION_EDGE_LAYERS = 4;
-    private static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
     private static final float ENEMY_PATH_OVERLAY_SECONDS = 10f;
     private static final int TERMINAL_INPUT_MAX_CHARS = 64;
@@ -297,10 +279,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             bootstrapResult -> new GdxWorldView(bootstrapResult.maze(), bootstrapResult.player()),
             () -> showHintInfo = false,
             () -> showSpanningTreeInfo = false,
-            GdxGameScreenController::toJavaFxLikeSpeed,
+            GdxGameScreenMetrics::toJavaFxLikeSpeed,
             playerSize,
             GOAL_SIZE,
-            JAVA_FX_TICK_RATE,
+            GdxGameScreenMetrics.JAVA_FX_TICK_RATE,
             MAX_ENEMY_TICKS_PER_FRAME);
         this.renderCoordinator = new GdxGameRenderCoordinator(
             worldModel,
@@ -321,22 +303,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             winOverlayController,
             this::loadTexture,
             this::enemyDisplayPath,
-            new GdxGameRenderCoordinator.RenderConstants(
-                WALL_THICKNESS,
-                PLAYER_ALIVE_SCALE,
-                PLAYER_DEAD_SCALE,
-                HALF_RATIO,
-                INFECTION_EDGE_LAYERS,
-                INFECTION_PULSE_SPEED,
-                INFECTION_TRIANGLE_WIDTH,
-                INFECTION_TRIANGLE_HEIGHT,
-                INFECTION_GLOW_LAYERS,
-                INFECTION_WARNING_TEXT,
-                TOP_MARGIN,
-                SCORE_PANEL_WIDTH,
-                SCORE_PANEL_HEIGHT,
-                BOTTOM_BAR_HEIGHT,
-                HP_BAR_HEIGHT));
+            GdxGameRenderConstants.defaults());
     }
 
     private void configureInputBindings() {
@@ -426,7 +393,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private void applyGameViewportBounds(int width, int height) {
         int w = Math.max(1, width);
         int h = Math.max(1, height);
-        GameStripBounds strip = computeGameStripBounds(w, h);
+        GdxGameScreenMetrics.GameStripBounds strip = GdxGameScreenMetrics.computeGameStripBounds(w, h);
         viewport.update(w, h, true);
         if (viewport instanceof ScreenViewport sv) {
             sv.setWorldSize(strip.width(), strip.height());
@@ -434,52 +401,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             sv.apply(true);
         }
     }
-
-    /**
-     * Gameplay viewport screen-pixel bounds. Match JavaFX by rendering the
-     * maze under HUD overlays across the full window.
-     *
-     * <p>Package-private for unit tests.
-     */
-    static GameStripBounds computeGameStripBounds(int windowWidth, int windowHeight) {
-        int w = Math.max(1, windowWidth);
-        int h = Math.max(1, windowHeight);
-        return new GameStripBounds(0, 0, w, h);
-    }
-
-    /** HUD y of the HP bar lower edge so the bar is pinned to the window top. */
-    static float hpBarBottomY(float windowHeight) {
-        return Math.max(0f, windowHeight - HP_BAR_HEIGHT);
-    }
-
-    /** HUD y of the bottom command row lower edge so the bar is pinned to the window bottom. */
-    static float bottomRowY() {
-        return 0f;
-    }
-
-    /** HUD pixel height reserved for the bottom command row. */
-    static float bottomRowHeight() {
-        return BOTTOM_BAR_HEIGHT;
-    }
-
-    static float bottomBarHeight() {
-        return BOTTOM_BAR_HEIGHT;
-    }
-
-    static float deathDisplayDelaySeconds() {
-        return DEATH_DISPLAY_DELAY_SECONDS;
-    }
-
-    static float hpBarHeight() {
-        return HP_BAR_HEIGHT;
-    }
-
-    static boolean isInfectious(EnemySpawn spawn) {
-        return spawn != null && spawn.infectionLevel() > 0;
-    }
-
-    /** Package-private viewport-strip record exposed for unit tests. */
-    public record GameStripBounds(int x, int y, int width, int height) {}
 
     @Override
     public void render() {
@@ -568,7 +489,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 combatFrameDead,
                 worldModel,
                 dt,
-                DEATH_DISPLAY_DELAY_SECONDS,
+                GdxGameScreenMetrics.DEATH_DISPLAY_DELAY_SECONDS,
                 () -> session.setMode(GameMode.GAME_OVER),
                 gameAudioCoordinator::switchToGameOverMusic);
     }
@@ -605,9 +526,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 gameOverBackgroundTexture,
                 combatState.isDead(),
                 enemyAnimationClock,
-                hpBarBottomY(hudCamera.viewportHeight),
-                bottomRowY(),
-                bottomRowHeight(),
+                GdxGameScreenMetrics.hpBarBottomY(hudCamera.viewportHeight),
+                GdxGameScreenMetrics.bottomRowY(),
+                GdxGameScreenMetrics.bottomRowHeight(),
                 showHintInfo,
                 pathHintRemainingSeconds(),
                 showSpanningTreeInfo,
@@ -696,10 +617,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private int currentScore() {
         return GdxGameRuntimeSupport.currentScore(scoringEngine, session, worldModel);
-    }
-
-    static float toJavaFxLikeSpeed(float playerSpeed) {
-        return playerSpeed * JAVA_FX_TICK_RATE;
     }
 
     private void requestReturnToMenu(boolean fromGame) {

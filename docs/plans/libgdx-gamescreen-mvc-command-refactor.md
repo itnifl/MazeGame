@@ -30,7 +30,7 @@
 
 ### Pending
 
-1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~794 lines). This is the single largest outstanding item.
+1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~662 lines). This is the single largest outstanding item, and reaching `< 200` is an aggressive goal that requires several further behavior-preserving increments.
 2. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
 
 ### Architecture Note (screen router)
@@ -45,6 +45,24 @@ legacy gameplay host being decomposed behind that router.
 
 1. Full repository `mvn test` run under Java 21 completed with `BUILD SUCCESS`.
 2. Focused libGDX regression suites used during extraction rounds are green.
+
+### 2026-06-09 Increment (render-constants extraction)
+
+1. Extracted the render-only tuning values (wall thickness, player alive/dead scale, half ratio, infection-overlay geometry, top margin, score-panel sizing) into a dedicated `render.GdxGameRenderConstants` factory that builds the `GdxGameRenderCoordinator.RenderConstants` block; bar heights are sourced from `GdxGameScreenMetrics` so HUD geometry stays single-defined.
+2. Replaced the inline ~16-argument `RenderConstants` construction in the controller's canonical constructor with a single `GdxGameRenderConstants.defaults()` call.
+3. Removed the now-unused `StageConstants` import from the controller.
+4. Added `GdxGameRenderConstantsTest` (2 tests) asserting the exact tuning values and that bar heights come from the shared metrics (no visual change).
+5. `make-libgdx.ps1 quick` is green: `BUILD SUCCESS`, 237 tests, 0 failures.
+6. Controller line count after this increment: 662 (down from 690).
+
+### 2026-06-09 Increment (layout/metrics extraction)
+
+1. Extracted the controller's pure layout/metrics helpers into a dedicated, stateless `controller.GdxGameScreenMetrics` class (SRP / MVC): `computeGameStripBounds`, `hpBarBottomY`, `bottomRowY`, `bottomRowHeight`, `bottomBarHeight`, `hpBarHeight`, `deathDisplayDelaySeconds`, `isInfectious`, `toJavaFxLikeSpeed`, plus the `GameStripBounds` record.
+2. Moved the frame-independent constants `JAVA_FX_TICK_RATE`, `BOTTOM_BAR_HEIGHT`, `HP_BAR_HEIGHT`, and `DEATH_DISPLAY_DELAY_SECONDS` onto the metrics class and updated the controller's internal call sites to reference them there.
+3. Removed the now-unused `EnemySpawn` import from the controller.
+4. Repointed the existing `GdxGameScreenLayoutTest` and `GdxGameScreenParityTest` assertions at `GdxGameScreenMetrics`; those suites now serve as the metrics class tests (no behavior change, pure relocation).
+5. `make-libgdx.ps1 quick` is green: `BUILD SUCCESS`, 235 tests, 0 failures.
+6. Controller line count after this increment: 690 (down from 794).
 
 ### 2026-06-08 Increment (ten micro-steps)
 

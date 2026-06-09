@@ -24,7 +24,7 @@ class GdxGameScreenLayoutTest {
         int w = 1024;
         int h = 768;
 
-        GdxGameScreenController.GameStripBounds strip = GdxGameScreenController.computeGameStripBounds(w, h);
+        GdxGameScreenMetrics.GameStripBounds strip = GdxGameScreenMetrics.computeGameStripBounds(w, h);
 
         assertEquals(0, strip.x(), "strip starts at left edge");
         assertEquals(0, strip.y(), "strip starts at bottom edge");
@@ -36,8 +36,8 @@ class GdxGameScreenLayoutTest {
     void hpBarRendersAtWindowTop() {
         float h = 600f;
 
-        float hpBarBottom = GdxGameScreenController.hpBarBottomY(h);
-        float hpBarTop = hpBarBottom + GdxGameScreenController.hpBarHeight();
+        float hpBarBottom = GdxGameScreenMetrics.hpBarBottomY(h);
+        float hpBarTop = hpBarBottom + GdxGameScreenMetrics.hpBarHeight();
 
         assertTrue(hpBarTop <= h, "HP bar top edge must not extend past window top");
         assertTrue(h - hpBarTop <= 0.001f,
@@ -46,11 +46,11 @@ class GdxGameScreenLayoutTest {
 
     @Test
     void bottomBarRendersAtWindowBottom() {
-        float rowY = GdxGameScreenController.bottomRowY();
-        float rowH = GdxGameScreenController.bottomRowHeight();
+        float rowY = GdxGameScreenMetrics.bottomRowY();
+        float rowH = GdxGameScreenMetrics.bottomRowHeight();
 
         assertTrue(rowY >= 0f, "bottom row must not render below the window");
-        assertTrue(rowY + rowH <= GdxGameScreenController.bottomBarHeight(),
+        assertTrue(rowY + rowH <= GdxGameScreenMetrics.bottomBarHeight(),
                 "bottom row must fit inside the reserved bottom strip -> bar sticks to bottom");
         assertTrue(rowY <= 0.001f,
                 "bottom row anchors at y=0 of the HUD -> bar sticks to bottom");
@@ -59,7 +59,7 @@ class GdxGameScreenLayoutTest {
     @Test
     void smallWindowKeepsBothBarsClampedAndStripNonNegative() {
         // Even with a degenerate window, computeGameStripBounds must remain valid.
-        GdxGameScreenController.GameStripBounds strip = GdxGameScreenController.computeGameStripBounds(10, 10);
+        GdxGameScreenMetrics.GameStripBounds strip = GdxGameScreenMetrics.computeGameStripBounds(10, 10);
         assertTrue(strip.height() >= 1, "strip height never collapses below 1");
         assertTrue(strip.width() >= 1, "strip width never collapses below 1");
     }
