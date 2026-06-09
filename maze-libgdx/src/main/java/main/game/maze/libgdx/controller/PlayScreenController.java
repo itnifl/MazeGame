@@ -15,14 +15,14 @@ public final class PlayScreenController extends AbstractLegacyAdapterScreen {
     }
 
     public PlayScreenController(GdxGameContext context, Difficulty forcedDifficulty, Runnable returnToMenuAction) {
-        super(context, new GdxGameScreenController(
-                null,
-                context.runtimeConfig(),
-                context.assets(),
-                false,
-                false,
-                true,
-                returnToMenuAction,
-                forcedDifficulty));
+        super(context, new GdxGameScreenController(GdxGameScreenOptions.builder()
+                .runtimeConfig(context.runtimeConfig())
+                .assetService(context.assets())
+                .ownsAssetService(false)
+                .autoStartOnCreate(false)
+                .immediateStartOnCreate(true)
+                .returnToMenuAction(returnToMenuAction)
+                .forcedDifficulty(forcedDifficulty)
+                .build()));
     }
 }

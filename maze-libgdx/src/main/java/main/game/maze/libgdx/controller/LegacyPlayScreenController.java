@@ -17,14 +17,13 @@ public final class LegacyPlayScreenController extends AbstractLegacyAdapterScree
     }
 
     public LegacyPlayScreenController(GdxGameContext context, boolean autoStartOnCreate, Runnable returnToMenuAction) {
-        super(context, new GdxGameScreenController(
-                null,
-                context.runtimeConfig(),
-                context.assets(),
-                false,
-                autoStartOnCreate,
-                false,
-                returnToMenuAction));
+        super(context, new GdxGameScreenController(GdxGameScreenOptions.builder()
+                .runtimeConfig(context.runtimeConfig())
+                .assetService(context.assets())
+                .ownsAssetService(false)
+                .autoStartOnCreate(autoStartOnCreate)
+                .returnToMenuAction(returnToMenuAction)
+                .build()));
     }
 
     /**

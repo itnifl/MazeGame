@@ -30,7 +30,11 @@ class GdxScoringAndSpawnParityTest {
 
     @Test
     void libgdxBaseScoreUsesSharedConstantsForAllDifficulties() throws Exception {
-        GdxGameScreenController screen = new GdxGameScreenController(null, 48f, 16, 12, 160f, true);
+        GdxGameScreenController screen = new GdxGameScreenController(
+                GdxGameScreenOptions.builder()
+                        .cellSize(48f)
+                        .useRealMaze(true)
+                        .build());
         Method m = GdxGameScreenController.class.getDeclaredMethod("baseScoreForDifficulty", Difficulty.class);
         m.setAccessible(true);
 

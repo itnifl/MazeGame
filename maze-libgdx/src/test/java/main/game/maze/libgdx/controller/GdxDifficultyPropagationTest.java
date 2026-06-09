@@ -31,8 +31,7 @@ class GdxDifficultyPropagationTest {
         GdxAssetService assets = new GdxAssetService();
         Difficulty hard = DifficultiesFactory.eINSTANCE.createHardDifficulty();
 
-        GdxGameScreenController controller = new GdxGameScreenController(
-                null, MazeRuntimeConfig.DEFAULT, assets, false, false, false, null, hard);
+        GdxGameScreenController controller = controllerWithDifficulty(assets, hard);
 
         assertSame(hard, readForcedDifficulty(controller),
                 "forcedDifficulty must be the HardDifficulty instance passed to the constructor");
@@ -42,8 +41,7 @@ class GdxDifficultyPropagationTest {
     void gdxGameScreenControllerForcedDifficultyIsNullWhenNotProvided() throws Exception {
         GdxAssetService assets = new GdxAssetService();
 
-        GdxGameScreenController controller = new GdxGameScreenController(
-                null, MazeRuntimeConfig.DEFAULT, assets, false, false, false, null, null);
+        GdxGameScreenController controller = controllerWithDifficulty(assets, null);
 
         assertNull(readForcedDifficulty(controller),
                 "forcedDifficulty must be null when constructed without one");
@@ -54,8 +52,7 @@ class GdxDifficultyPropagationTest {
         GdxAssetService assets = new GdxAssetService();
         Difficulty easy = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
 
-        GdxGameScreenController controller = new GdxGameScreenController(
-                null, MazeRuntimeConfig.DEFAULT, assets, false, false, false, null, easy);
+        GdxGameScreenController controller = controllerWithDifficulty(assets, easy);
 
         assertSame(easy, readForcedDifficulty(controller),
                 "forcedDifficulty must be the EasyDifficulty instance passed to the constructor");
@@ -66,12 +63,21 @@ class GdxDifficultyPropagationTest {
         GdxAssetService assets = new GdxAssetService();
         Difficulty normal = DifficultiesFactory.eINSTANCE.createNormalDifficulty();
 
-        GdxGameScreenController controller = new GdxGameScreenController(
-                null, MazeRuntimeConfig.DEFAULT, assets, false, false, false, null, normal);
+        GdxGameScreenController controller = controllerWithDifficulty(assets, normal);
 
         assertNotNull(readForcedDifficulty(controller));
         assertSame(normal, readForcedDifficulty(controller),
                 "forcedDifficulty must be the NormalDifficulty instance passed to the constructor");
+    }
+
+    private static GdxGameScreenController controllerWithDifficulty(GdxAssetService assets, Difficulty difficulty) {
+        return new GdxGameScreenController(GdxGameScreenOptions.builder()
+                .runtimeConfig(MazeRuntimeConfig.DEFAULT)
+                .assetService(assets)
+                .ownsAssetService(false)
+                .autoStartOnCreate(false)
+                .forcedDifficulty(difficulty)
+                .build());
     }
 
     private static Difficulty readForcedDifficulty(GdxGameScreenController controller) throws Exception {

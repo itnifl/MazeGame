@@ -88,10 +88,6 @@ import main.game.maze.service.DifficultyService;
  */
 public final class GdxGameScreenController extends ApplicationAdapter {
 
-    private static final float DEFAULT_CELL_SIZE = 48f;
-    private static final int DEFAULT_COLS = 16;
-    private static final int DEFAULT_ROWS = 12;
-    private static final float DEFAULT_PLAYER_SPEED = DEFAULT_CELL_SIZE * 3.5f;
     private static final float WALL_THICKNESS = (float) StageConstants.WallThicknessPx;
     private static final float GOAL_SIZE = 50f;
     private static final float JAVA_FX_TICK_RATE = 30f;
@@ -200,85 +196,40 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     
 
     public GdxGameScreenController() {
-        this(null, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
-                new GdxAssetService(), true, false, false, null, null);
+        this(GdxGameScreenOptions.builder().build());
     }
 
     /**
      * Creates a controller that boots a game session and immediately opens the high-scores overlay.
      */
     static GdxGameScreenController forHighScores(MazeRuntimeConfig cfg, GdxAssetService assetService, Runnable returnToMenuAction) {
-        return new GdxGameScreenController(
-                null, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, false, false, false, true, returnToMenuAction, null);
+        return new GdxGameScreenController(GdxGameScreenOptions.builder()
+                .runtimeConfig(cfg)
+                .assetService(assetService)
+                .ownsAssetService(false)
+                .autoStartOnCreate(false)
+                .showHighScoresOnCreate(true)
+                .returnToMenuAction(returnToMenuAction)
+                .build());
     }
 
-    public GdxGameScreenController(MazeArena arena) {
-        this(arena, DEFAULT_CELL_SIZE, DEFAULT_COLS, DEFAULT_ROWS, DEFAULT_PLAYER_SPEED, true,
-                new GdxAssetService(), true, false, false, null, null);
-    }
-
-    public GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                new GdxAssetService(), true, false, false, null, null);
-    }
-
-    public GdxGameScreenController(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze) {
-        this(arena, cellSize, cols, rows, playerSpeed, useRealMaze, new GdxAssetService(), true, false, false, null, null);
-    }
-
-    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, ownsAssetService, false, false, null, null);
-    }
-
-    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
-            boolean autoStartOnCreate) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-            assetService, ownsAssetService, autoStartOnCreate, false, null, null);
-    }
-
-    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
-            boolean autoStartOnCreate, boolean immediateStartOnCreate) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, null, null);
-    }
-
-    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
-            boolean autoStartOnCreate, boolean immediateStartOnCreate, Runnable returnToMenuAction) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, returnToMenuAction, null);
-    }
-
-    GdxGameScreenController(MazeArena arena, MazeRuntimeConfig cfg, GdxAssetService assetService, boolean ownsAssetService,
-            boolean autoStartOnCreate, boolean immediateStartOnCreate, Runnable returnToMenuAction,
-            Difficulty forcedDifficulty) {
-        this(arena, cfg.cellSize(), cfg.mazeCols(), cfg.mazeRows(), cfg.playerSpeed(), cfg.useRealMaze(),
-                assetService, ownsAssetService, autoStartOnCreate, immediateStartOnCreate, returnToMenuAction,
-                forcedDifficulty);
-    }
-
-    private GdxGameScreenController(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze,
-            GdxAssetService assetService, boolean ownsAssetService, boolean autoStartOnCreate,
-            boolean immediateStartOnCreate, Runnable returnToMenuAction, Difficulty forcedDifficulty) {
-        this(arena, cellSize, cols, rows, playerSpeed, useRealMaze, assetService, ownsAssetService,
-                autoStartOnCreate, immediateStartOnCreate, false, returnToMenuAction, forcedDifficulty);
-    }
-
-    private GdxGameScreenController(MazeArena arena, float cellSize, int cols, int rows, float playerSpeed, boolean useRealMaze,
-            GdxAssetService assetService, boolean ownsAssetService, boolean autoStartOnCreate,
-            boolean immediateStartOnCreate, boolean showHighScoresOnCreate, Runnable returnToMenuAction, Difficulty forcedDifficulty) {
-        this.providedMaze = arena;
-        this.cellSize = cellSize;
-        this.playerSize = cellSize * 0.5f;
-        this.useRealMaze = useRealMaze;
-        this.assetService = assetService;
-        this.ownsAssetService = ownsAssetService;
-        this.autoStartOnCreate = autoStartOnCreate;
-        this.immediateStartOnCreate = immediateStartOnCreate;
-        this.showHighScoresOnCreate = showHighScoresOnCreate;
-        this.returnToMenuAction = returnToMenuAction;
-        this.forcedDifficulty = forcedDifficulty;
+    /**
+     * Canonical constructor. All construction flags and collaborators are supplied
+     * through an immutable {@link GdxGameScreenOptions} parameter object (SR-41),
+     * replacing the previous telescoping-constructor chain.
+     */
+    public GdxGameScreenController(GdxGameScreenOptions options) {
+        this.providedMaze = options.arena();
+        this.cellSize = options.cellSize();
+        this.playerSize = options.cellSize() * 0.5f;
+        this.useRealMaze = options.useRealMaze();
+        this.assetService = options.assetService();
+        this.ownsAssetService = options.ownsAssetService();
+        this.autoStartOnCreate = options.autoStartOnCreate();
+        this.immediateStartOnCreate = options.immediateStartOnCreate();
+        this.showHighScoresOnCreate = options.showHighScoresOnCreate();
+        this.returnToMenuAction = options.returnToMenuAction();
+        this.forcedDifficulty = options.forcedDifficulty();
         this.overlayModeCoordinator = new GdxOverlayModeCoordinator(
             session,
             modeInputController,

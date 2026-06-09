@@ -31,8 +31,7 @@
 ### Pending
 
 1. Final target for a thin coordinator is not yet reached; `GdxGameScreenController` remains above the `< 200` line target (current: ~794 lines). This is the single largest outstanding item.
-2. Telescoping-constructor chain on `GdxGameScreenController` (consecutive boolean flags) is tracked as SR-41 and not yet migrated to a builder/options object.
-3. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
+2. Follow-up structural cleanup is still needed before this plan can be marked fully completed.
 
 ### Architecture Note (screen router)
 
@@ -170,6 +169,16 @@ legacy gameplay host being decomposed behind that router.
 4. Added `GdxGameRenderPipelineTest` (SR-37) covering those decision helpers.
 5. Updated the requirements traceability matrix rows SR-36..40 from "planned" to the implemented collaborators and added SR-41 (telescoping-constructor code smell).
 6. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`; libGDX suite at 229 tests green.
+
+### 2026-06-09 Increment (SR-41 telescoping-constructor removal)
+
+1. Added `controller.GdxGameScreenOptions` (immutable parameter object plus fluent builder) carrying arena, cell size, real-maze flag, asset service ownership, auto/immediate start, high-scores shortcut, return-to-menu action, and forced difficulty.
+2. Replaced the `GdxGameScreenController` telescoping-constructor chain (eleven overloads ending in four consecutive boolean flags) with a single canonical `GdxGameScreenController(GdxGameScreenOptions)` constructor plus a no-arg convenience and the `forHighScores` factory, both delegating through the options builder.
+3. Removed the now-dead `DEFAULT_CELL_SIZE`, `DEFAULT_COLS`, `DEFAULT_ROWS`, and `DEFAULT_PLAYER_SPEED` constants that only fed the old overloads (the latter three were never even stored on the instance).
+4. Updated all call sites to the builder: `PlayScreenController`, `LegacyPlayScreenController`, `GdxDifficultyPropagationTest` (via a shared helper), and `GdxScoringAndSpawnParityTest`.
+5. Added `GdxGameScreenOptionsTest` (6 tests) covering builder defaults, asset-service supply/retention, runtime-config copy, explicit-flag retention, and controller forced-difficulty propagation.
+6. Updated suggested-requirements SR-41 wording and the RTM SR-41 row from "planned" to the implemented `GdxGameScreenOptions` boundary.
+7. Validation run `pwsh ./make-libgdx.ps1 quick` completed with `BUILD SUCCESS`; libGDX suite green (now 235 tests).
 
 ---
 
