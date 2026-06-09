@@ -89,8 +89,6 @@ import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
-import main.game.maze.common.terminal.TerminalCommand;
-import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
@@ -164,6 +162,58 @@ public class GameController implements Initializable {
 
     // Key state tracking for smooth movement
     private final Set<KeyCode> pressedKeys = EnumSet.noneOf(KeyCode.class);
+    private final GameControllerInputSupport.GameKeyActionSink keyActionSink = new GameControllerInputSupport.GameKeyActionSink() {
+        @Override
+        public void showHighScore() {
+            GameController.this.showHighScore();
+        }
+
+        @Override
+        public void openDifficultyPickerAndMaybeRestart() {
+            GameController.this.openDifficultyPickerAndMaybeRestart();
+        }
+
+        @Override
+        public void showNavigationPath() {
+            GameController.this.showNavigationPath();
+        }
+
+        @Override
+        public void showSpanningTree() {
+            GameController.this.showSpanningTree();
+        }
+
+        @Override
+        public void clearNavigationPath() {
+            GameController.this.clearNavigationPath();
+        }
+
+        @Override
+        public void clearSpanningTree() {
+            GameController.this.clearSpanningTree();
+        }
+    };
+    private final GameControllerTerminalSupport.TerminalCommandSink terminalCommandSink = new GameControllerTerminalSupport.TerminalCommandSink() {
+        @Override
+        public void setHudMessage(String text) {
+            GameController.this.setHudMessage(text);
+        }
+
+        @Override
+        public void setHudMessage(String text, Duration visibleFor) {
+            GameController.this.setHudMessage(text, visibleFor);
+        }
+
+        @Override
+        public void showEnemyDebugLabels(boolean behaviourType) {
+            GameController.this.showEnemyDebugLabels(behaviourType);
+        }
+
+        @Override
+        public void showEnemyPathsOverlay() {
+            GameController.this.showEnemyPathsOverlay();
+        }
+    };
     private AnimationTimer movementTimer;
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
@@ -253,42 +303,12 @@ public class GameController implements Initializable {
     
     @FXML
     private void handleKeyReleased(KeyEvent event) {
-        pressedKeys.remove(event.getCode());
-        if (event.getCode() == KeyCode.P) {
-            clearNavigationPath();
-        } else if (event.getCode() == KeyCode.O) {
-            clearSpanningTree();
-        }
+        GameControllerInputSupport.handleKeyReleased(event.getCode(), pressedKeys, keyActionSink);
     }
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
-        KeyCode code = event.getCode();
-        
-        // Track movement keys for continuous movement
-        if (code == KeyCode.UP || code == KeyCode.DOWN || 
-            code == KeyCode.LEFT || code == KeyCode.RIGHT) {
-            pressedKeys.add(code);
-            return;  // Movement handled by AnimationTimer
-        }
-        
-        // Handle instant action keys
-        switch (code) {
-            case H:
-                showHighScore();
-                break;
-            case ESCAPE:
-                openDifficultyPickerAndMaybeRestart();
-                break;
-            case P:   
-                showNavigationPath();
-                break;
-            case O: 
-                showSpanningTree();
-                break;
-            default:
-                break;
-        }
+        GameControllerInputSupport.handleKeyPressed(event.getCode(), pressedKeys, keyActionSink);
     }
 
     private void updateDebugLabels() {
@@ -420,41 +440,16 @@ public class GameController implements Initializable {
         var dialog = new TextInputDialog();
         dialog.setTitle("Maze Terminal");
         dialog.setHeaderText("Enter command");
-        dialog.setContentText("/h, /showbehaviourtype, /showmovementtype, /showenemypath, /sep (shows enemy paths for 10 seconds)");
+        dialog.setContentText(GameControllerTerminalSupport.PROMPT_CONTENT_TEXT);
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
         if (window != null) {
             dialog.initOwner(window);
         }
 
-        dialog.showAndWait().ifPresent(this::executeTerminalCommand);
+        dialog.showAndWait().ifPresent(raw -> GameControllerTerminalSupport.executeTerminalCommand(raw, terminalCommandSink));
         if (gameBoard != null) {
             gameBoard.requestFocus();
         }
-    }
-
-    private void executeTerminalCommand(String raw) {
-        TerminalCommand command = parseTerminalCommand(raw);
-        switch (command) {
-            case HELP -> setHudMessage("Commands: /h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)", Duration.seconds(20));
-            case SHOW_BEHAVIOUR_TYPE -> {
-                setHudMessage("Showing behaviour type above enemies");
-                showEnemyDebugLabels(true);
-            }
-            case SHOW_MOVEMENT_TYPE -> {
-                setHudMessage("Showing movement type above enemies");
-                showEnemyDebugLabels(false);
-            }
-            case SHOW_ENEMY_PATH -> {
-                setHudMessage("Showing enemy paths for 10 seconds");
-                showEnemyPathsOverlay();
-            }
-            case EMPTY -> setHudMessage("No command entered");
-            default -> setHudMessage("Unknown command. Use /h");
-        }
-    }
-
-    private static TerminalCommand parseTerminalCommand(String raw) {
-        return TerminalCommandParser.parse(raw);
     }
 
     private void showEnemyPathsOverlay() {

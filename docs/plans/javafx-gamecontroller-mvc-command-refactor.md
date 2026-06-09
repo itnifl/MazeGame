@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** Proposed (not started)
+**Status:** In progress (Phase 3 partial)
 **Branch (planned):** `feature/refactorJavafxForStandardImplementation`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Date:** 2026-06-09
@@ -33,6 +33,23 @@ This plan brings the JavaFX controller to the same layering and input model, and
 the abstractions are genuinely backend-neutral — **promotes them into
 `maze-common-frontend`** so both frontends share one input/mode core instead of two
 parallel copies.
+
+### 2026-06-09 Increment Log (implemented)
+
+1. Extracted JavaFX terminal command parsing and dispatch from `GameController` into
+  `GameControllerTerminalSupport`.
+2. Extracted JavaFX key press/release action dispatch from `GameController` into
+  `GameControllerInputSupport`.
+3. Kept behavior unchanged by routing both helpers back into the same existing controller
+  side effects (high score, restart prompt, path hint, spanning tree, enemy debug labels,
+  enemy path overlay, HUD message updates).
+4. Added unit tests:
+  - `GameControllerTerminalSupportTest` (3 tests)
+  - `GameControllerInputSupportTest` (3 tests)
+5. Validation:
+  - Focused tests: 8/8 passing
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`
+6. Controller line count snapshot after this increment: ~1867 lines.
 
 ---
 
