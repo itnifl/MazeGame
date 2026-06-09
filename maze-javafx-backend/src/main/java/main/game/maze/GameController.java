@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javafx.animation.Animation;
@@ -148,7 +147,8 @@ public class GameController implements Initializable {
     private WinArea winarea;
     private Thread runComputerCharactersThread;
     private final List<IMovingComputerCharacter> allComputerCharacters = new CopyOnWriteArrayList<>();
-    private final AtomicInteger playerMoveCount = new AtomicInteger(0);
+    /** Gameplay scoring and path-hint state extracted from this controller (MVC model). */
+    private final FxGameWorldModel model = new FxGameWorldModel();
     private Canvas pathCanvas;
     private Canvas treeCanvas;
     private Canvas mazeCanvas;
@@ -232,12 +232,6 @@ public class GameController implements Initializable {
     private static final long PATH_HINT_BUDGET_EASY_NANOS  = 45L * 1_000_000_000L;
     private static final long PATH_HINT_BUDGET_NORMAL_NANOS = 25L * 1_000_000_000L;
     private static final long PATH_HINT_BUDGET_HARD_NANOS  = 15L * 1_000_000_000L;
-    /** Total nanoseconds of path-hint budget consumed this game. */
-    private long pathHintTotalUsedNanos = 0L;
-    /** Nanos when the P key was most recently pressed (0 if not held). */
-    private long pathHintPressStartNanos = 0L;
-    /** True while P is physically held down and a budget press is in progress. */
-    private boolean pathHintKeyDown = false;
     /** Timeline that ticks every 100ms while P is held to update the countdown label. */
     private Timeline pathHintCountdownTicker;
     /** Auto-clears the "energy already spent" message after a short delay. */
@@ -248,10 +242,6 @@ public class GameController implements Initializable {
     private Timeline movementWatchdogTimer;
     /** If no heartbeat is seen within this window the thread is considered stalled. */
     private static final long MOVEMENT_STALL_THRESHOLD_NANOS = 6_000_000_000L; // 6 s
-    private boolean isRouteHintVisible = false;
-    private long lastRouteHintPenaltyNanos = 0L;
-    private double routeHintPenaltyAccumulator = 0.0;
-    private int routeHintPenaltyPoints = 0;
     private Rectangle gameBoardClip;
     private boolean cameraFollowListenersInstalled;
     private VBox infectionWarningSign;
@@ -265,8 +255,6 @@ public class GameController implements Initializable {
     private final PatrolMovementService patrolMovementService = new PatrolMovementService();
     private final GhostPhasingMovementService ghostPhasingMovementService = new GhostPhasingMovementService();
     private AnimationTimer enemyPathOverlayTimer;
-    private boolean enemyPathOverlayVisible;
-    private long enemyPathOverlayHideAtNanos;
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -329,7 +317,7 @@ public class GameController implements Initializable {
 
         coordinatesLabel.setText(coordinatesText + " - " + directionsText);
 
-        playerMoveCount.getAndIncrement();
+        model.playerMoveCount().getAndIncrement();
 
         gameOverAction.updateScore();
         var score = winGameAction.updateScore();
@@ -349,7 +337,7 @@ public class GameController implements Initializable {
     }
 
     public int getDynamicScorePenalty() {
-        return routeHintPenaltyPoints;
+        return model.routeHintPenaltyPoints();
     }
 
     /**
@@ -370,29 +358,30 @@ public class GameController implements Initializable {
     }
 
     private void applyRouteHintPenalty(long now) {
-        if (!isRouteHintVisible) {
-            lastRouteHintPenaltyNanos = now;
+        if (!model.isRouteHintVisible()) {
+            model.setLastRouteHintPenaltyNanos(now);
             return;
         }
 
-        if (lastRouteHintPenaltyNanos == 0L) {
-            lastRouteHintPenaltyNanos = now;
+        if (model.lastRouteHintPenaltyNanos() == 0L) {
+            model.setLastRouteHintPenaltyNanos(now);
             return;
         }
 
-        long elapsedNanos = now - lastRouteHintPenaltyNanos;
+        long elapsedNanos = now - model.lastRouteHintPenaltyNanos();
         if (elapsedNanos <= 0) {
             return;
         }
-        lastRouteHintPenaltyNanos = now;
+        model.setLastRouteHintPenaltyNanos(now);
 
         double elapsedMs = elapsedNanos / 1_000_000.0;
-        routeHintPenaltyAccumulator += elapsedMs * ROUTE_HINT_PENALTY_PER_MS;
+        model.setRouteHintPenaltyAccumulator(
+                model.routeHintPenaltyAccumulator() + elapsedMs * ROUTE_HINT_PENALTY_PER_MS);
 
-        if (routeHintPenaltyAccumulator >= 1.0) {
-            int penaltyToApply = (int) routeHintPenaltyAccumulator;
-            routeHintPenaltyPoints += penaltyToApply;
-            routeHintPenaltyAccumulator -= penaltyToApply;
+        if (model.routeHintPenaltyAccumulator() >= 1.0) {
+            int penaltyToApply = (int) model.routeHintPenaltyAccumulator();
+            model.setRouteHintPenaltyPoints(model.routeHintPenaltyPoints() + penaltyToApply);
+            model.setRouteHintPenaltyAccumulator(model.routeHintPenaltyAccumulator() - penaltyToApply);
 
             // Keep HUD score in sync even when the player is not moving.
             if (winGameAction != null) {
@@ -461,8 +450,8 @@ public class GameController implements Initializable {
     }
 
     private void showEnemyPathsOverlay() {
-        enemyPathOverlayVisible = true;
-        enemyPathOverlayHideAtNanos = System.nanoTime() + 10_000_000_000L;
+        model.setEnemyPathOverlayVisible(true);
+        model.setEnemyPathOverlayHideAtNanos(System.nanoTime() + 10_000_000_000L);
         ensureEnemyPathOverlayTimer();
         refreshPathCanvasOverlay();
     }
@@ -475,8 +464,8 @@ public class GameController implements Initializable {
         enemyPathOverlayTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now >= enemyPathOverlayHideAtNanos) {
-                    enemyPathOverlayVisible = false;
+                if (now >= model.enemyPathOverlayHideAtNanos()) {
+                    model.setEnemyPathOverlayVisible(false);
                     stop();
                 }
                 refreshPathCanvasOverlay();
@@ -692,9 +681,9 @@ public class GameController implements Initializable {
         gameBoard.getChildren().add(treeCanvas);
         ensureHudLayersOnTop();
 
-        gameOverAction = new GameOverAction(playerCharacter, playerMoveCount, root, () -> {});
+        gameOverAction = new GameOverAction(playerCharacter, model.playerMoveCount(), root, () -> {});
 
-        winGameAction = new WinGameAction(playerCharacter, playerMoveCount, root, () -> {});
+        winGameAction = new WinGameAction(playerCharacter, model.playerMoveCount(), root, () -> {});
 
         int baseScore = getBaseScoreForCurrentDifficulty();
         gameOverAction.setBaseScore(baseScore);
@@ -744,12 +733,7 @@ public class GameController implements Initializable {
 
         playerCharacter.setHitPoints(playerConfig.health());
         var score = winGameAction.resetScore();
-        routeHintPenaltyPoints = 0;
-        routeHintPenaltyAccumulator = 0.0;
-        isRouteHintVisible = false;
-        lastRouteHintPenaltyNanos = 0L;
-        pathHintTotalUsedNanos = 0L;
-        pathHintKeyDown = false;
+        model.resetScoringState();
         stopPathHintCountdown();
         clearPathHintTimerLabel();
         if (pathHintExhaustedClearTimer != null) {
@@ -1538,30 +1522,30 @@ public class GameController implements Initializable {
     }
 
     private void showNavigationPath() {
-        long remainingNanos = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        long remainingNanos = pathHintBudgetNanos() - model.pathHintTotalUsedNanos();
         if (remainingNanos <= 0) {
             showPathHintExhaustedMessage();
             return;
         }
-        isRouteHintVisible = true;
+        model.setRouteHintVisible(true);
         // Guard against OS key-repeat: only record the start time and launch the
         // countdown on the very first press event, not on every repeat event.
-        if (!pathHintKeyDown) {
-            pathHintKeyDown = true;
-            pathHintPressStartNanos = System.nanoTime();
-            lastRouteHintPenaltyNanos = pathHintPressStartNanos;
+        if (!model.pathHintKeyDown()) {
+            model.setPathHintKeyDown(true);
+            model.setPathHintPressStartNanos(System.nanoTime());
+            model.setLastRouteHintPenaltyNanos(model.pathHintPressStartNanos());
             startPathHintCountdown();
         }
         refreshPathCanvasOverlay();
     }
 
     private void clearNavigationPath() {
-        if (pathHintKeyDown) {
-            long heldNanos = System.nanoTime() - pathHintPressStartNanos;
-            pathHintTotalUsedNanos = Math.min(pathHintTotalUsedNanos + heldNanos, pathHintBudgetNanos());
-            pathHintKeyDown = false;
+        if (model.pathHintKeyDown()) {
+            long heldNanos = System.nanoTime() - model.pathHintPressStartNanos();
+            model.setPathHintTotalUsedNanos(Math.min(model.pathHintTotalUsedNanos() + heldNanos, pathHintBudgetNanos()));
+            model.setPathHintKeyDown(false);
         }
-        isRouteHintVisible = false;
+        model.setRouteHintVisible(false);
         stopPathHintCountdown();
         clearPathHintTimerLabel();
         refreshPathCanvasOverlay();
@@ -1581,13 +1565,13 @@ public class GameController implements Initializable {
     private void startPathHintCountdown() {
         stopPathHintCountdown();
         pathHintCountdownTicker = new Timeline(new KeyFrame(Duration.millis(100), e -> {
-            long usedSoFar = pathHintTotalUsedNanos + (System.nanoTime() - pathHintPressStartNanos);
+            long usedSoFar = model.pathHintTotalUsedNanos() + (System.nanoTime() - model.pathHintPressStartNanos());
             long budgetNanos = pathHintBudgetNanos();
             long remainingNanos = budgetNanos - usedSoFar;
             if (remainingNanos <= 0) {
-                pathHintTotalUsedNanos = budgetNanos;
-                pathHintKeyDown = false;
-                isRouteHintVisible = false;
+                model.setPathHintTotalUsedNanos(budgetNanos);
+                model.setPathHintKeyDown(false);
+                model.setRouteHintVisible(false);
                 stopPathHintCountdown();
                 refreshPathCanvasOverlay();
                 showPathHintExhaustedMessage();
@@ -1598,7 +1582,7 @@ public class GameController implements Initializable {
         pathHintCountdownTicker.setCycleCount(Animation.INDEFINITE);
         pathHintCountdownTicker.play();
         // Show initial value immediately without waiting for first tick.
-        long initial = pathHintBudgetNanos() - pathHintTotalUsedNanos;
+        long initial = pathHintBudgetNanos() - model.pathHintTotalUsedNanos();
         updatePathHintTimerLabel(initial);
     }
 
@@ -1641,10 +1625,10 @@ public class GameController implements Initializable {
         }
         GraphicsContext gc = pathCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
-        if (isRouteHintVisible) {
+        if (model.isRouteHintVisible()) {
             drawPlayerNavigationPath(gc);
         }
-        if (enemyPathOverlayVisible) {
+        if (model.enemyPathOverlayVisible()) {
             drawEnemyNavigationPaths(gc);
         }
         gc.setGlobalAlpha(1.0);
@@ -1652,13 +1636,13 @@ public class GameController implements Initializable {
 
     private void drawPlayerNavigationPath(GraphicsContext gc) {
         if (maze == null || heart == null || playerCharacter == null) {
-            isRouteHintVisible = false;
+            model.setRouteHintVisible(false);
             return;
         }
 
         var navGraph = maze.getNavigationGraph();
         if (navGraph == null) {
-            isRouteHintVisible = false;
+            model.setRouteHintVisible(false);
             return;
         }
 
@@ -1673,7 +1657,7 @@ public class GameController implements Initializable {
 
         var path = MazeNavigationGraphService.findPath(navGraph, start, goal);
         if (path == null || path.size() < 2) {
-            isRouteHintVisible = false;
+            model.setRouteHintVisible(false);
             return;
         }
 
@@ -1834,7 +1818,7 @@ public class GameController implements Initializable {
             enemyPathOverlayTimer.stop();
             enemyPathOverlayTimer = null;
         }
-        enemyPathOverlayVisible = false;
+        model.setEnemyPathOverlayVisible(false);
 
         if (hudMessageClearTimer != null) {
             hudMessageClearTimer.stop();

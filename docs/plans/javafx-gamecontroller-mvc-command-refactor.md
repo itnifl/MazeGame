@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 0 complete; Phase 3 partial)
+**Status:** In progress (Phase 0 complete; Phase 1 partial; Phase 3 partial)
 **Branch (planned):** `feature/refactorJavafxForStandardImplementation`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Date:** 2026-06-09
@@ -126,6 +126,43 @@ classes *extend* the shared classes, but the shared classes are `final`.
   - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
   - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
+---
+
+### 2026-06-09 Increment Log (implemented, Phase 1 nr 1 — scoring/path-hint model extraction)
+
+First increment of **Phase 1** (Section 11 model extraction). Extracts the cohesive,
+FXML/thread-free gameplay scoring and path-hint state out of `GameController` into a dedicated
+`FxGameWorldModel`, preserving behavior exactly. The riskier core entities
+(`playerCharacter`/`maze`/`winarea`/`allComputerCharacters`) and `FxGameSessionBootstrapper`
+(`setupGame()` build/reset logic) remain in the controller and are deferred to later Phase 1
+increments because they are referenced across ~20 methods.
+
+1. Added `main.game.maze.FxGameWorldModel` (package matches the existing JavaFX backend
+   convention used by `GameControllerInputSupport`/`GameControllerTerminalSupport`, not the
+   aspirational `javafx.model` package, so same-package tests retain access). It owns:
+   `playerMoveCount` (`AtomicInteger`), the path-hint budget triple
+   (`pathHintTotalUsedNanos`/`pathHintPressStartNanos`/`pathHintKeyDown`), the route-hint
+   penalty cluster (`isRouteHintVisible`/`lastRouteHintPenaltyNanos`/`routeHintPenaltyAccumulator`/`routeHintPenaltyPoints`),
+   and the enemy-path overlay flags (`enemyPathOverlayVisible`/`enemyPathOverlayHideAtNanos`).
+   Field names mirror the former controller fields. Adds `resetScoringState()` mirroring the
+   former inline `setupGame()` reset (move count intentionally preserved).
+2. `GameController` now holds a single `private final FxGameWorldModel model` and routes every
+   former field read/write through its accessors (`updateDebugLabels`, `getDynamicScorePenalty`,
+   `applyRouteHintPenalty`, `showEnemyPathsOverlay`, `ensureEnemyPathOverlayTimer`, `setupGame`
+   reset + score-action wiring, `showNavigationPath`, `clearNavigationPath`,
+   `startPathHintCountdown`, `refreshPathCanvasOverlay`, `drawPlayerNavigationPath`, `dispose`).
+   Removed the now-unused `AtomicInteger` import.
+3. Tests:
+   - Added `FxGameWorldModelTest` (defaults, accessor round-trips, shared move-count instance,
+     reset semantics).
+   - `GameControllerPathHintBudgetTest` and `GameControllerRoutePenaltyTest` keep their
+     existing call sites; only their reflection `get`/`set` helpers gained a `resolveField`
+     fallback that resolves migrated fields on the controller's `model` sub-object.
+4. Validation:
+   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS`.
+   - Targeted: `FxGameWorldModelTest` (4), `GameControllerPathHintBudgetTest` (8),
+     `GameControllerRoutePenaltyTest` (2) => 14 run, 0 failures.
 
 ---
 

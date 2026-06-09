@@ -29,15 +29,33 @@ public class GameControllerRoutePenaltyTest {
     }
 
     private static void set(Object target, String field, Object value) throws Exception {
-        Field f = target.getClass().getDeclaredField(field);
+        Object[] ownerAndField = resolveField(target, field);
+        Field f = (Field) ownerAndField[1];
         f.setAccessible(true);
-        f.set(target, value);
+        f.set(ownerAndField[0], value);
     }
 
     private static Object get(Object target, String field) throws Exception {
-        Field f = target.getClass().getDeclaredField(field);
+        Object[] ownerAndField = resolveField(target, field);
+        Field f = (Field) ownerAndField[1];
         f.setAccessible(true);
-        return f.get(target);
+        return f.get(ownerAndField[0]);
+    }
+
+    /**
+     * Resolves a field by name, first on {@code target}, then (for state that was
+     * extracted into {@link FxGameWorldModel}) on the controller's {@code model}
+     * sub-object. Returns the owning instance and the {@link Field} to access.
+     */
+    private static Object[] resolveField(Object target, String field) throws Exception {
+        try {
+            return new Object[]{target, target.getClass().getDeclaredField(field)};
+        } catch (NoSuchFieldException notOnController) {
+            Field modelField = target.getClass().getDeclaredField("model");
+            modelField.setAccessible(true);
+            Object model = modelField.get(target);
+            return new Object[]{model, model.getClass().getDeclaredField(field)};
+        }
     }
 
     private static Object invoke(Object target, String method, Class<?>[] sig, Object... args) throws Exception {
