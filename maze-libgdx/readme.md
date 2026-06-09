@@ -30,6 +30,8 @@ not static.
 - Path hint display is hold-based like JavaFX (`P` held) and uses the shared navigation graph in `RealMaze`. The path hint has a per-difficulty budget that mirrors the JavaFX implementation (Easy 45 s, Normal 25 s, Hard 15 s). The remaining budget is shown in the HUD command row as `P Path [ON] [Xs left]` (or `[SPENT]` once exhausted). The penalty rate is 50 points/second. When the budget runs out the hint is hidden automatically and a status message is shown. See [maze-javafx-backend readme](../maze-javafx-backend/readme.md) for the equivalent JavaFX implementation.
 - Spanning tree hint uses the same navigation graph source and is rendered as an overlay in gameplay.
 - High score list is available in libGDX (`H`) and reads the same `scores.txt` file used by JavaFX.
+- Start menu can open high scores directly without starting a game session (`GdxGame.routeToHighScores()` via `LegacyPlayScreenController.forHighScores(...)`).
+- High score overlay rendering now has two explicit paths: it renders on a cleared background when no world is active (opened from start menu), and renders on top of the active world plus HUD when opened during gameplay.
 - Win state shows completion text and allows returning to start menu (`ESC`).
 - `ESC` while in overlays (help, high score, controls) returns to gameplay first, then start menu only from gameplay state.
 - Menu music and menu selection sound are optional; if files are missing the game continues without audio failures.
@@ -74,8 +76,10 @@ controller responsibilities while preserving current behavior:
 - Render orchestration:
 	- `render.GdxGameRenderPipeline` orchestrates world, HUD, and overlay rendering
 		through existing view classes by consuming an immutable `RenderState` snapshot.
+	- The high-score branch in `render.GdxGameRenderPipeline` handles both start-menu and in-game overlay contexts to avoid blank-screen regressions and to preserve semi-transparent overlay composition.
 	- `render.GdxGameRenderCoordinator` now owns the large render-snapshot mapping step,
 		keeping `GdxGameScreenController` focused on lifecycle flow instead of render-state assembly.
+	- `helper.GdxGameInteractionSupport.executeTerminalCommand(...)` now applies terminal outcomes and forwards status text through one unified status-message call path.
 
 This keeps behavior parity intact while making future extraction of gameplay state
 and bootstrap flows lower risk.
