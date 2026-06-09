@@ -51,6 +51,8 @@ parallel copies.
   - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`
 6. Controller line count snapshot after this increment: ~1867 lines.
 
+Note: this small line-count reduction is expected in a behavior-preserving extraction step, because `GameControllerTerminalSupport` and `GameControllerInputSupport` are intentionally routed back into existing `GameController` side effects in this phase; larger reductions are planned in later phases by moving ownership of more responsibilities out of `GameController`.
+
 ### 2026-06-09 Increment Log (implemented, nr 1 follow-up)
 
 1. Added immutable JavaFX input snapshot model in `JavaFxInputFrame` with held and edge key queries plus mouse snapshot fields.
