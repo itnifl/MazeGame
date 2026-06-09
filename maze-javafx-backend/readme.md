@@ -32,6 +32,17 @@ maze-javafx-backend
 
 ## Runtime notes
 
+### GameController refactor progress
+
+JavaFX controller decomposition is in progress to mirror the libGDX MVC plus command architecture.
+
+- terminal command parsing and dispatch are extracted into `GameControllerTerminalSupport`
+- keyboard action dispatch is extracted into `GameControllerInputSupport`
+- immutable per tick key and mouse snapshots are provided by `JavaFxInputFrame` and `JavaFxInputSnapshotReader`
+- first command objects are routed through `JavaFxGameCommand` and `JavaFxInputCommandContext`
+
+Current extraction steps preserve behavior by routing side effects back into `GameController` through small sink interfaces. This keeps gameplay and threading behavior stable while controller ownership is reduced incrementally.
+
 ### Start menu and viewport
 
 The JavaFX client starts on `startScreen.fxml`, where the player selects difficulty before loading the game scene.

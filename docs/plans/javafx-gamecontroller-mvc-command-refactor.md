@@ -69,6 +69,25 @@ Note: this small line-count reduction is expected in a behavior-preserving extra
   - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`.
 6. Controller line count snapshot after this increment: ~1880 lines.
 
+### 2026-06-09 Increment Log (implemented, nr 1 continued)
+
+1. Added JavaFX command context boundary in `JavaFxInputCommandContext` plus `JavaFxGameCommand` contract.
+2. Added first JavaFX input command implementations:
+  - `ShowHighScoreCommand`
+  - `OpenDifficultyPickerCommand`
+  - `ShowNavigationPathCommand`
+  - `ShowSpanningTreeCommand`
+3. Updated `GameControllerInputSupport.handleKeyPressed(...)` to dispatch these actions through command objects and context.
+4. Kept key-release behavior unchanged (`P` clears navigation path, `O` clears spanning tree).
+5. Added unit tests:
+  - `JavaFxInputCommandContextTest` (1 test)
+  - `JavaFxGameCommandsTest` (1 test)
+6. Validation:
+  - Focused tests: `JavaFxInputCommandContextTest`, `JavaFxGameCommandsTest`, `GameControllerInputSupportTest` passing.
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`.
+
+This increment is a direct preparatory step toward SR-43 and the Phase 3 Command + Registry architecture; routing still terminates in existing `GameController` side-effect sinks to preserve behavior while responsibilities are peeled away incrementally.
+
 ---
 
 ## 1. Motivation (concrete code smells)

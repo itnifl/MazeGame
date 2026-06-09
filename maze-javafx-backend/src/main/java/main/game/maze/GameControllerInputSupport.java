@@ -5,6 +5,11 @@ import javafx.scene.input.KeyCode;
 
 final class GameControllerInputSupport {
 
+    private static final JavaFxGameCommand SHOW_HIGH_SCORE_COMMAND = new ShowHighScoreCommand();
+    private static final JavaFxGameCommand OPEN_DIFFICULTY_PICKER_COMMAND = new OpenDifficultyPickerCommand();
+    private static final JavaFxGameCommand SHOW_NAVIGATION_PATH_COMMAND = new ShowNavigationPathCommand();
+    private static final JavaFxGameCommand SHOW_SPANNING_TREE_COMMAND = new ShowSpanningTreeCommand();
+
     private GameControllerInputSupport() {
     }
 
@@ -14,11 +19,12 @@ final class GameControllerInputSupport {
             return;
         }
 
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
         switch (code) {
-            case H -> sink.showHighScore();
-            case ESCAPE -> sink.openDifficultyPickerAndMaybeRestart();
-            case P -> sink.showNavigationPath();
-            case O -> sink.showSpanningTree();
+            case H -> SHOW_HIGH_SCORE_COMMAND.execute(context);
+            case ESCAPE -> OPEN_DIFFICULTY_PICKER_COMMAND.execute(context);
+            case P -> SHOW_NAVIGATION_PATH_COMMAND.execute(context);
+            case O -> SHOW_SPANNING_TREE_COMMAND.execute(context);
             default -> {
             }
         }
@@ -26,10 +32,11 @@ final class GameControllerInputSupport {
 
     static void handleKeyReleased(KeyCode code, Set<KeyCode> pressedKeys, GameKeyActionSink sink) {
         pressedKeys.remove(code);
-        if (code == KeyCode.P) {
-            sink.clearNavigationPath();
-        } else if (code == KeyCode.O) {
-            sink.clearSpanningTree();
+        switch (code) {
+            case P -> sink.clearNavigationPath();
+            case O -> sink.clearSpanningTree();
+            default -> {
+            }
         }
     }
 
