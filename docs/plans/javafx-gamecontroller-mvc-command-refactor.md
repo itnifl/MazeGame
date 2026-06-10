@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** Proposed (not started)
+**Status:** In progress (Phase 0 complete; Phase 1 partial; Phase 3 partial)
 **Branch (planned):** `feature/refactorJavafxForStandardImplementation`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Date:** 2026-06-09
@@ -34,7 +34,138 @@ the abstractions are genuinely backend-neutral — **promotes them into
 `maze-common-frontend`** so both frontends share one input/mode core instead of two
 parallel copies.
 
+### 2026-06-09 Increment Log (implemented)
+
+1. Extracted JavaFX terminal command parsing and dispatch from `GameController` into
+  `GameControllerTerminalSupport`.
+2. Extracted JavaFX key press/release action dispatch from `GameController` into
+  `GameControllerInputSupport`.
+3. Kept behavior unchanged by routing both helpers back into the same existing controller
+  side effects (high score, restart prompt, path hint, spanning tree, enemy debug labels,
+  enemy path overlay, HUD message updates).
+4. Added unit tests:
+  - `GameControllerTerminalSupportTest` (3 tests)
+  - `GameControllerInputSupportTest` (3 tests)
+5. Validation:
+  - Focused tests: 6/6 passing
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`
+6. Controller line count snapshot after this increment: ~1867 lines.
+
+Note: this small line-count reduction is expected in a behavior-preserving extraction step, because `GameControllerTerminalSupport` and `GameControllerInputSupport` are intentionally routed back into existing `GameController` side effects in this phase; larger reductions are planned in later phases by moving ownership of more responsibilities out of `GameController`.
+
+### 2026-06-09 Increment Log (implemented, nr 1 follow-up)
+
+1. Added immutable JavaFX input snapshot model in `JavaFxInputFrame` with held and edge key queries plus mouse snapshot fields.
+2. Added `JavaFxInputSnapshotReader` to build frame snapshots from controller key state and consume edge-key state once per tick.
+3. Integrated snapshot flow in `GameController`:
+  - Added `edgeKeys` tracking in `handleKeyPressed`.
+  - Added per-tick `currentInputFrame` update in the movement timer.
+  - Switched movement checks from direct `pressedKeys.contains(...)` to `currentInputFrame.isHeld(...)`.
+  - Added mouse snapshot capture in `handleMouseClicked` and one-shot click consumption after snapshot read.
+4. Added unit tests:
+  - `JavaFxInputSnapshotReaderTest` (3 tests)
+5. Validation:
+  - Focused tests: `JavaFxInputSnapshotReaderTest` passing.
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`.
+6. Controller line count snapshot after this increment: ~1880 lines.
+
+### 2026-06-09 Increment Log (implemented, nr 1 continued)
+
+1. Added JavaFX command context boundary in `JavaFxInputCommandContext` plus `JavaFxGameCommand` contract.
+2. Added first JavaFX input command implementations:
+  - `ShowHighScoreCommand`
+  - `OpenDifficultyPickerCommand`
+  - `ShowNavigationPathCommand`
+  - `ShowSpanningTreeCommand`
+3. Updated `GameControllerInputSupport.handleKeyPressed(...)` to dispatch these actions through command objects and context.
+4. Kept key-release behavior unchanged (`P` clears navigation path, `O` clears spanning tree).
+5. Added unit tests:
+  - `JavaFxInputCommandContextTest` (1 test)
+  - `JavaFxGameCommandsTest` (1 test)
+6. Validation:
+  - Focused tests: `JavaFxInputCommandContextTest`, `JavaFxGameCommandsTest`, `GameControllerInputSupportTest` passing.
+  - Full quick verification: `pwsh ./make-javafx.ps1 quick` => `BUILD SUCCESS`.
+
+This increment is a direct preparatory step toward SR-43 and the Phase 3 Command + Registry architecture; routing still terminates in existing `GameController` side-effect sinks to preserve behavior while responsibilities are peeled away incrementally.
+
+### 2026-06-09 Increment Log (implemented, Phase 0 shared input core promotion)
+
+This increment implements **Phase 0** (the Section 4 shared promotion strategy) for real, and
+resolves the SR-42 design decision: the shared core uses **concrete generic classes consumed
+directly** (parameterized on the physical key type `K`), not subclassing and not a neutral
+`int` + adapter. The earlier discarded spike failed because it tried to make per-frontend
+classes *extend* the shared classes, but the shared classes are `final`.
+
+1. Promoted the input core into `maze-common-frontend` under `main.game.maze.common.input`:
+  - `GameAction` (neutral enum), `KeyBindingRegistry<K>` (with `BindingKind`, `KeyBinding<K>`,
+    `trackedKeys()`), `InputFrame<K>` (held/edge keys, mouse x/y as `double`, left click),
+    `InputRouter<K>`, `EdgeKeyTracker<K>`.
+  - `main.game.maze.common.input.command`: `GameCommand<K>`
+    (`execute(GameCommandContext, InputFrame<K>)`) and neutral `GameCommandContext`.
+2. Migrated libGDX to consume the shared types with `K = Integer`:
+  - Deleted the libGDX-local `input` core copies and their duplicate tests.
+  - `InputSnapshotReader` now returns `InputFrame<Integer>` using the shared
+    `EdgeKeyTracker<Integer>`; `LibgdxInputCommandContext implements` the shared
+    `GameCommandContext`; command classes implement `GameCommand<Integer>`.
+  - Helpers parameterized on `Integer` (`GdxGameInputBindingsSupport`,
+    `GdxGameFrameStateSupport` using `trackedKeys()`, `GdxGameInteractionSupport` casting
+    `double` mouse to `float` at its three call sites, `GdxGamePlayingBridgeFactory`,
+    `GdxGameMouseInteractionCoordinator`, `GdxGameUpdateFlowSupport`,
+    `GdxGameScreenController`).
+3. Wired JavaFX to consume the shared core with `K = javafx.scene.input.KeyCode`:
+  - `JavaFxInputSnapshotReader` now produces the shared `InputFrame<KeyCode>`.
+  - Removed the JavaFX-local `JavaFxInputFrame` record; `GameController` movement polling
+    now uses `InputFrame<KeyCode>` directly.
+  - Full JavaFX `KeyBindingRegistry`/`InputRouter` dispatch is intentionally deferred to
+    Phase 3 (the JavaFX action set does not map 1:1 to `GameCommandContext` yet).
+4. Tests:
+  - Shared: `EdgeKeyTrackerTest`, `KeyBindingRegistryTest`, `InputRouterTest` moved to
+    `maze-common-frontend` (each also covers a non-`Integer` key type).
+  - JavaFX: `JavaFxInputSnapshotReaderTest` updated to the shared `InputFrame<KeyCode>`.
+5. Validation:
+  - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
+  - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
+  - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
 ---
+
+### 2026-06-09 Increment Log (implemented, Phase 1 nr 1 — scoring/path-hint model extraction)
+
+First increment of **Phase 1** (Section 11 model extraction). Extracts the cohesive,
+FXML/thread-free gameplay scoring and path-hint state out of `GameController` into a dedicated
+`FxGameWorldModel`, preserving behavior exactly. The riskier core entities
+(`playerCharacter`/`maze`/`winarea`/`allComputerCharacters`) and `FxGameSessionBootstrapper`
+(`setupGame()` build/reset logic) remain in the controller and are deferred to later Phase 1
+increments because they are referenced across ~20 methods.
+
+1. Added `main.game.maze.FxGameWorldModel` (package matches the existing JavaFX backend
+   convention used by `GameControllerInputSupport`/`GameControllerTerminalSupport`, not the
+   aspirational `javafx.model` package, so same-package tests retain access). It owns:
+   `playerMoveCount` (`AtomicInteger`), the path-hint budget triple
+   (`pathHintTotalUsedNanos`/`pathHintPressStartNanos`/`pathHintKeyDown`), the route-hint
+   penalty cluster (`isRouteHintVisible`/`lastRouteHintPenaltyNanos`/`routeHintPenaltyAccumulator`/`routeHintPenaltyPoints`),
+   and the enemy-path overlay flags (`enemyPathOverlayVisible`/`enemyPathOverlayHideAtNanos`).
+   Field names mirror the former controller fields. Adds `resetScoringState()` mirroring the
+   former inline `setupGame()` reset (move count intentionally preserved).
+2. `GameController` now holds a single `private final FxGameWorldModel model` and routes every
+   former field read/write through its accessors (`updateDebugLabels`, `getDynamicScorePenalty`,
+   `applyRouteHintPenalty`, `showEnemyPathsOverlay`, `ensureEnemyPathOverlayTimer`, `setupGame`
+   reset + score-action wiring, `showNavigationPath`, `clearNavigationPath`,
+   `startPathHintCountdown`, `refreshPathCanvasOverlay`, `drawPlayerNavigationPath`, `dispose`).
+   Removed the now-unused `AtomicInteger` import.
+3. Tests:
+   - Added `FxGameWorldModelTest` (defaults, accessor round-trips, shared move-count instance,
+     reset semantics).
+   - `GameControllerPathHintBudgetTest` and `GameControllerRoutePenaltyTest` keep their
+     existing call sites; only their reflection `get`/`set` helpers gained a `resolveField`
+     fallback that resolves migrated fields on the controller's `model` sub-object.
+4. Validation:
+   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS`.
+   - Targeted: `FxGameWorldModelTest` (4), `GameControllerPathHintBudgetTest` (8),
+     `GameControllerRoutePenaltyTest` (2) => 14 run, 0 failures.
+
+---
+
 
 ## 1. Motivation (concrete code smells)
 

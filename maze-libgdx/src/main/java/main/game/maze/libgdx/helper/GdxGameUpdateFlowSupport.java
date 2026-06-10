@@ -1,7 +1,7 @@
 package main.game.maze.libgdx.helper;
 
 import main.game.maze.libgdx.controller.GdxPlayerInputController;
-import main.game.maze.libgdx.input.InputFrame;
+import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
@@ -15,7 +15,7 @@ public final class GdxGameUpdateFlowSupport {
     }
 
     public static void applyMovementFromFrame(
-            InputFrame currentInputFrame,
+            InputFrame<Integer> currentInputFrame,
             GdxPlayerInputController playerInputController,
             PlayerState player,
             MazeArena maze,

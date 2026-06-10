@@ -65,11 +65,13 @@ The libGDX gameplay path now includes dedicated boundaries that reduce direct
 controller responsibilities while preserving current behavior:
 
 - Input command routing:
-	- `input.InputSnapshotReader` captures per-frame keyboard and mouse state.
-	- `input.KeyBindingRegistry` maps logical gameplay actions to key bindings.
-	- `input.InputRouter` resolves triggered actions and invokes command objects.
-	- `input.command.*` contains focused command implementations for menu return,
-		terminal toggle, high score opening, spanning tree toggle, and movement.
+	- `input.InputSnapshotReader` captures per-frame keyboard and mouse state (libGDX-specific physical layer).
+	- The logical input core is shared in `maze-common-frontend` under `main.game.maze.common.input` and consumed here parameterized on `Integer`:
+		- `common.input.KeyBindingRegistry<Integer>` maps logical gameplay actions to key bindings.
+		- `common.input.InputRouter<Integer>` resolves triggered actions and invokes command objects.
+		- `common.input.InputFrame<Integer>` and `common.input.EdgeKeyTracker<Integer>` provide the immutable per-frame snapshot and rising-edge latch.
+	- `input.command.*` contains focused libGDX command implementations (implementing `common.input.command.GameCommand<Integer>`) for menu return,
+		terminal toggle, high score opening, spanning tree toggle, path hint, and movement.
 - Mode update routing:
 	- `controller.state.GameModeRouter` dispatches mode handlers in deterministic order.
 	- `GdxGameScreenController` now delegates mode checks through this router.
@@ -93,8 +95,8 @@ the wider refactor:
 | Pattern | Where it is used | Purpose |
 | --- | --- | --- |
 | Model-View-Controller (MVC) | `model.GameWorldModel` (state), `view.Gdx*View` (rendering), `controller.*` (lifecycle/wiring) | Separates mutable gameplay state, drawing, and control flow so each layer can change independently. |
-| Command | `input.command.GameCommand` + implementations (`MovePlayerCommand`, `ReturnToMenuCommand`, `ToggleTerminalCommand`, `OpenHighScoresCommand`, `ToggleSpanningTreeCommand`, `ApplyPathHintCommand`) | Each logical input action is an isolated, headlessly testable object; new actions are added without editing a central dispatch switch (open/closed). |
-| Registry / Strategy | `input.KeyBindingRegistry`, `input.InputRouter`, `helper.GdxGameInputBindingsSupport` | Maps logical actions to key bindings, registers their commands, and builds the platform keyboard `InputProcessor`, removing scattered `Gdx.input` polling and inline input wiring from the controller. |
+| Command | `input.command.GameCommand` + implementations (`MovePlayerCommand`, `ReturnToMenuCommand`, `ToggleTerminalCommand`, `OpenHighScoresCommand`, `ToggleSpanningTreeCommand`, `ApplyPathHintCommand`) implementing shared `common.input.command.GameCommand<Integer>` | Each logical input action is an isolated, headlessly testable object; new actions are added without editing a central dispatch switch (open/closed). |
+| Registry / Strategy | shared `common.input.KeyBindingRegistry<Integer>`, `common.input.InputRouter<Integer>`, `helper.GdxGameInputBindingsSupport` | Maps logical actions to key bindings, registers their commands, and builds the platform keyboard `InputProcessor`, removing scattered `Gdx.input` polling and inline input wiring from the controller. |
 | Factory | `helper.GdxGamePlayingBridgeFactory`, `helper.GdxGameStartFlowRequestFactory`, `GdxGameScreenController.forHighScores(...)`, `controller.LegacyPlayScreenController.forHighScores(...)` | Centralizes construction/wiring of collaborators and start-flow requests instead of inlining it in the controller. |
 | Builder / parameter object (immutable) | `controller.GdxGameScreenOptions` + its `Builder` | Replaces the previous `GdxGameScreenController` telescoping-constructor chain (SR-41); self-documenting builder calls supply arena, runtime config, asset-service ownership, start/overlay flags, return-to-menu action, and forced difficulty through one canonical constructor. |
 | Pure helper / metrics value object | `controller.GdxGameScreenMetrics` (+ its `GameStripBounds` record), `render.GdxGameRenderConstants` | Hold the screen's stateless layout geometry, HUD bar sizing, death-display timing, JavaFX speed-parity factor, and render tuning values outside the controller (SRP), so they are unit-testable in isolation and the controller stays thinner. |
@@ -102,7 +104,7 @@ the wider refactor:
 | Coordinator / Mediator | `render.GdxGameRenderCoordinator`, `controller.state.GdxOverlayModeCoordinator`, `helper.GdxGameMouseInteractionCoordinator`, `audio.GdxGameAudioCoordinator` | Each coordinator owns one cross-cutting concern (render assembly, overlay routing, mouse wiring, audio transitions) so the screen controller stays thin. |
 | Adapter | `adapter.AbstractLegacyAdapterScreen`, `adapter.ApplicationAdapterScreen`, `game.RealMaze`, `movement.GdxWorldView`, `GdxBackend` (installs libGDX impls behind shared facades) | Wraps legacy/external types behind the interfaces the rest of the code expects, enabling gradual migration and parity. |
 | State | `controller.state.GameModeRouter`, `controller.state.PlayingModeController`, `GameMode` | Per-mode update handlers are dispatched in deterministic order based on the current `GameMode`. |
-| Snapshot / Value object (immutable) | `render.RenderState`, `input.InputFrame` (Java records) | Per-frame inputs and render data are passed as immutable snapshots, avoiding shared-mutable-state bugs across the loop. |
+| Snapshot / Value object (immutable) | `render.RenderState`, shared `common.input.InputFrame<Integer>` | Per-frame inputs and render data are passed as immutable snapshots, avoiding shared-mutable-state bugs across the loop. |
 | Facade | `service.GdxAssetService`, shared `common-graphics` facades (`UiScheduler`, `AudioEngine`) | Hides libGDX resource/loading details behind a small surface so screens never call `new Texture(...)` directly. |
 | Singleton | `AudioEngine.get()` (shared channel routing) | One shared audio engine instance routes menu/in-game/win/game-over channels consistently across screens. |
 

@@ -46,6 +46,21 @@ runtime renderer is JavaFX, libGDX, or something else.
   Frontends use these APIs for `/showenemypath` and `/sep` so overlays show
   the active runtime path being followed, rather than a newly computed path.
 
+- Shared generic input core (`main.game.maze.common.input` and
+  `main.game.maze.common.input.command`), backend-neutral and parameterized on the
+  physical key type `K` (libGDX uses `Integer`, JavaFX uses `javafx.scene.input.KeyCode`):
+  - `GameAction`: logical action enum (return to menu, toggle terminal, open high scores,
+    toggle spanning tree, apply path hint, move player).
+  - `InputFrame<K>`: immutable per-frame snapshot (held keys, edge keys, mouse x/y as
+    `double`, left-click) with `isHeld(K)` / `isEdge(K)`.
+  - `EdgeKeyTracker<K>`: rising-edge latch for poll-based frontends.
+  - `KeyBindingRegistry<K>` (with `BindingKind`, `KeyBinding<K>`): maps actions to keys and
+    commands; `InputRouter<K>` resolves triggered actions and runs their commands.
+  - `command.GameCommand<K>` and `command.GameCommandContext`: the command contract and a
+    neutral side-effect facade. Each frontend supplies its own physical snapshot reader and
+    command-context adapter.
+
+
 ## Default behaviour with no backend installed
 
 The defaults are deliberately inert so tests and library consumers do not
@@ -76,3 +91,6 @@ singletons.
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [PropertiesMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/PropertiesMazeVisualStyleLoaderTest.java)
 - [XmiMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/XmiMazeVisualStyleLoaderTest.java)
+- [EdgeKeyTrackerTest](src/test/java/main/game/maze/common/input/EdgeKeyTrackerTest.java)
+- [KeyBindingRegistryTest](src/test/java/main/game/maze/common/input/KeyBindingRegistryTest.java)
+- [InputRouterTest](src/test/java/main/game/maze/common/input/InputRouterTest.java)

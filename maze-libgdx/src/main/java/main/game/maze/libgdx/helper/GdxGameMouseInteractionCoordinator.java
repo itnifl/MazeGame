@@ -5,9 +5,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.controller.GdxHudInteractionStateController;
 import main.game.maze.libgdx.controller.GdxTerminalController;
-import main.game.maze.libgdx.input.InputFrame;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.mazeworld.generators.MazeArena;
@@ -55,7 +55,7 @@ public final class GdxGameMouseInteractionCoordinator {
         this.updateCameraFollow = updateCameraFollow;
     }
 
-    public void handle(InputFrame inputFrame) {
+    public void handle(InputFrame<Integer> inputFrame) {
         GdxGameInteractionSupport.handleGameMouseInput(
                 inputFrame,
                 hudLayoutSupplier.get(),

@@ -5,9 +5,9 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntPredicate;
-import main.game.maze.libgdx.input.GameAction;
-import main.game.maze.libgdx.input.KeyBindingRegistry;
-import main.game.maze.libgdx.input.KeyBindingRegistry.BindingKind;
+import main.game.maze.common.input.GameAction;
+import main.game.maze.common.input.KeyBindingRegistry;
+import main.game.maze.common.input.KeyBindingRegistry.BindingKind;
 import main.game.maze.libgdx.input.command.MovePlayerCommand;
 import main.game.maze.libgdx.input.command.OpenHighScoresCommand;
 import main.game.maze.libgdx.input.command.ReturnToMenuCommand;
@@ -22,7 +22,7 @@ public final class GdxGameInputBindingsSupport {
     private GdxGameInputBindingsSupport() {
     }
 
-    public static void configureDefaultBindings(KeyBindingRegistry keyBindingRegistry) {
+    public static void configureDefaultBindings(KeyBindingRegistry<Integer> keyBindingRegistry) {
         keyBindingRegistry
                 .bind(GameAction.RETURN_TO_MENU, Input.Keys.ESCAPE, BindingKind.EDGE)
                 .command(GameAction.RETURN_TO_MENU, new ReturnToMenuCommand())
