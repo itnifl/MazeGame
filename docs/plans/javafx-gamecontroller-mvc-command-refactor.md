@@ -1,9 +1,9 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 0 complete; Phase 1 partial; Phase 3 partial)
-**Branch (planned):** `feature/refactorJavafxForStandardImplementation`
+**Status:** In progress (Phase 0 complete; Phase 1 Nr 1 complete, Nr 2 deferred; Phase 3 partial)
+**Branch (current):** `feature/refactorJavaFX` (was `feature/refactorJavafxForStandardImplementation`)
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
-**Date:** 2026-06-09
+**Last updated:** 2026-06-13
 **Predecessor:** `docs/plans/libgdx-gamescreen-mvc-command-refactor.md` (the libGDX round establishes the reference architecture this plan mirrors)
 
 ---
@@ -126,6 +126,38 @@ classes *extend* the shared classes, but the shared classes are `final`.
   - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
   - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
+---
+
+### 2026-06-13 Status Update (Phase 1 Nr 2 — Deferred)
+
+**What's done:**
+- Phase 0 (shared input core promotion): COMPLETE ✓
+  - `maze-common-frontend/main.game.maze.common.input.*` promoted and GREEN
+  - libGDX migrated to use shared `InputFrame<Integer>` and `GameCommand<Integer>`: GREEN
+  - JavaFX integrated to use shared `InputFrame<KeyCode>`: GREEN
+  - All tests passing (128 javafx-backend tests, 238 libgdx tests)
+
+- Phase 1 Nr 1 (model extraction): COMPLETE ✓
+  - `FxGameWorldModel` created (scoring + path-hint state, 100% coverage in `FxGameWorldModelTest`)
+  - `GameController` refactored to delegate model reads/writes through `model.*()` accessors
+  - Existing reflection-based tests updated and passing (PathHintBudgetTest, RoutePenaltyTest, etc.)
+  - Line count reduced from 1872 → 1660 (212 lines saved)
+
+**What's deferred (Phase 1 Nr 2 — FxGameSessionBootstrapper):**
+The bootstrapper extraction requires resolving a complex circular dependency:
+- `GameOverAction` + `WinGameAction` constructors require `PlayerCharacter` as first parameter
+- `PlayerCharacter` is created inside `setupGame()`
+- `OpponentRuntimeFactory.instantiateFromModel()` currently uses `GameController` as context (not a neutral setup interface)
+
+**Recommended approach for future Phase 1 Nr 2:**
+1. Refactor `OpponentRuntimeFactory.instantiateFromModel()` to accept a neutral enemy-spawn callback interface
+2. Keep `GameOverAction`/`WinGameAction`/`WinArea` creation in `GameController` (they have UI dependencies)
+3. Have bootstrapper return `(PlayerCharacter, GameMazeWorld, canvases, PlayerConfig)` only
+4. Controller creates actions after, using the returned player character
+
+**Why deferred now:**
+The refactoring scope exceeds Phase 1 and touches shared enemy-spawn logic that could affect libGDX parity tests. Safer to defer until after Phase 3 (command registry) is complete, which will provide clearer abstraction boundaries.
 
 ---
 
