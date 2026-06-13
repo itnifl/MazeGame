@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 0 complete; Phase 1 Nr 1 complete, Nr 2 deferred; Phase 3 partial)
+**Status:** In progress (Phase 0 complete; Phase 1 Nr 1 complete, Nr 2 deferred; Phase 3 partial - bindings support added)
 **Branch (current):** `feature/refactorJavaFX` (was `feature/refactorJavafxForStandardImplementation`)
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Last updated:** 2026-06-13
@@ -126,6 +126,45 @@ classes *extend* the shared classes, but the shared classes are `final`.
   - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
   - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
+---
+
+### 2026-06-13 Status Update (Phase 3 — Input bindings support)
+
+**What's done:**
+- Phase 0 (shared input core promotion): COMPLETE ✓
+  - `maze-common-frontend/main.game.maze.common.input.*` promoted and GREEN
+  - libGDX migrated to use shared `InputFrame<Integer>` and `GameCommand<Integer>`: GREEN
+  - JavaFX integrated to use shared `InputFrame<KeyCode>`: GREEN
+  - All tests passing (128 javafx-backend tests, 238 libgdx tests)
+
+- Phase 1 Nr 1 (model extraction): COMPLETE ✓
+  - `FxGameWorldModel` created (scoring + path-hint state, 100% coverage in `FxGameWorldModelTest`)
+  - `GameController` refactored to delegate model reads/writes through `model.*()` accessors
+  - Existing reflection-based tests updated and passing (PathHintBudgetTest, RoutePenaltyTest, etc.)
+  - Line count reduced from 1872 → 1660 (212 lines saved)
+
+- Phase 3 (partial) — Input command bindings infrastructure: ADDED ✓
+  - Created `JavaFxInputBindingsSupport` with `configureDefaultBindings(KeyBindingRegistry<KeyCode>)` 
+  - Implemented all missing `GameCommand<KeyCode>` classes:
+    - `ApplyPathHintCommand` (P key, shows path hint)
+    - `ReturnToMenuCommand` (ESC key, opens difficulty picker)
+    - `OpenHighScoresCommand` (H key, shows high scores)
+    - `ToggleSpanningTreeCommand` (O key, shows spanning tree)
+    - `MovePlayerCommand` (movement keys)
+    - `ToggleTerminalCommand` (T key, opens terminal)
+  - Updated `JavaFxGameCommand` interface to extend `GameCommand<KeyCode>` with default implementation routing to JavaFX-specific execute()
+  - Updated `JavaFxInputCommandContext` to implement shared `GameCommandContext` interface with all required methods
+  - Bindings mirror libGDX structure (§4 shared promotion) using `KeyBindingRegistry<KeyCode>`, `BindingKind` (EDGE/HELD), and command attachment
+  - Current dispatch still uses switch-based routing in `GameControllerInputSupport`; full `InputRouter<KeyCode>` integration deferred to next phase
+
+**Still needed for full Phase 3:**
+1. Integrate `InputRouter<KeyCode>` into `GameController.handleKeyPressed/Released` to replace switch-based dispatch
+2. Create `JavaFxInputBindingsSupportTest` and per-command unit tests
+3. Create router-integration test verifying H/ESC/P/O/movement/terminal commands execute identically to pre-refactor
+
+**Why partial Phase 3 now:**
+The command binding infrastructure is complete and can coexist with the current switch-based dispatch. Full router integration requires wiring the `InputRouter` into the key event handlers and movement loop, which interacts with threading concerns (movement timer). Safer to complete Phase 3 router integration after Phase 2 (concurrency coordinator extraction) establishes clear boundaries for thread-owned components.
 
 ---
 
