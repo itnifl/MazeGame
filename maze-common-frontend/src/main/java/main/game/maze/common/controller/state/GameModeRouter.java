@@ -1,4 +1,4 @@
-package main.game.maze.libgdx.controller.state;
+package main.game.maze.common.controller.state;
 
 import java.util.ArrayList;
 import java.util.List;

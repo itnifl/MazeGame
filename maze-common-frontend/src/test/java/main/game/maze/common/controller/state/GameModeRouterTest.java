@@ -1,4 +1,4 @@
-package main.game.maze.libgdx.controller.state;
+package main.game.maze.common.controller.state;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
