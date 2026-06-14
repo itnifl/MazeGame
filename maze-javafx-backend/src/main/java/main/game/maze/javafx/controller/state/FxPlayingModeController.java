@@ -41,6 +41,13 @@ public final class FxPlayingModeController implements GameModeRouter.ModeHandler
     }
 
     public void update(InputFrame<KeyCode> frame, long now) {
+        // The HELD binding fires ApplyPathHintCommand only when P is down; nothing in
+        // the router fires on release.  Clear the hint explicitly when P is released,
+        // regardless of player-character state.
+        if (!frame.isHeld(KeyCode.P) && model.pathHintKeyDown()) {
+            context.applyPathHintHeld(false);
+        }
+
         if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) {
             return;
         }

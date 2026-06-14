@@ -166,8 +166,9 @@ public class GameController implements Initializable {
     public GameController() {
         inputCommandContext = new JavaFxInputCommandContext(actionSink);
         JavaFxInputBindingsSupport.configureDefaultBindings(keyBindingRegistry);
+        // gameBoard and root are @FXML fields — null here; suppliers are evaluated lazily after initialize().
         enemyCoordinator = new FxEnemyCoordinator(
-                null, null, model,
+                () -> gameBoard, () -> root, model,
                 () -> maze,
                 () -> playerCharacter,
                 this::refreshPathCanvasOverlay);

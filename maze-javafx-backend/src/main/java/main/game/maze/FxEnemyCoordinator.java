@@ -80,8 +80,9 @@ public final class FxEnemyCoordinator {
     /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
     private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
 
-    private final Pane gameBoard;
-    private final AnchorPane root;
+    /** Evaluated lazily so the coordinator can be created before FXML fields are set. */
+    private final Supplier<Pane>        gameBoardSupplier;
+    private final Supplier<AnchorPane>  rootSupplier;
     private final FxGameWorldModel model;
     private final Supplier<GameMazeWorld> mazeSupplier;
     private final Supplier<PlayerCharacter> playerSupplier;
@@ -108,14 +109,14 @@ public final class FxEnemyCoordinator {
     private PauseTransition infectionWarningHideTimer;
 
     public FxEnemyCoordinator(
-            Pane gameBoard,
-            AnchorPane root,
+            Supplier<Pane>       gameBoardSupplier,
+            Supplier<AnchorPane> rootSupplier,
             FxGameWorldModel model,
             Supplier<GameMazeWorld> mazeSupplier,
             Supplier<PlayerCharacter> playerSupplier,
             Runnable pathCanvasRefreshCallback) {
-        this.gameBoard                 = gameBoard;
-        this.root                      = root;
+        this.gameBoardSupplier         = gameBoardSupplier;
+        this.rootSupplier              = rootSupplier;
         this.model                     = model;
         this.mazeSupplier              = mazeSupplier;
         this.playerSupplier            = playerSupplier;
@@ -139,9 +140,10 @@ public final class FxEnemyCoordinator {
 
     public void registerCharacter(IMovingComputerCharacter character, Node node) {
         Platform.runLater(() -> {
-            if (gameBoard == null || node == null || character == null) return;
-            if (!gameBoard.getChildren().contains(node)) {
-                gameBoard.getChildren().add(node);
+            Pane board = gameBoardSupplier.get();
+            if (board == null || node == null || character == null) return;
+            if (!board.getChildren().contains(node)) {
+                board.getChildren().add(node);
             }
             if (character instanceof ZombieCharacter zombieCharacter) {
                 int infectionLevel = zombieCharacter.getModel() != null
@@ -168,8 +170,9 @@ public final class FxEnemyCoordinator {
                 subscribable.removePositionSubscriber(player);
             }
             stopInfectiousMist(node);
-            if (gameBoard != null && node != null && node.getParent() == gameBoard) {
-                gameBoard.getChildren().remove(node);
+            Pane board = gameBoardSupplier.get();
+            if (board != null && node != null && node.getParent() == board) {
+                board.getChildren().remove(node);
             }
         });
     }
@@ -214,7 +217,7 @@ public final class FxEnemyCoordinator {
             Platform.runLater(this::showInfectionWarning);
             return;
         }
-        if (root == null) return;
+        if (rootSupplier.get() == null) return;
         ensureInfectionWarningSign();
         infectionWarningSign.setVisible(true);
         infectionWarningSign.setManaged(false);
@@ -257,9 +260,11 @@ public final class FxEnemyCoordinator {
         infectionWarningSign.setManaged(false);
         infectionWarningSign.setVisible(false);
 
-        infectionWarningSign.layoutXProperty().bind(root.widthProperty().subtract(96).divide(2));
-        infectionWarningSign.layoutYProperty().bind(root.heightProperty().subtract(130).divide(2));
-        root.getChildren().add(infectionWarningSign);
+        AnchorPane r = rootSupplier.get();
+        if (r == null) return;
+        infectionWarningSign.layoutXProperty().bind(r.widthProperty().subtract(96).divide(2));
+        infectionWarningSign.layoutYProperty().bind(r.heightProperty().subtract(130).divide(2));
+        r.getChildren().add(infectionWarningSign);
     }
 
     private void applyInfectiousMist(Node node, int infectionLevel) {
@@ -300,7 +305,8 @@ public final class FxEnemyCoordinator {
 
     public void showEnemyDebugLabels(boolean behaviourType) {
         clearEnemyDebugLabels();
-        if (gameBoard == null) return;
+        Pane board = gameBoardSupplier.get();
+        if (board == null) return;
         for (var cc : allComputerCharacters) {
             if (!(cc instanceof ComputerCharacter computerCharacter)) continue;
             Node enemyNode = computerCharacter.getCharacterGraphics();
@@ -315,7 +321,7 @@ public final class FxEnemyCoordinator {
                     + "-fx-padding: 2 4 2 4; -fx-background-radius: 3;");
             label.layoutXProperty().bind(enemyNode.layoutXProperty());
             label.layoutYProperty().bind(enemyNode.layoutYProperty().subtract(ENEMY_LABEL_Y_OFFSET));
-            gameBoard.getChildren().add(label);
+            board.getChildren().add(label);
             activeEnemyDebugLabels.add(label);
         }
 
@@ -346,12 +352,13 @@ public final class FxEnemyCoordinator {
     }
 
     private void clearEnemyDebugLabels() {
-        if (activeEnemyDebugLabels.isEmpty() || gameBoard == null) return;
+        Pane board = gameBoardSupplier.get();
+        if (activeEnemyDebugLabels.isEmpty() || board == null) return;
         for (Node label : activeEnemyDebugLabels) {
             if (label != null) {
                 label.layoutXProperty().unbind();
                 label.layoutYProperty().unbind();
-                gameBoard.getChildren().remove(label);
+                board.getChildren().remove(label);
             }
         }
         activeEnemyDebugLabels.clear();
@@ -439,7 +446,7 @@ public final class FxEnemyCoordinator {
         }
         if (infectionWarningSign != null) {
             VBox sign = infectionWarningSign;
-            Platform.runLater(() -> { if (root != null) root.getChildren().remove(sign); });
+            Platform.runLater(() -> { AnchorPane r = rootSupplier.get(); if (r != null) r.getChildren().remove(sign); });
             infectionWarningSign = null;
         }
         infectiousMists.values().forEach(Timeline::stop);

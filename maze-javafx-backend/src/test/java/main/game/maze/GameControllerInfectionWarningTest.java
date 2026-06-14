@@ -37,7 +37,7 @@ class GameControllerInfectionWarningTest {
     }
 
     private static FxEnemyCoordinator buildCoordinator(AnchorPane root) {
-        return new FxEnemyCoordinator(null, root, new FxGameWorldModel(),
+        return new FxEnemyCoordinator(() -> null, () -> root, new FxGameWorldModel(),
                 () -> null, () -> null, () -> {});
     }
 
