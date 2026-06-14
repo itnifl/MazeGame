@@ -70,10 +70,11 @@ class JavaFxRouterIntegrationTest {
     }
 
     @Test
-    void spanningTreeTriggersOnHold() {
-        InputFrame<KeyCode> heldFrame = new InputFrame<>(Set.of(KeyCode.O), Set.of(), 0, 0, false);
-        router.route(heldFrame, context);
-        
+    void spanningTreeTogglesOnEdge() {
+        // O is bound as EDGE — key must be in edgeKeys, not pressedKeys
+        InputFrame<KeyCode> edgeFrame = new InputFrame<>(Set.of(), Set.of(KeyCode.O), 0, 0, false);
+        router.route(edgeFrame, context);
+
         assertEquals(1, sink.calls.size());
         assertEquals("showSpanningTree", sink.calls.get(0));
     }

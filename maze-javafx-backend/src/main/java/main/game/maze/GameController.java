@@ -561,28 +561,21 @@ public class GameController implements Initializable {
     private void showNavigationPath() {
         long remainingNanos = pathHintBudgetNanos() - model.pathHintTotalUsedNanos();
         if (remainingNanos <= 0) {
-            if (pathHintCoordinator != null) pathHintCoordinator.showExhaustedMessage();
+            pathHintCoordinator.showExhaustedMessage();
             return;
         }
-        model.setRouteHintVisible(true);
-        if (!model.pathHintKeyDown()) {
-            model.setPathHintKeyDown(true);
-            model.setPathHintPressStartNanos(System.nanoTime());
-            model.setLastRouteHintPenaltyNanos(model.pathHintPressStartNanos());
-            if (pathHintCoordinator != null) pathHintCoordinator.startCountdown();
+        boolean wasDown = model.pathHintKeyDown();
+        model.beginPathHint();
+        if (!wasDown) {
+            pathHintCoordinator.startCountdown();
         }
         refreshPathCanvasOverlay();
     }
 
     private void clearNavigationPath() {
-        if (model.pathHintKeyDown()) {
-            long heldNanos = System.nanoTime() - model.pathHintPressStartNanos();
-            model.setPathHintTotalUsedNanos(Math.min(model.pathHintTotalUsedNanos() + heldNanos, pathHintBudgetNanos()));
-            model.setPathHintKeyDown(false);
-        }
-        model.setRouteHintVisible(false);
-        if (pathHintCoordinator != null) pathHintCoordinator.stopCountdown();
-        if (pathHintCoordinator != null) pathHintCoordinator.clearTimerLabel();
+        model.endPathHint(pathHintBudgetNanos());
+        pathHintCoordinator.stopCountdown();
+        pathHintCoordinator.clearTimerLabel();
         refreshPathCanvasOverlay();
     }
 

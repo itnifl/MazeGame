@@ -1,10 +1,9 @@
 package main.game.maze;
 
 /**
- * Handles TOGGLE_SPANNING_TREE action (O key).
- * Shows the spanning tree overlay when the key is pressed.
- * Clearing the tree is handled separately on key release
- * (through the edge-key tracking in GameController).
+ * Handles TOGGLE_SPANNING_TREE action (O key, EDGE binding).
+ * Each press alternates the spanning-tree overlay between visible and hidden.
+ * The toggle state lives in {@link JavaFxInputCommandContext}.
  */
 final class ToggleSpanningTreeCommand implements JavaFxGameCommand {
     @Override

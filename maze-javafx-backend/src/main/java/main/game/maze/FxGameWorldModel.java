@@ -119,6 +119,38 @@ public final class FxGameWorldModel {
     }
 
     /**
+     * Atomically starts a new path-hint press session.
+     * Sets {@code isRouteHintVisible = true} and, if the key was not already flagged
+     * as held, initialises the press-start timestamp and penalty reference time.
+     * Idempotent: calling again while the key is already down is a no-op on the timer.
+     */
+    public void beginPathHint() {
+        isRouteHintVisible = true;
+        if (!pathHintKeyDown) {
+            long now = System.nanoTime();
+            pathHintKeyDown           = true;
+            pathHintPressStartNanos   = now;
+            lastRouteHintPenaltyNanos = now;
+        }
+    }
+
+    /**
+     * Atomically ends the current path-hint press session.
+     * Accumulates held nanoseconds into {@code pathHintTotalUsedNanos} (capped at
+     * {@code budgetNanos}), clears {@code pathHintKeyDown}, and hides the overlay.
+     *
+     * @param budgetNanos the maximum total nanoseconds allowed for the current difficulty
+     */
+    public void endPathHint(long budgetNanos) {
+        if (pathHintKeyDown) {
+            long heldNanos = System.nanoTime() - pathHintPressStartNanos;
+            pathHintTotalUsedNanos = Math.min(pathHintTotalUsedNanos + heldNanos, budgetNanos);
+            pathHintKeyDown = false;
+        }
+        isRouteHintVisible = false;
+    }
+
+    /**
      * Resets all per-game scoring and path-hint state to its initial values.
      * Mirrors the inline reset previously performed in {@code setupGame()}.
      * The {@link #playerMoveCount} is intentionally left untouched here because

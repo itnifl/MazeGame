@@ -5,20 +5,41 @@ import main.game.maze.common.input.command.GameCommandContext;
 /**
  * JavaFX implementation of the shared {@link GameCommandContext} interface.
  * Adapts between the shared command contract and JavaFX-specific action sinks.
+ *
+ * <p>The sink interface is split into three narrower interfaces (ISP) so that
+ * components which only need one concern can declare a narrower dependency:</p>
+ * <ul>
+ *   <li>{@link NavigationSink} – menu / score navigation</li>
+ *   <li>{@link OverlaySink} – path-hint and spanning-tree overlays</li>
+ *   <li>{@link HudSink} – HUD / debug updates</li>
+ * </ul>
+ * {@link ActionSink} composes all three for full-controller wiring.
  */
 public final class JavaFxInputCommandContext implements GameCommandContext {
 
-    interface ActionSink {
+    /** Menu and high-score navigation actions. */
+    interface NavigationSink {
         void showHighScore();
         void openDifficultyPickerAndMaybeRestart();
-        void showNavigationPath();
-        void showSpanningTree();
-        void clearNavigationPath();
-        void clearSpanningTree();
-        void updateDebugLabels();
-        void updateScoreHud();
         void openTerminalPrompt();
     }
+
+    /** Path-hint and spanning-tree overlay actions. */
+    interface OverlaySink {
+        void showNavigationPath();
+        void clearNavigationPath();
+        void showSpanningTree();
+        void clearSpanningTree();
+    }
+
+    /** HUD update actions. */
+    interface HudSink {
+        void updateDebugLabels();
+        void updateScoreHud();
+    }
+
+    /** Full sink interface used by {@link main.game.maze.GameController}. Composes all three. */
+    interface ActionSink extends NavigationSink, OverlaySink, HudSink {}
 
     private final ActionSink sink;
     private boolean spanningTreeVisible = false;

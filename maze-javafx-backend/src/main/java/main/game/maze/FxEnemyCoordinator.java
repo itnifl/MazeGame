@@ -47,10 +47,12 @@ import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,6 +61,15 @@ import java.util.logging.Logger;
  * Owns all enemy lifecycle concerns: AI movement, infection visuals, and debug
  * overlays. Extracted from GameController to isolate the enemy domain from the
  * top-level FXML coordinator.
+ *
+ * <p>Movement dispatch uses an {@link EnumMap} keyed by {@link BehaviorType} so
+ * that adding a new behaviour only requires registering a handler in the
+ * constructor — no switch statement to edit (OCP).</p>
+ *
+ * <p>Note: this class resides in {@code main.game.maze} rather than
+ * {@code main.game.maze.javafx.enemy} because it still has a static dependency on
+ * {@link App}. Moving it is deferred until {@code App.getBoardMaxX/Y()} is
+ * extracted behind a {@code BoardDimensions} interface.</p>
  */
 public final class FxEnemyCoordinator {
 
@@ -78,10 +89,16 @@ public final class FxEnemyCoordinator {
     private final Map<Node, Timeline>            infectiousMists        = new HashMap<>();
     private final List<Node>                     activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
 
-    private final AntiLoopWanderMovementService       antiLoopWanderMovementService       = new AntiLoopWanderMovementService();
-    private final AdaptiveAggressiveMovementService   adaptiveAggressiveMovementService   = new AdaptiveAggressiveMovementService();
-    private final PatrolMovementService               patrolMovementService               = new PatrolMovementService();
-    private final GhostPhasingMovementService         ghostPhasingMovementService         = new GhostPhasingMovementService();
+    private final AntiLoopWanderMovementService       antiLoopWanderMovementService     = new AntiLoopWanderMovementService();
+    private final AdaptiveAggressiveMovementService   adaptiveAggressiveMovementService = new AdaptiveAggressiveMovementService();
+    private final PatrolMovementService               patrolMovementService             = new PatrolMovementService();
+    private final GhostPhasingMovementService         ghostPhasingMovementService       = new GhostPhasingMovementService();
+
+    // Stable WorldView built once in the constructor; captures suppliers by reference.
+    private final WorldView worldView;
+
+    // Dispatch table: BehaviorType → movement handler. OCP-friendly extension point.
+    private final EnumMap<BehaviorType, Consumer<IMovingComputerCharacter>> movementDispatch;
 
     private AnimationTimer  enemyPathOverlayTimer;
     private PauseTransition enemyDebugLabelHideTimer;
@@ -95,12 +112,23 @@ public final class FxEnemyCoordinator {
             Supplier<GameMazeWorld> mazeSupplier,
             Supplier<PlayerCharacter> playerSupplier,
             Runnable pathCanvasRefreshCallback) {
-        this.gameBoard                  = gameBoard;
-        this.root                       = root;
-        this.model                      = model;
-        this.mazeSupplier               = mazeSupplier;
-        this.playerSupplier             = playerSupplier;
-        this.pathCanvasRefreshCallback  = pathCanvasRefreshCallback;
+        this.gameBoard                 = gameBoard;
+        this.root                      = root;
+        this.model                     = model;
+        this.mazeSupplier              = mazeSupplier;
+        this.playerSupplier            = playerSupplier;
+        this.pathCanvasRefreshCallback = pathCanvasRefreshCallback;
+
+        // Build stable WorldView after all suppliers are set.
+        this.worldView = buildWorldView();
+
+        // Register movement handlers. PASSIVE shares the WANDER handler.
+        // To add a new BehaviorType: add one entry here — no other change needed.
+        movementDispatch = new EnumMap<>(BehaviorType.class);
+        movementDispatch.put(BehaviorType.WANDER,     this::doWanderMove);
+        movementDispatch.put(BehaviorType.PASSIVE,    this::doWanderMove);
+        movementDispatch.put(BehaviorType.PATROL,     this::doPatrolMove);
+        movementDispatch.put(BehaviorType.AGGRESSIVE, this::doAggressiveMove);
     }
 
     // -----------------------------------------------------------------------
@@ -152,13 +180,9 @@ public final class FxEnemyCoordinator {
         for (var computerCharacter : allComputerCharacters) {
             try {
                 if (computerCharacter instanceof ComputerCharacter cc) {
-                    switch (cc.getCharacterBehaviour()) {
-                        case WANDER  -> doWanderMove(computerCharacter);
-                        case PATROL  -> doPatrolMove(computerCharacter);
-                        case PASSIVE -> doWanderMove(computerCharacter);
-                        case AGGRESSIVE -> doAggressiveMove(computerCharacter);
-                        default      -> doWanderMove(computerCharacter);
-                    }
+                    movementDispatch
+                            .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
+                            .accept(computerCharacter);
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
@@ -175,7 +199,7 @@ public final class FxEnemyCoordinator {
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {
         var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
-                createWorldView(), desiredX, desiredY, enemySize);
+                worldView, desiredX, desiredY, enemySize);
         return new Point2D(resolution.x(), resolution.y());
     }
 
@@ -306,7 +330,7 @@ public final class FxEnemyCoordinator {
         if (behaviour == BehaviorType.AGGRESSIVE) {
             String id = enemyId(character);
             var mode = adaptiveAggressiveMovementService.modeForEnemy(id);
-            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW)    return "AGGRESSIVE_PATH";
+            if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.PATH_FOLLOW)     return "AGGRESSIVE_PATH";
             if (mode == AdaptiveAggressiveMovementService.AggressiveMovementMode.WANDER_RECOVERY) return "AGGRESSIVE_WANDER";
             return "AGGRESSIVE_CHASE";
         }
@@ -429,30 +453,34 @@ public final class FxEnemyCoordinator {
     }
 
     // -----------------------------------------------------------------------
-    // Private helpers
+    // Private helpers — movement
     // -----------------------------------------------------------------------
+
+    /**
+     * Applies ghost-phasing movement if {@code cc} is currently non-tangient.
+     *
+     * @return {@code true} if the character was phasing and its move was handled;
+     *         the caller must return immediately in that case.
+     */
+    private boolean applyPhasing(IMovingComputerCharacter character, ComputerCharacter cc) {
+        if (!(cc instanceof INonTangientMazeGameCharacter ntcc)) return false;
+        if (!drainNonTangientEnergy(ntcc)) return false;
+        MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), worldView);
+        cc.setDirection(new Point2D(next.directionX(), next.directionY()));
+        character.move(true);
+        return true;
+    }
 
     private void doWanderMove(IMovingComputerCharacter computerCharacter) {
         if (!(computerCharacter instanceof ComputerCharacter cc) || mazeSupplier.get() == null) {
             if (!computerCharacter.move(false)) computerCharacter.changeDirection();
             return;
         }
-
-        boolean nonTangient = false;
-        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = drainNonTangientEnergy(nontangientcc);
-        }
-
-        if (nonTangient) {
-            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createWorldView());
-            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
-            computerCharacter.move(true);
-            return;
-        }
+        if (applyPhasing(computerCharacter, cc)) return;
 
         if (cc.getDirectionX() == 0 && cc.getDirectionY() == 0) computerCharacter.changeDirection();
 
-        MovementResult next = antiLoopWanderMovementService.tick(buildEnemyState(cc), createWorldView());
+        MovementResult next = antiLoopWanderMovementService.tick(buildEnemyState(cc), worldView);
         if (next.directionX() != 0 || next.directionY() != 0) {
             cc.setDirection(new Point2D(next.directionX(), next.directionY()));
         }
@@ -467,20 +495,9 @@ public final class FxEnemyCoordinator {
             doWanderMove(computerCharacter);
             return;
         }
+        if (applyPhasing(computerCharacter, cc)) return;
 
-        boolean nonTangient = false;
-        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = drainNonTangientEnergy(nontangientcc);
-        }
-
-        if (nonTangient) {
-            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createWorldView());
-            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
-            computerCharacter.move(true);
-            return;
-        }
-
-        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), createWorldView(), 0.06d);
+        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), worldView, 0.06d);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doWanderMove(computerCharacter);
             return;
@@ -491,24 +508,15 @@ public final class FxEnemyCoordinator {
     }
 
     private void doAggressiveMove(IMovingComputerCharacter computerCharacter) {
-        if (playerSupplier.get() == null || !(computerCharacter instanceof ComputerCharacter cc) || mazeSupplier.get() == null) {
+        if (playerSupplier.get() == null
+                || !(computerCharacter instanceof ComputerCharacter cc)
+                || mazeSupplier.get() == null) {
             doWanderMove(computerCharacter);
             return;
         }
+        if (applyPhasing(computerCharacter, cc)) return;
 
-        boolean nonTangient = false;
-        if (computerCharacter instanceof INonTangientMazeGameCharacter nontangientcc) {
-            nonTangient = drainNonTangientEnergy(nontangientcc);
-        }
-
-        if (nonTangient) {
-            MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), createWorldView());
-            cc.setDirection(new Point2D(next.directionX(), next.directionY()));
-            computerCharacter.move(true);
-            return;
-        }
-
-        MovementResult result = adaptiveAggressiveMovementService.tick(buildEnemyState(cc), createWorldView(), 0.06d);
+        MovementResult result = adaptiveAggressiveMovementService.tick(buildEnemyState(cc), worldView, 0.06d);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doWanderMove(computerCharacter);
             return;
@@ -544,7 +552,8 @@ public final class FxEnemyCoordinator {
                 speed);
     }
 
-    private WorldView createWorldView() {
+    /** Builds the {@link WorldView} once; the returned object captures suppliers by reference. */
+    private WorldView buildWorldView() {
         return new WorldView() {
             @Override public double playerX() {
                 PlayerCharacter p = playerSupplier.get();
