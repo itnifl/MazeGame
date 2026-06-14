@@ -21,6 +21,7 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
     }
 
     private final ActionSink sink;
+    private boolean spanningTreeVisible = false;
 
     JavaFxInputCommandContext(ActionSink sink) {
         this.sink = sink;
@@ -39,7 +40,7 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
 
     @Override
     public void openTerminalPrompt() {
-        // not yet integrated — intentionally a no-op
+        sink.openTerminalPrompt();
     }
 
     @Override
@@ -49,7 +50,12 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
 
     @Override
     public void toggleSpanningTree() {
-        sink.showSpanningTree();
+        spanningTreeVisible = !spanningTreeVisible;
+        if (spanningTreeVisible) {
+            sink.showSpanningTree();
+        } else {
+            sink.clearSpanningTree();
+        }
     }
 
     @Override

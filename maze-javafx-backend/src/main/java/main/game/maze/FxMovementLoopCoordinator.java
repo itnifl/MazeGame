@@ -36,6 +36,7 @@ public final class FxMovementLoopCoordinator {
     }
 
     public FxMovementLoopCoordinator(Callbacks callbacks) {
+        if (callbacks == null) throw new IllegalArgumentException("callbacks must not be null");
         this.callbacks = callbacks;
     }
 
@@ -106,7 +107,11 @@ public final class FxMovementLoopCoordinator {
                 LOGGER.warning("Interrupted while joining computer characters thread");
                 Thread.currentThread().interrupt();
             }
-            runComputerCharactersThread = null;
+            if (runComputerCharactersThread.isAlive()) {
+                LOGGER.warning("Computer characters thread did not stop within timeout — it may still be running");
+            } else {
+                runComputerCharactersThread = null;
+            }
         }
     }
 

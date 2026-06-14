@@ -21,7 +21,13 @@ public interface PositionBounds {
     default double getCenterY() { return getMinY() + getHeight() / 2.0; }
 
     /**
-     * Returns true if this bounding box overlaps {@code other}.
+     * Returns true if this bounding box overlaps {@code other} (AABB overlap test).
+     * Implementors may override for specialised geometry, but the default covers
+     * the standard axis-aligned case and guards against {@code null}.
      */
-    boolean intersects(PositionBounds other);
+    default boolean intersects(PositionBounds other) {
+        if (other == null) return false;
+        return !(other.getMaxX() < getMinX() || other.getMinX() > getMaxX()
+              || other.getMaxY() < getMinY() || other.getMinY() > getMaxY());
+    }
 }

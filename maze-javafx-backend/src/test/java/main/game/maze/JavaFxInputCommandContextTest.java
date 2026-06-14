@@ -16,10 +16,37 @@ class JavaFxInputCommandContextTest {
         context.applyPathHintHeld(true);
         context.toggleSpanningTree();
 
+        assertEquals(4, sink.calls.size(), "exactly 4 sink calls must have been dispatched");
         assertEquals("showHighScore", sink.calls.get(0));
         assertEquals("openDifficultyPickerAndMaybeRestart", sink.calls.get(1));
         assertEquals("showNavigationPath", sink.calls.get(2));
         assertEquals("showSpanningTree", sink.calls.get(3));
+    }
+
+    @Test
+    void toggleSpanningTreeAlternatesShowAndClear() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+
+        context.toggleSpanningTree();  // first call → show
+        context.toggleSpanningTree();  // second call → clear
+        context.toggleSpanningTree();  // third call → show again
+
+        assertEquals(3, sink.calls.size());
+        assertEquals("showSpanningTree",  sink.calls.get(0));
+        assertEquals("clearSpanningTree", sink.calls.get(1));
+        assertEquals("showSpanningTree",  sink.calls.get(2));
+    }
+
+    @Test
+    void openTerminalPromptDelegatesToSink() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+
+        context.openTerminalPrompt();
+
+        assertEquals(1, sink.calls.size());
+        assertEquals("openTerminalPrompt", sink.calls.get(0));
     }
 
     private static final class RecordingSink implements JavaFxInputCommandContext.ActionSink {
@@ -65,6 +92,7 @@ class JavaFxInputCommandContextTest {
 
         @Override
         public void openTerminalPrompt() {
+            calls.add("openTerminalPrompt");
         }
     }
 }

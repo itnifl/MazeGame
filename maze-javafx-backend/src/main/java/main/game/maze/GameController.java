@@ -348,9 +348,6 @@ public class GameController implements Initializable {
     }
 
     public void setupGame() {
-        playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
-        modeRouter.register(playingModeController);
-
         hpBar.setProgress(1.0);
 
         gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
@@ -367,6 +364,9 @@ public class GameController implements Initializable {
         setPlayerBaseImage(player, playerConfig.imageBase());
 
         playerCharacter = new PlayerCharacter(player, player.getLayoutX(), player.getLayoutY(), hpBar, playerConfig);
+
+        playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
+        modeRouter.register(playingModeController);
 
         var vectors = maze.getMazeVectors();
 
@@ -620,7 +620,8 @@ public class GameController implements Initializable {
     // -----------------------------------------------------------------------
 
     public void stopComputerCharacters() {
-        movementLoopCoordinator.dispose();
+        movementLoopCoordinator.stopComputerCharacters();
+        movementLoopCoordinator.stopMovementTimer();
         pressedKeys.clear();
         edgeKeys.clear();
     }

@@ -22,11 +22,17 @@ interface JavaFxGameCommand extends GameCommand<KeyCode> {
     /**
      * Default implementation of the shared GameCommand contract.
      * Routes through the JavaFX-specific execute() method.
+     *
+     * @throws IllegalArgumentException if {@code context} is not a {@link JavaFxInputCommandContext}
      */
     @Override
     default void execute(main.game.maze.common.input.command.GameCommandContext context, InputFrame<KeyCode> frame) {
         if (context instanceof JavaFxInputCommandContext javaFxContext) {
             execute(javaFxContext);
+        } else {
+            throw new IllegalArgumentException(
+                    "JavaFxGameCommand requires a JavaFxInputCommandContext but got: "
+                    + (context == null ? "null" : context.getClass().getName()));
         }
     }
 }

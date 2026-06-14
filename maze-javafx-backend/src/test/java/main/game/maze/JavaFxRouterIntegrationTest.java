@@ -53,14 +53,11 @@ class JavaFxRouterIntegrationTest {
 
     @Test
     void terminalKeyTriggersAction() {
-        // T is terminal but we mocked it inside JavaFxInputCommandContext as doing nothing 
-        // until fully integrated. Let's just make sure it routes to context.openTerminalPrompt
-        // To verify we need to check if openTerminalPrompt on context delegates,
-        // but it's an empty implementation right now. We can still execute it without error.
         InputFrame<KeyCode> edgeFrame = new InputFrame<>(Set.of(), Set.of(KeyCode.T), 0, 0, false);
         router.route(edgeFrame, context);
-        
-        assertEquals(0, sink.calls.size()); // empty impl in context for now
+
+        assertEquals(1, sink.calls.size());
+        assertEquals("openTerminalPrompt", sink.calls.get(0));
     }
 
     @Test

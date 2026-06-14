@@ -62,10 +62,14 @@ class FxMovementLoopCoordinatorTest {
         int countAfterStop = stepCount.get();
         Thread.sleep(300);
 
-        int countAfterWait = stepCount.get();
-        // Allow at most one in-flight call that was already in progress at stop time.
-        assertTrue(countAfterWait - countAfterStop <= 1,
-                "No more than one additional step should occur after stopComputerCharacters()");
+        try {
+            int countAfterWait = stepCount.get();
+            // Allow at most one in-flight call that was already in progress at stop time.
+            assertTrue(countAfterWait - countAfterStop <= 1,
+                    "No more than one additional step should occur after stopComputerCharacters()");
+        } finally {
+            coordinator.dispose();
+        }
     }
 
     @Test

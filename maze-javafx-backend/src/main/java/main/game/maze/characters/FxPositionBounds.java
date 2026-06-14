@@ -12,6 +12,7 @@ public final class FxPositionBounds implements PositionBounds {
     private final Bounds bounds;
 
     public FxPositionBounds(Bounds bounds) {
+        if (bounds == null) throw new IllegalArgumentException("bounds must not be null");
         this.bounds = bounds;
     }
 
@@ -22,6 +23,7 @@ public final class FxPositionBounds implements PositionBounds {
 
     @Override
     public boolean intersects(PositionBounds other) {
+        if (other == null) return false;
         return !(other.getMaxX() < getMinX() || other.getMinX() > getMaxX()
               || other.getMaxY() < getMinY() || other.getMinY() > getMaxY());
     }
