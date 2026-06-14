@@ -12,6 +12,7 @@ import main.game.maze.actions.GameOverAction;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.NoopAudioEngine;
 import main.game.maze.common.constants.AudioResourceConstants;
+import main.game.maze.javafx.render.FxGameRenderCoordinator;
 
 /**
  * Locks in the JavaFX window/scroll/audio behavior the player relies on:
@@ -40,7 +41,7 @@ class WindowedCameraAndAudioTest {
     @Test
     void cameraDoesNotScrollWhenNotFullscreen() {
         // World larger than viewport, but stage is windowed -> no translation.
-        double[] t = GameController.computeCameraTranslation(
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 800, 600,
                 1600, 1200,
                 1500, 1100,
@@ -53,7 +54,7 @@ class WindowedCameraAndAudioTest {
     void cameraScrollsAndClampsWhenFullscreen() {
         // Player near the far corner: translation clamps so the world's far
         // edge sits flush with the viewport edge (map never scrolls past).
-        double[] t = GameController.computeCameraTranslation(
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 800, 600,
                 1600, 1200,
                 1500, 1100,
@@ -63,7 +64,7 @@ class WindowedCameraAndAudioTest {
 
         // Player near origin: translation clamps to 0 so the world's origin
         // edge sits flush with the viewport origin.
-        double[] t2 = GameController.computeCameraTranslation(
+        double[] t2 = FxGameRenderCoordinator.computeCameraTranslation(
                 800, 600,
                 1600, 1200,
                 10, 10,
@@ -75,7 +76,7 @@ class WindowedCameraAndAudioTest {
     @Test
     void cameraDoesNotScrollWhenWorldFitsViewport() {
         // Even in fullscreen, if the world fits the viewport, no translation.
-        double[] t = GameController.computeCameraTranslation(
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 1920, 1080,
                 800, 600,
                 400, 300,
@@ -102,5 +103,41 @@ class WindowedCameraAndAudioTest {
         GameOverAction.startGameOverMusic();
         assertTrue(fakeAudio.playedResources().contains(AudioResourceConstants.GameOverSound),
                 "GameOverAction must start the GAME_OVER_MUSIC loop so the player hears the game-over track");
+    }
+
+    @Test
+    void cameraStaysAtOriginWhenWorldSmallerThanViewport() {
+        // Player at centre of a small world inside a large viewport
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                1920, 1080,
+                800, 600,
+                400, 300,
+                false);
+        assertEquals(0d, t[0], 0.0001);
+        assertEquals(0d, t[1], 0.0001);
+    }
+
+    @Test
+    void cameraAnchorsWhenWorldIsWiderInWindowedMode() {
+        // In windowed mode with width overflow only, x is anchored to viewport-world.
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                1280, 720,
+                2000, 720,
+                1000, 400,
+                false);
+        assertEquals(1280 - 2000, t[0], 0.0001, "x clamps to viewport-world");
+        assertEquals(720 - 720, t[1], 0.0001, "y clamps to viewport-world");
+    }
+
+    @Test
+    void cameraAnchorsWhenWorldIsTallerInWindowedMode() {
+        // In windowed mode with height overflow only, y is anchored to viewport-world.
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                1280, 720,
+                1280, 1000,
+                1000, 400,
+                false);
+        assertEquals(0d, t[0], 0.0001);
+        assertEquals(720 - 1000, t[1], 0.0001, "y clamps to viewport-world");
     }
 }

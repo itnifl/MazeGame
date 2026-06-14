@@ -47,7 +47,7 @@ import main.game.maze.libgdx.helper.GdxGameUpdateFlowSupport;
 import main.game.maze.libgdx.helper.GdxScoreSupport;
 import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
-import main.game.maze.libgdx.controller.state.GameModeRouter;
+import main.game.maze.common.controller.state.GameModeRouter;
 import main.game.maze.libgdx.controller.state.GdxOverlayModeCoordinator;
 import main.game.maze.libgdx.controller.state.PlayingModeController;
 import main.game.maze.common.input.InputFrame;

@@ -6,7 +6,7 @@ import javafx.scene.layout.AnchorPane;
 
 public class ActionScreens {
 
-    protected void replaceRoot(AnchorPane oldRoot, AnchorPane newRoot) {
+    public void replaceRoot(AnchorPane oldRoot, AnchorPane newRoot) {
         if (oldRoot == null || newRoot == null) return;
 
         Runnable doSwap = () -> {

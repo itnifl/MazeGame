@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import main.game.maze.actions.WinGameAction;
+import main.game.maze.characters.FxPositionBounds;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
+import main.game.maze.characters.interfaces.PositionBounds;
 
 public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
     private static final Logger LOGGER = Logger.getLogger(WinArea.class.getName());
@@ -29,10 +30,10 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
     }
 
     @Override
-    public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
 
         // full bounds of the heart image (areaGraphics)
-        Bounds full = this.areaGraphics.getBoundsInParent();
+        PositionBounds full = new FxPositionBounds(this.areaGraphics.getBoundsInParent());
 
         // compute a centered inner box from a configurable hitbox ratio
         double innerWidth = full.getWidth() * INNER_HITBOX_SIZE_RATIO;
@@ -41,12 +42,12 @@ public class WinArea implements ICanSubscribeAndNotifyPosition, ICanLetYouWin {
         double innerMinX = full.getMinX() + (full.getWidth() - innerWidth) * CENTER_OFFSET_RATIO;
         double innerMinY = full.getMinY() + (full.getHeight() - innerHeight) * CENTER_OFFSET_RATIO;
 
-        Bounds inner = new javafx.geometry.BoundingBox(
+        PositionBounds inner = new FxPositionBounds(new javafx.geometry.BoundingBox(
                 innerMinX,
                 innerMinY,
                 innerWidth,
                 innerHeight
-        );
+        ));
 
         // intersection now only checks the inner third
         if (nodeBounds.intersects(inner)) {

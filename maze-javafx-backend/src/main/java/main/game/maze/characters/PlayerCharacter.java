@@ -6,7 +6,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.ColorAdjust;
@@ -19,6 +18,7 @@ import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanLetYouWin;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
+import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.config.model.PlayerConfig;
@@ -172,12 +172,12 @@ public class PlayerCharacter extends Character
     }
 
     private class HappyAction implements ICharacterAction {
-        public void doAction(Node characterGraphics) {
+        public void doAction(Object characterGraphics) {
         }
     }
 
     private class DieAction implements ICharacterAction {
-        public void doAction(Node characterGraphics) {
+        public void doAction(Object characterGraphics) {
         }
     }
 
@@ -240,7 +240,7 @@ public class PlayerCharacter extends Character
     }
 
     @Override
-    public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
         var graphics = this.getCharacterGraphics();
         if (graphics == null) {
             return;  // Player removed (game over), skip evaluation
@@ -251,7 +251,7 @@ public class PlayerCharacter extends Character
         boolean isPhasing = entity instanceof INonTangientMazeGameCharacter nonTangient
                 && GhostNonTangibilityService.isPhasing(nonTangient.getNonTangientEnergy());
 
-        var myBounds = graphics.getBoundsInParent();
+        var myBounds = new FxPositionBounds(graphics.getBoundsInParent());
         if (!nodeBounds.intersects(myBounds)) {
             return;
         }

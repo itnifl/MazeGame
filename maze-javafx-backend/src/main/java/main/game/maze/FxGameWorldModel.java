@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * reflection-based unit tests continue to resolve them through the controller's
  * {@code model} reference.</p>
  */
-final class FxGameWorldModel {
+public final class FxGameWorldModel {
 
     /** Number of player moves performed in the current game (shared with score actions). */
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
@@ -46,76 +46,108 @@ final class FxGameWorldModel {
         return playerMoveCount;
     }
 
-    long pathHintTotalUsedNanos() {
+    public long pathHintTotalUsedNanos() {
         return pathHintTotalUsedNanos;
     }
 
-    void setPathHintTotalUsedNanos(long value) {
+    public void setPathHintTotalUsedNanos(long value) {
         this.pathHintTotalUsedNanos = value;
     }
 
-    long pathHintPressStartNanos() {
+    public long pathHintPressStartNanos() {
         return pathHintPressStartNanos;
     }
 
-    void setPathHintPressStartNanos(long value) {
+    public void setPathHintPressStartNanos(long value) {
         this.pathHintPressStartNanos = value;
     }
 
-    boolean pathHintKeyDown() {
+    public boolean pathHintKeyDown() {
         return pathHintKeyDown;
     }
 
-    void setPathHintKeyDown(boolean value) {
+    public void setPathHintKeyDown(boolean value) {
         this.pathHintKeyDown = value;
     }
 
-    boolean isRouteHintVisible() {
+    public boolean isRouteHintVisible() {
         return isRouteHintVisible;
     }
 
-    void setRouteHintVisible(boolean value) {
+    public void setRouteHintVisible(boolean value) {
         this.isRouteHintVisible = value;
     }
 
-    long lastRouteHintPenaltyNanos() {
+    public long lastRouteHintPenaltyNanos() {
         return lastRouteHintPenaltyNanos;
     }
 
-    void setLastRouteHintPenaltyNanos(long value) {
+    public void setLastRouteHintPenaltyNanos(long value) {
         this.lastRouteHintPenaltyNanos = value;
     }
 
-    double routeHintPenaltyAccumulator() {
+    public double routeHintPenaltyAccumulator() {
         return routeHintPenaltyAccumulator;
     }
 
-    void setRouteHintPenaltyAccumulator(double value) {
+    public void setRouteHintPenaltyAccumulator(double value) {
         this.routeHintPenaltyAccumulator = value;
     }
 
-    int routeHintPenaltyPoints() {
+    public int routeHintPenaltyPoints() {
         return routeHintPenaltyPoints;
     }
 
-    void setRouteHintPenaltyPoints(int value) {
+    public void setRouteHintPenaltyPoints(int value) {
         this.routeHintPenaltyPoints = value;
     }
 
-    boolean enemyPathOverlayVisible() {
+    public boolean enemyPathOverlayVisible() {
         return enemyPathOverlayVisible;
     }
 
-    void setEnemyPathOverlayVisible(boolean value) {
+    public void setEnemyPathOverlayVisible(boolean value) {
         this.enemyPathOverlayVisible = value;
     }
 
-    long enemyPathOverlayHideAtNanos() {
+    public long enemyPathOverlayHideAtNanos() {
         return enemyPathOverlayHideAtNanos;
     }
 
-    void setEnemyPathOverlayHideAtNanos(long value) {
+    public void setEnemyPathOverlayHideAtNanos(long value) {
         this.enemyPathOverlayHideAtNanos = value;
+    }
+
+    /**
+     * Atomically starts a new path-hint press session.
+     * Sets {@code isRouteHintVisible = true} and, if the key was not already flagged
+     * as held, initialises the press-start timestamp and penalty reference time.
+     * Idempotent: calling again while the key is already down is a no-op on the timer.
+     */
+    public void beginPathHint() {
+        isRouteHintVisible = true;
+        if (!pathHintKeyDown) {
+            long now = System.nanoTime();
+            pathHintKeyDown           = true;
+            pathHintPressStartNanos   = now;
+            lastRouteHintPenaltyNanos = now;
+        }
+    }
+
+    /**
+     * Atomically ends the current path-hint press session.
+     * Accumulates held nanoseconds into {@code pathHintTotalUsedNanos} (capped at
+     * {@code budgetNanos}), clears {@code pathHintKeyDown}, and hides the overlay.
+     *
+     * @param budgetNanos the maximum total nanoseconds allowed for the current difficulty
+     */
+    public void endPathHint(long budgetNanos) {
+        if (pathHintKeyDown) {
+            long heldNanos = System.nanoTime() - pathHintPressStartNanos;
+            pathHintTotalUsedNanos = Math.min(pathHintTotalUsedNanos + heldNanos, budgetNanos);
+            pathHintKeyDown = false;
+        }
+        isRouteHintVisible = false;
     }
 
     /**

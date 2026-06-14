@@ -4,8 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.shape.Rectangle;
-import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
+import main.game.maze.characters.interfaces.PositionBounds;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ public class PlayerCharacterDisposeTest {
 
         // Add a dummy subscriber to verify it gets cleared
         ICanSubscribeAndNotifyPosition dummy = new ICanSubscribeAndNotifyPosition() {
-            public void doPositionEvaluation(javafx.geometry.Bounds b, ICanSubscribeAndNotifyPosition e) {}
+            public void doPositionEvaluation(PositionBounds b, ICanSubscribeAndNotifyPosition e) {}
             public void addPositionSubscriber(ICanSubscribeAndNotifyPosition e) {}
             public void removePositionSubscriber(ICanSubscribeAndNotifyPosition e) {}
             public java.util.List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() { return java.util.Collections.emptyList(); }

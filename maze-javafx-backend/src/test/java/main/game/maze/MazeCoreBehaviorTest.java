@@ -40,6 +40,12 @@ public class MazeCoreBehaviorTest {
         f.setAccessible(true);
         f.set(target, value);
     }
+    
+    private static Object getPrivate(Object target, String field) throws Exception {
+        Field f = target.getClass().getDeclaredField(field);
+        f.setAccessible(true);
+        return f.get(target);
+    }
 
     /** Minimal concrete subclass to expose Character#dispose() if protected */
     static class TestCharacter extends Character {
@@ -133,8 +139,9 @@ public class MazeCoreBehaviorTest {
         assertEquals(1, player.getPositionSubscribers().size(), "Precondition: win area subscribed");
 
         // inject fields
-        setPrivate(gc, "runComputerCharacters", bgTask);
-        setPrivate(gc, "runComputerCharactersThread", worker);
+        Object coordinator = getPrivate(gc, "movementLoopCoordinator");
+        setPrivate(coordinator, "runComputerCharacters", bgTask);
+        setPrivate(coordinator, "runComputerCharactersThread", worker);
         setPrivate(gc, "playerCharacter", player);
         setPrivate(gc, "winarea", winArea);
 

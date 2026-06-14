@@ -6,12 +6,15 @@ JavaFX game runtime module. This module is now the top level runtime module for 
 
 | Package | Contents |
 |---|---|
-| `main.game.maze` | `App` (JavaFX `Application` entry point), `Launcher`, `GameController`, screen controllers |
-| `main.game.maze.characters` | `Character`, `ComputerCharacter`, `GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`, `PlayerCharacter`, `ProgressBarStatePresenter` |
-| `main.game.maze.characters.interfaces` | `ICharacterAction`, `ICanSubscribeAndNotifyPosition` |
+| `main.game.maze` | `App` (JavaFX `Application` entry point), `Launcher`, `GameController`, `FxGameWorldModel`, `FxMovementLoopCoordinator`, `FxEnemyCoordinator`, screen controllers |
+| `main.game.maze.characters` | `Character`, `ComputerCharacter`, `GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`, `PlayerCharacter`, `FxPositionBounds`, `ProgressBarStatePresenter` |
+| `main.game.maze.characters.interfaces` | `PositionBounds` (JavaFX-backend neutral bounds); `ICharacterAction` and `ICanSubscribeAndNotifyPosition` promoted to `maze-common-backend` |
 | `main.game.maze.actions` | `GameOverAction`, `HighscoreAction`, `MovementNotifierAction`, `RestartGameAction`, `WinGameAction` |
 | `main.game.maze.actions.base` | `ActionScreens`, `CharacterActionScreens` |
 | `main.game.maze.areas` | `WinArea` |
+| `main.game.maze.javafx.audio` | `FxGameAudioCoordinator` |
+| `main.game.maze.javafx.controller.state` | `FxPlayingModeController` |
+| `main.game.maze.javafx.render` | `FxGameRenderCoordinator`, `FxMazeCanvasRenderer`, `FxPathHintCoordinator` |
 | `main.game.maze.runtime.opponents` | `OpponentRuntimeFactory` |
 | `main.game.maze.service` | `CharacterIntersectionFixerService` |
 | `main.game.maze.util` | `Dialogs` |
@@ -34,13 +37,23 @@ maze-javafx-backend
 
 ### GameController refactor progress
 
-JavaFX controller decomposition is in progress to mirror the libGDX MVC plus command architecture.
+The JavaFX `GameController` has been refactored to an MVC (Model-View-Controller) plus Command architecture, mirroring the libGDX frontend for structural parity. The original 1800-line god class has been decomposed into a slim coordinator that delegates responsibilities to dedicated classes.
 
-- terminal command parsing and dispatch are extracted into `GameControllerTerminalSupport`
-- keyboard action dispatch is extracted into `GameControllerInputSupport`
-- immutable per tick key and mouse snapshots are provided by the shared generic `InputFrame<KeyCode>` (in `maze-common-frontend` under `main.game.maze.common.input`), built by `JavaFxInputSnapshotReader`
-- first command objects are routed through `JavaFxGameCommand` and `JavaFxInputCommandContext`
-- gameplay scoring and path-hint state (move count, path-hint budget, route-hint penalty, enemy-path overlay flags) is extracted into the `FxGameWorldModel` data model (first Phase 1 model-extraction increment); the controller delegates all reads and writes through it
+| Responsibility | Owner | Notes |
+|---|---|---|
+| **Lifecycle & FXML** | `GameController` (~653 lines) | The controller is the FXML entry point; wires all coordinators and delegates every domain concern. |
+| **Gameplay State** | `FxGameWorldModel` | Pure data model holding scoring, path-hint state, and enemy overlay flags. |
+| **Input Handling** | `InputRouter<KeyCode>` | Shared component from `maze-common-frontend`; maps key presses to `GameCommand` objects via `KeyBindingRegistry`. |
+| **Concurrency** | `FxMovementLoopCoordinator` | Owns the background `Task` for enemy AI and the `AnimationTimer` for player movement. |
+| **Enemy AI & Visuals** | `FxEnemyCoordinator` | Enemy movement AI, infection mist/warning, debug-label overlays, and enemy path canvas drawing. |
+| **Path Hint** | `FxPathHintCoordinator` | Path-hint energy budget, countdown label, budget exhaustion message, and player navigation path rendering. |
+| **Maze Canvas** | `FxMazeCanvasRenderer` | Static maze wall canvas rendering from `List<Vector2D>` with image caching. |
+| **Camera & Spanning Tree** | `FxGameRenderCoordinator` | Camera translation (windowed / fullscreen), spanning-tree canvas drawing. |
+| **Audio** | `FxGameAudioCoordinator` | Audio transitions for menu, in-game, win, and game-over states. |
+| **Game Logic** | `FxPlayingModeController` | PLAYING-mode update loop: input routing, route-hint penalty, player movement throttling. |
+| **Mode Switching** | `GameModeRouter` | Shared deterministic mode state machine; dispatches to the active mode controller. |
+
+This new structure improves testability, isolates responsibilities, and ensures that both the JavaFX and libGDX frontends are built on the same architectural foundation, satisfying **CRR-5**.
 
 Current extraction steps preserve behavior by routing side effects back into `GameController` through small sink interfaces. This keeps gameplay and threading behavior stable while controller ownership is reduced incrementally.
 

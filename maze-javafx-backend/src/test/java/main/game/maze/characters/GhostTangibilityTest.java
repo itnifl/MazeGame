@@ -1,10 +1,8 @@
 package main.game.maze.characters;
 
 import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.scene.shape.Rectangle;
-import main.game.maze.characters.GhostCharacter;
-import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentsFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -78,7 +76,7 @@ class GhostTangibilityTest {
         int hpBefore = player.getHitPoints();
 
         // Simulate the ghost evaluating its position against the player's bounds.
-        Bounds playerBounds = new BoundingBox(0, 0, 30, 30);
+        PositionBounds playerBounds = new FxPositionBounds(new BoundingBox(0, 0, 30, 30));
         ghost.doPositionEvaluation(playerBounds, player);
 
         // Phasing ghost bypasses wall check and deals damage on contact.
@@ -100,7 +98,7 @@ class GhostTangibilityTest {
         int hpBefore = player.getHitPoints();
 
         // Bounds overlap and App.gameController is null, so the wall check is skipped and damage is applied.
-        Bounds playerBounds = new BoundingBox(5, 5, 30, 30);
+        PositionBounds playerBounds = new FxPositionBounds(new BoundingBox(5, 5, 30, 30));
         ghost.doPositionEvaluation(playerBounds, player);
 
         assertTrue(player.getHitPoints() < hpBefore,
@@ -132,7 +130,7 @@ class GhostTangibilityTest {
         PlayerCharacter player = new PlayerCharacter(new Rectangle(10, 10, 30, 30), 0, 0, null);
         int hpBefore = player.getHitPoints();
 
-        Bounds playerBounds = new BoundingBox(10, 10, 30, 30);
+        PositionBounds playerBounds = new FxPositionBounds(new BoundingBox(10, 10, 30, 30));
         ghost.doPositionEvaluation(playerBounds, player);
 
         assertTrue(player.getHitPoints() < hpBefore,
@@ -163,7 +161,7 @@ class GhostTangibilityTest {
         PlayerCharacter player = new PlayerCharacter(new Rectangle(10, 10, 30, 30), 0, 0, null);
         int hpBefore = player.getHitPoints();
 
-        Bounds playerBounds = new BoundingBox(10, 10, 30, 30);
+        PositionBounds playerBounds = new FxPositionBounds(new BoundingBox(10, 10, 30, 30));
         ghost.doPositionEvaluation(playerBounds, player);
 
         assertEquals(hpBefore, player.getHitPoints(),
@@ -184,7 +182,7 @@ class GhostTangibilityTest {
         PlayerCharacter player = new PlayerCharacter(new Rectangle(200, 0, 30, 30), 0, 0, null);
         int hpBefore = player.getHitPoints();
 
-        Bounds playerBounds = new BoundingBox(200, 0, 30, 30);
+        PositionBounds playerBounds = new FxPositionBounds(new BoundingBox(200, 0, 30, 30));
         ghost.doPositionEvaluation(playerBounds, player);
 
         assertEquals(hpBefore, player.getHitPoints(),
@@ -222,7 +220,7 @@ class GhostTangibilityTest {
         ghost.setNonTangientEnergy(5);   // phasing
 
         // Ghost bounds fully overlap the player (both start at origin).
-        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        PositionBounds ghostBounds = new FxPositionBounds(new BoundingBox(0, 0, 40, 40));
         player.doPositionEvaluation(ghostBounds, ghost);
 
         assertTrue(player.getHitPoints() < hpBefore,
@@ -250,7 +248,7 @@ class GhostTangibilityTest {
         GhostCharacter ghost = newGhost(ghostGfx);
         ghost.setNonTangientEnergy(5);   // phasing
 
-        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        PositionBounds ghostBounds = new FxPositionBounds(new BoundingBox(0, 0, 40, 40));
         player.doPositionEvaluation(ghostBounds, ghost);
 
         assertTrue(player.getHitPoints() < hpBefore,
@@ -278,7 +276,7 @@ class GhostTangibilityTest {
         GhostCharacter ghost = newGhost(ghostGfx);
         ghost.setNonTangientEnergy(0);   // solid
 
-        Bounds ghostBounds = new BoundingBox(0, 0, 40, 40);
+        PositionBounds ghostBounds = new FxPositionBounds(new BoundingBox(0, 0, 40, 40));
         player.doPositionEvaluation(ghostBounds, ghost);
 
         assertEquals(hpBefore, player.getHitPoints(),

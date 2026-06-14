@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,6 +14,7 @@ import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
+import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -49,8 +49,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     }
 
     // animations
-    private class HappyAction implements ICharacterAction { public void doAction(Node g) {} }
-    private class DieAction   implements ICharacterAction { public void doAction(Node g) {} }
+    private class HappyAction implements ICharacterAction { public void doAction(Object g) {} }
+    private class DieAction   implements ICharacterAction { public void doAction(Object g) {} }
 
     @Override public void PlayHappyAnimation() { super.doCharacterAnimation(new HappyAction()); }
     @Override public void PlayDieAnimation()   { super.doCharacterAnimation(new DieAction()); }
@@ -104,11 +104,11 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
             // early collision while flying
             boolean hitNow = false;
-            Bounds pb = p.node.getBoundsInParent();
+            FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
             for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                 if (!(s instanceof ICanDie victim)) continue;
                 Node n = ((Character)s).getCharacterGraphics();
-                if (n != null && pb.intersects(n.getBoundsInParent())) {
+                if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
                     explode(p, victim);
                     hitNow = true; break;
                 }
@@ -169,12 +169,12 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     @Override public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() { return touchTargets; }
 
     @Override
-    public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
         var graphics = this.getCharacterGraphics();
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        var myBounds = graphics.getBoundsInParent();
+        var myBounds = new FxPositionBounds(graphics.getBoundsInParent());
         if (!nodeBounds.intersects(myBounds)) {
             return;
         }

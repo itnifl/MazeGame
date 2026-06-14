@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.javafx.controller.state.FxPlayingModeController;
 import main.game.maze.mazeworld.GameMazeWorld;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,28 @@ public class GameControllerRoutePenaltyTest {
         return m.invoke(target, args);
     }
 
+    /** Extracts the {@link FxGameWorldModel} from a {@link GameController} via reflection. */
+    private static FxGameWorldModel extractModel(GameController gc) throws Exception {
+        Field f = GameController.class.getDeclaredField("model");
+        f.setAccessible(true);
+        return (FxGameWorldModel) f.get(gc);
+    }
+
+    /** No-op sink used to satisfy {@link JavaFxInputCommandContext} in unit tests. */
+    private static JavaFxInputCommandContext noopContext() {
+        return new JavaFxInputCommandContext(new JavaFxInputCommandContext.ActionSink() {
+            public void showHighScore() {}
+            public void openDifficultyPickerAndMaybeRestart() {}
+            public void showNavigationPath() {}
+            public void showSpanningTree() {}
+            public void clearNavigationPath() {}
+            public void clearSpanningTree() {}
+            public void updateDebugLabels() {}
+            public void updateScoreHud() {}
+            public void openTerminalPrompt() {}
+        });
+    }
+
     @Test
     void showNavigationPathWithMissingNavigationGraphDoesNotEnablePenalty() throws Exception {
         GameController gc = new GameController();
@@ -86,18 +109,21 @@ public class GameControllerRoutePenaltyTest {
     @Test
     void routePenaltyAccruesOnlyWhenHintIsVisible() throws Exception {
         GameController gc = new GameController();
+        FxGameWorldModel model = extractModel(gc);
+        FxPlayingModeController playing = new FxPlayingModeController(model, null, null, null, noopContext());
 
         long now = System.nanoTime();
 
+        // Hint hidden — penalty must NOT accrue.
         set(gc, "isRouteHintVisible", false);
         set(gc, "lastRouteHintPenaltyNanos", now - 1_000_000_000L);
-        invoke(gc, "applyRouteHintPenalty", new Class<?>[]{long.class}, now);
+        invoke(playing, "applyRouteHintPenalty", new Class<?>[]{long.class}, now);
         assertEquals(0, gc.getDynamicScorePenalty(), "Penalty should not accrue while hint is hidden");
 
+        // Hint visible — penalty MUST accrue (1 s elapsed @ 0.05 pts/ms = 50 pts).
         set(gc, "isRouteHintVisible", true);
         set(gc, "lastRouteHintPenaltyNanos", now - 1_000_000_000L);
-        invoke(gc, "applyRouteHintPenalty", new Class<?>[]{long.class}, now);
-
+        invoke(playing, "applyRouteHintPenalty", new Class<?>[]{long.class}, now);
         assertTrue(gc.getDynamicScorePenalty() > 0, "Penalty should accrue while hint is visible");
     }
 }

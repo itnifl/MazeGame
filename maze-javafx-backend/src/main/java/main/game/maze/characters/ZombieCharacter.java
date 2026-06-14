@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.ICharacterAction;
+import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.opponents.Zombie;                // generated EMF class
@@ -54,11 +54,11 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     private class HappyAction implements ICharacterAction {
-        public void doAction(Node characterGraphics) { /* animate */ }
+        public void doAction(Object characterGraphics) { /* animate */ }
     }
 
     private class DieAction implements ICharacterAction {
-        public void doAction(Node characterGraphics) { /* animate and remove node */ }
+        public void doAction(Object characterGraphics) { /* animate and remove node */ }
     }
 
     @Override
@@ -96,12 +96,12 @@ public class ZombieCharacter extends ComputerCharacter
 
 
     @Override
-    public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
         var graphics = this.getCharacterGraphics();
         if (nodeBounds == null || graphics == null) {
             return;
         }
-        var myBounds = graphics.getBoundsInParent();
+        var myBounds = new FxPositionBounds(graphics.getBoundsInParent());
         if (!nodeBounds.intersects(myBounds)) {
             return;
         }

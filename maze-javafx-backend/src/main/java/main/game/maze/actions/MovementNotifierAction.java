@@ -2,8 +2,8 @@ package main.game.maze.actions;
 
 import java.util.ArrayList;
 
-import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import main.game.maze.characters.FxPositionBounds;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.interfaces.INotifyMovement;
 
@@ -22,8 +22,8 @@ public class MovementNotifierAction implements INotifyMovement {
             return;
         }
 
-        Bounds bounds = characterGraphics.getBoundsInParent();
-        if (bounds == null) {
+        var rawBounds = characterGraphics.getBoundsInParent();
+        if (rawBounds == null) {
             return;
         }
 
@@ -31,6 +31,8 @@ public class MovementNotifierAction implements INotifyMovement {
         if (subscribers == null || subscribers.isEmpty()) {
             return;
         }
+
+        var bounds = new FxPositionBounds(rawBounds);
 
         // Iterate over a snapshot so listeners can subscribe/unsubscribe during callbacks.
         var snapshot = new ArrayList<>(subscribers);
@@ -41,5 +43,4 @@ public class MovementNotifierAction implements INotifyMovement {
             listener.doPositionEvaluation(bounds, this.entity);
         }
     }
-    
 }
