@@ -4,7 +4,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
 import main.game.maze.characters.PlayerCharacter;
-import main.game.maze.mazeworld.GameMazeWorld;
 
 /**
  * Owns canvas/HUD/overlay redraw orchestration over an immutable render snapshot
@@ -29,8 +28,8 @@ public final class FxGameRenderCoordinator {
             gameBoard.setClip(gameBoardClip);
         }
 
-        gameBoardClip.widthProperty().bind(gameBoard.getScene().getRoot().getBoundsInLocal().widthProperty());
-        gameBoardClip.heightProperty().bind(gameBoard.getScene().getRoot().getBoundsInLocal().heightProperty());
+        gameBoardClip.widthProperty().bind(gameBoard.getScene().widthProperty());
+        gameBoardClip.heightProperty().bind(gameBoard.getScene().heightProperty());
     }
 
     public void updateCameraFollow(PlayerCharacter playerCharacter) {
@@ -72,21 +71,46 @@ public final class FxGameRenderCoordinator {
     public static double[] computeCameraTranslation(double viewportWidth, double viewportHeight,
             double worldWidth, double worldHeight, double playerX, double playerY, boolean fullscreen) {
 
+        boolean worldWider  = worldWidth  > viewportWidth;
+        boolean worldTaller = worldHeight > viewportHeight;
+
+        // World fits entirely in viewport — no translation needed.
+        if (!worldWider && !worldTaller) {
+            return new double[]{0, 0};
+        }
+
+        // Both axes overflow in windowed mode — keep the board at origin so the
+        // player always sees the top-left starting area.
+        if (worldWider && worldTaller && !fullscreen) {
+            return new double[]{0, 0};
+        }
+
         double translateX = 0;
         double translateY = 0;
 
-        if (worldWidth > viewportWidth) {
-            translateX = viewportWidth / 2 - playerX;
-            translateX = Math.min(translateX, 0);
-            translateX = Math.max(translateX, viewportWidth - worldWidth);
+        if (worldWider) {
+            if (fullscreen) {
+                // Centre-follow the player, clamped so the world never scrolls past its edges.
+                translateX = viewportWidth / 2 - playerX;
+                translateX = Math.min(translateX, 0);
+                translateX = Math.max(translateX, viewportWidth - worldWidth);
+            } else {
+                // Only width overflows in windowed mode — anchor to the far-right edge.
+                translateX = viewportWidth - worldWidth;
+            }
         }
 
-        if (worldHeight > viewportHeight) {
-            translateY = viewportHeight / 2 - playerY;
-            translateY = Math.min(translateY, 0);
-            translateY = Math.max(translateY, viewportHeight - worldHeight);
+        if (worldTaller) {
+            if (fullscreen) {
+                translateY = viewportHeight / 2 - playerY;
+                translateY = Math.min(translateY, 0);
+                translateY = Math.max(translateY, viewportHeight - worldHeight);
+            } else {
+                // Only height overflows in windowed mode — anchor to the far-bottom edge.
+                translateY = viewportHeight - worldHeight;
+            }
         }
-        
+
         return new double[]{translateX, translateY};
     }
 }

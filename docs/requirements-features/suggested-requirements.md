@@ -16,6 +16,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - SR-47: JavaFX mode specific update logic shall be dispatched by a deterministic mode state machine router that evaluates mode handlers in a fixed order and returns after the first handling controller, mirroring the libGDX mode router.
 - SR-48: JavaFX frame rendering shall be orchestrated by a dedicated render coordinator that consumes an immutable render snapshot from the gameplay model and delegates actual drawing to existing canvas, HUD, and overlay view helpers, with all scene graph mutation remaining on the JavaFX Application Thread.
 - SR-49: JavaFX audio transitions for menu, in game, win, and game over shall be encapsulated behind a dedicated coordinator boundary over `GameAudioDirector`, keeping the controller free from direct channel switching policy.
+- SR-45: JavaFX gameplay start and reset flow shall be encapsulated in a dedicated bootstrap boundary (FxGameSessionBootstrapper) — **deferred**: requires resolving circular dependency between GameOverAction/WinGameAction constructors and PlayerCharacter creation inside setupGame(); see plan Phase 1 Nr 2.
 - SR-50: During JavaFX input migration to command and registry architecture, command dispatch shall emit lightweight structured diagnostics (command name, input action, and mode) through a frontend neutral observability hook enabled in debug builds. This shall support parity troubleshooting between JavaFX and libGDX without changing gameplay behavior.
 
 ## Ratified Requirements
@@ -26,4 +27,7 @@ These requirements have been implemented and verified.
 - SR-43: JavaFX gameplay input is handled via the shared key binding registry, resolving logical actions to command objects and replacing the inline `handleKeyPressed` switch. Key polling is centralized, and all actions are expressed as commands.
 - SR-44: JavaFX gameplay mutable runtime state lives in a dedicated model (`FxGameWorldModel`), separate from lifecycle, rendering, input, and FXML concerns.
 - SR-46: The JavaFX movement thread, animation timer, and watchdog are owned by a dedicated concurrency coordinator (`FxMovementLoopCoordinator`) with unchanged lifecycle semantics.
+- SR-46: The JavaFX movement thread, animation timer, and watchdog are owned by a dedicated concurrency coordinator (`FxMovementLoopCoordinator`) with unchanged lifecycle semantics.
+- SR-47: JavaFX mode-specific update logic is dispatched by the shared `GameModeRouter` to `FxPlayingModeController`, which owns input routing, route-hint penalty accrual, player movement throttling, and camera follow for the PLAYING mode.
+- SR-48: JavaFX frame rendering is orchestrated by `FxGameRenderCoordinator`, which computes camera translation for windowed and fullscreen modes with correct player centre-follow and edge clamping.
 - SR-49: JavaFX audio transitions are encapsulated behind a dedicated coordinator (`FxGameAudioCoordinator`) over `GameAudioDirector`.

@@ -9,6 +9,6 @@ package main.game.maze;
 final class ApplyPathHintCommand implements JavaFxGameCommand {
     @Override
     public void execute(JavaFxInputCommandContext context) {
-        context.showNavigationPath();
+        context.applyPathHintHeld(true);
     }
 }

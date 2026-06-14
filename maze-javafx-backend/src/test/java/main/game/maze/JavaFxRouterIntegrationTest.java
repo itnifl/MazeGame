@@ -109,5 +109,14 @@ class JavaFxRouterIntegrationTest {
 
         @Override
         public void clearSpanningTree() { calls.add("clearSpanningTree"); }
+
+        @Override
+        public void updateDebugLabels() { calls.add("updateDebugLabels"); }
+
+        @Override
+        public void updateScoreHud() { calls.add("updateScoreHud"); }
+
+        @Override
+        public void openTerminalPrompt() { calls.add("openTerminalPrompt"); }
     }
 }

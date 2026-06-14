@@ -3,6 +3,7 @@ package main.game.maze.javafx.controller.state;
 import javafx.scene.input.KeyCode;
 import main.game.maze.App;
 import main.game.maze.FxGameWorldModel;
+import main.game.maze.JavaFxInputCommandContext;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.common.controller.state.GameModeRouter;
 import main.game.maze.common.input.InputFrame;

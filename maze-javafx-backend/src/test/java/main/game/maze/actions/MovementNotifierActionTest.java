@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
-import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
+import main.game.maze.characters.interfaces.PositionBounds;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -25,7 +24,7 @@ public class MovementNotifierActionTest {
 
         ICanSubscribeAndNotifyPosition mutatingSubscriber = new ICanSubscribeAndNotifyPosition() {
             @Override
-            public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition mortalEntity) {
+            public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition mortalEntity) {
                 invoked.set(true);
                 mortalEntity.removePositionSubscriber(this);
             }
@@ -56,7 +55,7 @@ public class MovementNotifierActionTest {
         private final List<ICanSubscribeAndNotifyPosition> subscribers = new ArrayList<>();
 
         @Override
-        public void doPositionEvaluation(Bounds nodeBounds, ICanSubscribeAndNotifyPosition mortalEntity) {
+        public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition mortalEntity) {
         }
 
         @Override

@@ -58,7 +58,7 @@ class FxGameAudioCoordinatorTest {
         String lastPlayedLoop;
         String lastPlayedLoopChannel;
 
-        @Override public void init() {}
+        public void init() {}
         @Override public void dispose() {}
         @Override public void play(String soundName) {}
         @Override public void playRateLimited(String soundName, String soundId, long cooldown) {}

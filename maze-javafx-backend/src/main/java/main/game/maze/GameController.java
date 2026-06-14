@@ -188,6 +188,7 @@ public class GameController implements Initializable {
     private FxPlayingModeController playingModeController;
     private FxGameRenderCoordinator renderCoordinator;
     private FxGameAudioCoordinator audioCoordinator;
+    private double mouseX;
     private double mouseY;
     private boolean leftMouseClicked;
     private final JavaFxInputCommandContext.ActionSink actionSink = new JavaFxInputCommandContext.ActionSink() {

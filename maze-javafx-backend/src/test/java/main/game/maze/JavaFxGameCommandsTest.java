@@ -30,7 +30,7 @@ class JavaFxGameCommandsTest {
         assertEquals("showHighScore", sink.calls.get(4));
     }
 
-    private static final class RecordingSink implements JavaFxInputCommandContext.GameKeyActionSink {
+    private static final class RecordingSink implements JavaFxInputCommandContext.ActionSink {
         private final java.util.List<String> calls = new java.util.ArrayList<>();
 
         @Override
@@ -59,6 +59,18 @@ class JavaFxGameCommandsTest {
 
         @Override
         public void clearSpanningTree() {
+        }
+
+        @Override
+        public void updateDebugLabels() {
+        }
+
+        @Override
+        public void updateScoreHud() {
+        }
+
+        @Override
+        public void openTerminalPrompt() {
         }
     }
 }

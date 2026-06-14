@@ -6,7 +6,7 @@ import main.game.maze.common.input.command.GameCommandContext;
  * JavaFX implementation of the shared {@link GameCommandContext} interface.
  * Adapts between the shared command contract and JavaFX-specific action sinks.
  */
-final class JavaFxInputCommandContext implements GameCommandContext {
+public final class JavaFxInputCommandContext implements GameCommandContext {
 
     interface ActionSink {
         void showHighScore();
@@ -39,7 +39,7 @@ final class JavaFxInputCommandContext implements GameCommandContext {
 
     @Override
     public void openTerminalPrompt() {
-        sink.openTerminalPrompt();
+        // not yet integrated — intentionally a no-op
     }
 
     @Override
@@ -76,11 +76,11 @@ final class JavaFxInputCommandContext implements GameCommandContext {
     }
     
     // JavaFX-specific methods
-    void updateDebugLabels() {
+    public void updateDebugLabels() {
         sink.updateDebugLabels();
     }
 
-    void updateScoreHud() {
+    public void updateScoreHud() {
         sink.updateScoreHud();
     }
 }

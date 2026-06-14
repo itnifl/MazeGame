@@ -6,12 +6,15 @@ JavaFX game runtime module. This module is now the top level runtime module for 
 
 | Package | Contents |
 |---|---|
-| `main.game.maze` | `App` (JavaFX `Application` entry point), `Launcher`, `GameController`, screen controllers |
-| `main.game.maze.characters` | `Character`, `ComputerCharacter`, `GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`, `PlayerCharacter`, `ProgressBarStatePresenter` |
-| `main.game.maze.characters.interfaces` | `ICharacterAction`, `ICanSubscribeAndNotifyPosition` |
+| `main.game.maze` | `App` (JavaFX `Application` entry point), `Launcher`, `GameController`, `FxGameWorldModel`, `FxMovementLoopCoordinator`, screen controllers |
+| `main.game.maze.characters` | `Character`, `ComputerCharacter`, `GhostCharacter`, `ZombieCharacter`, `PumpkinBomberCharacter`, `PlayerCharacter`, `FxPositionBounds`, `ProgressBarStatePresenter` |
+| `main.game.maze.characters.interfaces` | `PositionBounds` (JavaFX-backend neutral bounds); `ICharacterAction` and `ICanSubscribeAndNotifyPosition` promoted to `maze-common-backend` |
 | `main.game.maze.actions` | `GameOverAction`, `HighscoreAction`, `MovementNotifierAction`, `RestartGameAction`, `WinGameAction` |
 | `main.game.maze.actions.base` | `ActionScreens`, `CharacterActionScreens` |
 | `main.game.maze.areas` | `WinArea` |
+| `main.game.maze.javafx.audio` | `FxGameAudioCoordinator` |
+| `main.game.maze.javafx.controller.state` | `FxPlayingModeController` |
+| `main.game.maze.javafx.render` | `FxGameRenderCoordinator` |
 | `main.game.maze.runtime.opponents` | `OpponentRuntimeFactory` |
 | `main.game.maze.service` | `CharacterIntersectionFixerService` |
 | `main.game.maze.util` | `Dialogs` |

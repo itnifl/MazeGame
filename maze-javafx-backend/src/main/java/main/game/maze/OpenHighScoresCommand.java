@@ -7,6 +7,6 @@ package main.game.maze;
 final class OpenHighScoresCommand implements JavaFxGameCommand {
     @Override
     public void execute(JavaFxInputCommandContext context) {
-        context.showHighScore();
+        context.openHighScores();
     }
 }

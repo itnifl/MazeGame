@@ -9,6 +9,6 @@ package main.game.maze;
 final class ToggleSpanningTreeCommand implements JavaFxGameCommand {
     @Override
     public void execute(JavaFxInputCommandContext context) {
-        context.showSpanningTree();
+        context.toggleSpanningTree();
     }
 }

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * reflection-based unit tests continue to resolve them through the controller's
  * {@code model} reference.</p>
  */
-final class FxGameWorldModel {
+public final class FxGameWorldModel {
 
     /** Number of player moves performed in the current game (shared with score actions). */
     private final AtomicInteger playerMoveCount = new AtomicInteger(0);
@@ -70,7 +70,7 @@ final class FxGameWorldModel {
         this.pathHintKeyDown = value;
     }
 
-    boolean isRouteHintVisible() {
+    public boolean isRouteHintVisible() {
         return isRouteHintVisible;
     }
 
@@ -78,27 +78,27 @@ final class FxGameWorldModel {
         this.isRouteHintVisible = value;
     }
 
-    long lastRouteHintPenaltyNanos() {
+    public long lastRouteHintPenaltyNanos() {
         return lastRouteHintPenaltyNanos;
     }
 
-    void setLastRouteHintPenaltyNanos(long value) {
+    public void setLastRouteHintPenaltyNanos(long value) {
         this.lastRouteHintPenaltyNanos = value;
     }
 
-    double routeHintPenaltyAccumulator() {
+    public double routeHintPenaltyAccumulator() {
         return routeHintPenaltyAccumulator;
     }
 
-    void setRouteHintPenaltyAccumulator(double value) {
+    public void setRouteHintPenaltyAccumulator(double value) {
         this.routeHintPenaltyAccumulator = value;
     }
 
-    int routeHintPenaltyPoints() {
+    public int routeHintPenaltyPoints() {
         return routeHintPenaltyPoints;
     }
 
-    void setRouteHintPenaltyPoints(int value) {
+    public void setRouteHintPenaltyPoints(int value) {
         this.routeHintPenaltyPoints = value;
     }
 
