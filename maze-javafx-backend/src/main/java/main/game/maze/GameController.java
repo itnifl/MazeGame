@@ -74,6 +74,10 @@ import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.input.InputRouter;
 import main.game.maze.common.input.KeyBindingRegistry;
+import main.game.maze.common.controller.state.GameModeRouter;
+import main.game.maze.javafx.audio.FxGameAudioCoordinator;
+import main.game.maze.javafx.controller.state.FxPlayingModeController;
+import main.game.maze.javafx.render.FxGameRenderCoordinator;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.ActivePathPoint;
@@ -180,11 +184,13 @@ public class GameController implements Initializable {
     private final KeyBindingRegistry<KeyCode> keyBindingRegistry = new KeyBindingRegistry<>();
     private final InputRouter<KeyCode> inputRouter = new InputRouter<>(keyBindingRegistry);
     private final JavaFxInputCommandContext inputCommandContext;
-
-    private double mouseX;
+    private final GameModeRouter modeRouter = new GameModeRouter();
+    private FxPlayingModeController playingModeController;
+    private FxGameRenderCoordinator renderCoordinator;
+    private FxGameAudioCoordinator audioCoordinator;
     private double mouseY;
     private boolean leftMouseClicked;
-    private final JavaFxInputCommandContext.GameKeyActionSink keyActionSink = new JavaFxInputCommandContext.GameKeyActionSink() {
+    private final JavaFxInputCommandContext.ActionSink actionSink = new JavaFxInputCommandContext.ActionSink() {
         @Override
         public void showHighScore() {
             GameController.this.showHighScore();
@@ -213,6 +219,22 @@ public class GameController implements Initializable {
         @Override
         public void clearSpanningTree() {
             GameController.this.clearSpanningTree();
+        }
+
+        @Override
+        public void updateDebugLabels() {
+            GameController.this.updateDebugLabels();
+        }
+
+        @Override
+        public void updateScoreHud() {
+            var score = winGameAction.updateScore();
+            GameController.this.updateScoreHud(score);
+        }
+
+        @Override
+        public void openTerminalPrompt() {
+            GameController.this.openTerminalPrompt();
         }
     };
     private final GameControllerTerminalSupport.TerminalCommandSink terminalCommandSink = new GameControllerTerminalSupport.TerminalCommandSink() {
@@ -264,7 +286,7 @@ public class GameController implements Initializable {
     private AnimationTimer enemyPathOverlayTimer;
 
     public GameController() {
-        inputCommandContext = new JavaFxInputCommandContext(keyActionSink);
+        inputCommandContext = new JavaFxInputCommandContext(actionSink);
         JavaFxInputBindingsSupport.configureDefaultBindings(keyBindingRegistry);
     }
 
@@ -276,6 +298,9 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        audioCoordinator = new FxGameAudioCoordinator(VISUAL_STYLE);
+        renderCoordinator = new FxGameRenderCoordinator(gameBoard);
+        
         javafx.application.Platform.runLater(() -> {
             installBottomButtonPressEffects();
             if (gameBoard != null) {
@@ -374,6 +399,9 @@ public class GameController implements Initializable {
         return WallCollisionUtil.wallBetweenVectors(ex, ey, px, py, walls);
     }
 
+
+    // This logic is now in FxPlayingModeController
+    /*
     private void applyRouteHintPenalty(long now) {
         if (!model.isRouteHintVisible()) {
             model.setLastRouteHintPenaltyNanos(now);
@@ -407,8 +435,11 @@ public class GameController implements Initializable {
             }
         }
     }
-
+    */
+    
     private void ensureHudLayersOnTop() {
+    // ...
+    
         if (scoreHudContainer != null) {
             scoreHudContainer.setViewOrder(-20);
         }
@@ -649,6 +680,9 @@ public class GameController implements Initializable {
     private void movePlayerUp()    { stepPlayer(speed -> playerCharacter.moveUp(speed, false)); }
 
     public void setupGame() {
+        playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
+        modeRouter.register(playingModeController);
+
         hpBar.setProgress(1.0);
 
         gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
@@ -829,66 +863,12 @@ public class GameController implements Initializable {
         currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
         leftMouseClicked = false;
 
-        applyRouteHintPenalty(now);
-        
-        // Execute input router once per tick to handle HELD commands (like MOVE_PLAYER and APPLY_PATH_HINT)
-        inputRouter.route(currentInputFrame, inputCommandContext);
-        
-        // Throttle movement to avoid being too fast
-        if (now - lastMoveTime < MOVE_INTERVAL_NANOS) {
-            return;
-        }
-        lastMoveTime = now;
-        
-        boolean moved = false;
-        if (currentInputFrame.isHeld(KeyCode.UP) || currentInputFrame.isHeld(KeyCode.NUMPAD8) || currentInputFrame.isHeld(KeyCode.W)) {
-            movePlayerUp();
-            moved = true;
-        }
-        if (currentInputFrame.isHeld(KeyCode.DOWN) || currentInputFrame.isHeld(KeyCode.NUMPAD5) || currentInputFrame.isHeld(KeyCode.S)) {
-            movePlayerDown();
-            moved = true;
-        }
-        if (currentInputFrame.isHeld(KeyCode.LEFT) || currentInputFrame.isHeld(KeyCode.NUMPAD4) || currentInputFrame.isHeld(KeyCode.A)) {
-            movePlayerLeft();
-            moved = true;
-        }
-        if (currentInputFrame.isHeld(KeyCode.RIGHT) || currentInputFrame.isHeld(KeyCode.NUMPAD6) || currentInputFrame.isHeld(KeyCode.D)) {
-            movePlayerRight();
-            moved = true;
-        }
-        if (moved) {
-            updateDebugLabels();
-            updateCameraFollow();
-        }
+        playingModeController.update(currentInputFrame, now);
     }
 
+    // This method is now unused, its logic is in FxGameRenderCoordinator
     private void updateCameraFollow() {
-        if (root == null || gameBoard == null || playerCharacter == null) {
-            return;
-        }
-
-        double viewportWidth = root.getWidth();
-        double viewportHeight = root.getHeight();
-        if (viewportWidth <= 0 || viewportHeight <= 0) {
-            return;
-        }
-
-        double worldWidth = App.getBoardMaxX();
-        double worldHeight = App.getBoardMaxY();
-
-        double playerX = playerCharacter.getCharacterPosition().getX();
-        double playerY = playerCharacter.getCharacterPosition().getY();
-
-        boolean fullscreen = isStageFullscreen();
-        double[] translation = computeCameraTranslation(
-                viewportWidth, viewportHeight,
-                worldWidth, worldHeight,
-                playerX, playerY,
-                fullscreen);
-
-        gameBoard.setTranslateX(translation[0]);
-        gameBoard.setTranslateY(translation[1]);
+        renderCoordinator.updateCameraFollow(playerCharacter);
     }
 
     private boolean isStageFullscreen() {

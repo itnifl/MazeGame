@@ -8,93 +8,79 @@ import main.game.maze.common.input.command.GameCommandContext;
  */
 final class JavaFxInputCommandContext implements GameCommandContext {
 
-    interface GameKeyActionSink {
+    interface ActionSink {
         void showHighScore();
         void openDifficultyPickerAndMaybeRestart();
         void showNavigationPath();
         void showSpanningTree();
         void clearNavigationPath();
         void clearSpanningTree();
+        void updateDebugLabels();
+        void updateScoreHud();
+        void openTerminalPrompt();
     }
 
-    private final GameKeyActionSink keyActionSink;
+    private final ActionSink sink;
 
-    JavaFxInputCommandContext(GameKeyActionSink keyActionSink) {
-        this.keyActionSink = keyActionSink;
+    JavaFxInputCommandContext(ActionSink sink) {
+        this.sink = sink;
     }
 
     // Shared interface methods
     @Override
     public boolean terminalActive() {
-        // Terminal is not yet active in the current JavaFX implementation;
-        // commands execute directly. When full terminal input handling is integrated,
-        // this would check if a terminal prompt is open.
         return false;
     }
 
     @Override
     public void requestReturnToMenu() {
-        keyActionSink.openDifficultyPickerAndMaybeRestart();
+        sink.openDifficultyPickerAndMaybeRestart();
     }
 
     @Override
     public void openTerminalPrompt() {
-        // Terminal is invoked via ESC in the current design.
-        // This method is here for interface compliance with future refactoring.
+        sink.openTerminalPrompt();
     }
 
     @Override
     public void openHighScores() {
-        keyActionSink.showHighScore();
+        sink.showHighScore();
     }
 
     @Override
     public void toggleSpanningTree() {
-        keyActionSink.showSpanningTree();
+        sink.showSpanningTree();
     }
 
     @Override
     public void applyPathHintHeld(boolean held) {
         if (held) {
-            keyActionSink.showNavigationPath();
+            sink.showNavigationPath();
         } else {
-            keyActionSink.clearNavigationPath();
+            sink.clearNavigationPath();
         }
     }
 
     @Override
     public void applyMovementFromFrame() {
-        // Movement is applied by the movement timer in GameController,
-        // which checks the currentInputFrame. This is called by MovePlayerCommand
-        // but movement is actually applied elsewhere. This is a placeholder
-        // for parity with the shared interface.
+        // Movement is handled by FxPlayingModeController directly
     }
 
     @Override
     public void requestStop() {
-        // Stop is not yet integrated into commands; it's invoked via explicit stop() calls.
-        // Placeholder for future integration.
     }
 
     @Override
     public boolean stopRequested() {
         return false;
     }
-
-    // Legacy JavaFX-specific methods (kept for existing command compatibility)
-    void showHighScore() {
-        keyActionSink.showHighScore();
+    
+    // JavaFX-specific methods
+    void updateDebugLabels() {
+        sink.updateDebugLabels();
     }
 
-    void openDifficultyPickerAndMaybeRestart() {
-        keyActionSink.openDifficultyPickerAndMaybeRestart();
-    }
-
-    void showNavigationPath() {
-        keyActionSink.showNavigationPath();
-    }
-
-    void showSpanningTree() {
-        keyActionSink.showSpanningTree();
+    void updateScoreHud() {
+        sink.updateScoreHud();
     }
 }
