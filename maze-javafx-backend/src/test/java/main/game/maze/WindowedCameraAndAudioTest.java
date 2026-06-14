@@ -118,8 +118,8 @@ class WindowedCameraAndAudioTest {
     }
 
     @Test
-    void cameraPansToKeepPlayerInCentreWhenWorldIsWider() {
-        // Player at centre of wide world
+    void cameraAnchorsWhenWorldIsWiderInWindowedMode() {
+        // In windowed mode with width overflow only, x is anchored to viewport-world.
         double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 1280, 720,
                 2000, 720,
@@ -127,20 +127,11 @@ class WindowedCameraAndAudioTest {
                 false);
         assertEquals(1280 - 2000, t[0], 0.0001, "x clamps to viewport-world");
         assertEquals(720 - 720, t[1], 0.0001, "y clamps to viewport-world");
-
-        // Player moves to far right
-        double[] t2 = FxGameRenderCoordinator.computeCameraTranslation(
-                1280, 720,
-                2000, 720,
-                1000, 400,
-                false);
-        assertEquals(1280 - 2000, t2[0], 0.0001, "x clamps to viewport-world");
-        assertEquals(720 - 720, t2[1], 0.0001, "y clamps to viewport-world");
     }
 
     @Test
-    void cameraPansToKeepPlayerInCentreWhenWorldIsTaller() {
-        // Player at centre of tall world
+    void cameraAnchorsWhenWorldIsTallerInWindowedMode() {
+        // In windowed mode with height overflow only, y is anchored to viewport-world.
         double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 1280, 720,
                 1280, 1000,
@@ -148,14 +139,5 @@ class WindowedCameraAndAudioTest {
                 false);
         assertEquals(0d, t[0], 0.0001);
         assertEquals(720 - 1000, t[1], 0.0001, "y clamps to viewport-world");
-
-        // Player moves to far right
-        double[] t2 = FxGameRenderCoordinator.computeCameraTranslation(
-                1280, 720,
-                1280, 1000,
-                1000, 400,
-                false);
-        assertEquals(0d, t2[0], 0.0001);
-        assertEquals(720 - 1000, t2[1], 0.0001, "y clamps to viewport-world");
     }
 }

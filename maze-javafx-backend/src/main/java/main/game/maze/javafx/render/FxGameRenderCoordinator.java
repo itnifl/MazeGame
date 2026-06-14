@@ -126,9 +126,9 @@ public final class FxGameRenderCoordinator {
         var navGraph = maze.getNavigationGraph();
         if (navGraph == null) return;
 
-        Point2D playerPos = new Point2D(
-                playerCharacter.getCharacterPosition().getX(),
-                playerCharacter.getCharacterPosition().getY());
+        var characterPosition = playerCharacter.getCharacterPosition();
+        if (characterPosition == null) return;
+        Point2D playerPos = new Point2D(characterPosition.getX(), characterPosition.getY());
         MazeNavigationGraphService.rebuildSpanningTreeFrom(navGraph, playerPos);
 
         GraphicsContext gc = treeCanvas.getGraphicsContext2D();

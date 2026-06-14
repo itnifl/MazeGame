@@ -48,9 +48,9 @@ import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -75,8 +75,10 @@ public final class FxEnemyCoordinator {
 
     private static final Logger LOGGER = Logger.getLogger(FxEnemyCoordinator.class.getName());
 
-    private static final Duration ENEMY_LABEL_DURATION = Duration.seconds(20);
-    private static final double   ENEMY_LABEL_Y_OFFSET = 14.0;
+    private static final Duration ENEMY_LABEL_DURATION    = Duration.seconds(20);
+    private static final double   ENEMY_LABEL_Y_OFFSET    = 14.0;
+    /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
+    private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
 
     private final Pane gameBoard;
     private final AnchorPane root;
@@ -86,7 +88,7 @@ public final class FxEnemyCoordinator {
     private final Runnable pathCanvasRefreshCallback;
 
     private final List<IMovingComputerCharacter> allComputerCharacters  = new CopyOnWriteArrayList<>();
-    private final Map<Node, Timeline>            infectiousMists        = new HashMap<>();
+    private final Map<Node, Timeline>            infectiousMists        = new ConcurrentHashMap<>();
     private final List<Node>                     activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
 
     private final AntiLoopWanderMovementService       antiLoopWanderMovementService     = new AntiLoopWanderMovementService();
@@ -497,7 +499,7 @@ public final class FxEnemyCoordinator {
         }
         if (applyPhasing(computerCharacter, cc)) return;
 
-        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), worldView, 0.06d);
+        MovementResult result = patrolMovementService.tick(buildEnemyState(cc), worldView, MOVEMENT_TICK_THRESHOLD);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doWanderMove(computerCharacter);
             return;
@@ -516,7 +518,7 @@ public final class FxEnemyCoordinator {
         }
         if (applyPhasing(computerCharacter, cc)) return;
 
-        MovementResult result = adaptiveAggressiveMovementService.tick(buildEnemyState(cc), worldView, 0.06d);
+        MovementResult result = adaptiveAggressiveMovementService.tick(buildEnemyState(cc), worldView, MOVEMENT_TICK_THRESHOLD);
         if (result.directionX() == 0 && result.directionY() == 0) {
             doWanderMove(computerCharacter);
             return;
@@ -534,7 +536,7 @@ public final class FxEnemyCoordinator {
         boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
         if (nonTangient) {
             cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy));
-            cc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, 0.060));
+            cc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, MOVEMENT_TICK_THRESHOLD));
         }
         return nonTangient;
     }
