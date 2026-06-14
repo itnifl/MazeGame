@@ -18,6 +18,11 @@ import javafx.scene.text.Text;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for infection-warning visuals now owned by {@link FxEnemyCoordinator}.
+ * Accesses internals via reflection so we can verify JavaFX-thread visual state
+ * without a full FXML scene.
+ */
 class GameControllerInfectionWarningTest {
 
     @BeforeAll
@@ -31,23 +36,24 @@ class GameControllerInfectionWarningTest {
         latch.await(2, TimeUnit.SECONDS);
     }
 
+    private static FxEnemyCoordinator buildCoordinator(AnchorPane root) {
+        return new FxEnemyCoordinator(null, root, new FxGameWorldModel(),
+                () -> null, () -> null, () -> {});
+    }
+
     @Test
     void infectionWarningShowsFullCaptionText() throws Exception {
-        GameController controller = new GameController();
-        AnchorPane root = new AnchorPane();
+        AnchorPane root       = new AnchorPane();
+        FxEnemyCoordinator ec = buildCoordinator(root);
 
-        Field rootField = GameController.class.getDeclaredField("root");
-        rootField.setAccessible(true);
-        rootField.set(controller, root);
-
-        Method ensure = GameController.class.getDeclaredMethod("ensureInfectionWarningSign");
+        Method ensure = FxEnemyCoordinator.class.getDeclaredMethod("ensureInfectionWarningSign");
         ensure.setAccessible(true);
 
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
         Platform.runLater(() -> {
             try {
-                ensure.invoke(controller);
+                ensure.invoke(ec);
             } catch (Exception ex) {
                 failure.set(ex);
             } finally {
@@ -55,13 +61,11 @@ class GameControllerInfectionWarningTest {
             }
         });
         assertTrue(latch.await(2, TimeUnit.SECONDS), "FX thread should ensure the infection sign");
-        if (failure.get() != null) {
-            throw new RuntimeException(failure.get());
-        }
+        if (failure.get() != null) throw new RuntimeException(failure.get());
 
-        Field signField = GameController.class.getDeclaredField("infectionWarningSign");
+        Field signField = FxEnemyCoordinator.class.getDeclaredField("infectionWarningSign");
         signField.setAccessible(true);
-        VBox sign = (VBox) signField.get(controller);
+        VBox sign = (VBox) signField.get(ec);
 
         assertEquals(1, root.getChildren().size(), "only the infection sign should be added to the root");
         assertTrue(root.getChildren().get(0) == sign, "the sign should be attached to the root");
@@ -76,17 +80,18 @@ class GameControllerInfectionWarningTest {
 
     @Test
     void infectingZombieGetsPulsatingMistEffect() throws Exception {
-        GameController controller = new GameController();
-        ImageView zombieNode = new ImageView();
+        FxEnemyCoordinator ec = buildCoordinator(new AnchorPane());
+        ImageView zombieNode  = new ImageView();
 
-        Method applyMist = GameController.class.getDeclaredMethod("applyInfectiousMist", javafx.scene.Node.class, int.class);
+        Method applyMist = FxEnemyCoordinator.class
+                .getDeclaredMethod("applyInfectiousMist", javafx.scene.Node.class, int.class);
         applyMist.setAccessible(true);
 
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<Throwable> failure = new AtomicReference<>();
         Platform.runLater(() -> {
             try {
-                applyMist.invoke(controller, zombieNode, 50);
+                applyMist.invoke(ec, zombieNode, 50);
             } catch (Exception ex) {
                 failure.set(ex);
             } finally {
@@ -94,9 +99,7 @@ class GameControllerInfectionWarningTest {
             }
         });
         assertTrue(latch.await(2, TimeUnit.SECONDS), "FX thread should apply the mist effect");
-        if (failure.get() != null) {
-            throw new RuntimeException(failure.get());
-        }
+        if (failure.get() != null) throw new RuntimeException(failure.get());
 
         assertTrue(zombieNode.getEffect() instanceof DropShadow,
                 "infectious characters should carry a neon mist effect");

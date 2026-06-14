@@ -1,9 +1,15 @@
 package main.game.maze.javafx.render;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 
 /**
  * Owns canvas/HUD/overlay redraw orchestration over an immutable render snapshot
@@ -112,5 +118,45 @@ public final class FxGameRenderCoordinator {
         }
 
         return new double[]{translateX, translateY};
+    }
+
+    public void showSpanningTree(Canvas treeCanvas, PlayerCharacter playerCharacter, GameMazeWorld maze) {
+        if (maze == null || treeCanvas == null || playerCharacter == null) return;
+
+        var navGraph = maze.getNavigationGraph();
+        if (navGraph == null) return;
+
+        Point2D playerPos = new Point2D(
+                playerCharacter.getCharacterPosition().getX(),
+                playerCharacter.getCharacterPosition().getY());
+        MazeNavigationGraphService.rebuildSpanningTreeFrom(navGraph, playerPos);
+
+        GraphicsContext gc = treeCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(4.0);
+        gc.setGlobalAlpha(0.6);
+
+        var grid = navGraph.getGrid();
+        int cols = navGraph.getCols();
+        int rows = navGraph.getRows();
+
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                var node = grid[c][r];
+                if (node == null) continue;
+                var parent = node.getTreeParent();
+                if (parent != null) {
+                    gc.strokeLine(node.getX(), node.getY(), parent.getX(), parent.getY());
+                }
+            }
+        }
+        gc.setGlobalAlpha(1.0);
+    }
+
+    public void clearSpanningTree(Canvas treeCanvas) {
+        if (treeCanvas == null) return;
+        GraphicsContext gc = treeCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, treeCanvas.getWidth(), treeCanvas.getHeight());
     }
 }

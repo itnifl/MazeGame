@@ -46,27 +46,27 @@ public final class FxGameWorldModel {
         return playerMoveCount;
     }
 
-    long pathHintTotalUsedNanos() {
+    public long pathHintTotalUsedNanos() {
         return pathHintTotalUsedNanos;
     }
 
-    void setPathHintTotalUsedNanos(long value) {
+    public void setPathHintTotalUsedNanos(long value) {
         this.pathHintTotalUsedNanos = value;
     }
 
-    long pathHintPressStartNanos() {
+    public long pathHintPressStartNanos() {
         return pathHintPressStartNanos;
     }
 
-    void setPathHintPressStartNanos(long value) {
+    public void setPathHintPressStartNanos(long value) {
         this.pathHintPressStartNanos = value;
     }
 
-    boolean pathHintKeyDown() {
+    public boolean pathHintKeyDown() {
         return pathHintKeyDown;
     }
 
-    void setPathHintKeyDown(boolean value) {
+    public void setPathHintKeyDown(boolean value) {
         this.pathHintKeyDown = value;
     }
 
@@ -74,7 +74,7 @@ public final class FxGameWorldModel {
         return isRouteHintVisible;
     }
 
-    void setRouteHintVisible(boolean value) {
+    public void setRouteHintVisible(boolean value) {
         this.isRouteHintVisible = value;
     }
 
@@ -102,19 +102,19 @@ public final class FxGameWorldModel {
         this.routeHintPenaltyPoints = value;
     }
 
-    boolean enemyPathOverlayVisible() {
+    public boolean enemyPathOverlayVisible() {
         return enemyPathOverlayVisible;
     }
 
-    void setEnemyPathOverlayVisible(boolean value) {
+    public void setEnemyPathOverlayVisible(boolean value) {
         this.enemyPathOverlayVisible = value;
     }
 
-    long enemyPathOverlayHideAtNanos() {
+    public long enemyPathOverlayHideAtNanos() {
         return enemyPathOverlayHideAtNanos;
     }
 
-    void setEnemyPathOverlayHideAtNanos(long value) {
+    public void setEnemyPathOverlayHideAtNanos(long value) {
         this.enemyPathOverlayHideAtNanos = value;
     }
 
