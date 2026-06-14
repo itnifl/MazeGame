@@ -663,20 +663,6 @@ public class GameController implements Initializable {
         action.Load();
     }
 
-    private void stepPlayer(java.util.function.IntPredicate step) {
-        int iterations = Math.max(1, playerMovementSpeed / StageConstants.SpeedReducer);
-        for (int x = 0; x < iterations; x++) {
-            if (step.test(playerMovementSpeed - (x * StageConstants.SpeedReducer))) {
-                return;
-            }
-        }
-    }
-
-    private void movePlayerRight() { stepPlayer(speed -> playerCharacter.moveRight(speed, false)); }
-    private void movePlayerLeft()  { stepPlayer(speed -> playerCharacter.moveLeft(speed, false)); }
-    private void movePlayerDown()  { stepPlayer(speed -> playerCharacter.moveDown(speed, false)); }
-    private void movePlayerUp()    { stepPlayer(speed -> playerCharacter.moveUp(speed, false)); }
-
     public void setupGame() {
         playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
         modeRouter.register(playingModeController);
@@ -864,17 +850,8 @@ public class GameController implements Initializable {
         playingModeController.update(currentInputFrame, now);
     }
 
-    // This method is now unused, its logic is in FxGameRenderCoordinator
     private void updateCameraFollow() {
         renderCoordinator.updateCameraFollow(playerCharacter);
-    }
-
-    private boolean isStageFullscreen() {
-        if (root == null || root.getScene() == null) {
-            return false;
-        }
-        var window = root.getScene().getWindow();
-        return window instanceof javafx.stage.Stage stage && stage.isFullScreen();
     }
 
     /**
@@ -886,33 +863,6 @@ public class GameController implements Initializable {
      *
      * <p>Package-private for unit tests.
      */
-    static double[] computeCameraTranslation(double viewportWidth, double viewportHeight,
-                                             double worldWidth, double worldHeight,
-                                             double playerX, double playerY,
-                                             boolean fullscreen) {
-        if (!fullscreen) {
-            return new double[] {0d, 0d};
-        }
-        double targetX = 0d;
-        double targetY = 0d;
-        if (worldWidth > viewportWidth) {
-            targetX = clamp((viewportWidth / 2.0) - playerX, viewportWidth - worldWidth, 0);
-        }
-        if (worldHeight > viewportHeight) {
-            targetY = clamp((viewportHeight / 2.0) - playerY, viewportHeight - worldHeight, 0);
-        }
-        return new double[] {targetX, targetY};
-    }
-
-    private static double clamp(double value, double min, double max) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
 
     private void updateBoardBackground() {
         String bgPath = VISUAL_STYLE.backgroundImageForDifficultyName(difficultyName());

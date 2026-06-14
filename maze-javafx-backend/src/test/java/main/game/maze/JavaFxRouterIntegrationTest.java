@@ -89,7 +89,7 @@ class JavaFxRouterIntegrationTest {
         assertEquals(0, sink.calls.size()); // Movement application is empty impl in context
     }
 
-    private static final class RecordingSink implements JavaFxInputCommandContext.GameKeyActionSink {
+    private static final class RecordingSink implements JavaFxInputCommandContext.ActionSink {
         final List<String> calls = new ArrayList<>();
 
         @Override
