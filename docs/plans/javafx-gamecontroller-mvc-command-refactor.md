@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 0-3 complete; Phase 1 Nr 1 complete, Nr 2 deferred)
+**Status:** In progress (Phase 0-4 complete; Phase 1 Nr 2 deferred; Phase 5 in progress)
 **Branch (current):** `feature/refactorJavaFX` (was `feature/refactorJavafxForStandardImplementation`)
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Last updated:** 2026-06-13

@@ -17,3 +17,13 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - SR-48: JavaFX frame rendering shall be orchestrated by a dedicated render coordinator that consumes an immutable render snapshot from the gameplay model and delegates actual drawing to existing canvas, HUD, and overlay view helpers, with all scene graph mutation remaining on the JavaFX Application Thread.
 - SR-49: JavaFX audio transitions for menu, in game, win, and game over shall be encapsulated behind a dedicated coordinator boundary over `GameAudioDirector`, keeping the controller free from direct channel switching policy.
 - SR-50: During JavaFX input migration to command and registry architecture, command dispatch shall emit lightweight structured diagnostics (command name, input action, and mode) through a frontend neutral observability hook enabled in debug builds. This shall support parity troubleshooting between JavaFX and libGDX without changing gameplay behavior.
+
+## Ratified Requirements
+
+These requirements have been implemented and verified.
+
+- SR-42: The Command and key binding registry input core is shared in `maze-common-frontend` and consumed by both frontends. The dispatch loop is generalized over a frontend-neutral key type, allowing new keys/actions to be added without modifying the router. libGDX has been migrated to consume the promoted types.
+- SR-43: JavaFX gameplay input is handled via the shared key binding registry, resolving logical actions to command objects and replacing the inline `handleKeyPressed` switch. Key polling is centralized, and all actions are expressed as commands.
+- SR-44: JavaFX gameplay mutable runtime state lives in a dedicated model (`FxGameWorldModel`), separate from lifecycle, rendering, input, and FXML concerns.
+- SR-46: The JavaFX movement thread, animation timer, and watchdog are owned by a dedicated concurrency coordinator (`FxMovementLoopCoordinator`) with unchanged lifecycle semantics.
+- SR-49: JavaFX audio transitions are encapsulated behind a dedicated coordinator (`FxGameAudioCoordinator`) over `GameAudioDirector`.

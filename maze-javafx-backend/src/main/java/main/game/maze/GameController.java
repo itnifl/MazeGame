@@ -258,8 +258,6 @@ public class GameController implements Initializable {
             GameController.this.showEnemyPathsOverlay();
         }
     };
-    private long lastMoveTime = 0;
-    private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.05;
 
@@ -336,8 +334,8 @@ public class GameController implements Initializable {
     @FXML
     private void handleKeyReleased(KeyEvent event) {
         pressedKeys.remove(event.getCode());
-        // Routing of release logic is handled implicitly by edge key frames
-        // and held key state via the InputRouter.
+        // HELD state changes are processed by the InputRouter in the movement tick.
+        // EDGE (key-up) actions can be routed here if needed in the future.
     }
 
     @FXML

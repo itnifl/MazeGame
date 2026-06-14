@@ -34,13 +34,20 @@ maze-javafx-backend
 
 ### GameController refactor progress
 
-JavaFX controller decomposition is in progress to mirror the libGDX MVC plus command architecture.
+The JavaFX `GameController` has been refactored to an MVC (Model-View-Controller) plus Command architecture, mirroring the libGDX frontend for structural parity. The original 1800-line god class has been decomposed into a slim coordinator that delegates responsibilities to dedicated classes.
 
-- terminal command parsing and dispatch are extracted into `GameControllerTerminalSupport`
-- keyboard action dispatch is extracted into `GameControllerInputSupport`
-- immutable per tick key and mouse snapshots are provided by the shared generic `InputFrame<KeyCode>` (in `maze-common-frontend` under `main.game.maze.common.input`), built by `JavaFxInputSnapshotReader`
-- first command objects are routed through `JavaFxGameCommand` and `JavaFxInputCommandContext`
-- gameplay scoring and path-hint state (move count, path-hint budget, route-hint penalty, enemy-path overlay flags) is extracted into the `FxGameWorldModel` data model (first Phase 1 model-extraction increment); the controller delegates all reads and writes through it
+| Responsibility | Owner | Notes |
+|---|---|---|
+| **Lifecycle & FXML** | `GameController` | The controller remains the FXML entry point, but only wires dependencies and handles lifecycle events. |
+| **Gameplay State** | `FxGameWorldModel` | A pure data model holding scoring, path-hint state, and other gameplay variables. |
+| **Input Handling** | `InputRouter<KeyCode>` | A shared component from `maze-common-frontend` that maps key presses to `GameCommand` objects via a `KeyBindingRegistry`. |
+| **Concurrency** | `FxMovementLoopCoordinator` | Manages the background `Task` for enemy AI and the `AnimationTimer` for player movement, isolating all threading logic. |
+| **Rendering** | `FxGameRenderCoordinator` | Handles camera logic, viewport translation, and canvas drawing orchestration. |
+| **Audio** | `FxGameAudioCoordinator` | Manages audio transitions for different game modes (menu, in-game, win, game over). |
+| **Game Logic** | `FxPlayingModeController` | Contains the core game loop logic for when the player is actively playing, such as applying penalties and moving the player. |
+| **Mode Switching** | `GameModeRouter` | A shared component that will manage transitions between different game states (e.g., playing, game over, high scores). |
+
+This new structure improves testability, isolates responsibilities, and ensures that both the JavaFX and libGDX frontends are built on the same architectural foundation, satisfying **CRR-5**.
 
 Current extraction steps preserve behavior by routing side effects back into `GameController` through small sink interfaces. This keeps gameplay and threading behavior stable while controller ownership is reduced incrementally.
 
