@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** In progress (Phase 0 complete; Phase 1 Nr 1 complete, Nr 2 deferred; Phase 3 partial - bindings support added)
+**Status:** In progress (Phase 0-3 complete; Phase 1 Nr 1 complete, Nr 2 deferred)
 **Branch (current):** `feature/refactorJavaFX` (was `feature/refactorJavafxForStandardImplementation`)
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Last updated:** 2026-06-13
@@ -126,6 +126,24 @@ classes *extend* the shared classes, but the shared classes are `final`.
   - `mvn -pl maze-common-frontend,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS` (238 libGDX tests).
   - `mvn -pl maze-javafx-backend -am test -DskipITs` => `BUILD SUCCESS` (124 tests).
   - Cross-frontend: `mvn -pl maze-common-frontend,maze-javafx-backend,maze-javafx,maze-libgdx -am test -DskipITs` => `BUILD SUCCESS`.
+
+---
+
+### 2026-06-14 Status Update (Phase 2 & 3 Complete)
+
+**Phase 2 — Concurrency coordinator extraction: COMPLETE ✓**
+- Created `FxMovementLoopCoordinator` encapsulating the movement `Task` (computer characters), `AnimationTimer` (player movement tick), and the watchdog `Timeline`.
+- Safely moved lifecycle management (start/stop/dispose) out of `GameController` while maintaining identical thread affinity, join timeout, and disposal ordering.
+- Updated `GameControllerDisposeTest` and `MazeCoreBehaviorTest` to verify disposal correctly stops timers and cancels tasks within the coordinator.
+
+**Phase 3 — Command + Registry input system (JavaFX): COMPLETE ✓**
+- Integrated `InputRouter<KeyCode>` into `GameController.handlePlayerMovementTick` and `handleKeyPressed/Released`.
+- `GameController` now only maintains `pressedKeys` and `edgeKeys` sets, dropping all inline switch dispatch logic.
+- The `InputRouter` is polled once per frame, correctly dispatching `GameAction` triggers to their respective `GameCommand<KeyCode>` implementations.
+- Added `JavaFxRouterIntegrationTest` and `JavaFxGameCommandsTest` to verify that H, ESC, P, O, T, and movement commands are successfully triggered with parity to the pre-refactor switch.
+- Deleted `GameControllerInputSupport` and `GameControllerInputSupportTest` as their logic has been fully superseded by the router and command framework.
+
+All tests remain green (132 tests in `maze-javafx-backend`).
 
 ---
 

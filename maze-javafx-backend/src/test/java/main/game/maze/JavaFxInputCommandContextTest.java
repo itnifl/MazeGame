@@ -22,7 +22,7 @@ class JavaFxInputCommandContextTest {
         assertEquals("showSpanningTree", sink.calls.get(3));
     }
 
-    private static final class RecordingSink implements GameControllerInputSupport.GameKeyActionSink {
+    private static final class RecordingSink implements JavaFxInputCommandContext.GameKeyActionSink {
         private final java.util.List<String> calls = new java.util.ArrayList<>();
 
         @Override

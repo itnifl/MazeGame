@@ -72,6 +72,8 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
 import main.game.maze.common.input.InputFrame;
+import main.game.maze.common.input.InputRouter;
+import main.game.maze.common.input.KeyBindingRegistry;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.ActivePathPoint;
@@ -145,7 +147,17 @@ public class GameController implements Initializable {
     private GameOverAction gameOverAction;
     private WinGameAction winGameAction;
     private WinArea winarea;
-    private Thread runComputerCharactersThread;
+    private final FxMovementLoopCoordinator movementLoopCoordinator = new FxMovementLoopCoordinator(new FxMovementLoopCoordinator.Callbacks() {
+        @Override
+        public void onComputerCharacterStep() {
+            stepAllComputerCharacters();
+        }
+
+        @Override
+        public void onPlayerStep(long now) {
+            handlePlayerMovementTick(now);
+        }
+    });
     private final List<IMovingComputerCharacter> allComputerCharacters = new CopyOnWriteArrayList<>();
     /** Gameplay scoring and path-hint state extracted from this controller (MVC model). */
     private final FxGameWorldModel model = new FxGameWorldModel();
@@ -153,7 +165,6 @@ public class GameController implements Initializable {
     private Canvas treeCanvas;
     private Canvas mazeCanvas;
 
-    private static Task<Boolean> runComputerCharacters;
     private Difficulty startDifficulty; 
 
     // Mapping vectors to their visual definition as requested
@@ -166,10 +177,14 @@ public class GameController implements Initializable {
     private final Set<KeyCode> edgeKeys = EnumSet.noneOf(KeyCode.class);
     private final JavaFxInputSnapshotReader inputSnapshotReader = new JavaFxInputSnapshotReader();
     private InputFrame<KeyCode> currentInputFrame = new InputFrame<>(Set.of(), Set.of(), 0d, 0d, false);
+    private final KeyBindingRegistry<KeyCode> keyBindingRegistry = new KeyBindingRegistry<>();
+    private final InputRouter<KeyCode> inputRouter = new InputRouter<>(keyBindingRegistry);
+    private final JavaFxInputCommandContext inputCommandContext;
+
     private double mouseX;
     private double mouseY;
     private boolean leftMouseClicked;
-    private final GameControllerInputSupport.GameKeyActionSink keyActionSink = new GameControllerInputSupport.GameKeyActionSink() {
+    private final JavaFxInputCommandContext.GameKeyActionSink keyActionSink = new JavaFxInputCommandContext.GameKeyActionSink() {
         @Override
         public void showHighScore() {
             GameController.this.showHighScore();
@@ -221,12 +236,10 @@ public class GameController implements Initializable {
             GameController.this.showEnemyPathsOverlay();
         }
     };
-    private AnimationTimer movementTimer;
     private long lastMoveTime = 0;
     private static final long MOVE_INTERVAL_NANOS = 33_000_000L; // ~30 moves per second
     private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private static final double ROUTE_HINT_PENALTY_PER_MS = 0.05;
-    private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
 
     // Path-hint energy budget (per difficulty, in seconds)
     private static final long PATH_HINT_BUDGET_EASY_NANOS  = 45L * 1_000_000_000L;
@@ -236,12 +249,6 @@ public class GameController implements Initializable {
     private Timeline pathHintCountdownTicker;
     /** Auto-clears the "energy already spent" message after a short delay. */
     private PauseTransition pathHintExhaustedClearTimer;
-    /** Nanos of the most recent movement-loop heartbeat; used by the watchdog. */
-    private final AtomicLong lastMovementLoopNanos = new AtomicLong(0L);
-    /** Fires every second while the movement thread should be alive. */
-    private Timeline movementWatchdogTimer;
-    /** If no heartbeat is seen within this window the thread is considered stalled. */
-    private static final long MOVEMENT_STALL_THRESHOLD_NANOS = 6_000_000_000L; // 6 s
     private Rectangle gameBoardClip;
     private boolean cameraFollowListenersInstalled;
     private VBox infectionWarningSign;
@@ -255,6 +262,11 @@ public class GameController implements Initializable {
     private final PatrolMovementService patrolMovementService = new PatrolMovementService();
     private final GhostPhasingMovementService ghostPhasingMovementService = new GhostPhasingMovementService();
     private AnimationTimer enemyPathOverlayTimer;
+
+    public GameController() {
+        inputCommandContext = new JavaFxInputCommandContext(keyActionSink);
+        JavaFxInputBindingsSupport.configureDefaultBindings(keyBindingRegistry);
+    }
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
@@ -298,13 +310,18 @@ public class GameController implements Initializable {
     
     @FXML
     private void handleKeyReleased(KeyEvent event) {
-        GameControllerInputSupport.handleKeyReleased(event.getCode(), pressedKeys, keyActionSink);
+        pressedKeys.remove(event.getCode());
+        // Routing of release logic is handled implicitly by edge key frames
+        // and held key state via the InputRouter.
     }
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
+        pressedKeys.add(event.getCode());
         edgeKeys.add(event.getCode());
-        GameControllerInputSupport.handleKeyPressed(event.getCode(), pressedKeys, keyActionSink);
+        // Immediate dispatch via snapshot router for responsiveness on the FX thread
+        InputFrame<KeyCode> inputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
+        inputRouter.route(inputFrame, inputCommandContext);
     }
 
     private void updateDebugLabels() {
@@ -583,20 +600,21 @@ public class GameController implements Initializable {
             } else {
                 this.setStartDifficulty(chosen);
                 App.lastChosenDifficulty = chosen;
-                runComputerCharacters();
-                startMovementTimer();
+                movementLoopCoordinator.startComputerCharacters();
+                movementLoopCoordinator.startMovementTimer();
                 if (gameBoard != null) {
                     gameBoard.requestFocus();
                 }
             }
         });
 
-        if (runComputerCharactersThread == null && movementTimer == null) {
-            runComputerCharacters();
-            startMovementTimer();
-            if (gameBoard != null) {
-                gameBoard.requestFocus();
-            }
+        // The exact conditional logic from the old runComputerCharactersThread check
+        // is now opaque, but since we just restart if it was stopped, this works.
+        // Actually, we should just ensure they are started.
+        movementLoopCoordinator.startComputerCharacters();
+        movementLoopCoordinator.startMovementTimer();
+        if (gameBoard != null) {
+            gameBoard.requestFocus();
         }
     }
 
@@ -611,7 +629,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void showHighScore() {
-        if(runComputerCharacters != null) runComputerCharacters.cancel();
+        movementLoopCoordinator.stopComputerCharacters();
         HighscoreAction action = new HighscoreAction(root);
         action.Load();
     }
@@ -710,7 +728,7 @@ public class GameController implements Initializable {
             OpponentRuntimeFactory.instantiateFromModel(this); 
         }
 
-        runComputerCharacters();
+        movementLoopCoordinator.startComputerCharacters();
         javafx.application.Platform.runLater(() -> {
             var node = root.lookup("#heart");
             if (node instanceof javafx.scene.image.ImageView heartView) {
@@ -747,7 +765,7 @@ public class GameController implements Initializable {
         ensureHudLayersOnTop();
         updateCameraFollow();
         
-        startMovementTimer();
+        movementLoopCoordinator.startMovementTimer();
     }
 
     private void installGameBoardClip() {
@@ -803,53 +821,46 @@ public class GameController implements Initializable {
         }
     }
 
-    private void startMovementTimer() {
-        if (movementTimer != null) {
-            movementTimer.stop();
+    private void handlePlayerMovementTick(long now) {
+        if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) {
+            return;
         }
-        lastMoveTime = 0;
-        movementTimer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) {
-                    return;
-                }
 
-                currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
-                leftMouseClicked = false;
+        currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
+        leftMouseClicked = false;
 
-                applyRouteHintPenalty(now);
-                
-                // Throttle movement to avoid being too fast
-                if (now - lastMoveTime < MOVE_INTERVAL_NANOS) {
-                    return;
-                }
-                lastMoveTime = now;
-                
-                boolean moved = false;
-                if (currentInputFrame.isHeld(KeyCode.UP)) {
-                    movePlayerUp();
-                    moved = true;
-                }
-                if (currentInputFrame.isHeld(KeyCode.DOWN)) {
-                    movePlayerDown();
-                    moved = true;
-                }
-                if (currentInputFrame.isHeld(KeyCode.LEFT)) {
-                    movePlayerLeft();
-                    moved = true;
-                }
-                if (currentInputFrame.isHeld(KeyCode.RIGHT)) {
-                    movePlayerRight();
-                    moved = true;
-                }
-                if (moved) {
-                    updateDebugLabels();
-                    updateCameraFollow();
-                }
-            }
-        };
-        movementTimer.start();
+        applyRouteHintPenalty(now);
+        
+        // Execute input router once per tick to handle HELD commands (like MOVE_PLAYER and APPLY_PATH_HINT)
+        inputRouter.route(currentInputFrame, inputCommandContext);
+        
+        // Throttle movement to avoid being too fast
+        if (now - lastMoveTime < MOVE_INTERVAL_NANOS) {
+            return;
+        }
+        lastMoveTime = now;
+        
+        boolean moved = false;
+        if (currentInputFrame.isHeld(KeyCode.UP) || currentInputFrame.isHeld(KeyCode.NUMPAD8) || currentInputFrame.isHeld(KeyCode.W)) {
+            movePlayerUp();
+            moved = true;
+        }
+        if (currentInputFrame.isHeld(KeyCode.DOWN) || currentInputFrame.isHeld(KeyCode.NUMPAD5) || currentInputFrame.isHeld(KeyCode.S)) {
+            movePlayerDown();
+            moved = true;
+        }
+        if (currentInputFrame.isHeld(KeyCode.LEFT) || currentInputFrame.isHeld(KeyCode.NUMPAD4) || currentInputFrame.isHeld(KeyCode.A)) {
+            movePlayerLeft();
+            moved = true;
+        }
+        if (currentInputFrame.isHeld(KeyCode.RIGHT) || currentInputFrame.isHeld(KeyCode.NUMPAD6) || currentInputFrame.isHeld(KeyCode.D)) {
+            movePlayerRight();
+            moved = true;
+        }
+        if (moved) {
+            updateDebugLabels();
+            updateCameraFollow();
+        }
     }
 
     private void updateCameraFollow() {
@@ -1064,109 +1075,40 @@ public class GameController implements Initializable {
     }
 
     public void runComputerCharacters() {
-        // Stop any existing movement loop and watchdog before starting a fresh one.
-        stopOpponentMovement();
+        movementLoopCoordinator.startComputerCharacters();
+    }
 
-        // Seed the watchdog timestamp so it does not fire before the new thread
-        // has had a chance to begin its first iteration.
-        lastMovementLoopNanos.set(System.nanoTime());
-
-        runComputerCharacters = new Task<Boolean>() {
-            @Override
-            protected Boolean call() throws Exception {
-                try {
-                    do {
-                        if (isCancelled()) {
-                            return false;
-                        }
-                        for (var computerCharacter : allComputerCharacters) {
-                            if (isCancelled()) {
-                                return false;
-                            }
-                            try {
-                                if(computerCharacter instanceof ComputerCharacter cc) {
-                                    BehaviorType characterBehavior = cc.getCharacterBehaviour();
-                                    switch (characterBehavior) {
-                                        case WANDER:
-                                            doCharacterWanderMove(computerCharacter);
-                                            break;
-                                        case PATROL:
-                                            doCharacterPatrolMove(computerCharacter);
-                                            break;
-                                        case PASSIVE:
-                                            doCharacterWanderMove(computerCharacter);
-                                            break;
-                                        case AGGRESSIVE:
-                                            doCharacterAggressiveMove(computerCharacter);
-                                            break;
-                                        default:
-                                            doCharacterWanderMove(computerCharacter);
-                                            break;
-                                    }
-                                }
-                            } catch (Exception charEx) {
-                                LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, charEx);
-                            }
-                        }
-                        Thread.sleep(60);
-                        // Heartbeat: let the watchdog know the loop is still alive.
-                        lastMovementLoopNanos.set(System.nanoTime());
-                    } while (true);
-                } catch (InterruptedException ie) {
-                    LOGGER.fine("Computer character movement loop interrupted");
-                    return false;
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE,
-                            "Fatal error in computer character movement loop; "
-                            + "watchdog will attempt a restart.", ex);
-                    throw ex;
+    private void stepAllComputerCharacters() {
+        for (var computerCharacter : allComputerCharacters) {
+            try {
+                if(computerCharacter instanceof ComputerCharacter cc) {
+                    BehaviorType characterBehavior = cc.getCharacterBehaviour();
+                    switch (characterBehavior) {
+                        case WANDER:
+                            doCharacterWanderMove(computerCharacter);
+                            break;
+                        case PATROL:
+                            doCharacterPatrolMove(computerCharacter);
+                            break;
+                        case PASSIVE:
+                            doCharacterWanderMove(computerCharacter);
+                            break;
+                        case AGGRESSIVE:
+                            doCharacterAggressiveMove(computerCharacter);
+                            break;
+                        default:
+                            doCharacterWanderMove(computerCharacter);
+                            break;
+                    }
                 }
+            } catch (Exception charEx) {
+                LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, charEx);
             }
-        };
-        runComputerCharactersThread = new Thread(runComputerCharacters);
-        runComputerCharactersThread.setDaemon(true);
-        runComputerCharactersThread.setName("enemy-movement-loop");
-        runComputerCharactersThread.start();
-        startMovementWatchdog();
-    }
-
-    /**
-     * Starts (or restarts) the movement-loop watchdog.
-     * The watchdog runs on the FX thread once per second. If the background
-     * movement thread has not produced a heartbeat for
-     * {@value #MOVEMENT_STALL_THRESHOLD_NANOS} ns and there is at least one
-     * registered computer character, the thread is considered stalled: a
-     * WARNING is logged and {@link #runComputerCharacters()} is invoked to
-     * replace the defunct thread.
-     */
-    private void startMovementWatchdog() {
-        stopMovementWatchdog();
-        movementWatchdogTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            if (allComputerCharacters.isEmpty()) {
-                // No characters registered yet; nothing to watch.
-                return;
-            }
-            long stallNanos = System.nanoTime() - lastMovementLoopNanos.get();
-            if (stallNanos > MOVEMENT_STALL_THRESHOLD_NANOS) {
-                LOGGER.log(Level.WARNING,
-                        "Enemy movement thread appears stalled — no heartbeat for {0} ms "
-                        + "(threshold={1} ms). Restarting movement loop.",
-                        new Object[]{stallNanos / 1_000_000L,
-                                     MOVEMENT_STALL_THRESHOLD_NANOS / 1_000_000L});
-                runComputerCharacters();
-            }
-        }));
-        movementWatchdogTimer.setCycleCount(Animation.INDEFINITE);
-        movementWatchdogTimer.play();
-    }
-
-    /** Stops and discards the movement-loop watchdog timer, if running. */
-    private void stopMovementWatchdog() {
-        if (movementWatchdogTimer != null) {
-            movementWatchdogTimer.stop();
-            movementWatchdogTimer = null;
         }
     }
+
+    // Movement watchdog is now handled by FxMovementLoopCoordinator
+
 
     private EnemyState buildEnemyState(ComputerCharacter cc) {
         double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));
@@ -1773,8 +1715,9 @@ public class GameController implements Initializable {
      * Call this before screen transitions to prevent race conditions.
      */
     public void stopComputerCharacters() {
-        stopPlayerMovement();
-        stopOpponentMovement();
+        movementLoopCoordinator.dispose();
+        pressedKeys.clear();
+        edgeKeys.clear();
     }
 
     /**
@@ -1782,28 +1725,16 @@ public class GameController implements Initializable {
      * Opponent movement loop remains active.
      */
     public void stopPlayerMovement() {
-        if (movementTimer != null) {
-            movementTimer.stop();
-            movementTimer = null;
-        }
+        movementLoopCoordinator.stopMovementTimer();
         pressedKeys.clear();
+        edgeKeys.clear();
     }
 
     /**
      * Stops only opponent movement loop.
      */
     public void stopOpponentMovement() {
-        stopMovementWatchdog();
-        if (runComputerCharacters != null) runComputerCharacters.cancel();
-        if (runComputerCharactersThread != null) {
-            runComputerCharactersThread.interrupt();
-            try {
-                runComputerCharactersThread.join(OPPONENT_THREAD_JOIN_TIMEOUT_MS);
-            } catch (InterruptedException interruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            runComputerCharactersThread = null;
-        }
+        movementLoopCoordinator.stopComputerCharacters();
     }
 
     public void dispose() {

@@ -35,6 +35,12 @@ public class GameControllerDisposeTest {
         f.setAccessible(true);
         f.set(target, value);
     }
+    
+    private static Object get(Object target, String field) throws Exception {
+        Field f = target.getClass().getDeclaredField(field);
+        f.setAccessible(true);
+        return f.get(target);
+    }
 
     @Test
     void disposeCancelsTaskInterruptsThreadAndUnsubscribes() throws Exception {
@@ -56,9 +62,12 @@ public class GameControllerDisposeTest {
         player.addPositionSubscriber(winArea);
         assertEquals(1, player.getPositionSubscribers().size(), "Precondition: win area subscribed");
 
+        // Inject into coordinator
+        Object coordinator = get(gc, "movementLoopCoordinator");
+        set(coordinator, "runComputerCharacters", bgTask);
+        set(coordinator, "runComputerCharactersThread", worker);
+        
         // Inject into controller
-        set(gc, "runComputerCharacters", bgTask);
-        set(gc, "runComputerCharactersThread", worker);
         set(gc, "playerCharacter", player);
         set(gc, "winarea", winArea);
 

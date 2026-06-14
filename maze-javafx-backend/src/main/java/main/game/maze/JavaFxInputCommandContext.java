@@ -8,9 +8,18 @@ import main.game.maze.common.input.command.GameCommandContext;
  */
 final class JavaFxInputCommandContext implements GameCommandContext {
 
-    private final GameControllerInputSupport.GameKeyActionSink keyActionSink;
+    interface GameKeyActionSink {
+        void showHighScore();
+        void openDifficultyPickerAndMaybeRestart();
+        void showNavigationPath();
+        void showSpanningTree();
+        void clearNavigationPath();
+        void clearSpanningTree();
+    }
 
-    JavaFxInputCommandContext(GameControllerInputSupport.GameKeyActionSink keyActionSink) {
+    private final GameKeyActionSink keyActionSink;
+
+    JavaFxInputCommandContext(GameKeyActionSink keyActionSink) {
         this.keyActionSink = keyActionSink;
     }
 
