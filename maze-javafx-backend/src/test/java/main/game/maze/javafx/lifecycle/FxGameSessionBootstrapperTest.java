@@ -13,11 +13,15 @@ import main.game.maze.runtime.opponents.EnemyRegistrar;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import main.game.maze.difficulties.Difficulty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,9 +75,14 @@ class FxGameSessionBootstrapperTest {
     }
 
     private static FxGameSessionBootstrapper bootstrapper(EnemyRegistrar registrar) {
+        return bootstrapper(registrar, (r, d) -> {});
+    }
+
+    private static FxGameSessionBootstrapper bootstrapper(
+            EnemyRegistrar registrar,
+            BiConsumer<EnemyRegistrar, Difficulty> spawner) {
         FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(MazeVisualStyleConfig.DEFAULT, () -> "");
-        // no-op spawner: avoids loading the EMF/XMI opponent model in unit-test JVM context
-        return new FxGameSessionBootstrapper(MazeVisualStyleConfig.DEFAULT, renderer, registrar, (r, d) -> {});
+        return new FxGameSessionBootstrapper(MazeVisualStyleConfig.DEFAULT, renderer, registrar, spawner);
     }
 
     // -----------------------------------------------------------------------
@@ -183,13 +192,19 @@ class FxGameSessionBootstrapperTest {
     @Test
     void enemyRegistrarIsWiredToFactory() throws Exception {
         RecordingRegistrar registrar = new RecordingRegistrar();
-        runSetup(bootstrapper(registrar), new Pane());
+        AtomicBoolean spawnerCalled = new AtomicBoolean(false);
+        var bs = bootstrapper(registrar, (r, d) -> {
+            spawnerCalled.set(true);
+            // call through the registrar to prove the same instance was forwarded
+            r.resolveEnemySpawnPosition(10, 20, 32);
+        });
+        runSetup(bs, new Pane());
         // Flush any Platform.runLater lambdas that the factory posted for character registration
         flushFx();
         flushFx();
 
-        // If at least one character type is enabled in the model, resolveEnemySpawnPosition
-        // must have been called at least once. If no enemies are enabled it is vacuously green.
-        assertNotNull(registrar, "sanity: recording registrar must not be null");
+        assertTrue(spawnerCalled.get(), "bootstrapper must invoke the provided spawner");
+        assertFalse(registrar.spawnPositions.isEmpty(),
+                "spawner must receive the same EnemyRegistrar instance so its calls are recorded");
     }
 }
