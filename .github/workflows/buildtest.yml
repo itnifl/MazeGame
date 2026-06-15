@@ -28,13 +28,20 @@ jobs:
             -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze-javafx \
             -am \
             -DskipTests=true \
-            clean verify
-                  
+            clean install
+
       - name: Upload p2 site
         uses: actions/upload-artifact@v4
         with:
           name: maze-p2-repository
           path: maze-module-repository/target/repository/**
+
+      - name: Upload local Maven artifacts (eclipse-plugin JARs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: maze-maven-artifacts
+          path: ~/.m2/repository/main/game/maze/
+          retention-days: 1
 
   game:
     runs-on: ubuntu-latest
@@ -56,6 +63,12 @@ jobs:
           key: p2-${{ runner.os }}-${{ hashFiles('releng/mirror/pom.xml','releng/maze.target') }}
           restore-keys: |
             p2-${{ runner.os }}-
+
+      - name: Download eclipse-plugin JARs from tycho job
+        uses: actions/download-artifact@v4
+        with:
+          name: maze-maven-artifacts
+          path: ~/.m2/repository/main/game/maze/
 
       - name: Install Xvfb (headless JavaFX)
         run: |
