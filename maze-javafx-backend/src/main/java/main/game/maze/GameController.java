@@ -35,7 +35,6 @@ import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.input.InputRouter;
 import main.game.maze.common.input.KeyBindingRegistry;
 import main.game.maze.common.controller.state.GameModeRouter;
-import main.game.maze.javafx.audio.FxGameAudioCoordinator;
 import main.game.maze.javafx.controller.state.FxPlayingModeController;
 import main.game.maze.javafx.render.FxGameRenderCoordinator;
 import main.game.maze.javafx.render.FxMazeCanvasRenderer;
@@ -114,7 +113,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final GameModeRouter modeRouter = new GameModeRouter();
     private FxPlayingModeController playingModeController;
     private FxGameRenderCoordinator renderCoordinator;
-    private FxGameAudioCoordinator audioCoordinator;
 
     private double mouseX;
     private double mouseY;
@@ -181,7 +179,6 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        audioCoordinator   = new FxGameAudioCoordinator(VISUAL_STYLE);
         renderCoordinator  = new FxGameRenderCoordinator(gameBoard);
         mazeCanvasRenderer = new FxMazeCanvasRenderer(VISUAL_STYLE, this::difficultyName);
         bootstrapper       = new FxGameSessionBootstrapper(VISUAL_STYLE, mazeCanvasRenderer, this);

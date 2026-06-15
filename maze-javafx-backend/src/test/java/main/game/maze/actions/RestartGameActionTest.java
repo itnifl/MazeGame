@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import main.game.maze.actions.RestartGameAction;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.IAudioEngine;
 import org.junit.jupiter.api.BeforeAll;

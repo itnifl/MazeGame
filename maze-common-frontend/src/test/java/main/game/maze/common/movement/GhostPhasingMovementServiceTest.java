@@ -1,7 +1,6 @@
 package main.game.maze.common.movement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Random;
@@ -127,7 +126,7 @@ class GhostPhasingMovementServiceTest {
         EnemyState state = new EnemyState("g1", 100, 100, 1, 0, 16, 4);
 
         // Establish a direction.
-        MovementResult before = service.tick(state, world);
+        service.tick(state, world);
 
         service.reset();
 
