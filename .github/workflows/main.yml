@@ -13,10 +13,10 @@ jobs:
   game:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Temurin JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
           distribution: temurin
           java-version: 21
@@ -33,29 +33,43 @@ jobs:
             -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze-javafx \
             -am \
             -DskipTests=true \
-            clean verify
+            clean install
 
-      - name: Run full test suite
+      - name: Test common backend and frontend modules
+        run: |
+          mvn -B -e \
+            -DskipITs \
+            -pl maze-common-backend,maze-common-frontend \
+            test
+
+      - name: Test libGDX module
+        run: |
+          mvn -B -e \
+            -DskipITs \
+            -pl maze-libgdx -am \
+            test
+
+      - name: Test JavaFX modules (headless)
         env:
           MAVEN_OPTS: -Xmx2g
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
-          mvn -B -U -e \
+          mvn -B -e \
             -DskipITs \
             -Djavafx.platform=linux \
-            -pl '!releng/mirror' \
+            -pl maze-javafx-backend -am \
             test
 
       - name: Upload Surefire reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: surefire-reports
           path: "**/target/surefire-reports/**"
 
       - name: Upload game artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: maze-game
           path: maze-javafx-backend/target/**/*.jar

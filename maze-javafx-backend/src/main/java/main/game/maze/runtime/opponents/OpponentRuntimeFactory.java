@@ -27,6 +27,7 @@ import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
 import main.game.maze.service.DifficultyService;
@@ -35,7 +36,6 @@ import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.App;
-import main.game.maze.GameController;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyTypes;
 
@@ -51,21 +51,20 @@ public final class OpponentRuntimeFactory {
     private OpponentRuntimeFactory() { /* utility class */  }
 
 
-    public static void instantiateFromModel(GameController gameController) {
-        instantiateFromModel(gameController, null);
+    public static void instantiateFromModel(EnemyRegistrar registrar) {
+        instantiateFromModel(registrar, null);
     }
 
-    public static void instantiateFromModel(GameController gameController, Difficulty override) {
-        instantiateFromModelInternal(gameController, override);
+    public static void instantiateFromModel(EnemyRegistrar registrar, Difficulty override) {
+        instantiateFromModelInternal(registrar, override);
     }
 
     /**
-     * Instantiate characters from an XMI model and register them with the provided GameController.
+     * Instantiate characters from an XMI model and register them with the provided {@link EnemyRegistrar}.
      *
-     * @param resourcePath  classpath path to the XMI (e.g. "/opponents/instances/classic_zombie.xmi")
-     * @param gameController the controller responsible for registering characters and nodes
+     * @param registrar the registrar responsible for placing spawned characters into the scene
      */
-    public static void instantiateFromModelInternal(GameController gameController, Difficulty setOverrideDifficulty) {
+    public static void instantiateFromModelInternal(EnemyRegistrar registrar, Difficulty setOverrideDifficulty) {
 
         /** REFACTOR START Extract into XmiRulesLoader  line 73-161 **/
         String resourcePath = OpponentConstants.ZombieModelPath;
@@ -74,8 +73,8 @@ public final class OpponentRuntimeFactory {
             _logger.warning("instantiateFromModel called with empty resourcePath");
             return;
         }
-        if (gameController == null) {
-            _logger.warning("instantiateFromModel requires a non-null GameController");
+        if (registrar == null) {
+            _logger.warning("instantiateFromModel requires a non-null EnemyRegistrar");
             return;
         }
         // should I use the RunComposition.java instead o delete it?
@@ -159,7 +158,7 @@ public final class OpponentRuntimeFactory {
             speedMultiplierByDifficulty,
             dmgMultiplierByDifficulty,
             instantDeath,
-            gameController,                     
+            registrar,
             noOfGhostsSpawned, noOfZombiesSpawned, noOfPumpkinBombersSpawned
         );
 
@@ -188,7 +187,7 @@ private static double spawnByTarget(
         double speedMult,
         double dmgMult,
         boolean instantDeath,
-        GameController gameController,
+        EnemyRegistrar registrar,
         AtomicInteger spawnedGhosts,
         AtomicInteger spawnedZombies,
         AtomicInteger spawnedPumpkins
@@ -258,7 +257,7 @@ private static double spawnByTarget(
             setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);
 
             // register in game (updates per-type counters)
-            doCharacterRegistration(gameController, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
+            doCharacterRegistration(registrar, picked, spawnedGhosts, spawnedZombies, spawnedPumpkins);
 
             threat += picked.getEffectiveThreat();
         }
@@ -277,7 +276,7 @@ private static double spawnByTarget(
      * Delegates character registration to the generated CharacterRegistrar.
      * This eliminates manual instanceof chains - the generated code handles dispatch.
      */
-    private static void doCharacterRegistration(GameController gameController, CharacterType characterType,
+    private static void doCharacterRegistration(EnemyRegistrar registrar, CharacterType characterType,
             AtomicInteger noOfGhostsSpawned, AtomicInteger noOfZombiesSpawned, AtomicInteger noOfPumpkinBombersSpawned) {
                 
             final double spawnX = ThreadLocalRandom.current()
@@ -301,36 +300,36 @@ private static double spawnByTarget(
             CharacterRegistrar.register(
                 characterType,
                 // Ghost handler
-                g -> {                            
-                    noOfGhostsSpawned.incrementAndGet();                    
-                    var resolved = gameController.resolveEnemySpawnPosition(
+                g -> {
+                    noOfGhostsSpawned.incrementAndGet();
+                    Point2D resolved = registrar.resolveEnemySpawnPosition(
                             spawnX,
                             spawnY,
                             StageConstants.GhostCharacterXYSize);
-                    registerGhostCharacter(gameController, resolved.getX(), resolved.getY(), g);
+                    registerGhostCharacter(registrar, resolved.getX(), resolved.getY(), g);
                 },
                 // Zombie handler
                 z -> {
-                    noOfZombiesSpawned.incrementAndGet();        
-                    var resolved = gameController.resolveEnemySpawnPosition(
+                    noOfZombiesSpawned.incrementAndGet();
+                    Point2D resolved = registrar.resolveEnemySpawnPosition(
                             spawnX,
                             spawnY,
                             StageConstants.ZombieCharacterXYSize);
-                    registerZombieCharacter(gameController, resolved.getX(), resolved.getY(), z);
+                    registerZombieCharacter(registrar, resolved.getX(), resolved.getY(), z);
                 },
                 // PumpkinBomber handler
                 b -> {
                     noOfPumpkinBombersSpawned.incrementAndGet();
-                    var resolved = gameController.resolveEnemySpawnPosition(
+                    Point2D resolved = registrar.resolveEnemySpawnPosition(
                             spawnX,
                             spawnY,
                             StageConstants.PumpkinBomberCharacterXYSize);
-                    registerPumpkinBomberCharacter(gameController, resolved.getX(), resolved.getY(), b);
+                    registerPumpkinBomberCharacter(registrar, resolved.getX(), resolved.getY(), b);
                 }
             );
     }
 
-    private static void registerPumpkinBomberCharacter(GameController gameController, double spawnX, double spawnY,
+    private static void registerPumpkinBomberCharacter(EnemyRegistrar registrar, double spawnX, double spawnY,
             PumpkinBomber b) {
         Platform.runLater(() -> {
             try {
@@ -338,36 +337,36 @@ private static double spawnByTarget(
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
                 new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
-                //gameController.registerComputerCharacter(character, graphicsNode); //Need new method to register pumpkin bomber
+                // PumpkinBomber does not yet implement IMovingComputerCharacter — registration deferred
             } catch (Exception fxException) {
                 _logger.log(Level.SEVERE, "Failed to create or register a PumpkinBomberCharacter.", fxException);
             }
         });
     }
 
-    private static void registerGhostCharacter(GameController gameController, double spawnX, double spawnY, Ghost g) {
+    private static void registerGhostCharacter(EnemyRegistrar registrar, double spawnX, double spawnY, Ghost g) {
         Platform.runLater(() -> {
             try {
                 Node graphicsNode = createCharacterGraphics(g, StageConstants.GhostCharacterXYSize);
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
                 var character = new GhostCharacter(graphicsNode, spawnX, spawnY, g);
-                gameController.registerComputerCharacter(character, graphicsNode);
+                registrar.registerComputerCharacter(character, graphicsNode);
             } catch (Exception fxException) {
                 _logger.log(Level.SEVERE, "Failed to create or register a GhostCharacter.", fxException);
             }
         });
     }
 
-    private static void registerZombieCharacter(GameController gameController, double spawnX,
-            double spawnY, Zombie z) {                
+    private static void registerZombieCharacter(EnemyRegistrar registrar, double spawnX,
+            double spawnY, Zombie z) {
         Platform.runLater(() -> {
             try {
                 Node graphicsNode = createCharacterGraphics(z, StageConstants.ZombieCharacterXYSize);
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
                 ZombieCharacter zombieCharacter = new ZombieCharacter(graphicsNode, spawnX, spawnY, z);
-                gameController.registerComputerCharacter(zombieCharacter, graphicsNode);
+                registrar.registerComputerCharacter(zombieCharacter, graphicsNode);
             } catch (Exception fxException) {
                 _logger.log(Level.SEVERE, "Failed to create or register a ZombieCharacter.", fxException);
             }

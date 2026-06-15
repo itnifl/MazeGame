@@ -63,16 +63,32 @@ class GameControllerPathHintBudgetTest {
         }
     }
 
+    /**
+     * Invokes {@code method()} on {@code target}; if not found there, falls back to
+     * the {@code pathHintCoordinator} sub-object (methods were moved there during refactoring).
+     */
     private static Object invoke(Object target, String method) throws Exception {
-        Method m = target.getClass().getDeclaredMethod(method);
-        m.setAccessible(true);
-        return m.invoke(target);
+        try {
+            Method m = target.getClass().getDeclaredMethod(method);
+            m.setAccessible(true);
+            return m.invoke(target);
+        } catch (NoSuchMethodException e) {
+            Field cf = target.getClass().getDeclaredField("pathHintCoordinator");
+            cf.setAccessible(true);
+            Object coordinator = cf.get(target);
+            Method m = coordinator.getClass().getDeclaredMethod(method);
+            m.setAccessible(true);
+            return m.invoke(coordinator);
+        }
     }
 
     private static long getBudgetNanos(GameController gc) throws Exception {
-        Method m = gc.getClass().getDeclaredMethod("pathHintBudgetNanos");
+        Field cf = gc.getClass().getDeclaredField("pathHintCoordinator");
+        cf.setAccessible(true);
+        Object coordinator = cf.get(gc);
+        Method m = coordinator.getClass().getMethod("budgetNanos");
         m.setAccessible(true);
-        return (long) m.invoke(gc);
+        return (long) m.invoke(coordinator);
     }
 
     // -----------------------------------------------------------------------

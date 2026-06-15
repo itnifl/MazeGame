@@ -17,7 +17,6 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
-import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.constants.ScreenNameFXMLConstants;
 import main.game.maze.mazeworld.constants.StageConstants;
 

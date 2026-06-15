@@ -5,10 +5,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+
+import java.util.function.Consumer;
 import main.game.maze.FxGameWorldModel;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.difficulties.EasyDifficulty;
@@ -32,32 +35,35 @@ public final class FxPathHintCoordinator {
     private static final long PATH_HINT_BUDGET_NORMAL_NANOS = 25L * 1_000_000_000L;
     private static final long PATH_HINT_BUDGET_HARD_NANOS   = 15L * 1_000_000_000L;
 
-    private final Supplier<Label> labelSupplier;
-    private final FxGameWorldModel model;
-    private final Supplier<?> difficultySupplier;
-    private final Supplier<GameMazeWorld> mazeSupplier;
-    private final Supplier<PlayerCharacter> playerSupplier;
-    private final Supplier<Node> heartSupplier;
-    private final Runnable onRefreshRequired;
+    private final Supplier<Label>              labelSupplier;
+    private final FxGameWorldModel             model;
+    private final Supplier<?>                  difficultySupplier;
+    private final Supplier<GameMazeWorld>      mazeSupplier;
+    private final Supplier<PlayerCharacter>    playerSupplier;
+    private final Supplier<Node>               heartSupplier;
+    private final Supplier<Canvas>             pathCanvasSupplier;
+    private final Consumer<GraphicsContext>    enemyPathDrawer;
 
     private Timeline pathHintCountdownTicker;
     private PauseTransition pathHintExhaustedClearTimer;
 
     public FxPathHintCoordinator(
-            Supplier<Label> labelSupplier,
-            FxGameWorldModel model,
-            Supplier<?> difficultySupplier,
-            Supplier<GameMazeWorld> mazeSupplier,
+            Supplier<Label>           labelSupplier,
+            FxGameWorldModel          model,
+            Supplier<?>               difficultySupplier,
+            Supplier<GameMazeWorld>   mazeSupplier,
             Supplier<PlayerCharacter> playerSupplier,
-            Supplier<Node> heartSupplier,
-            Runnable onRefreshRequired) {
+            Supplier<Node>            heartSupplier,
+            Supplier<Canvas>          pathCanvasSupplier,
+            Consumer<GraphicsContext> enemyPathDrawer) {
         this.labelSupplier      = labelSupplier;
         this.model              = model;
         this.difficultySupplier = difficultySupplier;
         this.mazeSupplier       = mazeSupplier;
         this.playerSupplier     = playerSupplier;
         this.heartSupplier      = heartSupplier;
-        this.onRefreshRequired  = onRefreshRequired;
+        this.pathCanvasSupplier = pathCanvasSupplier;
+        this.enemyPathDrawer    = enemyPathDrawer;
     }
 
     private Label lbl() {
@@ -82,7 +88,7 @@ public final class FxPathHintCoordinator {
                 model.setPathHintKeyDown(false);
                 model.setRouteHintVisible(false);
                 stopCountdown();
-                if (onRefreshRequired != null) onRefreshRequired.run();
+                refreshPathCanvas();
                 showExhaustedMessage();
                 return;
             }
@@ -158,6 +164,36 @@ public final class FxPathHintCoordinator {
             gc.strokeLine(prev.getX(), prev.getY(), p.getX(), p.getY());
             prev = p;
         }
+    }
+
+    /** Redraws the path-canvas overlay (player navigation path + enemy paths). */
+    public void refreshPathCanvas() {
+        Canvas pc = pathCanvasSupplier.get();
+        if (pc == null) return;
+        GraphicsContext gc = pc.getGraphicsContext2D();
+        gc.clearRect(0, 0, pc.getWidth(), pc.getHeight());
+        if (model.isRouteHintVisible()) drawPlayerNavigationPath(gc);
+        gc.setGlobalAlpha(1.0);
+        if (model.enemyPathOverlayVisible()) enemyPathDrawer.accept(gc);
+        gc.setGlobalAlpha(1.0);
+    }
+
+    /** Called when the P key is held: starts the hint countdown and redraws. */
+    public void showNavigationPath() {
+        long remainingNanos = budgetNanos() - model.pathHintTotalUsedNanos();
+        if (remainingNanos <= 0) { showExhaustedMessage(); return; }
+        boolean wasDown = model.pathHintKeyDown();
+        model.beginPathHint();
+        if (!wasDown) startCountdown();
+        refreshPathCanvas();
+    }
+
+    /** Called when the P key is released: ends the hint and clears the overlay. */
+    public void clearNavigationPath() {
+        model.endPathHint(budgetNanos());
+        stopCountdown();
+        clearTimerLabel();
+        refreshPathCanvas();
     }
 
     public void dispose() {

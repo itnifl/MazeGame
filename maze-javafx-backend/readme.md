@@ -14,8 +14,11 @@ JavaFX game runtime module. This module is now the top level runtime module for 
 | `main.game.maze.areas` | `WinArea` |
 | `main.game.maze.javafx.audio` | `FxGameAudioCoordinator` |
 | `main.game.maze.javafx.controller.state` | `FxPlayingModeController` |
+| `main.game.maze.javafx.hud` | `FxHudCoordinator` — transient HUD message display with auto-clear timer |
+| `main.game.maze.javafx.lifecycle` | `FxGameSessionBootstrapper` — arena build, player construction, canvas z-ordering, enemy spawning (injectable) |
+| `main.game.maze.javafx.menu` | `FxDifficultyPickerSupport` — difficulty dialog + restart confirmation flow |
 | `main.game.maze.javafx.render` | `FxGameRenderCoordinator`, `FxMazeCanvasRenderer`, `FxPathHintCoordinator` |
-| `main.game.maze.runtime.opponents` | `OpponentRuntimeFactory` |
+| `main.game.maze.runtime.opponents` | `OpponentRuntimeFactory`, `EnemyRegistrar` (ISP interface decoupling factory from controller) |
 | `main.game.maze.service` | `CharacterIntersectionFixerService` |
 | `main.game.maze.util` | `Dialogs` |
 
@@ -41,17 +44,21 @@ The JavaFX `GameController` has been refactored to an MVC (Model-View-Controller
 
 | Responsibility | Owner | Notes |
 |---|---|---|
-| **Lifecycle & FXML** | `GameController` (~653 lines) | The controller is the FXML entry point; wires all coordinators and delegates every domain concern. |
+| **Lifecycle & FXML** | `GameController` (~488 lines) | The controller is the FXML entry point; wires all coordinators and delegates every domain concern. Original god class was 1872 lines. |
+| **Session Bootstrap** | `FxGameSessionBootstrapper` | Encapsulates arena build, player construction, canvas z-ordering, and enemy spawning. Spawning is injectable for testability. |
 | **Gameplay State** | `FxGameWorldModel` | Pure data model holding scoring, path-hint state, and enemy overlay flags. |
 | **Input Handling** | `InputRouter<KeyCode>` | Shared component from `maze-common-frontend`; maps key presses to `GameCommand` objects via `KeyBindingRegistry`. |
 | **Concurrency** | `FxMovementLoopCoordinator` | Owns the background `Task` for enemy AI and the `AnimationTimer` for player movement. |
 | **Enemy AI & Visuals** | `FxEnemyCoordinator` | Enemy movement AI, infection mist/warning, debug-label overlays, and enemy path canvas drawing. |
-| **Path Hint** | `FxPathHintCoordinator` | Path-hint energy budget, countdown label, budget exhaustion message, and player navigation path rendering. |
+| **Path Hint** | `FxPathHintCoordinator` | Path-hint energy budget, countdown label, budget exhaustion message, navigation path drawing, and input flow (`showNavigationPath` / `clearNavigationPath` / `refreshPathCanvas`). |
+| **HUD Messages** | `FxHudCoordinator` | Transient status messages with optional auto-clear duration. |
+| **Difficulty Picker** | `FxDifficultyPickerSupport` | ESC-key difficulty dialog + restart confirmation flow. Extracted from controller. |
 | **Maze Canvas** | `FxMazeCanvasRenderer` | Static maze wall canvas rendering from `List<Vector2D>` with image caching. |
 | **Camera & Spanning Tree** | `FxGameRenderCoordinator` | Camera translation (windowed / fullscreen), spanning-tree canvas drawing. |
 | **Audio** | `FxGameAudioCoordinator` | Audio transitions for menu, in-game, win, and game-over states. |
 | **Game Logic** | `FxPlayingModeController` | PLAYING-mode update loop: input routing, route-hint penalty, player movement throttling. |
 | **Mode Switching** | `GameModeRouter` | Shared deterministic mode state machine; dispatches to the active mode controller. |
+| **Enemy Spawn Interface** | `EnemyRegistrar` | ISP boundary — `OpponentRuntimeFactory` depends on this interface, not on `GameController` directly. |
 
 This new structure improves testability, isolates responsibilities, and ensures that both the JavaFX and libGDX frontends are built on the same architectural foundation, satisfying **CRR-5**.
 

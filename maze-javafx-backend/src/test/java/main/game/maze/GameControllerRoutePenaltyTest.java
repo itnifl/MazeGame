@@ -59,10 +59,27 @@ public class GameControllerRoutePenaltyTest {
         }
     }
 
+    /**
+     * Invokes {@code method(sig)} on {@code target}; if not found there, falls back to
+     * the {@code pathHintCoordinator} sub-object (methods were moved there during refactoring).
+     */
     private static Object invoke(Object target, String method, Class<?>[] sig, Object... args) throws Exception {
-        Method m = target.getClass().getDeclaredMethod(method, sig);
-        m.setAccessible(true);
-        return m.invoke(target, args);
+        try {
+            Method m = target.getClass().getDeclaredMethod(method, sig);
+            m.setAccessible(true);
+            return m.invoke(target, args);
+        } catch (NoSuchMethodException original) {
+            try {
+                Field cf = target.getClass().getDeclaredField("pathHintCoordinator");
+                cf.setAccessible(true);
+                Object coordinator = cf.get(target);
+                Method m = coordinator.getClass().getDeclaredMethod(method, sig);
+                m.setAccessible(true);
+                return m.invoke(coordinator, args);
+            } catch (NoSuchFieldException | NoSuchMethodException e) {
+                throw original;
+            }
+        }
     }
 
     /** Extracts the {@link FxGameWorldModel} from a {@link GameController} via reflection. */
