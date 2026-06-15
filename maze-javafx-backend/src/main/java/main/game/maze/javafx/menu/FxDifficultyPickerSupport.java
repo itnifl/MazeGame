@@ -34,22 +34,24 @@ public final class FxDifficultyPickerSupport {
         var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
         onStop.run();
 
-        App.pickDifficulty(window).ifPresent(chosen -> {
-            var confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Restart required");
-            confirm.setHeaderText("Restart with " + App.displayName(chosen) + " difficulty now?");
-            confirm.setContentText("Choose OK to restart, or Cancel to keep playing and apply on next restart.");
-            if (window != null) confirm.initOwner(window);
+        var chosenOpt = App.pickDifficulty(window);
+        if (chosenOpt.isEmpty()) {
+            onResume.run();
+            return;
+        }
+        var chosen = chosenOpt.get();
+        var confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Restart required");
+        confirm.setHeaderText("Restart with " + App.displayName(chosen) + " difficulty now?");
+        confirm.setContentText("Choose OK to restart, or Cancel to keep playing and apply on next restart.");
+        if (window != null) confirm.initOwner(window);
 
-            var res = confirm.showAndWait();
-            if (res.isPresent() && res.get() == ButtonType.OK) {
-                onHardRestart.run();
-            } else {
-                onDifficultySet.accept(chosen);
-                onResume.run();
-            }
-        });
-
+        var res = confirm.showAndWait();
+        if (res.isPresent() && res.get() == ButtonType.OK) {
+            onHardRestart.run();
+            return;
+        }
+        onDifficultySet.accept(chosen);
         onResume.run();
     }
 }

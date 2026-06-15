@@ -172,7 +172,8 @@ public final class FxPathHintCoordinator {
         if (pc == null) return;
         GraphicsContext gc = pc.getGraphicsContext2D();
         gc.clearRect(0, 0, pc.getWidth(), pc.getHeight());
-        if (model.isRouteHintVisible())    drawPlayerNavigationPath(gc);
+        if (model.isRouteHintVisible()) drawPlayerNavigationPath(gc);
+        gc.setGlobalAlpha(1.0);
         if (model.enemyPathOverlayVisible()) enemyPathDrawer.accept(gc);
         gc.setGlobalAlpha(1.0);
     }
