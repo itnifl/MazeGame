@@ -5,15 +5,11 @@ import java.util.EnumSet;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextInputDialog;
@@ -48,7 +44,9 @@ import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.javafx.hud.FxHudCoordinator;
 import main.game.maze.javafx.lifecycle.FxGameSessionBootstrapper;
+import main.game.maze.javafx.menu.FxDifficultyPickerSupport;
 import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.service.CharacterIntersectionFixerService;
 
@@ -125,10 +123,10 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final JavaFxInputCommandContext.ActionSink actionSink = new JavaFxInputCommandContext.ActionSink() {
         @Override public void showHighScore()                       { GameController.this.showHighScore(); }
         @Override public void openDifficultyPickerAndMaybeRestart(){ GameController.this.openDifficultyPickerAndMaybeRestart(); }
-        @Override public void showNavigationPath()                  { GameController.this.showNavigationPath(); }
-        @Override public void showSpanningTree()                    { GameController.this.showSpanningTree(); }
-        @Override public void clearNavigationPath()                 { GameController.this.clearNavigationPath(); }
-        @Override public void clearSpanningTree()                   { GameController.this.clearSpanningTree(); }
+        @Override public void showNavigationPath()  { pathHintCoordinator.showNavigationPath(); }
+        @Override public void clearNavigationPath() { pathHintCoordinator.clearNavigationPath(); }
+        @Override public void showSpanningTree()    { renderCoordinator.showSpanningTree(treeCanvas, playerCharacter, maze); }
+        @Override public void clearSpanningTree()   { renderCoordinator.clearSpanningTree(treeCanvas); }
         @Override public void updateDebugLabels()                   { GameController.this.updateDebugLabels(); }
         @Override public void updateScoreHud() {
             var score = winGameAction.updateScore();
@@ -144,14 +142,14 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void showEnemyPathsOverlay()                             { enemyCoordinator.showEnemyPathsOverlay(); }
     };
 
-    private PauseTransition hudMessageClearTimer;
     private boolean cameraFollowListenersInstalled;
     private Rectangle gameBoardClip;
 
     // Extracted coordinators
-    private final FxEnemyCoordinator enemyCoordinator;
-    private FxPathHintCoordinator pathHintCoordinator;
-    private FxMazeCanvasRenderer mazeCanvasRenderer;
+    private final FxEnemyCoordinator  enemyCoordinator;
+    private final FxHudCoordinator    hudCoordinator = new FxHudCoordinator(() -> mouseCoordsLabel);
+    private FxPathHintCoordinator     pathHintCoordinator;
+    private FxMazeCanvasRenderer      mazeCanvasRenderer;
     private FxGameSessionBootstrapper bootstrapper;
 
     public GameController() {
@@ -162,7 +160,7 @@ public class GameController implements Initializable, EnemyRegistrar {
                 () -> gameBoard, () -> root, model,
                 () -> maze,
                 () -> playerCharacter,
-                this::refreshPathCanvasOverlay);
+                () -> pathHintCoordinator.refreshPathCanvas());
         // Label resolved lazily — FXML field is null until initialize() runs.
         pathHintCoordinator = new FxPathHintCoordinator(
                 () -> pathHintTimerLabel,
@@ -171,7 +169,8 @@ public class GameController implements Initializable, EnemyRegistrar {
                 () -> maze,
                 () -> playerCharacter,
                 () -> heart,
-                this::refreshPathCanvasOverlay);
+                () -> pathCanvas,
+                gc -> enemyCoordinator.drawEnemyNavigationPaths(gc));
     }
 
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
@@ -283,45 +282,16 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (gameBoard != null) gameBoard.requestFocus();
     }
 
-    private void setHudMessage(String text) {
-        if (hudMessageClearTimer != null) { hudMessageClearTimer.stop(); hudMessageClearTimer = null; }
-        if (mouseCoordsLabel != null) mouseCoordsLabel.setText(text);
-    }
-
-    private void setHudMessage(String text, Duration visibleFor) {
-        setHudMessage(text);
-        hudMessageClearTimer = new PauseTransition(visibleFor);
-        hudMessageClearTimer.setOnFinished(e -> setHudMessage(""));
-        hudMessageClearTimer.play();
-    }
+    private void setHudMessage(String text)                    { hudCoordinator.setMessage(text); }
+    private void setHudMessage(String text, Duration visibleFor) { hudCoordinator.setMessage(text, visibleFor); }
 
     private void openDifficultyPickerAndMaybeRestart() {
-        var window = (root != null && root.getScene() != null) ? root.getScene().getWindow() : null;
-        stopComputerCharacters();
-        hideCommandsOverlay();
-
-        App.pickDifficulty(window).ifPresent(chosen -> {
-            var confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Restart required");
-            confirm.setHeaderText("Restart with " + App.displayName(chosen) + " difficulty now?");
-            confirm.setContentText("Choose OK to restart, or Cancel to keep playing and apply on next restart.");
-            if (window != null) confirm.initOwner(window);
-
-            var res = confirm.showAndWait();
-            if (res.isPresent() && res.get() == ButtonType.OK) {
-                new main.game.maze.actions.RestartGameAction(root).Load();
-            } else {
-                this.setStartDifficulty(chosen);
-                App.lastChosenDifficulty = chosen;
-                movementLoopCoordinator.startComputerCharacters();
-                movementLoopCoordinator.startMovementTimer();
-                if (gameBoard != null) gameBoard.requestFocus();
-            }
-        });
-
-        movementLoopCoordinator.startComputerCharacters();
-        movementLoopCoordinator.startMovementTimer();
-        if (gameBoard != null) gameBoard.requestFocus();
+        FxDifficultyPickerSupport.open(
+                root,
+                () -> { stopComputerCharacters(); hideCommandsOverlay(); },
+                () -> { movementLoopCoordinator.startComputerCharacters(); movementLoopCoordinator.startMovementTimer(); if (gameBoard != null) gameBoard.requestFocus(); },
+                chosen -> { setStartDifficulty(chosen); App.lastChosenDifficulty = chosen; },
+                () -> new main.game.maze.actions.RestartGameAction(root).Load());
     }
 
     @FXML
@@ -480,60 +450,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     // -----------------------------------------------------------------------
-    // Path hint (delegating — tests access these methods on GameController)
-    // -----------------------------------------------------------------------
-
-    private void showNavigationPath() {
-        long remainingNanos = pathHintBudgetNanos() - model.pathHintTotalUsedNanos();
-        if (remainingNanos <= 0) {
-            pathHintCoordinator.showExhaustedMessage();
-            return;
-        }
-        boolean wasDown = model.pathHintKeyDown();
-        model.beginPathHint();
-        if (!wasDown) {
-            pathHintCoordinator.startCountdown();
-        }
-        refreshPathCanvasOverlay();
-    }
-
-    private void clearNavigationPath() {
-        model.endPathHint(pathHintBudgetNanos());
-        pathHintCoordinator.stopCountdown();
-        pathHintCoordinator.clearTimerLabel();
-        refreshPathCanvasOverlay();
-    }
-
-    private long pathHintBudgetNanos() {
-        return pathHintCoordinator.budgetNanos();
-    }
-
-    // -----------------------------------------------------------------------
-    // Canvas overlay
-    // -----------------------------------------------------------------------
-
-    private void refreshPathCanvasOverlay() {
-        if (pathCanvas == null) return;
-        GraphicsContext gc = pathCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, pathCanvas.getWidth(), pathCanvas.getHeight());
-        if (model.isRouteHintVisible()) {
-            pathHintCoordinator.drawPlayerNavigationPath(gc);
-        }
-        if (model.enemyPathOverlayVisible()) {
-            enemyCoordinator.drawEnemyNavigationPaths(gc);
-        }
-        gc.setGlobalAlpha(1.0);
-    }
-
-    private void showSpanningTree() {
-        renderCoordinator.showSpanningTree(treeCanvas, playerCharacter, maze);
-    }
-
-    private void clearSpanningTree() {
-        renderCoordinator.clearSpanningTree(treeCanvas);
-    }
-
-    // -----------------------------------------------------------------------
     // Lifecycle
     // -----------------------------------------------------------------------
 
@@ -559,7 +475,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();
         enemyCoordinator.dispose();
 
-        if (hudMessageClearTimer != null) { hudMessageClearTimer.stop(); hudMessageClearTimer = null; }
+        hudCoordinator.dispose();
 
         if (winarea != null && playerCharacter != null) {
             playerCharacter.removePositionSubscriber(winarea);

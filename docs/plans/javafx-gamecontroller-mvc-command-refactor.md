@@ -1,6 +1,6 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** COMPLETE — all phases implemented and all tests green (164 pass in javafx-backend, 71 in common stack; 2 skipped)
+**Status:** COMPLETE — all phases implemented; GameController reduced from 1872 → 488 lines (74%); < 300 target remains aspirational due to FXML/boilerplate floor; all tests green (164 pass in javafx-backend, 71 in common stack; 2 skipped)
 **Branch (current):** `feature/refactorJavaFX-nextRound`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
 **Last updated:** 2026-06-15
