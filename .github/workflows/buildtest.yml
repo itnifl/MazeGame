@@ -62,13 +62,27 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
 
-      - name: Run full test suite
+      - name: Test common backend and frontend modules
+        run: |
+          mvn -B -e \
+            -DskipITs \
+            -pl maze-common-backend,maze-common-frontend \
+            test
+
+      - name: Test libGDX module
+        run: |
+          mvn -B -e \
+            -DskipITs \
+            -pl maze-libgdx -am \
+            test
+
+      - name: Test JavaFX modules (headless)
         env:
           MAVEN_OPTS: -Xmx2g
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" \
-          mvn -B -U -e \
+          mvn -B -e \
             -DskipITs \
             -Djavafx.platform=linux \
-            -pl '!releng/mirror' \
+            -pl maze-javafx-backend -am \
             test

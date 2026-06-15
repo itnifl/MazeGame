@@ -1,9 +1,9 @@
 # JavaFX `GameController` Refactor Plan — MVC Decomposition + Command/Registry Input
 
-**Status:** Phase 5 complete (Phase 0–4 complete; Phase 1 Nr 2 deferred; Phase 5 docs/tests complete; GameController slim-down to <300 lines deferred pending FxGameSessionBootstrapper extraction)
+**Status:** COMPLETE — all phases implemented and all tests green (164 pass in javafx-backend, 71 in common stack; 2 skipped)
 **Branch (current):** `feature/refactorJavaFX-nextRound`
 **Scope:** JavaFX module only (`maze-javafx-backend`, `maze-javafx`); shared promotions into `maze-common-frontend`
-**Last updated:** 2026-06-14
+**Last updated:** 2026-06-15
 **Predecessor:** `docs/plans/libgdx-gamescreen-mvc-command-refactor.md` (the libGDX round establishes the reference architecture this plan mirrors)
 
 ---

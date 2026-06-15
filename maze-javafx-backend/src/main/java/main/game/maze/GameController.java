@@ -17,17 +17,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -38,8 +32,6 @@ import main.game.maze.actions.WinGameAction;
 import main.game.maze.areas.WinArea;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
-import main.game.maze.config.model.PlayerConfig;
-import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
@@ -54,17 +46,16 @@ import main.game.maze.javafx.render.FxMazeCanvasRenderer;
 import main.game.maze.javafx.render.FxPathHintCoordinator;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.WallCollisionUtil;
-import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.constants.PlayerConstants;
-import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
+import main.game.maze.javafx.lifecycle.FxGameSessionBootstrapper;
+import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.service.CharacterIntersectionFixerService;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GameController implements Initializable {
+public class GameController implements Initializable, EnemyRegistrar {
     private static final Logger LOGGER = Logger.getLogger(GameController.class.getName());
     private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
 
@@ -153,7 +144,6 @@ public class GameController implements Initializable {
         @Override public void showEnemyPathsOverlay()                             { enemyCoordinator.showEnemyPathsOverlay(); }
     };
 
-    private int playerMovementSpeed = StageConstants.PlayerCharacterSpeed;
     private PauseTransition hudMessageClearTimer;
     private boolean cameraFollowListenersInstalled;
     private Rectangle gameBoardClip;
@@ -162,6 +152,7 @@ public class GameController implements Initializable {
     private final FxEnemyCoordinator enemyCoordinator;
     private FxPathHintCoordinator pathHintCoordinator;
     private FxMazeCanvasRenderer mazeCanvasRenderer;
+    private FxGameSessionBootstrapper bootstrapper;
 
     public GameController() {
         inputCommandContext = new JavaFxInputCommandContext(actionSink);
@@ -191,9 +182,10 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        audioCoordinator  = new FxGameAudioCoordinator(VISUAL_STYLE);
-        renderCoordinator = new FxGameRenderCoordinator(gameBoard);
+        audioCoordinator   = new FxGameAudioCoordinator(VISUAL_STYLE);
+        renderCoordinator  = new FxGameRenderCoordinator(gameBoard);
         mazeCanvasRenderer = new FxMazeCanvasRenderer(VISUAL_STYLE, this::difficultyName);
+        bootstrapper       = new FxGameSessionBootstrapper(VISUAL_STYLE, mazeCanvasRenderer, this);
 
         javafx.application.Platform.runLater(() -> {
             installBottomButtonPressEffects();
@@ -350,50 +342,28 @@ public class GameController implements Initializable {
 
     public void setupGame() {
         hpBar.setProgress(1.0);
-
-        gameBoard.setPrefSize(App.getBoardMaxX(), App.getBoardMaxY());
-        gameBoard.setMinSize(App.getBoardMaxX(), App.getBoardMaxY());
-        gameBoard.setMaxSize(App.getBoardMaxX(), App.getBoardMaxY());
         installGameBoardClip();
 
-        updateBoardBackground();
-
-        maze = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
-        PlayerConfig playerConfig = loadPlayerConfig();
-        playerMovementSpeed = Math.max(1, (int) Math.round(playerConfig.speed()));
-
-        setPlayerBaseImage(player, playerConfig.imageBase());
-
-        playerCharacter = new PlayerCharacter(player, player.getLayoutX(), player.getLayoutY(), hpBar, playerConfig);
-
-        playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
-        modeRouter.register(playingModeController);
-
-        var vectors = maze.getMazeVectors();
-
+        // Remove stale canvases from the previous session
         if (mazeCanvas != null) { gameBoard.getChildren().remove(mazeCanvas); mazeCanvas = null; }
         if (pathCanvas != null) { gameBoard.getChildren().remove(pathCanvas); pathCanvas = null; }
         if (treeCanvas != null) { gameBoard.getChildren().remove(treeCanvas); treeCanvas = null; }
 
-        mazeCanvas = mazeCanvasRenderer.drawCanvas(vectors);
-        gameBoard.getChildren().add(0, mazeCanvas);
-
-        pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        pathCanvas.setMouseTransparent(true);
-        gameBoard.getChildren().add(pathCanvas);
-
-        treeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        treeCanvas.setMouseTransparent(true);
-        gameBoard.getChildren().add(treeCanvas);
+        // Bootstrap new session: world build, player creation, canvas setup, opponent spawn
+        var result = bootstrapper.setup(gameBoard, player, hpBar, startDifficulty);
+        playerCharacter = result.playerCharacter();
+        maze            = result.maze();
+        mazeCanvas      = result.mazeCanvas();
+        pathCanvas      = result.pathCanvas();
+        treeCanvas      = result.treeCanvas();
         ensureHudLayersOnTop();
 
+        // Wire per-session actions
+        int baseScore = getBaseScoreForCurrentDifficulty();
         gameOverAction = new GameOverAction(playerCharacter, model.playerMoveCount(), root, () -> {});
         winGameAction  = new WinGameAction(playerCharacter, model.playerMoveCount(), root, () -> {});
-
-        int baseScore = getBaseScoreForCurrentDifficulty();
         gameOverAction.setBaseScore(baseScore);
         winGameAction.setBaseScore(baseScore);
-
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
         winarea = new WinArea(heart);
@@ -401,15 +371,13 @@ public class GameController implements Initializable {
         winarea.AddWinGameAction(winGameAction);
         playerCharacter.addPositionSubscriber(winarea);
 
+        // Wire per-session playing controller
+        playingModeController = new FxPlayingModeController(model, inputRouter, playerCharacter, renderCoordinator, inputCommandContext);
+        modeRouter.register(playingModeController);
+
         player.requestFocus();
         gameBoard.requestFocus();
         enemyCoordinator.reset();
-
-        if (startDifficulty != null) {
-            OpponentRuntimeFactory.instantiateFromModel(this, startDifficulty);
-        } else {
-            OpponentRuntimeFactory.instantiateFromModel(this);
-        }
 
         movementLoopCoordinator.startComputerCharacters();
         javafx.application.Platform.runLater(() -> {
@@ -419,17 +387,13 @@ public class GameController implements Initializable {
                 double heartH = heartView.getBoundsInLocal().getHeight();
                 if (heartW <= 0) heartW = heartView.getFitWidth();
                 if (heartH <= 0) heartH = heartView.getFitHeight();
-                int width  = App.getBoardMaxX();
-                int height = App.getBoardMaxY();
-                heartView.setLayoutX((width  - heartW) / 2.0);
-                heartView.setLayoutY((height - heartH) / 2.0);
-                var characterIntersectionFixerService = new CharacterIntersectionFixerService(gameBoard, maze);
-                characterIntersectionFixerService.fixInitialSpriteMazeIntersections();
+                heartView.setLayoutX((App.getBoardMaxX() - heartW) / 2.0);
+                heartView.setLayoutY((App.getBoardMaxY() - heartH) / 2.0);
+                new CharacterIntersectionFixerService(gameBoard, maze).fixInitialSpriteMazeIntersections();
                 updateCameraFollow();
             }
         });
 
-        playerCharacter.setHitPoints(playerConfig.health());
         var score = winGameAction.resetScore();
         model.resetScoringState();
         pathHintCoordinator.stopCountdown();
@@ -461,30 +425,6 @@ public class GameController implements Initializable {
         }
     }
 
-    private PlayerConfig loadPlayerConfig() {
-        var loader = new XmiRulesLoader();
-        try {
-            return loader.loadPlayerConfigFromClasspath(PlayerConstants.PlayerModelPath, PlayerConstants.PlayerModelEcorePath);
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Failed to load player model, falling back to defaults", ex);
-            return PlayerConfig.defaults();
-        }
-    }
-
-    private void setPlayerBaseImage(ImageView playerImageView, String imagePath) {
-        if (imagePath == null || imagePath.isBlank()) return;
-        try {
-            var url = getClass().getResource(imagePath);
-            if (url != null) {
-                playerImageView.setImage(new Image(url.toExternalForm()));
-            } else {
-                LOGGER.warning("Player base image not found: " + imagePath);
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "Failed to load player base image from " + imagePath, ex);
-        }
-    }
-
     private void handlePlayerMovementTick(long now) {
         if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) return;
         currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
@@ -494,24 +434,6 @@ public class GameController implements Initializable {
 
     private void updateCameraFollow() {
         renderCoordinator.updateCameraFollow(playerCharacter);
-    }
-
-    private void updateBoardBackground() {
-        String bgPath = VISUAL_STYLE.backgroundImageForDifficultyName(difficultyName());
-        try {
-            var url = getClass().getResource(bgPath);
-            if (url != null) {
-                Image bgImage = new Image(url.toExternalForm());
-                BackgroundImage bi = new BackgroundImage(bgImage,
-                        BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-                        BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-                gameBoard.setBackground(new Background(bi));
-            } else {
-                LOGGER.warning("Could not find background image: " + bgPath);
-            }
-        } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error loading background", e);
-        }
     }
 
     private String difficultyName() {
@@ -539,6 +461,7 @@ public class GameController implements Initializable {
     // Delegation API (called by OpponentRuntimeFactory and characters)
     // -----------------------------------------------------------------------
 
+    @Override
     public void registerComputerCharacter(IMovingComputerCharacter character, javafx.scene.Node node) {
         enemyCoordinator.registerCharacter(character, node);
     }
@@ -551,6 +474,7 @@ public class GameController implements Initializable {
         enemyCoordinator.showInfectionWarning();
     }
 
+    @Override
     public Point2D resolveEnemySpawnPosition(double desiredX, double desiredY, double enemySize) {
         return enemyCoordinator.resolveSpawnPosition(desiredX, desiredY, enemySize);
     }
