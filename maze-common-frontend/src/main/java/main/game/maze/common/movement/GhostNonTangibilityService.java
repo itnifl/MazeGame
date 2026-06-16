@@ -98,7 +98,7 @@ public final class GhostNonTangibilityService {
         }
         double phasingOpacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
         double clampedOpacity = Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
-        if (LOGGER.isLoggable(Level.FINE) && Math.abs(clampedOpacity - baseOpacity) > 0.05) {
+        if (LOGGER.isLoggable(Level.FINE) && phasingOpacity > baseOpacity) {
             LOGGER.fine(String.format(
                     "Ghost opacity clamped by phasing: energy=%.2f visibilityLevel=%d baseOpacity=%.4f clampedOpacity=%.4f",
                     energy, visibilityLevel, baseOpacity, clampedOpacity));
