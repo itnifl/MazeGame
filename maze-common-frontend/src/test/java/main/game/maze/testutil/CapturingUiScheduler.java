@@ -20,6 +20,8 @@ public final class CapturingUiScheduler implements IUiScheduler {
 
     private final List<Runnable> captured = new ArrayList<>();
     private final boolean inline;
+    /** Points past the last action already executed by {@link #flush()}. */
+    private int flushedUpTo = 0;
 
     /** Creates a capturing scheduler that also runs actions inline (synchronous mode). */
     public CapturingUiScheduler() {
@@ -44,11 +46,7 @@ public final class CapturingUiScheduler implements IUiScheduler {
 
     @Override
     public void runOnUiThread(Runnable action) {
-        if (inline) {
-            action.run();
-        } else {
-            runLater(action);
-        }
+        runLater(action);
     }
 
     @Override
@@ -56,10 +54,17 @@ public final class CapturingUiScheduler implements IUiScheduler {
         return inline;
     }
 
-    /** Runs all captured actions that have not yet been executed (deferred mode only). */
+    /**
+     * Runs all as-yet-unflushed actions (deferred mode only).
+     * Safe to call multiple times — each call runs only actions added since the last flush.
+     */
     public void flush() {
         if (!inline) {
-            new ArrayList<>(captured).forEach(Runnable::run);
+            int end = captured.size();
+            for (int i = flushedUpTo; i < end; i++) {
+                captured.get(i).run();
+            }
+            flushedUpTo = end;
         }
     }
 
@@ -68,7 +73,7 @@ public final class CapturingUiScheduler implements IUiScheduler {
         return List.copyOf(captured);
     }
 
-    /** Total number of {@code runOnUiThread} calls received. */
+    /** Total actions submitted via {@code runLater} or {@code runOnUiThread}. */
     public int callCount() {
         return captured.size();
     }
