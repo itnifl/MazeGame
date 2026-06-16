@@ -94,3 +94,10 @@ singletons.
 - [EdgeKeyTrackerTest](src/test/java/main/game/maze/common/input/EdgeKeyTrackerTest.java)
 - [KeyBindingRegistryTest](src/test/java/main/game/maze/common/input/KeyBindingRegistryTest.java)
 - [InputRouterTest](src/test/java/main/game/maze/common/input/InputRouterTest.java)
+- [TerminalCommandParserTest](src/test/java/main/game/maze/common/input/TerminalCommandParserTest.java) — full alias/case/null coverage for `TerminalCommandParser`
+- [ChasePlayerMovementServiceTest](src/test/java/main/game/maze/common/movement/ChasePlayerMovementServiceTest.java) — 6 tests for horizontal/vertical chase, blocked-axis fallback, and stability
+
+### Test utilities (`src/test/java/main/game/maze/testutil`)
+
+- `CapturingAudioEngine` — `IAudioEngine` test double that records all `play`, `playLoop`, `stopChannel`, and `playRateLimited` calls; use `AudioEngine.set(...)` / `AudioEngine.reset()` in `@AfterEach`.
+- `FakeWorldView` — configurable `WorldView` stub for movement service tests; builder methods `playerAt(x,y)`, `bounds(w,h)`, `allBlocked()`, `blockAt(dir)`.

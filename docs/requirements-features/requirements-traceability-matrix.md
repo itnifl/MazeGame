@@ -53,6 +53,26 @@ shared movement services and consumed by both JavaFX and libGDX frontends.
 | GR-26, GR-28, GR-29 | Shared service, Strategy, Reset on session start | `GhostPhasingMovementService.tick(...)`, `reset()` in `maze-common-frontend`; integrated in `GameController` and `GdxGameScreenController` | `GhostPhasingMovementServiceTest` (8 tests), `GhostTangibilityParityTest.phasingGhostDealsDamage_libgdxMatchesJavaFx`, `GhostTangibilityTest.phasingGhostDealsNoDamageThroughWall` |
 | GR-26 (damage semantics) | OCP: wall-bypass ≠ damage-bypass | `GhostCharacter.doPositionEvaluation(...)` (JavaFX) skips wall check when phasing; `PlayerCombatStateService` (libGDX) skips wall check when phasing; both still apply contact damage | `GhostTangibilityTest.phasingGhostDealsNoDamageThroughWall`, `PlayerCombatStateServiceTest.phasingGhostDoesDamage_evenWithoutWall`, `PlayerCombatStateServiceTest.phasingGhostBypassesWallCheck_dealsDamage` |
 
+| SR-51 (new) | Chase movement correctness across both frontends (DRY parity, shared service) | `ChasePlayerMovementService.tick(...)` in `maze-common-frontend` | `ChasePlayerMovementServiceTest` (6 tests: horizontal/vertical chase, at-player position, alt-axis when blocked, all-blocked stays still, symmetric-board stable direction) |
+| SR-52 (new) | Terminal command parsing contracts shared between frontends | `TerminalCommandParser.parse(...)`, `HELP_TEXT` constant in `maze-common-frontend` | `TerminalCommandParserTest` (14 tests: all named commands, aliases, case-insensitivity, whitespace trimming, null/empty guards, non-empty HELP_TEXT) |
+| SR-53 (new) | Enemy composition resolver handles caps correctly during redistribution | `CompositionResolverImpl.resolve(...)` — fixed bug where `redistributeToTotal` violated caps | `CompositionResolverImplTest` (8 tests: single ratio, override precedence, total=enemyCount invariant, idempotent, unknown profile IAE, null/empty profiles NPE/ISE, caps respected) |
+| SR-54 (new) | Difficulty service lifecycle and EMF model correctness | `DifficultyService.list()`, `getCurrent()`, `setCurrent(...)` in `maze-common-backend` | `DifficultyServiceTest` (5 tests: returns 3 difficulties, each non-null, getCurrent before set no-throw, setCurrent persists, list stable) |
+| SR-55 (new) | Player configuration defaults satisfy game rules | `PlayerConfig.defaults()` factory in `maze-common-backend` | `PlayerConfigTest` (9 tests: health>0, speed>0, enabled=true, matches PlayerConstants, non-blank id/displayName, non-null image paths, toString/equality/hashCode) |
+| SR-56 (new) | Difficulty picker routing logic is testable without real dialogs | `FxDifficultyPickerSupport.resolvePickResult(...)` extracted package-private method | `FxDifficultyPickerSupportTest` (4 tests: no-restart path calls onDifficultySet+onResume, hard-restart path, resume called exactly once, hardRestart called exactly once) |
+| SR-57 (new) | Game-over music channel and resource are correct | `GameOverAction.startGameOverMusic()` | `GameOverActionTest` (3 tests: GAME_OVER_MUSIC channel, GameOverSound resource, 2 calls = 2 invocations) |
+| SR-58 (new) | Win-game action lifecycle with partial initialization | `WinGameAction.WinGame()` | `WinGameActionTest` (2 tests: constructor no-throw, WinGame stops IN_GAME_MUSIC before scene null-check) |
+| SR-59 (new) | Start-screen action with missing scene | `StartScreenAction.Load()` | `StartScreenActionTest` (3 tests: Load without scene = 0 stop calls, Load with null root no-throw, constructor no-throw) |
+| SR-60 (new) | HUD coordinator message display and lifecycle | `FxHudCoordinator.setMessage(...)`, `dispose()` | `FxHudCoordinatorTest` (6 tests: setMessage updates label, empty clears, null supplier no NPE, dispose no-throw, duration sets immediately, replacing timed message updates) |
+| SR-61 (new) | Path hint coordinator renders enemy routes and resets alpha | `FxPathHintCoordinator.refreshPathCanvas()`, `dispose()` | `FxPathHintCoordinatorTest` (5 tests: refreshPathCanvas no-throw, enemy drawer called when route hint not visible, globalAlpha reset to 1.0, null canvas no-throw, dispose no-throw) |
+| SR-62 (new) | Zombie character construction and damage model | `ZombieCharacter` in `maze-javafx-backend` | `ZombieCharacterTest` (6 tests: constructor, getDamage positive, subtractHitPoints partial, audio on overlap, death subscriber management, getModel) |
+| SR-63 (new) | PumpkinBomber character construction and damage model | `PumpkinBomberCharacter` in `maze-javafx-backend` | `PumpkinBomberCharacterTest` (8 tests: constructor, getDamage positive, subtractHitPoints partial, setHitPoints, addHitPoints, doPositionEvaluation no-throw, getModel) |
+| SR-64 (new) | libGDX command classes respect terminal guard and delegate correctly | All 6 libGDX command classes (`ApplyPathHintCommand`, `ReturnToMenuCommand`, `OpenHighScoresCommand`, `ToggleSpanningTreeCommand`, `ToggleTerminalCommand`, `MovePlayerCommand`) | `GdxGameCommandsTest` (terminal guard, 2-call count, key-based routing) |
+| SR-65 (new) | Combat/enemy flow support guards and win conditions | `GdxGameCombatAndEnemyFlowSupport.advanceEnemies(...)`, `shouldTriggerWin(...)`, `triggerWin(...)` | `GdxGameCombatAndEnemyFlowSupportTest` (7 tests: empty list, null maze, null player, notPlaying, playerDead, farFromGoal, triggerWin once, sets WON mode) |
+| SR-66 (new) | Game-start flow viewport initialization and difficulty text | `GdxGameStartFlowApplySupport.ensureViewportInitialized(...)`, `startedDifficultyText(...)` | `GdxGameStartFlowApplySupportTest` (4 tests: existing viewport returned, null creates new, null difficulty contains "Default", always starts with "Started") |
+| SR-67 (new) | Terminal command support extended edge cases | `GdxTerminalCommandSupport` edge cases | `GdxTerminalCommandSupportExtendedTest` (9 tests: null→NONE, aliases, all commands non-null, helpText has /sep, unknown has status text, help command has positive duration) |
+| SR-68 (new) | Screen layout metrics are non-negative and internally consistent | `GdxGameScreenMetrics` at multiple resolutions | `GdxGameScreenLayoutExtendedTest` (14 tests: non-negative coords for 4 resolutions, hpBarHeight/bottomRowHeight/bottomBarHeight positive, hpBarBottomY within window, strip width = window width) |
+| SR-69 (new) | Asset service public API is safe in headless mode | `GdxAssetService` public API only | `GdxAssetServiceExtendedTest` (7 tests: getTexture null no-throw, duplicate queueTexture no-throw, null queueTexture no-throw, dispose multiple times no-throw, loadingProgress in [0,1], getTexture headless null, updateLoading no assets true) |
+
 ## Quality Attributes
 
 1. Maintainability
@@ -64,9 +84,18 @@ phasing logic is fully encapsulated in `GhostNonTangibilityService` and
 2. Testability
 Movement services are pure enough to execute against `WorldView` stubs and
 assert deterministic behavior windows. Ghost phasing services are tested via
-unit tests with controlled inputs.
+unit tests with controlled inputs. New test-double infrastructure
+(`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`) isolates
+audio-engine and scene-graph dependencies so coordinator and action tests
+run without a real game loop.
 
 3. Parity and correctness
 JavaFX and libGDX consume the same movement runtime state for enemy path
 overlay rendering. Ghost phasing opacity and energy drain are guaranteed
 identical via a shared service.
+
+4. Reliability / bug prevention
+A cap-awareness bug in `CompositionResolverImpl.redistributeToTotal(...)` was
+caught by the new `CompositionResolverImplTest.resolve_capsAreRespected` test
+and fixed: the redistribution loop now skips types already at their cap
+rather than adding back to them, guaranteeing caps are the final authority.

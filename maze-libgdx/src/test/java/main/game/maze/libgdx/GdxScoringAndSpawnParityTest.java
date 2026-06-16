@@ -62,6 +62,26 @@ class GdxScoringAndSpawnParityTest {
     }
 
     @Test
+    void clampToCapLimitEnforcesPerTypeCeilingIdenticallyAcrossFrontends() {
+        // Both frontends must use EnemySpawnPlanner.clampToCapLimit so that the
+        // per-type spawn ceiling from EnemyMaxCount is applied consistently (F8).
+        Difficulty d = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
+        addCap(d, EnemyTypes.ZOMBIE, 3);
+        addCap(d, EnemyTypes.PUMPKINBOMBER, 0);
+
+        Map<EnemyTypes, Integer> caps = EnemySpawnPlanner.capsFromDifficulty(d);
+
+        // Requested within cap — unchanged
+        assertEquals(2, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 2, caps));
+        // Requested exceeds cap — clamped
+        assertEquals(3, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 10, caps));
+        // Cap of 0 blocks all spawns of that type (Easy: no PumpkinBombers)
+        assertEquals(0, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.PUMPKINBOMBER, 5, caps));
+        // Type absent from caps (GHOST not declared here) — no ceiling applied
+        assertEquals(4, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.GHOST, 4, caps));
+    }
+
+    @Test
     void damageMultiplierIsAppliedIdenticallyAcrossFrontends() {
         // Unit-level contract test for EnemySpawnPlanner.applyDamageMultiplier.
         // Both frontends (RuntimeVisualModelLoader and OpponentRuntimeFactory) are
