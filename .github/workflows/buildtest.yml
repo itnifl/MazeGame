@@ -80,14 +80,14 @@ jobs:
           mvn -B -e \
             -DskipITs \
             -pl maze-common-backend,maze-common-frontend \
-            test
+            verify
 
       - name: Test libGDX module
         run: |
           mvn -B -e \
             -DskipITs \
             -pl maze-libgdx -am \
-            test
+            verify
 
       - name: Test JavaFX modules (headless)
         env:
@@ -98,4 +98,4 @@ jobs:
             -DskipITs \
             -Djavafx.platform=linux \
             -pl maze-javafx-backend -am \
-            test
+            verify
