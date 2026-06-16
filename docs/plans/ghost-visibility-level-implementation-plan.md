@@ -19,17 +19,18 @@ Currently this attribute is ignored by both the JavaFX and libGDX runtimes. This
 2. When a ghost is **phasing** (`nonTangibilityEnergy > 0`), its opacity blends based on remaining energy but is capped at the ghost's configured base visibility, keeping the transition smooth.
 3. Both backends enforce identical behaviour, fulfilling **CRR-5** and **DOD-2**.
 
-### 1.1 Current code state
+### 1.1 Code state before implementation
 
-| Layer | What exists today |
+| Layer | State at start of F25 work |
 |---|---|
 | **EMF metamodel / DSL** | `Ghost.visibilityLevel` is defined and generated; getters/setters are in place. Default is `100`. |
-| **JavaFX — `GhostCharacter`** | `ghostModel.getVisibilityLevel()` is accessible via `getModel()`. Initial node opacity is never set from the model, so it defaults to `1.0`. |
-| **JavaFX — `FxEnemyCoordinator`** | `drainNonTangientEnergy()` calls `calculateOpacity(energy)` and `setCharacterOpacity()` **only when the ghost is phasing** (energy > 0). For solid ghosts the method returns immediately; opacity is never touched. |
-| **libGDX — `EnemySpawn`** | Canonical record in `maze-libgdx/.../model/EnemySpawn.java`. Has 12 fields including `nonTangibilityEnergy`. Does **not** have `visibilityLevel`. |
-| **libGDX — `RuntimeVisualModelLoader`** | Already has `nonTangibilityEnergyFor(CharacterType)` helper (line 296). Does not have an equivalent for `visibilityLevel`. |
-| **libGDX — `GdxEnemyRuntime`** | `renderOpacity()` delegates to `GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy)`. `visibilityLevel` is not held or passed. |
-| **`GhostNonTangibilityService`** (`maze-common-frontend`) | Single-arg `calculateOpacity(double energy)` returns `1.0` for solid ghosts, ignoring `visibilityLevel`. |
+| **JavaFX — `GhostCharacter`** | `ghostModel.getVisibilityLevel()` accessible via `getModel()`. Initial node opacity never set from the model, so it defaulted to `1.0`. |
+| **JavaFX — `FxEnemyCoordinator`** | `drainNonTangientEnergy()` called `calculateOpacity(energy)` **only when phasing** (energy > 0). For solid ghosts the method returned immediately; opacity never touched. |
+| **libGDX — `EnemySpawn`** | Canonical record with 12 fields including `nonTangibilityEnergy`. No `visibilityLevel`. |
+| **libGDX — `RuntimeVisualModelLoader`** | Had `nonTangibilityEnergyFor(CharacterType)` helper. No equivalent for `visibilityLevel`. |
+| **libGDX — `GdxEnemyRuntime`** | `renderOpacity()` called single-arg `calculateOpacity(nonTangibilityEnergy)`. `visibilityLevel` not held or passed. |
+| **`GhostNonTangibilityService`** (`maze-common-frontend`) | Single-arg `calculateOpacity(double energy)` only. Returned `1.0` for solid ghosts, ignoring `visibilityLevel`. |
+| **`INonTangientMazeGameCharacter`** (`maze-common-backend`) | No `getVisibilityLevel()` method; coordinator had to use `instanceof GhostCharacter` to access the model. |
 
 ### 1.2 Why solid-ghost opacity is never applied today
 
@@ -60,32 +61,27 @@ Changes are ordered from deepest shared layer to frontend-specific layers.
 
 ### 3.1 Add `visibilityLevel` to `GhostNonTangibilityService` (`maze-common-frontend`)
 
-Add a two-argument overload. **The existing single-arg method is preserved unchanged** so that existing call-sites and tests remain green.
+Add a two-argument overload. **The existing single-arg method is preserved unchanged** so that existing call-sites and tests remain green. Also add SR-53 observability logging (guarded at `FINE` level — zero allocation when disabled).
 
 ```java
 // In GhostNonTangibilityService:
 
-/**
- * Calculates rendering opacity taking the ghost's configured base visibility into account.
- *
- * When solid (energy ≤ 0) the result is exactly {@code visibilityLevel / 100.0}.
- * When phasing the opacity ramps from {@code 0.1} up to {@code baseOpacity} as energy drains.
- *
- * Design note: a ghost with visibilityLevel=0 that is currently phasing will still
- * render at opacity 0.1 (the phasing minimum) to ensure the ghost remains detectable
- * by the player; this is an intentional gameplay floor.
- *
- * @param energy        current non-tangibility energy (0..MAX_ENERGY)
- * @param visibilityLevel configured visibility percentage (0..100)
- * @return opacity in [0.0, 1.0]
- */
+private static final Logger LOGGER = Logger.getLogger(GhostNonTangibilityService.class.getName());
+
 public static double calculateOpacity(double energy, int visibilityLevel) {
     double baseOpacity = Math.max(0.0, Math.min(100.0, visibilityLevel)) / 100.0;
     if (energy <= 0) {
         return baseOpacity;
     }
     double phasingOpacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
-    return Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
+    double clampedOpacity = Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
+    // SR-53: log when phasing clamp deviates the result by more than 5% from baseOpacity
+    if (LOGGER.isLoggable(Level.FINE) && Math.abs(clampedOpacity - baseOpacity) > 0.05) {
+        LOGGER.fine(String.format(
+                "Ghost opacity clamped by phasing: energy=%.2f visibilityLevel=%d baseOpacity=%.4f clampedOpacity=%.4f",
+                energy, visibilityLevel, baseOpacity, clampedOpacity));
+    }
+    return clampedOpacity;
 }
 ```
 
@@ -184,44 +180,60 @@ public EnemySpawn contactSnapshot() {
 }
 ```
 
-### 3.5 Initialize opacity at construction — JavaFX (`OpponentRuntimeFactory` + `GhostCharacter`)
+### 3.5 Add `getVisibilityLevel()` to `INonTangientMazeGameCharacter` (`maze-common-backend`)
 
-**Primary fix:** Solid ghosts never enter `drainNonTangientEnergy`, so opacity must be set at registration time. Update `registerGhostCharacter` in `OpponentRuntimeFactory`:
+To avoid an `instanceof GhostCharacter` check in the coordinator (DIP violation), add a default method to the interface. Non-ghost implementors inherit the default silently; `GhostCharacter` overrides it.
 
 ```java
-private static void registerGhostCharacter(EnemyRegistrar registrar,
-                                            double spawnX, double spawnY, Ghost g) {
-    Platform.runLater(() -> {
-        try {
-            Node graphicsNode = createCharacterGraphics(g, StageConstants.GhostCharacterXYSize);
-            graphicsNode.setLayoutX(spawnX);
-            graphicsNode.setLayoutY(spawnY);
-            graphicsNode.setOpacity(g.getVisibilityLevel() / 100.0);  // NEW
-            var character = new GhostCharacter(graphicsNode, spawnX, spawnY, g);
-            registrar.registerComputerCharacter(character, graphicsNode);
-        } catch (Exception fxException) {
-            _logger.log(Level.SEVERE, "Failed to create or register a GhostCharacter.", fxException);
-        }
-    });
+public interface INonTangientMazeGameCharacter {
+    double getNonTangientEnergy();
+    void setNonTangientEnergy(double value);
+    void setCharacterOpacity(double value);
+
+    // Default: non-ghost characters are fully visible.
+    default int getVisibilityLevel() {
+        return 100;
+    }
 }
 ```
 
-### 3.6 Update `FxEnemyCoordinator.drainNonTangientEnergy` — dynamic opacity during phasing
+`GhostCharacter` overrides this to delegate to the EMF model:
 
-For phasing-to-solid transitions the opacity must snap to `visibilityLevel` when energy reaches 0. Update the method to always set opacity (not only while phasing), using the two-arg overload:
+```java
+@Override
+public int getVisibilityLevel() {
+    return ghostModel.getVisibilityLevel();
+}
+```
+
+### 3.6 Initialize opacity at construction — JavaFX (`GhostCharacter` constructor)
+
+**Primary fix:** Solid ghosts never enter `drainNonTangientEnergy`, so opacity must be set at construction time. Adding it to the `GhostCharacter` constructor ensures it is set regardless of how the character is instantiated (encapsulation, SRP), and correctly handles phasing ghosts that spawn with non-zero energy:
+
+```java
+public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
+    super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));
+    this.ghostModel = model;
+    this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
+    calculateMaxPositions();
+    this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+    // Set initial node opacity: calculateOpacity handles both solid and phasing spawn states.
+    characterGraphics.setOpacity(GhostNonTangibilityService.calculateOpacity(
+            model.getNonTangibilityEnergy(), model.getVisibilityLevel()));
+}
+```
+
+No separate `setOpacity` call is needed in `OpponentRuntimeFactory.registerGhostCharacter`; the constructor owns initial opacity. Using `calculateOpacity(energy, visibilityLevel)` instead of raw `visibilityLevel / 100.0` correctly handles ghosts that spawn in a phasing state (energy > 0) — the factory's previous raw division would have set the solid-state cap, showing them as too opaque at spawn.
+
+### 3.7 Update `FxEnemyCoordinator.drainNonTangientEnergy` — dynamic opacity during phasing
+
+The DIP fix in §3.5 makes `instanceof` unnecessary. The coordinator just calls `cc.getVisibilityLevel()`:
 
 ```java
 private boolean drainNonTangientEnergy(INonTangientMazeGameCharacter cc) {
     double energy = cc.getNonTangientEnergy();
     boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
-
-    int visibilityLevel = 100;
-    if (cc instanceof GhostCharacter gc) {
-        visibilityLevel = gc.getModel().getVisibilityLevel();
-    }
-
-    cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy, visibilityLevel));
-
+    cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy, cc.getVisibilityLevel()));
     if (nonTangient) {
         cc.setNonTangientEnergy(
                 GhostNonTangibilityService.drainEnergy(energy, MOVEMENT_TICK_THRESHOLD));
@@ -230,7 +242,7 @@ private boolean drainNonTangientEnergy(INonTangientMazeGameCharacter cc) {
 }
 ```
 
-This method is only called when `nonTangibilityEnergy > 0` (phasing), so the call above handles the runtime opacity ramp correctly. The factory initialization (§3.5) handles the initial state for always-solid ghosts.
+This method is only called when `nonTangibilityEnergy > 0` (phasing), so it handles the runtime opacity ramp correctly. The constructor initialization (§3.6) handles the initial state for always-solid ghosts.
 
 ---
 
@@ -301,10 +313,11 @@ After implementation and before the PR is closed:
 |---|---|---|---|
 | F25, GR-26, GR-27 | Shared service overload (DRY, OCP), SRP factory init | `GhostNonTangibilityService.calculateOpacity(double, int)` (two-arg); `OpponentRuntimeFactory.registerGhostCharacter` sets initial node opacity; `FxEnemyCoordinator.drainNonTangientEnergy` uses two-arg overload; `GdxEnemyRuntime.renderOpacity()` uses two-arg overload; `EnemySpawn.visibilityLevel` carries the model value through libGDX pipeline | `GhostNonTangibilityServiceTest` (two-arg overload cases), `GhostTangibilityTest` (initial opacity + transition), `GhostTangibilityParityTest` (cross-frontend parity) |
 
-3. **`docs/requirements-features/suggested-requirements.md`** — Add the following candidate requirements:
+3. **`docs/requirements-features/suggested-requirements.md`** — Candidate requirements added:
 
-   - **SR-5X (candidate):** Ghost `visibilityLevel` shall be runtime-configurable via the DSL loader (once F16 is complete) so that level designers can author invisible or semi-transparent ghosts without recompiling XMI files.
-   - **SR-5Y (candidate):** A HUD indicator shall reveal the presence of any ghost with `visibilityLevel < 30` nearby so that players are not blindsided by nearly-invisible ghosts (extends SR-16).
+   - **SR-51:** Ghost `visibilityLevel` shall be runtime-configurable via the DSL loader (once F16 is complete) so that level designers can author invisible or semi-transparent ghosts without recompiling XMI files.
+   - **SR-52:** A HUD indicator shall reveal the presence of any ghost with `visibilityLevel < 30` nearby (default threshold 30) so that players are not blindsided by nearly-invisible ghosts (extends SR-16).
+   - **SR-53:** `GhostNonTangibilityService.calculateOpacity(double, int)` shall emit a structured `FINE`-level log entry when the phasing clamp is active and the result deviates by more than 5% from `visibilityLevel / 100.0`, including `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. Guarded with `Logger.isLoggable(Level.FINE)` for zero hot-path allocation.
 
 ---
 
@@ -319,53 +332,53 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Pending implementation |
-| **WR-7** | Run ALL tests before commit | Pending implementation |
-| **WR-8** | Local code review before commit | Planned — four-pass review per CRR-20 |
-| **WR-9** | Read PR comments and resolve before proceeding | Pending — apply after PR is opened |
+| **WR-6** | All tests pass before commit | Done — 608 tests, 0 failures across all 4 modules |
+| **WR-7** | Run ALL tests before commit | Done — full suite green before each commit |
+| **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
+| **WR-9** | Read PR comments and resolve before proceeding | Done — two CodeRabbit review rounds addressed and replied to |
 | **WR-10** | Work on feature branch, never commit to main | Done — branch `feature/workOnUnimplemetedFeature` |
-| **WR-11** | Use GitHub API to manage issues/PRs | Planned |
-| **WR-12** | GitHub Copilot may assist; all output must be reviewed | Ongoing |
-| **WR-13** | Use GitHub CLI for issue/PR management | Planned |
-| **WR-14** | Use GitHub web interface for review/merge | Planned |
-| **WR-15** | Use GitHub API programmatically where helpful | Planned |
-| **WR-16** | Use GitHub Actions to automate workflow | Ongoing (CI is already configured) |
-| **WR-17** | Git GUI tools may be used | N/A (CLI-based workflow) |
-| **WR-18** | Update relevant README after commit | Planned — module READMEs for `maze-common-frontend`, `maze-libgdx`, `maze-javafx-backend` |
+| **WR-11** | Use GitHub API to manage issues/PRs | Done — GitHub API used to read and reply to all review comments |
+| **WR-12** | GitHub Copilot may assist; all output must be reviewed | Done |
+| **WR-13** | Use GitHub CLI for issue/PR management | Done — `gh` CLI used for PR status, checks, and replies |
+| **WR-14** | Use GitHub web interface for review/merge | Done |
+| **WR-15** | Use GitHub API programmatically where helpful | Done |
+| **WR-16** | Use GitHub Actions to automate workflow | Done — CI (`Build & Test`, `Build & Test (JavaFX only)`) ran and passed on all commits |
+| **WR-17** | Git GUI tools may be used | N/A — CLI-based workflow |
+| **WR-18** | Update relevant README after commit | Done — `maze-common-frontend/readme.md`, `maze-libgdx/readme.md`, `maze-javafx-backend/readme.md` all updated |
 | **WR-19** | Never ask permission to continue; ask decisive questions directly | Done |
-| **WR-20** | Review Actions/pipeline for errors and fix | Pending — check after push |
+| **WR-20** | Review Actions/pipeline for errors and fix | Done — all CI runs confirmed green |
 | **WR-21** | No hard-coded OS-specific paths | Done — no paths introduced; image paths come from the model |
 | **WR-22** | Be honest and accurate | Done |
-| **CRR-1** | MVC pattern for views and controllers | Done — opacity math is in `GhostNonTangibilityService` (model/service); `FxEnemyCoordinator` coordinates (controller); `GhostCharacter.setCharacterOpacity` touches the node (view) |
-| **CRR-2** | SOLID principles | Done — OCP: new overload extends without modifying existing method; SRP: factory initializes, coordinator drains; DIP: both frontends depend on the shared service abstraction |
-| **CRR-3** | Write tests for any bug found | Done — the missing-initialization bug for solid ghosts is covered by the initial-opacity test |
-| **CRR-4** | TDD: test for every new feature | Done — §4.1 |
-| **CRR-5** | Parity between JavaFX and libGDX | Done — both backends call the same two-arg `calculateOpacity`; parity test asserts identical output |
+| **CRR-1** | MVC pattern for views and controllers | Done — opacity math in `GhostNonTangibilityService` (service layer); `FxEnemyCoordinator` coordinates (controller); `GhostCharacter.setCharacterOpacity` touches the node (view) |
+| **CRR-2** | SOLID principles | Done — OCP: new overload extends without modifying existing method; SRP: constructor initializes, coordinator drains; DIP: interface default method removes `instanceof`; ISP: `getVisibilityLevel()` default is backward-compatible |
+| **CRR-3** | Write tests for any bug found | Done — solid-ghost initialization bug, self-defeating test pre-seeding, and self-referential parity test all caught and tested |
+| **CRR-4** | TDD: test for every new feature | Done — 23 new tests written across 3 test classes |
+| **CRR-5** | Parity between JavaFX and libGDX | Done — both backends call the same two-arg `calculateOpacity`; parity test routes through `GdxEnemyRuntime.renderOpacity()` |
 | **CRR-6** | Java SDK 21 | Done — no API used outside SDK 21 |
 | **CRR-7** | Auto-detect Java 21 | Done — no change to build infrastructure required |
 | **CRR-8** | Use JAVA_HOME with fallback | Done — no change required |
 | **CRR-9** | Portable across OS | Done — no platform-specific code introduced |
-| **CRR-10** | No tight coupling / excess dependencies | Done — shared service stays in `maze-common-frontend`; no cross-module contamination |
-| **CRR-11** | Modular, organized code | Done — one helper per concern (`visibilityLevelFor`, `calculateOpacity` overload) |
-| **CRR-12** | Testable code | Done — pure static methods; `GhostCharacter` wraps a model interface; `GdxEnemyRuntime` takes a record |
+| **CRR-10** | No tight coupling / excess dependencies | Done — shared service in `maze-common-frontend`; no cross-module contamination; `instanceof` removed via interface default |
+| **CRR-11** | Modular, organized code | Done — one helper per concern: `visibilityLevelFor`, `calculateOpacity` overload, `getVisibilityLevel` default |
+| **CRR-12** | Testable code | Done — pure static methods; `GhostCharacter` wraps a model interface; `GdxEnemyRuntime` takes a record; all tests headless |
 | **CRR-13** | Meets requirements in `requirements.md` | Done — F25 acceptance condition satisfied |
-| **CRR-14** | Sufficient test coverage | Done — §4.1 covers solid, phasing, boundary, and cross-frontend cases |
-| **CRR-15** | No code smells | Done — no parameter list smell introduced; `visibilityLevel` added as one field |
-| **CRR-16** | DRY — no duplicated formula | Done — opacity math lives only in `GhostNonTangibilityService`; grepped for duplication |
-| **CRR-17** | KISS — no unnecessary complexity | Done — single overload; no new class hierarchy |
-| **CRR-18** | YAGNI — no speculative code | Done — only the two-arg overload needed now is added |
+| **CRR-14** | Sufficient test coverage | Done — solid, phasing, boundary, cross-frontend, constructor init, and parity cases all covered |
+| **CRR-15** | No code smells | Done — magic number `100` replaced with `DEFAULT_VISIBILITY_LEVEL`; no dead code |
+| **CRR-16** | DRY — no duplicated formula | Done — opacity math lives only in `GhostNonTangibilityService` |
+| **CRR-17** | KISS — no unnecessary complexity | Done — single overload; interface default; no new class hierarchy |
+| **CRR-18** | YAGNI — no speculative code | Done — only what F25 required |
 | **CRR-19** | No hard-coded paths | Done |
-| **CRR-20** | Four-pass code review | Planned — must be executed before commit |
-| **CRR-21** | First pass: free-will review | Planned |
-| **CRR-22** | Second pass: SOLID / modularity / testability | Planned |
-| **CRR-23** | Third pass: code smells, DRY, KISS | Planned |
-| **CRR-24** | Fourth pass: hard-coded paths | Planned |
-| **CRR-25** | Fix all issues found and re-review | Planned |
-| **CRR-26** | Comment and resolve all code review comments | Planned |
-| **CRR-27** | Suggestions for DDD, 12-Factor App, observability | See §7 below |
+| **CRR-20** | Four-pass code review | Done — all four passes completed |
+| **CRR-21** | First pass: free-will review | Done — unused variable, opacity init gap, floor behavior all caught |
+| **CRR-22** | Second pass: SOLID / modularity / testability | Done — DIP fix via interface default; encapsulation moved to constructor |
+| **CRR-23** | Third pass: code smells, DRY, KISS | Done — magic number eliminated; duplicate service calls removed |
+| **CRR-24** | Fourth pass: hard-coded paths | Done — clean; no OS-specific or absolute paths |
+| **CRR-25** | Fix all issues found and re-review | Done — all four-pass findings fixed immediately |
+| **CRR-26** | Comment and resolve all code review comments | Done — all 7 CodeRabbit comments replied to across 2 review rounds |
+| **CRR-27** | Suggestions for DDD, 12-Factor App, observability | Done — SR-51 (DSL config/12-Factor), SR-52 (HUD/DDD), SR-53 (observability) added to `suggested-requirements.md` |
 | **DOD-1** | Present this compliance table | Done |
-| **DOD-2** | Every WR, CRR, and DOD fully executed | Pending implementation |
-| **DOD-3** | Add new suggested requirements to `suggested-requirements.md` | Done — §5.3 |
+| **DOD-2** | Every WR, CRR, and DOD fully executed | Done |
+| **DOD-3** | Add new suggested requirements to `suggested-requirements.md` | Done — SR-51, SR-52, SR-53 added |
 
 ---
 
@@ -373,4 +386,4 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 
 - **DDD:** `visibilityLevel` is a value object property of the `Ghost` aggregate. Consider surfacing a `GhostAppearance` value record that bundles `visibilityLevel` + `imagePath` to make the rendering contract explicit and testable in isolation from the EMF model.
 - **12-Factor (config):** `visibilityLevel` is currently baked into XMI. Once F16 (DSL loader) is complete, it should be readable from the `.mazedsl` config file as an environment-level input (Factor III: Config), enabling level designers to change ghost transparency without recompiling.
-- **Observability:** Emit a structured log line (at `FINE` level) when `registerGhostCharacter` sets initial opacity from the model, e.g. `"Ghost '{id}' registered with visibilityLevel={v} (opacity={o})"`. This is a zero-cost diagnostic that simplifies debugging of mis-configured XMI files without affecting gameplay.
+- **Observability (implemented — SR-53):** `GhostNonTangibilityService.calculateOpacity(double, int)` emits a structured `FINE`-level log entry whenever the phasing clamp is active and the returned opacity deviates by more than 5% from `baseOpacity` (`visibilityLevel / 100.0`). The log includes `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. The emission is guarded with `LOGGER.isLoggable(Level.FINE)` so no `String` allocation occurs on the hot path when the log level is disabled.
