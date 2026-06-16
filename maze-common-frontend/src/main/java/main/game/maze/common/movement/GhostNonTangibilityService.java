@@ -1,5 +1,8 @@
 package main.game.maze.common.movement;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Shared utility for ghost non-tangibility (phasing) energy calculations.
  *
@@ -15,6 +18,8 @@ package main.game.maze.common.movement;
  * and computations to guarantee parity between the two runtimes.
  */
 public final class GhostNonTangibilityService {
+
+    private static final Logger LOGGER = Logger.getLogger(GhostNonTangibilityService.class.getName());
 
     /** Maximum non-tangibility energy (ghosts start at this value when spawned phasing). */
     public static final double MAX_ENERGY = 100.0;
@@ -92,6 +97,12 @@ public final class GhostNonTangibilityService {
             return baseOpacity;
         }
         double phasingOpacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
-        return Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
+        double clampedOpacity = Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
+        if (LOGGER.isLoggable(Level.FINE) && Math.abs(clampedOpacity - baseOpacity) > 0.05) {
+            LOGGER.fine(String.format(
+                    "Ghost opacity clamped by phasing: energy=%.2f visibilityLevel=%d baseOpacity=%.4f clampedOpacity=%.4f",
+                    energy, visibilityLevel, baseOpacity, clampedOpacity));
+        }
+        return clampedOpacity;
     }
 }
