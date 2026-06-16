@@ -194,6 +194,29 @@ class GhostTangibilityTest {
     // -----------------------------------------------------------------------
 
     // -----------------------------------------------------------------------
+    // F25: getVisibilityLevel() — INonTangientMazeGameCharacter interface
+    // -----------------------------------------------------------------------
+
+    @Test
+    void ghostCharacterImplementsGetVisibilityLevelFromModel() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        ghostModel.setVisibilityLevel(60);
+        GhostCharacter ghost = new GhostCharacter(new Rectangle(), 0, 0, ghostModel);
+
+        assertEquals(60, ghost.getVisibilityLevel(),
+                "GhostCharacter.getVisibilityLevel() must delegate to the EMF model");
+    }
+
+    @Test
+    void defaultVisibilityLevelIs100WhenModelNotSet() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        GhostCharacter ghost = new GhostCharacter(new Rectangle(), 0, 0, ghostModel);
+
+        assertEquals(100, ghost.getVisibilityLevel(),
+                "Default EMF Ghost.visibilityLevel must be 100");
+    }
+
+    // -----------------------------------------------------------------------
     // F25: visibilityLevel — initial opacity and phasing transition
     // -----------------------------------------------------------------------
 
@@ -202,8 +225,8 @@ class GhostTangibilityTest {
         Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
         ghostModel.setVisibilityLevel(75);
         Rectangle graphics = new Rectangle();
-        graphics.setOpacity(ghostModel.getVisibilityLevel() / 100.0);
         GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+        graphics.setOpacity(ghost.getVisibilityLevel() / 100.0);
 
         assertEquals(0.75, graphics.getOpacity(), 1e-9,
                 "Ghost with visibilityLevel=75 must start with node opacity 0.75");
@@ -214,8 +237,8 @@ class GhostTangibilityTest {
         Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
         ghostModel.setVisibilityLevel(40);
         Rectangle graphics = new Rectangle();
-        graphics.setOpacity(ghostModel.getVisibilityLevel() / 100.0);
         GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+        graphics.setOpacity(ghost.getVisibilityLevel() / 100.0);
 
         assertEquals(0.40, graphics.getOpacity(), 1e-9,
                 "Ghost with visibilityLevel=40 must start with node opacity 0.40");

@@ -119,6 +119,22 @@ Ghosts phase while `nonTangibilityEnergy > 0`.
 
 Both frontends use shared services in `maze-common-frontend` to keep behavior aligned.
 
+#### F25 — Ghost visibility level
+
+`Ghost.visibilityLevel` (0–100, EMF default 100) caps the maximum rendering opacity
+of a ghost independently of its phasing state.
+
+| Component | Role |
+|---|---|
+| `GhostCharacter.getVisibilityLevel()` | Implements `INonTangientMazeGameCharacter.getVisibilityLevel()` — delegates to `ghostModel.getVisibilityLevel()`. |
+| `OpponentRuntimeFactory.registerGhostCharacter(...)` | Sets the scene-graph node's initial opacity to `visibilityLevel / 100.0` at spawn time. This is the only initialization path for always-solid ghosts (energy = 0 from spawn) because `drainNonTangientEnergy` is only reached when a ghost is phasing. |
+| `FxEnemyCoordinator.drainNonTangientEnergy(...)` | Calls `GhostNonTangibilityService.calculateOpacity(energy, cc.getVisibilityLevel())` — no `instanceof` check needed because `getVisibilityLevel()` is declared on the `INonTangientMazeGameCharacter` interface with a default of 100 (DIP-compliant). |
+| `INonTangientMazeGameCharacter.getVisibilityLevel()` | Default method returns 100; only `GhostCharacter` overrides it. Removes the previous `instanceof GhostCharacter` check from the coordinator. |
+
+A ghost with `visibilityLevel = 50` renders at 0.5 opacity when solid and never
+exceeds 0.5 opacity while phasing. The phasing floor of 0.1 opacity still applies
+during the phasing-in period.
+
 ## Running
 
 Use the VS Code launch configuration `Launch MazeGame (JavaFX)` in [.vscode/launch.json](../.vscode/launch.json).
@@ -132,3 +148,5 @@ mvn -pl maze-javafx-backend -am clean verify
 ## Tests
 
 This module owns its own tests under `maze-javafx-backend/src/test`.
+
+- [GhostTangibilityTest](src/test/java/main/game/maze/characters/GhostTangibilityTest.java): phasing/solid damage paths, wall-blocking guard, `getVisibilityLevel()` delegation (F25), initial opacity from `visibilityLevel` (F25), phasing opacity never exceeds `baseOpacity` (F25), solid-state opacity equals `visibilityLevel / 100` (F25).
