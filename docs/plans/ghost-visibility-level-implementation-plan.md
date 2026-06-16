@@ -75,8 +75,8 @@ public static double calculateOpacity(double energy, int visibilityLevel) {
     }
     double phasingOpacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
     double clampedOpacity = Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
-    // SR-53: log when phasing clamp deviates the result by more than 5% from baseOpacity
-    if (LOGGER.isLoggable(Level.FINE) && Math.abs(clampedOpacity - baseOpacity) > 0.05) {
+    // SR-53: log when the phasing cap is active (phasingOpacity exceeds baseOpacity, so clamping occurs)
+    if (LOGGER.isLoggable(Level.FINE) && phasingOpacity > baseOpacity) {
         LOGGER.fine(String.format(
                 "Ghost opacity clamped by phasing: energy=%.2f visibilityLevel=%d baseOpacity=%.4f clampedOpacity=%.4f",
                 energy, visibilityLevel, baseOpacity, clampedOpacity));
@@ -317,7 +317,7 @@ After implementation and before the PR is closed:
 
    - **SR-51:** Ghost `visibilityLevel` shall be runtime-configurable via the DSL loader (once F16 is complete) so that level designers can author invisible or semi-transparent ghosts without recompiling XMI files.
    - **SR-52:** A HUD indicator shall reveal the presence of any ghost with `visibilityLevel < 30` nearby (default threshold 30) so that players are not blindsided by nearly-invisible ghosts (extends SR-16).
-   - **SR-53:** `GhostNonTangibilityService.calculateOpacity(double, int)` shall emit a structured `FINE`-level log entry when the phasing clamp is active and the result deviates by more than 5% from `visibilityLevel / 100.0`, including `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. Guarded with `Logger.isLoggable(Level.FINE)` for zero hot-path allocation.
+   - **SR-53:** `GhostNonTangibilityService.calculateOpacity(double, int)` shall emit a structured `FINE`-level log entry when the phasing cap is active — i.e. when `phasingOpacity > baseOpacity` (the visibility cap clamps the result) — including `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. Guarded with `Logger.isLoggable(Level.FINE)` for zero hot-path allocation.
 
 ---
 
