@@ -46,9 +46,7 @@ class GhostTangibilityTest {
         Rectangle graphics = new Rectangle();
         GhostCharacter ghost = newGhost(graphics);
 
-        // sanity: JavaFX Nodes default to opacity 1.0
-        assertEquals(1.0, graphics.getOpacity(), 1e-9, "Precondition: default opacity should be 1.0");
-
+        // The constructor initialises opacity from the model; override and verify setCharacterOpacity works.
         ghost.setCharacterOpacity(0.4);
         assertEquals(0.4, graphics.getOpacity(), 1e-9, "setCharacterOpacity should set Node opacity");
 
@@ -224,24 +222,24 @@ class GhostTangibilityTest {
     void ghostWithVisibilityLevel75_initialOpacityIsPoint75() {
         Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
         ghostModel.setVisibilityLevel(75);
+        ghostModel.setNonTangibilityEnergy(0); // solid ghost — energy has drained to zero
         Rectangle graphics = new Rectangle();
-        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
-        graphics.setOpacity(ghost.getVisibilityLevel() / 100.0);
+        new GhostCharacter(graphics, 0, 0, ghostModel);
 
         assertEquals(0.75, graphics.getOpacity(), 1e-9,
-                "Ghost with visibilityLevel=75 must start with node opacity 0.75");
+                "GhostCharacter constructor must set node opacity to visibilityLevel/100 (0.75) for a solid ghost");
     }
 
     @Test
     void ghostWithVisibilityLevel40_initialOpacityIsPoint4() {
         Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
         ghostModel.setVisibilityLevel(40);
+        ghostModel.setNonTangibilityEnergy(0); // solid ghost — energy has drained to zero
         Rectangle graphics = new Rectangle();
-        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
-        graphics.setOpacity(ghost.getVisibilityLevel() / 100.0);
+        new GhostCharacter(graphics, 0, 0, ghostModel);
 
         assertEquals(0.40, graphics.getOpacity(), 1e-9,
-                "Ghost with visibilityLevel=40 must start with node opacity 0.40");
+                "GhostCharacter constructor must set node opacity to visibilityLevel/100 (0.40) for a solid ghost");
     }
 
     @Test

@@ -13,6 +13,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import main.game.maze.common.movement.GhostNonTangibilityService;
+import main.game.maze.common.movement.WorldView;
+import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.opponents.BehaviorType;
@@ -236,14 +238,25 @@ class GhostTangibilityParityTest {
 
     @Test
     void crossFrontendParity_sameInputProducesSameOpacity() {
-        // The shared service is the single source of truth for both frontends.
+        // JavaFX delegates to the shared service directly (via FxEnemyCoordinator).
+        // libGDX delegates via GdxEnemyRuntime.renderOpacity(), which in turn calls
+        // the shared service. Both must produce identical values for every input.
         double[] energyValues = {0.0, 10.0, 50.0, 90.0, 100.0};
         int[] visibilityLevels = {0, 30, 50, 75, 100};
+        WorldView noWalls = new WorldView() {
+            public double playerX() { return 0; }
+            public double playerY() { return 0; }
+            public boolean wouldCollide(double x, double y, double size) { return false; }
+        };
         for (double energy : energyValues) {
             for (int vis : visibilityLevels) {
-                double javafxOpacity = GhostNonTangibilityService.calculateOpacity(energy, vis);
-                double gdxOpacity    = GhostNonTangibilityService.calculateOpacity(energy, vis);
-                assertEquals(javafxOpacity, gdxOpacity, 1e-12,
+                // JavaFX path: FxEnemyCoordinator calls the service directly (double precision)
+                float javafxOpacity = (float) GhostNonTangibilityService.calculateOpacity(energy, vis);
+                // libGDX path: through the runtime render pipeline (float precision)
+                EnemySpawn spawn = ghostSpawn(energy, vis);
+                GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(spawn, 0, noWalls, 60f, 1);
+                float gdxOpacity = runtime.renderOpacity();
+                assertEquals(javafxOpacity, gdxOpacity, 1e-6f,
                         "Both frontends must produce identical opacity for energy=" + energy + " vis=" + vis);
             }
         }

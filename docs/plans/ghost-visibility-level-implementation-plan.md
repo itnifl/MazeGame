@@ -1,6 +1,6 @@
 # Implementation Plan — F25. Ghost Visibility Level
 
-**Status:** PLANNED  
+**Status:** DONE  
 **ID:** `F25`  
 **Source:** `opponents.ecore` — `Ghost.visibilityLevel` (default 100); `MazeDsl.xtext` — `GhostSpecifics.visibilityLevel`  
 **Backend:** both (JavaFX and libGDX)  
