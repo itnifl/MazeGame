@@ -22,8 +22,10 @@ class GameOverActionTest {
     }
 
     // startGameOverMusic() is a public static method — test it in isolation.
+    // Note: stopChannel(IN_GAME_MUSIC) is called by showGameOverScreen(), not here;
+    // this method's sole responsibility is to start the game-over loop.
     @Test
-    void startGameOverMusic_stopsInGameMusicAndStartsGameOverLoop() {
+    void startGameOverMusic_loopsGameOverTrackOnGameOverChannel() {
         RecordingAudio audio = new RecordingAudio();
         AudioEngine.set(audio);
 
@@ -31,6 +33,8 @@ class GameOverActionTest {
 
         assertTrue(audio.loopCalls.contains(AudioChannelConstants.GAME_OVER_MUSIC + ":" + AudioResourceConstants.GameOverSound),
                 "startGameOverMusic must start the game-over music loop on GAME_OVER_MUSIC channel");
+        assertTrue(audio.stopCalls.isEmpty(),
+                "startGameOverMusic must NOT stop any channel — stopping IN_GAME_MUSIC is showGameOverScreen's responsibility");
     }
 
     // Calling startGameOverMusic() twice produces exactly two loop invocations (no dedup guard in this method).

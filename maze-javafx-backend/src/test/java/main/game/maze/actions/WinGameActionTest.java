@@ -30,7 +30,7 @@ class WinGameActionTest {
         } catch (IllegalStateException alreadyStarted) {
             latch.countDown();
         }
-        latch.await(2, TimeUnit.SECONDS);
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "JavaFX startup timed out");
     }
 
     @AfterEach

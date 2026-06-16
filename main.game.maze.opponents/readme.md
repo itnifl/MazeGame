@@ -296,6 +296,13 @@ Shared responsibilities include
   Difficulty rules may specify minimum or maximum counts for certain categories of opponents.  
   The opponent module supplies the classification and raw definitions that make these rules possible.
 
+- Per-type spawn cap enforcement (F8)  
+  `EnemySpawnPlanner.clampToCapLimit(EnemyTypes, int, Map<EnemyTypes, Integer>)` is the single
+  shared enforcement point for `EnemyMaxCount.maxCount`. Both frontends must call this helper
+  before iterating a type's spawn loop so caps are never exceeded regardless of what the
+  composition resolver computed. A zero cap (e.g. PumpkinBomber on Easy difficulty) is treated
+  as a hard block; an absent key in the map means no ceiling applies for that type.
+
 This separation of concerns allows you to balance difficulty without touching the core opponent definitions, and vice versa.
 
 ---

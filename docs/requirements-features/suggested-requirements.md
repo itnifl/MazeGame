@@ -21,6 +21,25 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-73**: The `DifficultyService` and `CompositionResolverImpl` shall expose all public contracts through the `DifficultyService` / `CompositionResolver` interfaces; direct use of concrete implementation classes in non-test code should be avoided (DIP).
 - **SR-74**: Enemy type caps in `CompositionResolverImpl` shall be enforced as a hard ceiling: `redistributeToTotal` shall never push a type above its cap, even when total redistribution requires additional units that cannot be allocated without violating a cap.
 
+### F8 spawn cap enforcement — DDD / 12-Factor / Observability suggestions
+
+- **SR-80** *(Observability)*: `EnemySpawnPlanner.clampToCapLimit(...)` currently relies on callers
+  to emit the INFO log when a cap is applied. Consider introducing an optional `SpawnCapListener`
+  functional interface that callers register at construction time, so cap events can be routed to
+  structured telemetry (metrics counter, event bus) without embedding logging policy in the
+  shared helper.
+
+- **SR-81** *(12-Factor, Config)*: `EnemyMaxCount` values are baked into `difficultiesBasic.xmi`.
+  Per 12-Factor principle III (Config), externalise per-type caps to a hot-reloadable config layer
+  (environment variable overrides or a sidecar YAML) so QA can adjust spawn limits between runs
+  without rebuilding.
+
+- **SR-82** *(DDD)*: `clampToCapLimit` and `capsFromDifficulty` belong to the **Difficulty**
+  bounded context (they enforce invariants owned by `Difficulty`). Consider moving them out of
+  the `opponents.util` package and into a `difficulties.spawn` sub-package so the module boundary
+  aligns with the domain boundary. The opponents module would then depend on the difficulties
+  module only for data, not for policy.
+
 ### 12-Factor App / Observability suggestions
 
 - **SR-75** *(12-Factor, Config)*: Enemy composition profiles (profile name, enemy count, ratios, caps) should be externalized to an XMI or YAML file loaded at runtime so difficulty tuning does not require recompilation.

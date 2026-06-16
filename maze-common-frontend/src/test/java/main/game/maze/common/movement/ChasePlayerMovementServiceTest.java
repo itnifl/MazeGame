@@ -45,8 +45,9 @@ class ChasePlayerMovementServiceTest {
         FakeWorldView world = new FakeWorldView().playerAt(100, 100);
         EnemyState enemy = new EnemyState("e1", 100, 100, 0, 0, 16, 4);
 
-        // No exception; service must either move or report standing still with a direction.
-        assertDoesNotThrow(() -> service.tick(enemy, world));
+        MovementResult result = assertDoesNotThrow(() -> service.tick(enemy, world));
+        assertTrue(result.moved() || result.directionX() != 0 || result.directionY() != 0,
+                "fallback should move or provide a non-zero heading");
     }
 
     // When the direct path is walled, the enemy tries the perpendicular axis.
@@ -64,6 +65,9 @@ class ChasePlayerMovementServiceTest {
 
         // Should still move (via alt axis or fallback), not stand still.
         assertTrue(result.moved(), "enemy must find an alternative direction when direct path is blocked");
+        // The blocked direct-right step must NOT have been taken.
+        assertFalse(result.x() > 100 && result.y() == 100.0,
+                "enemy should not take the blocked direct-right step");
     }
 
     // When all cardinal directions are blocked, enemy stands still but reports heading.

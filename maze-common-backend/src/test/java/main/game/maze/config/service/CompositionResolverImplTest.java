@@ -115,4 +115,26 @@ class CompositionResolverImplTest {
 
         assertTrue(result.getOrDefault(EnemyTypes.ZOMBIE, 0) <= 2, "Zombie count must not exceed cap");
     }
+
+    // Infeasible total: requested count exceeds the sum of all caps.
+    // The resolver must stop at the cap-limited total rather than force the requested count.
+    @Test
+    void resolve_requestedExceedsCapSum_stopsAtCapTotal() {
+        Map<EnemyTypes, Double> ratios = new EnumMap<>(EnemyTypes.class);
+        ratios.put(EnemyTypes.ZOMBIE, 0.5);
+        ratios.put(EnemyTypes.GHOST, 0.5);
+
+        Map<EnemyTypes, Integer> caps = new EnumMap<>(EnemyTypes.class);
+        caps.put(EnemyTypes.ZOMBIE, 2);
+        caps.put(EnemyTypes.GHOST, 3);
+        // Cap sum = 5; request 10 — impossible to satisfy without violating caps.
+
+        ProfileRules rule = new ProfileRules("infeasible", 10, ratios, null, caps);
+        var result = resolver(rule).resolve("infeasible");
+
+        int total = result.values().stream().mapToInt(Integer::intValue).sum();
+        assertTrue(total <= 5, "Total must not exceed the sum of all caps (5) even when a higher count is requested");
+        assertTrue(result.getOrDefault(EnemyTypes.ZOMBIE, 0) <= 2, "Zombie must not exceed cap of 2");
+        assertTrue(result.getOrDefault(EnemyTypes.GHOST, 0) <= 3, "Ghost must not exceed cap of 3");
+    }
 }

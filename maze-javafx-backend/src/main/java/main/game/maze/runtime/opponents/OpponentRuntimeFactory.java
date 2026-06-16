@@ -239,7 +239,6 @@ private static double spawnByTarget(
             continue;
         }
 
-
         for (int i = 0; i < toSpawn; i++) {
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;

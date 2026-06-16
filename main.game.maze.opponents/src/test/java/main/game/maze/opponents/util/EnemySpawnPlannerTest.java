@@ -246,6 +246,11 @@ class EnemySpawnPlannerTest {
     }
 
     @Test
+    void clampToCapLimit_nullCaps_returnsRequested() {
+        assertEquals(5, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 5, null));
+    }
+
+    @Test
     void clampToCapLimit_negativeRequested_returnsZero() {
         Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
         assertEquals(0, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, -1, caps));

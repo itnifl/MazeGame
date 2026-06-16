@@ -22,7 +22,7 @@ class FxPathHintCoordinatorTest {
         } catch (IllegalStateException alreadyStarted) {
             latch.countDown();
         }
-        latch.await(2, TimeUnit.SECONDS);
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "JavaFX startup timed out");
     }
 
     private static void runOnFx(Runnable r) throws Exception {
