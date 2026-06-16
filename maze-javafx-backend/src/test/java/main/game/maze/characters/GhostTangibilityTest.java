@@ -193,6 +193,68 @@ class GhostTangibilityTest {
     // Path-1 contact: ghost moves → player.doPositionEvaluation (task scream fix)
     // -----------------------------------------------------------------------
 
+    // -----------------------------------------------------------------------
+    // F25: visibilityLevel — initial opacity and phasing transition
+    // -----------------------------------------------------------------------
+
+    @Test
+    void ghostWithVisibilityLevel75_initialOpacityIsPoint75() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        ghostModel.setVisibilityLevel(75);
+        Rectangle graphics = new Rectangle();
+        graphics.setOpacity(ghostModel.getVisibilityLevel() / 100.0);
+        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+
+        assertEquals(0.75, graphics.getOpacity(), 1e-9,
+                "Ghost with visibilityLevel=75 must start with node opacity 0.75");
+    }
+
+    @Test
+    void ghostWithVisibilityLevel40_initialOpacityIsPoint4() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        ghostModel.setVisibilityLevel(40);
+        Rectangle graphics = new Rectangle();
+        graphics.setOpacity(ghostModel.getVisibilityLevel() / 100.0);
+        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+
+        assertEquals(0.40, graphics.getOpacity(), 1e-9,
+                "Ghost with visibilityLevel=40 must start with node opacity 0.40");
+    }
+
+    @Test
+    void ghostVisibilityLevel50_phasingNeverExceedsBaseOpacity() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        ghostModel.setVisibilityLevel(50);
+        Rectangle graphics = new Rectangle();
+        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+
+        // Simulate the opacity that drainNonTangientEnergy would set for various energy levels.
+        int visibilityLevel = ghost.getModel().getVisibilityLevel();
+        double baseOpacity = visibilityLevel / 100.0;
+
+        for (double energy = 100.0; energy >= 0.0; energy -= 5.0) {
+            double opacity = main.game.maze.common.movement.GhostNonTangibilityService
+                    .calculateOpacity(energy, visibilityLevel);
+            assertTrue(opacity <= baseOpacity + 1e-9,
+                    "Opacity must never exceed baseOpacity=" + baseOpacity + " at energy=" + energy);
+        }
+    }
+
+    @Test
+    void ghostVisibilityLevel50_phasingToSolid_opacitySnapsToBase() {
+        Ghost ghostModel = OpponentsFactory.eINSTANCE.createGhost();
+        ghostModel.setVisibilityLevel(50);
+        Rectangle graphics = new Rectangle();
+        GhostCharacter ghost = new GhostCharacter(graphics, 0, 0, ghostModel);
+
+        int visibilityLevel = ghost.getModel().getVisibilityLevel();
+        double solidOpacity = main.game.maze.common.movement.GhostNonTangibilityService
+                .calculateOpacity(0.0, visibilityLevel);
+
+        assertEquals(0.5, solidOpacity, 1e-9,
+                "When energy reaches 0, opacity must equal visibilityLevel/100=0.5");
+    }
+
     /**
      * Creates a player whose graphics is a plain {@link Rectangle} (non-ImageView).
      * With the {@code instanceof ImageView} guard now in

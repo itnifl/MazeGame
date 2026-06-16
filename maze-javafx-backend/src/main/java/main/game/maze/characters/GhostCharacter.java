@@ -133,6 +133,11 @@ public class GhostCharacter extends ComputerCharacter
     }
 
     @Override
+    public int getVisibilityLevel() {
+        return ghostModel.getVisibilityLevel();
+    }
+
+    @Override
     public Ghost getModel() {
         return this.ghostModel;
     }

@@ -346,14 +346,21 @@ overall feature is marked Done.
 ### F25. Ghost visibility level
 
 - **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.visibilityLevel`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `GhostSpecifics.visibilityLevel`.
-- **Status**: Missing.
+- **Status**: Done.
 - **Backend**: both.
 - **What the model says**: ghosts can expose a visibility percentage that
   controls how visible or hidden they are.
-- **What the game does today**: ghosts ignore walls via energy, but the
-  visibility level is not used to drive any on-screen alpha or stealth cue.
+- **What the game does today**: `Ghost.visibilityLevel` (0–100) is propagated
+  through `EnemySpawn.visibilityLevel` (libGDX) and initialized directly from
+  the EMF model in `OpponentRuntimeFactory.registerGhostCharacter` (JavaFX).
+  Solid ghosts render at exactly `visibilityLevel / 100.0` opacity.
+  Phasing ghosts blend from 0.1 up to the same cap via
+  `GhostNonTangibilityService.calculateOpacity(energy, visibilityLevel)`.
+  Both backends use the shared two-arg overload, guaranteeing identical output.
 - **Acceptance**: lowering `visibilityLevel` makes ghosts visibly harder to
-  see, while `100` keeps them fully visible.
+  see, while `100` keeps them fully visible. ✓ Implemented and covered by
+  `GhostNonTangibilityServiceTest`, `GhostTangibilityTest`, and
+  `GhostTangibilityParityTest`.
 
 ### F26. Ranged projectile speed from DSL/model
 
@@ -372,7 +379,7 @@ overall feature is marked Done.
 
 | Area | Open IDs |
 |------|----------|
-| Opponents + sprites | F1, F10, F14, F18, F24, F25, F26 |
+| Opponents + sprites | F1, F10, F14, F18, F24, F26 |
 | Loot | F2, F21 |
 | Patrol + AI | F3, F4, F5, F6, F22, F23 |
 | Difficulty | F8, F9 |

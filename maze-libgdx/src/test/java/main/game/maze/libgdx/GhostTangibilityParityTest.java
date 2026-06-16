@@ -48,6 +48,20 @@ class GhostTangibilityParityTest {
                 energy);
     }
 
+    /** Creates an EnemySpawn with explicit energy and visibilityLevel. */
+    private static EnemySpawn ghostSpawn(double energy, int visibilityLevel) {
+        return new EnemySpawn(
+                "ghost-1",
+                "/main/game/maze/ghost1-right.png",
+                0f, 0f,
+                40f,
+                1f, 5, 0, "",
+                BehaviorType.WANDER,
+                2f,
+                energy,
+                visibilityLevel);
+    }
+
     // -----------------------------------------------------------------------
     // Combat rules: phasing ghost CAN harm player (bypasses wall check only)
     // -----------------------------------------------------------------------
@@ -167,5 +181,71 @@ class GhostTangibilityParityTest {
      */
     private static float ghostRenderOpacity(double energy) {
         return (float) GhostNonTangibilityService.calculateOpacity(energy);
+    }
+
+    // -----------------------------------------------------------------------
+    // F25: visibilityLevel carried through EnemySpawn
+    // -----------------------------------------------------------------------
+
+    @Test
+    void enemySpawnCarriesVisibilityLevel() {
+        EnemySpawn ghost = ghostSpawn(0.0, 75);
+        assertEquals(75, ghost.visibilityLevel(),
+                "EnemySpawn must preserve the visibilityLevel passed at construction");
+    }
+
+    @Test
+    void defaultEnemySpawnHasVisibilityLevel100() {
+        EnemySpawn zombie = new EnemySpawn("z1", "/zombie.png", 10f, 10f, 40f, 1f, 5, 0, "", 2f);
+        assertEquals(100, zombie.visibilityLevel(),
+                "Default EnemySpawn (no visibilityLevel arg) must have visibilityLevel=100");
+    }
+
+    @Test
+    void twelveArgConstructor_defaultsVisibilityLevel100() {
+        EnemySpawn ghost = ghostSpawn(50.0);   // 12-arg convenience constructor
+        assertEquals(100, ghost.visibilityLevel(),
+                "12-arg convenience constructor must default visibilityLevel to 100");
+    }
+
+    // -----------------------------------------------------------------------
+    // F25: renderOpacity with visibilityLevel — cross-frontend parity
+    // -----------------------------------------------------------------------
+
+    @Test
+    void solidGhost_visibilityLevel60_renderOpacityIsPoint6() {
+        double opacity = GhostNonTangibilityService.calculateOpacity(0.0, 60);
+        assertEquals(0.6f, (float) opacity, 0.001f,
+                "Solid ghost with visibilityLevel=60 must render at opacity 0.6");
+    }
+
+    @Test
+    void fullPhasingGhost_anyVisibility_renderOpacityIsFloor() {
+        double opacity = GhostNonTangibilityService.calculateOpacity(GhostNonTangibilityService.MAX_ENERGY, 80);
+        assertEquals(0.1f, (float) opacity, 0.001f,
+                "Fully-phasing ghost must always render at floor opacity 0.1");
+    }
+
+    @Test
+    void phasingGhost_visibilityLevel30_cappedAtBase() {
+        // energy=50, formula=0.6, capped at 0.3
+        double opacity = GhostNonTangibilityService.calculateOpacity(50.0, 30);
+        assertEquals(0.3f, (float) opacity, 0.001f,
+                "Phasing ghost opacity must be capped at visibilityLevel/100 when formula exceeds it");
+    }
+
+    @Test
+    void crossFrontendParity_sameInputProducesSameOpacity() {
+        // The shared service is the single source of truth for both frontends.
+        double[] energyValues = {0.0, 10.0, 50.0, 90.0, 100.0};
+        int[] visibilityLevels = {0, 30, 50, 75, 100};
+        for (double energy : energyValues) {
+            for (int vis : visibilityLevels) {
+                double javafxOpacity = GhostNonTangibilityService.calculateOpacity(energy, vis);
+                double gdxOpacity    = GhostNonTangibilityService.calculateOpacity(energy, vis);
+                assertEquals(javafxOpacity, gdxOpacity, 1e-12,
+                        "Both frontends must produce identical opacity for energy=" + energy + " vis=" + vis);
+            }
+        }
     }
 }

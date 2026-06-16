@@ -69,4 +69,29 @@ public final class GhostNonTangibilityService {
         double opacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
         return Math.max(0.1, Math.min(1.0, opacity));
     }
+
+    /**
+     * Calculates rendering opacity taking the ghost's configured base visibility into account.
+     *
+     * <p>When solid ({@code energy <= 0}) the result is exactly {@code visibilityLevel / 100.0}.
+     * When phasing the opacity ramps from {@code 0.1} up toward {@code baseOpacity} as energy drains,
+     * but is capped at {@code baseOpacity} so a semi-transparent ghost never appears more opaque
+     * than its configured visibility level.
+     *
+     * <p>Design note: a ghost with {@code visibilityLevel=0} that is phasing still renders at
+     * opacity {@code 0.1} (the phasing minimum) so players can detect it; this is an intentional
+     * gameplay floor.
+     *
+     * @param energy          current non-tangibility energy (0..MAX_ENERGY)
+     * @param visibilityLevel configured visibility percentage (0..100)
+     * @return opacity in [0.0, 1.0]
+     */
+    public static double calculateOpacity(double energy, int visibilityLevel) {
+        double baseOpacity = Math.max(0.0, Math.min(100.0, visibilityLevel)) / 100.0;
+        if (energy <= 0) {
+            return baseOpacity;
+        }
+        double phasingOpacity = 1.0 - (energy / MAX_ENERGY) + 0.1;
+        return Math.max(0.1, Math.min(baseOpacity, phasingOpacity));
+    }
 }

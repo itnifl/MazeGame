@@ -214,7 +214,8 @@ public final class RuntimeVisualModelLoader {
                             touchSound,
                             runtimeBehavior,
                             spawnSpeed,
-                            nonTangibilityEnergyFor(picked));
+                            nonTangibilityEnergyFor(picked),
+                            visibilityLevelFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -298,6 +299,13 @@ public final class RuntimeVisualModelLoader {
             return ghost.getNonTangibilityEnergy();
         }
         return 0.0;
+    }
+
+    private static int visibilityLevelFor(CharacterType type) {
+        if (type instanceof Ghost ghost) {
+            return ghost.getVisibilityLevel();
+        }
+        return EnemySpawn.DEFAULT_VISIBILITY_LEVEL;
     }
 
     private static String touchSoundFor(CharacterType type) {

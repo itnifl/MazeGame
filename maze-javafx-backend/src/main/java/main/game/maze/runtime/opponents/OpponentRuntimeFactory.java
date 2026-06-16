@@ -350,6 +350,7 @@ private static double spawnByTarget(
                 Node graphicsNode = createCharacterGraphics(g, StageConstants.GhostCharacterXYSize);
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
+                graphicsNode.setOpacity(g.getVisibilityLevel() / 100.0);
                 var character = new GhostCharacter(graphicsNode, spawnX, spawnY, g);
                 registrar.registerComputerCharacter(character, graphicsNode);
             } catch (Exception fxException) {

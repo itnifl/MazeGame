@@ -35,6 +35,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private String movementTypeLabel;
     // Mirrors JavaFX ghost non-tangibility energy from the opponent model.
     double nonTangibilityEnergy;
+    private final int visibilityLevel;
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
 
@@ -68,6 +69,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.behaviorTypeLabel = behavior.name();
         this.movementTypeLabel = "WANDER";
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
+        this.visibilityLevel = spawn.visibilityLevel();
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -106,7 +108,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.touchSoundPath(),
                 spawn.behavior(),
                 spawn.speed(),
-                nonTangibilityEnergy);
+                nonTangibilityEnergy,
+                spawn.visibilityLevel());
     }
 
     public String imagePath() {
@@ -176,7 +179,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     public float renderOpacity() {
-        return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy);
+        return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy, visibilityLevel);
     }
 
     private MovementResult nextMove(WorldView world,
