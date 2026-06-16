@@ -74,6 +74,9 @@ shared movement services and consumed by both JavaFX and libGDX frontends.
 | SR-67 (new) | Terminal command support extended edge cases | `GdxTerminalCommandSupport` edge cases | `GdxTerminalCommandSupportExtendedTest` (9 tests: null→NONE, aliases, all commands non-null, helpText has /sep, unknown has status text, help command has positive duration) |
 | SR-68 (new) | Screen layout metrics are non-negative and internally consistent | `GdxGameScreenMetrics` at multiple resolutions | `GdxGameScreenLayoutExtendedTest` (14 tests: non-negative coords for 4 resolutions, hpBarHeight/bottomRowHeight/bottomBarHeight positive, hpBarBottomY within window, strip width = window width) |
 | SR-69 (new) | Asset service public API is safe in headless mode | `GdxAssetService` public API only | `GdxAssetServiceExtendedTest` (7 tests: getTexture null no-throw, duplicate queueTexture no-throw, null queueTexture no-throw, dispose multiple times no-throw, loadingProgress in [0,1], getTexture headless null, updateLoading no assets true) |
+| SR-70 (new) | `IUiScheduler` test double captures and replays actions in inline and deferred modes | `CapturingUiScheduler` in `maze-common-frontend` test utilities | `CapturingUiScheduler` (inline/deferred modes, `callCount()`, `capturedActions()`, `flush()`; used as shared test infrastructure for UI-thread-dispatching coordinators) |
+| SR-71 (new) | `FxEnemyCoordinator` lifecycle is safe with null-returning suppliers | `FxEnemyCoordinator` constructor and public lifecycle methods in `maze-javafx-backend` | `FxEnemyCoordinatorTest` (6 tests: stepAll no-throw, reset no-throw, showEnemyDebugLabels null board, drawEnemyNavigationPaths null maze, dispose no-throw, dispose idempotent) |
+| SR-72 (new) | `GdxGameRenderPipeline` static helpers are correct for all null combinations and GameMode values | `GdxGameRenderPipeline.hasRenderableWorld(...)`, `isHighScoresOnlyOverlay(...)` in `maze-libgdx` | `GdxGameRenderPipelineExtendedTest` (9 tests: all-present returns true, 4 null combinations return false, HIGH_SCORES without world true, HIGH_SCORES with world false, all non-HIGH_SCORES modes false via @ParameterizedTest @EnumSource EXCLUDE) |
 
 ## Quality Attributes
 
@@ -87,9 +90,9 @@ phasing logic is fully encapsulated in `GhostNonTangibilityService` and
 Movement services are pure enough to execute against `WorldView` stubs and
 assert deterministic behavior windows. Ghost phasing services are tested via
 unit tests with controlled inputs. New test-double infrastructure
-(`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`) isolates
-audio-engine and scene-graph dependencies so coordinator and action tests
-run without a real game loop.
+(`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`, `CapturingUiScheduler`) isolates
+audio-engine, scene-graph, and UI-thread-dispatch dependencies so coordinator
+and action tests run without a real game loop.
 
 3. Parity and correctness
 JavaFX and libGDX consume the same movement runtime state for enemy path
