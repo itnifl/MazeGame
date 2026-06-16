@@ -154,6 +154,7 @@ public final class OpponentRuntimeFactory {
         double threatSum = spawnByTarget(
             characterList,  // candidates
             target,                             // resolvers decision
+            caps,                               // per-type spawn ceilings (F8)
             maxThreatByDifficulty,              // threat limit per difficulty
             speedMultiplierByDifficulty,
             dmgMultiplierByDifficulty,
@@ -183,6 +184,7 @@ public final class OpponentRuntimeFactory {
 private static double spawnByTarget(
         List<CharacterType> all,
         Map<EnemyTypes, Integer> target,
+        Map<EnemyTypes, Integer> caps,
         int maxThreat,
         double speedMult,
         double dmgMult,
@@ -224,13 +226,18 @@ private static double spawnByTarget(
 
     for (Map.Entry<EnemyTypes, Integer> e : target.entrySet()) {
         EnemyTypes type = e.getKey();
-        int toSpawn = Math.max(0, e.getValue());
+        int requested = Math.max(0, e.getValue());
+        int toSpawn = EnemySpawnPlanner.clampToCapLimit(type, requested, caps);
+        if (toSpawn < requested) {
+            _logger.log(Level.INFO,
+                "EnemyMaxCount cap applied: type={0}, requested={1}, capped to={2}",
+                new Object[] { type, requested, toSpawn });
+        }
         var candidates = poolofAvailableEnemies.getOrDefault(type, new ArrayList<CharacterType>());
 
         if (candidates.isEmpty()) {
             continue;
         }
-
 
         for (int i = 0; i < toSpawn; i++) {
             double remaining = maxThreat - threat;

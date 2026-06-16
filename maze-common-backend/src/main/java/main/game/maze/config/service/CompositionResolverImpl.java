@@ -41,7 +41,7 @@ public final class CompositionResolverImpl implements CompositionResolver {
             Map<EnemyTypes, Integer> capped =
                     applyCaps(nonNegativeCounts, profileRules.caps());
 
-            return redistributeToTotal(capped, totalEnemyCount);
+            return redistributeToTotal(capped, totalEnemyCount, profileRules.caps());
         }
 
         // Otherwise, use ratios
@@ -57,7 +57,7 @@ public final class CompositionResolverImpl implements CompositionResolver {
         Map<EnemyTypes, Integer> cappedAllocation =
                 applyCaps(initialAllocation, profileRules.caps());
 
-        return redistributeToTotal(cappedAllocation, totalEnemyCount);
+        return redistributeToTotal(cappedAllocation, totalEnemyCount, profileRules.caps());
     }
 
     /**
@@ -189,11 +189,13 @@ public final class CompositionResolverImpl implements CompositionResolver {
     /**
      * Adjusts the given counts so that the sum of all enemies equals the desired total.
      * If there are too many enemies, they are removed from the largest buckets first.
-     * If there are too few, enemies are added in a round-robin fashion.
+     * If there are too few, enemies are added in round-robin order, skipping types at their cap.
+     * When all types are at their cap, the loop stops rather than violating a cap.
      */
     private static Map<EnemyTypes, Integer> redistributeToTotal(
             Map<EnemyTypes, Integer> counts,
-            int total
+            int total,
+            Map<EnemyTypes, Integer> caps
     ) {
         int currentTotal = counts.values().stream()
                 .mapToInt(Integer::intValue)
@@ -226,20 +228,28 @@ public final class CompositionResolverImpl implements CompositionResolver {
             result.replaceAll((type, value) -> Math.max(0, value));
             return result;
         } else {
-            // Add missing units in a round-robin fashion
+            // Add missing units, skipping types already at their cap
             int toAdd = total - currentTotal;
             List<EnemyTypes> order = new ArrayList<>(result.keySet());
 
             if (order.isEmpty()) {
-                // If there are truly no keys, start with all enemy types
-                order = List.of(EnemyTypes.values());
+                order = new ArrayList<>(List.of(EnemyTypes.values()));
                 result.put(order.get(0), 0);
             }
 
-            int index = 0;
-            while (toAdd-- > 0) {
-                EnemyTypes type = order.get(index++ % order.size());
-                result.put(type, result.getOrDefault(type, 0) + 1);
+            while (toAdd > 0) {
+                boolean anyAdded = false;
+                for (EnemyTypes type : order) {
+                    if (toAdd == 0) break;
+                    int currentCount = result.getOrDefault(type, 0);
+                    int cap = (caps != null) ? caps.getOrDefault(type, Integer.MAX_VALUE) : Integer.MAX_VALUE;
+                    if (currentCount < cap) {
+                        result.put(type, currentCount + 1);
+                        toAdd--;
+                        anyAdded = true;
+                    }
+                }
+                if (!anyAdded) break; // All types are at their cap; stop rather than violate caps
             }
 
             return result;

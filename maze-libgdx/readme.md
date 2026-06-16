@@ -159,6 +159,15 @@ mvn -pl maze-common-frontend,maze-libgdx -am test
 - [PlayerStateTest](src/test/java/main/game/maze/libgdx/game/PlayerStateTest.java): collision resolution, border clamping, goal-proximity detection.
 - [GhostTangibilityParityTest](src/test/java/main/game/maze/libgdx/GhostTangibilityParityTest.java): F25 visibility level — `EnemySpawn` carries `visibilityLevel`, default = 100, 12-arg constructor defaults, `GdxEnemyRuntime.renderOpacity()` honours `visibilityLevel` cap, full-phasing floor = 0.1, cross-frontend opacity parity with `GhostNonTangibilityService`.
 
+### Extended tests (headless, no GL context required)
+
+- [GdxGameCommandsTest](src/test/java/main/game/maze/libgdx/commands/GdxGameCommandsTest.java) — all 6 command classes: terminal-active guard (no-op), delegate invocation count, key-based routing for `ApplyPathHintCommand`.
+- [GdxGameCombatAndEnemyFlowSupportTest](src/test/java/main/game/maze/libgdx/flow/GdxGameCombatAndEnemyFlowSupportTest.java) — `advanceEnemies` null-safety guards, `shouldTriggerWin` conditions, `triggerWin` sets WON mode and fires win sound exactly once.
+- [GdxGameStartFlowApplySupportTest](src/test/java/main/game/maze/libgdx/flow/GdxGameStartFlowApplySupportTest.java) — `ensureViewportInitialized` returns existing viewport or creates new, `startedDifficultyText` always non-blank and starts with "Started".
+- [GdxTerminalCommandSupportExtendedTest](src/test/java/main/game/maze/libgdx/terminal/GdxTerminalCommandSupportExtendedTest.java) — null→NONE, alias parsing, all inputs non-null, `/sep` in helpText, unknown command has non-blank status, HELP has positive duration.
+- [GdxGameScreenLayoutExtendedTest](src/test/java/main/game/maze/libgdx/screen/GdxGameScreenLayoutExtendedTest.java) — 14 parameterized tests for strip bounds at 4 resolutions, HP/bottom-row/bottom-bar heights positive, hpBarBottomY in-window, strip width = window width.
+- [GdxAssetServiceExtendedTest](src/test/java/main/game/maze/libgdx/asset/GdxAssetServiceExtendedTest.java) — public API only (headless): null path guards, duplicate queue, multiple dispose, loadingProgress in [0,1], updateLoading no-assets returns true.
+
 ## Coordinate system
 
 libGDX uses a bottom-left origin (positive y is up). The current gameplay

@@ -222,6 +222,27 @@ public final class EnemySpawnPlanner {
         return BehaviorType.AGGRESSIVE;
     }
 
+    /**
+     * Returns how many enemies of {@code type} may actually be spawned given
+     * the per-type cap from the active difficulty.  When no cap is registered
+     * for a type (e.g. when difficulty is null and caps is empty) the requested
+     * count is returned unchanged.  Negative requested values are clamped to 0.
+     *
+     * <p>Both frontends MUST route through this helper so cap enforcement
+     * stays in one place (GR-4, F8).
+     */
+    public static int clampToCapLimit(EnemyTypes type, int requested, Map<EnemyTypes, Integer> caps) {
+        int safe = Math.max(0, requested);
+        if (caps == null || caps.isEmpty()) {
+            return safe;
+        }
+        Integer cap = caps.get(type);
+        if (cap == null) {
+            return safe;
+        }
+        return Math.min(safe, Math.max(0, cap));
+    }
+
     private static int resolveAttackDamage(int baseDamage, double damageMultiplier, boolean instantDeath) {
         if (instantDeath) {
             return Integer.MAX_VALUE;
