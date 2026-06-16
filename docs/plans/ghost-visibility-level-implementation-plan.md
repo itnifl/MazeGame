@@ -332,8 +332,8 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Done — 170 tests (4 game modules), 0 failures across all commits |
-| **WR-7** | Run ALL tests before commit | Done — full suite green before each commit |
+| **WR-6** | All tests pass before commit | Done — 207 tests (4 game modules), 0 failures across all commits |
+| **WR-7** | Run ALL tests before commit | Done — full suite green before each commit; merge conflicts resolved and suite re-verified |
 | **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
 | **WR-9** | Read PR comments and resolve before proceeding | Done — three CodeRabbit review rounds addressed and replied to |
 | **WR-10** | Work on feature branch, never commit to main | Done — branch `feature/workOnUnimplemetedFeature` |
@@ -344,7 +344,7 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-15** | Use GitHub API programmatically where helpful | Done |
 | **WR-16** | Use GitHub Actions to automate workflow | Done — CI (`Build & Test`, `Build & Test (JavaFX only)`) ran and passed on all commits |
 | **WR-17** | Git GUI tools may be used | N/A — CLI-based workflow |
-| **WR-18** | Update relevant README after commit | Done — `maze-common-frontend/readme.md`, `maze-libgdx/readme.md`, `maze-javafx-backend/readme.md` all updated |
+| **WR-18** | Update relevant README after commit | Done — `maze-common-frontend/readme.md`, `maze-libgdx/readme.md`, `maze-javafx-backend/readme.md` all updated; merge conflict resolution preserved both F25 and incoming test-section additions |
 | **WR-19** | Never ask permission to continue; ask decisive questions directly | Done |
 | **WR-20** | Review Actions/pipeline for errors and fix | Done — all CI runs confirmed green |
 | **WR-21** | No hard-coded OS-specific paths | Done — no paths introduced; image paths come from the model |
