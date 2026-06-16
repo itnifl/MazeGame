@@ -132,3 +132,24 @@ mvn -pl maze-javafx-backend -am clean verify
 ## Tests
 
 This module owns its own tests under `maze-javafx-backend/src/test`.
+
+### Action-layer tests
+
+- `GameOverActionTest` — verifies `startGameOverMusic()` uses the correct channel and resource, and that repeated calls each produce an audio invocation.
+- `WinGameActionTest` — verifies construction succeeds and that `WinGame()` stops `IN_GAME_MUSIC` before the null-scene early-return guard.
+- `StartScreenActionTest` — verifies `Load()` without a scene produces zero stop calls, and null-root handling does not throw.
+
+### Coordinator tests (require `Platform.startup()`)
+
+- `FxHudCoordinatorTest` — 6 tests for `setMessage`, empty-string clear, null-supplier guard, `dispose`, duration set, and message replacement.
+- `FxPathHintCoordinatorTest` — 5 tests for `refreshPathCanvas`, enemy-drawer invocation, global-alpha reset, null-canvas guard, and `dispose`.
+- `FxDifficultyPickerSupportTest` — 4 tests for the extracted `resolvePickResult(...)` routing logic without real JavaFX dialogs.
+
+### Character tests
+
+- `ZombieCharacterTest` — construction, `getDamage`, partial HP subtraction, audio-on-overlap, death-subscriber management, and `getModel`.
+- `PumpkinBomberCharacterTest` — construction, `getDamage`, partial HP subtraction, `setHitPoints`/`addHitPoints`, `doPositionEvaluation` no-throw, and `getModel`.
+
+### Test doubles (`src/test/java/main/game/maze`)
+
+- `SpyActionSink` — records all `ActionSink` method calls for verifying command dispatch without real side-effects. Must stay in package `main.game.maze` to access the package-private `ActionSink` interface.

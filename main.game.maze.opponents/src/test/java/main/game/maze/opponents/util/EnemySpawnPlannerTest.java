@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -203,6 +204,62 @@ class EnemySpawnPlannerTest {
         assertEquals(BehaviorType.WANDER,
                 EnemySpawnPlanner.resolveRuntimeBehaviorWithAggressiveCap(
                         BehaviorType.AGGRESSIVE, hard, 99, seeded));
+    }
+
+    // -----------------------------------------------------------------------
+    // clampToCapLimit — F8 enforcement
+    // -----------------------------------------------------------------------
+
+    @Test
+    void clampToCapLimit_requestedBelowCap_unchanged() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
+        assertEquals(2, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 2, caps));
+    }
+
+    @Test
+    void clampToCapLimit_requestedEqualsCap_unchanged() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
+        assertEquals(3, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 3, caps));
+    }
+
+    @Test
+    void clampToCapLimit_requestedExceedsCap_clamped() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
+        assertEquals(3, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 5, caps));
+    }
+
+    @Test
+    void clampToCapLimit_zeroCap_returnsZero() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.PUMPKINBOMBER, 0);
+        assertEquals(0, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.PUMPKINBOMBER, 4, caps));
+    }
+
+    @Test
+    void clampToCapLimit_noCapForType_returnsRequested() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
+        assertEquals(7, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.GHOST, 7, caps));
+    }
+
+    @Test
+    void clampToCapLimit_emptyCaps_returnsRequested() {
+        assertEquals(5, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 5, Map.of()));
+    }
+
+    @Test
+    void clampToCapLimit_nullCaps_returnsRequested() {
+        assertEquals(5, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, 5, null));
+    }
+
+    @Test
+    void clampToCapLimit_negativeRequested_returnsZero() {
+        Map<EnemyTypes, Integer> caps = capsMap(EnemyTypes.ZOMBIE, 3);
+        assertEquals(0, EnemySpawnPlanner.clampToCapLimit(EnemyTypes.ZOMBIE, -1, caps));
+    }
+
+    private static Map<EnemyTypes, Integer> capsMap(EnemyTypes type, int cap) {
+        EnumMap<EnemyTypes, Integer> m = new EnumMap<>(EnemyTypes.class);
+        m.put(type, cap);
+        return m;
     }
 
     private static void addCap(Difficulty d, EnemyTypes type, int max) {
