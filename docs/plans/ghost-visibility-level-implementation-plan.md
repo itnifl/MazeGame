@@ -332,10 +332,10 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Done — 608 tests, 0 failures across all 4 modules |
+| **WR-6** | All tests pass before commit | Done — 170 tests (4 game modules), 0 failures across all commits |
 | **WR-7** | Run ALL tests before commit | Done — full suite green before each commit |
 | **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
-| **WR-9** | Read PR comments and resolve before proceeding | Done — two CodeRabbit review rounds addressed and replied to |
+| **WR-9** | Read PR comments and resolve before proceeding | Done — three CodeRabbit review rounds addressed and replied to |
 | **WR-10** | Work on feature branch, never commit to main | Done — branch `feature/workOnUnimplemetedFeature` |
 | **WR-11** | Use GitHub API to manage issues/PRs | Done — GitHub API used to read and reply to all review comments |
 | **WR-12** | GitHub Copilot may assist; all output must be reviewed | Done |
@@ -374,7 +374,7 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **CRR-23** | Third pass: code smells, DRY, KISS | Done — magic number eliminated; duplicate service calls removed |
 | **CRR-24** | Fourth pass: hard-coded paths | Done — clean; no OS-specific or absolute paths |
 | **CRR-25** | Fix all issues found and re-review | Done — all four-pass findings fixed immediately |
-| **CRR-26** | Comment and resolve all code review comments | Done — all 7 CodeRabbit comments replied to across 2 review rounds |
+| **CRR-26** | Comment and resolve all code review comments | Done — all CodeRabbit comments replied to across 3 review rounds |
 | **CRR-27** | Suggestions for DDD, 12-Factor App, observability | Done — SR-51 (DSL config/12-Factor), SR-52 (HUD/DDD), SR-53 (observability) added to `suggested-requirements.md` |
 | **DOD-1** | Present this compliance table | Done |
 | **DOD-2** | Every WR, CRR, and DOD fully executed | Done |
