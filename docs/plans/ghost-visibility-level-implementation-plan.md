@@ -5,7 +5,7 @@
 **Source:** `opponents.ecore` — `Ghost.visibilityLevel` (default 100); `MazeDsl.xtext` — `GhostSpecifics.visibilityLevel`  
 **Backend:** both (JavaFX and libGDX)  
 **Target:** JavaFX (`maze-javafx-backend`) & libGDX (`maze-libgdx`)  
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-18
 
 ---
 
@@ -332,7 +332,7 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Done — 207 tests (4 game modules), 0 failures across all commits |
+| **WR-6** | All tests pass before commit | Done — 219 tests (game modules), 0 failures across all commits (includes 10 new regression tests for BUG-1 and BUG-2) |
 | **WR-7** | Run ALL tests before commit | Done — full suite green before each commit; merge conflicts resolved and suite re-verified |
 | **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
 | **WR-9** | Read PR comments and resolve before proceeding | Done — three CodeRabbit review rounds addressed and replied to |
@@ -387,3 +387,29 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 - **DDD:** `visibilityLevel` is a value object property of the `Ghost` aggregate. Consider surfacing a `GhostAppearance` value record that bundles `visibilityLevel` + `imagePath` to make the rendering contract explicit and testable in isolation from the EMF model.
 - **12-Factor (config):** `visibilityLevel` is currently baked into XMI. Once F16 (DSL loader) is complete, it should be readable from the `.mazedsl` config file as an environment-level input (Factor III: Config), enabling level designers to change ghost transparency without recompiling.
 - **Observability (implemented — SR-53):** `GhostNonTangibilityService.calculateOpacity(double, int)` emits a structured `FINE`-level log entry whenever the phasing clamp is active and the returned opacity deviates by more than 5% from `baseOpacity` (`visibilityLevel / 100.0`). The log includes `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. The emission is guarded with `LOGGER.isLoggable(Level.FINE)` so no `String` allocation occurs on the hot path when the log level is disabled.
+
+---
+
+## 8. Post-F25 Bug Fixes (2026-06-18)
+
+Two runtime bugs discovered after the F25 merge were fixed in the same branch as part of the ongoing feature work.
+
+### BUG-1 — WallMaterialBaseType not found at runtime (JavaFX no walls; libGDX crash)
+
+**Root cause:** `main.game.maze.walls` uses `<packaging>eclipse-plugin</packaging>`. Maven's `copy-dependencies` and VS Code's Java extension do not reliably resolve `eclipse-plugin`-packaged modules as transitive dependencies. `WallRegistry.<clinit>` (generated code in `maze-module-generator`) references `WallMaterialBaseType.DIRT/WOOD/STEEL` at class-load time. When the class is missing, `WallRegistry` throws `ExceptionInInitializerError`, which propagated through `FxGameSessionBootstrapper.setup()` before `opponentSpawner.accept()` was reached — killing both wall rendering **and** enemy spawning simultaneously.
+
+**Fixes applied:**
+1. Added `main.game.maze.walls` as an explicit `<dependency>` in `maze-javafx-backend/pom.xml` and `maze-libgdx/pom.xml`. Explicit declaration forces both Maven's `copy-dependencies` and VS Code's classpath resolution to include the artifact.
+2. Added a try/catch for `ExceptionInInitializerError | NoClassDefFoundError` around `mazeCanvasRenderer.drawCanvas(...)` in `FxGameSessionBootstrapper.setup()`. If the classpath is still broken, the game falls back to a blank (transparent) wall canvas and logs a `SEVERE` entry instead of aborting — ensuring enemy spawning always proceeds regardless of the wall-canvas outcome.
+
+**Regression tests added:** `FxMazeCanvasRendererTest` (6 tests) — verifies `WallRegistry` initializes without error, exposes at least one registered material, `get("DIRT_BASIC")` returns non-null, and `drawCanvas` completes without throwing for empty walls, unknown difficulty, and null difficulty supplier.
+
+### BUG-2 — JavaFX no enemies (spawnByTarget single-attempt bug)
+
+**Root cause:** `OpponentRuntimeFactory.spawnByTarget` picked exactly one random candidate per spawn slot using `ThreadLocalRandom.current().nextInt(candidates.size())`. If that single pick's `effectiveThreat` was 0 or exceeded the remaining threat budget, `picked` remained null and the code `break`-ed out of the entire inner `for (int i = 0; i < toSpawn; i++)` loop — leaving 0 enemies spawned for that type even when other valid candidates existed in the pool.
+
+In practice this bug was masked when all enabled enemies had `effectiveThreat = 1` and the budget was large, but it would silently manifest whenever a high-threat enemy template was the first random pick with a tight budget.
+
+**Fix applied:** Replaced the single random-pick with a full candidate sweep: `candidates` is copied into a new `ArrayList`, shuffled with `Collections.shuffle(shuffled, ThreadLocalRandom.current())`, and then iterated in full. The first template whose `effectiveThreat` fits within the remaining budget is picked and copied via `EcoreUtil.copy`. Only after exhausting the entire shuffled list without a fit does the loop break.
+
+**Regression tests added:** `OpponentRuntimeFactorySpawnTest` (6 tests) — verifies all slots filled when all candidates fit, fitting candidate always found in a mixed pool (regression for single-attempt bug), zero spawns when no candidate fits, cap enforcement, multi-type spawning, and integration via `instantiateFromModel`.

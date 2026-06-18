@@ -46,6 +46,16 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- Explicit declaration ensures WallMaterialBaseType is on the classpath.
+         WallRegistry (generated) references this class at static-init time; without
+         an explicit dep, eclipse-plugin packaging prevents transitive resolution in
+         VS Code's Java extension and maven-dependency-plugin copy-dependencies. -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.walls</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- mazeworld bundle for maze data model -->
     <dependency>
       <groupId>main.game.maze</groupId>

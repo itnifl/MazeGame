@@ -2,6 +2,7 @@ package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -243,22 +244,22 @@ private static double spawnByTarget(
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;
 
+            // Shuffle candidates so each spawn slot gets a different random ordering.
+            // Iterating the full shuffled list means we try every available template
+            // before giving up — a single bad random pick no longer blocks all spawns.
+            List<CharacterType> shuffled = new ArrayList<>(candidates);
+            Collections.shuffle(shuffled, ThreadLocalRandom.current());
+
             CharacterType picked = null;
+            for (CharacterType template : shuffled) {
+                double effThreat = template.getEffectiveThreat();
+                if (effThreat > 0 && effThreat <= remaining) {
+                    picked = EcoreUtil.copy(template);
+                    break;
+                }
+            }
 
-            // Try to pick a fitting candidate at random
-          
-            int index = ThreadLocalRandom.current().nextInt(candidates.size());
-            CharacterType template = candidates.get(index);   // don't remove yet
-
-            double effThreat = template.getEffectiveThreat();
-            if (effThreat > 0 && effThreat <= remaining) {
-                // Make a *copy* so we don't mutate the template in the pool
-                // Replace this with your actual copy mechanism
-                picked = EcoreUtil.copy(template); 
-                
-            } 
-            
-            if (picked == null) break; // no suitable options left
+            if (picked == null) break; // no candidate fits within the remaining threat budget
 
             // apply difficulty multipliers
             setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);

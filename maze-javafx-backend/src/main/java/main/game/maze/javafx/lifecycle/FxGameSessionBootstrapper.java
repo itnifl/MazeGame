@@ -126,7 +126,15 @@ public final class FxGameSessionBootstrapper {
         player.setHitPoints(config.health());
 
         // Canvases — order matters for rendering (maze at index 0, overlays above)
-        Canvas mazeCanvas = mazeCanvasRenderer.drawCanvas(maze.getMazeVectors());
+        Canvas mazeCanvas;
+        try {
+            mazeCanvas = mazeCanvasRenderer.drawCanvas(maze.getMazeVectors());
+        } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
+            LOGGER.log(Level.SEVERE,
+                    "WallRegistry static initializer failed — main.game.maze.walls may be missing from classpath. "
+                    + "Falling back to blank wall canvas.", e);
+            mazeCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
+        }
         gameBoard.getChildren().add(0, mazeCanvas);
 
         Canvas pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
