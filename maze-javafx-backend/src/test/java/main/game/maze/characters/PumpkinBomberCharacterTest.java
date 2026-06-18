@@ -1,17 +1,34 @@
 package main.game.maze.characters;
 
+import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
+import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.PumpkinBomber;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PumpkinBomberCharacterTest {
+
+    @BeforeAll
+    static void initFx() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException alreadyStarted) {
+            latch.countDown();
+        }
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "JavaFX startup timed out");
+    }
 
     @AfterEach
     void cleanup() {
@@ -100,6 +117,17 @@ class PumpkinBomberCharacterTest {
         Rectangle gfx = new Rectangle(16, 16);
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
         assertDoesNotThrow(() -> pbc.addDeathNotificationSubscriber(entity -> {}));
+    }
+
+    // PumpkinBomberCharacter must implement IMovingComputerCharacter so that
+    // OpponentRuntimeFactory.registerPumpkinBomberCharacter() can call
+    // registrar.registerComputerCharacter() — regression guard against stale
+    // "registration deferred" comment re-appearing.
+    @Test
+    void pumpkinBomberCharacter_implementsIMovingComputerCharacter() {
+        assertTrue(IMovingComputerCharacter.class.isAssignableFrom(PumpkinBomberCharacter.class),
+                "PumpkinBomberCharacter must implement IMovingComputerCharacter "
+                + "so it can be registered with EnemyRegistrar and participate in the movement loop");
     }
 
     // getModel() returns the model passed at construction.
