@@ -52,7 +52,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-76** *(Observability)*: `CompositionResolverImpl.resolve(...)` should emit a structured trace log (profile name → final composition map) at DEBUG level so difficulty tuning in QA is auditable without a debugger.
 - **SR-77** *(Observability)*: `GdxGameCombatAndEnemyFlowSupport.triggerWin(...)` should emit a structured event (timestamp, player position, score) to an optional event sink so win-condition analytics can be collected without modifying game logic.
 
-### Test infrastructure / JaCoCo coverage gate (from branch `feature/improveTestCoverage2`)
+### Test infrastructure / JaCoCo coverage gate (from branch `feature/workOnUnimplemetedFeature`)
 
 - **SR-83** *(DDD, Modularity)*: `CapturingUiScheduler` and other shared test doubles (`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`) should be consolidated into a dedicated `maze-test-util` module so every frontend module can import them without duplicating the helper package in each module's test tree.
 
@@ -61,6 +61,10 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-85** *(Observability)*: Upload JaCoCo HTML reports as a CI build artifact so code coverage trends are visible per run in the GitHub Actions summary without downloading the JAR or running locally.
 
 - **SR-86** *(Observability)*: Set per-module JaCoCo thresholds in a dedicated Maven property (e.g., `jacoco.line.minimum`) so the threshold for GL-bound modules like `maze-libgdx` can be adjusted in one place without editing XML execution configurations directly.
+
+- **SR-91** *(12-Factor, Dev/Prod Parity)*: `OpponentRuntimeFactorySpawnTest` calls `OclBootstrap.init()` which requires the OCL ecore delegate JAR — a system-scope dependency only available after Tycho builds the Eclipse plug-ins. Introduce a Maven test profile or a module-level `pom.xml` configuration that copies the OCL jar into the test classpath for `maze-javafx-backend`, so developers can run the full test suite locally without CI. Until then, null-guard paths (already covered by `OpponentRuntimeFactoryNullGuardTest`) provide local coverage.
+
+- **SR-92** *(Observability)*: JaCoCo line-coverage thresholds should be split per package within `maze-javafx-backend` (e.g., separate minimums for `characters`, `javafx.controller`, `runtime`) so coverage regressions in a single package are immediately identifiable rather than masked by a module-level aggregate.
 
 ### BUG-1 / BUG-2 post-fix — DDD / 12-Factor / Observability suggestions
 

@@ -401,3 +401,4 @@ identifier so the gap analysis stays in sync with the implementation.
 * Refactor score handling out of CharacterActionScreens
 * Implement stronger algorithms for gameplay and movement
 * The whole Eclipse MDD model is not implemented (loot items, ranged attacks etc).
+* Both javaFX and libgdx implementations must substract death penalty and damage penalty in both win and game over screens.
