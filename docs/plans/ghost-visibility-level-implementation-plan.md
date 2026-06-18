@@ -332,10 +332,10 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Done — 219 tests (game modules), 0 failures across all commits (includes 12 new regression tests for BUG-1 and BUG-2) |
+| **WR-6** | All tests pass before commit | Done — 217 tests (javafx-backend) + 299 tests (maze-libgdx), 0 failures; total includes 12 BUG-1/BUG-2 regression tests + 8 new guard/wall-resolution tests (commits a01ba6a, cc29a08) |
 | **WR-7** | Run ALL tests before commit | Done — full suite green before each commit; merge conflicts resolved and suite re-verified |
 | **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
-| **WR-9** | Read PR comments and resolve before proceeding | Done — three CodeRabbit review rounds addressed and replied to |
+| **WR-9** | Read PR comments and resolve before proceeding | Done — four CodeRabbit review rounds addressed and replied to (latest: assertSame identity check + NoClassDefFoundError branch parity, resolved in cc29a08) |
 | **WR-10** | Work on feature branch, never commit to main | Done — branch `feature/workOnUnimplemetedFeature` |
 | **WR-11** | Use GitHub API to manage issues/PRs | Done — GitHub API used to read and reply to all review comments |
 | **WR-12** | GitHub Copilot may assist; all output must be reviewed | Done |
