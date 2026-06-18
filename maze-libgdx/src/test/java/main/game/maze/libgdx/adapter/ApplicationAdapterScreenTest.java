@@ -1,6 +1,5 @@
 package main.game.maze.libgdx.adapter;
 
-import main.game.maze.libgdx.adapter.ApplicationAdapterScreen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.badlogic.gdx.ApplicationAdapter;

@@ -124,6 +124,7 @@
           <executions>
             <execution>
               <id>jacoco-prepare-agent</id>
+              <phase>initialize</phase>
               <goals><goal>prepare-agent</goal></goals>
             </execution>
             <execution>

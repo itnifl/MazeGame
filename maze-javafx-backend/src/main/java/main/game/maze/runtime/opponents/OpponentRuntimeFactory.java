@@ -348,8 +348,8 @@ private static double spawnByTarget(
                 Node graphicsNode = createCharacterGraphics(b, StageConstants.PumpkinBomberCharacterXYSize);
                 graphicsNode.setLayoutX(spawnX);
                 graphicsNode.setLayoutY(spawnY);
-                new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
-                // PumpkinBomber does not yet implement IMovingComputerCharacter — registration deferred
+                var pumpkinBomberCharacter = new PumpkinBomberCharacter(graphicsNode, spawnX, spawnY, b);
+                registrar.registerComputerCharacter(pumpkinBomberCharacter, graphicsNode);
             } catch (Exception fxException) {
                 _logger.log(Level.SEVERE, "Failed to create or register a PumpkinBomberCharacter.", fxException);
             }
