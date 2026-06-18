@@ -42,7 +42,17 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <!-- Preserve OSGi bundle headers so Tycho pomDependencies=consider
+                 recognises this plain-JAR module as an OSGi bundle. -->
+            <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
