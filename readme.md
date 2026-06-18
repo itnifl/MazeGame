@@ -19,6 +19,7 @@
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
+* 🗄️ [maze-common-backend](maze-common-backend/readme.md)
 * 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md)
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
@@ -38,7 +39,8 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 ![Tycho](https://img.shields.io/badge/Tycho-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![Eclipse](https://img.shields.io/badge/Eclipse-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white)
-![JUnit5](https://img.shields.io/badge/JUnit5-%2325A162.svg?style=for-the-badge&logo=junit5&logoColor=white) <br/>
+![JUnit5](https://img.shields.io/badge/JUnit5-%2325A162.svg?style=for-the-badge&logo=junit5&logoColor=white)
+![JaCoCo](https://img.shields.io/badge/JaCoCo_coverage-60%25_min-brightgreen?style=for-the-badge) <br/>
 ![MDD](https://img.shields.io/badge/Model_Driven_Dev-%23555555.svg?style=for-the-badge)
 ![Xtext](https://img.shields.io/badge/Xtext-%23F7941E.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![FreeMarker](https://img.shields.io/badge/FreeMarker-%23E34F26.svg?style=for-the-badge&logo=apache&logoColor=white)

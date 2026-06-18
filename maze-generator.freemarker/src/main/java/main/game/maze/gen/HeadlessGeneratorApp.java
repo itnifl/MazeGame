@@ -1,9 +1,6 @@
 package main.game.maze.gen;
 ///maze-generator.acceleo/src/main/game/maze/gen/HeadlessGeneratorApp.java
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;

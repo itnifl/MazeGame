@@ -1,9 +1,6 @@
 package main.game.maze.libgdx.adapter;
 
-import main.game.maze.libgdx.adapter.*;
-import main.game.maze.libgdx.controller.*;
-import main.game.maze.libgdx.helper.*;
-import main.game.maze.libgdx.service.*;
+import main.game.maze.libgdx.adapter.ApplicationAdapterScreen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.badlogic.gdx.ApplicationAdapter;

@@ -111,3 +111,4 @@ build.log
 .github/copilot-instructions.md
 .vscode/maze.launch.env
 CLAUDE.md
+.continue/permissions.yaml

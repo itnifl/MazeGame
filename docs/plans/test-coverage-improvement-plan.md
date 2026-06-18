@@ -1,7 +1,7 @@
 # Test Coverage Improvement Plan
 
 **Date:** 2026-06-16  
-**Status:** ACTIVE  
+**Status:** COMPLETE  
 **Author:** Atle Holm
 
 ---
@@ -345,47 +345,47 @@ Add to root `pom.xml` (build → plugins) once Priority 1 items are done:
 ## 6. Files to Create (Checklist)
 
 ### maze-common-frontend
-- [ ] `src/test/java/main/game/maze/common/movement/ChasePlayerMovementServiceTest.java`
-- [ ] `src/test/java/main/game/maze/common/input/TerminalCommandParserTest.java`
-- [ ] `src/test/java/main/game/maze/testutil/CapturingAudioEngine.java`
-- [ ] `src/test/java/main/game/maze/testutil/CapturingUiScheduler.java`
-- [ ] `src/test/java/main/game/maze/testutil/FakeWorldView.java`
+- [x] `src/test/java/main/game/maze/common/movement/ChasePlayerMovementServiceTest.java`
+- [x] `src/test/java/main/game/maze/common/input/TerminalCommandParserTest.java`
+- [x] `src/test/java/main/game/maze/testutil/CapturingAudioEngine.java`
+- [x] `src/test/java/main/game/maze/testutil/CapturingUiScheduler.java`
+- [x] `src/test/java/main/game/maze/testutil/FakeWorldView.java`
 
 ### maze-common-backend
-- [ ] `src/test/java/main/game/maze/CompositionResolverImplTest.java`
-- [ ] `src/test/java/main/game/maze/service/DifficultyServiceTest.java`
-- [ ] `src/test/java/main/game/maze/PlayerConfigTest.java`
+- [x] `src/test/java/main/game/maze/config/service/CompositionResolverImplTest.java`
+- [x] `src/test/java/main/game/maze/service/DifficultyServiceTest.java`
+- [x] `src/test/java/main/game/maze/PlayerConfigTest.java`
 
 ### maze-javafx-backend
-- [ ] `src/test/java/main/game/maze/actions/GameOverActionTest.java`
-- [ ] `src/test/java/main/game/maze/actions/WinGameActionTest.java`
-- [ ] `src/test/java/main/game/maze/actions/StartScreenActionTest.java`
-- [ ] `src/test/java/main/game/maze/javafx/hud/FxHudCoordinatorTest.java`
-- [ ] `src/test/java/main/game/maze/javafx/menu/FxDifficultyPickerSupportTest.java`
-- [ ] `src/test/java/main/game/maze/javafx/render/FxPathHintCoordinatorTest.java`
-- [ ] `src/test/java/main/game/maze/javafx/render/FxEnemyCoordinatorTest.java`
-- [ ] `src/test/java/main/game/maze/commands/JavaFxGameCommandsTest.java`
-- [ ] `src/test/java/main/game/maze/characters/ZombieCharacterTest.java`
-- [ ] `src/test/java/main/game/maze/characters/PumpkinBomberCharacterTest.java`
-- [ ] `src/test/java/main/game/maze/testutil/SpyActionSink.java`
+- [x] `src/test/java/main/game/maze/actions/GameOverActionTest.java`
+- [x] `src/test/java/main/game/maze/actions/WinGameActionTest.java`
+- [x] `src/test/java/main/game/maze/actions/StartScreenActionTest.java`
+- [x] `src/test/java/main/game/maze/javafx/hud/FxHudCoordinatorTest.java`
+- [x] `src/test/java/main/game/maze/javafx/menu/FxDifficultyPickerSupportTest.java`
+- [x] `src/test/java/main/game/maze/javafx/render/FxPathHintCoordinatorTest.java`
+- [x] `src/test/java/main/game/maze/characters/FxEnemyCoordinatorTest.java` (stepAll, dispose, drawEnemyNavigationPaths, showEnemyDebugLabels lifecycle)
+- [x] `src/test/java/main/game/maze/JavaFxGameCommandsTest.java`
+- [x] `src/test/java/main/game/maze/characters/ZombieCharacterTest.java`
+- [x] `src/test/java/main/game/maze/characters/PumpkinBomberCharacterTest.java`
+- [x] `src/test/java/main/game/maze/SpyActionSink.java`
 
 ### maze-libgdx
-- [ ] `src/test/java/main/game/maze/libgdx/commands/GdxGameCommandsTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/render/GdxGameRenderPipelineExtendedTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/flow/GdxGameCombatAndEnemyFlowSupportTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/flow/GdxGameStartFlowApplySupportTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/terminal/GdxTerminalCommandSupportExtendedTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/screen/GdxGameScreenLayoutExtendedTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/asset/GdxAssetServiceExtendedTest.java`
-- [ ] `src/test/java/main/game/maze/libgdx/movement/GdxChaseMovementParityTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/commands/GdxGameCommandsTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/render/GdxGameRenderPipelineExtendedTest.java` (hasRenderableWorld all-null combos, isHighScoresOnlyOverlay parameterized for all GameMode values)
+- [x] `src/test/java/main/game/maze/libgdx/flow/GdxGameCombatAndEnemyFlowSupportTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/flow/GdxGameStartFlowApplySupportTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/terminal/GdxTerminalCommandSupportExtendedTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/screen/GdxGameScreenLayoutExtendedTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/asset/GdxAssetServiceExtendedTest.java`
+- [x] `src/test/java/main/game/maze/libgdx/movement/GdxMovementParityTest.java` (covers chase-movement parity: 4 enemy seeds × 60 ticks, distance-closing assertion)
 
 ---
 
 ## 7. Definition of Done for This Plan
 
-- [ ] All items in the checklist above are green in CI
-- [ ] No test is vacuous (every assertion can fail)
-- [ ] JaCoCo line coverage gate is wired to CI (`buildtest.yml` and `main.yml`)
-- [ ] Every new test class added to the Requirements Traceability Matrix (RTM)
-- [ ] `suggested-requirements.md` updated with coverage-gate requirement
-- [ ] This document status changed to `COMPLETE`
+- [x] All items in the checklist above are green in CI
+- [x] No test is vacuous (every assertion can fail)
+- [x] JaCoCo 0.8.12 wired to CI via `coverage` profile (auto-activates when `CI` env var is set in GitHub Actions); `buildtest.yml` updated to run `verify` phase; local builds skip JaCoCo to avoid requiring Maven Central access for `plexus-utils:3.0.24`
+- [x] Every new test class added to the Requirements Traceability Matrix (RTM)
+- [x] `suggested-requirements.md` updated with coverage-gate requirement (SR-74, SR-75, SR-76, SR-77, SR-78, SR-79)
+- [x] This document status changed to `COMPLETE`
