@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -81,11 +82,13 @@ class FxGameSessionBootstrapperCanvasGuardTest {
     @Test
     @DisplayName("returns supplier canvas unchanged when no error occurs")
     void passesSupplierCanvasThrough() throws Exception {
+        AtomicReference<Canvas> expectedRef = new AtomicReference<>();
         AtomicReference<Canvas> result = new AtomicReference<>();
         CountDownLatch done = new CountDownLatch(1);
         Platform.runLater(() -> {
             try {
                 Canvas expected = new Canvas(1024, 768);
+                expectedRef.set(expected);
                 result.set(FxGameSessionBootstrapper.drawCanvasOrFallback(
                         () -> expected,
                         100, 100));
@@ -95,6 +98,7 @@ class FxGameSessionBootstrapperCanvasGuardTest {
         });
         assertTrue(done.await(5, TimeUnit.SECONDS), "guard must complete within 5 s");
         assertNotNull(result.get());
+        assertSame(expectedRef.get(), result.get(), "supplier canvas instance must be returned unchanged");
         assertEquals(1024.0, result.get().getWidth(),  "supplier canvas dimensions must be preserved");
         assertEquals(768.0,  result.get().getHeight(), "supplier canvas dimensions must be preserved");
     }

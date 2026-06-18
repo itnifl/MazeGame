@@ -107,6 +107,22 @@ class RuntimeVisualModelLoaderTest {
     }
 
     @Test
+    @DisplayName("resolveWallDefinition returns null when WallRegistry.get throws NoClassDefFoundError")
+    void resolveWallDefinitionReturnsNullOnNoClassDefFoundError() {
+        RuntimeVisualModelLoader loader = new RuntimeVisualModelLoader();
+
+        try (MockedStatic<WallRegistry> registry = Mockito.mockStatic(WallRegistry.class)) {
+            registry.when(() -> WallRegistry.get(anyString()))
+                    .thenAnswer(inv -> { throw new NoClassDefFoundError("simulated missing class"); });
+
+            WallRegistry.WallDefinition def =
+                    loader.resolveWallDefinition(null, MazeVisualStyleConfig.DEFAULT);
+
+            assertNull(def, "resolveWallDefinition must return null when WallRegistry throws NoClassDefFoundError");
+        }
+    }
+
+    @Test
     @DisplayName("load() uses DEFAULT_WALL_IMAGE when WallRegistry is unavailable")
     void loadUsesDefaultWallImageWhenRegistryUnavailable() {
         RuntimeVisualModelLoader loader = new RuntimeVisualModelLoader();
