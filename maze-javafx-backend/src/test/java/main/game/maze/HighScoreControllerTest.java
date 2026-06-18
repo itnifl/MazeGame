@@ -1,16 +1,27 @@
 package main.game.maze;
 
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
+
+import main.game.maze.game.score.FileHighScoreRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HighScoreControllerTest {
 
+    private static HighScoreController controllerWithTestScores() throws Exception {
+        URL resource = HighScoreControllerTest.class.getClassLoader().getResource("data/scores.txt");
+        assertNotNull(resource, "data/scores.txt must exist in test resources");
+        String path = Paths.get(resource.toURI()).toString();
+        return new HighScoreController(new FileHighScoreRepository(path));
+    }
+
     @Test
-    void CanReadHighScoresTest() {
-        HighScoreController controller = new HighScoreController();
+    void CanReadHighScoresTest() throws Exception {
+        HighScoreController controller = controllerWithTestScores();
         controller.initialize(null, null);
         var scores = controller.getScores();
 
