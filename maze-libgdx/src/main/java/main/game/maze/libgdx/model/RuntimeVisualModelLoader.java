@@ -377,12 +377,19 @@ public final class RuntimeVisualModelLoader {
     }
 
     private WallRegistry.WallDefinition resolveWallDefinition(Difficulty difficulty, MazeVisualStyleConfig visualStyle) {
-        String wallId = visualStyle.wallTypeIdForDifficultyName(difficultyName(difficulty));
-        WallRegistry.WallDefinition byStyle = WallRegistry.get(wallId);
-        if (byStyle != null) {
-            return byStyle;
+        try {
+            String wallId = visualStyle.wallTypeIdForDifficultyName(difficultyName(difficulty));
+            WallRegistry.WallDefinition byStyle = WallRegistry.get(wallId);
+            if (byStyle != null) {
+                return byStyle;
+            }
+            return WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName(difficulty)));
+        } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
+            LOGGER.log(Level.SEVERE,
+                    "WallRegistry static initializer failed — main.game.maze.walls may be missing from classpath. "
+                    + "Falling back to default wall image.", e);
+            return null;
         }
-        return WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName(difficulty)));
     }
 
     private static String difficultyName(Difficulty difficulty) {
