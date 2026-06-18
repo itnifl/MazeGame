@@ -244,20 +244,24 @@ private static double spawnByTarget(
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;
 
-            // Shuffle candidates so each spawn slot gets a different random ordering.
-            // Iterating the full shuffled list means we try every available template
-            // before giving up — a single bad random pick no longer blocks all spawns.
+            // Shuffle candidates for randomised tie-breaking when multiple
+            // templates share the minimum effective threat.
             List<CharacterType> shuffled = new ArrayList<>(candidates);
             Collections.shuffle(shuffled, ThreadLocalRandom.current());
 
-            CharacterType picked = null;
+            // Select the cheapest fitting template (minimum effectiveThreat that
+            // still fits in the remaining budget). Picking the smallest fit prevents
+            // early over-spending that would block later slots from being filled.
+            CharacterType bestFit = null;
+            double minFitThreat = Double.MAX_VALUE;
             for (CharacterType template : shuffled) {
                 double effThreat = template.getEffectiveThreat();
-                if (effThreat > 0 && effThreat <= remaining) {
-                    picked = EcoreUtil.copy(template);
-                    break;
+                if (effThreat > 0 && effThreat <= remaining && effThreat < minFitThreat) {
+                    bestFit = template;
+                    minFitThreat = effThreat;
                 }
             }
+            CharacterType picked = bestFit != null ? EcoreUtil.copy(bestFit) : null;
 
             if (picked == null) break; // no candidate fits within the remaining threat budget
 

@@ -168,8 +168,8 @@ class OpponentRuntimeFactorySpawnTest {
     void mixedCandidatesAlwaysPicksFittingOne() throws Exception {
         // 9 ghosts with effectiveThreat = round(10 * 100/100) = 10 — too large for remaining budget of 3
         // 1 ghost with effectiveThreat = round(1 * 100/100) = 1 — fits
-        // Bug: old code picks one at random; 9/10 chance of picking a non-fitter and breaking.
-        // Fix: iterates all; always finds the fitting ghost.
+        // Bug: old code picked one at random; 9/10 chance of selecting a non-fitter and breaking.
+        // Fix: min-threat-fit iterates all candidates and selects the cheapest that fits the budget.
         List<CharacterType> pool = new ArrayList<>();
         for (int i = 0; i < 9; i++) pool.add(enabledGhost(10.0, 100));
         pool.add(enabledGhost(1.0, 100));

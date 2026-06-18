@@ -332,7 +332,7 @@ Per **DOD-1**, all WR, CRR, and DOD items are listed with implementation status.
 | **WR-3** | Write tests before code (TDD) | Done — §4.1 specifies all tests with explicit assertions before code is authored |
 | **WR-4** | Update the RTM | Done — §5.2 specifies the exact RTM row to add |
 | **WR-5** | Update requirements and quality attributes | Done — §5.3 adds suggested requirements |
-| **WR-6** | All tests pass before commit | Done — 219 tests (game modules), 0 failures across all commits (includes 10 new regression tests for BUG-1 and BUG-2) |
+| **WR-6** | All tests pass before commit | Done — 219 tests (game modules), 0 failures across all commits (includes 12 new regression tests for BUG-1 and BUG-2) |
 | **WR-7** | Run ALL tests before commit | Done — full suite green before each commit; merge conflicts resolved and suite re-verified |
 | **WR-8** | Local code review before commit | Done — four-pass review executed (CRR-20–24) |
 | **WR-9** | Read PR comments and resolve before proceeding | Done — three CodeRabbit review rounds addressed and replied to |
@@ -400,9 +400,9 @@ Two runtime bugs discovered after the F25 merge were fixed in the same branch as
 
 **Fixes applied:**
 1. Changed `main.game.maze.walls` `<packaging>` from `eclipse-plugin` to `jar`. The `eclipse-plugin` lifecycle caused three separate failures: VS Code's Java extension did not resolve it transitively; `maven-dependency-plugin copy-dependencies` resolved it as Tycho's internal `.osgi.bundle` type and crashed `make-javafx.ps1`; and the Tycho build was 2× slower with no benefit (no OSGi-specific configuration existed). Changing to `jar` eliminates all three.
-2. Added explicit `<dependency>` on `main.game.maze.walls` in `maze-javafx-backend/pom.xml` and `maze-libgdx/pom.xml` as belt-and-suspenders to ensure classpath inclusion even if transitive resolution is incomplete.
-3. Added a try/catch for `ExceptionInInitializerError | NoClassDefFoundError` around `mazeCanvasRenderer.drawCanvas(...)` in `FxGameSessionBootstrapper.setup()` — ensures enemy spawning still runs even if wall rendering fails.
-4. Added the same try/catch to `RuntimeVisualModelLoader.resolveWallDefinition(...)` in libGDX — returns `null` (falls back to `DEFAULT_WALL_IMAGE`) instead of crashing the entire session.
+2. Included explicit `<dependency>` on `main.game.maze.walls` in `maze-javafx-backend/pom.xml` and `maze-libgdx/pom.xml` as belt-and-suspenders to ensure classpath inclusion even if transitive resolution is incomplete.
+3. Wrapped `mazeCanvasRenderer.drawCanvas(...)` in `FxGameSessionBootstrapper.setup()` with a try/catch for `ExceptionInInitializerError | NoClassDefFoundError` — ensures enemy spawning still runs even if wall rendering fails.
+4. Applied the same defensive catch to `RuntimeVisualModelLoader.resolveWallDefinition(...)` in libGDX — returns `null` (falls back to `DEFAULT_WALL_IMAGE`) instead of crashing the entire session.
 
 **Regression tests added:** `FxMazeCanvasRendererTest` (6 tests) — verifies `WallRegistry` initializes without error, exposes at least one registered material, `get("DIRT_BASIC")` returns non-null, and `drawCanvas` completes without throwing for empty walls, unknown difficulty, and null difficulty supplier.
 
