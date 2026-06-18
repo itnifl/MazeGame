@@ -61,10 +61,9 @@ public final class CapturingUiScheduler implements IUiScheduler {
     public void flush() {
         if (!inline) {
             int end = captured.size();
-            for (int i = flushedUpTo; i < end; i++) {
-                captured.get(i).run();
+            for (; flushedUpTo < end; flushedUpTo++) {
+                captured.get(flushedUpTo).run();
             }
-            flushedUpTo = end;
         }
     }
 

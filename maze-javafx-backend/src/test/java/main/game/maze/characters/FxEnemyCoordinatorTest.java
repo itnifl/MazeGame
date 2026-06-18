@@ -27,7 +27,7 @@ class FxEnemyCoordinatorTest {
         } catch (IllegalStateException alreadyStarted) {
             latch.countDown();
         }
-        assertTrue(latch.await(2, TimeUnit.SECONDS), "JavaFX startup timed out");
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "JavaFX startup timed out");
     }
 
     private static void runOnFx(Runnable r) throws Exception {
