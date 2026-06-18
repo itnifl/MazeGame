@@ -376,7 +376,7 @@ public final class RuntimeVisualModelLoader {
         return distanceSquared(px, py, cx, cy);
     }
 
-    private WallRegistry.WallDefinition resolveWallDefinition(Difficulty difficulty, MazeVisualStyleConfig visualStyle) {
+    WallRegistry.WallDefinition resolveWallDefinition(Difficulty difficulty, MazeVisualStyleConfig visualStyle) {
         try {
             String wallId = visualStyle.wallTypeIdForDifficultyName(difficultyName(difficulty));
             WallRegistry.WallDefinition byStyle = WallRegistry.get(wallId);
