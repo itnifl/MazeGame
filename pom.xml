@@ -112,6 +112,51 @@
             <requireJavaPackageImports>false</requireJavaPackageImports>
           </configuration>
         </plugin>
+
+        <!-- JaCoCo: version + shared config declared once here.
+             Each testable module (maze-common-frontend, maze-common-backend,
+             maze-javafx-backend, maze-libgdx) opts in by adding this plugin
+             to its own <plugins> section without repeating the config. -->
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+          <executions>
+            <execution>
+              <id>jacoco-prepare-agent</id>
+              <goals><goal>prepare-agent</goal></goals>
+            </execution>
+            <execution>
+              <id>jacoco-report</id>
+              <phase>verify</phase>
+              <goals><goal>report</goal></goals>
+            </execution>
+            <execution>
+              <id>jacoco-check</id>
+              <phase>verify</phase>
+              <goals><goal>check</goal></goals>
+              <configuration>
+                <rules>
+                  <rule>
+                    <element>BUNDLE</element>
+                    <limits>
+                      <limit>
+                        <counter>LINE</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.60</minimum>
+                      </limit>
+                    </limits>
+                  </rule>
+                </rules>
+                <excludes>
+                  <exclude>main/game/maze/difficulties/impl/**</exclude>
+                  <exclude>main/game/maze/opponents/impl/**</exclude>
+                  <exclude>main/game/maze/difficulties/util/**</exclude>
+                </excludes>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>   
@@ -153,6 +198,7 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
 </project>

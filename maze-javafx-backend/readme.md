@@ -176,6 +176,10 @@ This module owns its own tests under `maze-javafx-backend/src/test`.
 
 - `OpponentRuntimeFactorySpawnTest` — 6 tests verifying `spawnByTarget` fills all requested slots when all candidates fit, always finds a fitting candidate in a mixed pool (regression for single-attempt pick bug), returns 0 spawns when no candidate fits the budget, enforces per-type caps, fills both ghost and zombie slots independently, and that `instantiateFromModel` schedules at least one enemy with the default model.
 
+### Enemy coordinator tests (require `Platform.startup()`)
+
+- `FxEnemyCoordinatorTest` — 6 headless lifecycle tests using null-returning suppliers (no real scene graph): `stepAll` with no enemies, `reset`, `showEnemyDebugLabels` with null board (early-return guard), `drawEnemyNavigationPaths` with null maze (early-return guard), `dispose`, and `dispose` called twice (idempotent guard).
+
 ### Test doubles (`src/test/java/main/game/maze`)
 
 - `SpyActionSink` — records all `ActionSink` method calls for verifying command dispatch without real side-effects. Must stay in package `main.game.maze` to access the package-private `ActionSink` interface.

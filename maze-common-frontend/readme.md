@@ -110,3 +110,6 @@ singletons.
 
 - `CapturingAudioEngine` — `IAudioEngine` test double that records all `play`, `playLoop`, `stopChannel`, and `playRateLimited` calls; use `AudioEngine.set(...)` / `AudioEngine.reset()` in `@AfterEach`.
 - `FakeWorldView` — configurable `WorldView` stub for movement service tests; builder methods `playerAt(x,y)`, `bounds(w,h)`, `allBlocked()`, `blockAt(dir)`.
+- `CapturingUiScheduler` — `IUiScheduler` test double with two modes:
+  - **inline** (default, `new CapturingUiScheduler()`) — actions run immediately on the calling thread; both `runLater` and `runOnUiThread` execute and are tracked by `callCount()`.
+  - **deferred** (`new CapturingUiScheduler(false)`) — actions are captured but not run until `flush()` is called; `flush()` is idempotent (each call drains only newly-added actions). Inspect all submitted actions via `capturedActions()` and total count via `callCount()`.

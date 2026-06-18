@@ -167,6 +167,7 @@ mvn -pl maze-common-frontend,maze-libgdx -am test
 - [GdxTerminalCommandSupportExtendedTest](src/test/java/main/game/maze/libgdx/terminal/GdxTerminalCommandSupportExtendedTest.java) — null→NONE, alias parsing, all inputs non-null, `/sep` in helpText, unknown command has non-blank status, HELP has positive duration.
 - [GdxGameScreenLayoutExtendedTest](src/test/java/main/game/maze/libgdx/screen/GdxGameScreenLayoutExtendedTest.java) — 14 parameterized tests for strip bounds at 4 resolutions, HP/bottom-row/bottom-bar heights positive, hpBarBottomY in-window, strip width = window width.
 - [GdxAssetServiceExtendedTest](src/test/java/main/game/maze/libgdx/asset/GdxAssetServiceExtendedTest.java) — public API only (headless): null path guards, duplicate queue, multiple dispose, loadingProgress in [0,1], updateLoading no-assets returns true.
+- [GdxGameRenderPipelineExtendedTest](src/test/java/main/game/maze/libgdx/render/GdxGameRenderPipelineExtendedTest.java) — static helpers only (no GL context): all null combinations for `hasRenderableWorld` (5 tests), and `isHighScoresOnlyOverlay` for the `HIGH_SCORES` mode and all other `GameMode` values via `@ParameterizedTest @EnumSource(EXCLUDE)` (3 tests). GL-context operations (`render()`, `dispose()`) are excluded from headless CI.
 
 ## Coordinate system
 

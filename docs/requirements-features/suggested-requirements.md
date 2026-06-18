@@ -52,15 +52,25 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-76** *(Observability)*: `CompositionResolverImpl.resolve(...)` should emit a structured trace log (profile name → final composition map) at DEBUG level so difficulty tuning in QA is auditable without a debugger.
 - **SR-77** *(Observability)*: `GdxGameCombatAndEnemyFlowSupport.triggerWin(...)` should emit a structured event (timestamp, player position, score) to an optional event sink so win-condition analytics can be collected without modifying game logic.
 
+### Test infrastructure / JaCoCo coverage gate (from branch `feature/improveTestCoverage2`)
+
+- **SR-83** *(DDD, Modularity)*: `CapturingUiScheduler` and other shared test doubles (`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`) should be consolidated into a dedicated `maze-test-util` module so every frontend module can import them without duplicating the helper package in each module's test tree.
+
+- **SR-84** *(12-Factor, Dev/Prod Parity)*: Add a `<profile>` entry named `coverage-local` (activated by `-Pcoverage-local`) that mirrors the CI coverage profile so developers can run `mvn verify -Pcoverage-local` locally and reproduce exactly the JaCoCo gate checks that run in CI.
+
+- **SR-85** *(Observability)*: Upload JaCoCo HTML reports as a CI build artifact so code coverage trends are visible per run in the GitHub Actions summary without downloading the JAR or running locally.
+
+- **SR-86** *(Observability)*: Set per-module JaCoCo thresholds in a dedicated Maven property (e.g., `jacoco.line.minimum`) so the threshold for GL-bound modules like `maze-libgdx` can be adjusted in one place without editing XML execution configurations directly.
+
 ### BUG-1 / BUG-2 post-fix — DDD / 12-Factor / Observability suggestions
 
-- **SR-83** *(DDD)*: `WallRegistry` and `WallMaterialBaseType` are generated artifacts tightly coupled to the wall sub-domain. Introduce a `WallDomainService` façade that hides the static registry behind an injectable, mockable interface. This removes static dependency coupling from consumers (`FxGameSessionBootstrapper`, `RuntimeVisualModelLoader`) and aligns with DDD's domain-service pattern.
+- **SR-87** *(DDD)*: `WallRegistry` and `WallMaterialBaseType` are generated artifacts tightly coupled to the wall sub-domain. Introduce a `WallDomainService` façade that hides the static registry behind an injectable, mockable interface. This removes static dependency coupling from consumers (`FxGameSessionBootstrapper`, `RuntimeVisualModelLoader`) and aligns with DDD's domain-service pattern.
 
-- **SR-84** *(12-Factor, Config IV — Backing Services)*: Wall material image paths and `WallMaterialBaseType` constants are embedded in the EMF model and generated code. Externalising them to an env-overridable config file would let operators swap wall art sets without recompilation, aligning with 12-Factor principle IV.
+- **SR-88** *(12-Factor, Config IV — Backing Services)*: Wall material image paths and `WallMaterialBaseType` constants are embedded in the EMF model and generated code. Externalising them to an env-overridable config file would let operators swap wall art sets without recompilation, aligning with 12-Factor principle IV.
 
-- **SR-85** *(Observability)*: `FxGameSessionBootstrapper` and `RuntimeVisualModelLoader` catch `ExceptionInInitializerError` and log at SEVERE. A structured metric (e.g., a Micrometer counter `wall.registry.init.failures`) would let an ops dashboard detect misconfigured deployments before players notice broken rendering.
+- **SR-89** *(Observability)*: `FxGameSessionBootstrapper` and `RuntimeVisualModelLoader` catch `ExceptionInInitializerError` and log at SEVERE. A structured metric (e.g., a Micrometer counter `wall.registry.init.failures`) would let an ops dashboard detect misconfigured deployments before players notice broken rendering.
 
-- **SR-86** *(Observability)*: `OpponentRuntimeFactory.spawnByTarget` now shuffles candidates on every slot. Add a DEBUG-level log entry emitting the final spawn list (type, threat, slot count) per session so difficulty balancers can audit the result without attaching a debugger.
+- **SR-90** *(Observability)*: `OpponentRuntimeFactory.spawnByTarget` now shuffles candidates on every slot. Add a DEBUG-level log entry emitting the final spawn list (type, threat, slot count) per session so difficulty balancers can audit the result without attaching a debugger.
 
 ### DDD boundary suggestions
 

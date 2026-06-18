@@ -178,4 +178,50 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>coverage</id>
+      <activation>
+        <property><name>env.CI</name></property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <!-- Most libGDX rendering classes require a GL context and cannot be
+                 tested headlessly. The 35 % actual coverage is near the CI limit;
+                 use 0.30 to stay achievable while still guarding regressions. -->
+            <executions>
+              <execution>
+                <id>jacoco-check</id>
+                <phase>verify</phase>
+                <goals><goal>check</goal></goals>
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <limits>
+                        <limit>
+                          <counter>LINE</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.30</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                  <excludes>
+                    <exclude>main/game/maze/difficulties/impl/**</exclude>
+                    <exclude>main/game/maze/opponents/impl/**</exclude>
+                    <exclude>main/game/maze/difficulties/util/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
