@@ -199,6 +199,19 @@ them into the canonical 13-arg `EnemySpawn` constructor.
 
 ---
 
+## Wall registry resilience
+
+`RuntimeVisualModelLoader.resolveWallDefinition` wraps all access to
+`WallRegistry` in a `try/catch` for `ExceptionInInitializerError` and
+`NoClassDefFoundError`. If `main.game.maze.walls` is absent from the
+classpath (for example in a misconfigured build), the method logs the
+error and returns `null`; call sites then fall back to a default wall
+image rather than crashing the game session. The root cause of
+`WallMaterialBaseType` not being on the classpath was an `eclipse-plugin`
+packaging declaration in `main.game.maze.walls/pom.xml` — changed to
+`jar` packaging so standard Maven dependency resolution works for all
+consumers.
+
 ## Wall thickness parity
 
 Wall render thickness is read from `StageConstants.WallThicknessPx` (5 px,
