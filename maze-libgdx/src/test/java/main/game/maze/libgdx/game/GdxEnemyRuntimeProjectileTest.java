@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -61,6 +62,26 @@ class GdxEnemyRuntimeProjectileTest {
 
         assertTrue(dealtDamage > 0, "BEAM should damage immediately on fire");
         assertTrue(runtime.beamVisuals().size() > 0, "BEAM should emit a visible beam effect");
+    }
+
+    @Test
+    void lobWithHighArcDoesNotExpireOutOfBoundsBeforeArrival() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 80f, 1000f, 180f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        boolean hadLobVisual = false;
+        for (int i = 0; i < 30; i++) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+            hadLobVisual = hadLobVisual || runtime.projectileVisuals().stream().anyMatch(v -> v.lob());
+        }
+
+        assertTrue(hadLobVisual, "High-arc lob should remain active in flight instead of expiring out of bounds");
+        assertFalse(runtime.projectileVisuals().isEmpty(),
+                "High-arc lob should still have an active projectile visual during early flight");
     }
 
     private static EnemySpawn rangedSpawn(ProjectileType type, float splashRadius, float arcHeight) {

@@ -85,8 +85,11 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
         if (projectileType == ProjectileType.BEAM) {
             boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
-            if (!blocked && target instanceof ICanDie victim) {
-                victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
+            if (!blocked) {
+                ICanDie victim = resolveVictimForTargetNode(target);
+                if (victim != null) {
+                    victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
+                }
             }
             drawBeam(sx, sy, tx, ty, blocked);
             playSound(model.getThrowSound());
@@ -147,7 +150,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
             for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                 if (!(s instanceof ICanDie victim)) continue;
-                Node n = ((Character)s).getCharacterGraphics();
+                Node n = characterGraphicsOf(s);
                 if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
                     if (p.type == ProjectileType.STRAIGHT) {
                         victim.subtractHitPoints(p.damage);
@@ -162,7 +165,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || hitNow || outOfBounds);
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (!(s instanceof ICanDie victim)) continue;
-                    Node n = ((Character)s).getCharacterGraphics();
+                    Node n = characterGraphicsOf(s);
                     if (n == null) continue;
                     double dx = n.getLayoutX() - p.node.getLayoutX();
                     double dy = n.getLayoutY() - p.node.getLayoutY();
@@ -242,6 +245,29 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
     private void playSound(String path) {
         AudioEngine.get().play(path);
+    }
+
+    private ICanDie resolveVictimForTargetNode(Node target) {
+        if (target instanceof ICanDie directVictim) {
+            return directVictim;
+        }
+        for (ICanSubscribeAndNotifyPosition subscriber : touchTargets) {
+            if (!(subscriber instanceof ICanDie victim)) {
+                continue;
+            }
+            Node subscriberGraphics = characterGraphicsOf(subscriber);
+            if (subscriberGraphics == target) {
+                return victim;
+            }
+        }
+        return null;
+    }
+
+    private static Node characterGraphicsOf(ICanSubscribeAndNotifyPosition entity) {
+        if (entity instanceof Character character) {
+            return character.getCharacterGraphics();
+        }
+        return null;
     }
 
     private Pane hostPane() {

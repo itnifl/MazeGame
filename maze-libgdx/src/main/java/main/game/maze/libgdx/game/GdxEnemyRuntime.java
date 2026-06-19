@@ -160,8 +160,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             }
 
             boolean outOfBounds = maze != null
-                    && (projectile.x < 0f || projectile.y < 0f
-                    || projectile.x > maze.widthPx() || projectile.y > maze.heightPx());
+                    && (projectile.boundsX() < 0f || projectile.boundsY() < 0f
+                    || projectile.boundsX() > maze.widthPx() || projectile.boundsY() > maze.heightPx());
 
             if ((projectile.type == ProjectileType.LOB && projectile.arrived()) || outOfBounds || projectile.lifeSeconds > 5f) {
                 if (projectile.type == ProjectileType.LOB
@@ -419,6 +419,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         private float lifeSeconds;
         private float x;
         private float y;
+        private float boundsX;
+        private float boundsY;
 
         private ActiveProjectile(
                 ProjectileType type,
@@ -439,6 +441,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             this.lifeSeconds = 0f;
             this.x = sx;
             this.y = sy;
+            this.boundsX = sx;
+            this.boundsY = sy;
         }
 
         private void tick(float dt) {
@@ -446,6 +450,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             progress = Math.min(1f, progress + dt / duration);
             float lerpX = sx + (targetX - sx) * progress;
             float lerpY = sy + (targetY - sy) * progress;
+            boundsX = lerpX;
+            boundsY = lerpY;
             if (type == ProjectileType.LOB) {
                 float arcOffset = (float) (arcHeight * Math.sin(Math.PI * progress));
                 x = lerpX;
@@ -454,6 +460,14 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 x = lerpX;
                 y = lerpY;
             }
+        }
+
+        private float boundsX() {
+            return boundsX;
+        }
+
+        private float boundsY() {
+            return boundsY;
         }
 
         private boolean arrived() {

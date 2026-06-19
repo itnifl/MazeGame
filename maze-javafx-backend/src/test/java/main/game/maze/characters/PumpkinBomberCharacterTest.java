@@ -3,12 +3,14 @@ package main.game.maze.characters;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
+import main.game.maze.GameController;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.ProjectileType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -220,6 +222,99 @@ class PumpkinBomberCharacterTest {
 
         // Subsequent tick with empty list must also be safe.
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016));
+    }
+
+    @Test
+    void beamProjectile_damagesSubscribedVictimWhenLineOfSightClear() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        model.setAttackDamage(6);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(20);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return false;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+
+        assertEquals(hpBefore - 6, player.getHitPoints(),
+                "BEAM should damage the subscribed target represented by the provided Node");
+    }
+
+    @Test
+    void beamProjectile_doesNotDamageWhenBlockedByWall() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        model.setAttackDamage(7);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(20);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "BEAM must not damage player when line of sight is blocked");
+    }
+
+    @Test
+    void lobProjectile_appliesSplashEvenWhenWallReported() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        model.setAttackDamage(5);
+        model.setSplashRadius(120.0);
+        model.setProjectileSpeed(120.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(0);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(60);
+        target.setLayoutY(0);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.updateProjectiles(10.0);
+
+        assertTrue(player.getHitPoints() < hpBefore,
+                "LOB splash should still apply even when walls are reported between bomber and target");
     }
 
     // -----------------------------------------------------------------------
