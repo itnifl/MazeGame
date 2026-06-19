@@ -86,7 +86,9 @@ public final class GdxGameRuntimeSupport {
     /**
      * End-screen score for the GAME_OVER or WON overlay.
      * Delegates to {@link GdxScoreSupport#endScreenScore} which applies
-     * the 5 000-point death penalty (when dead) and damage * 10 penalty.
+     * the death penalty from {@link main.game.maze.mazeworld.constants.StageConstants#ScoreDeathPenalty}
+     * (when dead) and the damage * 10 penalty defined by
+     * {@link main.game.maze.mazeworld.constants.StageConstants#ScoreSubtractFactor}.
      */
     public static int endScreenScore(
             ScoringEngine scoringEngine,
