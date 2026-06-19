@@ -35,6 +35,8 @@ public final class GameWorldModel {
 
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();
     private final List<Point2D> activePathPoints = new ArrayList<>();
+    private final List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles = new ArrayList<>();
+    private final List<GdxEnemyRuntime.BeamVisual> enemyBeams = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -187,6 +189,14 @@ public final class GameWorldModel {
 
     public List<Point2D> activePathPoints() {
         return activePathPoints;
+    }
+
+    public List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles() {
+        return enemyProjectiles;
+    }
+
+    public List<GdxEnemyRuntime.BeamVisual> enemyBeams() {
+        return enemyBeams;
     }
 
     public List<Score> highScoreRows() {

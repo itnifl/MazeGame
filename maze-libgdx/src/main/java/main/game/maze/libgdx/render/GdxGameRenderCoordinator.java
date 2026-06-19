@@ -136,6 +136,8 @@ public final class GdxGameRenderCoordinator {
                 constants.infectionWarningText(),
                 animatedEnemies,
                 activePathPoints,
+                worldModel.enemyProjectiles(),
+                worldModel.enemyBeams(),
                 session,
                 debugOverlayState,
                 statusMessageBus,

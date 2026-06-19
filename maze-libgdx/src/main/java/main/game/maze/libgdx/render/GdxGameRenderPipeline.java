@@ -102,6 +102,8 @@ public final class GdxGameRenderPipeline {
                 state.infectionEdgeLayers(),
                 enemyViewModels,
                 state.activePathPoints(),
+                state.enemyProjectiles(),
+                state.enemyBeams(),
                 state.debugOverlayState().enemyPathSecondsRemaining(),
                 state.showSpanningTreeInfo()));
 
@@ -274,6 +276,8 @@ public final class GdxGameRenderPipeline {
             String infectionWarningText,
             List<GdxEnemyRuntime> animatedEnemies,
             List<Point2D> activePathPoints,
+            List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
+            List<GdxEnemyRuntime.BeamVisual> enemyBeams,
             GameSession session,
             GdxDebugOverlayState debugOverlayState,
             StatusMessageBus statusMessageBus,

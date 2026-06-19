@@ -28,6 +28,7 @@ import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.ProjectileType;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
@@ -215,7 +216,13 @@ public final class RuntimeVisualModelLoader {
                             runtimeBehavior,
                             spawnSpeed,
                             nonTangibilityEnergyFor(picked),
-                            visibilityLevelFor(picked));
+                            visibilityLevelFor(picked),
+                            projectileTypeFor(picked),
+                            splashRadiusFor(picked),
+                            arcHeightFor(picked),
+                            attackRangeFor(picked),
+                            attackCooldownFor(picked),
+                            projectileSpeedFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -306,6 +313,48 @@ public final class RuntimeVisualModelLoader {
             return ghost.getVisibilityLevel();
         }
         return EnemySpawn.DEFAULT_VISIBILITY_LEVEL;
+    }
+
+    private static ProjectileType projectileTypeFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber && pumpkinBomber.getProjectileType() != null) {
+            return pumpkinBomber.getProjectileType();
+        }
+        return EnemySpawn.DEFAULT_PROJECTILE_TYPE;
+    }
+
+    private static float splashRadiusFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return (float) Math.max(0d, pumpkinBomber.getSplashRadius());
+        }
+        return EnemySpawn.DEFAULT_SPLASH_RADIUS;
+    }
+
+    private static float arcHeightFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return (float) Math.max(0d, pumpkinBomber.getArcHeight());
+        }
+        return EnemySpawn.DEFAULT_ARC_HEIGHT;
+    }
+
+    private static float attackRangeFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return (float) Math.max(0d, pumpkinBomber.getAttackRange());
+        }
+        return EnemySpawn.DEFAULT_ATTACK_RANGE;
+    }
+
+    private static int attackCooldownFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return Math.max(0, pumpkinBomber.getAttackCooldownMs());
+        }
+        return EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS;
+    }
+
+    private static float projectileSpeedFor(CharacterType type) {
+        if (type instanceof PumpkinBomber pumpkinBomber) {
+            return (float) Math.max(0d, pumpkinBomber.getProjectileSpeed());
+        }
+        return EnemySpawn.DEFAULT_PROJECTILE_SPEED;
     }
 
     private static String touchSoundFor(CharacterType type) {

@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -20,6 +23,7 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
@@ -58,6 +62,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ranged attack API (uses arcHeight instead of gravity)
 
     public void tryShootAt(Node target, long nowMs) {
+        if (target == null || getCharacterGraphics() == null) {
+            return;
+        }
         int cooldown = defaultIfNull(model.getAttackCooldownMs(), 1000);
         if (nowMs - lastShotMs < cooldown) return;
 
@@ -71,17 +78,43 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         double range = defaultIfNull(model.getAttackRange(), 350.0);
         if ((dx*dx + dy*dy) > range * range) return;
 
+        ProjectileType projectileType = model.getProjectileType() == null
+                ? ProjectileType.STRAIGHT
+                : model.getProjectileType();
+
+        if (projectileType == ProjectileType.BEAM) {
+            boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
+            if (!blocked && target instanceof ICanDie victim) {
+                victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
+            }
+            drawBeam(sx, sy, tx, ty, blocked);
+            playSound(model.getThrowSound());
+            lastShotMs = nowMs;
+            return;
+        }
+
         double speed     = defaultIfNull(model.getProjectileSpeed(), 260.0);
         double arcHeight = Math.max(0.0, defaultIfNull(model.getArcHeight(), 40.0));
-        PumpkinProjectile p = PumpkinProjectile.createArc(sx, sy, tx, ty, speed, arcHeight,
+        PumpkinProjectile p = PumpkinProjectile.create(
+                projectileType,
+                sx,
+                sy,
+                tx,
+                ty,
+                speed,
+                arcHeight,
                 defaultIfNull(model.getSplashRadius(), 48.0),
                 defaultIfNull(model.getAttackDamage(), 5),
                 model.getProjectileImage());
 
         if (p != null) {
+            Pane pane = hostPane();
+            if (pane != null) {
+                main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> pane.getChildren().add(p.node));
+            }
             projectiles.add(p);
+            playSound(model.getThrowSound());
             lastShotMs = nowMs;
-            // playSound(model.getThrowSound());
         }
     }
 
@@ -95,12 +128,18 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         Iterator<PumpkinProjectile> it = projectiles.iterator();
         while (it.hasNext()) {
             PumpkinProjectile p = it.next();
+            double prevX = p.node.getLayoutX();
+            double prevY = p.node.getLayoutY();
             p.tick(dtSeconds);
 
             boolean outOfBounds =
                 p.node.getLayoutX() < 0 || p.node.getLayoutX() > maxX ||
                 p.node.getLayoutY() < 0 || p.node.getLayoutY() > maxY ||
                 p.lifeSeconds > 5.0;
+
+            boolean blockedByWall = p.type == ProjectileType.STRAIGHT
+                    && App.gameController != null
+                    && App.gameController.isWallBetween(prevX, prevY, p.node.getLayoutX(), p.node.getLayoutY());
 
             // early collision while flying
             boolean hitNow = false;
@@ -109,34 +148,34 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 if (!(s instanceof ICanDie victim)) continue;
                 Node n = ((Character)s).getCharacterGraphics();
                 if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
-                    explode(p, victim);
+                    if (p.type == ProjectileType.STRAIGHT) {
+                        victim.subtractHitPoints(p.damage);
+                    }
                     hitNow = true; break;
                 }
             }
 
             boolean arrived = p.isArrived();
 
-            if (hitNow || arrived || outOfBounds) {
-                // splash damage (including on arrival)
+            if (blockedByWall || hitNow || arrived || outOfBounds) {
+                boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || hitNow || outOfBounds);
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (!(s instanceof ICanDie victim)) continue;
                     Node n = ((Character)s).getCharacterGraphics();
                     if (n == null) continue;
                     double dx = n.getLayoutX() - p.node.getLayoutX();
                     double dy = n.getLayoutY() - p.node.getLayoutY();
-                    if ((dx*dx + dy*dy) <= p.splashRadius * p.splashRadius) {
+                    if (shouldApplySplash && (dx*dx + dy*dy) <= p.splashRadius * p.splashRadius) {
                         victim.subtractHitPoints(p.damage);
                     }
                 }
-                playSound(model.getExplosionSound());
+                if (!blockedByWall) {
+                    playSound(model.getExplosionSound());
+                }
                 p.dispose();
                 it.remove();
             }
         }
-    }
-
-    private void explode(PumpkinProjectile p, ICanDie victim) {
-        victim.subtractHitPoints(p.damage);
     }
 
     // ICanKill / damage
@@ -204,9 +243,39 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         AudioEngine.get().play(path);
     }
 
+    private Pane hostPane() {
+        if (getCharacterGraphics() == null || getCharacterGraphics().getParent() == null) {
+            return null;
+        }
+        if (getCharacterGraphics().getParent() instanceof Pane pane) {
+            return pane;
+        }
+        return null;
+    }
+
+    private void drawBeam(double sx, double sy, double tx, double ty, boolean blocked) {
+        Pane pane = hostPane();
+        if (pane == null) {
+            return;
+        }
+        main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+            Line line = new Line(sx, sy, tx, ty);
+            line.setStroke(blocked ? Color.ORANGERED : Color.AQUA);
+            line.setStrokeWidth(3.5);
+            line.setOpacity(0.9);
+            pane.getChildren().add(line);
+            javafx.animation.FadeTransition fade = new javafx.animation.FadeTransition(javafx.util.Duration.millis(120), line);
+            fade.setFromValue(0.9);
+            fade.setToValue(0.0);
+            fade.setOnFinished(evt -> pane.getChildren().remove(line));
+            fade.play();
+        });
+    }
+
     // projectile with parametric arc (no gravity)
 
     private static final class PumpkinProjectile {
+        final ProjectileType type;
         final ImageView node;
         final double splashRadius;
         final int damage;
@@ -217,10 +286,12 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         double u = 0.0;        // 0..1 progress
         double lifeSeconds = 0;
 
-        private PumpkinProjectile(ImageView node,
+        private PumpkinProjectile(ProjectileType type,
+                                  ImageView node,
                                   double sx, double sy, double tx, double ty,
                                   double duration, double arcHeight,
                                   double splashRadius, int damage) {
+            this.type = type;
             this.node = node;
             this.sx = sx; this.sy = sy; this.tx = tx; this.ty = ty;
             this.duration = Math.max(0.15, duration);
@@ -229,10 +300,11 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             this.damage = damage;
         }
 
-        public static PumpkinProjectile createArc(double sx, double sy, double tx, double ty,
-                                           double speed, double arcHeight,
-                                           double splashRadius, int dmg,
-                                           String projectileImagePath) {
+        public static PumpkinProjectile create(ProjectileType type,
+                               double sx, double sy, double tx, double ty,
+                               double speed, double arcHeight,
+                               double splashRadius, int dmg,
+                               String projectileImagePath) {
             double dx = tx - sx, dy = ty - sy;
             double dist = Math.hypot(dx, dy);
             if (dist < 1e-3 || speed <= 1e-6) return null;
@@ -247,18 +319,23 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 if (url != null) iv.setImage(new Image(url.toExternalForm()));
             }
 
-            return new PumpkinProjectile(iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
+            return new PumpkinProjectile(type, iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
         }
 
         private void tick(double dt) {
             lifeSeconds += dt;
             u = Math.min(1.0, u + dt / duration);
-            // linear path + vertical bump for arc
+            // STRAIGHT keeps flat trajectory; LOB applies arc offset.
             double x = lerp(sx, tx, u);
-            double y = lerp(sy, ty, u) - arcHeight * Math.sin(Math.PI * u);
+            double y = lerp(sy, ty, u);
+            if (type == ProjectileType.LOB) {
+                y -= arcHeight * Math.sin(Math.PI * u);
+            }
+            final double drawX = x;
+            final double drawY = y;
             main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
-                node.setLayoutX(x);
-                node.setLayoutY(y);
+                node.setLayoutX(drawX);
+                node.setLayoutY(drawY);
             });
         }
 
@@ -266,7 +343,11 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
         void dispose() {
             main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
-                if (node.getParent() != null) node.setVisible(false);
+                if (node.getParent() instanceof Pane pane) {
+                    pane.getChildren().remove(node);
+                } else {
+                    node.setVisible(false);
+                }
             });
         }
 

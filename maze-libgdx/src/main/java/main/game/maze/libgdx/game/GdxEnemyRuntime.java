@@ -1,5 +1,7 @@
 package main.game.maze.libgdx.game;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -13,7 +15,10 @@ import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.mazeworld.WallCollisionUtil;
+import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.opponents.BehaviorType;
+import main.game.maze.opponents.ProjectileType;
 
 public final class GdxEnemyRuntime implements EnemyRuntime {
     private final EnemySpawn spawn;
@@ -38,6 +43,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final int visibilityLevel;
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
+    private float shotCooldownRemaining;
+    private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
+    private final List<BeamEffect> activeBeams = new ArrayList<>();
 
     private GdxEnemyRuntime(EnemySpawn spawn,
                             String runtimeEnemyId,
@@ -70,6 +78,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.movementTypeLabel = "WANDER";
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         this.visibilityLevel = spawn.visibilityLevel();
+        this.shotCooldownRemaining = 0f;
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -109,7 +118,137 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.behavior(),
                 spawn.speed(),
                 nonTangibilityEnergy,
-                spawn.visibilityLevel());
+                spawn.visibilityLevel(),
+                spawn.projectileType(),
+                spawn.splashRadius(),
+                spawn.arcHeight(),
+                spawn.attackRange(),
+                spawn.attackCooldownMs(),
+                spawn.projectileSpeed());
+    }
+
+    public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius) {
+        if (dt <= 0f) {
+            return 0;
+        }
+        int dealtDamage = 0;
+        shotCooldownRemaining = Math.max(0f, shotCooldownRemaining - dt);
+        for (BeamEffect beam : activeBeams) {
+            beam.remaining = Math.max(0f, beam.remaining - dt);
+        }
+        activeBeams.removeIf(beam -> beam.remaining <= 0f);
+
+        for (int i = activeProjectiles.size() - 1; i >= 0; i--) {
+            ActiveProjectile projectile = activeProjectiles.get(i);
+            float previousX = projectile.x;
+            float previousY = projectile.y;
+            projectile.tick(dt);
+
+            if (projectile.type == ProjectileType.STRAIGHT
+                    && maze != null
+                    && WallCollisionUtil.wallBetween(previousX, previousY, projectile.x, projectile.y, maze.walls())) {
+                activeProjectiles.remove(i);
+                continue;
+            }
+
+            boolean hitPlayer = distanceSquared(projectile.x, projectile.y, playerX, playerY)
+                    <= squared(playerRadius + projectile.radius());
+            if (projectile.type == ProjectileType.STRAIGHT && hitPlayer) {
+                dealtDamage += Math.max(0, spawn.attackDamage());
+                activeProjectiles.remove(i);
+                continue;
+            }
+
+            boolean outOfBounds = maze != null
+                    && (projectile.x < 0f || projectile.y < 0f
+                    || projectile.x > maze.widthPx() || projectile.y > maze.heightPx());
+
+            if ((projectile.type == ProjectileType.LOB && projectile.arrived()) || outOfBounds || projectile.lifeSeconds > 5f) {
+                if (projectile.type == ProjectileType.LOB
+                        && distanceSquared(playerX, playerY, projectile.targetX, projectile.targetY)
+                        <= squared(Math.max(0f, spawn.splashRadius()))) {
+                    dealtDamage += Math.max(0, spawn.attackDamage());
+                }
+                activeProjectiles.remove(i);
+            }
+        }
+
+        if (spawn.attackRange() <= 0f || spawn.projectileSpeed() <= 0f || spawn.attackCooldownMs() <= 0) {
+            return dealtDamage;
+        }
+
+        if (shotCooldownRemaining > 0f) {
+            return dealtDamage;
+        }
+
+        float dx = playerX - x;
+        float dy = playerY - y;
+        float range = Math.max(0f, spawn.attackRange());
+        if (distanceSquared(x, y, playerX, playerY) > squared(range)) {
+            return dealtDamage;
+        }
+
+        ProjectileType projectileType = spawn.projectileType() == null
+                ? ProjectileType.STRAIGHT
+                : spawn.projectileType();
+
+        if (projectileType == ProjectileType.BEAM) {
+            boolean blocked = maze != null && WallCollisionUtil.wallBetween(x, y, playerX, playerY, maze.walls());
+            if (!blocked) {
+                dealtDamage += Math.max(0, spawn.attackDamage());
+            }
+            activeBeams.add(new BeamEffect(x, y, playerX, playerY, blocked, 0.14f));
+            shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
+            return dealtDamage;
+        }
+
+        float speedValue = Math.max(1f, spawn.projectileSpeed());
+        float distance = (float) Math.sqrt(distanceSquared(x, y, playerX, playerY));
+        if (distance < 0.001f) {
+            return dealtDamage;
+        }
+        float duration = Math.max(0.15f, distance / speedValue);
+        activeProjectiles.add(new ActiveProjectile(
+                projectileType,
+                x,
+                y,
+                playerX,
+                playerY,
+                duration,
+                Math.max(0f, spawn.arcHeight())));
+        shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
+        return dealtDamage;
+    }
+
+    public List<ProjectileVisual> projectileVisuals() {
+        if (activeProjectiles.isEmpty()) {
+            return List.of();
+        }
+        List<ProjectileVisual> visuals = new ArrayList<>(activeProjectiles.size());
+        for (ActiveProjectile projectile : activeProjectiles) {
+            float shadow = projectile.type == ProjectileType.LOB
+                    ? Math.max(2f, 6f * (float) Math.sin(Math.PI * projectile.progress))
+                    : 0f;
+            visuals.add(new ProjectileVisual(
+                    projectile.x,
+                    projectile.y,
+                    projectile.radius(),
+                    shadow,
+                    projectile.type == ProjectileType.LOB));
+        }
+        return Collections.unmodifiableList(visuals);
+    }
+
+    public List<BeamVisual> beamVisuals() {
+        if (activeBeams.isEmpty()) {
+            return List.of();
+        }
+        List<BeamVisual> visuals = new ArrayList<>(activeBeams.size());
+        for (BeamEffect beam : activeBeams) {
+            float alpha = beam.maxDuration <= 0f ? 0f : Math.max(0f, beam.remaining / beam.maxDuration);
+            visuals.add(new BeamVisual(beam.x1, beam.y1, beam.x2, beam.y2, alpha, beam.blocked));
+        }
+        return Collections.unmodifiableList(visuals);
     }
 
     public String imagePath() {
@@ -250,5 +389,99 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             case 2 -> new int[] {0, -1};
             default -> new int[] {-1, 0};
         };
+    }
+
+    private static float distanceSquared(float x1, float y1, float x2, float y2) {
+        float dx = x1 - x2;
+        float dy = y1 - y2;
+        return dx * dx + dy * dy;
+    }
+
+    private static float squared(float value) {
+        return value * value;
+    }
+
+    public record ProjectileVisual(float x, float y, float radius, float shadowRadius, boolean lob) {
+    }
+
+    public record BeamVisual(float x1, float y1, float x2, float y2, float alpha, boolean blocked) {
+    }
+
+    private static final class ActiveProjectile {
+        private final ProjectileType type;
+        private final float sx;
+        private final float sy;
+        private final float targetX;
+        private final float targetY;
+        private final float duration;
+        private final float arcHeight;
+        private float progress;
+        private float lifeSeconds;
+        private float x;
+        private float y;
+
+        private ActiveProjectile(
+                ProjectileType type,
+                float sx,
+                float sy,
+                float targetX,
+                float targetY,
+                float duration,
+                float arcHeight) {
+            this.type = type;
+            this.sx = sx;
+            this.sy = sy;
+            this.targetX = targetX;
+            this.targetY = targetY;
+            this.duration = duration;
+            this.arcHeight = arcHeight;
+            this.progress = 0f;
+            this.lifeSeconds = 0f;
+            this.x = sx;
+            this.y = sy;
+        }
+
+        private void tick(float dt) {
+            lifeSeconds += dt;
+            progress = Math.min(1f, progress + dt / duration);
+            float lerpX = sx + (targetX - sx) * progress;
+            float lerpY = sy + (targetY - sy) * progress;
+            if (type == ProjectileType.LOB) {
+                float arcOffset = (float) (arcHeight * Math.sin(Math.PI * progress));
+                x = lerpX;
+                y = lerpY + arcOffset;
+            } else {
+                x = lerpX;
+                y = lerpY;
+            }
+        }
+
+        private boolean arrived() {
+            return progress >= 1f;
+        }
+
+        private float radius() {
+            return type == ProjectileType.LOB ? 6f : 5f;
+        }
+    }
+
+    private static final class BeamEffect {
+        private final float x1;
+        private final float y1;
+        private final float x2;
+        private final float y2;
+        private final boolean blocked;
+        private final float maxDuration;
+        private float remaining;
+
+        private BeamEffect(float x1, float y1, float x2, float y2, boolean blocked, float duration) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+            this.blocked = blocked;
+            this.maxDuration = duration;
+            this.remaining = duration;
+        }
     }
 }
