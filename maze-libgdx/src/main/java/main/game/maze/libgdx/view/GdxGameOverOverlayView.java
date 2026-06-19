@@ -14,7 +14,7 @@ import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
  */
 public final class GdxGameOverOverlayView {
 
-    private static final Color COLOR_PENALTY = new Color(1f, 0.54f, 0.47f, 1f);   // #ff8a78 – red
+    private static final Color COLOR_PENALTY = Color.RED;
     private static final Color COLOR_SCORE   = new Color(1f, 0.90f, 0.43f, 1f);   // gold
 
     public void render(RenderContext context) {
