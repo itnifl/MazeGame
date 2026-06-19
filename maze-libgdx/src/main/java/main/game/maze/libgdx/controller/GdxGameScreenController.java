@@ -230,7 +230,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::currentScore,
                 () -> requestReturnToMenu(false),
                 this::openHighScoresFromWin))
-            .register(() -> overlayModeCoordinator.updateGameOver(() -> requestReturnToMenu(false)));
+            .register(() -> overlayModeCoordinator.updateGameOver(
+                hudCamera,
+                this::startGameFromSelection,
+                () -> requestReturnToMenu(false)));
     }
 
     private void openHighScoresFromWin() {

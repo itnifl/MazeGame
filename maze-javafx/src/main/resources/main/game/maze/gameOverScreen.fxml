@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -34,7 +35,9 @@
                         <Label fx:id="scoreLabel" style="-fx-font-size: 30px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="0" />
                         <Label fx:id="deathPenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including death penalty" />
                         <Label fx:id="damagePenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including damage penalty" />
-                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart" />
+                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart">
+                            <VBox.margin><Insets top="16"/></VBox.margin>
+                        </Button>
                     </children>
                 </VBox>
             </children>

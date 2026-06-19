@@ -19,6 +19,7 @@ import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
+import main.game.maze.libgdx.controller.GdxGameOverOverlayController;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.helper.GdxDebugOverlayState;
@@ -186,7 +187,7 @@ public final class GdxGameRenderPipeline {
         if (state.session().mode() != GameMode.GAME_OVER) {
             return;
         }
-        state.gameOverOverlayView().render(
+        GdxGameOverOverlayView.GameOverButtons gameOverButtons = state.gameOverOverlayView().render(
                 new GdxGameOverOverlayView.RenderContext(
                         state.batch(),
                         state.shapes(),
@@ -196,6 +197,7 @@ public final class GdxGameRenderPipeline {
                         state.gameOverBackgroundTexture(),
                         state.currentScore(),
                         state.scoreBreakdown()));
+                state.gameOverOverlayController().onOverlayRendered(gameOverButtons);
     }
 
     private void drawInfectionOverlayIfNeeded(RenderState state) {
@@ -310,6 +312,7 @@ public final class GdxGameRenderPipeline {
             GdxWinOverlayView winOverlayView,
             GdxGameOverOverlayView gameOverOverlayView,
             GdxInfectionOverlayView infectionOverlayView,
+            GdxGameOverOverlayController gameOverOverlayController,
             GdxWinOverlayController winOverlayController,
             Function<String, Texture> enemyTextureLoader,
             Function<GdxEnemyRuntime, List<ActivePathPoint>> enemyPathProvider,

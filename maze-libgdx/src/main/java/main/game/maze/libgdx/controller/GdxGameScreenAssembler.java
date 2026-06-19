@@ -131,6 +131,7 @@ final class GdxGameScreenAssembler {
                 c.winOverlayView,
                 c.gameOverOverlayView,
                 c.infectionOverlayView,
+                c.gameOverOverlayController,
                 c.winOverlayController,
                 c::loadTexture,
                 c::enemyDisplayPath,
