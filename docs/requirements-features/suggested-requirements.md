@@ -2,6 +2,14 @@
 
 ## Candidate Additions
 
+### F10 and F20 follow on suggestions from implementation
+
+- **SR-93** *(DDD, portability)*: Introduce a shared projectile domain service in `maze-common-frontend` that hosts deterministic simulation for `STRAIGHT`, `LOB`, and `BEAM`. Both JavaFX and libGDX currently implement backend local runtime loops. A shared service would reduce divergence risk and simplify parity maintenance.
+
+- **SR-94** *(Observability)*: Add structured debug telemetry for enemy ranged attacks, including `enemyId`, `projectileType`, `blockedByWall`, `hitApplied`, and `damage`. This should be sampled and disabled by default, then enabled in debug runs to support balancing and parity diagnostics.
+
+- **SR-95** *(12-Factor, config)*: Externalize projectile visual tuning values, for example beam lifetime and lob shadow intensity, to a backend neutral config source so QA can tune readability without recompiling either frontend.
+
 ### F25 follow-on — Ghost Visibility Level (identified during implementation)
 
 - **SR-51:** Once F16 (DSL / scripted scenario support) is complete, `Ghost.visibilityLevel` shall be configurable via the scenario DSL so level designers can specify per-ghost opacity caps without editing the raw XMI model. The DSL entry shall be validated against the `[0, 100]` domain constraint defined in the Ecore metamodel, and invalid values shall produce a clear authoring-time error.
