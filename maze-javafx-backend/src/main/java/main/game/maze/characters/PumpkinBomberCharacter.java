@@ -149,6 +149,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             boolean hitNow = false;
             FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
             for (ICanSubscribeAndNotifyPosition s : touchTargets) {
+                if (p.type == ProjectileType.LOB) {
+                    continue;
+                }
                 if (!(s instanceof ICanDie victim)) continue;
                 Node n = characterGraphicsOf(s);
                 if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {

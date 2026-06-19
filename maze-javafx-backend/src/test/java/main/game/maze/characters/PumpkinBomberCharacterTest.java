@@ -317,6 +317,35 @@ class PumpkinBomberCharacterTest {
                 "LOB splash should still apply even when walls are reported between bomber and target");
     }
 
+    @Test
+    void lobProjectile_doesNotResolveOnImmediateBodyOverlapBeforeArrival() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        model.setAttackDamage(5);
+        model.setSplashRadius(200.0);
+        model.setProjectileSpeed(150.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(0);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(120);
+        target.setLayoutY(0);
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.updateProjectiles(0.01);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "LOB must not apply splash immediately due to initial overlap; splash is applied at arrival or expiry");
+    }
+
     // -----------------------------------------------------------------------
     private static ICanSubscribeAndNotifyPosition makeStubSubscriber() {
         return new ICanSubscribeAndNotifyPosition() {
