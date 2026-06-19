@@ -65,10 +65,10 @@ Then, from the repo root:
 
 ```powershell
 # JDK 21 + Maven only
-pwsh -File .\install.ps1
+pwsh -File ./install.ps1
 
 # JDK 21 + Maven + JavaFX SDK
-pwsh -File .\install.ps1 -JavaFX
+pwsh -File ./install.ps1 -JavaFX
 ```
 
 The script:
@@ -76,7 +76,7 @@ The script:
 2. Installs **JDK 21** via winget / Chocolatey / Homebrew / apt / dnf / pacman
 3. Installs **Apache Maven** via the same package manager
 4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
-5. *(With `-JavaFX`)* Downloads the **JavaFX 21.0.9 SDK** and sets `PATH_TO_FX`
+5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
 6. Sets `JAVA_HOME` as a persistent user-level environment variable
 7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`
 
@@ -117,7 +117,7 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 
 * The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
-* Sometimes when compiling and starting the game in VS Code, you will error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Both debugging and running without debugging will still work.
+* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Both debugging and running without debugging will still work.
 * You can pass walls by running into them through the edge.
 
 ## Sources

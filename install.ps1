@@ -14,8 +14,9 @@
     libGDX is a Maven dependency and is fetched automatically during the first
     build — no separate installation is required.
 
-    Requires PowerShell 7+ (pwsh). On Windows the script auto-elevates when
-    needed by winget/choco. On Linux/macOS sudo prompts may appear for apt/dnf/
+    Requires PowerShell 7+ (pwsh). On Windows the script does not auto-elevate;
+    run it from an elevated shell when your package manager requires it.
+    On Linux/macOS sudo prompts may appear for apt/dnf/
     pacman/brew.
 
 .PARAMETER JavaFX
@@ -329,6 +330,7 @@ function Install-Maven {
             $pkgMgr = Get-AvailablePackageManager
             if ($pkgMgr -eq 'apt') {
                 Write-Info "Using apt (maven)..."
+                sudo apt-get update -qq | Out-Host
                 sudo apt-get install -y maven | Out-Host
             } elseif ($pkgMgr -eq 'dnf') {
                 Write-Info "Using dnf (maven)..."
@@ -356,9 +358,9 @@ function Install-JavaFXSDK {
         'linux'   { if ($Arch -eq 'arm64') { 'linux-aarch64' } else { 'linux-x64' } }
     }
 
-    # Use environment-aware paths instead of hard-coded ones
+    # Use user-writable install roots on Windows to avoid elevation requirements.
     $installRoot = switch ($OS) {
-        'windows' { "$env:ProgramFiles\Java" }
+        'windows' { Join-Path $env:LOCALAPPDATA 'Programs\Java' }
         'macos'   { '/usr/local/lib' }  # macOS standard path; /opt/homebrew/lib as fallback
         'linux'   { '/opt/java' }       # Standard Linux convention; may require sudo
     }
