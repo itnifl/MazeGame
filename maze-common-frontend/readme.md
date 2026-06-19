@@ -34,6 +34,14 @@ runtime renderer is JavaFX, libGDX, or something else.
     ghost is phasing (`energy > 0`), computes the per-tick energy drain, and
     calculates the semi-transparent rendering opacity. Both frontends MUST use
     this service exclusively.
+    - Single-arg overload `calculateOpacity(double energy)` — legacy path; assumes
+      `visibilityLevel = 100` (fully visible cap).
+    - Two-arg overload `calculateOpacity(double energy, int visibilityLevel)` (F25) —
+      clips the opacity ceiling to `visibilityLevel / 100.0` so a ghost configured
+      with e.g. `visibilityLevel = 50` never renders above 50 % opacity even when
+      fully materialised. Input is clamped to `[0, 100]`. When energy = 0 the
+      returned opacity equals exactly `visibilityLevel / 100.0` (the solid-state
+      floor). The gameplay floor of 0.1 applies only while the ghost is phasing.
   - `GhostPhasingMovementService`: stateful per-ghost wall-ignoring movement.
     A phasing ghost picks a random cardinal direction and bounces at board
     boundaries, bypassing all wall collision checks. Call `reset()` when a new
@@ -94,6 +102,7 @@ singletons.
 - [EdgeKeyTrackerTest](src/test/java/main/game/maze/common/input/EdgeKeyTrackerTest.java)
 - [KeyBindingRegistryTest](src/test/java/main/game/maze/common/input/KeyBindingRegistryTest.java)
 - [InputRouterTest](src/test/java/main/game/maze/common/input/InputRouterTest.java)
+- [GhostNonTangibilityServiceTest](src/test/java/main/game/maze/common/movement/GhostNonTangibilityServiceTest.java): single-arg backward-compat, two-arg overload (F25) — solid at full/partial visibility, phasing capped at `baseOpacity`, floor=0.1 while phasing, zero-visibility floor, clamp for negative and >100 input.
 - [TerminalCommandParserTest](src/test/java/main/game/maze/common/input/TerminalCommandParserTest.java) — full alias/case/null coverage for `TerminalCommandParser`
 - [ChasePlayerMovementServiceTest](src/test/java/main/game/maze/common/movement/ChasePlayerMovementServiceTest.java) — 6 tests for horizontal/vertical chase, blocked-axis fallback, and stability
 

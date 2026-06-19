@@ -2,6 +2,7 @@ package main.game.maze.runtime.opponents;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -243,22 +244,26 @@ private static double spawnByTarget(
             double remaining = maxThreat - threat;
             if (remaining <= 0) return threat;
 
-            CharacterType picked = null;
+            // Shuffle candidates for randomised tie-breaking when multiple
+            // templates share the minimum effective threat.
+            List<CharacterType> shuffled = new ArrayList<>(candidates);
+            Collections.shuffle(shuffled, ThreadLocalRandom.current());
 
-            // Try to pick a fitting candidate at random
-          
-            int index = ThreadLocalRandom.current().nextInt(candidates.size());
-            CharacterType template = candidates.get(index);   // don't remove yet
+            // Select the cheapest fitting template (minimum effectiveThreat that
+            // still fits in the remaining budget). Picking the smallest fit prevents
+            // early over-spending that would block later slots from being filled.
+            CharacterType bestFit = null;
+            double minFitThreat = Double.MAX_VALUE;
+            for (CharacterType template : shuffled) {
+                double effThreat = template.getEffectiveThreat();
+                if (effThreat > 0 && effThreat <= remaining && effThreat < minFitThreat) {
+                    bestFit = template;
+                    minFitThreat = effThreat;
+                }
+            }
+            CharacterType picked = bestFit != null ? EcoreUtil.copy(bestFit) : null;
 
-            double effThreat = template.getEffectiveThreat();
-            if (effThreat > 0 && effThreat <= remaining) {
-                // Make a *copy* so we don't mutate the template in the pool
-                // Replace this with your actual copy mechanism
-                picked = EcoreUtil.copy(template); 
-                
-            } 
-            
-            if (picked == null) break; // no suitable options left
+            if (picked == null) break; // no candidate fits within the remaining threat budget
 
             // apply difficulty multipliers
             setCharacterAttributesByDifficulty(picked, speedMult, dmgMult, instantDeath);

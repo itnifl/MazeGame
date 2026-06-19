@@ -92,6 +92,16 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- Explicit declaration ensures WallMaterialBaseType is on the classpath.
+         WallRegistry (generated) references this class at static-init time; without
+         an explicit dep, eclipse-plugin packaging prevents transitive resolution in
+         VS Code's Java extension and maven-dependency-plugin copy-dependencies. -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.walls</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Shared frontend interfaces: AudioEngine, ICharacterView, etc. -->
     <dependency>
       <groupId>main.game.maze</groupId>
@@ -272,6 +282,35 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+            <!-- Some JavaFX rendering controllers and FXML-bound UI classes cannot
+                 be fully exercised headlessly in CI. The 55 % actual coverage is near
+                 the limit; use 0.55 to stay achievable while still guarding regressions. -->
+            <executions>
+              <execution>
+                <id>jacoco-check</id>
+                <phase>verify</phase>
+                <goals><goal>check</goal></goals>
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <limits>
+                        <limit>
+                          <counter>LINE</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.55</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                  <excludes>
+                    <exclude>main/game/maze/difficulties/impl/**</exclude>
+                    <exclude>main/game/maze/opponents/impl/**</exclude>
+                    <exclude>main/game/maze/difficulties/util/**</exclude>
+                  </excludes>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

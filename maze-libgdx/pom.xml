@@ -46,6 +46,16 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- Explicit declaration ensures WallMaterialBaseType is on the classpath.
+         WallRegistry (generated) references this class at static-init time; without
+         an explicit dep, eclipse-plugin packaging prevents transitive resolution in
+         VS Code's Java extension and maven-dependency-plugin copy-dependencies. -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.walls</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- mazeworld bundle for maze data model -->
     <dependency>
       <groupId>main.game.maze</groupId>
@@ -74,6 +84,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.12.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

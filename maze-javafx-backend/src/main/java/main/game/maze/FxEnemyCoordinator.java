@@ -541,8 +541,10 @@ public final class FxEnemyCoordinator {
     private boolean drainNonTangientEnergy(INonTangientMazeGameCharacter cc) {
         double energy = cc.getNonTangientEnergy();
         boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
+
+        cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy, cc.getVisibilityLevel()));
+
         if (nonTangient) {
-            cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy));
             cc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, MOVEMENT_TICK_THRESHOLD));
         }
         return nonTangient;

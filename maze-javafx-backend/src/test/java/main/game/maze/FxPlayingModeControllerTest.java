@@ -1,14 +1,20 @@
 package main.game.maze;
 
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
+import javafx.scene.shape.Rectangle;
+import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.javafx.controller.state.FxPlayingModeController;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.input.InputRouter;
 import main.game.maze.common.input.KeyBindingRegistry;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -129,5 +135,62 @@ class FxPlayingModeControllerTest {
         controller.update(emptyFrame, t0);
         assertEquals(0L, lastMoveField.get(controller),
                 "lastMoveTime must not advance when playerCharacter is null");
+    }
+
+    // --- Non-null player path (lines 54-83 of FxPlayingModeController.update) ---
+
+    @BeforeAll
+    static void initFx() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            Platform.startup(latch::countDown);
+        } catch (IllegalStateException alreadyStarted) {
+            latch.countDown();
+        }
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "JavaFX startup timed out");
+    }
+
+    @Test
+    void updateWithNonNullPlayer_coversPostGuardPath() throws Exception {
+        // Rectangle graphics → configureDirectionalImages() skips image loading (safe without FX scene).
+        // null ProgressBar → ProgressBarStatePresenter not created (null statePresenter is fine).
+        // null renderCoordinator → only touched when moved=true; empty frame keeps moved=false.
+        PlayerCharacter player = new PlayerCharacter(new Rectangle(16, 16), 50, 50, null);
+        FxPlayingModeController controller =
+                new FxPlayingModeController(model, router, player, null, context);
+
+        InputFrame<KeyCode> emptyFrame = new InputFrame<>(Set.of(), Set.of(), 0, 0, false);
+        // now > MOVE_INTERVAL_NANOS (33ms) so throttle is passed and lastMoveTime is updated.
+        long now = 100_000_000L;
+        assertDoesNotThrow(() -> controller.update(emptyFrame, now),
+                "update() with a non-null player and empty frame must not throw");
+
+        // Verify lastMoveTime was advanced (confirms the post-throttle path executed).
+        java.lang.reflect.Field lastMoveField =
+                FxPlayingModeController.class.getDeclaredField("lastMoveTime");
+        lastMoveField.setAccessible(true);
+        assertEquals(now, lastMoveField.get(controller),
+                "lastMoveTime must be set to 'now' after passing the throttle interval");
+    }
+
+    @Test
+    void updateWithNonNullPlayer_throttlePreventsMoveOnRapidCalls() throws Exception {
+        PlayerCharacter player = new PlayerCharacter(new Rectangle(16, 16), 50, 50, null);
+        FxPlayingModeController controller =
+                new FxPlayingModeController(model, router, player, null, context);
+
+        InputFrame<KeyCode> emptyFrame = new InputFrame<>(Set.of(), Set.of(), 0, 0, false);
+        long t0 = 100_000_000L;
+        controller.update(emptyFrame, t0);              // sets lastMoveTime = t0
+
+        // Second call only 1ms later — within throttle window → lastMoveTime stays t0.
+        long t1 = t0 + 1_000_000L;
+        controller.update(emptyFrame, t1);
+
+        java.lang.reflect.Field lastMoveField =
+                FxPlayingModeController.class.getDeclaredField("lastMoveTime");
+        lastMoveField.setAccessible(true);
+        assertEquals(t0, lastMoveField.get(controller),
+                "lastMoveTime must not advance when called within the throttle window");
     }
 }

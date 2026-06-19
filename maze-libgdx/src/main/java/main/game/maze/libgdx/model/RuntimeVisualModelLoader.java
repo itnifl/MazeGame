@@ -214,7 +214,8 @@ public final class RuntimeVisualModelLoader {
                             touchSound,
                             runtimeBehavior,
                             spawnSpeed,
-                            nonTangibilityEnergyFor(picked));
+                            nonTangibilityEnergyFor(picked),
+                            visibilityLevelFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -300,6 +301,13 @@ public final class RuntimeVisualModelLoader {
         return 0.0;
     }
 
+    private static int visibilityLevelFor(CharacterType type) {
+        if (type instanceof Ghost ghost) {
+            return ghost.getVisibilityLevel();
+        }
+        return EnemySpawn.DEFAULT_VISIBILITY_LEVEL;
+    }
+
     private static String touchSoundFor(CharacterType type) {
         if (type instanceof Zombie zombie) {
             return defaultIfBlank(zombie.getTouchSound(), DEFAULT_ZOMBIE_TOUCH_SOUND);
@@ -368,13 +376,20 @@ public final class RuntimeVisualModelLoader {
         return distanceSquared(px, py, cx, cy);
     }
 
-    private WallRegistry.WallDefinition resolveWallDefinition(Difficulty difficulty, MazeVisualStyleConfig visualStyle) {
-        String wallId = visualStyle.wallTypeIdForDifficultyName(difficultyName(difficulty));
-        WallRegistry.WallDefinition byStyle = WallRegistry.get(wallId);
-        if (byStyle != null) {
-            return byStyle;
+    WallRegistry.WallDefinition resolveWallDefinition(Difficulty difficulty, MazeVisualStyleConfig visualStyle) {
+        try {
+            String wallId = visualStyle.wallTypeIdForDifficultyName(difficultyName(difficulty));
+            WallRegistry.WallDefinition byStyle = WallRegistry.get(wallId);
+            if (byStyle != null) {
+                return byStyle;
+            }
+            return WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName(difficulty)));
+        } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
+            LOGGER.log(Level.SEVERE,
+                    "WallRegistry static initializer failed — main.game.maze.walls may be missing from classpath. "
+                    + "Falling back to default wall image.", e);
+            return null;
         }
-        return WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyName(difficulty)));
     }
 
     private static String difficultyName(Difficulty difficulty) {

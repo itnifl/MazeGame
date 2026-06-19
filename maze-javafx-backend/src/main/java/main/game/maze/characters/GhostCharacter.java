@@ -29,13 +29,14 @@ public class GhostCharacter extends ComputerCharacter
 
 
     public GhostCharacter(Node characterGraphics, double positionX, double positionY, Ghost model) {
-        super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));        
+        super(characterGraphics, model, positionX, positionY, mapSpeed(model.getSpeed()));
         this.ghostModel = model;
 
         this.characterXYSizeFromPoint = StageConstants.GhostCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
-
+        characterGraphics.setOpacity(GhostNonTangibilityService.calculateOpacity(
+                model.getNonTangibilityEnergy(), model.getVisibilityLevel()));
     }
 
     @Override
@@ -130,6 +131,11 @@ public class GhostCharacter extends ComputerCharacter
         var graphics = this.getCharacterGraphics();
         graphics.setOpacity(value);
         this.setCharacterGraphics(graphics);
+    }
+
+    @Override
+    public int getVisibilityLevel() {
+        return ghostModel.getVisibilityLevel();
     }
 
     @Override

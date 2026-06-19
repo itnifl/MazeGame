@@ -1,6 +1,6 @@
 package main.game.maze;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +49,63 @@ class JavaFxInputCommandContextTest {
         assertEquals("openTerminalPrompt", sink.calls.get(0));
     }
 
+    @Test
+    void applyPathHintHeld_false_callsClearNavigationPath() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+
+        context.applyPathHintHeld(false);
+
+        assertEquals(1, sink.calls.size());
+        assertEquals("clearNavigationPath", sink.calls.get(0));
+    }
+
+    @Test
+    void applyMovementFromFrame_doesNotThrow() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+        assertDoesNotThrow(context::applyMovementFromFrame);
+        assertTrue(sink.calls.isEmpty(), "applyMovementFromFrame must be a no-op");
+    }
+
+    @Test
+    void requestStop_doesNotThrowAndProducesNoSinkCall() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+        assertDoesNotThrow(context::requestStop);
+        assertTrue(sink.calls.isEmpty());
+    }
+
+    @Test
+    void stopRequested_alwaysReturnsFalse() {
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(new RecordingSink());
+        assertFalse(context.stopRequested());
+    }
+
+    @Test
+    void terminalActive_alwaysReturnsFalse() {
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(new RecordingSink());
+        assertFalse(context.terminalActive());
+    }
+
+    @Test
+    void updateDebugLabels_delegatesToSink() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+        context.updateDebugLabels();
+        assertEquals(1, sink.calls.size());
+        assertEquals("updateDebugLabels", sink.calls.get(0));
+    }
+
+    @Test
+    void updateScoreHud_delegatesToSink() {
+        RecordingSink sink = new RecordingSink();
+        JavaFxInputCommandContext context = new JavaFxInputCommandContext(sink);
+        context.updateScoreHud();
+        assertEquals(1, sink.calls.size());
+        assertEquals("updateScoreHud", sink.calls.get(0));
+    }
+
     private static final class RecordingSink implements JavaFxInputCommandContext.ActionSink {
         private final java.util.List<String> calls = new java.util.ArrayList<>();
 
@@ -84,10 +141,12 @@ class JavaFxInputCommandContextTest {
 
         @Override
         public void updateDebugLabels() {
+            calls.add("updateDebugLabels");
         }
 
         @Override
         public void updateScoreHud() {
+            calls.add("updateScoreHud");
         }
 
         @Override

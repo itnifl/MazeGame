@@ -68,6 +68,73 @@ class FxGameWorldModelTest {
     }
 
     @Test
+    void beginPathHint_setsRouteHintVisibleAndKeyDownAndTimestamp() {
+        FxGameWorldModel model = new FxGameWorldModel();
+
+        model.beginPathHint();
+
+        assertTrue(model.isRouteHintVisible(), "beginPathHint must set isRouteHintVisible = true");
+        assertTrue(model.pathHintKeyDown(), "beginPathHint must set pathHintKeyDown = true");
+        assertTrue(model.pathHintPressStartNanos() > 0L,
+                "beginPathHint must record a positive press-start timestamp");
+        assertTrue(model.lastRouteHintPenaltyNanos() > 0L,
+                "beginPathHint must record a positive penalty reference timestamp");
+    }
+
+    @Test
+    void beginPathHint_idempotentWhenKeyAlreadyDown() {
+        FxGameWorldModel model = new FxGameWorldModel();
+        model.beginPathHint();
+        long firstStart = model.pathHintPressStartNanos();
+
+        // Second call while key is already down must not reset the press-start timestamp.
+        model.beginPathHint();
+
+        assertEquals(firstStart, model.pathHintPressStartNanos(),
+                "second beginPathHint call must not reset pathHintPressStartNanos");
+    }
+
+    @Test
+    void endPathHint_clearsKeyDownAndHidesOverlay() {
+        FxGameWorldModel model = new FxGameWorldModel();
+        model.beginPathHint();
+
+        model.endPathHint(10_000_000_000L); // 10-second budget
+
+        assertFalse(model.pathHintKeyDown(), "endPathHint must clear pathHintKeyDown");
+        assertFalse(model.isRouteHintVisible(), "endPathHint must hide the route hint overlay");
+        assertTrue(model.pathHintTotalUsedNanos() > 0L,
+                "endPathHint must accumulate held nanoseconds into pathHintTotalUsedNanos");
+    }
+
+    @Test
+    void endPathHint_cappedByBudget() {
+        FxGameWorldModel model = new FxGameWorldModel();
+        // Simulate a press that started 1000 seconds ago so the held duration exceeds the budget.
+        model.setPathHintKeyDown(true);
+        model.setPathHintPressStartNanos(System.nanoTime() - 1_000_000_000_000L);
+        long budgetNanos = 5_000_000_000L; // 5-second cap
+
+        model.endPathHint(budgetNanos);
+
+        assertEquals(budgetNanos, model.pathHintTotalUsedNanos(),
+                "endPathHint must cap pathHintTotalUsedNanos at budgetNanos");
+    }
+
+    @Test
+    void endPathHint_whenNotDown_onlyHidesOverlay() {
+        FxGameWorldModel model = new FxGameWorldModel();
+        model.setRouteHintVisible(true); // overlay was visible for some other reason
+
+        model.endPathHint(Long.MAX_VALUE); // key was never pressed
+
+        assertFalse(model.isRouteHintVisible(),
+                "endPathHint must hide the overlay even when pathHintKeyDown was false");
+        assertEquals(0L, model.pathHintTotalUsedNanos(),
+                "endPathHint must not accumulate nanos when key was not down");
+    }
+
+    @Test
     void resetScoringStateClearsPenaltyAndPathHintButKeepsMoveCount() {
         FxGameWorldModel model = new FxGameWorldModel();
 

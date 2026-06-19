@@ -9,7 +9,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>main.game.maze.walls</artifactId>
-  <packaging>eclipse-plugin</packaging>
+  <packaging>jar</packaging>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,7 +42,18 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+        <configuration>
+          <archive>
+            <!-- Preserve OSGi bundle headers so Tycho pomDependencies=consider
+                 recognises this plain-JAR module as an OSGi bundle. -->
+            <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

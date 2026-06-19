@@ -157,6 +157,7 @@ mvn -pl maze-common-frontend,maze-libgdx -am test
 - [SampleMazeTest](src/test/java/main/game/maze/libgdx/game/SampleMazeTest.java): deterministic generation, axis-aligned walls, immutability, input validation, full-grid connectivity.
 - [RealMazeTest](src/test/java/main/game/maze/libgdx/game/RealMazeTest.java): `RealMaze` adapter exposes walls / start / goal derived from `GameMazeWorld`.
 - [PlayerStateTest](src/test/java/main/game/maze/libgdx/game/PlayerStateTest.java): collision resolution, border clamping, goal-proximity detection.
+- [GhostTangibilityParityTest](src/test/java/main/game/maze/libgdx/GhostTangibilityParityTest.java): F25 visibility level — `EnemySpawn` carries `visibilityLevel`, default = 100, 12-arg constructor defaults, `GdxEnemyRuntime.renderOpacity()` honours `visibilityLevel` cap, full-phasing floor = 0.1, cross-frontend opacity parity with `GhostNonTangibilityService`.
 
 ### Extended tests (headless, no GL context required)
 
@@ -187,14 +188,30 @@ The libGDX implementation mirrors the JavaFX behaviour exactly:
 | Initial energy | Read from the ghost's `nonTangibilityEnergy` field in the XMI opponent model (default 100). |
 | Drain rate | Delegated to `GhostNonTangibilityService.drainEnergy(...)` (`0.14 × (1000 / 60)` energy per second, shared constant). |
 | Phasing | While energy > 0 the ghost moves through walls using `GhostPhasingMovementService.tick(...)`, which returns `false` for all `wouldCollide` queries. |
-| Opacity | Delegated to `GhostNonTangibilityService.calculateOpacity(...)`: `clamp(1.0 − energy/100 + 0.1, 0.1, 1.0)`. |
+| Opacity | Delegated to `GhostNonTangibilityService.calculateOpacity(double energy, int visibilityLevel)` (F25): opacity ceiling is `visibilityLevel / 100.0`; while phasing the value is `clamp(1.0 - energy/MAX_ENERGY + 0.1, 0.1, baseOpacity)`; when energy = 0 opacity equals exactly `baseOpacity`. |
+| Visibility cap | `EnemySpawn.visibilityLevel` (0–100, default `EnemySpawn.DEFAULT_VISIBILITY_LEVEL = 100`) carries the configured visibility from the XMI model. `RuntimeVisualModelLoader.visibilityLevelFor(CharacterType)` reads `Ghost.visibilityLevel` and falls back to `DEFAULT_VISIBILITY_LEVEL` for non-ghost enemies. |
 | Damage | A phasing ghost bypasses the wall-blocking check in `PlayerCombatStateService` but DOES deal contact damage when bounding boxes overlap. Wall bypass and damage suppression are independent. |
 
-The `EnemySpawn` record carries `nonTangibilityEnergy` and `EnemyRuntime` holds
-the mutable runtime state. `RuntimeVisualModelLoader` reads the value from the
-`Ghost` EMF model.
+The `EnemySpawn` record carries both `nonTangibilityEnergy` and `visibilityLevel`
+(F25). `GdxEnemyRuntime` holds both as final fields; `renderOpacity()` delegates to
+the two-arg `GhostNonTangibilityService.calculateOpacity(energy, visibilityLevel)`.
+`RuntimeVisualModelLoader` reads both values from the `Ghost` EMF model and wires
+them into the canonical 13-arg `EnemySpawn` constructor.
 
 ---
+
+## Wall registry resilience
+
+`RuntimeVisualModelLoader.resolveWallDefinition` wraps all access to
+`WallRegistry` in a `try/catch` for `ExceptionInInitializerError` and
+`NoClassDefFoundError`. If `main.game.maze.walls` is absent from the
+classpath (for example in a misconfigured build), the method logs the
+error and returns `null`; call sites then fall back to a default wall
+image rather than crashing the game session. The root cause of
+`WallMaterialBaseType` not being on the classpath was an `eclipse-plugin`
+packaging declaration in `main.game.maze.walls/pom.xml` — changed to
+`jar` packaging so standard Maven dependency resolution works for all
+consumers.
 
 ## Wall thickness parity
 

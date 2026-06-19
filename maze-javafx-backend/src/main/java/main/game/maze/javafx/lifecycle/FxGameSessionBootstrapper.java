@@ -23,6 +23,7 @@ import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,7 +127,9 @@ public final class FxGameSessionBootstrapper {
         player.setHitPoints(config.health());
 
         // Canvases — order matters for rendering (maze at index 0, overlays above)
-        Canvas mazeCanvas = mazeCanvasRenderer.drawCanvas(maze.getMazeVectors());
+        Canvas mazeCanvas = drawCanvasOrFallback(
+                () -> mazeCanvasRenderer.drawCanvas(maze.getMazeVectors()),
+                App.getBoardMaxX(), App.getBoardMaxY());
         gameBoard.getChildren().add(0, mazeCanvas);
 
         Canvas pathCanvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
@@ -143,7 +146,29 @@ public final class FxGameSessionBootstrapper {
     }
 
     // -----------------------------------------------------------------------
-    // Helpers
+    // Package-private helpers (accessible from tests in same package)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Draws the maze canvas via the supplied factory, catching the JVM errors
+     * that arise when the {@code main.game.maze.walls} bundle is absent from
+     * the runtime classpath.  Returns a blank canvas with the given dimensions
+     * as a fallback, ensuring enemy spawning and the rest of session setup
+     * still proceed normally.
+     */
+    static Canvas drawCanvasOrFallback(Supplier<Canvas> canvasSupplier, int fallbackWidth, int fallbackHeight) {
+        try {
+            return canvasSupplier.get();
+        } catch (ExceptionInInitializerError | NoClassDefFoundError e) {
+            LOGGER.log(Level.SEVERE,
+                    "WallRegistry static initializer failed — main.game.maze.walls may be missing from classpath. "
+                    + "Falling back to blank wall canvas.", e);
+            return new Canvas(fallbackWidth, fallbackHeight);
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // Private helpers
     // -----------------------------------------------------------------------
 
     private void updateBoardBackground(Pane gameBoard, Difficulty startDifficulty) {

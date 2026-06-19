@@ -2,7 +2,13 @@
 
 ## Candidate Additions
 
+### F25 follow-on — Ghost Visibility Level (identified during implementation)
 
+- **SR-51:** Once F16 (DSL / scripted scenario support) is complete, `Ghost.visibilityLevel` shall be configurable via the scenario DSL so level designers can specify per-ghost opacity caps without editing the raw XMI model. The DSL entry shall be validated against the `[0, 100]` domain constraint defined in the Ecore metamodel, and invalid values shall produce a clear authoring-time error.
+
+- **SR-52:** The HUD shall display a low-visibility warning indicator when the active area contains a ghost whose `visibilityLevel` is below a configurable threshold (default 30). The threshold of 30 aligns with the manual test plan (section 1, setup line 14) which configures test ghosts at `visibilityLevel = 30` as the boundary for heavy transparency, and with the implementation plan (section 5.3) which defines `visibilityLevel < 30` as the alert condition. The indicator shall be rendered in both the JavaFX and libGDX frontends using the shared `UiScheduler` / HUD facade to maintain CRR-5 parity. This extends the scope defined in SR-16 (HUD observability).
+
+- **SR-53:** Observability — when the phasing cap is active in `GhostNonTangibilityService.calculateOpacity(double, int)` (i.e. `phasingOpacity > baseOpacity`, meaning the raw phasing formula would exceed the ghost's configured visibility ceiling), a structured debug-level log entry shall be emitted including `energy`, `visibilityLevel`, `baseOpacity`, and `clampedOpacity`. The log entry shall be suppressible in production builds via the standard Java `Logger` level mechanism and shall not allocate on the hot path when the level is disabled.
 
 ### JavaFX MVC + Command/Registry refactor (Phase 5 of `docs/plans/javafx-gamecontroller-mvc-command-refactor.md`)
 
@@ -46,7 +52,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-76** *(Observability)*: `CompositionResolverImpl.resolve(...)` should emit a structured trace log (profile name → final composition map) at DEBUG level so difficulty tuning in QA is auditable without a debugger.
 - **SR-77** *(Observability)*: `GdxGameCombatAndEnemyFlowSupport.triggerWin(...)` should emit a structured event (timestamp, player position, score) to an optional event sink so win-condition analytics can be collected without modifying game logic.
 
-### Test infrastructure / JaCoCo coverage gate (from branch `feature/improveTestCoverage2`)
+### Test infrastructure / JaCoCo coverage gate (from branch `feature/workOnUnimplemetedFeature`)
 
 - **SR-83** *(DDD, Modularity)*: `CapturingUiScheduler` and other shared test doubles (`CapturingAudioEngine`, `FakeWorldView`, `SpyActionSink`) should be consolidated into a dedicated `maze-test-util` module so every frontend module can import them without duplicating the helper package in each module's test tree.
 
@@ -55,6 +61,20 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-85** *(Observability)*: Upload JaCoCo HTML reports as a CI build artifact so code coverage trends are visible per run in the GitHub Actions summary without downloading the JAR or running locally.
 
 - **SR-86** *(Observability)*: Set per-module JaCoCo thresholds in a dedicated Maven property (e.g., `jacoco.line.minimum`) so the threshold for GL-bound modules like `maze-libgdx` can be adjusted in one place without editing XML execution configurations directly.
+
+- **SR-91** *(12-Factor, Dev/Prod Parity)*: `OpponentRuntimeFactorySpawnTest` calls `OclBootstrap.init()` which requires the OCL ecore delegate JAR — a system-scope dependency only available after Tycho builds the Eclipse plug-ins. Introduce a Maven test profile or a module-level `pom.xml` configuration that copies the OCL jar into the test classpath for `maze-javafx-backend`, so developers can run the full test suite locally without CI. Until then, null-guard paths (already covered by `OpponentRuntimeFactoryNullGuardTest`) provide local coverage.
+
+- **SR-92** *(Observability)*: JaCoCo line-coverage thresholds should be split per package within `maze-javafx-backend` (e.g., separate minimums for `characters`, `javafx.controller`, `runtime`) so coverage regressions in a single package are immediately identifiable rather than masked by a module-level aggregate.
+
+### BUG-1 / BUG-2 post-fix — DDD / 12-Factor / Observability suggestions
+
+- **SR-87** *(DDD)*: `WallRegistry` and `WallMaterialBaseType` are generated artifacts tightly coupled to the wall sub-domain. Introduce a `WallDomainService` façade that hides the static registry behind an injectable, mockable interface. This removes static dependency coupling from consumers (`FxGameSessionBootstrapper`, `RuntimeVisualModelLoader`) and aligns with DDD's domain-service pattern.
+
+- **SR-88** *(12-Factor, Config IV — Backing Services)*: Wall material image paths and `WallMaterialBaseType` constants are embedded in the EMF model and generated code. Externalising them to an env-overridable config file would let operators swap wall art sets without recompilation, aligning with 12-Factor principle IV.
+
+- **SR-89** *(Observability)*: `FxGameSessionBootstrapper` and `RuntimeVisualModelLoader` catch `ExceptionInInitializerError` and log at SEVERE. A structured metric (e.g., a Micrometer counter `wall.registry.init.failures`) would let an ops dashboard detect misconfigured deployments before players notice broken rendering.
+
+- **SR-90** *(Observability)*: `OpponentRuntimeFactory.spawnByTarget` now shuffles candidates on every slot. Add a DEBUG-level log entry emitting the final spawn list (type, threat, slot count) per session so difficulty balancers can audit the result without attaching a debugger.
 
 ### DDD boundary suggestions
 

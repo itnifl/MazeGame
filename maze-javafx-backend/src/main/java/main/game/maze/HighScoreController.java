@@ -32,8 +32,15 @@ public class HighScoreController implements Initializable {
     private Runnable onContinue;
 
     private List<Score> scores = new ArrayList<>();
-    private final HighScoreRepository highScoreRepository =
-            new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
+    private final HighScoreRepository highScoreRepository;
+
+    public HighScoreController() {
+        this.highScoreRepository = new FileHighScoreRepository(DataFileConstants.HighscoreFilePath);
+    }
+
+    HighScoreController(HighScoreRepository repository) {
+        this.highScoreRepository = repository;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
