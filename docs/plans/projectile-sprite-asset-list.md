@@ -6,7 +6,15 @@
 ## 1. Naming convention suggestion
 
 1. Use snake case and keep backend neutral paths.
-2. Suggested root folder: `assets/projectiles/pumpkinbomber/`
+2. Runtime root path for drop in assets: `/main/game/maze/projectiles/pumpkinbomber/`
+3. Files placed there are auto picked by JavaFX projectile loading with no code changes.
+
+## 1.1 Drop in file mapping now active
+
+1. `STRAIGHT` uses `/main/game/maze/projectiles/pumpkinbomber/pumpkin_straight_projectile.png`
+2. `LOB` uses `/main/game/maze/projectiles/pumpkinbomber/pumpkin_lob_projectile.png`
+3. `BEAM` uses `/main/game/maze/projectiles/pumpkinbomber/pumpkin_beam_core_segment.png`
+4. If these are missing, runtime falls back to generated placeholder circles.
 
 ## 2. Straight projectile assets
 
@@ -77,7 +85,7 @@
 
 ## 9. Placement checklist for you
 
-1. Put final sprites under a single shared resource tree used by both frontends.
+1. Put final sprites in `maze-common-frontend/src/main/resources/main/game/maze/projectiles/pumpkinbomber/`.
 2. Keep old file names until code paths are switched in one dedicated commit.
 3. Add a quick visual smoke test scene for each projectile mode after placement.
 4. Record final file mapping in module readme after import.

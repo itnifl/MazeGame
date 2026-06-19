@@ -314,16 +314,38 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             ImageView iv = new ImageView();
             iv.setFitWidth(16); iv.setFitHeight(16); iv.setPreserveRatio(true);
             iv.setLayoutX(sx); iv.setLayoutY(sy);
-            iv.setImage(createFallbackProjectileImage(type));
-
-            if (projectileImagePath != null && !projectileImagePath.isBlank()) {
-                var url = PumpkinBomberCharacter.class.getResource(projectileImagePath);
-                if (url != null) {
-                    iv.setImage(new Image(url.toExternalForm()));
-                }
-            }
+            Image resolved = loadProjectileImage(type, projectileImagePath);
+            iv.setImage(resolved == null ? createFallbackProjectileImage(type) : resolved);
 
             return new PumpkinProjectile(type, iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
+        }
+
+        private static Image loadProjectileImage(ProjectileType type, String projectileImagePath) {
+            Image configured = loadImageIfPresent(projectileImagePath);
+            if (configured != null) {
+                return configured;
+            }
+
+            // Stable drop-in paths for art pipeline; files can be added later without code changes.
+            String typeDefault = switch (type) {
+                case LOB -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_lob_projectile.png";
+                case BEAM -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_beam_core_segment.png";
+                case STRAIGHT -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_straight_projectile.png";
+            };
+            Image byType = loadImageIfPresent(typeDefault);
+            if (byType != null) {
+                return byType;
+            }
+
+            return loadImageIfPresent("/main/game/maze/pumpkin.png");
+        }
+
+        private static Image loadImageIfPresent(String path) {
+            if (path == null || path.isBlank()) {
+                return null;
+            }
+            var url = PumpkinBomberCharacter.class.getResource(path);
+            return url == null ? null : new Image(url.toExternalForm());
         }
 
         private void tick(double dt) {
