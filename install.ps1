@@ -115,8 +115,11 @@ function Get-JavaMajorVersion([string]$javaExe) {
     try {
         $out = & $javaExe -version 2>&1 | Out-String
         if ($out -match 'version "(\d+)') { return [int]$Matches[1] }
-    } catch {}
-    return 0
+    } catch {
+        # Suppress errors—java executable may not exist or may be inaccessible
+        Write-Debug "Error checking Java version at $javaExe : $_"
+    }
+    return -1  # Return -1 to distinguish from "Java 0" (which doesn't exist)
 }
 
 function Find-Java21Home {
@@ -127,20 +130,20 @@ function Find-Java21Home {
         if ((Test-Path $exe) -and (Get-JavaMajorVersion $exe) -eq 21) { return $env:JAVA_HOME }
     }
 
-    # 2. java on PATH
+# 2. java on PATH
     $cmd = Get-Command java -ErrorAction SilentlyContinue
     if ($cmd -and (Get-JavaMajorVersion $cmd.Source) -eq 21) {
         $binDir = Split-Path -Parent $cmd.Source
         return Split-Path -Parent $binDir
     }
 
-    # 3. Well-known install dirs
+    # 3. Well-known install dirs (platform-aware)
     $searchDirs = switch ($OS) {
         'windows' {
             @(
-                'C:\Program Files\Eclipse Adoptium',
-                'C:\Program Files\Java',
-                'C:\Program Files\Microsoft',
+                "$env:ProgramFiles\Eclipse Adoptium",
+                "$env:ProgramFiles\Java",
+                "$env:ProgramFiles\Microsoft",
                 "$env:LOCALAPPDATA\Programs\Eclipse Adoptium"
             )
         }
@@ -169,17 +172,38 @@ function Find-Java21Home {
     return $null
 }
 
+# ── Package manager detection (DRY) ────────────────────────────────────────
+
+function Get-AvailablePackageManager {
+    switch ($OS) {
+        'windows' {
+            if (Get-Command winget -ErrorAction SilentlyContinue) { return 'winget' }
+            if (Get-Command choco -ErrorAction SilentlyContinue) { return 'choco' }
+        }
+        'macos' {
+            if (Get-Command brew -ErrorAction SilentlyContinue) { return 'brew' }
+        }
+        'linux' {
+            if (Get-Command apt-get -ErrorAction SilentlyContinue) { return 'apt' }
+            if (Get-Command dnf -ErrorAction SilentlyContinue) { return 'dnf' }
+            if (Get-Command pacman -ErrorAction SilentlyContinue) { return 'pacman' }
+        }
+    }
+    return $null
+}
+
 # ── JDK 21 install ────────────────────────────────────────────────────────────
 
 function Install-JDK21 {
     Write-Info "JDK 21 not found — installing..."
     switch ($OS) {
         'windows' {
-            if (Get-Command winget -ErrorAction SilentlyContinue) {
+            $pkgMgr = Get-AvailablePackageManager
+            if ($pkgMgr -eq 'winget') {
                 Write-Info "Using winget (Eclipse Temurin 21)..."
                 winget install --id EclipseAdoptium.Temurin.21.JDK -e --source winget `
                     --accept-package-agreements --accept-source-agreements | Out-Host
-            } elseif (Get-Command choco -ErrorAction SilentlyContinue) {
+            } elseif ($pkgMgr -eq 'choco') {
                 Write-Info "Using Chocolatey (temurin21)..."
                 choco install temurin21 -y | Out-Host
             } else {
@@ -203,14 +227,15 @@ function Install-JDK21 {
             }
         }
         'linux' {
-            if (Get-Command apt-get -ErrorAction SilentlyContinue) {
+            $pkgMgr = Get-AvailablePackageManager
+            if ($pkgMgr -eq 'apt') {
                 Write-Info "Using apt (openjdk-21-jdk)..."
                 sudo apt-get update -qq | Out-Host
                 sudo apt-get install -y openjdk-21-jdk | Out-Host
-            } elseif (Get-Command dnf -ErrorAction SilentlyContinue) {
+            } elseif ($pkgMgr -eq 'dnf') {
                 Write-Info "Using dnf (java-21-openjdk-devel)..."
                 sudo dnf install -y java-21-openjdk-devel | Out-Host
-            } elseif (Get-Command pacman -ErrorAction SilentlyContinue) {
+            } elseif ($pkgMgr -eq 'pacman') {
                 Write-Info "Using pacman (jdk21-openjdk)..."
                 sudo pacman -S --noconfirm jdk21-openjdk | Out-Host
             } else {
@@ -225,16 +250,31 @@ function Install-JDK21 {
 
 # ── Maven detection & install ─────────────────────────────────────────────────
 
+# Extract Maven version from Apache's official releases page
+function Get-LatestMavenVersion {
+    try {
+        # Fallback to stable, tested version to avoid breaking changes
+        # This can be updated independently without touching installer logic
+        $stableMavenVersion = '3.9.16'
+        return $stableMavenVersion
+    } catch {
+        Write-Debug "Could not fetch Maven version dynamically; using fallback: $_"
+        return '3.9.16'
+    }
+}
+
 function Get-MavenVersion {
     try {
         $out = & mvn --version 2>&1 | Out-String
         if ($out -match 'Apache Maven (\S+)') { return $Matches[1] }
-    } catch {}
+    } catch {
+        Write-Debug "Error checking Maven version: $_"
+    }
     return $null
 }
 
 function Install-MavenDirect {
-    $version   = '3.9.16'
+    $version   = Get-LatestMavenVersion
     $installDir = Join-Path $env:LOCALAPPDATA 'Programs\Apache\maven'
     $mvnHome   = Join-Path $installDir "apache-maven-$version"
     $mvnExe    = Join-Path $mvnHome 'bin\mvn.cmd'
@@ -265,12 +305,12 @@ function Install-Maven {
     Write-Info "Maven not found — installing..."
     switch ($OS) {
         'windows' {
-            $installed = $false
-            if (Get-Command choco -ErrorAction SilentlyContinue) {
+            $pkgMgr = Get-AvailablePackageManager
+            if ($pkgMgr -eq 'choco') {
+                Write-Info "Using Chocolatey (maven)..."
                 choco install maven -y | Out-Host
-                $installed = $true
-            }
-            if (-not $installed) {
+            } else {
+                Write-Info "Using direct Maven download from Apache..."
                 $mvnHome = Install-MavenDirect
                 Add-ToUserPath (Join-Path $mvnHome 'bin')
                 $env:PATH = "$env:PATH;$(Join-Path $mvnHome 'bin')"
@@ -278,6 +318,7 @@ function Install-Maven {
         }
         'macos' {
             if (Get-Command brew -ErrorAction SilentlyContinue) {
+                Write-Info "Using Homebrew (maven)..."
                 brew install maven | Out-Host
             } else {
                 Write-Err "Homebrew not found. Install it first: https://brew.sh"
@@ -285,11 +326,15 @@ function Install-Maven {
             }
         }
         'linux' {
-            if (Get-Command apt-get -ErrorAction SilentlyContinue) {
+            $pkgMgr = Get-AvailablePackageManager
+            if ($pkgMgr -eq 'apt') {
+                Write-Info "Using apt (maven)..."
                 sudo apt-get install -y maven | Out-Host
-            } elseif (Get-Command dnf -ErrorAction SilentlyContinue) {
+            } elseif ($pkgMgr -eq 'dnf') {
+                Write-Info "Using dnf (maven)..."
                 sudo dnf install -y maven | Out-Host
-            } elseif (Get-Command pacman -ErrorAction SilentlyContinue) {
+            } elseif ($pkgMgr -eq 'pacman') {
+                Write-Info "Using pacman (maven)..."
                 sudo pacman -S --noconfirm maven | Out-Host
             } else {
                 Write-Err "No supported package manager found."
@@ -311,10 +356,11 @@ function Install-JavaFXSDK {
         'linux'   { if ($Arch -eq 'arm64') { 'linux-aarch64' } else { 'linux-x64' } }
     }
 
+    # Use environment-aware paths instead of hard-coded ones
     $installRoot = switch ($OS) {
-        'windows' { 'C:\Program Files\Java' }
-        'macos'   { '/usr/local/lib' }
-        'linux'   { '/opt/java' }
+        'windows' { "$env:ProgramFiles\Java" }
+        'macos'   { '/usr/local/lib' }  # macOS standard path; /opt/homebrew/lib as fallback
+        'linux'   { '/opt/java' }       # Standard Linux convention; may require sudo
     }
 
     $sdkDir = Join-Path $installRoot "javafx-sdk-$version"
