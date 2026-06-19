@@ -15,17 +15,21 @@
 * 📝 [Xtext setup and learning guide](docs/xtext-readme.md)
 * 📚 [Technology Layman's Guide](docs/technology-laymans-guide.md) - **Simple explanations of Xtext, metamodels, and FreeMarker**
 * 🧩 [maze-generator.freemarker](maze-generator.freemarker/readme.md)
-* 🧩 [maze-feature](maze-feature/readme.md)
-* 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🧩 [maze-generator.freemarker-runner](maze-generator.freemarker-runner/readme.md)
 * 🧩 [maze-module-generator](maze-module-generator/readme.md)
+* 🧩 [maze-feature](maze-feature/readme.md)
+* 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🗄️ [maze-common-backend](maze-common-backend/readme.md)
+* 🖼️ [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic interfaces and inert defaults
 * 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md)
+* 🎨 [maze-javafx](maze-javafx/readme.md) — JavaFX backend adapters
+* 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX backend
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
   * 📄 [Maze Generation Rules](docs/requirements-features/maze-generation-rules.md) (MGR-1..19)
   * 📄 [Missing Features](docs/requirements-features/missing-feature.md)
+* ⚙️ [install.ps1](install.ps1) — automated prerequisite installer (Windows / macOS / Linux)
 
 Also, see: [FreeMarker](freemarker.readme.md) in the Maze Game
 Also, see: [Model-Driven Code Generation Plan](docs/mdd-code-generation.md) — architecture for generating application logic from models
@@ -46,6 +50,43 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 ![FreeMarker](https://img.shields.io/badge/FreeMarker-%23E34F26.svg?style=for-the-badge&logo=apache&logoColor=white)
 ![Makefile](https://img.shields.io/badge/Makefile-%23A81D33.svg?style=for-the-badge&logo=gnumake&logoColor=white)
 <br/>
+
+## Quick start
+
+Run the install script once to download and configure every prerequisite automatically. PowerShell 7+ is required (`pwsh`); install it first if you don't have it:
+
+| OS | PowerShell 7 install |
+|---|---|
+| Windows | `winget install --id Microsoft.PowerShell -e` |
+| macOS | `brew install powershell` |
+| Linux | See [Microsoft docs](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux) |
+
+Then, from the repo root:
+
+```powershell
+# JDK 21 + Maven only
+pwsh -File ./install.ps1
+
+# JDK 21 + Maven + JavaFX SDK
+pwsh -File ./install.ps1 -JavaFX
+```
+
+The script:
+1. Detects your OS (Windows / macOS / Linux) and CPU architecture
+2. Installs **JDK 21** via winget / Chocolatey / Homebrew / apt / dnf / pacman
+3. Installs **Apache Maven** via the same package manager
+4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
+5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
+6. Sets `JAVA_HOME` as a persistent user-level environment variable
+7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`
+
+> **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
+
+Restart your terminal after the script finishes, then open VS Code and press **Ctrl+F5** to launch the game.
+
+> **Tip:** If your system already has JDK 21 and Maven, the script skips those steps and only sets up environment variables, VS Code extensions, and the launch file.
+
+---
 
 ## Instructions
 
@@ -76,7 +117,7 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 
 * The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
-* Sometimes when compiling and starting the game in VS Code, you will error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Bith debugging and running without debugging will still work.
+* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Both debugging and running without debugging will still work.
 * You can pass walls by running into them through the edge.
 
 ## Sources
@@ -88,6 +129,8 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 * Vector math: [https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/](https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/)
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
+
+---
 
 ## Prerequisites and setup
 
@@ -115,8 +158,9 @@ Download and install:
     Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
   * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
     - Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
-  * Powershell [Powershell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
-    - Note that Powershell can be installed on Linux and MacOs also.
+  * PowerShell [PowerShell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
+    - Note that PowerShell can be installed on Linux and macOS also.
+  * **libGDX** — pulled automatically by Maven during the build (`com.badlogicgames.gdx:gdx:1.12.1`). No manual install required.
 
 Environment variables (examples on Windows):
 
@@ -128,8 +172,8 @@ Environment variables (examples on Windows):
 
 VS Code Java runtime:
 
-* Ctrl + Shift + P → “Java: Clean Java Language Server Workspace”
-* Ctrl + Shift + P → “Java: Configure Java Runtime”
+* Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"
+* Ctrl + Shift + P → "Java: Configure Java Runtime"
 * Under JDKs, add `C:\Program Files\Java\jdk-21` and set it as Default for build tasks
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
@@ -269,11 +313,12 @@ mvn test
 mvn -pl main.game.maze.opponents -am test
 
 # Run the JavaFX game (Windows)
-# -> Start in VSCode (CTRl + F5)
+# -> Start in VSCode (Ctrl + F5)
 ```
 
-### Makefile usage - Windows Powershell
-```
+### make-javafx.ps1 targets — Windows / macOS / Linux
+
+```powershell
 # Default: toolchain info, update mirror if needed, clear Tycho cache, full build
 .\make-javafx.ps1
 
@@ -283,17 +328,17 @@ mvn -pl main.game.maze.opponents -am test
 # Prepare launch dependencies and refresh launch environment file
 .\make-javafx.ps1 -Target prepare-run
 
-# Explicit target:
+# Explicit targets:
 .\make-javafx.ps1 -Target toolchain
 .\make-javafx.ps1 -Target mirror
 .\make-javafx.ps1 -Target force-mirror
 .\make-javafx.ps1 -Target clear-cache
 .\make-javafx.ps1 -Target build
-
 ```
 
-### make-libgdx.ps1 usage - Windows Powershell
-```
+### make-libgdx.ps1 targets — Windows / macOS / Linux
+
+```powershell
 # Generate launch environment file for VS Code debug/run
 .\make-libgdx.ps1 -Target write-launch-env
 
@@ -307,7 +352,8 @@ mvn -pl main.game.maze.opponents -am test
 .\make-libgdx.ps1 -Target run
 ```
 
-#### Makefile usage - Other
+### Makefile targets — Linux / macOS
+
 ```bash
 make force-mirror
 make clear-tycho-cache
@@ -385,6 +431,21 @@ See: [main.game.maze.dsl.ui/readme.md](main.game.maze.dsl.ui/readme.md)
 Automated test module for DSL parsing, validation, and integration behavior.
 See: [main.game.maze.dsl.tests/readme.md](main.game.maze.dsl.tests/readme.md)
 
+### maze-common-frontend
+
+Backend-agnostic interfaces and inert defaults for graphics, threading, and audio, consumed by all gameplay code. Allows the renderer to be swapped without touching game logic.  
+See: [maze-common-frontend/readme.md](maze-common-frontend/readme.md)
+
+### maze-javafx
+
+JavaFX backend adapters that implement the `maze-common-frontend` interfaces. Used by the JavaFX runtime entry point in `maze-javafx-backend`.  
+See: [maze-javafx/readme.md](maze-javafx/readme.md)
+
+### maze-libgdx
+
+libGDX backend with a working launcher and full game screen runtime. A drop-in alternative to the JavaFX backend.  
+See: [maze-libgdx/readme.md](maze-libgdx/readme.md)
+
 ### maze-javafx-backend
 
 JavaFX game runtime module with `App`, `Launcher`, controllers, character logic, actions, and runtime wiring for the game.  
@@ -418,10 +479,17 @@ See: [maze-module-generator/readme.md](maze-module-generator/readme.md)
 
 # Utility scripts at the project root
 
-This repository includes two helper scripts for packaging the source and for running a repeatable build with diagnostics. Both scripts live in the root of the repo for easy access.
+Helper scripts for installing prerequisites, packaging the source, and running repeatable builds with diagnostics.
 
-* 📦 **[pack-source.ps1](./tools/pack-source.ps1)**
-* 🧪 **[Run-P2AndBuildCheck-javafx.ps1](./Run-P2AndBuildCheck-javafx.ps1)**
+| Script | Purpose |
+|---|---|
+| ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
+| 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
+| 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |
+| 📦 [pack-source.ps1](pack-source.ps1) | Package selected source files into a zip or combined text file |
+| 📦 [ZipCodePackage.ps1](ZipCodePackage.ps1) | Export project source and handlers into a distributable zip |
+| 🔧 [tools/pack-plugin-config.ps1](tools/pack-plugin-config.ps1) | Pack only plugin/config/build-related files for minimal distribution |
+| 👁️ [tools/watch-pr.ps1](tools/watch-pr.ps1) | Poll a GitHub PR on a recurring interval and report status |
 
 ---
 
