@@ -14,9 +14,11 @@ import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
  */
 public final class GdxWinOverlayView {
 
-    private static final Color COLOR_PENALTY  = Color.RED;
+    private static final Color COLOR_PENALTY  = new Color(1f, 0.188f, 0.145f, 1f); // #ff3025, matching JavaFX
     private static final Color COLOR_WIN_BONUS = new Color(0.56f, 1.0f, 0.88f, 1f); // cyan
     private static final Color COLOR_SCORE    = new Color(1f, 0.90f, 0.43f, 1f);  // gold
+
+    private static final float LINE_SPACING = 16f;
 
     public WinButtons render(WinOverlayContext context) {
         SpriteBatch batch = context.batch();
@@ -38,7 +40,7 @@ public final class GdxWinOverlayView {
 
         int breakdownLines = countBreakdownLines(context.scoreBreakdown());
         float panelW = Math.min(600f, w - 80f);
-        float panelH = 280f + breakdownLines * 20f;
+        float panelH = 290f + breakdownLines * LINE_SPACING;
         float panelX = (w - panelW) * 0.5f;
         float panelY = (h - panelH) * 0.5f;
 
@@ -47,7 +49,7 @@ public final class GdxWinOverlayView {
         float backBtnW = 160f;
         float backBtnH = 36f;
         float btnGap = 16f;
-        float btnRowY = panelY + 18f;
+        float btnRowY = panelY + 24f;
         float saveBtnX = panelX + (panelW - saveBtnW - backBtnW - btnGap) * 0.5f;
         float backBtnX = saveBtnX + saveBtnW + btnGap;
 
@@ -78,11 +80,14 @@ public final class GdxWinOverlayView {
         font.draw(batch, "Type your name then click Save Score, or Back to Menu.", panelX + 34f, panelY + panelH - 62f);
 
         font.setColor(COLOR_SCORE);
-        font.draw(batch, "Score: " + context.score(), panelX + 34f, panelY + panelH - 88f);
+        font.draw(batch, "Your score", panelX + 34f, panelY + panelH - 78f);
+        font.getData().setScale(1.5f);
+        font.draw(batch, String.valueOf(context.score()), panelX + 34f, panelY + panelH - 96f);
+        font.getData().setScale(1.0f);
 
-        float breakdownEndY = drawBreakdown(batch, font, context.scoreBreakdown(), panelX + 34f, panelY + panelH - 110f);
+        float breakdownEndY = drawBreakdown(batch, font, context.scoreBreakdown(), panelX + 34f, panelY + panelH - 126f);
 
-        float nameY = breakdownEndY - 22f;
+        float nameY = breakdownEndY - 32f;
         if (context.winScoreSaved()) {
             font.setColor(COLOR_WIN_BONUS);
             font.draw(batch, context.winScoreStatus(), panelX + 34f, nameY);
@@ -91,7 +96,7 @@ public final class GdxWinOverlayView {
             font.draw(batch, "Name: " + context.winNameInput() + "_", panelX + 34f, nameY);
             if (context.winScoreStatus() != null && !context.winScoreStatus().isBlank()) {
                 font.setColor(COLOR_PENALTY);
-                font.draw(batch, context.winScoreStatus(), panelX + 34f, nameY - 20f);
+                font.draw(batch, context.winScoreStatus(), panelX + 34f, nameY - LINE_SPACING);
             }
         }
 
@@ -123,17 +128,17 @@ public final class GdxWinOverlayView {
         if (bd.damagePenalty() > 0) {
             font.setColor(COLOR_PENALTY);
             font.draw(batch, "- Damage penalty: -" + bd.damagePenalty(), x, y);
-            y -= 20f;
+            y -= LINE_SPACING;
         }
         if (bd.dynamicPenalty() > 0) {
             font.setColor(COLOR_PENALTY);
             font.draw(batch, "- Path hint penalty: -" + bd.dynamicPenalty(), x, y);
-            y -= 20f;
+            y -= LINE_SPACING;
         }
         if (bd.winBonus() > 0) {
             font.setColor(COLOR_WIN_BONUS);
             font.draw(batch, "+ Win bonus: +" + bd.winBonus(), x, y);
-            y -= 20f;
+            y -= LINE_SPACING;
         }
         return y;
     }
