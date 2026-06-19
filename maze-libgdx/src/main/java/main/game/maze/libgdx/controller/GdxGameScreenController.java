@@ -522,6 +522,13 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private int currentScore() {
+        GameMode mode = session.mode();
+        if (mode == GameMode.GAME_OVER || mode == GameMode.WON) {
+            return GdxGameRuntimeSupport.endScreenScore(
+                    scoringEngine, session, worldModel,
+                    combatState.maxHitPoints(), combatState.currentHitPointsAsInt(),
+                    mode == GameMode.WON);
+        }
         return GdxGameRuntimeSupport.currentScore(scoringEngine, session, worldModel);
     }
 

@@ -87,6 +87,17 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-18**: Score adjustments (route hint penalty, etc.) MUST be applied
   identically. New score rules go in a shared scorer service; per-frontend
   scorers are forbidden.
+- **GR-36**: When the player dies (HP reaches 0), a **death penalty of 5 000
+  points** is subtracted from the end-screen score. This penalty is applied
+  via `StageConstants.ScoreDeathPenalty` and must be identical in both
+  frontends. Both frontends MUST call `ScoringEngine.characterScreenScore()`
+  (not `gameplayScore()`) on the GAME_OVER and WON overlays.
+- **GR-37**: On the GAME_OVER and WON end screens, the total damage the player
+  received is subtracted from the score as **damage × 10**
+  (`hpReduction × ScoreSubtractFactor` where `ScoreSubtractFactor = 10`).
+  This penalty is in addition to the move penalty and the death penalty.
+  Both frontends MUST compute this via `ScoringEngine.characterScreenScore()`;
+  a per-frontend inline formula is forbidden.
 
 ## Win / lose
 

@@ -90,6 +90,14 @@ public final class PlayerCombatStateService {
         return dead;
     }
 
+    public int currentHitPointsAsInt() {
+        return Math.round(currentHitPoints);
+    }
+
+    public int maxHitPoints() {
+        return maxHitPoints;
+    }
+
     private void tickTimers(float dt) {
         contactCooldownRemaining = Math.max(0f, contactCooldownRemaining - dt);
         if (flashRemaining > 0f) {

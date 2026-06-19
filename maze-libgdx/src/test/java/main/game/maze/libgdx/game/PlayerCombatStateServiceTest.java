@@ -138,6 +138,51 @@ class PlayerCombatStateServiceTest {
                 "Phasing ghost (nonTangibilityEnergy > 0) must still deal contact damage");
     }
 
+    // -----------------------------------------------------------------------
+    // HP accessor tests (GR-36 / GR-37 – end-screen scoring)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void currentHitPointsAsIntReturnsMaxHpAfterReset() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(100);
+
+        assertEquals(100, service.currentHitPointsAsInt());
+    }
+
+    @Test
+    void maxHitPointsReturnsValueFromReset() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(80);
+
+        assertEquals(80, service.maxHitPoints());
+    }
+
+    @Test
+    void currentHitPointsAsIntDecreasesAfterDamage() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(100);
+
+        EnemySpawn enemy = new EnemySpawn("z_hp", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 5, 0, "", 1f);
+        service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
+
+        assertTrue(service.currentHitPointsAsInt() < 100,
+                "currentHitPointsAsInt must decrease after taking damage");
+    }
+
+    @Test
+    void currentHitPointsAsIntIsZeroAfterLethalDamage() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(20);
+
+        // Threat > threshold triggers instant-kill damage path.
+        EnemySpawn enemy = new EnemySpawn("z_lethal", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 101f, 1, 0, "", 1f);
+        service.update(1f / 30f, 10f, 10f, 15f, List.of(enemy));
+
+        assertEquals(0, service.currentHitPointsAsInt(),
+                "currentHitPointsAsInt must be 0 after lethal damage");
+    }
+
     /**
      * A phasing ghost behind a wall must deal damage because phasing ghosts bypass
      * wall-blocking checks entirely.

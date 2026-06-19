@@ -82,4 +82,20 @@ public final class GdxGameRuntimeSupport {
     public static int currentScore(ScoringEngine scoringEngine, GameSession session, GameWorldModel worldModel) {
         return GdxScoreSupport.currentScore(scoringEngine, session, worldModel.pathPenaltyPoints());
     }
+
+    /**
+     * End-screen score for the GAME_OVER or WON overlay.
+     * Delegates to {@link GdxScoreSupport#endScreenScore} which applies
+     * the 5 000-point death penalty (when dead) and damage * 10 penalty.
+     */
+    public static int endScreenScore(
+            ScoringEngine scoringEngine,
+            GameSession session,
+            GameWorldModel worldModel,
+            int maxHp,
+            int currentHp,
+            boolean won) {
+        return GdxScoreSupport.endScreenScore(
+                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won);
+    }
 }
