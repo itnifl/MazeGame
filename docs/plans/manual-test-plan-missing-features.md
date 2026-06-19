@@ -118,6 +118,17 @@ This document outlines step-by-step manual test cases to be performed after the 
     *   `LOB`: The projectile renders flying in a visual arc *over* the wall. It lands at the target coordinate, explodes, and deals splash damage to the player despite the wall.
     *   `BEAM`: An instant laser line draws from the enemy to the player, dealing immediate damage without travel time.
 
+### 7.1 Rapid smoke pass, one minute
+
+Use this before deeper manual sessions.
+
+1. Start JavaFX with one PumpkinBomber per projectile type.
+2. Validate `STRAIGHT` blocked by wall and zero damage to player.
+3. Validate `LOB` arc visual and splash damage around impact.
+4. Validate `BEAM` flash line and instant damage.
+5. Repeat steps 2 to 4 in libGDX.
+6. Mark parity pass only if behavior and readability match across both frontends.
+
 ---
 
 ## 8. F3-F6, F22-F23: Patrol and Pathfinding AI Overhaul

@@ -1,6 +1,6 @@
 # Implementation Plan — F20 & F10. Projectile Variants (Straight, Lob, Beam)
 
-**Status:** IMPLEMENTED
+ continu**Status:** IMPLEMENTED
 **ID:** `F10`, `F20`
 **Source:** `opponents.ecore` / `MazeDsl.xtext` — `ProjectileType {STRAIGHT, LOB, BEAM}`
 **Backend:** both
@@ -49,3 +49,13 @@ Completed in both backends.
      - straight projectile blocked by wall,
      - lob projectile ignoring intermediate wall and applying splash,
      - beam immediate damage plus beam visual emission.
+
+## 3. One minute visual smoke test
+
+Use this quick check after any projectile tuning or sprite update.
+
+1. Launch JavaFX with Java 21 and spawn one PumpkinBomber profile per projectile mode.
+2. Stand behind a wall and trigger `STRAIGHT`, confirm the projectile is blocked and no player damage is applied.
+3. Stay behind a wall and trigger `LOB`, confirm visible arc travel and splash damage near impact.
+4. Step into line of sight for `BEAM`, confirm instant line flash and immediate damage.
+5. Repeat the same sequence in libGDX, then confirm parity for damage outcome and visual readability.

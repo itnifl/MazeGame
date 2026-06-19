@@ -75,3 +75,9 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 2. Manual parity checks pass in both frontends for F10 and F20 scenarios.
 3. No severe readability regressions in combat encounters.
 4. No wall interaction regressions for non projectile melee contact damage.
+
+## 11. Fast visual validation
+
+1. Run the rapid smoke pass in `docs/plans/manual-test-plan-missing-features.md` section `7.1` before each balancing session.
+2. Capture one short clip per mode from JavaFX and libGDX when changing visuals or timing values.
+3. Only proceed with broader balancing if all three projectile modes pass parity in the rapid smoke pass.
