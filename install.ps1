@@ -53,6 +53,54 @@ function Write-OK([string]$text)    { Write-Host "  [OK]  $text"  -ForegroundCol
 function Write-Info([string]$text)  { Write-Host "  [..]  $text"  -ForegroundColor Yellow }
 function Write-Err([string]$text)   { Write-Host "  [!!]  $text"  -ForegroundColor Red }
 
+function Get-UnixProfileFiles {
+    $profileFiles = @("$HOME/.bashrc", "$HOME/.zshrc") | Where-Object { Test-Path $_ }
+    if (-not $profileFiles -or $profileFiles.Count -eq 0) {
+        $fallbackProfile = Join-Path $HOME '.profile'
+        if (-not (Test-Path $fallbackProfile)) {
+            New-Item -ItemType File -Path $fallbackProfile -Force | Out-Null
+        }
+        $profileFiles = @($fallbackProfile)
+    }
+    return $profileFiles
+}
+
+function Get-ExpectedHashFromContent([string]$content, [int]$hashLength) {
+    $match = [regex]::Match($content, "[A-Fa-f0-9]{$hashLength}")
+    if (-not $match.Success) {
+        throw "Could not parse expected checksum."
+    }
+    return $match.Value.ToLowerInvariant()
+}
+
+function Assert-ArchiveChecksum([string]$archivePath, [string]$downloadUrl) {
+    $checksumSources = @(
+        @{ Url = "$downloadUrl.sha256"; Algorithm = 'SHA256'; Length = 64 },
+        @{ Url = "$downloadUrl.sha512"; Algorithm = 'SHA512'; Length = 128 }
+    )
+
+    foreach ($source in $checksumSources) {
+        $checksumContent = $null
+        try {
+            $checksumContent = (Invoke-WebRequest -Uri $source.Url -UseBasicParsing).Content
+        } catch {
+            Write-Debug "Checksum source not available ($($source.Url)): $_"
+            continue
+        }
+
+        $expectedHash = Get-ExpectedHashFromContent -content $checksumContent -hashLength $source.Length
+        $actualHash = (Get-FileHash -Path $archivePath -Algorithm $source.Algorithm).Hash.ToLowerInvariant()
+        if ($actualHash -ne $expectedHash) {
+            throw "Checksum verification failed for $archivePath using $($source.Algorithm)."
+        }
+
+        Write-OK "Checksum verified ($($source.Algorithm))"
+        return
+    }
+
+    throw "Unable to verify checksum for $archivePath; no checksum file could be downloaded."
+}
+
 # ── OS detection ──────────────────────────────────────────────────────────────
 
 function Get-OS {
@@ -74,7 +122,7 @@ function Set-UserEnv([string]$name, [string]$value) {
         [System.Environment]::SetEnvironmentVariable($name, $value, 'User')
     } else {
         # On Unix, write/update the export line in the user's shell profile.
-        $profileFiles = @("$HOME/.bashrc", "$HOME/.zshrc") | Where-Object { Test-Path $_ }
+        $profileFiles = Get-UnixProfileFiles
         foreach ($f in $profileFiles) {
             $content = Get-Content $f -Raw
             $exportLine = "export $name=`"$value`""
@@ -98,7 +146,7 @@ function Add-ToUserPath([string]$dir) {
             [System.Environment]::SetEnvironmentVariable('PATH', "$current$sep$dir", 'User')
         }
     } else {
-        $profileFiles = @("$HOME/.bashrc", "$HOME/.zshrc") | Where-Object { Test-Path $_ }
+        $profileFiles = Get-UnixProfileFiles
         $exportLine   = "export PATH=`"$dir`${PATH:+:`$PATH}`""
         foreach ($f in $profileFiles) {
             if ((Get-Content $f -Raw) -notlike "*$dir*") {
@@ -291,6 +339,7 @@ function Install-MavenDirect {
 
     Write-Info "Downloading Apache Maven $version from Apache..."
     Invoke-WebRequest -Uri $url -OutFile $tmpZip -UseBasicParsing
+    Assert-ArchiveChecksum -archivePath $tmpZip -downloadUrl $url
 
     if (-not (Test-Path $installDir)) {
         New-Item -ItemType Directory -Path $installDir -Force | Out-Null
@@ -360,9 +409,9 @@ function Install-JavaFXSDK {
 
     # Use user-writable install roots on Windows to avoid elevation requirements.
     $installRoot = switch ($OS) {
-        'windows' { Join-Path $env:LOCALAPPDATA 'Programs\Java' }
-        'macos'   { '/usr/local/lib' }  # macOS standard path; /opt/homebrew/lib as fallback
-        'linux'   { '/opt/java' }       # Standard Linux convention; may require sudo
+        'windows' { Join-Path $env:LOCALAPPDATA 'Programs\JavaFX' }
+        'macos'   { Join-Path $HOME 'Library/Application Support/MazeGame/javafx' }
+        'linux'   { Join-Path $HOME '.local/share/mazegame/javafx' }
     }
 
     $sdkDir = Join-Path $installRoot "javafx-sdk-$version"
@@ -378,11 +427,10 @@ function Install-JavaFXSDK {
 
     Write-Info "Downloading JavaFX SDK $version ($platformSlug)..."
     Invoke-WebRequest -Uri $url -OutFile $tmpZip -UseBasicParsing
+    Assert-ArchiveChecksum -archivePath $tmpZip -downloadUrl $url
 
     Write-Info "Extracting to $installRoot ..."
-    if ($OS -ne 'windows' -and -not (Test-Path $installRoot)) {
-        sudo mkdir -p $installRoot
-    } elseif (-not (Test-Path $installRoot)) {
+    if (-not (Test-Path $installRoot)) {
         New-Item -ItemType Directory -Path $installRoot -Force | Out-Null
     }
 
@@ -421,7 +469,20 @@ if ($javaHome) {
     $javaHome = if ($hint -and (Test-Path $hint)) { $hint } else { Find-Java21Home }
     if (-not $javaHome) {
         Write-Err "Install succeeded but JDK 21 home could not be detected."
-        $javaHome = Read-Host "Enter JDK 21 home path"
+        while (-not $javaHome) {
+            $candidateJavaHome = Read-Host "Enter JDK 21 home path"
+            $candidateJavaExe = if ($OS -eq 'windows') {
+                Join-Path $candidateJavaHome 'bin\java.exe'
+            } else {
+                Join-Path $candidateJavaHome 'bin/java'
+            }
+
+            if ((Test-Path $candidateJavaExe) -and (Get-JavaMajorVersion $candidateJavaExe) -eq 21) {
+                $javaHome = $candidateJavaHome
+            } else {
+                Write-Err "Invalid JDK 21 path. Please enter a valid JDK 21 home directory."
+            }
+        }
     }
     Write-OK "Installed: $javaHome"
 }
