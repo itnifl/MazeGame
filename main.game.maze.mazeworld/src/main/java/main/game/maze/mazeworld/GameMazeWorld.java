@@ -129,6 +129,7 @@ public class GameMazeWorld {
             mazeVectors.clear();
             breakableWalls.clear();
             mazeVectors.addAll(mazeGenerator.generateMaze());
+            navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
             assignBreakableWalls(42L);
         }
     }

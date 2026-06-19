@@ -21,6 +21,12 @@ class BreakableWallTest {
     }
 
     @Test
+    @DisplayName("constructor rejects null geometry")
+    void constructorRejectsNullGeometry() {
+        assertThrows(NullPointerException.class, () -> new BreakableWall(null, 10));
+    }
+
+    @Test
     @DisplayName("starts with full hit points and is not destroyed")
     void initialState() {
         BreakableWall bw = new BreakableWall(wall(), 10);
@@ -67,6 +73,13 @@ class BreakableWallTest {
             bw.applyDamage(5);
             bw.applyDamage(100);
             assertEquals(0, bw.getRemainingHp());
+        }
+
+        @Test
+        @DisplayName("rejects negative damage")
+        void rejectsNegativeDamage() {
+            BreakableWall bw = new BreakableWall(wall(), 10);
+            assertThrows(IllegalArgumentException.class, () -> bw.applyDamage(-1));
         }
 
         @Test

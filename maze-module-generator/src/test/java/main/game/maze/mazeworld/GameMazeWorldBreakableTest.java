@@ -110,8 +110,8 @@ class GameMazeWorldBreakableTest {
     }
 
     @Test
-    @DisplayName("nav graph gains an edge through a destroyed wall")
-    void navGraphGainsEdgeAfterWallDestroyed() {
+    @DisplayName("applyWallDamage rewires nav graph without throwing")
+    void navGraphRewireSmokeTest() {
         // Find a breakable wall that actually blocks a nav-graph edge pair.
         // We verify this by checking that rewireAfterWallRemoval can run without
         // throwing — the structural correctness is covered in MazeNavigationGraphServiceTest.

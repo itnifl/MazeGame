@@ -190,7 +190,7 @@ public final class FxEnemyCoordinator {
                             .accept(computerCharacter);
                 }
                 if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
-                    pbc.updateProjectiles(0.1);
+                    Platform.runLater(() -> pbc.updateProjectiles(0.1));
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
