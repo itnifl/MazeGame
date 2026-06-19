@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import main.game.maze.App;
@@ -313,10 +314,13 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             ImageView iv = new ImageView();
             iv.setFitWidth(16); iv.setFitHeight(16); iv.setPreserveRatio(true);
             iv.setLayoutX(sx); iv.setLayoutY(sy);
+            iv.setImage(createFallbackProjectileImage(type));
 
             if (projectileImagePath != null && !projectileImagePath.isBlank()) {
                 var url = PumpkinBomberCharacter.class.getResource(projectileImagePath);
-                if (url != null) iv.setImage(new Image(url.toExternalForm()));
+                if (url != null) {
+                    iv.setImage(new Image(url.toExternalForm()));
+                }
             }
 
             return new PumpkinProjectile(type, iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
@@ -352,5 +356,23 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         }
 
         private static double lerp(double a, double b, double t) { return a + (b - a) * t; }
+
+        private static Image createFallbackProjectileImage(ProjectileType type) {
+            WritableImage fallback = new WritableImage(16, 16);
+            var pixelWriter = fallback.getPixelWriter();
+            Color color = type == ProjectileType.LOB ? Color.ORANGE : Color.GOLD;
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
+                    int dx = x - 8;
+                    int dy = y - 8;
+                    if ((dx * dx) + (dy * dy) <= 36) {
+                        pixelWriter.setColor(x, y, color);
+                    } else {
+                        pixelWriter.setColor(x, y, Color.TRANSPARENT);
+                    }
+                }
+            }
+            return fallback;
+        }
     }
 }
