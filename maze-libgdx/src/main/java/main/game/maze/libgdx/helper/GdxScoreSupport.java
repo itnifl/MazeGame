@@ -4,6 +4,7 @@ import java.util.List;
 import main.game.maze.dto.Score;
 import main.game.maze.game.score.HighScoreRepository;
 import main.game.maze.game.score.ScoringEngine;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameSession;
 
 /**
@@ -32,6 +33,24 @@ public final class GdxScoreSupport {
             boolean won) {
         int dynamicPenalty = (int) Math.floor(Math.max(0f, pathPenaltyPoints));
         return scoringEngine.characterScreenScore(
+                session.baseScore(),
+                session.moveCount(),
+                maxHp,
+                currentHp,
+                dynamicPenalty,
+                won);
+    }
+
+    /** Returns the itemised breakdown for the end screen (mirrors {@link #endScreenScore}). */
+    public static ScoreBreakdown endScreenBreakdown(
+            ScoringEngine scoringEngine,
+            GameSession session,
+            float pathPenaltyPoints,
+            int maxHp,
+            int currentHp,
+            boolean won) {
+        int dynamicPenalty = (int) Math.floor(Math.max(0f, pathPenaltyPoints));
+        return scoringEngine.breakdown(
                 session.baseScore(),
                 session.moveCount(),
                 maxHp,

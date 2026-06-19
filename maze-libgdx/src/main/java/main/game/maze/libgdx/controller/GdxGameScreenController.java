@@ -25,6 +25,7 @@ import main.game.maze.game.session.GameSession;
 import main.game.maze.game.score.FileHighScoreRepository;
 import main.game.maze.game.score.HighScoreRepository;
 import main.game.maze.game.score.ScoringEngine;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.status.StatusMessageBus;
 import main.game.maze.common.terminal.TerminalCommand;
 import main.game.maze.common.scoring.GameScoringConstants;
@@ -439,6 +440,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 pathHintRemainingSeconds(),
                 showSpanningTreeInfo,
                 currentScore(),
+                currentBreakdown(),
                 hudLayout));
     }
 
@@ -530,6 +532,17 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     mode == GameMode.WON);
         }
         return GdxGameRuntimeSupport.currentScore(scoringEngine, session, worldModel);
+    }
+
+    private ScoreBreakdown currentBreakdown() {
+        GameMode mode = session.mode();
+        if (mode == GameMode.GAME_OVER || mode == GameMode.WON) {
+            return GdxGameRuntimeSupport.endScreenBreakdown(
+                    scoringEngine, session, worldModel,
+                    combatState.maxHitPoints(), combatState.currentHitPointsAsInt(),
+                    mode == GameMode.WON);
+        }
+        return null;
     }
 
     void requestReturnToMenu(boolean fromGame) {

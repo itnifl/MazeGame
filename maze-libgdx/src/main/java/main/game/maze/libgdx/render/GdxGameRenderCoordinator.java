@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
 import main.game.maze.libgdx.controller.GdxHudInteractionStateController;
@@ -157,6 +158,7 @@ public final class GdxGameRenderCoordinator {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
+                input.scoreBreakdown(),
                 terminalController.isActive(),
                 terminalController.bufferText(),
                 hudInteractionState.commandsOverlayVisible(),
@@ -200,6 +202,7 @@ public final class GdxGameRenderCoordinator {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
+            ScoreBreakdown scoreBreakdown,
             HudLayout hudLayout) {
     }
 

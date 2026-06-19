@@ -111,4 +111,60 @@ class ScoringEngineTest {
         assertEquals(gameplay, endScreen,
                 "GR-37: with 0 damage and no death, characterScreenScore must equal gameplayScore");
     }
+
+    // -------------------------------------------------------------------------
+    // breakdown()
+    // -------------------------------------------------------------------------
+
+    @Test
+    void breakdownTotalMatchesCharacterScreenScore() {
+        int base = 5000, moves = 10, maxHp = 100, curHp = 80, dynPen = 20;
+        int expected = engine.characterScreenScore(base, moves, maxHp, curHp, dynPen, true);
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(base, moves, maxHp, curHp, dynPen, true);
+
+        assertEquals(expected, bd.total(), "breakdown total must equal characterScreenScore");
+    }
+
+    @Test
+    void breakdownDeathPenaltyComponentIs5000WhenDead() {
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 0, 0, false);
+
+        assertEquals(StageConstants.ScoreDeathPenalty, bd.deathPenalty(),
+                "GR-36: breakdown.deathPenalty must equal ScoreDeathPenalty when HP is 0");
+    }
+
+    @Test
+    void breakdownDeathPenaltyIsZeroWhenAlive() {
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 50, 0, false);
+
+        assertEquals(0, bd.deathPenalty(), "breakdown.deathPenalty must be 0 when HP > 0");
+    }
+
+    @Test
+    void breakdownDamagePenaltyIsDamageTimes10() {
+        int damage = 30;
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 100 - damage, 0, false);
+
+        assertEquals(damage * StageConstants.ScoreSubtractFactor, bd.damagePenalty(),
+                "GR-37: breakdown.damagePenalty must be damage * ScoreSubtractFactor");
+    }
+
+    @Test
+    void breakdownWinBonusPresentOnlyWhenWon() {
+        ScoringEngine.ScoreBreakdown wonBd  = engine.breakdown(5000, 0, 100, 100, 0, true);
+        ScoringEngine.ScoreBreakdown loseBd = engine.breakdown(5000, 0, 100, 100, 0, false);
+
+        assertEquals(StageConstants.ScoreWinBonus, wonBd.winBonus(),
+                "breakdown.winBonus must equal ScoreWinBonus when won");
+        assertEquals(0, loseBd.winBonus(), "breakdown.winBonus must be 0 when not won");
+    }
+
+    @Test
+    void breakdownDynamicPenaltyReflectsPathHintPenalty() {
+        int pathPenalty = 150;
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 100, pathPenalty, false);
+
+        assertEquals(pathPenalty, bd.dynamicPenalty(),
+                "breakdown.dynamicPenalty must equal the dynamic (path-hint) penalty passed in");
+    }
 }

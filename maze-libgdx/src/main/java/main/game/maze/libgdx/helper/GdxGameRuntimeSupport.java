@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.game.score.PathHintBudget;
 import main.game.maze.game.score.ScoringEngine;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
@@ -90,6 +91,17 @@ public final class GdxGameRuntimeSupport {
      * (when dead) and the damage * 10 penalty defined by
      * {@link main.game.maze.mazeworld.constants.StageConstants#ScoreSubtractFactor}.
      */
+    public static ScoreBreakdown endScreenBreakdown(
+            ScoringEngine scoringEngine,
+            GameSession session,
+            GameWorldModel worldModel,
+            int maxHp,
+            int currentHp,
+            boolean won) {
+        return GdxScoreSupport.endScreenBreakdown(
+                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won);
+    }
+
     public static int endScreenScore(
             ScoringEngine scoringEngine,
             GameSession session,

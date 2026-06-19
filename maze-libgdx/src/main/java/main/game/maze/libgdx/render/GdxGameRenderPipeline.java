@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
@@ -176,7 +177,8 @@ public final class GdxGameRenderPipeline {
                         state.session().winScoreSaved(),
                         state.winOverlayController().winScoreStatusText(),
                         state.winOverlayController().winNameInputText(),
-                        state.currentScore()));
+                        state.currentScore(),
+                        state.scoreBreakdown()));
         state.winOverlayController().onOverlayRendered(winButtons);
     }
 
@@ -192,7 +194,8 @@ public final class GdxGameRenderPipeline {
                         state.glyphLayout(),
                         state.hudCamera(),
                         state.gameOverBackgroundTexture(),
-                        state.currentScore()));
+                        state.currentScore(),
+                        state.scoreBreakdown()));
     }
 
     private void drawInfectionOverlayIfNeeded(RenderState state) {
@@ -295,6 +298,7 @@ public final class GdxGameRenderPipeline {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
+            ScoreBreakdown scoreBreakdown,
             boolean terminalActive,
             String terminalBufferText,
             boolean commandsOverlayVisible,
