@@ -12,6 +12,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -26,6 +35,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
@@ -47,6 +57,75 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+        buildDirectionalImages();
+    }
+
+    /**
+     * Generates directional sprite variants from the base image so the pumpkin bomber
+     * visually turns when moving. If separate directional assets are configured in the
+     * model they are used as-is (handled by ComputerCharacter). When they are all the
+     * same as the base, we produce mirrored and tinted variants at runtime.
+     */
+    private void buildDirectionalImages() {
+        if (!(getCharacterGraphics() instanceof ImageView)) {
+            return;
+        }
+        Image base = imageRight; // ComputerCharacter already loaded these
+        if (base == null || base.getWidth() < 1) {
+            return;
+        }
+        // Only generate variants when all directional paths point at the same file
+        String lb = safeId(model.getImageTurnLeft());
+        String rb = safeId(model.getImageTurnRight());
+        String ub = safeId(model.getImageTurnUp());
+        String db = safeId(model.getImageTurnDown());
+        if (!lb.equals(rb) || !lb.equals(ub) || !lb.equals(db)) {
+            return; // distinct assets configured — trust ComputerCharacter's loading
+        }
+        int w = (int) base.getWidth();
+        int h = (int) base.getHeight();
+        PixelReader pr = base.getPixelReader();
+        if (pr == null) {
+            return;
+        }
+        // RIGHT — original (facing right)
+        // LEFT  — horizontally mirrored
+        // UP    — slightly brightened tint
+        // DOWN  — original (same as right for top-down view)
+        WritableImage left = new WritableImage(w, h);
+        WritableImage up   = new WritableImage(w, h);
+        PixelWriter pwLeft = left.getPixelWriter();
+        PixelWriter pwUp   = up.getPixelWriter();
+        for (int row = 0; row < h; row++) {
+            for (int col = 0; col < w; col++) {
+                Color c = pr.getColor(col, row);
+                pwLeft.setColor(w - 1 - col, row, c);                 // mirror X
+                pwUp.setColor(col, row, c.brighter().saturate());     // tint lighter
+            }
+        }
+        // Override the images registered in ComputerCharacter's internal map
+        // by installing them via the inherited setCharacterImage path.
+        // We do this by re-registering via the package-accessible images field.
+        // Since that map is private we instead use a VectorFacing subscription trick:
+        // register our generated images into a small local map and intercept direction changes.
+        var localImages = new java.util.EnumMap<VectorFacing, Image>(VectorFacing.class);
+        localImages.put(VectorFacing.RIGHT, base);
+        localImages.put(VectorFacing.LEFT,  left);
+        localImages.put(VectorFacing.UP,    up);
+        localImages.put(VectorFacing.DOWN,  base);
+        localImages.put(VectorFacing.IDLE,  base);
+
+        // Replace the direction subscriber to use our richer image map
+        this.directionSubscriber = facing -> {
+            if (facing != null) {
+                Image next = localImages.getOrDefault(facing, base);
+                setCharacterImage(next);
+            }
+        };
+    }
+
+    private static String safeId(String s) {
+        return s == null ? "" : s;
     }
 
     private static int mapSpeed(double modelSpeed) {
@@ -179,6 +258,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 }
                 if (!blockedByWall) {
                     playSound(model.getExplosionSound());
+                    if (p.type == ProjectileType.LOB || p.type == ProjectileType.STRAIGHT) {
+                        playExplosionVisual(p.node.getLayoutX(), p.node.getLayoutY(), p.splashRadius);
+                    }
                 }
                 p.dispose();
                 it.remove();
@@ -251,6 +333,54 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
     private void playSound(String path) {
         AudioEngine.get().play(path);
+    }
+
+    private void playExplosionVisual(double cx, double cy, double splashRadius) {
+        Pane pane = hostPane();
+        if (pane == null) {
+            return;
+        }
+        double radius = Math.max(12.0, splashRadius * 0.5);
+        main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+            Circle ring = new Circle(cx, cy, 6);
+            ring.setFill(Color.TRANSPARENT);
+            ring.setStroke(Color.ORANGERED);
+            ring.setStrokeWidth(3);
+            ring.setMouseTransparent(true);
+            pane.getChildren().add(ring);
+
+            Circle core = new Circle(cx, cy, 4);
+            core.setFill(Color.YELLOW);
+            core.setOpacity(0.9);
+            core.setMouseTransparent(true);
+            pane.getChildren().add(core);
+
+            Timeline expand = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                    new KeyValue(ring.radiusProperty(), 6),
+                    new KeyValue(ring.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(240),
+                    new KeyValue(ring.radiusProperty(), radius),
+                    new KeyValue(ring.opacityProperty(), 0.0))
+            );
+            expand.setOnFinished(e -> pane.getChildren().removeAll(ring, core));
+
+            FadeTransition coreFade = new FadeTransition(Duration.millis(180), core);
+            coreFade.setFromValue(0.9);
+            coreFade.setToValue(0.0);
+
+            // Brief screen shake on the board pane's parent (camera layer)
+            Node shakeTarget = pane.getParent() != null ? pane.getParent() : pane;
+            TranslateTransition shakeX = new TranslateTransition(Duration.millis(40), shakeTarget);
+            shakeX.setByX(5);
+            shakeX.setAutoReverse(true);
+            shakeX.setCycleCount(4);
+            shakeX.setOnFinished(e -> shakeTarget.setTranslateX(0));
+            shakeX.play();
+
+            expand.play();
+            coreFade.play();
+        });
     }
 
     private ICanDie resolveVictimForTargetNode(Node target) {
