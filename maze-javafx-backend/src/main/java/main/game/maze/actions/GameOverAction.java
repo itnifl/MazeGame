@@ -118,12 +118,16 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
     private void configurePenaltyLabels(GameOverController controller, int hitPoints) {
         var bd = getBreakdown();
-        if (hitPoints < PlayerCharacter.MAX_PLAYER_HP && bd != null) {
+        if (bd != null && hasDamagePenaltyAmount(bd.damagePenalty())) {
             controller.showDamagePenaltyLabel(bd.damagePenalty());
         }
         if (hitPoints <= 0 && bd != null) {
             controller.showDeathPenaltyLabel(bd.deathPenalty());
         }
+    }
+
+    static boolean hasDamagePenaltyAmount(int damagePenalty) {
+        return damagePenalty > 0;
     }
 
     /**
