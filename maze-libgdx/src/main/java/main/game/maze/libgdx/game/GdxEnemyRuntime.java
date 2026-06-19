@@ -170,6 +170,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                     dealtDamage += Math.max(0, spawn.attackDamage());
                 }
                 activeProjectiles.remove(i);
+                continue;
             }
         }
 
@@ -205,6 +206,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         float speedValue = Math.max(1f, spawn.projectileSpeed());
         float distance = (float) Math.sqrt(distanceSquared(x, y, playerX, playerY));
         if (distance < 0.001f) {
+            return dealtDamage;
+        }
+        if (activeProjectiles.size() >= 8) {
             return dealtDamage;
         }
         float duration = Math.max(0.15f, distance / speedValue);

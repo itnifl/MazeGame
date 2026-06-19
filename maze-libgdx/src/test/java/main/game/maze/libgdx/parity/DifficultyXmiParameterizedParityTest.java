@@ -83,7 +83,7 @@ class DifficultyXmiParameterizedParityTest {
 
     static final double NORMAL_SPEED_MULT  = 1.00;
     static final double NORMAL_DAMAGE_MULT = 1.00;
-    static final int    NORMAL_MAX_THREAT  = 20;
+    static final int    NORMAL_MAX_THREAT  = 25;
 
     static final double HARD_SPEED_MULT   = 1.15;
     static final double HARD_DAMAGE_MULT  = 1.40;

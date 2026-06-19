@@ -166,4 +166,26 @@
     <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
   </characterTypes>
 
+  <!-- Disabled zero-threat entry kept to exercise threat-floor logic in RuntimeVisualModelLoader (DO NOT DELETE) -->
+  <characterTypes xsi:type="opponents:PumpkinBomber">
+    <id>pb_threat_floor_fixture</id>
+    <displayName>PumpkinBomber Threat Floor Fixture</displayName>
+    <enabled>false</enabled>
+    <health>1</health>
+    <speed>0</speed>
+    <threatLevel>0.0</threatLevel>
+    <attackDamage>1</attackDamage>
+    <attackRange>1</attackRange>
+    <attackCooldownMs>99999</attackCooldownMs>
+    <projectileSpeed>1.0</projectileSpeed>
+    <projectileType>STRAIGHT</projectileType>
+    <splashRadius>0</splashRadius>
+    <arcHeight>0.0</arcHeight>
+    <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+  </characterTypes>
+
 </opponents:OpponentModel>

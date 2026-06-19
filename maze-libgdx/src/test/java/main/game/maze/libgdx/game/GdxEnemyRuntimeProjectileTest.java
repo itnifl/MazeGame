@@ -146,4 +146,95 @@ class GdxEnemyRuntimeProjectileTest {
             @Override public float goalY() { return 380; }
         };
     }
+
+    // --- Edge case: negative dt must return 0 and not tick projectiles ------
+
+    @Test
+    void updateRangedAttacks_withNegativeDt_returnZeroAndFiresNothing() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        int damage = runtime.updateRangedAttacks(-0.1f, openMaze(), 120f, 40f, 12f);
+
+        assertEquals(0, damage, "Negative dt must return 0 damage");
+        assertTrue(runtime.projectileVisuals().isEmpty(), "No projectile should be created for negative dt");
+    }
+
+    // --- Edge case: projectile cap prevents unbounded list growth ------------
+
+    @Test
+    void projectileCap_preventsMoreThanMaxActiveProjectiles() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.STRAIGHT, 0f, 0f, 1f),  // very slow — never arrive
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        // Fire repeatedly with cooldown=0 by passing large dt steps of exactly one cooldown period
+        for (int i = 0; i < 20; i++) {
+            runtime.updateRangedAttacks(0.201f, openMaze(), 120f, 40f, 1f);
+        }
+
+        assertTrue(runtime.projectileVisuals().size() <= 8,
+                "Active projectile count must not exceed the cap of 8");
+    }
+
+    // --- Edge case: LOB outside splash radius deals no damage ----------------
+
+    @Test
+    void lobProjectile_playerOutsideSplashRadius_dealsNoDamage() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 10f, 0f, 300f),  // tiny splash radius
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        // Player is at 200,40; enemy at 40,40; target is the player — 10px splash means
+        // player must be within 10px of impact to take damage. Impact is at player pos so
+        // player IS in range in this test. Validate via opposite: player far from impact.
+        GdxEnemyRuntime farRuntime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 10f, 0f, 300f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        int totalDamage = 0;
+        for (int i = 0; i < 240; i++) {
+            // Pass player coords 300,300 — far from the impact at ~200,40
+            totalDamage += farRuntime.updateRangedAttacks(1f / 60f, openMaze(), 300f, 300f, 5f);
+        }
+        assertEquals(0, totalDamage, "Player outside splash radius must take no LOB damage");
+    }
+
+    // --- Edge case: zero attackRange must not fire --------------------------
+
+    @Test
+    void updateRangedAttacks_withZeroAttackRange_neverFires() {
+        EnemySpawn noRangeSpawn = new EnemySpawn(
+                "no-range",
+                "/main/game/maze/pumpkinbomber.png",
+                40f, 40f, 40f, 2f, 10, 0, "",
+                BehaviorType.AGGRESSIVE, 2f, 0d,
+                EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                ProjectileType.STRAIGHT, 0f, 0f,
+                0f,   // attackRange = 0
+                200,
+                260f);
+
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(noRangeSpawn, 0, openWorld(), 60f, 8);
+
+        int total = 0;
+        for (int i = 0; i < 60; i++) {
+            total += runtime.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f);
+        }
+
+        assertEquals(0, total, "Zero attackRange must never fire a projectile or deal damage");
+    }
 }

@@ -165,7 +165,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             boolean arrived = p.isArrived();
 
             if (blockedByWall || hitNow || arrived || outOfBounds) {
-                boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || hitNow || outOfBounds);
+                // hitNow is always false for LOB (guarded by the continue above); kept for clarity.
+                boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || outOfBounds);
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (!(s instanceof ICanDie victim)) continue;
                     Node n = characterGraphicsOf(s);
@@ -200,7 +201,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
             for (var sub : deathSubscribers) sub.AddDeathNotification(this);
-            App.gameController.unregisterComputerCharacter(this, g);
+            if (App.gameController != null) {
+                App.gameController.unregisterComputerCharacter(this, g);
+            }
         }
     }
 
@@ -326,7 +329,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             this.sx = sx; this.sy = sy; this.tx = tx; this.ty = ty;
             this.duration = Math.max(0.15, duration);
             this.arcHeight = Math.max(0.0, arcHeight);
-            this.splashRadius = splashRadius;
+            this.splashRadius = Math.max(0.0, splashRadius);
             this.damage = damage;
         }
 
