@@ -83,6 +83,16 @@ class BreakableWallTest {
         }
 
         @Test
+        @DisplayName("zero damage leaves hit points unchanged")
+        void zeroDamageDoesNotChangeHp() {
+            BreakableWall bw = new BreakableWall(wall(), 10);
+            int remaining = bw.applyDamage(0);
+            assertEquals(10, remaining);
+            assertEquals(10, bw.getRemainingHp());
+            assertFalse(bw.isDestroyed());
+        }
+
+        @Test
         @DisplayName("multiple partial hits accumulate")
         void cumulativeDamage() {
             BreakableWall bw = new BreakableWall(wall(), 20);

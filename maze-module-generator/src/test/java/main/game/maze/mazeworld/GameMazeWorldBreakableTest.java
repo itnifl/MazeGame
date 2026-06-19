@@ -1,10 +1,14 @@
 package main.game.maze.mazeworld;
 
+import main.game.maze.mazeworld.generators.IMazeGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +22,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameMazeWorldBreakableTest {
 
     private GameMazeWorld world;
+
+    private static final class SequenceMazeGenerator implements IMazeGenerator {
+        private final Queue<List<Vector2D>> outputs = new ArrayDeque<>();
+
+        private SequenceMazeGenerator(List<Vector2D> first, List<Vector2D> second) {
+            outputs.add(first);
+            outputs.add(second);
+        }
+
+        @Override
+        public List<Vector2D> generateMaze() {
+            List<Vector2D> next = outputs.poll();
+            return next == null ? List.of() : next;
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -62,6 +81,12 @@ class GameMazeWorldBreakableTest {
         if (indestructible != null) {
             assertNull(world.findBreakableWall(indestructible));
         }
+    }
+
+    @Test
+    @DisplayName("findBreakableWall returns null for null geometry")
+    void findBreakableWallReturnsNullForNull() {
+        assertNull(world.findBreakableWall(null));
     }
 
     @Test
@@ -110,6 +135,49 @@ class GameMazeWorldBreakableTest {
     }
 
     @Test
+    @DisplayName("applyWallDamage with zero damage keeps wall unchanged")
+    void zeroDamageKeepsWall() {
+        BreakableWall bw = world.getBreakableWalls().get(0);
+        int hpBefore = bw.getRemainingHp();
+        int vectorsBefore = world.getMazeVectors().size();
+
+        boolean destroyed = world.applyWallDamage(bw, 0);
+
+        assertFalse(destroyed);
+        assertEquals(hpBefore, bw.getRemainingHp());
+        assertEquals(vectorsBefore, world.getMazeVectors().size());
+        assertTrue(world.getBreakableWalls().contains(bw));
+    }
+
+    @Test
+    @DisplayName("applyWallDamage rejects negative damage and keeps wall unchanged")
+    void negativeDamageThrowsAndKeepsWall() {
+        BreakableWall bw = world.getBreakableWalls().get(0);
+        int hpBefore = bw.getRemainingHp();
+        int vectorsBefore = world.getMazeVectors().size();
+
+        assertThrows(IllegalArgumentException.class, () -> world.applyWallDamage(bw, -1));
+
+        assertEquals(hpBefore, bw.getRemainingHp());
+        assertEquals(vectorsBefore, world.getMazeVectors().size());
+        assertTrue(world.getBreakableWalls().contains(bw));
+    }
+
+    @Test
+    @DisplayName("applyWallDamage ignores a breakable wall not owned by the world")
+    void ignoresForeignBreakableWall() {
+        Vector2D geometry = world.getMazeVectors().get(0);
+        BreakableWall foreign = new BreakableWall(geometry, 10);
+        int vectorsBefore = world.getMazeVectors().size();
+
+        boolean destroyed = world.applyWallDamage(foreign, 10);
+
+        assertFalse(destroyed);
+        assertEquals(vectorsBefore, world.getMazeVectors().size());
+        assertTrue(world.getMazeVectors().contains(geometry));
+    }
+
+    @Test
     @DisplayName("applyWallDamage rewires nav graph without throwing")
     void navGraphRewireSmokeTest() {
         // Find a breakable wall that actually blocks a nav-graph edge pair.
@@ -117,5 +185,36 @@ class GameMazeWorldBreakableTest {
         // throwing — the structural correctness is covered in MazeNavigationGraphServiceTest.
         BreakableWall bw = world.getBreakableWalls().get(0);
         assertDoesNotThrow(() -> world.applyWallDamage(bw, bw.getRemainingHp()));
+    }
+
+    @Test
+    @DisplayName("GenerateMaze rebuilds navigation graph and replaces maze vectors")
+    void generateMazeRebuildsGraphAndWalls() {
+        List<Vector2D> firstLayout = new ArrayList<>(List.of(
+                new Vector2D(0, 0, 100, 0),
+                new Vector2D(0, 100, 100, 100),
+                new Vector2D(0, 0, 0, 100),
+                new Vector2D(100, 0, 100, 100)
+        ));
+        List<Vector2D> secondLayout = new ArrayList<>(List.of(
+                new Vector2D(0, 0, 200, 0),
+                new Vector2D(0, 200, 200, 200),
+                new Vector2D(0, 0, 0, 200),
+                new Vector2D(200, 0, 200, 200),
+                new Vector2D(100, 0, 100, 200)
+        ));
+        GameMazeWorld generatedWorld = new GameMazeWorld(new SequenceMazeGenerator(firstLayout, secondLayout));
+
+        var graphBefore = generatedWorld.getNavigationGraph();
+        assertNotNull(graphBefore);
+        assertEquals(firstLayout.size(), generatedWorld.getMazeVectors().size());
+
+        assertDoesNotThrow(generatedWorld::GenerateMaze);
+
+        var graphAfter = generatedWorld.getNavigationGraph();
+        assertNotNull(graphAfter);
+        assertNotSame(graphBefore, graphAfter, "Navigation graph should be rebuilt from regenerated walls");
+        assertEquals(secondLayout.size(), generatedWorld.getMazeVectors().size());
+        assertTrue(generatedWorld.getMazeVectors().containsAll(secondLayout));
     }
 }
