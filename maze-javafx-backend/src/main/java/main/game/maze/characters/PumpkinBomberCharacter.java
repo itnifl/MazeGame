@@ -17,6 +17,8 @@ import main.game.maze.characters.interfaces.ICharacterAction;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.characters.interfaces.IHaveModel;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
@@ -111,6 +113,20 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
                     explode(p, victim);
                     hitNow = true; break;
+                }
+            }
+
+            // Wall collision: stop and damage the wall if it is breakable.
+            if (!hitNow && App.gameController != null) {
+                double wx = p.node.getLayoutX();
+                double wy = p.node.getLayoutY();
+                GameMazeWorld mazeWorld = GameMazeWorld.GetWorld();
+                if (mazeWorld != null) {
+                    var hitWall = WallCollisionUtil.findFirstHitWall(wx, wy, 16.0, mazeWorld.getMazeVectors());
+                    if (hitWall != null) {
+                        App.gameController.applyProjectileDamageToWall(hitWall, p.damage);
+                        hitNow = true;
+                    }
                 }
             }
 

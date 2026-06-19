@@ -189,6 +189,9 @@ public final class FxEnemyCoordinator {
                             .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
                             .accept(computerCharacter);
                 }
+                if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
+                    pbc.updateProjectiles(0.1);
+                }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
             }

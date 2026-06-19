@@ -140,6 +140,50 @@ public final class MazeNavigationGraphService {
     }
 
     /**
+     * Restores navigation edges that were blocked solely by the removed wall.
+     *
+     * <p>After a breakable wall is destroyed, {@code remainingWalls} no longer
+     * contains that wall. This method scans every pair of adjacent grid nodes and
+     * adds edges back wherever the corridor between them is now wall-free.
+     * Edges that already exist are left untouched (no duplicates).
+     *
+     * <p>Should be called on the UI thread after removing the wall from the live
+     * wall list so that {@code remainingWalls} reflects the post-destruction state.
+     */
+    public static void rewireAfterWallRemoval(MazeNavigationGraph graph,
+                                              List<Vector2D> remainingWalls) {
+        if (graph == null || remainingWalls == null) return;
+        Node[][] grid = graph.getGrid();
+        int cols = graph.getCols();
+        int rows = graph.getRows();
+
+        for (int c = 0; c < cols; c++) {
+            for (int r = 0; r < rows; r++) {
+                Node n = grid[c][r];
+                if (n == null) continue;
+
+                if (c + 1 < cols) {
+                    Node right = grid[c + 1][r];
+                    if (right != null && !n.getNeighbors().contains(right)
+                            && segmentIsFree(n.toPoint2D(), right.toPoint2D(), remainingWalls, 0)) {
+                        n.addNeighbor(right);
+                        right.addNeighbor(n);
+                    }
+                }
+
+                if (r + 1 < rows) {
+                    Node down = grid[c][r + 1];
+                    if (down != null && !n.getNeighbors().contains(down)
+                            && segmentIsFree(n.toPoint2D(), down.toPoint2D(), remainingWalls, 0)) {
+                        n.addNeighbor(down);
+                        down.addNeighbor(n);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Bygger spanning-tree med root på nærmeste node til gitt verdensposisjon.
      * Brukes for å starte treet fra spillerens posisjon.
      */

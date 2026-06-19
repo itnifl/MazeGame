@@ -1,6 +1,6 @@
 # Implementation Plan — F11. Breakable Walls and Hit Points
 
-**Status:** PLANNED
+**Status:** IMPLEMENTED
 **ID:** `F11`
 **Source:** `walls.ecore` — `WallMaterial.breakable`, `WallMaterial.hitPoints`
 **Backend:** both
