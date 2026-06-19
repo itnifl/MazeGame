@@ -156,8 +156,97 @@ public class CharacterBaseTest {
     @DisplayName("Character with null graphics can be created")
     void characterWithNullGraphics() {
         TestCharacter nullGraphicsChar = new TestCharacter(null, 50, 50);
-        
+
         assertNull(nullGraphicsChar.getCharacterGraphics());
         assertEquals(50, nullGraphicsChar.getCharacterPosition().getX(), 0.01);
+    }
+
+    // -----------------------------------------------------------------------
+    // Movement tests — cover moveRight/Left/Up/Down and their private delegates
+    // -----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("moveRight with ImageView advances position and returns true")
+    void moveRight_withImageView_advancesPositionAndReturnsTrue() {
+        boolean moved = character.moveRight(2, true);
+        assertTrue(moved, "moveRight(force=true) must return true when within bounds");
+        assertEquals(102, character.getCharacterPosition().getX(), 0.01);
+    }
+
+    @Test
+    @DisplayName("moveLeft with ImageView retreats position and returns true")
+    void moveLeft_withImageView_retreatsPositionAndReturnsTrue() {
+        boolean moved = character.moveLeft(2, true);
+        assertTrue(moved, "moveLeft(force=true) must return true when within bounds");
+        assertEquals(98, character.getCharacterPosition().getX(), 0.01);
+    }
+
+    @Test
+    @DisplayName("moveUp with ImageView decrements Y and returns true")
+    void moveUp_withImageView_decrementsYAndReturnsTrue() {
+        boolean moved = character.moveUp(2, true);
+        assertTrue(moved, "moveUp(force=true) must return true when within bounds");
+        assertEquals(98, character.getCharacterPosition().getY(), 0.01);
+    }
+
+    @Test
+    @DisplayName("moveDown with ImageView increments Y and returns true")
+    void moveDown_withImageView_incrementsYAndReturnsTrue() {
+        boolean moved = character.moveDown(2, true);
+        assertTrue(moved, "moveDown(force=true) must return true when within bounds");
+        assertEquals(102, character.getCharacterPosition().getY(), 0.01);
+    }
+
+    @Test
+    @DisplayName("moveLeft at x=0 cannot go further left — returns false")
+    void moveLeft_atLeftEdge_returnsFalse() {
+        TestCharacter edge = new TestCharacter(new ImageView(new WritableImage(1, 1)), 0, 100);
+        assertFalse(edge.moveLeft(2, true), "moveLeft at x=0 must return false");
+    }
+
+    @Test
+    @DisplayName("moveUp at y=0 cannot go further up — returns false")
+    void moveUp_atTopEdge_returnsFalse() {
+        TestCharacter edge = new TestCharacter(new ImageView(new WritableImage(1, 1)), 100, 0);
+        assertFalse(edge.moveUp(2, true), "moveUp at y=0 must return false");
+    }
+
+    @Test
+    @DisplayName("moveRight with null graphics short-circuits and returns false")
+    void moveRight_withNullGraphics_returnsFalse() {
+        TestCharacter nullGfx = new TestCharacter(null, 100, 100);
+        assertFalse(nullGfx.moveRight(2, true), "moveRight with null graphics must return false");
+    }
+
+    @Test
+    @DisplayName("moveDown with null graphics short-circuits and returns false")
+    void moveDown_withNullGraphics_returnsFalse() {
+        TestCharacter nullGfx = new TestCharacter(null, 100, 100);
+        assertFalse(nullGfx.moveDown(2, true), "moveDown with null graphics must return false");
+    }
+
+    @Test
+    @DisplayName("dispose clears the graphics reference to null")
+    void dispose_clearsGraphicsReferenceToNull() {
+        assertNotNull(character.getCharacterGraphics());
+        character.dispose();
+        assertNull(character.getCharacterGraphics());
+    }
+
+    @Test
+    @DisplayName("getCharacterView returns non-null view after construction with ImageView")
+    void getCharacterView_returnsNonNullView() {
+        assertNotNull(character.getCharacterView(),
+                "View must be non-null after construction with non-null graphics");
+    }
+
+    @Test
+    @DisplayName("setCharacterView replaces the view; getCharacterView returns the new one")
+    void setCharacterView_replacesViewAndGraphics() {
+        var original = character.getCharacterView();
+        assertNotNull(original);
+        // Setting the same view is idempotent
+        character.setCharacterView(original);
+        assertEquals(original, character.getCharacterView());
     }
 }

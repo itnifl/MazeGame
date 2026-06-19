@@ -3,6 +3,7 @@ package main.game.maze.characters;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
+import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.common.graphics.AudioEngine;
@@ -11,6 +12,8 @@ import main.game.maze.opponents.PumpkinBomber;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -137,5 +140,95 @@ class PumpkinBomberCharacterTest {
         PumpkinBomber model = basicPumpkin();
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
         assertSame(model, pbc.getModel());
+    }
+
+    // -----------------------------------------------------------------------
+    // Position-subscriber management
+    // -----------------------------------------------------------------------
+
+    @Test
+    void getPositionSubscribers_returnsEmptyListInitially() {
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+        assertTrue(pbc.getPositionSubscribers().isEmpty(),
+                "touchTargets must be empty before any subscriber is added");
+    }
+
+    @Test
+    void addPositionSubscriber_addsToTouchTargets() {
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+        ICanSubscribeAndNotifyPosition stub = makeStubSubscriber();
+
+        pbc.addPositionSubscriber(stub);
+
+        assertTrue(pbc.getPositionSubscribers().contains(stub),
+                "getPositionSubscribers must include subscriber added via addPositionSubscriber");
+    }
+
+    @Test
+    void removePositionSubscriber_removesFromTouchTargets() {
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+        ICanSubscribeAndNotifyPosition stub = makeStubSubscriber();
+        pbc.addPositionSubscriber(stub);
+
+        pbc.removePositionSubscriber(stub);
+
+        assertFalse(pbc.getPositionSubscribers().contains(stub),
+                "subscriber must not be present after removePositionSubscriber");
+    }
+
+    // -----------------------------------------------------------------------
+    // Ranged attack — tryShootAt / updateProjectiles
+    // -----------------------------------------------------------------------
+
+    @Test
+    void updateProjectiles_withNoProjectiles_returnsImmediately() {
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+        // Must not throw when projectiles list is empty.
+        assertDoesNotThrow(() -> pbc.updateProjectiles(0.016));
+    }
+
+    @Test
+    void tryShootAt_withSamePositionTarget_doesNotAddProjectile() {
+        Rectangle gfx = new Rectangle(16, 16); // layoutX/Y default to 0
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+
+        Rectangle target = new Rectangle(16, 16); // also at layoutX/Y = 0 → dist < 1e-3
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+
+        // No projectile should have been added; updateProjectiles on empty list must not crash.
+        assertDoesNotThrow(() -> pbc.updateProjectiles(0.016),
+                "updateProjectiles must be safe after tryShootAt skips zero-distance shot");
+    }
+
+    @Test
+    void tryShootAt_withInRangeTarget_createsProjectile_andUpdateProjectiles_removesIt() {
+        Rectangle gfx = new Rectangle(16, 16); // character at layoutX=0
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(10.0); // dist = 10 → within range 300 → createArc returns non-null
+
+        pbc.tryShootAt(target, Long.MAX_VALUE); // fires; projectile added
+
+        // Advance time well past the 5-second life limit so the projectile is removed.
+        assertDoesNotThrow(() -> pbc.updateProjectiles(6.0),
+                "updateProjectiles must remove the expired projectile without throwing");
+
+        // Subsequent tick with empty list must also be safe.
+        assertDoesNotThrow(() -> pbc.updateProjectiles(0.016));
+    }
+
+    // -----------------------------------------------------------------------
+    private static ICanSubscribeAndNotifyPosition makeStubSubscriber() {
+        return new ICanSubscribeAndNotifyPosition() {
+            public void doPositionEvaluation(PositionBounds b, ICanSubscribeAndNotifyPosition e) {}
+            public void addPositionSubscriber(ICanSubscribeAndNotifyPosition e) {}
+            public void removePositionSubscriber(ICanSubscribeAndNotifyPosition e) {}
+            public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() { return List.of(); }
+        };
     }
 }

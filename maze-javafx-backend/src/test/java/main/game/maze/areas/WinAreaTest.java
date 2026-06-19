@@ -89,4 +89,26 @@ public class WinAreaTest {
         }
         assertEquals(5, winArea.getPositionSubscribers().size());
     }
+
+    @Test
+    @DisplayName("removePositionSubscriber removes the subscriber from the list")
+    void removePositionSubscriber_removesSubscriberFromList() {
+        ICanSubscribeAndNotifyPosition subscriber = new StubPositionSubscriber();
+        winArea.addPositionSubscriber(subscriber);
+        assertFalse(winArea.getPositionSubscribers().isEmpty(), "subscriber must be present after add");
+
+        winArea.removePositionSubscriber(subscriber);
+
+        assertFalse(winArea.getPositionSubscribers().contains(subscriber),
+                "subscriber must not be present after remove");
+    }
+
+    @Test
+    @DisplayName("remove a non-existent subscriber is a no-op")
+    void removeNonExistentSubscriber_isNoOp() {
+        ICanSubscribeAndNotifyPosition phantom = new StubPositionSubscriber();
+        assertDoesNotThrow(() -> winArea.removePositionSubscriber(phantom),
+                "removing a subscriber that was never added must not throw");
+        assertTrue(winArea.getPositionSubscribers().isEmpty());
+    }
 }
