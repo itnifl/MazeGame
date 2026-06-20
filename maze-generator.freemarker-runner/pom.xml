@@ -24,31 +24,10 @@
       until the Tycho regression is sorted out. Re-enable with -Dskip.codegen=false.
     -->
     <skip.codegen>true</skip.codegen>
-    <root.uri.path>${maven.multiModuleProjectDirectory}</root.uri.path>
   </properties>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.6.0</version>
-        <executions>
-          <execution>
-            <id>normalize-root-uri-path</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>regex-property</goal>
-            </goals>
-            <configuration>
-              <name>root.uri.path</name>
-              <value>${maven.multiModuleProjectDirectory}</value>
-              <regex>\\</regex>
-              <replacement>/</replacement>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-eclipse-plugin</artifactId>
