@@ -108,31 +108,84 @@
       <ImageTurnDown>/main/game/maze/zombie3-down.png</ImageTurnDown>
     </characterTypes>
 
+  <!-- Normal difficulty bomber: LOB type, medium threat -->
   <characterTypes xsi:type="opponents:PumpkinBomber">
-    <id>pb_small</id>
-    <displayName>Pumpkin Bomber Example</displayName>
-    <enabled>false</enabled>
-    <health>100</health>
-    <speed>0</speed>
-    <threatLevel>0.0</threatLevel>
+    <id>pb_normal</id>
+    <displayName>Pumpkin Bomber</displayName>
+    <enabled>true</enabled>
+    <health>80</health>
+    <speed>1.2</speed>
+    <threatLevel>5.0</threatLevel>
+    <behavior>AGGRESSIVE</behavior>
 
-    <attackDamage>10</attackDamage>
-    <attackRange>100</attackRange>
-    <attackCooldownMs>6000</attackCooldownMs>
-    <projectileSpeed>260.0</projectileSpeed>
+    <attackDamage>8</attackDamage>
+    <attackRange>320</attackRange>
+    <attackCooldownMs>4000</attackCooldownMs>
+    <projectileSpeed>220.0</projectileSpeed>
     <projectileType>LOB</projectileType>
-    <splashRadius>48</splashRadius>
-    <arcHeight>10.0</arcHeight>
-    
-    <projectileImage>/main/game/maze/pumpkin.png</projectileImage>
+    <splashRadius>52</splashRadius>
+    <arcHeight>40.0</arcHeight>
+
+    <projectileImage>/main/game/maze/projectiles/pumpkinbomber/pumpkin_lob_projectile.png</projectileImage>
     <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
-    <explosionSound>/main/game/maze/pumpkin-pop.mp3</explosionSound>
+    <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
-    <ImageTurnLeft>/main/game/maze/pb-left.png</ImageTurnLeft>
-    <ImageTurnRight>/main/game/maze/pb-right.png</ImageTurnRight>
-    <ImageTurnUp>/main/game/maze/pb-up.png</ImageTurnUp>
-    <ImageTurnDown>/main/game/maze/pb-down.png</ImageTurnDown>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+  </characterTypes>
+
+  <!-- Hard difficulty elite bomber: STRAIGHT type, higher threat -->
+  <characterTypes xsi:type="opponents:PumpkinBomber">
+    <id>pb_hard</id>
+    <displayName>Pumpkin Bomber Elite</displayName>
+    <enabled>true</enabled>
+    <health>120</health>
+    <speed>1.8</speed>
+    <threatLevel>8.0</threatLevel>
+    <behavior>AGGRESSIVE</behavior>
+
+    <attackDamage>12</attackDamage>
+    <attackRange>380</attackRange>
+    <attackCooldownMs>3000</attackCooldownMs>
+    <projectileSpeed>280.0</projectileSpeed>
+    <projectileType>STRAIGHT</projectileType>
+    <splashRadius>0</splashRadius>
+    <arcHeight>0.0</arcHeight>
+
+    <projectileImage>/main/game/maze/projectiles/pumpkinbomber/pumpkin_straight_projectile.png</projectileImage>
+    <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
+    <explosionSound>/main/game/maze/error.wav</explosionSound>
+
+    <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+  </characterTypes>
+
+  <!-- Disabled zero-threat entry kept to exercise threat-floor logic in RuntimeVisualModelLoader (DO NOT DELETE) -->
+  <characterTypes xsi:type="opponents:PumpkinBomber">
+    <id>pb_threat_floor_fixture</id>
+    <displayName>PumpkinBomber Threat Floor Fixture</displayName>
+    <enabled>false</enabled>
+    <health>1</health>
+    <speed>0</speed>
+    <threatLevel>0.0</threatLevel>
+    <attackDamage>1</attackDamage>
+    <attackRange>1</attackRange>
+    <attackCooldownMs>99999</attackCooldownMs>
+    <projectileSpeed>1.0</projectileSpeed>
+    <projectileType>STRAIGHT</projectileType>
+    <splashRadius>0</splashRadius>
+    <arcHeight>0.0</arcHeight>
+    <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
   </characterTypes>
 
 </opponents:OpponentModel>

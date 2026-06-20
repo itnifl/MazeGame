@@ -90,6 +90,18 @@ public final class PlayerCombatStateService {
         return dead;
     }
 
+    public void applyDirectDamage(int damage) {
+        if (dead) {
+            return;
+        }
+        applyDamage(damage);
+        startFlash(1f, 0.45f, 0.45f);
+        AudioEngine.get().playRateLimited(
+                AudioResourceConstants.PlayerScreamSound,
+                "player.scream",
+                PLAYER_SOUND_COOLDOWN_MS);
+    }
+
     private void tickTimers(float dt) {
         contactCooldownRemaining = Math.max(0f, contactCooldownRemaining - dt);
         if (flashRemaining > 0f) {

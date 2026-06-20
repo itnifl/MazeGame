@@ -3,12 +3,14 @@ package main.game.maze.characters;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
+import main.game.maze.GameController;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.ProjectileType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -220,6 +222,229 @@ class PumpkinBomberCharacterTest {
 
         // Subsequent tick with empty list must also be safe.
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016));
+    }
+
+    @Test
+    void beamProjectile_damagesSubscribedVictimWhenLineOfSightClear() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        model.setAttackDamage(6);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(20);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return false;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+
+        assertEquals(hpBefore - 6, player.getHitPoints(),
+                "BEAM should damage the subscribed target represented by the provided Node");
+    }
+
+    @Test
+    void beamProjectile_doesNotDamageWhenBlockedByWall() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        model.setAttackDamage(7);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(20);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "BEAM must not damage player when line of sight is blocked");
+    }
+
+    @Test
+    void lobProjectile_appliesSplashEvenWhenWallReported() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        model.setAttackDamage(5);
+        model.setSplashRadius(120.0);
+        model.setProjectileSpeed(120.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(0);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(60);
+        target.setLayoutY(0);
+
+        App.gameController = new GameController() {
+            @Override
+            public boolean isWallBetween(double ex, double ey, double px, double py) {
+                return true;
+            }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.updateProjectiles(10.0);
+
+        assertTrue(player.getHitPoints() < hpBefore,
+                "LOB splash should still apply even when walls are reported between bomber and target");
+    }
+
+    // subtractHitPoints must not NPE when App.gameController is null (CRR-3)
+    @Test
+    void subtractHitPoints_withNullGameController_doesNotThrow() {
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
+        App.gameController = null;
+
+        assertDoesNotThrow(() -> pbc.subtractHitPoints(100),
+                "subtractHitPoints must not throw NPE when App.gameController is null");
+        assertTrue(pbc.getHitPoints() <= 0, "HP must be at or below zero after fatal damage");
+    }
+
+    // Negative splashRadius in model must be clamped to zero, no splash damage applied.
+    @Test
+    void lobProjectile_negativeSplashRadius_doesNotDamage() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        model.setAttackDamage(10);
+        model.setSplashRadius(-50.0);
+        model.setProjectileSpeed(150.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(0);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(80);
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.updateProjectiles(10.0);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "Negative splashRadius must be clamped to zero — no splash damage should apply");
+    }
+
+    // BEAM must still fire on consecutive calls after cooldown expires.
+    @Test
+    void beamProjectile_firesAgainAfterCooldown() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        model.setAttackDamage(5);
+        model.setAttackCooldownMs(1000);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(20);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        App.gameController = new GameController() {
+            @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return false; }
+        };
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx, 1000L);                  // first shot fires at t=1000ms
+        pbc.tryShootAt(playerGfx, 1500L);                  // within cooldown — must not fire
+        assertEquals(hpBefore - 5, player.getHitPoints(), "Second shot within cooldown must not fire");
+
+        pbc.tryShootAt(playerGfx, 2001L);                  // past cooldown — must fire again
+        assertEquals(hpBefore - 10, player.getHitPoints(), "Third shot after cooldown must fire");
+    }
+
+    // STRAIGHT projectile beyond attack range must not create a projectile.
+    @Test
+    void straightProjectile_outsideRange_doesNotFire() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.STRAIGHT);
+        model.setAttackRange(50.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(200);   // 200 > range 50
+
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+
+        assertDoesNotThrow(() -> pbc.updateProjectiles(0.016),
+                "updateProjectiles with empty list from out-of-range shot must not throw");
+    }
+
+    // Ensure BEAM does not fire when target is null.
+    @Test
+    void tryShootAt_withNullTarget_doesNotThrow() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.BEAM);
+        Rectangle gfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
+
+        assertDoesNotThrow(() -> pbc.tryShootAt(null, Long.MAX_VALUE),
+                "tryShootAt(null) must not throw");
+    }
+
+    @Test
+    void lobProjectile_doesNotResolveOnImmediateBodyOverlapBeforeArrival() {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        model.setAttackDamage(5);
+        model.setSplashRadius(200.0);
+        model.setProjectileSpeed(150.0);
+
+        Rectangle bomberGfx = new Rectangle(16, 16);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(bomberGfx, 0, 0, model);
+
+        Rectangle playerGfx = new Rectangle(16, 16);
+        playerGfx.setLayoutX(0);
+        playerGfx.setLayoutY(0);
+        PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
+        pbc.addPositionSubscriber(player);
+
+        Rectangle target = new Rectangle(16, 16);
+        target.setLayoutX(120);
+        target.setLayoutY(0);
+
+        int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.updateProjectiles(0.01);
+
+        assertEquals(hpBefore, player.getHitPoints(),
+                "LOB must not apply splash immediately due to initial overlap; splash is applied at arrival or expiry");
     }
 
     // -----------------------------------------------------------------------

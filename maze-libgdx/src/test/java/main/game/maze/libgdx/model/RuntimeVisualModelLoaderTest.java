@@ -20,6 +20,7 @@ import main.game.maze.difficulties.DifficultiesFactory;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyMaxCount;
 import main.game.maze.difficulties.EnemyTypes;
+import main.game.maze.opponents.ProjectileType;
 
 class RuntimeVisualModelLoaderTest {
 
@@ -44,6 +45,18 @@ class RuntimeVisualModelLoaderTest {
         assertNotNull(model.goalImagePath());
         assertNotNull(model.enemies());
         assertFalse(model.enemies().isEmpty(), "expected enemies derived from opponent model");
+
+        var pumpkinSpawns = model.enemies().stream()
+            .filter(e -> e.imagePath() != null && e.imagePath().toLowerCase(Locale.ROOT).contains("pumpkin"))
+            .toList();
+        if (!pumpkinSpawns.isEmpty()) {
+            assertTrue(pumpkinSpawns.stream().allMatch(e -> e.attackRange() >= 0f),
+                "pumpkin bomber spawns should carry ranged fields");
+            assertTrue(pumpkinSpawns.stream().allMatch(e -> e.projectileType() == ProjectileType.LOB
+                || e.projectileType() == ProjectileType.BEAM
+                || e.projectileType() == ProjectileType.STRAIGHT),
+                "pumpkin bomber spawns should carry projectile type values");
+        }
     }
 
     // Difficulty with PumpkinBomber cap=0 must produce zero PumpkinBomber spawns —
