@@ -1,6 +1,7 @@
 package main.game.maze.mazeworld;
 
 import main.game.maze.mazeworld.generators.IMazeGenerator;
+import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,11 +181,26 @@ class GameMazeWorldBreakableTest {
     @Test
     @DisplayName("applyWallDamage rewires nav graph without throwing")
     void navGraphRewireSmokeTest() {
-        // Find a breakable wall that actually blocks a nav-graph edge pair.
-        // We verify this by checking that rewireAfterWallRemoval can run without
-        // throwing — the structural correctness is covered in MazeNavigationGraphServiceTest.
         BreakableWall bw = world.getBreakableWalls().get(0);
+        int edgesBefore = countNavEdges(world.getNavigationGraph());
+
         assertDoesNotThrow(() -> world.applyWallDamage(bw, bw.getRemainingHp()));
+
+        // Destroying a wall can only open passages, never close them
+        assertTrue(countNavEdges(world.getNavigationGraph()) >= edgesBefore,
+                "Destroying a wall must never reduce the nav graph edge count");
+    }
+
+    private static int countNavEdges(MazeNavigationGraph graph) {
+        if (graph == null) return 0;
+        int total = 0;
+        for (int c = 0; c < graph.getCols(); c++) {
+            for (int r = 0; r < graph.getRows(); r++) {
+                MazeNavigationGraph.Node n = graph.getNode(c, r);
+                if (n != null) total += n.getNeighbors().size();
+            }
+        }
+        return total / 2;
     }
 
     @Test
