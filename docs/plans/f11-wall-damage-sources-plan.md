@@ -1,6 +1,6 @@
 # Implementation Plan — F11 (Extension). Wall Damage Sources
 
-**Status:** PLANNED
+**Status:** SR-99 IMPLEMENTED — remaining items PLANNED
 **ID:** `F11-EXT`
 **Parent:** `F11` (Breakable Walls — HP tracking, damage, removal)
 **Related:** `F10`, `F20` (Projectile Variants), `SR-99` (libGDX parity), `SR-100` (visual damage cues), `SR-101` (domain events)
@@ -62,14 +62,15 @@ or similar).
 | Both frontends | JavaFX: in `ZombieCharacter`; libGDX: equivalent in its zombie runtime |
 | New req | **SR-107** |
 
-### DS-4 — libGDX projectile parity (SR-99, medium priority)
+### DS-4 — libGDX projectile parity (SR-99) ✅ IMPLEMENTED (2026-06-20)
 
 | Attribute | Detail |
 |-----------|--------|
-| Who fires | Any libGDX enemy that fires a projectile |
-| Damage | Mirror of JavaFX `applyProjectileDamageToWall`; call `GameMazeWorld.applyWallDamage` directly (no `Platform.runLater` in libGDX; use `Gdx.app.postRunnable` if needed) |
-| Why separate | The libGDX frontend currently has no wall-damage integration point |
-| New req | **SR-99** (already in suggested-requirements.md) |
+| Who fires | Any libGDX enemy that fires a projectile (PumpkinBombers via `GdxEnemyRuntime.tryShootAt`) |
+| Damage | `GdxWallDamageSupport.updateProjectiles` calls `GameMazeWorld.applyWallDamage` directly on the render thread |
+| Key files | `GdxProjectileRuntime`, `GdxEnemyRuntime`, `GdxWallDamageSupport`, `RangedEnemySpawnProps`, `PlayingModeBridge.updateProjectiles`, `LibgdxPlayingBridge`, `GdxGamePlayingBridgeFactory`, `GdxGameScreenAssembler` |
+| Tests | `GdxWallDamageSupportTest` (9 tests), `PlayingModeControllerTest` FakeBridge |
+| CI | Passed on branch `feature/breakableWaLLS` (run 27874753789) |
 
 ---
 
@@ -115,7 +116,7 @@ should be posted to the render thread in libGDX to avoid concurrent iteration.
 
 | ID | Summary | Source |
 |----|---------|--------|
-| **SR-99** | libGDX parity — projectile wall damage | existing, proposed |
+| **SR-99** | libGDX parity — projectile wall damage | ✅ IMPLEMENTED 2026-06-20 |
 | **SR-100** | Visual crack/tint cue on partial damage | existing, proposed |
 | **SR-101** | `WallDestroyedEvent` domain event bus | existing, proposed |
 | **SR-104** | `WallMaterialSpec` as DIP boundary | ratified in F11 Phase 2 |
