@@ -104,6 +104,9 @@ public final class GdxGameRenderPipeline {
                 state.activePathPoints(),
                 state.enemyProjectiles(),
                 state.enemyBeams(),
+                state.enemyImpacts(),
+                state.shakeOffsetX(),
+                state.shakeOffsetY(),
                 state.debugOverlayState().enemyPathSecondsRemaining(),
                 state.showSpanningTreeInfo()));
 
@@ -278,6 +281,9 @@ public final class GdxGameRenderPipeline {
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
+            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            float shakeOffsetX,
+            float shakeOffsetY,
             GameSession session,
             GdxDebugOverlayState debugOverlayState,
             StatusMessageBus statusMessageBus,

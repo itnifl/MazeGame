@@ -128,7 +128,7 @@
 
     <projectileImage>/main/game/maze/projectiles/pumpkinbomber/pumpkin_lob_projectile.png</projectileImage>
     <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
-    <explosionSound>/main/game/maze/pumpkin-pop.mp3</explosionSound>
+    <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
     <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
@@ -157,7 +157,7 @@
 
     <projectileImage>/main/game/maze/projectiles/pumpkinbomber/pumpkin_straight_projectile.png</projectileImage>
     <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
-    <explosionSound>/main/game/maze/pumpkin-pop.mp3</explosionSound>
+    <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
     <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>

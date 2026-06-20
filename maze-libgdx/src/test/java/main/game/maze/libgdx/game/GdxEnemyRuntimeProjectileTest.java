@@ -50,6 +50,24 @@ class GdxEnemyRuntimeProjectileTest {
     }
 
     @Test
+    void lobImpactEmitsExplosionVisual() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 70f, 80f, 160f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        boolean hadImpactVisual = false;
+        for (int i = 0; i < 240; i++) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+            hadImpactVisual = hadImpactVisual || !runtime.impactVisuals().isEmpty();
+        }
+
+        assertTrue(hadImpactVisual, "LOB impact should emit at least one explosion visual in libGDX");
+    }
+
+    @Test
     void beamDealsInstantDamageWithoutTravelTime() {
         GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
                 rangedSpawn(ProjectileType.BEAM, 0f, 0f),

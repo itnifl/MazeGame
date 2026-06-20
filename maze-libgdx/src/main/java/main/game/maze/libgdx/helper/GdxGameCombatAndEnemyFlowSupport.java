@@ -18,6 +18,8 @@ import main.game.maze.mazeworld.generators.PlayerState;
  */
 public final class GdxGameCombatAndEnemyFlowSupport {
 
+    private static final float EXPLOSION_SHAKE_DURATION_SECONDS = 0.20f;
+
     private GdxGameCombatAndEnemyFlowSupport() {
     }
 
@@ -66,10 +68,17 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         if (player == null || worldModel == null) {
             return 0;
         }
+        worldModel.setExplosionShakeRemainingSeconds(
+                Math.max(0f, worldModel.explosionShakeRemainingSeconds() - Math.max(0f, dt)));
+        if (worldModel.explosionShakeRemainingSeconds() <= 0f) {
+            worldModel.setExplosionShakeIntensity(0f);
+        }
         worldModel.enemyProjectiles().clear();
         worldModel.enemyBeams().clear();
+        worldModel.enemyImpacts().clear();
 
         int totalDamage = 0;
+        float maxShake = 0f;
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             totalDamage += enemy.updateRangedAttacks(
                     dt,
@@ -79,6 +88,15 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     player.halfSize());
             worldModel.enemyProjectiles().addAll(enemy.projectileVisuals());
             worldModel.enemyBeams().addAll(enemy.beamVisuals());
+            var impacts = enemy.impactVisuals();
+            worldModel.enemyImpacts().addAll(impacts);
+            for (GdxEnemyRuntime.ImpactVisual impact : impacts) {
+                maxShake = Math.max(maxShake, impact.shakeMagnitude());
+            }
+        }
+        if (maxShake > 0f) {
+            worldModel.setExplosionShakeRemainingSeconds(EXPLOSION_SHAKE_DURATION_SECONDS);
+            worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), maxShake));
         }
         return totalDamage;
     }

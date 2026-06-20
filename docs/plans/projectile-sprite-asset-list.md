@@ -83,9 +83,18 @@
 5. `pumpkin_beam_fire.wav`
 6. `pumpkin_beam_blocked.wav`
 
+## 8.1 Runtime mapping and current placeholder
+
+1. Opponent model `explosionSound` now points to `/main/game/maze/error.wav` as a temporary placeholder that already exists.
+2. Final target for PumpkinBomber explosion should be `/main/game/maze/pumpkin-pop.wav`.
+3. Place the final file in `maze-common-frontend/src/main/resources/main/game/maze/pumpkin-pop.wav`.
+4. After placing it, update `opponentModel.xmi` entries from `/main/game/maze/error.wav` to `/main/game/maze/pumpkin-pop.wav`.
+5. Keep duration short, about 150ms to 350ms, so repeated lob impacts stay readable in combat.
+
 ## 9. Placement checklist for you
 
 1. Put final sprites in `maze-common-frontend/src/main/resources/main/game/maze/projectiles/pumpkinbomber/`.
-2. Keep old file names until code paths are switched in one dedicated commit.
-3. Add a quick visual smoke test scene for each projectile mode after placement.
-4. Record final file mapping in module readme after import.
+2. Put final projectile sound in `maze-common-frontend/src/main/resources/main/game/maze/`.
+3. Keep old file names until code paths are switched in one dedicated commit.
+4. Add a quick visual smoke test scene for each projectile mode after placement.
+5. Record final file mapping in module readme after import.

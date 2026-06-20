@@ -24,6 +24,12 @@ public final class GdxGameWorldView {
 
     public void render(RenderContext context) {
         context.viewport().apply();
+        float originalCameraX = context.camera().position.x;
+        float originalCameraY = context.camera().position.y;
+        context.camera().position.set(
+            originalCameraX + context.shakeOffsetX(),
+            originalCameraY + context.shakeOffsetY(),
+            0f);
         context.camera().update();
 
         SpriteBatch batch = context.batch();
@@ -52,6 +58,7 @@ public final class GdxGameWorldView {
         drawEnemyFallback(context, shapes);
         drawEnemyProjectiles(context, shapes);
         drawEnemyBeams(context, shapes);
+        drawEnemyImpacts(context, shapes);
         drawPlayerFallback(context, shapes, player);
         drawHintPath(context, shapes, maze);
         if (context.showEnemyPathSeconds() > 0f) {
@@ -60,6 +67,8 @@ public final class GdxGameWorldView {
         drawSpanningTreeOverlay(context, shapes, maze, player);
 
         shapes.end();
+        context.camera().position.set(originalCameraX, originalCameraY, 0f);
+        context.camera().update();
     }
 
     private void drawBackground(RenderContext context, SpriteBatch batch, OrthographicCamera camera, MazeArena maze) {
@@ -243,6 +252,19 @@ public final class GdxGameWorldView {
         }
     }
 
+    private void drawEnemyImpacts(RenderContext context, ShapeRenderer shapes) {
+        for (GdxEnemyRuntime.ImpactVisual impact : context.enemyImpacts()) {
+            float alpha = Math.max(0f, Math.min(1f, impact.alpha()));
+            if (alpha <= 0f) {
+                continue;
+            }
+            shapes.setColor(1f, 0.72f, 0.18f, 0.28f * alpha);
+            shapes.circle(impact.x(), impact.y(), impact.radius(), 28);
+            shapes.setColor(1f, 0.40f, 0.18f, 0.78f * alpha);
+            shapes.circle(impact.x(), impact.y(), Math.max(3f, impact.radius() * 0.55f), 24);
+        }
+    }
+
     private void drawHintPath(RenderContext context, ShapeRenderer shapes, MazeArena maze) {
         if (context.activePathPoints().isEmpty()) {
             return;
@@ -399,8 +421,11 @@ public final class GdxGameWorldView {
             int infectionEdgeLayers,
             List<EnemyViewModel> enemies,
             List<Point2D> activePathPoints,
-                List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
-                List<GdxEnemyRuntime.BeamVisual> enemyBeams,
+            List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
+            List<GdxEnemyRuntime.BeamVisual> enemyBeams,
+            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            float shakeOffsetX,
+            float shakeOffsetY,
             float showEnemyPathSeconds,
             boolean showSpanningTreeInfo) {
     }

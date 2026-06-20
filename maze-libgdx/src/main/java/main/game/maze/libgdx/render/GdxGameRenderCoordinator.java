@@ -138,6 +138,9 @@ public final class GdxGameRenderCoordinator {
                 activePathPoints,
                 worldModel.enemyProjectiles(),
                 worldModel.enemyBeams(),
+                worldModel.enemyImpacts(),
+                shakeOffsetX(input.enemyAnimationClock()),
+                shakeOffsetY(input.enemyAnimationClock()),
                 session,
                 debugOverlayState,
                 statusMessageBus,
@@ -175,6 +178,26 @@ public final class GdxGameRenderCoordinator {
                 enemyPathProvider,
                 input.hudLayout())));
     }
+
+        private float shakeOffsetX(float animationClock) {
+                float remaining = worldModel.explosionShakeRemainingSeconds();
+                float intensity = worldModel.explosionShakeIntensity();
+                if (remaining <= 0f || intensity <= 0f) {
+                        return 0f;
+                }
+                float envelope = Math.min(1f, remaining / 0.20f);
+                return (float) Math.sin(animationClock * 90f) * intensity * envelope;
+        }
+
+        private float shakeOffsetY(float animationClock) {
+                float remaining = worldModel.explosionShakeRemainingSeconds();
+                float intensity = worldModel.explosionShakeIntensity();
+                if (remaining <= 0f || intensity <= 0f) {
+                        return 0f;
+                }
+                float envelope = Math.min(1f, remaining / 0.20f);
+                return (float) Math.cos(animationClock * 73f) * intensity * 0.65f * envelope;
+        }
 
     public record FrameInput(
             SpriteBatch batch,

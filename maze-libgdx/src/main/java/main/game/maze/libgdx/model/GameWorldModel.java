@@ -32,11 +32,14 @@ public final class GameWorldModel {
     private float deathDisplayRemainingSeconds;
     private float pathPenaltyPoints;
     private PathHintBudget pathHintBudget = new PathHintBudget(PathHintBudget.EASY_SECONDS);
+    private float explosionShakeRemainingSeconds;
+    private float explosionShakeIntensity;
 
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles = new ArrayList<>();
     private final List<GdxEnemyRuntime.BeamVisual> enemyBeams = new ArrayList<>();
+    private final List<GdxEnemyRuntime.ImpactVisual> enemyImpacts = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -183,6 +186,22 @@ public final class GameWorldModel {
         this.pathHintBudget = pathHintBudget;
     }
 
+    public float explosionShakeRemainingSeconds() {
+        return explosionShakeRemainingSeconds;
+    }
+
+    public void setExplosionShakeRemainingSeconds(float explosionShakeRemainingSeconds) {
+        this.explosionShakeRemainingSeconds = Math.max(0f, explosionShakeRemainingSeconds);
+    }
+
+    public float explosionShakeIntensity() {
+        return explosionShakeIntensity;
+    }
+
+    public void setExplosionShakeIntensity(float explosionShakeIntensity) {
+        this.explosionShakeIntensity = Math.max(0f, explosionShakeIntensity);
+    }
+
     public List<GdxEnemyRuntime> animatedEnemies() {
         return animatedEnemies;
     }
@@ -197,6 +216,10 @@ public final class GameWorldModel {
 
     public List<GdxEnemyRuntime.BeamVisual> enemyBeams() {
         return enemyBeams;
+    }
+
+    public List<GdxEnemyRuntime.ImpactVisual> enemyImpacts() {
+        return enemyImpacts;
     }
 
     public List<Score> highScoreRows() {

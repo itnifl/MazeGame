@@ -3,6 +3,7 @@ package main.game.maze.libgdx.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -21,6 +22,11 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
 
 public final class GdxEnemyRuntime implements EnemyRuntime {
+    private static final String FALLBACK_THROW_SOUND = "/main/game/maze/menuselect.wav";
+    private static final String FALLBACK_EXPLOSION_SOUND = "/main/game/maze/error.wav";
+    private static final long RANGED_SOUND_COOLDOWN_MS = 120L;
+    private static final float IMPACT_DURATION_SECONDS = 0.24f;
+
     private final EnemySpawn spawn;
     private final String runtimeEnemyId;
     private final String imagePath;
@@ -46,6 +52,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private float shotCooldownRemaining;
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
+    private final List<ImpactEffect> activeImpacts = new ArrayList<>();
 
     private GdxEnemyRuntime(EnemySpawn spawn,
                             String runtimeEnemyId,
@@ -137,6 +144,10 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             beam.remaining = Math.max(0f, beam.remaining - dt);
         }
         activeBeams.removeIf(beam -> beam.remaining <= 0f);
+        for (ImpactEffect impact : activeImpacts) {
+            impact.remaining = Math.max(0f, impact.remaining - dt);
+        }
+        activeImpacts.removeIf(impact -> impact.remaining <= 0f);
 
         for (int i = activeProjectiles.size() - 1; i >= 0; i--) {
             ActiveProjectile projectile = activeProjectiles.get(i);
@@ -147,6 +158,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             if (projectile.type == ProjectileType.STRAIGHT
                     && maze != null
                     && WallCollisionUtil.wallBetween(previousX, previousY, projectile.x, projectile.y, maze.walls())) {
+                emitImpact(projectile.x, projectile.y, 16f, 4f);
+                playExplosionSound();
                 activeProjectiles.remove(i);
                 continue;
             }
@@ -155,6 +168,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                     <= squared(playerRadius + projectile.radius());
             if (projectile.type == ProjectileType.STRAIGHT && hitPlayer) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
+                emitImpact(projectile.x, projectile.y, 18f, 5f);
+                playExplosionSound();
                 activeProjectiles.remove(i);
                 continue;
             }
@@ -168,6 +183,14 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                         && distanceSquared(playerX, playerY, projectile.targetX, projectile.targetY)
                         <= squared(Math.max(0f, spawn.splashRadius()))) {
                     dealtDamage += Math.max(0, spawn.attackDamage());
+                }
+                if (projectile.type == ProjectileType.LOB || projectile.type == ProjectileType.STRAIGHT) {
+                    float impactRadius = projectile.type == ProjectileType.LOB
+                            ? Math.max(24f, Math.max(0f, spawn.splashRadius()))
+                            : 18f;
+                    float shakeMagnitude = projectile.type == ProjectileType.LOB ? 8f : 5f;
+                    emitImpact(projectile.boundsX(), projectile.boundsY(), impactRadius, shakeMagnitude);
+                    playExplosionSound();
                 }
                 activeProjectiles.remove(i);
                 continue;
@@ -198,6 +221,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             if (!blocked) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
             }
+            playThrowSound();
             activeBeams.add(new BeamEffect(x, y, playerX, playerY, blocked, 0.14f));
             shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
             return dealtDamage;
@@ -220,8 +244,33 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 playerY,
                 duration,
                 Math.max(0f, spawn.arcHeight())));
+        playThrowSound();
         shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
         return dealtDamage;
+    }
+
+    private void playThrowSound() {
+        String path = spawn.touchSoundPath();
+        if (path == null || path.isBlank()) {
+            path = FALLBACK_THROW_SOUND;
+        }
+        AudioEngine.get().playRateLimited(path, runtimeEnemyId + ":throw", RANGED_SOUND_COOLDOWN_MS);
+    }
+
+    private void playExplosionSound() {
+        AudioEngine.get().playRateLimited(
+                FALLBACK_EXPLOSION_SOUND,
+                runtimeEnemyId + ":explode",
+                RANGED_SOUND_COOLDOWN_MS);
+    }
+
+    private void emitImpact(float impactX, float impactY, float maxRadius, float shakeMagnitude) {
+        activeImpacts.add(new ImpactEffect(
+                impactX,
+                impactY,
+                Math.max(8f, maxRadius),
+                Math.max(0f, shakeMagnitude),
+                IMPACT_DURATION_SECONDS));
     }
 
     public List<ProjectileVisual> projectileVisuals() {
@@ -251,6 +300,20 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         for (BeamEffect beam : activeBeams) {
             float alpha = beam.maxDuration <= 0f ? 0f : Math.max(0f, beam.remaining / beam.maxDuration);
             visuals.add(new BeamVisual(beam.x1, beam.y1, beam.x2, beam.y2, alpha, beam.blocked));
+        }
+        return Collections.unmodifiableList(visuals);
+    }
+
+    public List<ImpactVisual> impactVisuals() {
+        if (activeImpacts.isEmpty()) {
+            return List.of();
+        }
+        List<ImpactVisual> visuals = new ArrayList<>(activeImpacts.size());
+        for (ImpactEffect impact : activeImpacts) {
+            float progress = impact.maxDuration <= 0f ? 1f : 1f - Math.max(0f, impact.remaining / impact.maxDuration);
+            float alpha = Math.max(0f, 1f - progress);
+            float radius = Math.max(2f, impact.maxRadius * (0.35f + 0.65f * progress));
+            visuals.add(new ImpactVisual(impact.x, impact.y, radius, alpha, impact.shakeMagnitude));
         }
         return Collections.unmodifiableList(visuals);
     }
@@ -411,6 +474,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     public record BeamVisual(float x1, float y1, float x2, float y2, float alpha, boolean blocked) {
     }
 
+    public record ImpactVisual(float x, float y, float radius, float alpha, float shakeMagnitude) {
+    }
+
     private static final class ActiveProjectile {
         private final ProjectileType type;
         private final float sx;
@@ -498,6 +564,24 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             this.x2 = x2;
             this.y2 = y2;
             this.blocked = blocked;
+            this.maxDuration = duration;
+            this.remaining = duration;
+        }
+    }
+
+    private static final class ImpactEffect {
+        private final float x;
+        private final float y;
+        private final float maxRadius;
+        private final float shakeMagnitude;
+        private final float maxDuration;
+        private float remaining;
+
+        private ImpactEffect(float x, float y, float maxRadius, float shakeMagnitude, float duration) {
+            this.x = x;
+            this.y = y;
+            this.maxRadius = maxRadius;
+            this.shakeMagnitude = shakeMagnitude;
             this.maxDuration = duration;
             this.remaining = duration;
         }
