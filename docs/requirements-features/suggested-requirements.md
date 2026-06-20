@@ -2,13 +2,34 @@
 
 ## Candidate Additions
 
+### PR #71: Improved Cross-Platform Installer (install.ps1)
+
+These requirements define the automated developer onboarding experience and installer validation:
+
+- **SR-93** *(Portability, CRR-21)*: The installer script `install.ps1` shall use environment-aware paths (e.g., `$env:ProgramFiles`, `$env:LOCALAPPDATA` on Windows) instead of hard-coded absolute paths. This ensures the script works on systems with non-standard installation layouts (e.g., different drive letters, multi-user environments) and respects OS conventions. Unix paths shall use standard FHS locations (`/usr/lib/jvm`, `/opt/java`, `/opt/homebrew/opt`) with fallback detection.
+
+- **SR-94** *(Modularity, CRR-2)*: The installer shall extract package-manager detection into a reusable `Get-AvailablePackageManager` function to eliminate code duplication between JDK and Maven installation flows. This function shall return the name of the first available package manager (winget, choco, apt, dnf, pacman, brew) so installation orchestration can be decoupled from platform-specific package manager logic.
+
+- **SR-95** *(Configuration, WR-5)*: Maven version shall be defined in a separate `Get-LatestMavenVersion` function rather than hard-coded in the installation logic. This allows Maven version updates without modifying the core installer flow and supports future dynamic version discovery (e.g., querying Maven central for the latest stable release).
+
+- **SR-96** *(Testing, WR-3/WR-6)*: Installer validation tests shall be created to verify that:
+  1. The script runs on Windows with JDK 21 and Maven installed without errors.
+  2. Java 21 detection correctly identifies JDK 21 and rejects other versions.
+  3. Environment variables (JAVA_HOME, PATH_TO_FX) are set correctly and persist across terminal restarts.
+  4. VS Code extensions are installed (if `code` CLI is available).
+  5. The generated `.vscode/maze.launch.env` file contains valid environment variables that work with the game build.
+
+- **SR-97** *(Error Handling, CRR-10)*: Java version detection shall return -1 on error (instead of 0) to distinguish between "Java version check failed" and "Java does not exist." All detection functions shall provide debug-level logging on failure to aid troubleshooting.
+
+- **SR-98** *(Documentation, WR-18)*: An `INSTALLER.md` file shall document the installer's architecture, supported platforms (Windows, macOS, Linux), package managers, fallback strategies, and known issues (e.g., PATH persistence on Unix shells).
+
 ### F10 and F20 follow on suggestions from implementation
 
-- **SR-93** *(DDD, portability)*: Introduce a shared projectile domain service in `maze-common-frontend` that hosts deterministic simulation for `STRAIGHT`, `LOB`, and `BEAM`. Both JavaFX and libGDX currently implement backend local runtime loops. A shared service would reduce divergence risk and simplify parity maintenance.
+- **SR-99** *(DDD, portability)*: Introduce a shared projectile domain service in `maze-common-frontend` that hosts deterministic simulation for `STRAIGHT`, `LOB`, and `BEAM`. Both JavaFX and libGDX currently implement backend local runtime loops. A shared service would reduce divergence risk and simplify parity maintenance.
 
-- **SR-94** *(Observability)*: Add structured debug telemetry for enemy ranged attacks, including `enemyId`, `projectileType`, `blockedByWall`, `hitApplied`, and `damage`. This should be sampled and disabled by default, then enabled in debug runs to support balancing and parity diagnostics.
+- **SR-100** *(Observability)*: Add structured debug telemetry for enemy ranged attacks, including `enemyId`, `projectileType`, `blockedByWall`, `hitApplied`, and `damage`. This should be sampled and disabled by default, then enabled in debug runs to support balancing and parity diagnostics.
 
-- **SR-95** *(12-Factor, config)*: Externalize projectile visual tuning values, for example beam lifetime and lob shadow intensity, to a backend neutral config source so QA can tune readability without recompiling either frontend.
+- **SR-101** *(12-Factor, config)*: Externalize projectile visual tuning values, for example beam lifetime and lob shadow intensity, to a backend neutral config source so QA can tune readability without recompiling either frontend.
 
 ### F25 follow-on — Ghost Visibility Level (identified during implementation)
 
