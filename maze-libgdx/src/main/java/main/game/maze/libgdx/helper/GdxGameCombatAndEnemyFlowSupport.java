@@ -37,6 +37,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         }
         WorldView world = new GdxWorldView(maze, player);
         enemyDirectorService.advanceAll(animatedEnemies, world, dt);
+        for (GdxEnemyRuntime enemy : animatedEnemies) {
+            enemy.tickInvulnerability(dt);
+        }
     }
 
     public static boolean updateCombat(
@@ -123,7 +126,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             }
             enemy.kill();
             killed++;
-            EnemySpawn spawn = enemy.contactSnapshot();
+            EnemySpawn spawn = enemy.originalSpawn();
             if (spawn.resurrectionTimeMs() > 0) {
                 float seconds = spawn.resurrectionTimeMs() / 1000f;
                 deadEnemies.add(new DeadEnemy(spawn, seconds));
@@ -157,10 +160,10 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             }
         }
         deadEnemies.removeAll(readyToRise);
-        int index = animatedEnemies.size();
+        int phaseOffset = animatedEnemies.size();
         for (DeadEnemy dead : readyToRise) {
             GdxEnemyRuntime risen = GdxEnemyRuntime.fromSpawn(
-                    dead.spawn(), index++, world, javaFxTickRate, maxEnemyTicksPerFrame);
+                    dead.spawn(), phaseOffset++, world, javaFxTickRate, maxEnemyTicksPerFrame);
             risen.grantRespawnInvulnerability();
             animatedEnemies.add(risen);
         }

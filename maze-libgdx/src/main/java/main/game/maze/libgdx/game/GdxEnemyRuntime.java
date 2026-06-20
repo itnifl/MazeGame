@@ -54,6 +54,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private int currentHitPoints;
     private float invulnerableSecondsRemaining;
     private static final float RESPAWN_INVULNERABILITY_SECONDS = 2f;
+    private static final java.util.concurrent.atomic.AtomicInteger RUNTIME_SEQUENCE =
+            new java.util.concurrent.atomic.AtomicInteger(0);
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
@@ -102,7 +104,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         // spawn.speed() already incorporates difficulty multiplier.
         float speed = Math.max(1f, spawn.speed());
         float phase = index * 0.8f;
-        String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + index;
+        String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + RUNTIME_SEQUENCE.getAndIncrement();
         var resolution = EnemySpawnUnstuckService.nudgeIfColliding(world, spawn.x(), spawn.y(), spawn.size());
         return new GdxEnemyRuntime(
                 spawn,
@@ -115,6 +117,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 (float) resolution.y(),
                 speed,
                 phase);
+    }
+
+    /** The original immutable spawn data this enemy was created from (spawn coords, resurrection time, etc.). */
+    public EnemySpawn originalSpawn() {
+        return spawn;
     }
 
     public EnemySpawn contactSnapshot() {

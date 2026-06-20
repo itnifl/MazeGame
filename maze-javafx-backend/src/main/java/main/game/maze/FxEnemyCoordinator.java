@@ -221,10 +221,12 @@ public final class FxEnemyCoordinator {
     public int killAll() {
         int killed = 0;
         for (var character : allComputerCharacters) {
-            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie
-                    && canDie.getHitPoints() > 0) {
-                canDie.subtractHitPoints(Integer.MAX_VALUE / 2);
-                killed++;
+            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie) {
+                int hp = canDie.getHitPoints();
+                if (hp > 0) {
+                    canDie.subtractHitPoints(hp);
+                    killed++;
+                }
             }
         }
         return killed;
