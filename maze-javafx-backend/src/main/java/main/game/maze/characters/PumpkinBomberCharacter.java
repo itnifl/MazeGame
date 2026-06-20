@@ -6,8 +6,21 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
 import main.game.maze.App;
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -20,7 +33,9 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
@@ -42,6 +57,75 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
+        buildDirectionalImages();
+    }
+
+    /**
+     * Generates directional sprite variants from the base image so the pumpkin bomber
+     * visually turns when moving. If separate directional assets are configured in the
+     * model they are used as-is (handled by ComputerCharacter). When they are all the
+     * same as the base, we produce mirrored and tinted variants at runtime.
+     */
+    private void buildDirectionalImages() {
+        if (!(getCharacterGraphics() instanceof ImageView)) {
+            return;
+        }
+        Image base = imageRight; // ComputerCharacter already loaded these
+        if (base == null || base.getWidth() < 1) {
+            return;
+        }
+        // Only generate variants when all directional paths point at the same file
+        String lb = safeId(model.getImageTurnLeft());
+        String rb = safeId(model.getImageTurnRight());
+        String ub = safeId(model.getImageTurnUp());
+        String db = safeId(model.getImageTurnDown());
+        if (!lb.equals(rb) || !lb.equals(ub) || !lb.equals(db)) {
+            return; // distinct assets configured — trust ComputerCharacter's loading
+        }
+        int w = (int) base.getWidth();
+        int h = (int) base.getHeight();
+        PixelReader pr = base.getPixelReader();
+        if (pr == null) {
+            return;
+        }
+        // RIGHT — original (facing right)
+        // LEFT  — horizontally mirrored
+        // UP    — slightly brightened tint
+        // DOWN  — original (same as right for top-down view)
+        WritableImage left = new WritableImage(w, h);
+        WritableImage up   = new WritableImage(w, h);
+        PixelWriter pwLeft = left.getPixelWriter();
+        PixelWriter pwUp   = up.getPixelWriter();
+        for (int row = 0; row < h; row++) {
+            for (int col = 0; col < w; col++) {
+                Color c = pr.getColor(col, row);
+                pwLeft.setColor(w - 1 - col, row, c);                 // mirror X
+                pwUp.setColor(col, row, c.brighter().saturate());     // tint lighter
+            }
+        }
+        // Override the images registered in ComputerCharacter's internal map
+        // by installing them via the inherited setCharacterImage path.
+        // We do this by re-registering via the package-accessible images field.
+        // Since that map is private we instead use a VectorFacing subscription trick:
+        // register our generated images into a small local map and intercept direction changes.
+        var localImages = new java.util.EnumMap<VectorFacing, Image>(VectorFacing.class);
+        localImages.put(VectorFacing.RIGHT, base);
+        localImages.put(VectorFacing.LEFT,  left);
+        localImages.put(VectorFacing.UP,    up);
+        localImages.put(VectorFacing.DOWN,  base);
+        localImages.put(VectorFacing.IDLE,  base);
+
+        // Replace the direction subscriber to use our richer image map
+        this.directionSubscriber = facing -> {
+            if (facing != null) {
+                Image next = localImages.getOrDefault(facing, base);
+                setCharacterImage(next);
+            }
+        };
+    }
+
+    private static String safeId(String s) {
+        return s == null ? "" : s;
     }
 
     private static int mapSpeed(double modelSpeed) {
@@ -58,6 +142,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ranged attack API (uses arcHeight instead of gravity)
 
     public void tryShootAt(Node target, long nowMs) {
+        if (target == null || getCharacterGraphics() == null) {
+            return;
+        }
         int cooldown = defaultIfNull(model.getAttackCooldownMs(), 1000);
         if (nowMs - lastShotMs < cooldown) return;
 
@@ -71,17 +158,46 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         double range = defaultIfNull(model.getAttackRange(), 350.0);
         if ((dx*dx + dy*dy) > range * range) return;
 
+        ProjectileType projectileType = model.getProjectileType() == null
+                ? ProjectileType.STRAIGHT
+                : model.getProjectileType();
+
+        if (projectileType == ProjectileType.BEAM) {
+            boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
+            if (!blocked) {
+                ICanDie victim = resolveVictimForTargetNode(target);
+                if (victim != null) {
+                    victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
+                }
+            }
+            drawBeam(sx, sy, tx, ty, blocked);
+            playSound(model.getThrowSound());
+            lastShotMs = nowMs;
+            return;
+        }
+
         double speed     = defaultIfNull(model.getProjectileSpeed(), 260.0);
         double arcHeight = Math.max(0.0, defaultIfNull(model.getArcHeight(), 40.0));
-        PumpkinProjectile p = PumpkinProjectile.createArc(sx, sy, tx, ty, speed, arcHeight,
+        PumpkinProjectile p = PumpkinProjectile.create(
+                projectileType,
+                sx,
+                sy,
+                tx,
+                ty,
+                speed,
+                arcHeight,
                 defaultIfNull(model.getSplashRadius(), 48.0),
                 defaultIfNull(model.getAttackDamage(), 5),
                 model.getProjectileImage());
 
         if (p != null) {
+            Pane pane = hostPane();
+            if (pane != null) {
+                main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> pane.getChildren().add(p.node));
+            }
             projectiles.add(p);
+            playSound(model.getThrowSound());
             lastShotMs = nowMs;
-            // playSound(model.getThrowSound());
         }
     }
 
@@ -95,6 +211,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         Iterator<PumpkinProjectile> it = projectiles.iterator();
         while (it.hasNext()) {
             PumpkinProjectile p = it.next();
+            double prevX = p.node.getLayoutX();
+            double prevY = p.node.getLayoutY();
             p.tick(dtSeconds);
 
             boolean outOfBounds =
@@ -102,41 +220,52 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 p.node.getLayoutY() < 0 || p.node.getLayoutY() > maxY ||
                 p.lifeSeconds > 5.0;
 
+            boolean blockedByWall = p.type == ProjectileType.STRAIGHT
+                    && App.gameController != null
+                    && App.gameController.isWallBetween(prevX, prevY, p.node.getLayoutX(), p.node.getLayoutY());
+
             // early collision while flying
             boolean hitNow = false;
             FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
             for (ICanSubscribeAndNotifyPosition s : touchTargets) {
+                if (p.type == ProjectileType.LOB) {
+                    continue;
+                }
                 if (!(s instanceof ICanDie victim)) continue;
-                Node n = ((Character)s).getCharacterGraphics();
+                Node n = characterGraphicsOf(s);
                 if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
-                    explode(p, victim);
+                    if (p.type == ProjectileType.STRAIGHT) {
+                        victim.subtractHitPoints(p.damage);
+                    }
                     hitNow = true; break;
                 }
             }
 
             boolean arrived = p.isArrived();
 
-            if (hitNow || arrived || outOfBounds) {
-                // splash damage (including on arrival)
+            if (blockedByWall || hitNow || arrived || outOfBounds) {
+                // hitNow is always false for LOB (guarded by the continue above); kept for clarity.
+                boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || outOfBounds);
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (!(s instanceof ICanDie victim)) continue;
-                    Node n = ((Character)s).getCharacterGraphics();
+                    Node n = characterGraphicsOf(s);
                     if (n == null) continue;
                     double dx = n.getLayoutX() - p.node.getLayoutX();
                     double dy = n.getLayoutY() - p.node.getLayoutY();
-                    if ((dx*dx + dy*dy) <= p.splashRadius * p.splashRadius) {
+                    if (shouldApplySplash && (dx*dx + dy*dy) <= p.splashRadius * p.splashRadius) {
                         victim.subtractHitPoints(p.damage);
                     }
                 }
-                playSound(model.getExplosionSound());
+                if (!blockedByWall) {
+                    playSound(model.getExplosionSound());
+                    if (p.type == ProjectileType.LOB || p.type == ProjectileType.STRAIGHT) {
+                        playExplosionVisual(p.node.getLayoutX(), p.node.getLayoutY(), p.splashRadius);
+                    }
+                }
                 p.dispose();
                 it.remove();
             }
         }
-    }
-
-    private void explode(PumpkinProjectile p, ICanDie victim) {
-        victim.subtractHitPoints(p.damage);
     }
 
     // ICanKill / damage
@@ -154,7 +283,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
             for (var sub : deathSubscribers) sub.AddDeathNotification(this);
-            App.gameController.unregisterComputerCharacter(this, g);
+            if (App.gameController != null) {
+                App.gameController.unregisterComputerCharacter(this, g);
+            }
         }
     }
 
@@ -204,9 +335,110 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         AudioEngine.get().play(path);
     }
 
+    private void playExplosionVisual(double cx, double cy, double splashRadius) {
+        Pane pane = hostPane();
+        if (pane == null) {
+            return;
+        }
+        double radius = Math.max(12.0, splashRadius * 0.5);
+        main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+            Circle ring = new Circle(cx, cy, 6);
+            ring.setFill(Color.TRANSPARENT);
+            ring.setStroke(Color.ORANGERED);
+            ring.setStrokeWidth(3);
+            ring.setMouseTransparent(true);
+            pane.getChildren().add(ring);
+
+            Circle core = new Circle(cx, cy, 4);
+            core.setFill(Color.YELLOW);
+            core.setOpacity(0.9);
+            core.setMouseTransparent(true);
+            pane.getChildren().add(core);
+
+            Timeline expand = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                    new KeyValue(ring.radiusProperty(), 6),
+                    new KeyValue(ring.opacityProperty(), 1.0)),
+                new KeyFrame(Duration.millis(240),
+                    new KeyValue(ring.radiusProperty(), radius),
+                    new KeyValue(ring.opacityProperty(), 0.0))
+            );
+            expand.setOnFinished(e -> pane.getChildren().removeAll(ring, core));
+
+            FadeTransition coreFade = new FadeTransition(Duration.millis(180), core);
+            coreFade.setFromValue(0.9);
+            coreFade.setToValue(0.0);
+
+            // Brief screen shake on the board pane's parent (camera layer)
+            Node shakeTarget = pane.getParent() != null ? pane.getParent() : pane;
+            TranslateTransition shakeX = new TranslateTransition(Duration.millis(40), shakeTarget);
+            shakeX.setByX(5);
+            shakeX.setAutoReverse(true);
+            shakeX.setCycleCount(4);
+            shakeX.setOnFinished(e -> shakeTarget.setTranslateX(0));
+            shakeX.play();
+
+            expand.play();
+            coreFade.play();
+        });
+    }
+
+    private ICanDie resolveVictimForTargetNode(Node target) {
+        if (target instanceof ICanDie directVictim) {
+            return directVictim;
+        }
+        for (ICanSubscribeAndNotifyPosition subscriber : touchTargets) {
+            if (!(subscriber instanceof ICanDie victim)) {
+                continue;
+            }
+            Node subscriberGraphics = characterGraphicsOf(subscriber);
+            if (subscriberGraphics == target) {
+                return victim;
+            }
+        }
+        return null;
+    }
+
+    private static Node characterGraphicsOf(ICanSubscribeAndNotifyPosition entity) {
+        if (entity instanceof Character character) {
+            return character.getCharacterGraphics();
+        }
+        return null;
+    }
+
+    private Pane hostPane() {
+        if (getCharacterGraphics() == null || getCharacterGraphics().getParent() == null) {
+            return null;
+        }
+        if (getCharacterGraphics().getParent() instanceof Pane pane) {
+            return pane;
+        }
+        return null;
+    }
+
+    private void drawBeam(double sx, double sy, double tx, double ty, boolean blocked) {
+        Pane pane = hostPane();
+        if (pane == null) {
+            return;
+        }
+        main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
+            Line line = new Line(sx, sy, tx, ty);
+            line.setStroke(blocked ? Color.ORANGERED : Color.AQUA);
+            line.setStrokeWidth(3.5);
+            line.setOpacity(0.9);
+            pane.getChildren().add(line);
+            javafx.animation.FadeTransition fade = new javafx.animation.FadeTransition(javafx.util.Duration.millis(120), line);
+            fade.setFromValue(0.9);
+            fade.setToValue(0.0);
+            fade.setOnFinished(evt -> pane.getChildren().remove(line));
+            fade.play();
+        });
+    }
+
     // projectile with parametric arc (no gravity)
 
     private static final class PumpkinProjectile {
+        final ProjectileType type;
         final ImageView node;
         final double splashRadius;
         final int damage;
@@ -217,22 +449,25 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         double u = 0.0;        // 0..1 progress
         double lifeSeconds = 0;
 
-        private PumpkinProjectile(ImageView node,
+        private PumpkinProjectile(ProjectileType type,
+                                  ImageView node,
                                   double sx, double sy, double tx, double ty,
                                   double duration, double arcHeight,
                                   double splashRadius, int damage) {
+            this.type = type;
             this.node = node;
             this.sx = sx; this.sy = sy; this.tx = tx; this.ty = ty;
             this.duration = Math.max(0.15, duration);
             this.arcHeight = Math.max(0.0, arcHeight);
-            this.splashRadius = splashRadius;
+            this.splashRadius = Math.max(0.0, splashRadius);
             this.damage = damage;
         }
 
-        public static PumpkinProjectile createArc(double sx, double sy, double tx, double ty,
-                                           double speed, double arcHeight,
-                                           double splashRadius, int dmg,
-                                           String projectileImagePath) {
+        public static PumpkinProjectile create(ProjectileType type,
+                               double sx, double sy, double tx, double ty,
+                               double speed, double arcHeight,
+                               double splashRadius, int dmg,
+                               String projectileImagePath) {
             double dx = tx - sx, dy = ty - sy;
             double dist = Math.hypot(dx, dy);
             if (dist < 1e-3 || speed <= 1e-6) return null;
@@ -241,24 +476,54 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             ImageView iv = new ImageView();
             iv.setFitWidth(16); iv.setFitHeight(16); iv.setPreserveRatio(true);
             iv.setLayoutX(sx); iv.setLayoutY(sy);
+            Image resolved = loadProjectileImage(type, projectileImagePath);
+            iv.setImage(resolved == null ? createFallbackProjectileImage(type) : resolved);
 
-            if (projectileImagePath != null && !projectileImagePath.isBlank()) {
-                var url = PumpkinBomberCharacter.class.getResource(projectileImagePath);
-                if (url != null) iv.setImage(new Image(url.toExternalForm()));
+            return new PumpkinProjectile(type, iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
+        }
+
+        private static Image loadProjectileImage(ProjectileType type, String projectileImagePath) {
+            Image configured = loadImageIfPresent(projectileImagePath);
+            if (configured != null) {
+                return configured;
             }
 
-            return new PumpkinProjectile(iv, sx, sy, tx, ty, duration, arcHeight, splashRadius, dmg);
+            // Stable drop-in paths for art pipeline; files can be added later without code changes.
+            String typeDefault = switch (type) {
+                case LOB -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_lob_projectile.png";
+                case BEAM -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_beam_core_segment.png";
+                case STRAIGHT -> "/main/game/maze/projectiles/pumpkinbomber/pumpkin_straight_projectile.png";
+            };
+            Image byType = loadImageIfPresent(typeDefault);
+            if (byType != null) {
+                return byType;
+            }
+
+            return loadImageIfPresent("/main/game/maze/pumpkin.png");
+        }
+
+        private static Image loadImageIfPresent(String path) {
+            if (path == null || path.isBlank()) {
+                return null;
+            }
+            var url = PumpkinBomberCharacter.class.getResource(path);
+            return url == null ? null : new Image(url.toExternalForm());
         }
 
         private void tick(double dt) {
             lifeSeconds += dt;
             u = Math.min(1.0, u + dt / duration);
-            // linear path + vertical bump for arc
+            // STRAIGHT keeps flat trajectory; LOB applies arc offset.
             double x = lerp(sx, tx, u);
-            double y = lerp(sy, ty, u) - arcHeight * Math.sin(Math.PI * u);
+            double y = lerp(sy, ty, u);
+            if (type == ProjectileType.LOB) {
+                y -= arcHeight * Math.sin(Math.PI * u);
+            }
+            final double drawX = x;
+            final double drawY = y;
             main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
-                node.setLayoutX(x);
-                node.setLayoutY(y);
+                node.setLayoutX(drawX);
+                node.setLayoutY(drawY);
             });
         }
 
@@ -266,10 +531,32 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
         void dispose() {
             main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
-                if (node.getParent() != null) node.setVisible(false);
+                if (node.getParent() instanceof Pane pane) {
+                    pane.getChildren().remove(node);
+                } else {
+                    node.setVisible(false);
+                }
             });
         }
 
         private static double lerp(double a, double b, double t) { return a + (b - a) * t; }
+
+        private static Image createFallbackProjectileImage(ProjectileType type) {
+            WritableImage fallback = new WritableImage(16, 16);
+            var pixelWriter = fallback.getPixelWriter();
+            Color color = type == ProjectileType.LOB ? Color.ORANGE : Color.GOLD;
+            for (int y = 0; y < 16; y++) {
+                for (int x = 0; x < 16; x++) {
+                    int dx = x - 8;
+                    int dy = y - 8;
+                    if ((dx * dx) + (dy * dy) <= 36) {
+                        pixelWriter.setColor(x, y, color);
+                    } else {
+                        pixelWriter.setColor(x, y, Color.TRANSPARENT);
+                    }
+                }
+            }
+            return fallback;
+        }
     }
 }

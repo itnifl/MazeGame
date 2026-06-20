@@ -182,12 +182,19 @@ public final class FxEnemyCoordinator {
     // -----------------------------------------------------------------------
 
     public void stepAll() {
+        PlayerCharacter playerCharacter = playerSupplier.get();
+        Node playerNode = playerCharacter != null ? playerCharacter.getCharacterGraphics() : null;
+        long nowMs = System.currentTimeMillis();
         for (var computerCharacter : allComputerCharacters) {
             try {
                 if (computerCharacter instanceof ComputerCharacter cc) {
                     movementDispatch
                             .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
                             .accept(computerCharacter);
+                    if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerNode != null) {
+                        pumpkinBomber.tryShootAt(playerNode, nowMs);
+                        pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
+                    }
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
 import java.util.List;
 import main.game.maze.common.movement.ActivePathPoint;
+import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
@@ -23,6 +24,12 @@ public final class GdxGameWorldView {
 
     public void render(RenderContext context) {
         context.viewport().apply();
+        float originalCameraX = context.camera().position.x;
+        float originalCameraY = context.camera().position.y;
+        context.camera().position.set(
+            originalCameraX + context.shakeOffsetX(),
+            originalCameraY + context.shakeOffsetY(),
+            0f);
         context.camera().update();
 
         SpriteBatch batch = context.batch();
@@ -49,6 +56,9 @@ public final class GdxGameWorldView {
         drawGoalFallback(context, shapes);
         drawWallsFallback(context, shapes, maze);
         drawEnemyFallback(context, shapes);
+        drawEnemyProjectiles(context, shapes);
+        drawEnemyBeams(context, shapes);
+        drawEnemyImpacts(context, shapes);
         drawPlayerFallback(context, shapes, player);
         drawHintPath(context, shapes, maze);
         if (context.showEnemyPathSeconds() > 0f) {
@@ -57,6 +67,8 @@ public final class GdxGameWorldView {
         drawSpanningTreeOverlay(context, shapes, maze, player);
 
         shapes.end();
+        context.camera().position.set(originalCameraX, originalCameraY, 0f);
+        context.camera().update();
     }
 
     private void drawBackground(RenderContext context, SpriteBatch batch, OrthographicCamera camera, MazeArena maze) {
@@ -208,6 +220,49 @@ public final class GdxGameWorldView {
         float halfDraw = drawSize * context.halfRatio();
         shapes.setColor(context.playerTintRed(), context.playerTintGreen(), context.playerTintBlue(), 1f);
         shapes.rect(player.x() - halfDraw, player.y() - halfDraw, drawSize, drawSize);
+    }
+
+    private void drawEnemyProjectiles(RenderContext context, ShapeRenderer shapes) {
+        for (GdxEnemyRuntime.ProjectileVisual projectile : context.enemyProjectiles()) {
+            if (projectile.lob() && projectile.shadowRadius() > 0f) {
+                shapes.setColor(0f, 0f, 0f, 0.22f);
+                shapes.circle(projectile.x(), projectile.y() - projectile.shadowRadius(), projectile.shadowRadius(), 20);
+            }
+            if (projectile.lob()) {
+                shapes.setColor(1f, 0.66f, 0.18f, 0.95f);
+            } else {
+                shapes.setColor(1f, 0.80f, 0.32f, 0.95f);
+            }
+            shapes.circle(projectile.x(), projectile.y(), projectile.radius(), 20);
+        }
+    }
+
+    private void drawEnemyBeams(RenderContext context, ShapeRenderer shapes) {
+        for (GdxEnemyRuntime.BeamVisual beam : context.enemyBeams()) {
+            float alpha = Math.max(0f, Math.min(1f, beam.alpha()));
+            if (alpha <= 0f) {
+                continue;
+            }
+            if (beam.blocked()) {
+                shapes.setColor(1f, 0.42f, 0.30f, 0.85f * alpha);
+            } else {
+                shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
+            }
+            shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), 4f);
+        }
+    }
+
+    private void drawEnemyImpacts(RenderContext context, ShapeRenderer shapes) {
+        for (GdxEnemyRuntime.ImpactVisual impact : context.enemyImpacts()) {
+            float alpha = Math.max(0f, Math.min(1f, impact.alpha()));
+            if (alpha <= 0f) {
+                continue;
+            }
+            shapes.setColor(1f, 0.72f, 0.18f, 0.28f * alpha);
+            shapes.circle(impact.x(), impact.y(), impact.radius(), 28);
+            shapes.setColor(1f, 0.40f, 0.18f, 0.78f * alpha);
+            shapes.circle(impact.x(), impact.y(), Math.max(3f, impact.radius() * 0.55f), 24);
+        }
     }
 
     private void drawHintPath(RenderContext context, ShapeRenderer shapes, MazeArena maze) {
@@ -366,6 +421,11 @@ public final class GdxGameWorldView {
             int infectionEdgeLayers,
             List<EnemyViewModel> enemies,
             List<Point2D> activePathPoints,
+            List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
+            List<GdxEnemyRuntime.BeamVisual> enemyBeams,
+            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            float shakeOffsetX,
+            float shakeOffsetY,
             float showEnemyPathSeconds,
             boolean showSpanningTreeInfo) {
     }
