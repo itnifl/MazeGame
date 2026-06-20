@@ -53,17 +53,6 @@ public final class ScoringEngine {
             int currentHitPoints,
             int dynamicPenalty,
             boolean won) {
-        int safeBase = Math.max(0, baseScore);
-        int hpReduction = Math.max(0, Math.max(1, maxHitPoints) - Math.max(0, currentHitPoints));
-        int scoreDeathPenalty = currentHitPoints <= 0 ? StageConstants.ScoreDeathPenalty : 0;
-        int total = safeBase
-                - (Math.max(0, moveCount) * StageConstants.ScoreSubtractFactor)
-                - (hpReduction * StageConstants.ScoreSubtractFactor)
-                - scoreDeathPenalty
-                - Math.max(0, dynamicPenalty);
-        if (won) {
-            total += StageConstants.ScoreWinBonus;
-        }
-        return total;
+        return breakdown(baseScore, moveCount, maxHitPoints, currentHitPoints, dynamicPenalty, won).total();
     }
 }

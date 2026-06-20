@@ -54,7 +54,7 @@ public final class GdxGameRenderCoordinator {
     private final GdxWinOverlayView winOverlayView;
     private final GdxGameOverOverlayView gameOverOverlayView;
     private final GdxInfectionOverlayView infectionOverlayView;
-        private final GdxGameOverOverlayController gameOverOverlayController;
+    private final GdxGameOverOverlayController gameOverOverlayController;
     private final GdxWinOverlayController winOverlayController;
     private final Function<String, Texture> enemyTextureLoader;
     private final Function<GdxEnemyRuntime, List<ActivePathPoint>> enemyPathProvider;
