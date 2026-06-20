@@ -109,6 +109,39 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- OCL delegate factories — system scope is not transitive, so these must be
+         declared explicitly here even though maze-common-backend already declares them.
+         Required for OclBootstrap.init() to succeed at test runtime
+         (e.g. OpponentRuntimeFactorySpawnTest). -->
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl</artifactId>
+      <version>3.4.0-v20140524-1358</version>
+      <scope>system</scope>
+      <systemPath>${maven.multiModuleProjectDirectory}/maze-common-backend/lib/org.eclipse.ocl-3.4.0-v20140524-1358.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.ecore</artifactId>
+      <version>3.3.0-v20130520-1222</version>
+      <scope>system</scope>
+      <systemPath>${maven.multiModuleProjectDirectory}/maze-common-backend/lib/org.eclipse.ocl.ecore-3.3.0-v20130520-1222.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.ocl</groupId>
+      <artifactId>org.eclipse.ocl.common</artifactId>
+      <version>1.2.0-v20140528-1458</version>
+      <scope>system</scope>
+      <systemPath>${maven.multiModuleProjectDirectory}/maze-common-backend/lib/org.eclipse.ocl.common-1.2.0-v20140528-1458.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>lpg.runtime</groupId>
+      <artifactId>java</artifactId>
+      <version>2.0.17-v201004271640</version>
+      <scope>system</scope>
+      <systemPath>${maven.multiModuleProjectDirectory}/maze-common-backend/lib/java-2.0.17-v201004271640.jar</systemPath>
+    </dependency>
+
     <!-- EMF (needed by OpponentRuntimeFactory and App for OclBootstrap) -->
     <dependency>
       <groupId>org.eclipse.emf</groupId>
