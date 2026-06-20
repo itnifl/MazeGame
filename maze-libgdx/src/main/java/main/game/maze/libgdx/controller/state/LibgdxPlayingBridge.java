@@ -17,6 +17,7 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
     private final java.util.function.Function<Float, Boolean> routeGameplayInput;
     private final Consumer<Float> tickEnemyAnimation;
     private final Consumer<Float> advanceEnemies;
+    private final Consumer<Float> updateProjectiles;
     private final BooleanSupplier hasPlayer;
     private final Consumer<Float> updateCombat;
     private final Consumer<Float> applyDeathSequence;
@@ -34,6 +35,7 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
             java.util.function.Function<Float, Boolean> routeGameplayInput,
             Consumer<Float> tickEnemyAnimation,
             Consumer<Float> advanceEnemies,
+            Consumer<Float> updateProjectiles,
             BooleanSupplier hasPlayer,
             Consumer<Float> updateCombat,
             Consumer<Float> applyDeathSequence,
@@ -49,6 +51,7 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
         this.routeGameplayInput = routeGameplayInput;
         this.tickEnemyAnimation = tickEnemyAnimation;
         this.advanceEnemies = advanceEnemies;
+        this.updateProjectiles = updateProjectiles;
         this.hasPlayer = hasPlayer;
         this.updateCombat = updateCombat;
         this.applyDeathSequence = applyDeathSequence;
@@ -100,6 +103,11 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
     @Override
     public void advanceEnemies(float dt) {
         advanceEnemies.accept(dt);
+    }
+
+    @Override
+    public void updateProjectiles(float dt) {
+        updateProjectiles.accept(dt);
     }
 
     @Override

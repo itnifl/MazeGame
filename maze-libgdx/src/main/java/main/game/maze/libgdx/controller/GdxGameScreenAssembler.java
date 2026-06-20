@@ -83,6 +83,7 @@ final class GdxGameScreenAssembler {
                 c::routeGameplayInput,
                 dt -> c.enemyAnimationClock += dt,
                 c::advanceEnemies,
+                c::updateProjectiles,
                 () -> c.player != null,
                 c::updateCombat,
                 c::applyDeathSequence,

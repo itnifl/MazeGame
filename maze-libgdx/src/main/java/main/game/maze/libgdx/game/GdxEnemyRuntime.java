@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -13,6 +14,7 @@ import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.libgdx.model.RangedEnemySpawnProps;
 import main.game.maze.opponents.BehaviorType;
 
 public final class GdxEnemyRuntime implements EnemyRuntime {
@@ -38,6 +40,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final int visibilityLevel;
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
+    private final RangedEnemySpawnProps rangedProps;
+    private final List<GdxProjectileRuntime> projectiles = new ArrayList<>();
+    private long lastShotMs;
 
     private GdxEnemyRuntime(EnemySpawn spawn,
                             String runtimeEnemyId,
@@ -70,6 +75,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.movementTypeLabel = "WANDER";
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         this.visibilityLevel = spawn.visibilityLevel();
+        this.rangedProps = spawn.rangedProps();
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -180,6 +186,40 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
     public float renderOpacity() {
         return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy, visibilityLevel);
+    }
+
+    /** Returns the live projectile list for this enemy; mutated by {@code GdxWallDamageSupport}. */
+    public List<GdxProjectileRuntime> activeProjectiles() {
+        return projectiles;
+    }
+
+    /**
+     * Fires a projectile toward {@code (targetWorldX, targetWorldY)} if this enemy is a ranged
+     * type, in range, and the attack cooldown has elapsed. Coordinates are in game-world (Y-down)
+     * space, matching {@code GameMazeWorld.getMazeVectors()}.
+     */
+    public void tryShootAt(double targetWorldX, double targetWorldY,
+                           double selfWorldX, double selfWorldY) {
+        if (rangedProps == null) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (now - lastShotMs < rangedProps.attackCooldownMs()) {
+            return;
+        }
+        double dx = targetWorldX - selfWorldX;
+        double dy = targetWorldY - selfWorldY;
+        double distSq = dx * dx + dy * dy;
+        double range = rangedProps.attackRange();
+        if (distSq > range * range) {
+            return;
+        }
+        projectiles.add(GdxProjectileRuntime.fire(
+                selfWorldX, selfWorldY,
+                targetWorldX, targetWorldY,
+                rangedProps.projectileSpeedPx(),
+                spawn.attackDamage()));
+        lastShotMs = now;
     }
 
     private MovementResult nextMove(WorldView world,

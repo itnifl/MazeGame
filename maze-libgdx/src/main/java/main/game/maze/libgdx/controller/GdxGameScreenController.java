@@ -386,6 +386,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt);
     }
 
+    void updateProjectiles(float dt) {
+        GdxGameCombatAndEnemyFlowSupport.updateProjectiles(animatedEnemies, maze, player, dt);
+    }
+
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
     }

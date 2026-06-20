@@ -28,6 +28,7 @@ import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.opponents.RangedEnemy;
 import main.game.maze.opponents.Zombie;
 import main.game.maze.opponents.util.EnemySpawnPlanner;
 import main.game.maze.opponents.util.OpponentsValidator;
@@ -215,7 +216,8 @@ public final class RuntimeVisualModelLoader {
                             runtimeBehavior,
                             spawnSpeed,
                             nonTangibilityEnergyFor(picked),
-                            visibilityLevelFor(picked));
+                            visibilityLevelFor(picked),
+                            rangedPropsFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -313,6 +315,17 @@ public final class RuntimeVisualModelLoader {
             return defaultIfBlank(zombie.getTouchSound(), DEFAULT_ZOMBIE_TOUCH_SOUND);
         }
         return EMPTY_TEXT;
+    }
+
+    private static RangedEnemySpawnProps rangedPropsFor(CharacterType type) {
+        if (type instanceof RangedEnemy re) {
+            return new RangedEnemySpawnProps(
+                    re.getAttackRange(),
+                    re.getAttackCooldownMs(),
+                    re.getProjectileSpeed(),
+                    re.getSplashRadius());
+        }
+        return null;
     }
 
     private static boolean isValidSpawn(

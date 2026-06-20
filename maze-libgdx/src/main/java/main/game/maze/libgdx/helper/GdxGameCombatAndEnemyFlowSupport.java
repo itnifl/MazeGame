@@ -21,6 +21,14 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     private GdxGameCombatAndEnemyFlowSupport() {
     }
 
+    public static void updateProjectiles(
+            List<GdxEnemyRuntime> animatedEnemies,
+            MazeArena maze,
+            PlayerState player,
+            float dt) {
+        GdxWallDamageSupport.updateProjectiles(animatedEnemies, maze, player, dt);
+    }
+
     public static void advanceEnemies(
             List<GdxEnemyRuntime> animatedEnemies,
             MazeArena maze,

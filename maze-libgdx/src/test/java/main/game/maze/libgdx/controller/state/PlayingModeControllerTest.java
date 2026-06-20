@@ -84,6 +84,10 @@ class PlayingModeControllerTest {
         }
 
         @Override
+        public void updateProjectiles(float dt) {
+        }
+
+        @Override
         public boolean hasPlayer() {
             return hasPlayer;
         }

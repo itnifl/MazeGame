@@ -12,6 +12,9 @@ import main.game.maze.opponents.BehaviorType;
  *
  * <p>{@code visibilityLevel} is read from {@code Ghost.visibilityLevel} (0–100,
  * default {@value #DEFAULT_VISIBILITY_LEVEL}). Non-ghost enemies use the default.
+ *
+ * <p>{@code rangedProps} holds firing parameters for ranged enemies (e.g.
+ * PumpkinBomber). {@code null} for melee / non-ranged enemies.
  */
 public record EnemySpawn(
         String id,
@@ -26,12 +29,13 @@ public record EnemySpawn(
         BehaviorType behavior,
         float speed,
         double nonTangibilityEnergy,
-        int visibilityLevel) {
+        int visibilityLevel,
+        RangedEnemySpawnProps rangedProps) {
 
     /** Fully-visible value used for non-ghost enemies and as the EMF model default. */
     public static final int DEFAULT_VISIBILITY_LEVEL = 100;
 
-    /** 10-arg convenience constructor — no behavior, nonTangibilityEnergy, or visibilityLevel. */
+    /** 10-arg convenience constructor — no behavior, nonTangibilityEnergy, visibilityLevel, or rangedProps. */
     public EnemySpawn(
             String id,
             String imagePath,
@@ -44,10 +48,10 @@ public record EnemySpawn(
             String touchSoundPath,
             float speed) {
         this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
-                touchSoundPath, BehaviorType.WANDER, speed, 0.0, DEFAULT_VISIBILITY_LEVEL);
+                touchSoundPath, BehaviorType.WANDER, speed, 0.0, DEFAULT_VISIBILITY_LEVEL, null);
     }
 
-    /** 11-arg convenience constructor — has behavior, no nonTangibilityEnergy or visibilityLevel. */
+    /** 11-arg convenience constructor — has behavior, no nonTangibilityEnergy, visibilityLevel, or rangedProps. */
     public EnemySpawn(
             String id,
             String imagePath,
@@ -61,10 +65,10 @@ public record EnemySpawn(
             BehaviorType behavior,
             float speed) {
         this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
-                touchSoundPath, behavior, speed, 0.0, DEFAULT_VISIBILITY_LEVEL);
+                touchSoundPath, behavior, speed, 0.0, DEFAULT_VISIBILITY_LEVEL, null);
     }
 
-    /** 12-arg convenience constructor — has nonTangibilityEnergy, no visibilityLevel. */
+    /** 12-arg convenience constructor — has nonTangibilityEnergy, no visibilityLevel or rangedProps. */
     public EnemySpawn(
             String id,
             String imagePath,
@@ -79,6 +83,25 @@ public record EnemySpawn(
             float speed,
             double nonTangibilityEnergy) {
         this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
-                touchSoundPath, behavior, speed, nonTangibilityEnergy, DEFAULT_VISIBILITY_LEVEL);
+                touchSoundPath, behavior, speed, nonTangibilityEnergy, DEFAULT_VISIBILITY_LEVEL, null);
+    }
+
+    /** 13-arg convenience constructor — has visibilityLevel, no rangedProps. */
+    public EnemySpawn(
+            String id,
+            String imagePath,
+            float x,
+            float y,
+            float size,
+            float effectiveThreat,
+            int attackDamage,
+            int infectionLevel,
+            String touchSoundPath,
+            BehaviorType behavior,
+            float speed,
+            double nonTangibilityEnergy,
+            int visibilityLevel) {
+        this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
+                touchSoundPath, behavior, speed, nonTangibilityEnergy, visibilityLevel, null);
     }
 }
