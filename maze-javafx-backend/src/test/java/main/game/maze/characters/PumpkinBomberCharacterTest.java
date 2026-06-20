@@ -3,16 +3,19 @@ package main.game.maze.characters;
 import javafx.application.Platform;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.App;
+import main.game.maze.GameController;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.PositionBounds;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.PumpkinBomber;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import java.util.concurrent.CountDownLatch;
@@ -220,6 +223,29 @@ class PumpkinBomberCharacterTest {
 
         // Subsequent tick with empty list must also be safe.
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016));
+    }
+
+    @Test
+    void updateProjectiles_withNonNullControllerAndMaze_doesNotThrow() throws Exception {
+        // Cover the wall-check branch (lines that require App.gameController != null and
+        // GameMazeWorld.GetWorld() != null). The projectile starts far from any wall so
+        // hitWall == null, but the branch itself is exercised for coverage.
+        Field worldField = GameMazeWorld.class.getDeclaredField("world");
+        worldField.setAccessible(true);
+        GameMazeWorld maze = new GameMazeWorld();
+        worldField.set(null, maze);
+        App.gameController = new GameController();
+        try {
+            Rectangle gfx = new Rectangle(16, 16);
+            PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 100, 100, basicPumpkin());
+            Rectangle target = new Rectangle(16, 16);
+            target.setLayoutX(110.0);
+            pbc.tryShootAt(target, Long.MAX_VALUE);
+            assertDoesNotThrow(() -> pbc.updateProjectiles(6.0),
+                    "updateProjectiles must not throw when gameController and mazeWorld are set");
+        } finally {
+            worldField.set(null, null);
+        }
     }
 
     // -----------------------------------------------------------------------
