@@ -218,6 +218,18 @@ public final class FxEnemyCoordinator {
         ghostPhasingMovementService.reset();
     }
 
+    public int killAll() {
+        int killed = 0;
+        for (var character : allComputerCharacters) {
+            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie
+                    && canDie.getHitPoints() > 0) {
+                canDie.subtractHitPoints(Integer.MAX_VALUE / 2);
+                killed++;
+            }
+        }
+        return killed;
+    }
+
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {
         var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
                 worldView, desiredX, desiredY, enemySize);

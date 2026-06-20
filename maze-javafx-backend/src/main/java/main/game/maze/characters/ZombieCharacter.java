@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import javafx.animation.PauseTransition;
 import javafx.scene.Node;
+import javafx.util.Duration;
 import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICanKill;
@@ -29,14 +31,20 @@ public class ZombieCharacter extends ComputerCharacter
     private AtomicInteger hitPoints;
     private static final long ZOMBIE_SCREAM_COOLDOWN_MS = 600L;
 
+    private final double spawnX;
+    private final double spawnY;
+    private PauseTransition resurrectTransition;
+
     private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
-    
+
 
     public ZombieCharacter(Node characterGraphics, double x, double y, Zombie model) {
         super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
         this.zombieModel = model;
         this.hitPoints = new AtomicInteger(Math.max(1, model.getHealth()));
+        this.spawnX = x;
+        this.spawnY = y;
         this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
 
@@ -80,17 +88,39 @@ public class ZombieCharacter extends ComputerCharacter
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
-        var characterGraphics = this.getCharacterGraphics();
-        if (characterGraphics != null) {
-            //TODO: Do things with graphics when character is hurt;
+        if (hitPoints.get() <= 0) {
+            die();
+        }
+    }
+
+    private void die() {
+        PlayDieAnimation();
+        for (var subscriber : deathSubscribers) {
+            subscriber.AddDeathNotification(this);
+        }
+        var graphics = this.getCharacterGraphics();
+        if (App.gameController != null) {
+            App.gameController.unregisterComputerCharacter(this, graphics);
         }
 
-        if (hitPoints.get() <= 0) {
-            PlayDieAnimation();
-            for (var subscribers : deathSubscribers) {
-                subscribers.AddDeathNotification(this);
+        int resurrectionSeconds = zombieModel.getResurrectionTime();
+        if (resurrectionSeconds > 0) {
+            if (resurrectTransition == null) {
+                resurrectTransition = new PauseTransition();
+                resurrectTransition.setOnFinished(evt -> resurrect());
             }
-            App.gameController.unregisterComputerCharacter(this, characterGraphics);
+            resurrectTransition.setDuration(Duration.seconds(resurrectionSeconds));
+            resurrectTransition.stop();
+            resurrectTransition.playFromStart();
+        }
+    }
+
+    private void resurrect() {
+        hitPoints.set(Math.max(1, zombieModel.getHealth()));
+        teleportTo(spawnX, spawnY);
+        var graphics = this.getCharacterGraphics();
+        if (App.gameController != null) {
+            App.gameController.registerComputerCharacter(this, graphics);
         }
     }
 

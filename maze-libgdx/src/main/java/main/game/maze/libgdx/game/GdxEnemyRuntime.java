@@ -51,6 +51,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
     private float shotCooldownRemaining;
+    private int currentHitPoints;
+    private float invulnerableSecondsRemaining;
+    private static final float RESPAWN_INVULNERABILITY_SECONDS = 2f;
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
@@ -87,6 +90,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         this.visibilityLevel = spawn.visibilityLevel();
         this.shotCooldownRemaining = 0f;
+        this.currentHitPoints = Math.max(1, spawn.maxHitPoints());
+        this.invulnerableSecondsRemaining = 0f;
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -132,7 +137,47 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.arcHeight(),
                 spawn.attackRange(),
                 spawn.attackCooldownMs(),
-                spawn.projectileSpeed());
+                spawn.projectileSpeed(),
+                spawn.resurrectionTimeMs(),
+                spawn.maxHitPoints());
+    }
+
+    /** Apply {@code amount} points of damage. Returns {@code true} if the enemy just died. */
+    public boolean takeDamage(int amount) {
+        if (currentHitPoints <= 0 || invulnerableSecondsRemaining > 0f) {
+            return false;
+        }
+        currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, amount));
+        return currentHitPoints <= 0;
+    }
+
+    /** Kill the enemy instantly regardless of current HP. Returns {@code true} always. */
+    public boolean kill() {
+        currentHitPoints = 0;
+        return true;
+    }
+
+    public boolean isAlive() {
+        return currentHitPoints > 0;
+    }
+
+    public int currentHitPoints() {
+        return currentHitPoints;
+    }
+
+    /** Tick the post-respawn invulnerability window down by {@code dt} seconds. */
+    public void tickInvulnerability(float dt) {
+        invulnerableSecondsRemaining = Math.max(0f, invulnerableSecondsRemaining - dt);
+    }
+
+    /** Grant a brief invulnerability window (used on respawn to prevent instant re-kill). */
+    public void grantRespawnInvulnerability() {
+        invulnerableSecondsRemaining = RESPAWN_INVULNERABILITY_SECONDS;
+    }
+
+    /** {@code true} while the post-respawn invulnerability window is active. */
+    public boolean isInvulnerable() {
+        return invulnerableSecondsRemaining > 0f;
     }
 
     public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius) {

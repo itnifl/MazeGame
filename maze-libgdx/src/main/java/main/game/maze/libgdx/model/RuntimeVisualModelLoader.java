@@ -222,7 +222,9 @@ public final class RuntimeVisualModelLoader {
                             arcHeightFor(picked),
                             attackRangeFor(picked),
                             attackCooldownFor(picked),
-                            projectileSpeedFor(picked));
+                            projectileSpeedFor(picked),
+                            resurrectionTimeMsFor(picked),
+                            maxHitPointsFor(picked));
                     break;
                 }
                 if (accepted != null) {
@@ -355,6 +357,17 @@ public final class RuntimeVisualModelLoader {
             return (float) Math.max(0d, pumpkinBomber.getProjectileSpeed());
         }
         return EnemySpawn.DEFAULT_PROJECTILE_SPEED;
+    }
+
+    private static int resurrectionTimeMsFor(CharacterType type) {
+        if (type instanceof Zombie zombie) {
+            return Math.max(0, zombie.getResurrectionTime()) * 1000;
+        }
+        return EnemySpawn.DEFAULT_RESURRECTION_TIME_MS;
+    }
+
+    private static int maxHitPointsFor(CharacterType type) {
+        return Math.max(1, type.getHealth());
     }
 
     private static String touchSoundFor(CharacterType type) {

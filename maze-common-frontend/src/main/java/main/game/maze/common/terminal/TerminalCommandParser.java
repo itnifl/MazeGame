@@ -9,7 +9,7 @@ import java.util.Locale;
 public final class TerminalCommandParser {
 
     public static final String HELP_TEXT =
-            "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds)";
+            "/h, /showbehaviourtype, /sbt, /showmovementtype, /smt, /showenemypath, /sep (shows enemy paths for 10 seconds), /kill (kills all enemies — triggers resurrection timer if configured)";
 
     private TerminalCommandParser() {}
 
@@ -29,6 +29,9 @@ public final class TerminalCommandParser {
         }
         if ("/showenemypath".equals(command) || "/sep".equals(command)) {
             return TerminalCommand.SHOW_ENEMY_PATH;
+        }
+        if ("/kill".equals(command)) {
+            return TerminalCommand.KILL_ENEMIES;
         }
         return TerminalCommand.UNKNOWN;
     }
