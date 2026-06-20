@@ -12,6 +12,25 @@ import main.game.maze.mazeworld.service.MazeNavigationGraph;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 
 public class GameMazeWorld {
+
+    /**
+     * Default breakable materials in ascending durability order, mirroring
+     * {@code walls.xmi}. Approximately 50 % of walls are made breakable;
+     * the material is chosen uniformly at random from this list so every
+     * session contains a mix of fragile (Glass 5 HP), medium (Dirt 10 HP /
+     * Wood 20 HP), and tough (Stone 40 HP) walls.
+     *
+     * <p>Callers with access to {@code WallRegistry} can supply a custom list
+     * via {@link #assignBreakableWalls(long, List)} so material definitions
+     * stay authoritative in the XMI model.
+     */
+    public static final List<WallMaterialSpec> DEFAULT_BREAKABLE_MATERIALS = List.of(
+            new WallMaterialSpec("GLASS_BASIC", "Glass",  5),
+            new WallMaterialSpec("DIRT_BASIC",  "Dirt",  10),
+            new WallMaterialSpec("WOOD_BASIC",  "Wood",  20),
+            new WallMaterialSpec("STONE_BASIC", "Stone", 40)
+    );
+
     private static GameMazeWorld world;
     private final IMazeGenerator mazeGenerator;
     /** Thread-safe: read on background AI thread, written on UI thread. */
@@ -39,6 +58,7 @@ public class GameMazeWorld {
         world = new GameMazeWorld(new DfsMazeGenerator(getMazeConfig(boardMaxX, boardMaxY)));
         return world;
     }
+
     private static MazeGeneratorConfig getMazeConfig(int boardMaxX, int boardMaxY) {
         return new MazeGeneratorConfig(
             boardMaxX,
@@ -55,9 +75,10 @@ public class GameMazeWorld {
         if (this.mazeGenerator != null) {
             mazeVectors.addAll(this.mazeGenerator.generateMaze());
             navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
-            assignBreakableWalls(42L);
+            assignBreakableWalls(42L, DEFAULT_BREAKABLE_MATERIALS);
         }
     }
+
     /*
      * Gives us a predefined standard map
      */
@@ -115,7 +136,7 @@ public class GameMazeWorld {
         mazeVectors.add(new Vector2D(220, 100, 360, 100)); // horizontal vector
 
         navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
-        assignBreakableWalls(42L);
+        assignBreakableWalls(42L, DEFAULT_BREAKABLE_MATERIALS);
     }
 
     public GameMazeWorld(String svgPath) {
@@ -130,24 +151,39 @@ public class GameMazeWorld {
             breakableWalls.clear();
             mazeVectors.addAll(mazeGenerator.generateMaze());
             navigationGraph = MazeNavigationGraphService.buildFrom(mazeVectors, StageConstants.NaviGraphStepSize);
-            assignBreakableWalls(42L);
+            assignBreakableWalls(42L, DEFAULT_BREAKABLE_MATERIALS);
         }
     }
 
     /**
-     * Randomly marks ~30% of walls as low-durability (10 HP) and ~20% as
-     * medium-durability (20 HP). The rest are treated as indestructible.
-     * Uses a fixed seed so map layout is deterministic between sessions.
+     * Assigns breakable wall materials using the supplied {@code materials} list.
+     *
+     * <p>For each wall segment a uniform random roll decides whether it becomes
+     * breakable (~50 % probability). If breakable, a material is chosen uniformly
+     * at random from the {@code materials} list, so every material type can appear
+     * and each type's hit points drive wall durability. Uses a fixed {@code seed}
+     * so the map layout is deterministic between sessions.
+     *
+     * <p>Callers with access to {@code WallRegistry} should build a list of
+     * {@link WallMaterialSpec} from all breakable registry entries and pass it here
+     * so that the XMI model stays authoritative over HP values. When no registry is
+     * available, pass {@link #DEFAULT_BREAKABLE_MATERIALS} as the fallback.
+     *
+     * @param seed      deterministic seed for reproducible layouts
+     * @param materials non-empty list of breakable material specs to pick from
      */
-    private void assignBreakableWalls(long seed) {
+    public void assignBreakableWalls(long seed, List<WallMaterialSpec> materials) {
+        if (materials == null || materials.isEmpty()) {
+            throw new IllegalArgumentException("materials must not be null or empty");
+        }
         breakableWalls.clear();
         Random rng = new Random(seed);
+        int matCount = materials.size();
         for (Vector2D wall : mazeVectors) {
-            int roll = rng.nextInt(10);
-            if (roll < 3) {
-                breakableWalls.add(new BreakableWall(wall, 10));
-            } else if (roll < 5) {
-                breakableWalls.add(new BreakableWall(wall, 20));
+            // ~50 % of walls become breakable
+            if (rng.nextInt(10) < 5) {
+                WallMaterialSpec spec = materials.get(rng.nextInt(matCount));
+                breakableWalls.add(new BreakableWall(wall, spec));
             }
         }
     }

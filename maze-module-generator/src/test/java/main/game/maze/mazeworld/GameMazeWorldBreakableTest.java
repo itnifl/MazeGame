@@ -168,7 +168,7 @@ class GameMazeWorldBreakableTest {
     @DisplayName("applyWallDamage ignores a breakable wall not owned by the world")
     void ignoresForeignBreakableWall() {
         Vector2D geometry = world.getMazeVectors().get(0);
-        BreakableWall foreign = new BreakableWall(geometry, 10);
+        BreakableWall foreign = new BreakableWall(geometry, new WallMaterialSpec("DIRT_BASIC", "Dirt", 10));
         int vectorsBefore = world.getMazeVectors().size();
 
         boolean destroyed = world.applyWallDamage(foreign, 10);
