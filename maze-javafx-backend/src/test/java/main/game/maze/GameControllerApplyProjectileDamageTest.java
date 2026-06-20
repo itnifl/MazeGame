@@ -66,8 +66,8 @@ class GameControllerApplyProjectileDamageTest {
     }
 
     @Test
-    @DisplayName("reduces breakable wall HP via Platform.runLater when wall is breakable")
-    void breakableWallTakesDamage() throws Exception {
+    @DisplayName("schedules damage via runLater when called from non-FX thread")
+    void breakableWallTakesDamageFromNonFxThread() throws Exception {
         GameController gc = new GameController();
         GameMazeWorld maze = new GameMazeWorld();
         setField(gc, "maze", maze);
@@ -75,14 +75,35 @@ class GameControllerApplyProjectileDamageTest {
         BreakableWall bw = maze.getBreakableWalls().get(0);
         int hpBefore = bw.getRemainingHp();
 
+        // Called from test (non-FX) thread — must take the runLater path.
         gc.applyProjectileDamageToWall(bw.geometry, 1);
 
-        // Drain the JavaFX event queue so the scheduled runLater executes.
         CountDownLatch latch = new CountDownLatch(1);
         Platform.runLater(latch::countDown);
         assertTrue(latch.await(2, TimeUnit.SECONDS), "Platform.runLater did not execute");
 
         assertEquals(hpBefore - 1, bw.getRemainingHp(),
-                "Damage must be applied to the breakable wall via Platform.runLater");
+                "Damage must be applied after the runLater drains");
+    }
+
+    @Test
+    @DisplayName("applies damage immediately when called from FX thread")
+    void breakableWallTakesDamageFromFxThread() throws Exception {
+        GameController gc = new GameController();
+        GameMazeWorld maze = new GameMazeWorld();
+        setField(gc, "maze", maze);
+
+        BreakableWall bw = maze.getBreakableWalls().get(0);
+        int hpBefore = bw.getRemainingHp();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            gc.applyProjectileDamageToWall(bw.geometry, 1);
+            latch.countDown();
+        });
+        assertTrue(latch.await(2, TimeUnit.SECONDS), "FX task did not execute");
+
+        assertEquals(hpBefore - 1, bw.getRemainingHp(),
+                "Damage must be applied immediately when already on FX thread");
     }
 }

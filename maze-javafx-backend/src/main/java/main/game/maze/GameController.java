@@ -256,7 +256,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (maze == null) return;
         BreakableWall bw = maze.findBreakableWall(wall);
         if (bw == null) return;
-        javafx.application.Platform.runLater(() -> maze.applyWallDamage(bw, damage));
+        if (javafx.application.Platform.isFxApplicationThread()) {
+            maze.applyWallDamage(bw, damage);
+        } else {
+            javafx.application.Platform.runLater(() -> maze.applyWallDamage(bw, damage));
+        }
     }
 
     private void ensureHudLayersOnTop() {
