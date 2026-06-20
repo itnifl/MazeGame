@@ -23,6 +23,20 @@ class WallRegistryTest {
     class GetMethodTests {
 
         @Test
+        @DisplayName("should return GLASS_BASIC wall definition")
+        void shouldReturnGlassBasic() {
+            WallRegistry.WallDefinition wall = WallRegistry.get("GLASS_BASIC");
+
+            assertNotNull(wall, "GLASS_BASIC should be registered");
+            assertEquals("GLASS_BASIC", wall.id);
+            assertEquals("Glass", wall.displayName);
+            assertEquals(WallMaterialBaseType.GLASS, wall.baseType);
+            assertTrue(wall.breakable, "Glass should be breakable");
+            assertEquals(5, wall.hitPoints);
+            assertEquals("/main/game/maze/glassWall.png", wall.baseImage);
+        }
+
+        @Test
         @DisplayName("should return DIRT_BASIC wall definition")
         void shouldReturnDirtBasic() {
             WallRegistry.WallDefinition wall = WallRegistry.get("DIRT_BASIC");
@@ -48,6 +62,20 @@ class WallRegistryTest {
             assertTrue(wall.breakable, "Wood should be breakable");
             assertEquals(20, wall.hitPoints);
             assertEquals("/main/game/maze/woodWall.png", wall.baseImage);
+        }
+
+        @Test
+        @DisplayName("should return STONE_BASIC wall definition")
+        void shouldReturnStoneBasic() {
+            WallRegistry.WallDefinition wall = WallRegistry.get("STONE_BASIC");
+
+            assertNotNull(wall, "STONE_BASIC should be registered");
+            assertEquals("STONE_BASIC", wall.id);
+            assertEquals("Stone", wall.displayName);
+            assertEquals(WallMaterialBaseType.STONE, wall.baseType);
+            assertTrue(wall.breakable, "Stone should be breakable");
+            assertEquals(40, wall.hitPoints);
+            assertEquals("/main/game/maze/stoneWall.png", wall.baseImage);
         }
 
         @Test
@@ -91,7 +119,7 @@ class WallRegistryTest {
             Map<String, WallRegistry.WallDefinition> allWalls = WallRegistry.all();
             
             assertNotNull(allWalls, "Wall map should not be null");
-            assertEquals(3, allWalls.size(), "Should have exactly 3 wall materials");
+            assertEquals(5, allWalls.size(), "Should have exactly 5 wall materials");
         }
 
         @Test
@@ -99,8 +127,10 @@ class WallRegistryTest {
         void shouldContainAllExpectedIds() {
             Map<String, WallRegistry.WallDefinition> allWalls = WallRegistry.all();
             
+            assertTrue(allWalls.containsKey("GLASS_BASIC"), "Should contain GLASS_BASIC");
             assertTrue(allWalls.containsKey("DIRT_BASIC"), "Should contain DIRT_BASIC");
             assertTrue(allWalls.containsKey("WOOD_BASIC"), "Should contain WOOD_BASIC");
+            assertTrue(allWalls.containsKey("STONE_BASIC"), "Should contain STONE_BASIC");
             assertTrue(allWalls.containsKey("STEEL_SOLID"), "Should contain STEEL_SOLID");
         }
 
