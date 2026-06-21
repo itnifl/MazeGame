@@ -50,9 +50,6 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
             AnchorPane winScreen = fxmlLoader.load();
             WinGameController controller = fxmlLoader.getController();
             playerCharacter.isWinning = true;
-            updateScore();
-
-            controller.setScoreLabel(this.score);
 
             AnchorPane.setTopAnchor(winScreen, 0.0);
             AnchorPane.setRightAnchor(winScreen, 0.0);
@@ -71,9 +68,12 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
 
             controller.setScoreLabel(this.score);
 
-            var hitPoints = playerCharacter.getHitPoints();
-            if (hitPoints < 100) {
-                controller.showDamagePenaltyLabel();
+            var bd = getBreakdown();
+            if (bd != null) {
+                if (bd.damagePenalty() > 0) {
+                    controller.showDamagePenaltyLabel(bd.damagePenalty());
+                }
+                controller.showWinBonusLabel(bd.winBonus());
             }
 
             if (root == null || root.getScene() == null) {

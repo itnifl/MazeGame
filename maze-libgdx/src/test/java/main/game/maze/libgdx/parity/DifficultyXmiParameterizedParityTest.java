@@ -79,15 +79,15 @@ class DifficultyXmiParameterizedParityTest {
     // These mirror the data in DIFFICULTIES_XMI_CLASSPATH. Update both together.
     static final double EASY_SPEED_MULT    = 0.80;
     static final double EASY_DAMAGE_MULT   = 0.70;
-    static final int    EASY_MAX_THREAT    = 12;
+    static final int    EASY_MAX_THREAT    = 25;
 
     static final double NORMAL_SPEED_MULT  = 1.00;
     static final double NORMAL_DAMAGE_MULT = 1.00;
-    static final int    NORMAL_MAX_THREAT  = 20;
+    static final int    NORMAL_MAX_THREAT  = 30;
 
     static final double HARD_SPEED_MULT   = 1.15;
     static final double HARD_DAMAGE_MULT  = 1.40;
-    static final int    HARD_MAX_THREAT   = 62;
+    static final int    HARD_MAX_THREAT   = 86;
 
     // Loaded once by @BeforeAll; shared by all nested groups.
     private static List<Difficulty> allDifficultyList;

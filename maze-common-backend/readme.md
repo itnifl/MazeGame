@@ -55,7 +55,7 @@ JaCoCo 0.8.12 with a **60 % LINE** minimum. The profile is inherited from root
 - [EnemyDirectorServiceTest](src/test/java/main/game/maze/game/runtime/EnemyDirectorServiceTest.java)
 - [FileHighScoreRepositoryTest](src/test/java/main/game/maze/game/score/FileHighScoreRepositoryTest.java)
 - [PathHintBudgetTest](src/test/java/main/game/maze/game/score/PathHintBudgetTest.java)
-- [ScoringEngineTest](src/test/java/main/game/maze/game/score/ScoringEngineTest.java)
+- [ScoringEngineTest](src/test/java/main/game/maze/game/score/ScoringEngineTest.java) — 15 tests covering `gameplayScore`, `characterScreenScore` (GR-36 death penalty 5 000, GR-37 damage × 10), breakdown parity, win bonus, and edge cases
 - [StatusMessageBusTest](src/test/java/main/game/maze/game/status/StatusMessageBusTest.java)
 - [DifficultyPresentationSupportTest](src/test/java/main/game/maze/service/DifficultyPresentationSupportTest.java)
 - [HighScoreFileTest](src/test/java/main/game/maze/dto/HighScoreFileTest.java)

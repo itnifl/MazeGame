@@ -108,6 +108,20 @@ the wider refactor:
 | Facade | `service.GdxAssetService`, shared `common-graphics` facades (`UiScheduler`, `AudioEngine`) | Hides libGDX resource/loading details behind a small surface so screens never call `new Texture(...)` directly. |
 | Singleton | `AudioEngine.get()` (shared channel routing) | One shared audio engine instance routes menu/in-game/win/game-over channels consistently across screens. |
 
+## End-screen scoring (GR-36 / GR-37)
+
+When the game ends (GAME_OVER or WON mode), `GdxGameScreenController.currentScore()` switches from `gameplayScore()` to `characterScreenScore()` via `GdxGameRuntimeSupport.endScreenScore()`. This applies:
+
+| Penalty / bonus | Rule | Constant |
+|---|---|---|
+| Death penalty | Subtracted when `currentHp == 0` | `StageConstants.ScoreDeathPenalty` (5 000) |
+| Damage × 10 | `(maxHp − currentHp) × 10` | `StageConstants.ScoreSubtractFactor` (10) |
+| Win bonus | Added when the player wins | `StageConstants.ScoreWinBonus` (4 000) |
+
+The HP values are supplied by `PlayerCombatStateService.currentHitPointsAsInt()` and `maxHitPoints()`. During ordinary gameplay the score displayed is the lighter `gameplayScore()` (moves + hint penalty only), so the heavier end-screen penalties do not affect the in-play HUD.
+
+Parity with the JavaFX `characterScreenScore()` path is verified by `EndScreenScoringParityTest` (9-case parametrised suite + 6 standalone tests).
+
 ## Enemy damage and wall blocking
 
 Combat is handled by `PlayerCombatStateService`. Each frame it checks whether any tangible enemy is within contact range of the player. Before applying damage it calls `WallCollisionUtil.wallBetween` (from the [mazeworld module](../main.game.maze.mazeworld/readme.md)) to test whether any wall separates the enemy centre from the player centre. If a wall blocks the line of sight, damage is not applied for that enemy this frame.

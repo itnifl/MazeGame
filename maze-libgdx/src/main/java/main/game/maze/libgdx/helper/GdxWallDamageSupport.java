@@ -1,24 +1,20 @@
 package main.game.maze.libgdx.helper;
 
-import java.util.Iterator;
-import java.util.List;
-import main.game.maze.libgdx.game.GdxEnemyRuntime;
-import main.game.maze.libgdx.game.GdxProjectileRuntime;
 import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
-import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.RealMaze;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
- * Handles projectile advancement and wall-damage for the libGDX frontend.
+ * Provides the wall-damage callback used by
+ * {@link GdxGameCombatAndEnemyFlowSupport} when a STRAIGHT projectile hits a wall.
  *
- * <p>All operations run on the libGDX render thread (no {@code postRunnable} needed).
- * Projectile and wall coordinates are in game-world (Y-down) space to align with
- * {@code GameMazeWorld.getMazeVectors()}; enemy/player screen positions are
- * Y-flipped via {@code heightPx - screenY} before use.</p>
+ * <p>Runs on the libGDX render thread — no {@code postRunnable} needed.</p>
  */
 public final class GdxWallDamageSupport {
 
@@ -26,57 +22,32 @@ public final class GdxWallDamageSupport {
     }
 
     /**
-     * For each ranged enemy: attempts to shoot at the player, then advances all
-     * in-flight projectiles and applies damage to any breakable wall they hit.
+     * Returns a {@link Consumer} that, given a projectile hit position {@code [x, y]},
+     * locates the nearest breakable wall in {@code arena} and applies {@code damage} to it.
      *
-     * @param enemies    live enemy list
-     * @param arena      current maze (wall damage is skipped when not a {@link RealMaze})
-     * @param player     current player state (screen-space coordinates)
-     * @param dt         frame delta in seconds
+     * <p>Returns {@code null} when {@code arena} is not a {@link RealMaze} (e.g. in tests
+     * that use a stub arena), so callers must guard against a null callback.</p>
+     *
+     * @param arena  current maze arena
+     * @param damage HP damage to apply on wall hit
      */
-    public static void updateProjectiles(
-            List<GdxEnemyRuntime> enemies,
-            MazeArena arena,
-            PlayerState player,
-            float dt) {
-        if (enemies == null || enemies.isEmpty() || arena == null || player == null) {
-            return;
-        }
-
-        float heightPx = arena.heightPx();
-        double playerWorldX = player.x();
-        double playerWorldY = heightPx - player.y();
-
+    public static Consumer<float[]> wallHitCallback(MazeArena arena, int damage) {
         GameMazeWorld world = worldFrom(arena);
-
-        for (GdxEnemyRuntime enemy : enemies) {
-            double enemyWorldX = enemy.x();
-            double enemyWorldY = heightPx - enemy.y();
-            enemy.tryShootAt(playerWorldX, playerWorldY, enemyWorldX, enemyWorldY);
+        if (world == null) {
+            return null;
         }
-
-        List<Vector2D> mazeVectors = world != null ? world.getMazeVectors() : List.of();
-
-        for (GdxEnemyRuntime enemy : enemies) {
-            Iterator<GdxProjectileRuntime> it = enemy.activeProjectiles().iterator();
-            while (it.hasNext()) {
-                GdxProjectileRuntime p = it.next();
-                p.advance(dt);
-                if (p.isExpired()) {
-                    it.remove();
-                    continue;
-                }
-                if (world != null) {
-                    Vector2D hitWall = WallCollisionUtil.findFirstHitWall(
-                            p.x(), p.y(), GdxProjectileRuntime.PROJECTILE_SIZE, mazeVectors);
-                    if (hitWall != null) {
-                        applyProjectileDamageToWall(world, hitWall, p.damage());
-                        it.remove();
-                    }
-                }
+        List<Vector2D> mazeVectors = world.getMazeVectors();
+        return hitPos -> {
+            Vector2D hitWall = WallCollisionUtil.findFirstHitWall(
+                    hitPos[0], hitPos[1], PROJECTILE_HIT_RADIUS, mazeVectors);
+            if (hitWall != null) {
+                applyProjectileDamageToWall(world, hitWall, damage);
             }
-        }
+        };
     }
+
+    /** AABB lookup radius used when searching for the hit wall segment. */
+    static final float PROJECTILE_HIT_RADIUS = 10f;
 
     static void applyProjectileDamageToWall(GameMazeWorld world, Vector2D wall, int damage) {
         BreakableWall bw = world.findBreakableWall(wall);
@@ -85,7 +56,7 @@ public final class GdxWallDamageSupport {
         }
     }
 
-    private static GameMazeWorld worldFrom(MazeArena arena) {
+    static GameMazeWorld worldFrom(MazeArena arena) {
         if (arena instanceof RealMaze realMaze) {
             return realMaze.sourceWorld();
         }

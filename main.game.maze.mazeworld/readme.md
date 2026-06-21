@@ -47,6 +47,7 @@ You normally find values such as
 * Large board width and height for a hard difficulty
 * Wall segment length in pixels (`WallSegmentLengthPx`)
 * Wall render thickness in pixels (`WallThicknessPx`, shared by both JavaFX and libGDX frontends to guarantee visual parity)
+* Scoring constants: `ScoreDeathPenalty` (5 000 — GR-36), `ScoreSubtractFactor` (10 — GR-37, damage × 10 on end screens), `ScoreWinBonus` (4 000)
 
 The application uses small helper functions in the front end layer to select the correct values based on the last chosen difficulty.
 When you change board size, you usually update the constants in this module.

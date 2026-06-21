@@ -59,11 +59,13 @@ public final class GdxOverlayModeCoordinator {
                 openHighScoresAction);
     }
 
-    public boolean updateGameOver(Runnable returnToMenuAction) {
+    public boolean updateGameOver(OrthographicCamera hudCamera, Runnable restartAction, Runnable returnToMenuAction) {
         return gameOverOverlayController.update(
                 session,
                 modeInputController,
                 Gdx.input.isKeyPressed(Input.Keys.ESCAPE),
+                hudCamera,
+                restartAction,
                 returnToMenuAction);
     }
 }

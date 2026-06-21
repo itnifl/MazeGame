@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import main.game.maze.actions.HighscoreAction;
 import main.game.maze.actions.StartScreenAction;
@@ -15,6 +16,13 @@ import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.constants.DataFileConstants;
 
 public class WinGameController extends ActionScreenController implements Initializable {
+
+    @FXML
+    private Label winBonusNoticeLabel;
+
+    public void showWinBonusLabel(int amount) {
+        winBonusNoticeLabel.setText("+ Win bonus: +" + amount);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

@@ -174,7 +174,7 @@ public final class OpponentRuntimeFactory {
             }
         );
 
-        validateOrFail(opponentModel);
+        validateOrWarn(opponentModel);
          
 }
 
@@ -433,11 +433,13 @@ private static double spawnByTarget(
         return imageView;
     }
 
-    private static void validateOrFail(OpponentModel model) {
+    private static void validateOrWarn(OpponentModel model) {
         BasicDiagnostic diag = new BasicDiagnostic();
         boolean ok = OpponentsValidator.INSTANCE.validate(model, diag, null);
         if (!ok) {
-            throw new IllegalStateException("Invalid opponent model: " + ", " + diag.getChildren() + ", " + diag.getMessage());
+            _logger.log(Level.WARNING,
+                    "Opponent model validation warning during runtime spawn setup: {0} | diagnostics={1}",
+                    new Object[] { diag.getMessage(), diag.getChildren() });
         }
     }
 

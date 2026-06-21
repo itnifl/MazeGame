@@ -24,8 +24,6 @@ public final class PlayingModeController {
 
         void advanceEnemies(float dt);
 
-        void updateProjectiles(float dt);
-
         boolean hasPlayer();
 
         void updateCombat(float dt);
@@ -57,7 +55,6 @@ public final class PlayingModeController {
 
         bridge.tickEnemyAnimation(dt);
         bridge.advanceEnemies(dt);
-        bridge.updateProjectiles(dt);
 
         if (!bridge.hasPlayer()) {
             return;

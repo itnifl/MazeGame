@@ -17,7 +17,6 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
     private final java.util.function.Function<Float, Boolean> routeGameplayInput;
     private final Consumer<Float> tickEnemyAnimation;
     private final Consumer<Float> advanceEnemies;
-    private final Consumer<Float> updateProjectiles;
     private final BooleanSupplier hasPlayer;
     private final Consumer<Float> updateCombat;
     private final Consumer<Float> applyDeathSequence;
@@ -35,7 +34,6 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
             java.util.function.Function<Float, Boolean> routeGameplayInput,
             Consumer<Float> tickEnemyAnimation,
             Consumer<Float> advanceEnemies,
-            Consumer<Float> updateProjectiles,
             BooleanSupplier hasPlayer,
             Consumer<Float> updateCombat,
             Consumer<Float> applyDeathSequence,
@@ -51,7 +49,6 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
         this.routeGameplayInput = routeGameplayInput;
         this.tickEnemyAnimation = tickEnemyAnimation;
         this.advanceEnemies = advanceEnemies;
-        this.updateProjectiles = updateProjectiles;
         this.hasPlayer = hasPlayer;
         this.updateCombat = updateCombat;
         this.applyDeathSequence = applyDeathSequence;
@@ -60,83 +57,19 @@ public final class LibgdxPlayingBridge implements PlayingModeController.PlayingM
         this.triggerWin = triggerWin;
     }
 
-    @Override
-    public boolean isTerminalActive() {
-        return terminalActive.getAsBoolean();
-    }
-
-    @Override
-    public boolean isEscEdgePressed() {
-        return escEdgePressed.getAsBoolean();
-    }
-
-    @Override
-    public void requestReturnToMenu() {
-        requestReturnToMenu.run();
-    }
-
-    @Override
-    public boolean isCombatDead() {
-        return combatDead.getAsBoolean();
-    }
-
-    @Override
-    public void handleGameMouseInput() {
-        handleGameMouseInput.run();
-    }
-
-    @Override
-    public void handleTerminalTypingInput() {
-        handleTerminalTypingInput.run();
-    }
-
-    @Override
-    public boolean routeGameplayInput(float dt) {
-        return routeGameplayInput.apply(dt);
-    }
-
-    @Override
-    public void tickEnemyAnimation(float dt) {
-        tickEnemyAnimation.accept(dt);
-    }
-
-    @Override
-    public void advanceEnemies(float dt) {
-        advanceEnemies.accept(dt);
-    }
-
-    @Override
-    public void updateProjectiles(float dt) {
-        updateProjectiles.accept(dt);
-    }
-
-    @Override
-    public boolean hasPlayer() {
-        return hasPlayer.getAsBoolean();
-    }
-
-    @Override
-    public void updateCombat(float dt) {
-        updateCombat.accept(dt);
-    }
-
-    @Override
-    public void applyDeathSequence(float dt) {
-        applyDeathSequence.accept(dt);
-    }
-
-    @Override
-    public void updateCameraFollow() {
-        updateCameraFollow.run();
-    }
-
-    @Override
-    public boolean shouldTriggerWin() {
-        return shouldTriggerWin.getAsBoolean();
-    }
-
-    @Override
-    public void triggerWin() {
-        triggerWin.run();
-    }
+    @Override public boolean isTerminalActive() { return terminalActive.getAsBoolean(); }
+    @Override public boolean isEscEdgePressed() { return escEdgePressed.getAsBoolean(); }
+    @Override public void requestReturnToMenu() { requestReturnToMenu.run(); }
+    @Override public boolean isCombatDead() { return combatDead.getAsBoolean(); }
+    @Override public void handleGameMouseInput() { handleGameMouseInput.run(); }
+    @Override public void handleTerminalTypingInput() { handleTerminalTypingInput.run(); }
+    @Override public boolean routeGameplayInput(float dt) { return routeGameplayInput.apply(dt); }
+    @Override public void tickEnemyAnimation(float dt) { tickEnemyAnimation.accept(dt); }
+    @Override public void advanceEnemies(float dt) { advanceEnemies.accept(dt); }
+    @Override public boolean hasPlayer() { return hasPlayer.getAsBoolean(); }
+    @Override public void updateCombat(float dt) { updateCombat.accept(dt); }
+    @Override public void applyDeathSequence(float dt) { applyDeathSequence.accept(dt); }
+    @Override public void updateCameraFollow() { updateCameraFollow.run(); }
+    @Override public boolean shouldTriggerWin() { return shouldTriggerWin.getAsBoolean(); }
+    @Override public void triggerWin() { triggerWin.run(); }
 }

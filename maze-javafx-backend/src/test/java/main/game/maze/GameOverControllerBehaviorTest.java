@@ -53,9 +53,9 @@ public class GameOverControllerBehaviorTest {
         return c;
     }
 
-    // 1) showDeathPenaltyLabel() makes death label visible from a hidden state
+    // 1) showDeathPenaltyLabel(int) makes death label visible and shows correct text
     @Test
-    @DisplayName("GameOverController.showDeathPenaltyLabel reveals the death label")
+    @DisplayName("GameOverController.showDeathPenaltyLabel reveals the death label with amount")
     void deathPenaltyLabelBecomesVisible() throws Exception {
         GameOverController c = newControllerWithLabels();
 
@@ -63,18 +63,18 @@ public class GameOverControllerBehaviorTest {
         deathField.setAccessible(true);
         Label death = (Label) deathField.get(c);
 
-        // Ensure known precondition
         death.setVisible(false);
         assertFalse(death.isVisible(), "Precondition: we set the label invisible");
 
-        c.showDeathPenaltyLabel();
+        c.showDeathPenaltyLabel(5000);
 
         assertTrue(death.isVisible(), "Death penalty label should become visible");
+        assertEquals("- Death penalty: -5000", death.getText(), "Label text should include the amount");
     }
 
-    // 2) inherited showDamagePenaltyLabel() reveals damage label from a hidden state
+    // 2) inherited showDamagePenaltyLabel(int) reveals damage label and shows correct text
     @Test
-    @DisplayName("ActionScreenController.showDamagePenaltyLabel reveals the damage label")
+    @DisplayName("ActionScreenController.showDamagePenaltyLabel reveals the damage label with amount")
     void damagePenaltyLabelBecomesVisible() throws Exception {
         GameOverController c = newControllerWithLabels();
 
@@ -82,13 +82,13 @@ public class GameOverControllerBehaviorTest {
         dmgField.setAccessible(true);
         Label damage = (Label) dmgField.get(c);
 
-        // Ensure known precondition
         damage.setVisible(false);
         assertFalse(damage.isVisible(), "Precondition: we set the label invisible");
 
-        c.showDamagePenaltyLabel();
+        c.showDamagePenaltyLabel(300);
 
         assertTrue(damage.isVisible(), "Damage penalty label should become visible");
+        assertEquals("- Damage penalty: -300", damage.getText(), "Label text should include the amount");
     }
 
     // 3) setScoreLabel(int) updates label text

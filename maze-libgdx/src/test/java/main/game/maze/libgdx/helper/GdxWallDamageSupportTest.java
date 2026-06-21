@@ -1,21 +1,18 @@
 package main.game.maze.libgdx.helper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import main.game.maze.libgdx.game.GdxEnemyRuntime;
-import main.game.maze.libgdx.game.GdxProjectileRuntime;
-import main.game.maze.libgdx.model.EnemySpawn;
-import main.game.maze.libgdx.model.RangedEnemySpawnProps;
+import java.util.function.Consumer;
 import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.generators.MazeArena;
-import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.RealMaze;
 import main.game.maze.mazeworld.generators.WallSegment;
-import main.game.maze.opponents.BehaviorType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,77 +34,51 @@ class GdxWallDamageSupportTest {
         };
     }
 
-    private static GdxEnemyRuntime openArenaEnemy() {
-        EnemySpawn spawn = new EnemySpawn("e1", "/img.png", 50f, 50f, 32f, 1f, 5, 0, "", 1f);
-        return GdxEnemyRuntime.fromSpawn(spawn, 0,
-                new main.game.maze.libgdx.movement.GdxWorldView(stubArena(), new PlayerState(400f, 400f, 16f)),
-                20f, 4);
+    @Test
+    @DisplayName("wallHitCallback returns null for stub (non-RealMaze) arena")
+    void wallHitCallback_stubArena_returnsNull() {
+        Consumer<float[]> cb = GdxWallDamageSupport.wallHitCallback(stubArena(), 10);
+        assertNull(cb, "Stub arena has no GameMazeWorld — callback must be null");
     }
 
     @Test
-    @DisplayName("no-op with stub (non-RealMaze) arena — does not throw")
-    void updateProjectiles_stubArena_doesNotThrow() {
-        GdxEnemyRuntime enemy = openArenaEnemy();
-        PlayerState player = new PlayerState(400f, 400f, 16f);
-
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
-                GdxWallDamageSupport.updateProjectiles(List.of(enemy), stubArena(), player, 0.016f));
+    @DisplayName("wallHitCallback returns non-null for RealMaze arena")
+    void wallHitCallback_realMaze_returnsNonNull() {
+        RealMaze realMaze = new RealMaze(new GameMazeWorld(), WORLD_W, WORLD_H);
+        Consumer<float[]> cb = GdxWallDamageSupport.wallHitCallback(realMaze, 5);
+        assertNotNull(cb, "RealMaze arena must produce a non-null wall-hit callback");
     }
 
     @Test
-    @DisplayName("no-op with null player — does not throw")
-    void updateProjectiles_nullPlayer_doesNotThrow() {
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
-                GdxWallDamageSupport.updateProjectiles(List.of(), stubArena(), null, 0.016f));
-    }
-
-    @Test
-    @DisplayName("no-op with empty enemy list — does not throw")
-    void updateProjectiles_emptyEnemies_doesNotThrow() {
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
-                GdxWallDamageSupport.updateProjectiles(
-                        List.of(), stubArena(), new PlayerState(50f, 50f, 16f), 0.016f));
-    }
-
-    @Test
-    @DisplayName("projectile placed on breakable wall applies damage and is removed")
-    void projectile_onBreakableWall_appliesDamageAndIsRemoved() {
+    @DisplayName("callback at breakable wall mid-point reduces HP")
+    void wallHitCallback_atBreakableWallMidpoint_reducesHp() {
         GameMazeWorld world = new GameMazeWorld();
         RealMaze realMaze = new RealMaze(world, WORLD_W, WORLD_H);
 
         List<BreakableWall> bwalls = world.getBreakableWalls();
-        // default GameMazeWorld with seed 42 always has at least one breakable wall
         assertTrue(!bwalls.isEmpty(), "Expected at least one breakable wall");
 
         BreakableWall bw = bwalls.get(0);
         int hpBefore = bw.getRemainingHp();
 
-        // Place projectile at the wall's midpoint in game-world (Y-down) space
         Vector2D wallVec = bw.geometry;
         double midX = (wallVec.getStart().getX() + wallVec.getEnd().getX()) / 2.0;
         double midY = (wallVec.getStart().getY() + wallVec.getEnd().getY()) / 2.0;
 
-        GdxEnemyRuntime enemy = openArenaEnemy();
-        // Stationary projectile (same from/to) parked exactly on the wall
-        enemy.activeProjectiles().add(
-                GdxProjectileRuntime.fire(midX, midY, midX, midY, 0, bw.getRemainingHp()));
-
-        PlayerState player = new PlayerState(50f, 50f, 16f);
-        GdxWallDamageSupport.updateProjectiles(List.of(enemy), realMaze, player, 0f);
+        Consumer<float[]> cb = GdxWallDamageSupport.wallHitCallback(realMaze, hpBefore);
+        assertNotNull(cb);
+        cb.accept(new float[]{(float) midX, (float) midY});
 
         assertTrue(bw.getRemainingHp() < hpBefore,
-                "Wall HP must decrease after projectile hit");
-        assertTrue(enemy.activeProjectiles().isEmpty(),
-                "Projectile must be removed after hitting a wall");
+                "Breakable wall HP must decrease after callback fires at its midpoint");
     }
 
     @Test
-    @DisplayName("projectile on indestructible wall position applies no damage")
-    void projectile_onIndestructibleWall_doesNotApplyDamage() {
+    @DisplayName("callback at indestructible wall position does not change any breakable HP")
+    void wallHitCallback_atIndestructibleWall_noHpChange() {
         GameMazeWorld world = new GameMazeWorld();
         RealMaze realMaze = new RealMaze(world, WORLD_W, WORLD_H);
 
-        // Find a wall vector that is NOT breakable
         Vector2D nonBreakable = world.getMazeVectors().stream()
                 .filter(v -> world.findBreakableWall(v) == null)
                 .findFirst().orElse(null);
@@ -118,97 +89,70 @@ class GdxWallDamageSupportTest {
         double midX = (nonBreakable.getStart().getX() + nonBreakable.getEnd().getX()) / 2.0;
         double midY = (nonBreakable.getStart().getY() + nonBreakable.getEnd().getY()) / 2.0;
 
-        GdxEnemyRuntime enemy = openArenaEnemy();
-        enemy.activeProjectiles().add(GdxProjectileRuntime.fire(midX, midY, midX, midY, 0, 10));
-
         int totalHpBefore = world.getBreakableWalls().stream()
                 .mapToInt(BreakableWall::getRemainingHp).sum();
 
-        PlayerState player = new PlayerState(50f, 50f, 16f);
-        GdxWallDamageSupport.updateProjectiles(List.of(enemy), realMaze, player, 0f);
+        Consumer<float[]> cb = GdxWallDamageSupport.wallHitCallback(realMaze, 10);
+        assertNotNull(cb);
+        cb.accept(new float[]{(float) midX, (float) midY});
 
         int totalHpAfter = world.getBreakableWalls().stream()
                 .mapToInt(BreakableWall::getRemainingHp).sum();
         assertEquals(totalHpBefore, totalHpAfter,
-                "Hitting a non-breakable wall must not change any HP");
-        // Projectile still hits a wall segment — it must be removed from the list
-        assertTrue(enemy.activeProjectiles().isEmpty(),
-                "Projectile must be consumed even when hitting an indestructible wall");
+                "Hit at a non-breakable wall must not change any breakable wall HP");
     }
 
     @Test
-    @DisplayName("enemy without rangedProps does not fire projectiles")
-    void tryShootAt_enemyWithoutRangedProps_noProjectileCreated() {
-        // EnemySpawn with no rangedProps (null) — melee enemy
-        EnemySpawn spawn = new EnemySpawn("z1", "/zombie.png", 50f, 50f, 32f, 1f, 5, 0, "", 1f);
-        GdxEnemyRuntime enemy = GdxEnemyRuntime.fromSpawn(spawn, 0,
-                new main.game.maze.libgdx.movement.GdxWorldView(stubArena(), new PlayerState(400f, 400f, 16f)),
-                20f, 4);
-
-        enemy.tryShootAt(100, 100, 50, 50);
-
-        assertTrue(enemy.activeProjectiles().isEmpty(),
-                "Melee enemy (no rangedProps) must not create projectiles");
-    }
-
-    @Test
-    @DisplayName("enemy with rangedProps fires when player is in range")
-    void tryShootAt_enemyWithRangedProps_inRange_createsProjectile() {
-        RangedEnemySpawnProps props = new RangedEnemySpawnProps(10000, 0, 200, 0);
-        EnemySpawn spawn = new EnemySpawn("pb1", "/pumpkin.png", 50f, 50f, 32f, 1f, 5, 0, "",
-                BehaviorType.WANDER, 1f, 0.0, EnemySpawn.DEFAULT_VISIBILITY_LEVEL, props);
-
-        GdxEnemyRuntime enemy = GdxEnemyRuntime.fromSpawn(spawn, 0,
-                new main.game.maze.libgdx.movement.GdxWorldView(stubArena(), new PlayerState(400f, 400f, 16f)),
-                20f, 4);
-
-        // enemy world position (~50, ~50); shoot toward player at (100, 100) world
-        enemy.tryShootAt(100, 100, 50, 50);
-
-        assertEquals(1, enemy.activeProjectiles().size(),
-                "Ranged enemy in range must create exactly one projectile");
-    }
-
-    @Test
-    @DisplayName("enemy with rangedProps does not fire when player is out of range")
-    void tryShootAt_enemyWithRangedProps_outOfRange_noProjectile() {
-        RangedEnemySpawnProps props = new RangedEnemySpawnProps(10, 0, 200, 0);
-        EnemySpawn spawn = new EnemySpawn("pb2", "/pumpkin.png", 50f, 50f, 32f, 1f, 5, 0, "",
-                BehaviorType.WANDER, 1f, 0.0, EnemySpawn.DEFAULT_VISIBILITY_LEVEL, props);
-
-        GdxEnemyRuntime enemy = GdxEnemyRuntime.fromSpawn(spawn, 0,
-                new main.game.maze.libgdx.movement.GdxWorldView(stubArena(), new PlayerState(400f, 400f, 16f)),
-                20f, 4);
-
-        // player is 500 units away, attackRange is only 10
-        enemy.tryShootAt(550, 550, 50, 50);
-
-        assertTrue(enemy.activeProjectiles().isEmpty(),
-                "Ranged enemy out of range must not create a projectile");
-    }
-
-    @Test
-    @DisplayName("expired projectile is removed without applying damage")
-    void expiredProjectile_isRemovedWithoutDamage() {
+    @DisplayName("callback at position far from all walls does nothing")
+    void wallHitCallback_atEmptyPosition_noHpChange() {
         GameMazeWorld world = new GameMazeWorld();
         RealMaze realMaze = new RealMaze(world, WORLD_W, WORLD_H);
 
-        GdxEnemyRuntime enemy = openArenaEnemy();
-        // Place a projectile far from any wall and advance past lifetime (3+ seconds)
-        enemy.activeProjectiles().add(GdxProjectileRuntime.fire(1, 1, 2, 1, 1, 99));
-
         int totalHpBefore = world.getBreakableWalls().stream()
                 .mapToInt(BreakableWall::getRemainingHp).sum();
 
-        // 4 seconds — exceeds MAX_LIFETIME_SECONDS (3s)
-        GdxWallDamageSupport.updateProjectiles(
-                List.of(enemy), realMaze, new PlayerState(50f, 50f, 16f), 4f);
+        Consumer<float[]> cb = GdxWallDamageSupport.wallHitCallback(realMaze, 99);
+        assertNotNull(cb);
+        // Open centre of the arena — no wall should be nearby
+        cb.accept(new float[]{WORLD_W / 2f, WORLD_H / 2f});
 
         int totalHpAfter = world.getBreakableWalls().stream()
                 .mapToInt(BreakableWall::getRemainingHp).sum();
         assertEquals(totalHpBefore, totalHpAfter,
-                "Expired projectile must not apply damage");
-        assertTrue(enemy.activeProjectiles().isEmpty(),
-                "Expired projectile must be removed from the list");
+                "Callback at an open position must not change any wall HP");
+    }
+
+    @Test
+    @DisplayName("applyProjectileDamageToWall reduces HP of the matching breakable wall")
+    void applyProjectileDamageToWall_reducesHp() {
+        GameMazeWorld world = new GameMazeWorld();
+
+        List<BreakableWall> bwalls = world.getBreakableWalls();
+        assertTrue(!bwalls.isEmpty(), "Expected at least one breakable wall");
+
+        BreakableWall bw = bwalls.get(0);
+        int hpBefore = bw.getRemainingHp();
+
+        GdxWallDamageSupport.applyProjectileDamageToWall(world, bw.geometry, 3);
+
+        assertTrue(bw.getRemainingHp() < hpBefore,
+                "applyProjectileDamageToWall must reduce the matching wall's HP");
+    }
+
+    @Test
+    @DisplayName("applyProjectileDamageToWall on non-breakable wall does not throw")
+    void applyProjectileDamageToWall_nonBreakableWall_doesNotThrow() {
+        GameMazeWorld world = new GameMazeWorld();
+
+        Vector2D nonBreakable = world.getMazeVectors().stream()
+                .filter(v -> world.findBreakableWall(v) == null)
+                .findFirst().orElse(null);
+
+        org.junit.jupiter.api.Assumptions.assumeTrue(nonBreakable != null,
+                "All walls are breakable — this test is skipped");
+
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> GdxWallDamageSupport.applyProjectileDamageToWall(world, nonBreakable, 10),
+                "applyProjectileDamageToWall on non-breakable wall must not throw");
     }
 }

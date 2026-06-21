@@ -377,7 +377,7 @@ function Ensure-LaunchJavaFxLibs {
     }
 
     Write-Host ("Missing JavaFX launch libs ({0}). Restoring runtime dependencies..." -f ($missing -join ', ')) -ForegroundColor Yellow
-    & $Mvn -pl maze-javafx-backend -DskipTests=true dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/libs -DexcludeGroupIds=p2.osgi.bundle -DexcludeArtifactIds=com.sun.jna
+    & $Mvn -pl maze-javafx-backend '-DskipTests=true' dependency:copy-dependencies '-DincludeScope=runtime' '-DoutputDirectory=target/libs' '-DexcludeGroupIds=p2.osgi.bundle' '-DexcludeArtifactIds=com.sun.jna'
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to restore JavaFX runtime dependencies for launch. Maven exited with code $exit."

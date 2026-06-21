@@ -1,5 +1,6 @@
 package main.game.maze.game.score;
 
+import main.game.maze.mazeworld.constants.StageConstants;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ScoringEngineTest {
 
     private final ScoringEngine engine = new ScoringEngine();
+
+    // -------------------------------------------------------------------------
+    // gameplayScore
+    // -------------------------------------------------------------------------
 
     @Test
     void gameplayScoreUsesMoveAndHintPenalties() {
@@ -16,11 +21,150 @@ class ScoringEngineTest {
     }
 
     @Test
-    void characterScreenScoreAppliesDeathAndWinRules() {
-        int wonScore = engine.characterScreenScore(5000, 10, 100, 90, 20, true);
+    void gameplayScoreIsNeverNegative() {
+        // Move count so large that penalties exceed the base score.
+        int score = engine.gameplayScore(100, 9999, 0f);
+
+        assertEquals(0, score);
+    }
+
+    // -------------------------------------------------------------------------
+    // characterScreenScore – won path
+    // -------------------------------------------------------------------------
+
+    @Test
+    void characterScreenScoreAppliesWinBonusWhenWon() {
+        // No damage, no death: only move penalty and win bonus.
+        // baseScore=5000, moveCount=10 → movePenalty=100, winBonus=4000
+        int score = engine.characterScreenScore(5000, 10, 100, 100, 0, true);
+
+        assertEquals(8900, score);
+    }
+
+    @Test
+    void characterScreenScoreAppliesDamageTimesTenOnWin() {
+        // Took 10 HP of damage (currentHP=90), won the game.
+        // damagePenalty = (100-90)*10 = 100
+        int won = engine.characterScreenScore(5000, 10, 100, 90, 20, true);
+
+        assertEquals(8780, won);
+    }
+
+    // -------------------------------------------------------------------------
+    // characterScreenScore – death path  (GR-36: death penalty = 5 000)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void deathPenaltyConstantIs5000() {
+        assertEquals(5000, StageConstants.ScoreDeathPenalty,
+                "GR-36: ScoreDeathPenalty must be 5 000 — update this test if the rule changes");
+    }
+
+    @Test
+    void characterScreenScoreAppliesDeathPenaltyOf5000WhenDead() {
+        // currentHp=0 triggers death penalty of 5000.
+        // baseScore=5000, moveCount=10 → movePenalty=100
+        // hpReduction=100 → damagePenalty=1000, deathPenalty=5000, dynamic=20
+        // total = 5000 - 100 - 1000 - 5000 - 20 = -1120
         int deadScore = engine.characterScreenScore(5000, 10, 100, 0, 20, false);
 
-        assertEquals(8780, wonScore);
-        assertEquals(-120, deadScore);
+        assertEquals(-1120, deadScore,
+                "GR-36: death penalty must be 5 000");
+    }
+
+    @Test
+    void characterScreenScoreDeathPenaltyAbsentWhenAlive() {
+        // currentHp=50 (took 50 damage), did not die, did not win.
+        // damagePenalty = 50 * 10 = 500
+        int score = engine.characterScreenScore(5000, 5, 100, 50, 0, false);
+        int withoutDeathPenalty = 5000 - 50 - 500;
+
+        assertEquals(withoutDeathPenalty, score,
+                "GR-37: damage penalty applies but death penalty must be absent when HP > 0");
+    }
+
+    // -------------------------------------------------------------------------
+    // characterScreenScore – damage * 10 rule (GR-37)
+    // -------------------------------------------------------------------------
+
+    @Test
+    void damagePenaltyIsExactlyDamageTimes10() {
+        int maxHp = 100;
+        int damageReceived = 30;
+        int currentHp = maxHp - damageReceived;
+
+        // gameplayScore has no HP penalty; characterScreenScore adds damage * 10
+        int gameplay = engine.gameplayScore(10000, 0, 0f);
+        int endScreen = engine.characterScreenScore(10000, 0, maxHp, currentHp, 0, false);
+
+        int damagePenalty = gameplay - endScreen;
+        assertEquals(damageReceived * StageConstants.ScoreSubtractFactor, damagePenalty,
+                "GR-37: damage penalty on end screen must equal damage * ScoreSubtractFactor (damage * 10)");
+    }
+
+    @Test
+    void noDamageNoPenaltyDifference() {
+        // Player took 0 damage and is alive → characterScreenScore equals gameplayScore modulo win bonus
+        int gameplay = engine.gameplayScore(5000, 5, 0f);
+        int endScreen = engine.characterScreenScore(5000, 5, 100, 100, 0, false);
+
+        assertEquals(gameplay, endScreen,
+                "GR-37: with 0 damage and no death, characterScreenScore must equal gameplayScore");
+    }
+
+    // -------------------------------------------------------------------------
+    // breakdown()
+    // -------------------------------------------------------------------------
+
+    @Test
+    void breakdownTotalMatchesCharacterScreenScore() {
+        int base = 5000, moves = 10, maxHp = 100, curHp = 80, dynPen = 20;
+        int expected = engine.characterScreenScore(base, moves, maxHp, curHp, dynPen, true);
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(base, moves, maxHp, curHp, dynPen, true);
+
+        assertEquals(expected, bd.total(), "breakdown total must equal characterScreenScore");
+    }
+
+    @Test
+    void breakdownDeathPenaltyComponentIs5000WhenDead() {
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 0, 0, false);
+
+        assertEquals(StageConstants.ScoreDeathPenalty, bd.deathPenalty(),
+                "GR-36: breakdown.deathPenalty must equal ScoreDeathPenalty when HP is 0");
+    }
+
+    @Test
+    void breakdownDeathPenaltyIsZeroWhenAlive() {
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 50, 0, false);
+
+        assertEquals(0, bd.deathPenalty(), "breakdown.deathPenalty must be 0 when HP > 0");
+    }
+
+    @Test
+    void breakdownDamagePenaltyIsDamageTimes10() {
+        int damage = 30;
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 100 - damage, 0, false);
+
+        assertEquals(damage * StageConstants.ScoreSubtractFactor, bd.damagePenalty(),
+                "GR-37: breakdown.damagePenalty must be damage * ScoreSubtractFactor");
+    }
+
+    @Test
+    void breakdownWinBonusPresentOnlyWhenWon() {
+        ScoringEngine.ScoreBreakdown wonBd  = engine.breakdown(5000, 0, 100, 100, 0, true);
+        ScoringEngine.ScoreBreakdown loseBd = engine.breakdown(5000, 0, 100, 100, 0, false);
+
+        assertEquals(StageConstants.ScoreWinBonus, wonBd.winBonus(),
+                "breakdown.winBonus must equal ScoreWinBonus when won");
+        assertEquals(0, loseBd.winBonus(), "breakdown.winBonus must be 0 when not won");
+    }
+
+    @Test
+    void breakdownDynamicPenaltyReflectsPathHintPenalty() {
+        int pathPenalty = 150;
+        ScoringEngine.ScoreBreakdown bd = engine.breakdown(5000, 0, 100, 100, pathPenalty, false);
+
+        assertEquals(pathPenalty, bd.dynamicPenalty(),
+                "breakdown.dynamicPenalty must equal the dynamic (path-hint) penalty passed in");
     }
 }

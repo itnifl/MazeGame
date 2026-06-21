@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
+import main.game.maze.libgdx.controller.GdxGameOverOverlayController;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.helper.GdxDebugOverlayState;
@@ -71,6 +73,11 @@ public final class GdxGameRenderStateAssembler {
                 input.infectionWarningText(),
                 input.animatedEnemies(),
                 input.activePathPoints(),
+                input.enemyProjectiles(),
+                input.enemyBeams(),
+                input.enemyImpacts(),
+                input.shakeOffsetX(),
+                input.shakeOffsetY(),
                 input.session(),
                 input.debugOverlayState(),
                 input.statusMessageBus(),
@@ -92,6 +99,7 @@ public final class GdxGameRenderStateAssembler {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
+                input.scoreBreakdown(),
                 input.terminalActive(),
                 input.terminalBufferText(),
                 input.commandsOverlayVisible(),
@@ -103,6 +111,7 @@ public final class GdxGameRenderStateAssembler {
                 input.winOverlayView(),
                 input.gameOverOverlayView(),
                 input.infectionOverlayView(),
+                input.gameOverOverlayController(),
                 input.winOverlayController(),
                 input.enemyTextureLoader(),
                 input.enemyPathProvider(),
@@ -146,6 +155,11 @@ public final class GdxGameRenderStateAssembler {
             String infectionWarningText,
             List<GdxEnemyRuntime> animatedEnemies,
             List<Point2D> activePathPoints,
+            List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
+            List<GdxEnemyRuntime.BeamVisual> enemyBeams,
+            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            float shakeOffsetX,
+            float shakeOffsetY,
             GameSession session,
             GdxDebugOverlayState debugOverlayState,
             StatusMessageBus statusMessageBus,
@@ -167,6 +181,7 @@ public final class GdxGameRenderStateAssembler {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
+            ScoreBreakdown scoreBreakdown,
             boolean terminalActive,
             String terminalBufferText,
             boolean commandsOverlayVisible,
@@ -178,6 +193,7 @@ public final class GdxGameRenderStateAssembler {
             GdxWinOverlayView winOverlayView,
             GdxGameOverOverlayView gameOverOverlayView,
             GdxInfectionOverlayView infectionOverlayView,
+            GdxGameOverOverlayController gameOverOverlayController,
             GdxWinOverlayController winOverlayController,
             Function<String, Texture> enemyTextureLoader,
             Function<GdxEnemyRuntime, List<ActivePathPoint>> enemyPathProvider,

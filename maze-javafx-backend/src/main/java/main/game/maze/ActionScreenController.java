@@ -50,7 +50,8 @@ public class ActionScreenController {
         scoreLabel.setText(String.valueOf(score));
     }
 
-    public void showDamagePenaltyLabel() {
+    public void showDamagePenaltyLabel(int amount) {
+        damagePenaltyNoticeLabel.setText("- Damage penalty: -" + amount);
         damagePenaltyNoticeLabel.setVisible(true);
         damagePenaltyNoticeLabel.setManaged(true);
     }

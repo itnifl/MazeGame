@@ -99,7 +99,7 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
 
             updateScore();
             controller.setScoreLabel(this.score);
-            configurePenaltyLabels(controller, playerCharacter.getHitPoints());
+            configurePenaltyLabels(controller);
 
             Stage stage = (Stage) root.getScene().getWindow();
             this.replaceRoot(root, newRoot);
@@ -116,13 +116,19 @@ public class GameOverAction extends CharacterActionScreens implements IDeathSubs
         }
     }
 
-    private void configurePenaltyLabels(GameOverController controller, int hitPoints) {
-        if (hitPoints < PlayerCharacter.MAX_PLAYER_HP) {
-            controller.showDamagePenaltyLabel();
+    private void configurePenaltyLabels(GameOverController controller) {
+        var bd = getBreakdown();
+        if (bd == null) return;
+        if (hasDamagePenaltyAmount(bd.damagePenalty())) {
+            controller.showDamagePenaltyLabel(bd.damagePenalty());
         }
-        if (hitPoints <= 0) {
-            controller.showDeathPenaltyLabel();
+        if (bd.deathPenalty() > 0) {
+            controller.showDeathPenaltyLabel(bd.deathPenalty());
         }
+    }
+
+    static boolean hasDamagePenaltyAmount(int damagePenalty) {
+        return damagePenalty > 0;
     }
 
     /**
