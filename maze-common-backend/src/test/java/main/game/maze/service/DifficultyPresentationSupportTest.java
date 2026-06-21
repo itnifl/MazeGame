@@ -29,6 +29,12 @@ class DifficultyPresentationSupportTest {
     }
 
     @Test
+    void easyBoardHeightIs665() {
+        assertEquals(665, StageConstants.BoardMaxY,
+                "Easy difficulty board height must be 665 px (600 original + 65 px extended bottom)");
+    }
+
+    @Test
     void displayNameUsesDifficultyModelNameAndFallback() {
         Difficulty easy = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
         Difficulty normal = DifficultiesFactory.eINSTANCE.createNormalDifficulty();
