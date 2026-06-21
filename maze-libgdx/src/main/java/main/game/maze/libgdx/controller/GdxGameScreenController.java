@@ -353,7 +353,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private void killEnemies() {
         int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(
-                animatedEnemies, worldModel.deadEnemies());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
         flashStatus("Killed " + killed + " enemi" + (killed == 1 ? "y" : "es"));
     }
 
@@ -395,6 +395,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     void advanceEnemies(float dt) {
         GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt);
+        GdxGameCombatAndEnemyFlowSupport.tickDeathAnimations(worldModel.dyingEnemies(), dt);
         if (maze != null && player != null) {
             GdxGameCombatAndEnemyFlowSupport.tickResurrections(
                     worldModel.deadEnemies(),

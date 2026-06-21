@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.util.Duration;
 import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
@@ -66,7 +69,27 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     private class DieAction implements ICharacterAction {
-        public void doAction(Object characterGraphics) { /* animate and remove node */ }
+        private static final int HURT_FRAME_COUNT = 5;
+        private static final double FRAME_DURATION_MS = 100.0;
+        private static final String HURT_SPRITE_FORMAT = "/main/game/maze/zombie-hurt%d.png";
+
+        public void doAction(Object characterGraphics) {
+            Timeline timeline = new Timeline();
+            for (int i = 1; i <= HURT_FRAME_COUNT; i++) {
+                final int frameNum = i;
+                KeyFrame frame = new KeyFrame(
+                        Duration.millis((frameNum - 1) * FRAME_DURATION_MS),
+                        e -> {
+                            var stream = ZombieCharacter.class.getResourceAsStream(
+                                    String.format(HURT_SPRITE_FORMAT, frameNum));
+                            if (stream != null) {
+                                setCharacterImage(new Image(stream));
+                            }
+                        });
+                timeline.getKeyFrames().add(frame);
+            }
+            timeline.play();
+        }
     }
 
     @Override

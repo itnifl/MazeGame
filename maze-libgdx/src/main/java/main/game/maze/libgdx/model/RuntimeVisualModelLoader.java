@@ -61,6 +61,7 @@ public final class RuntimeVisualModelLoader {
     private static final float MIN_THREAT_BUDGET = 1f;
     // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
     private static final int DEFAULT_OPPONENT_MAX_THREAT = 20;
+    private static final int DEFAULT_ZOMBIE_RESURRECTION_TIME_MS = 5000;
     private static final int DEFAULT_ZOMBIE_CAP = 2;
     private static final int DEFAULT_GHOST_CAP = 2;
     private static final int DEFAULT_PUMPKIN_CAP = 1;
@@ -361,7 +362,8 @@ public final class RuntimeVisualModelLoader {
 
     private static int resurrectionTimeMsFor(CharacterType type) {
         if (type instanceof Zombie zombie) {
-            return Math.max(0, zombie.getResurrectionTime()) * 1000;
+            int modelMs = Math.max(0, zombie.getResurrectionTime()) * 1000;
+            return modelMs > 0 ? modelMs : DEFAULT_ZOMBIE_RESURRECTION_TIME_MS;
         }
         return EnemySpawn.DEFAULT_RESURRECTION_TIME_MS;
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.dto.Score;
 import main.game.maze.libgdx.model.DeadEnemy;
+import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.game.score.PathHintBudget;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.mazeworld.Point2D;
@@ -38,6 +39,7 @@ public final class GameWorldModel {
 
     private final List<GdxEnemyRuntime> animatedEnemies = new ArrayList<>();
     private final List<DeadEnemy> deadEnemies = new ArrayList<>();
+    private final List<EnemyDeathAnimation> dyingEnemies = new ArrayList<>();
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles = new ArrayList<>();
     private final List<GdxEnemyRuntime.BeamVisual> enemyBeams = new ArrayList<>();
@@ -210,6 +212,10 @@ public final class GameWorldModel {
 
     public List<DeadEnemy> deadEnemies() {
         return deadEnemies;
+    }
+
+    public List<EnemyDeathAnimation> dyingEnemies() {
+        return dyingEnemies;
     }
 
     public List<Point2D> activePathPoints() {

@@ -65,6 +65,7 @@ public final class GameSessionBootstrapper {
         request.worldModel().activePathPoints().clear();
         request.worldModel().animatedEnemies().clear();
         request.worldModel().deadEnemies().clear();
+        request.worldModel().dyingEnemies().clear();
 
         return new BootstrapResult(maze, runtimeModel, player, activePlayerSpeed, activeGoalSize);
     }

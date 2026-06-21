@@ -10,6 +10,7 @@ import main.game.maze.common.movement.WorldView;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.helper.GdxGameCombatAndEnemyFlowSupport;
 import main.game.maze.libgdx.model.DeadEnemy;
+import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.opponents.BehaviorType;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class ZombieResurrectionTest {
         active.add(enemy(0));
 
         List<DeadEnemy> dead = new ArrayList<>();
-        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead);
+        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead, new ArrayList<>());
 
         assertTrue(active.isEmpty(), "All enemies should be removed from the active list after kill");
     }
@@ -39,7 +40,7 @@ class ZombieResurrectionTest {
         active.add(enemy(0));
         active.add(enemy(0));
 
-        int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(active, new ArrayList<>());
+        int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(active, new ArrayList<>(), new ArrayList<>());
         assertEquals(3, killed);
     }
 
@@ -50,7 +51,7 @@ class ZombieResurrectionTest {
         active.add(enemy(0));     // no resurrection
 
         List<DeadEnemy> dead = new ArrayList<>();
-        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead);
+        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead, new ArrayList<>());
 
         assertEquals(1, dead.size(), "Only the enemy with resurrectionTimeMs > 0 should enter the dead queue");
         assertEquals(5f, dead.get(0).resurrectionSecondsRemaining(), 0.001f);
@@ -62,9 +63,22 @@ class ZombieResurrectionTest {
         active.add(enemy(0));
 
         List<DeadEnemy> dead = new ArrayList<>();
-        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead);
+        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead, new ArrayList<>());
 
         assertTrue(dead.isEmpty(), "Enemy with resurrectionTimeMs == 0 must not enter the dead queue");
+    }
+
+    @Test
+    void killEnemies_addsDeathAnimationForEachKilledEnemy() {
+        List<GdxEnemyRuntime> active = new ArrayList<>();
+        active.add(enemy(0));
+        active.add(enemy(5000));
+
+        List<EnemyDeathAnimation> dying = new ArrayList<>();
+        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, new ArrayList<>(), dying);
+
+        assertEquals(2, dying.size(), "One death animation should be added per killed enemy");
+        assertFalse(dying.get(0).isDone(), "Freshly added animation must not be done yet");
     }
 
     // -----------------------------------------------------------------------
@@ -138,7 +152,7 @@ class ZombieResurrectionTest {
         active.add(enemy(2000));
 
         List<DeadEnemy> dead = new ArrayList<>();
-        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead);
+        GdxGameCombatAndEnemyFlowSupport.killEnemies(active, dead, new ArrayList<>());
 
         assertTrue(active.isEmpty());
         assertEquals(1, dead.size());

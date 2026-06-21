@@ -44,6 +44,7 @@ public final class GameSessionStartCoordinator {
 
         request.animatedEnemies().clear();
         request.worldModel().deadEnemies().clear();
+        request.worldModel().dyingEnemies().clear();
         int idx = 0;
         for (EnemySpawn enemy : runtimeModel.enemies()) {
             request.animatedEnemies().add(GdxEnemyRuntime.fromSpawn(

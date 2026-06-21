@@ -10,6 +10,7 @@ import main.game.maze.libgdx.controller.GdxWinOverlayController;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.DeadEnemy;
+import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.movement.GdxWorldView;
@@ -112,18 +113,21 @@ public final class GdxGameCombatAndEnemyFlowSupport {
      * Kill every living enemy in {@code animatedEnemies}.
      * Enemies with {@code resurrectionTimeMs > 0} are moved to {@code deadEnemies}
      * so they reappear after the configured delay; the rest are simply removed.
+     * A death animation entry is added to {@code dyingEnemies} for every killed enemy.
      *
      * @return the number of enemies killed
      */
     public static int killEnemies(
             List<GdxEnemyRuntime> animatedEnemies,
-            List<DeadEnemy> deadEnemies) {
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies) {
         int killed = 0;
         List<GdxEnemyRuntime> toRemove = new ArrayList<>();
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             if (!enemy.isAlive()) {
                 continue;
             }
+            dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
             enemy.kill();
             killed++;
             EnemySpawn spawn = enemy.originalSpawn();
@@ -135,6 +139,16 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         }
         animatedEnemies.removeAll(toRemove);
         return killed;
+    }
+
+    /**
+     * Advance all active death animations and remove any that have finished.
+     */
+    public static void tickDeathAnimations(List<EnemyDeathAnimation> dyingEnemies, float dt) {
+        dyingEnemies.removeIf(anim -> {
+            anim.tick(dt);
+            return anim.isDone();
+        });
     }
 
     /**
