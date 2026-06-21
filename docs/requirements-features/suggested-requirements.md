@@ -131,3 +131,11 @@ These requirements have been implemented and verified.
 - **SR-76:** The scoring constants (`ScoreDeathPenalty`, `ScoreSubtractFactor`, `ScoreWinBonus`, base scores) shall be surfaced in a difficulty/rules summary screen or tooltip so new players can understand the scoring model before starting a run.
 
 - **SR-77:** A dedicated `ScoringRulesService` (or equivalent interface in `maze-common-backend`) shall expose the active penalty constants (death penalty, damage multiplier factor, win bonus) as readable properties so frontends and future UI components can display them without hard-coding `StageConstants` references. This follows the 12-Factor App principle of externalizing configuration and the DDD ubiquitous-language principle of naming domain concepts explicitly.
+
+### Ranged projectile speed (F26)
+
+- **SR-78:** The projectile speed physics contract (`distance = speed × time`) shall be validated via integration-style unit tests for every projectile type variant (STRAIGHT, LOB, BEAM) in both frontends to guard against accidental reintroduction of hardcoded flight durations.
+
+- **SR-79:** `EnemySpawn.projectileSpeed()` shall enforce a minimum floor (e.g. 1 px/s) at the record level to prevent divide-by-zero and infinite flight duration without requiring defensive guards scattered across `GdxEnemyRuntime` and `PumpkinBomberCharacter`.
+
+- **SR-80:** The `opponentModel.xmi` projectile speed values (220.0 LOB / 280.0 STRAIGHT) should be exposed through the difficulty UI or a developer overlay so level designers can tune them without needing to edit the XMI by hand. This aligns with the 12-Factor App externalised-config principle.

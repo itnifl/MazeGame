@@ -1,11 +1,11 @@
 # Implementation Plan — F26. Ranged Projectile Speed
 
-**Status:** PLANNED
+**Status:** DONE
 **ID:** `F26`
 **Source:** `opponents.ecore` — `RangedEnemy.projectileSpeed`
 **Backend:** both
 **Target:** Shared backend, JavaFX, libGDX
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-21
 
 ---
 
