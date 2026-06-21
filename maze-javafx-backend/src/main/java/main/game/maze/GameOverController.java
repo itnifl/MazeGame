@@ -19,7 +19,8 @@ public class GameOverController extends ActionScreenController implements Initia
         AudioEngine.get().playLoop(AudioResourceConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
     }
 
-    public void showDeathPenaltyLabel() {
+    public void showDeathPenaltyLabel(int amount) {
+        deathPenaltyNoticeLabel.setText("- Death penalty: -" + amount);
         deathPenaltyNoticeLabel.setVisible(true);
         deathPenaltyNoticeLabel.setManaged(true);
     }

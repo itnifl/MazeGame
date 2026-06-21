@@ -90,6 +90,14 @@ public final class PlayerCombatStateService {
         return dead;
     }
 
+    public int currentHitPointsAsInt() {
+        return Math.round(currentHitPoints);
+    }
+
+    public int maxHitPoints() {
+        return maxHitPoints;
+    }
+
     public void applyDirectDamage(int damage) {
         if (dead) {
             return;

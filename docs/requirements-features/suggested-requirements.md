@@ -123,3 +123,11 @@ These requirements have been implemented and verified.
 - SR-48: JavaFX frame rendering is orchestrated by `FxGameRenderCoordinator`, which computes camera translation for windowed and fullscreen modes with correct player centre-follow and edge clamping.
 - SR-49: JavaFX audio transitions are encapsulated behind a dedicated coordinator (`FxGameAudioCoordinator`) over `GameAudioDirector`.
 - SR-45: JavaFX gameplay start and reset flow is encapsulated in `FxGameSessionBootstrapper`, which initializes board sizing, background, maze world, player configuration, player character, canvases (in correct z-order), and enemy spawning. The spawning step is injectable via `BiConsumer<EnemyRegistrar, Difficulty>` to decouple tests from the EMF/XMI model stack. `GameController.setupGame()` delegates to the bootstrapper and wires the resulting objects to actions, subscribers, and the mode router.
+
+### Scoring penalty rules (GR-36, GR-37)
+
+- **SR-75:** The end-screen score display (both GAME_OVER and WON overlays) shall show a dedicated penalty breakdown line informing the player of the exact damage penalty (damage × 10) and, when applicable, the death penalty (5 000 points) so players understand why their final score differs from the in-game HUD score.
+
+- **SR-76:** The scoring constants (`ScoreDeathPenalty`, `ScoreSubtractFactor`, `ScoreWinBonus`, base scores) shall be surfaced in a difficulty/rules summary screen or tooltip so new players can understand the scoring model before starting a run.
+
+- **SR-77:** A dedicated `ScoringRulesService` (or equivalent interface in `maze-common-backend`) shall expose the active penalty constants (death penalty, damage multiplier factor, win bonus) as readable properties so frontends and future UI components can display them without hard-coding `StageConstants` references. This follows the 12-Factor App principle of externalizing configuration and the DDD ubiquitous-language principle of naming domain concepts explicitly.

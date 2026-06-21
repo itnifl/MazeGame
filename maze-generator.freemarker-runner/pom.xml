@@ -120,56 +120,8 @@
                     <version>0.0.0</version>
                 </dependency>
             </dependencies>
-              <repositories>
-                <repository>
-                  <id>local-p2</id>
-                  <layout>p2</layout>
-                  <url>${p2.repo.url}</url>
-                </repository>
-                 <repository>
-                  <id>maze-repo</id>
-                  <layout>p2</layout>
-                  <url>${maze.repo.url}</url>
-                </repository>
-              </repositories>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.gmavenplus</groupId>
-        <artifactId>gmavenplus-plugin</artifactId>
-        <version>3.0.2</version>
-        <dependencies>
-          <dependency>
-              <groupId>org.apache.groovy</groupId>
-              <artifactId>groovy</artifactId>
-              <version>4.0.15</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-ant</artifactId>
-            <version>4.0.15</version>
-          </dependency>
-        </dependencies>
-        <executions>
-          <execution>
-            <id>normalize-p2-repo-path</id>
-            <phase>initialize</phase>
-            <goals>
-                <goal>execute</goal>
-            </goals>
-            <configuration>
-                <scripts>
-                    <script>
-                        // Build canonical file:// URIs that work on both Windows and Unix.
-                        def projectRootDir = project.basedir.parentFile.getCanonicalFile()
-                        project.properties['p2.repo.url'] = new File(projectRootDir, 'releng/local-p2').toURI().toString()
-                        project.properties['maze.repo.url'] = new File(projectRootDir, 'maze-module-repository/target/repository').toURI().toString()
-                    </script>
-                </scripts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>        
     </plugins>
   </build>
 </project>

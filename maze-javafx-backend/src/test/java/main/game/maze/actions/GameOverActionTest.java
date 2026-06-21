@@ -66,6 +66,12 @@ class GameOverActionTest {
         });
     }
 
+    @Test
+    void hasDamagePenaltyAmount_requiresPositivePenalty() {
+        assertFalse(GameOverAction.hasDamagePenaltyAmount(0));
+        assertTrue(GameOverAction.hasDamagePenaltyAmount(10));
+    }
+
     // -----------------------------------------------------------------------
     private static final class RecordingAudio implements IAudioEngine {
         final List<String> loopCalls = new ArrayList<>();

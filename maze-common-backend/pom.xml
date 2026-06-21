@@ -49,7 +49,9 @@
       <version>${emf.version}</version>
     </dependency>
 
-    <!-- OCL delegate factories (OclBootstrap) -->
+    <!-- OCL delegate factories (OclBootstrap).
+         Paths use ${maven.multiModuleProjectDirectory} so dependent modules can
+         also declare these as system deps without fragile ../ traversals. -->
     <dependency>
       <groupId>org.eclipse.ocl</groupId>
       <artifactId>org.eclipse.ocl</artifactId>

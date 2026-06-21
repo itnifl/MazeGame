@@ -42,7 +42,13 @@
 
   <build>
     <plugins>
-
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <configuration>
+          <executionEnvironment>JavaSE-21</executionEnvironment>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>

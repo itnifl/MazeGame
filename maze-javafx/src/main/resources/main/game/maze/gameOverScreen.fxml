@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -32,9 +33,11 @@
                         <Label style="-fx-font-size: 14px; -fx-text-fill: #d7fff5; -fx-font-family: 'Consolas';" text="Press Restart to try again" />
                         <Label style="-fx-font-size: 14px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas';" text="Your score" />
                         <Label fx:id="scoreLabel" style="-fx-font-size: 30px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="0" />
-                        <Label fx:id="deathPenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including death penalty" />
-                        <Label fx:id="damagePenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff8a7a; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including damage penalty" />
-                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart" />
+                        <Label fx:id="deathPenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including death penalty" />
+                        <Label fx:id="damagePenaltyNoticeLabel" managed="false" visible="false" style="-fx-font-size: 13px; -fx-text-fill: #ff3025; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="- Including damage penalty" />
+                        <Button fx:id="restartButton" onAction="#restartGame" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart">
+                            <VBox.margin><Insets top="16"/></VBox.margin>
+                        </Button>
                     </children>
                 </VBox>
             </children>

@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
 import main.game.maze.libgdx.controller.GdxHudInteractionStateController;
 import main.game.maze.libgdx.controller.GdxTerminalController;
+import main.game.maze.libgdx.controller.GdxGameOverOverlayController;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.helper.GdxDebugOverlayState;
@@ -52,6 +54,7 @@ public final class GdxGameRenderCoordinator {
     private final GdxWinOverlayView winOverlayView;
     private final GdxGameOverOverlayView gameOverOverlayView;
     private final GdxInfectionOverlayView infectionOverlayView;
+    private final GdxGameOverOverlayController gameOverOverlayController;
     private final GdxWinOverlayController winOverlayController;
     private final Function<String, Texture> enemyTextureLoader;
     private final Function<GdxEnemyRuntime, List<ActivePathPoint>> enemyPathProvider;
@@ -73,6 +76,7 @@ public final class GdxGameRenderCoordinator {
             GdxWinOverlayView winOverlayView,
             GdxGameOverOverlayView gameOverOverlayView,
             GdxInfectionOverlayView infectionOverlayView,
+            GdxGameOverOverlayController gameOverOverlayController,
             GdxWinOverlayController winOverlayController,
             Function<String, Texture> enemyTextureLoader,
             Function<GdxEnemyRuntime, List<ActivePathPoint>> enemyPathProvider,
@@ -92,6 +96,7 @@ public final class GdxGameRenderCoordinator {
         this.winOverlayView = winOverlayView;
         this.gameOverOverlayView = gameOverOverlayView;
         this.infectionOverlayView = infectionOverlayView;
+        this.gameOverOverlayController = gameOverOverlayController;
         this.winOverlayController = winOverlayController;
         this.enemyTextureLoader = enemyTextureLoader;
         this.enemyPathProvider = enemyPathProvider;
@@ -162,6 +167,7 @@ public final class GdxGameRenderCoordinator {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
+                input.scoreBreakdown(),
                 terminalController.isActive(),
                 terminalController.bufferText(),
                 hudInteractionState.commandsOverlayVisible(),
@@ -173,6 +179,7 @@ public final class GdxGameRenderCoordinator {
                 winOverlayView,
                 gameOverOverlayView,
                 infectionOverlayView,
+                gameOverOverlayController,
                 winOverlayController,
                 enemyTextureLoader,
                 enemyPathProvider,
@@ -225,6 +232,7 @@ public final class GdxGameRenderCoordinator {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
+            ScoreBreakdown scoreBreakdown,
             HudLayout hudLayout) {
     }
 
