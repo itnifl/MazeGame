@@ -102,6 +102,20 @@ class GdxEnemyRuntimeProjectileTest {
                 "High-arc lob should still have an active projectile visual during early flight");
     }
 
+    /** Spawn with a 5-second cooldown so only one projectile fires during 1-second speed tests. */
+    private static EnemySpawn slowCooldownSpawn(ProjectileType type, float projectileSpeed) {
+        return new EnemySpawn(
+                "speed-test",
+                "/main/game/maze/pumpkinbomber.png",
+                40f, 40f, 40f, 2f, 10, 0, "",
+                BehaviorType.AGGRESSIVE, 2f, 0d,
+                EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                type, 0f, 0f,
+                300f,  // attackRange — covers distance to (240,40)
+                5000,  // attackCooldownMs — prevents a second shot during 1-second test
+                projectileSpeed);
+    }
+
     private static EnemySpawn rangedSpawn(ProjectileType type, float splashRadius, float arcHeight) {
         return rangedSpawn(type, splashRadius, arcHeight, 260f);
     }
@@ -229,6 +243,41 @@ class GdxEnemyRuntimeProjectileTest {
             totalDamage += farRuntime.updateRangedAttacks(1f / 60f, openMaze(), 300f, 300f, 5f);
         }
         assertEquals(0, totalDamage, "Player outside splash radius must take no LOB damage");
+    }
+
+    // --- F26: projectile speed drives physics --------------------------------
+
+    @Test
+    void lobProjectile_positionAfterOneSecond_equalsProjectileSpeedPixelsFromStart() {
+        // Enemy at (40,40) [from EnemySpawn]; player at (240,40): distance = 200f.
+        // Speed = 100f → duration = 200 / 100 = 2.0 seconds.
+        // After exactly 1 second of flight: progress = 0.5, x = 140f.
+        // Distance from spawn = 140 - 40 = 100f = projectileSpeed. (F26)
+        float speed = 100f;
+        float playerX = 240f, playerY = 40f;
+
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                slowCooldownSpawn(ProjectileType.LOB, speed),
+                0, openWorld(), 60f, 8);
+
+        // First tick fires the shot (shotCooldownRemaining starts at 0)
+        runtime.updateRangedAttacks(1f / 60f, openMaze(), playerX, playerY, 5f);
+
+        // Simulate exactly 1 second of flight (60 ticks of dt = 1/60 s)
+        for (int i = 0; i < 60; i++) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), playerX, playerY, 5f);
+        }
+
+        List<GdxEnemyRuntime.ProjectileVisual> visuals = runtime.projectileVisuals();
+        assertFalse(visuals.isEmpty(),
+                "LOB must still be in flight after 1 s when total flight duration is 2 s");
+
+        // LOB with arcHeight=0: x and y are the straight-line lerp (no arc offset)
+        float distanceTraveled = (float) Math.hypot(
+                visuals.get(0).x() - 40f,
+                visuals.get(0).y() - 40f);
+        assertEquals(speed, distanceTraveled, 2.0f,
+                "After 1 second of flight, distance from spawn must equal projectileSpeed (F26)");
     }
 
     // --- Edge case: zero attackRange must not fire --------------------------
