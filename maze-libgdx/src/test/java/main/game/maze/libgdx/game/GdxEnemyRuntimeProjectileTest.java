@@ -276,7 +276,7 @@ class GdxEnemyRuntimeProjectileTest {
         float distanceTraveled = (float) Math.hypot(
                 visuals.get(0).x() - 40f,
                 visuals.get(0).y() - 40f);
-        assertEquals(speed, distanceTraveled, 2.0f,
+        assertEquals(speed, distanceTraveled, 0.5f,
                 "After 1 second of flight, distance from spawn must equal projectileSpeed (F26)");
     }
 
