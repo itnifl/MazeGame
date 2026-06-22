@@ -137,6 +137,18 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-78** *(DDD)*: `PlayerConfig` and `CompositionResolverImpl` should live in a `config` bounded context with its own aggregate root (`DifficultyConfig`) that owns both the player config and enemy composition for a given difficulty level.
 - **SR-79** *(DDD)*: The `characters` package in `maze-javafx-backend` has mixed concerns (rendering, game logic, audio). Consider splitting it into a `characters.domain` sub-package (state, damage, death) and `characters.view` sub-package (graphics, animations) aligned with DDD entity vs. value-object separation.
 
+### F27 follow-on — Window sizing and camera follow (identified during implementation)
+
+- **SR-108** *(Observability, 12-Factor)*: When the window is clamped to screen resolution (i.e. `boardSize > screenSize`), a DEBUG-level log entry should be emitted including `boardW`, `boardH`, `screenW`, `screenH`, and `clampedW`/`clampedH`. This allows QA to confirm the correct clamp is applied per difficulty without attaching a debugger.
+
+- **SR-109** *(12-Factor, Config)*: The per-axis camera dead-zone (currently implicit — the camera starts following immediately when the player moves away from the viewport centre) should be externalisable as a configuration property (e.g., `camera.deadzone.pixels = 0`). A non-zero dead zone reduces camera jitter on small player movements and is a common game-feel tuning knob.
+
+- **SR-110** *(DDD, CRR-5)*: Window-resize events (e.g., when the OS changes the available screen area mid-session on multi-monitor setups) are not currently handled. Both frontends should re-evaluate the clamped window size on a `Screen.onChanged` / libGDX `resize` callback so the game adapts dynamically to screen resolution changes without requiring a restart.
+
+- **SR-111** *(Parity, CRR-5)*: A shared `WindowSizingPolicy` interface (or record) in `maze-common-frontend` could expose `clampToScreen(boardW, boardH, screenW, screenH)` so both JavaFX (`App.clampBoardToScreen`) and libGDX (`GdxGameLayoutSupport.resizeWindowForDifficulty`) share the same clamping logic, eliminating the risk of the two implementations diverging.
+
+- **SR-112** *(UX)*: When the maze is larger than the screen and camera follow is active, a minimap overlay showing the full maze and the player's current position would significantly improve navigation. The minimap should be rendered at a configurable opacity (default 50 %) in a corner of the viewport.
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.
