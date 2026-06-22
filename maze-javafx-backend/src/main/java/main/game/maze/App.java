@@ -113,36 +113,34 @@ public class App extends Application {
     }
 
 
+    /**
+     * Sizes the window to the board for the chosen difficulty, capped at the
+     * primary screen resolution. The window always stays in windowed mode;
+     * when the board is larger than the screen the camera follows the player
+     * so every part of the map is reachable (F27).
+     */
     public static void applySizeForCurrentDifficulty(Stage stage) {
-        int width  = getBoardMaxX();
-        int height = getBoardMaxY();
+        int boardWidth  = getBoardMaxX();
+        int boardHeight = getBoardMaxY();
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-
-        if (needsFullscreenForBoard(width, height, bounds.getWidth(), bounds.getHeight())) {
-            stage.setWidth(bounds.getWidth());
-            stage.setHeight(bounds.getHeight());
-            stage.setFullScreenExitHint("");
-            stage.setFullScreen(true);
-            applyRootSize(stage.getScene(), (int) bounds.getWidth(), (int) bounds.getHeight());
-            return;
-        }
+        int[] size = clampBoardToScreen(boardWidth, boardHeight,
+                (int) bounds.getWidth(), (int) bounds.getHeight());
 
         stage.setFullScreen(false);
-        stage.setWidth(width);
-        stage.setHeight(height);
-
-        applyRootSize(stage.getScene(), width, height);
+        stage.setWidth(size[0]);
+        stage.setHeight(size[1]);
+        applyRootSize(stage.getScene(), size[0], size[1]);
     }
 
     /**
-     * Fullscreen is auto-enabled whenever the chosen board exceeds the player's
-     * screen size in either dimension; otherwise the window stays sized to the
-     * board so the map always fits inside the window without camera scrolling.
-     *
-     * <p>Package-private for unit tests.
+     * Returns {@code [min(boardW, screenW), min(boardH, screenH)]}.
+     * Package-private for unit tests.
      */
-    static boolean needsFullscreenForBoard(int boardWidth, int boardHeight, double screenWidth, double screenHeight) {
-        return boardWidth > screenWidth || boardHeight > screenHeight;
+    static int[] clampBoardToScreen(int boardWidth, int boardHeight, int screenWidth, int screenHeight) {
+        return new int[]{
+            Math.min(boardWidth,  screenWidth),
+            Math.min(boardHeight, screenHeight)
+        };
     }
 
     public static void applyStandardSize(Stage stage) {

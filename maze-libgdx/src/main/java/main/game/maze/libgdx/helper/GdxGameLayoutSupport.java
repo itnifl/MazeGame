@@ -63,18 +63,28 @@ public final class GdxGameLayoutSupport {
         if (viewport == null || maze == null || player == null || camera == null) {
             return;
         }
-        float worldW = viewport.getWorldWidth();
-        float worldH = viewport.getWorldHeight();
-        float halfW = worldW * CENTER_RATIO;
-        float halfH = worldH * CENTER_RATIO;
+        float[] pos = computeCameraPosition(
+                viewport.getWorldWidth(), viewport.getWorldHeight(),
+                maze.widthPx(), maze.heightPx(),
+                player.x(), player.y());
+        camera.position.set(pos[0], pos[1], 0f);
+    }
 
-        float camX = maze.widthPx() <= worldW + 0.001f
-                ? maze.widthPx() * CENTER_RATIO
-                : clamp(player.x(), halfW, maze.widthPx() - halfW);
-        float camY = maze.heightPx() <= worldH + 0.001f
+    /**
+     * Pure-math camera position: centres the player in the viewport, clamped so
+     * the world never scrolls past its own edges (F27). Package-private for tests.
+     */
+    static float[] computeCameraPosition(float viewW, float viewH,
+            float mazeW, float mazeH, float playerX, float playerY) {
+        float halfW = viewW * CENTER_RATIO;
+        float halfH = viewH * CENTER_RATIO;
+        float camX = mazeW <= viewW + 0.001f
+                ? mazeW * CENTER_RATIO
+                : clamp(playerX, halfW, mazeW - halfW);
+        float camY = mazeH <= viewH + 0.001f
                 ? halfH
-                : clamp(player.y(), halfH, maze.heightPx() - halfH);
-        camera.position.set(camX, camY, 0f);
+                : clamp(playerY, halfH, mazeH - halfH);
+        return new float[]{camX, camY};
     }
 
     private static void nudgeGoalOffWalls(MazeArena maze, GameWorldModel worldModel, float goalW, float goalH) {

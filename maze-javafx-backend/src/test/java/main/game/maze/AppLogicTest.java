@@ -10,33 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AppLogicTest {
 
     @Test
-    void needsFullscreen_boardSmallerThanScreen_returnsFalse() {
-        assertFalse(App.needsFullscreenForBoard(800, 600, 1920.0, 1080.0));
-    }
-
-    @Test
-    void needsFullscreen_boardEqualToScreen_returnsFalse() {
-        assertFalse(App.needsFullscreenForBoard(1920, 1080, 1920.0, 1080.0));
-    }
-
-    @Test
-    void needsFullscreen_boardWiderThanScreen_returnsTrue() {
-        assertTrue(App.needsFullscreenForBoard(2000, 600, 1920.0, 1080.0));
-    }
-
-    @Test
-    void needsFullscreen_boardTallerThanScreen_returnsTrue() {
-        assertTrue(App.needsFullscreenForBoard(800, 1200, 1920.0, 1080.0));
-    }
-
-    @Test
-    void needsFullscreen_bothDimensionsExceed_returnsTrue() {
-        assertTrue(App.needsFullscreenForBoard(2000, 1200, 1920.0, 1080.0));
-    }
-
-    // --- Static delegation helpers ---
-
-    @Test
     void displayName_withNullDifficulty_returnsEmptyString() {
         String name = App.displayName(null);
         assertNotNull(name, "displayName(null) must not return null");

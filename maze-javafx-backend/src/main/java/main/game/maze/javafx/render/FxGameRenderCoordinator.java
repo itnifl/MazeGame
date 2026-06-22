@@ -55,39 +55,28 @@ public final class FxGameRenderCoordinator {
         double playerX = playerCharacter.getCharacterPosition().getX();
         double playerY = playerCharacter.getCharacterPosition().getY();
 
-        boolean fullscreen = isStageFullscreen();
         double[] translation = computeCameraTranslation(
                 viewportWidth, viewportHeight,
                 worldWidth, worldHeight,
-                playerX, playerY,
-                fullscreen);
+                playerX, playerY);
 
         gameBoard.setTranslateX(translation[0]);
         gameBoard.setTranslateY(translation[1]);
     }
-    
-    private boolean isStageFullscreen() {
-        if (gameBoard == null || gameBoard.getScene() == null) {
-            return false;
-        }
-        var window = gameBoard.getScene().getWindow();
-        return window instanceof javafx.stage.Stage stage && stage.isFullScreen();
-    }
-    
+
+    /**
+     * Computes the board translation required to centre-follow the player.
+     * The window is sized to min(screen, board), so when the board exceeds the
+     * viewport on any axis the camera scrolls to keep the player in view, clamped
+     * so the world never scrolls past its own edges.
+     */
     public static double[] computeCameraTranslation(double viewportWidth, double viewportHeight,
-            double worldWidth, double worldHeight, double playerX, double playerY, boolean fullscreen) {
+            double worldWidth, double worldHeight, double playerX, double playerY) {
 
         boolean worldWider  = worldWidth  > viewportWidth;
         boolean worldTaller = worldHeight > viewportHeight;
 
-        // World fits entirely in viewport — no translation needed.
         if (!worldWider && !worldTaller) {
-            return new double[]{0, 0};
-        }
-
-        // Both axes overflow in windowed mode — keep the board at origin so the
-        // player always sees the top-left starting area.
-        if (worldWider && worldTaller && !fullscreen) {
             return new double[]{0, 0};
         }
 
@@ -95,26 +84,15 @@ public final class FxGameRenderCoordinator {
         double translateY = 0;
 
         if (worldWider) {
-            if (fullscreen) {
-                // Centre-follow the player, clamped so the world never scrolls past its edges.
-                translateX = viewportWidth / 2 - playerX;
-                translateX = Math.min(translateX, 0);
-                translateX = Math.max(translateX, viewportWidth - worldWidth);
-            } else {
-                // Only width overflows in windowed mode — anchor to the far-right edge.
-                translateX = viewportWidth - worldWidth;
-            }
+            translateX = viewportWidth / 2 - playerX;
+            translateX = Math.min(translateX, 0);
+            translateX = Math.max(translateX, viewportWidth - worldWidth);
         }
 
         if (worldTaller) {
-            if (fullscreen) {
-                translateY = viewportHeight / 2 - playerY;
-                translateY = Math.min(translateY, 0);
-                translateY = Math.max(translateY, viewportHeight - worldHeight);
-            } else {
-                // Only height overflows in windowed mode — anchor to the far-bottom edge.
-                translateY = viewportHeight - worldHeight;
-            }
+            translateY = viewportHeight / 2 - playerY;
+            translateY = Math.min(translateY, 0);
+            translateY = Math.max(translateY, viewportHeight - worldHeight);
         }
 
         return new double[]{translateX, translateY};
