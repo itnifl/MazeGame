@@ -165,9 +165,9 @@ class EnemySpawnPlannerTest {
 
     @Test
     void resolveRuntimeBehaviorProducesPatrolWanderMix() {
-        // Run enough calls with a fixed seed to guarantee both WANDER and PATROL appear.
-        // The seed is fixed so the result is reproducible, but we don't assert a specific
-        // sequence because the Random API does not guarantee identical draws across JVM versions.
+        // Run enough calls to verify the behavioral contract: both WANDER and PATROL can appear.
+        // A 50-draw sample avoids asserting a specific sequence from a fixed seed; if the method's
+        // internal Random usage ever changes, the exact pair produced by 2 draws could differ.
         Random seeded = new Random(42L);
         boolean sawWander = false;
         boolean sawPatrol = false;
