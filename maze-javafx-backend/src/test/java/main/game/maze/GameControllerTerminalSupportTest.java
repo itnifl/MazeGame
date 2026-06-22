@@ -18,8 +18,22 @@ class GameControllerTerminalSupportTest {
         assertEquals(TerminalCommand.SHOW_BEHAVIOUR_TYPE, GameControllerTerminalSupport.parseTerminalCommand(" /sbt "));
         assertEquals(TerminalCommand.SHOW_MOVEMENT_TYPE, GameControllerTerminalSupport.parseTerminalCommand("/showmovementtype"));
         assertEquals(TerminalCommand.SHOW_ENEMY_PATH, GameControllerTerminalSupport.parseTerminalCommand("/sep"));
+        assertEquals(TerminalCommand.KILL_ENEMIES, GameControllerTerminalSupport.parseTerminalCommand("/kill"));
         assertEquals(TerminalCommand.EMPTY, GameControllerTerminalSupport.parseTerminalCommand("   "));
         assertEquals(TerminalCommand.UNKNOWN, GameControllerTerminalSupport.parseTerminalCommand("/missing"));
+    }
+
+    @Test
+    void executeTerminalCommand_killEnemies_callsSinkAndReportsCount() {
+        RecordingSink sink = new RecordingSink();
+        sink.killCount = 3;
+
+        GameControllerTerminalSupport.executeTerminalCommand("/kill", sink);
+
+        assertTrue(sink.killAllCalled, "/kill must invoke killAllEnemies() on the sink");
+        assertEquals(1, sink.events.size(), "Exactly one HUD message should be produced");
+        assertTrue(sink.events.get(0).contains("3"),
+                "HUD message should include the kill count returned by the sink");
     }
 
     @Test
@@ -62,6 +76,8 @@ class GameControllerTerminalSupportTest {
         private Duration lastVisibleFor = Duration.ZERO;
         private boolean behaviourLabelsShown;
         private boolean pathOverlayShown;
+        private boolean killAllCalled;
+        private int killCount;
 
         @Override
         public void setHudMessage(String text) {
@@ -84,6 +100,12 @@ class GameControllerTerminalSupportTest {
         public void showEnemyPathsOverlay() {
             pathOverlayShown = true;
             events.add("showPaths");
+        }
+
+        @Override
+        public int killAllEnemies() {
+            killAllCalled = true;
+            return killCount;
         }
     }
 }

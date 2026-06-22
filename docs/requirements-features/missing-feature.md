@@ -334,14 +334,15 @@ overall feature is marked Done.
 ### F24. Zombie resurrection time
 
 - **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.resurrectionTime`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ZombieSpecifics.resurrectionTime`.
-- **Status**: Missing.
+- **Status**: Done (branch `feature/zombieResurrection`).
 - **Backend**: both.
-- **What the model says**: zombies can declare a resurrection delay after
-  death.
-- **What the game does today**: zombies are removed on death and do not
-  return after a configured delay.
-- **Acceptance**: a zombie with `resurrectionTime > 0` reappears after that
-  delay using its configured spawn point and stats.
+- **What the model says**: zombies can declare a resurrection delay after death.
+- **What was implemented**:
+  - `EnemySpawn` record extended with `resurrectionTimeMs` and `maxHitPoints`; `RuntimeVisualModelLoader` reads both from the Ecore model.
+  - libGDX: `DeadEnemy` tracks countdown per killed zombie; `GdxGameCombatAndEnemyFlowSupport.killEnemies()` / `tickResurrections()` manage the lifecycle; `GdxEnemyRuntime` gains HP tracking and a respawn invulnerability window.
+  - JavaFX: `ZombieCharacter.die()` schedules a `PauseTransition`; on expiry `resurrect()` resets HP, teleports to spawn coords, and re-registers with `FxEnemyCoordinator`.
+  - `/kill` terminal command available in both frontends to trigger instant death (with resurrection where configured).
+- **Acceptance**: a zombie with `resurrectionTime > 0` reappears after that delay using its configured spawn point and stats. ✓
 
 ### F25. Ghost visibility level
 

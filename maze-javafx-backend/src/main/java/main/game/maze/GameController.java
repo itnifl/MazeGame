@@ -140,6 +140,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void setHudMessage(String text, Duration visibleFor)     { GameController.this.setHudMessage(text, visibleFor); }
         @Override public void showEnemyDebugLabels(boolean behaviourType)         { enemyCoordinator.showEnemyDebugLabels(behaviourType); }
         @Override public void showEnemyPathsOverlay()                             { enemyCoordinator.showEnemyPathsOverlay(); }
+        @Override public int killAllEnemies()                                     { return enemyCoordinator.killAll(); }
     };
 
     private boolean cameraFollowListenersInstalled;

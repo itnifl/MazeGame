@@ -121,9 +121,13 @@ public final class GdxGameInteractionSupport {
             GdxDebugOverlayState debugOverlayState,
             Consumer<String> statusMessage,
             float enemyLabelSeconds,
-            float enemyPathOverlaySeconds) {
+            float enemyPathOverlaySeconds,
+            Runnable killEnemiesCallback) {
         GdxTerminalCommandSupport.Outcome outcome = GdxTerminalCommandSupport.evaluate(raw);
         debugOverlayState.applyTerminalAction(outcome.action(), enemyLabelSeconds, enemyPathOverlaySeconds);
+        if (outcome.action() == GdxTerminalCommandSupport.Action.KILL_ENEMIES && killEnemiesCallback != null) {
+            killEnemiesCallback.run();
+        }
         statusMessage.accept(outcome.statusText());
     }
 

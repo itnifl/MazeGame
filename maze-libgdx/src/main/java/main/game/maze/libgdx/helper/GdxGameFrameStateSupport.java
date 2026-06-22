@@ -26,7 +26,8 @@ public final class GdxGameFrameStateSupport {
             Consumer<String> statusMessage,
             StatusMessageBus statusMessageBus,
             float enemyLabelSeconds,
-            float enemyPathOverlaySeconds) {
+            float enemyPathOverlaySeconds,
+            Runnable killEnemiesCallback) {
         InputFrame<Integer> currentInputFrame = inputSnapshotReader.read(keyBindingRegistry.trackedKeys());
         hudInteractionState.tick(dt);
 
@@ -37,7 +38,8 @@ public final class GdxGameFrameStateSupport {
                     debugOverlayState,
                     statusMessage,
                     enemyLabelSeconds,
-                    enemyPathOverlaySeconds);
+                    enemyPathOverlaySeconds,
+                    killEnemiesCallback);
         }
 
         debugOverlayState.tick(dt);
