@@ -166,7 +166,7 @@ This module owns its own tests under `maze-javafx-backend/src/test`.
 ### Character tests
 
 - `ZombieCharacterTest` — construction, `getDamage`, partial HP subtraction, audio-on-overlap, death-subscriber management, and `getModel`.
-- `PumpkinBomberCharacterTest` — construction, `getDamage`, partial HP subtraction, `setHitPoints`/`addHitPoints`, `doPositionEvaluation` no-throw, and `getModel`.
+- `PumpkinBomberCharacterTest` — construction, `getDamage`, partial HP subtraction, `setHitPoints`/`addHitPoints`, `doPositionEvaluation` no-throw, `getModel`, and F26 physics: `lobProjectile_arrivesAfterDistanceDividedBySpeed_seconds` (LOB arrives in exactly `distance/speed` seconds) and `lobProjectile_stillInFlightBeforeDistanceDividedBySpeed_seconds` (LOB still active before arrival).
 
 ### Wall renderer tests (BUG-1 regression)
 
