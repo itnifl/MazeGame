@@ -58,7 +58,7 @@ class WindowedCameraAndAudioTest {
     @Test
     void cameraFollowsPlayerWhenWorldIsWider() {
         // viewport 800×600, world 1600×600, player at (400, 300)
-        // translateX = 400 - 400 = 400, clamped to [800-1600, 0] = [-800, 0] → 0
+        // translateX = viewportWidth/2 - playerX = 400 - 400 = 0, clamped to [-800, 0] → 0
         double[] t = FxGameRenderCoordinator.computeCameraTranslation(
                 800, 600, 1600, 600, 400, 300);
         assertEquals(0d, t[0], 0.0001, "player at centre-left: board origin stays flush with viewport left");

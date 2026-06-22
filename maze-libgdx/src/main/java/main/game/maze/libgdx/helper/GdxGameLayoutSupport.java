@@ -63,16 +63,30 @@ public final class GdxGameLayoutSupport {
         if (viewport == null || maze == null || player == null || camera == null) {
             return;
         }
-        float[] pos = computeCameraPosition(
-                viewport.getWorldWidth(), viewport.getWorldHeight(),
-                maze.widthPx(), maze.heightPx(),
-                player.x(), player.y());
-        camera.position.set(pos[0], pos[1], 0f);
+        float viewW = viewport.getWorldWidth();
+        float viewH = viewport.getWorldHeight();
+        float halfW = viewW * CENTER_RATIO;
+        float halfH = viewH * CENTER_RATIO;
+        float mazeW = maze.widthPx();
+        float mazeH = maze.heightPx();
+        float camX = mazeW <= viewW + 0.001f
+                ? mazeW * CENTER_RATIO
+                : clamp(player.x(), halfW, mazeW - halfW);
+        float camY = mazeH <= viewH + 0.001f
+                ? halfH
+                : clamp(player.y(), halfH, mazeH - halfH);
+        camera.position.set(camX, camY, 0f);
     }
 
     /**
-     * Pure-math camera position: centres the player in the viewport, clamped so
-     * the world never scrolls past its own edges (F27). Package-private for tests.
+     * Pure-math camera position for tests (F27). Two-mode behaviour:
+     * <ul>
+     *   <li>Maze fits the viewport on an axis → camera is fixed at the maze/viewport
+     *       half-extent on that axis (bottom-anchor).</li>
+     *   <li>Maze is larger than the viewport on an axis → camera follows the player,
+     *       clamped so the world never scrolls past its own edges.</li>
+     * </ul>
+     * Package-private; call sites should use {@link #updateCameraFollow} at runtime.
      */
     static float[] computeCameraPosition(float viewW, float viewH,
             float mazeW, float mazeH, float playerX, float playerY) {

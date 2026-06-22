@@ -79,10 +79,10 @@ class FxCameraTranslationTest {
 
     @Test
     void onlyWidthOverflows_playerAtCentre_followsCentred() {
-        // viewport 800×400, world 1600×300, player at (100, 150)
-        // tx = 400 - 100 = 300 → clamped to 0
-        double[] t = FxGameRenderCoordinator.computeCameraTranslation(800, 400, 1600, 300, 100, 150);
-        assertEquals(0.0, t[0], 1e-9, "Centre follow clamped at left edge");
+        // viewport 800×400, world 1600×300, player at world centre (800, 150)
+        // tx = 400 - 800 = -400, in range [-800, 0] → -400 (no clamping)
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(800, 400, 1600, 300, 800, 150);
+        assertEquals(-400.0, t[0], 1e-9, "Centre follow: unclamped player-follow");
         assertEquals(0.0, t[1], 1e-9);
     }
 
