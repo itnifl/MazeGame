@@ -7,6 +7,14 @@
     >
 
   <materials
+      id="GLASS_BASIC"
+      displayName="Glass"
+      wallBaseType="GLASS"
+      breakable="true"
+      hitPoints="5"
+      baseImage="glassWall.png"/>
+
+  <materials
       id="DIRT_BASIC"
       displayName="Dirt"
       wallBaseType="DIRT"
@@ -21,6 +29,14 @@
       breakable="true"
       hitPoints="20"
       baseImage="woodWall.png"/>
+
+  <materials
+      id="STONE_BASIC"
+      displayName="Stone"
+      wallBaseType="STONE"
+      breakable="true"
+      hitPoints="40"
+      baseImage="stoneWall.png"/>
 
   <materials
       id="STEEL_SOLID"

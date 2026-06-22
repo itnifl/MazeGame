@@ -3,6 +3,7 @@ package main.game.maze.libgdx.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -135,6 +136,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius) {
+        return updateRangedAttacks(dt, maze, playerX, playerY, playerRadius, null);
+    }
+
+    public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius,
+                                   Consumer<float[]> onProjectileHitWall) {
         if (dt <= 0f) {
             return 0;
         }
@@ -158,6 +164,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             if (projectile.type == ProjectileType.STRAIGHT
                     && maze != null
                     && WallCollisionUtil.wallBetween(previousX, previousY, projectile.x, projectile.y, maze.walls())) {
+                if (onProjectileHitWall != null) {
+                    onProjectileHitWall.accept(new float[]{projectile.x, projectile.y});
+                }
                 emitImpact(projectile.x, projectile.y, 16f, 4f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
@@ -386,6 +395,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
     public float renderOpacity() {
         return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy, visibilityLevel);
+    }
+
+    /** Attack damage this enemy deals per hit; used by wall-damage callbacks. */
+    public int attackDamage() {
+        return spawn != null ? spawn.attackDamage() : 0;
     }
 
     private MovementResult nextMove(WorldView world,

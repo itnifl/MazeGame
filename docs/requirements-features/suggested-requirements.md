@@ -2,6 +2,33 @@
 
 ## Candidate Additions
 
+### PR #72: F11 Breakable Walls — follow-on requirements
+
+- **SR-99** *(Parity, CRR-5)*: Breakable wall support shall be available in the libGDX frontend as well as JavaFX. The libGDX `GdxGameScreenController` shall integrate `WallCollisionUtil.findFirstHitWall(...)` and delegate wall damage through a shared entry point equivalent to `GameController.applyProjectileDamageToWall(...)` so that wall destruction and nav-graph rewiring behave identically across frontends.
+
+- **SR-100** *(Visual feedback, GR)*: When a breakable wall absorbs damage but is not destroyed, a visual damage cue (e.g., crack overlay or color tint) shall be rendered on the wall segment to communicate remaining health to the player. Both frontends must use a shared `WallDamagePresenter` interface so the visual cue logic is not duplicated inline.
+
+- **SR-101** *(UX, Layout)*: Easy difficulty board height has been extended to 665 px (was 600 px). Both JavaFX and libGDX frontends shall continue deriving the Easy board height from `StageConstants.BoardMaxY` (single source of truth) rather than hard-coding it, so future layout adjustments require only that one constant to be changed.
+
+- **SR-102** *(DDD, 12-Factor)*: Board dimension constants (`StageConstants.BoardMaxX/Y`, `BoardMaxXMedium/YMedium`, `BoardMaxXLarge/YLarge`) are currently hard-coded Java constants. Consider externalising per-difficulty board sizes to a config file (YAML or XMI) loaded at runtime so layout changes can be applied without recompilation, aligning with 12-Factor principle IV (backing services / config).
+
+- **SR-101** *(Observability, DDD)*: Wall-destruction events shall be published to a domain event bus (e.g., `WallDestroyedEvent`) that subscribers (HUD, audio, achievement system) can consume independently. This decouples sound and UI feedback from the `GameMazeWorld` damage pipeline.
+
+- **SR-102** *(Model-driven breakability, CRR-1)*: The seeded random assignment of breakable walls shall be replaced by reading the `WallMaterial.breakable` and `WallMaterial.hitPoints` attributes from the loaded XMI model, so level designers can configure which wall types are destructible without code changes. The fallback seeded random strategy shall remain active when no material model is available.
+  - *Partial implementation (F11 Phase 2)*: HP values are now fully driven by `WallMaterialSpec` (Glass 5 HP, Dirt 10 HP, Wood 20 HP, Stone 40 HP) which mirrors `walls.xmi`. `GameMazeWorld.assignBreakableWalls(long, List<WallMaterialSpec>)` accepts XMI-backed specs from callers with `WallRegistry` access. `DEFAULT_BREAKABLE_MATERIALS` provides the fallback. Remaining work: wire `FxGameSessionBootstrapper` / `RuntimeVisualModelLoader` to call the overload with registry-backed specs so the XMI model is the live authority at startup.
+
+- **SR-104** *(DIP boundary, F11)*: The `WallMaterialSpec` record in `main.game.maze.mazeworld` serves as the dependency-inversion boundary between the `mazeworld` domain and the EMF `walls` model. All breakable-wall HP assignment inside `GameMazeWorld` must reference only `WallMaterialSpec`; never import `WallMaterialBaseType`, `WallDefinition`, or `WallRegistry` in the `mazeworld` module. Callers at the application boundary (bootstrapper, visual model loader) bridge the two modules by building `WallMaterialSpec` instances from registry entries before calling `assignBreakableWalls`.
+
+### F11-EXT: Additional wall damage sources (see `docs/plans/f11-wall-damage-sources-plan.md`)
+
+- **SR-105** *(Player weapon, F11-EXT/DS-1)*: The player character shall be able to fire projectiles that damage breakable walls. Each shot deals a configurable HP amount (default 3 HP) so Glass walls (5 HP) require 2 shots, Wood (20 HP) requires 7, and Stone (40 HP) requires 14. Both JavaFX and libGDX frontends must support this via the existing `applyProjectileDamageToWall` / `applyWallDamage` pipeline. The player weapon shall implement `ICanDamageWalls` to formalise the damage contract.
+
+- **SR-106** *(PumpkinBomber explosion splash, F11-EXT/DS-2)*: On projectile detonation, `PumpkinBomberCharacter` shall damage all breakable walls whose geometry intersects the explosion's splash radius, in addition to damaging the player. A shared `WallCollisionUtil.findWallsInRadius(cx, cy, radius, walls)` helper shall be introduced in `main.game.maze.mazeworld` so both frontends share the spatial query without duplication.
+
+- **SR-107** *(Zombie melee wall bash, F11-EXT/DS-3)*: When a `ZombieCharacter`'s movement is blocked by a breakable wall for consecutive ticks, it shall apply melee bash damage (`zombie.getDamage() / 4`, minimum 1) per blocked tick to that wall. This allows zombies to slowly pound through Glass and Dirt walls but be effectively stopped by Stone and Steel, creating emergent difficulty variation based on wall material.
+
+- **SR-103** *(12-Factor, WR-5)*: The breakable-wall seed value (currently `42L`) and the HP tiers (10 HP / 20 HP at 30 % / 20 % probability) shall be externalized to a configuration property or environment variable so they can be tuned per deployment without recompilation.
+
 ### PR #71: Improved Cross-Platform Installer (install.ps1)
 
 These requirements define the automated developer onboarding experience and installer validation:

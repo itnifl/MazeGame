@@ -95,6 +95,30 @@ public final class WallCollisionUtil {
     }
 
     /**
+     * Returns the first {@link Vector2D} wall whose geometry overlaps the square of
+     * side {@code size} centred at {@code (cx, cy)}, or {@code null} if none does.
+     * Used by projectiles to detect wall collisions without boundary clamping.
+     */
+    public static Vector2D findFirstHitWall(double cx, double cy, double size,
+                                            List<Vector2D> walls) {
+        double half   = size * 0.5d;
+        double left   = cx - half;
+        double right  = cx + half;
+        double bottom = cy - half;
+        double top    = cy + half;
+        for (Vector2D w : walls) {
+            double wx1 = w.getStart().getX();
+            double wy1 = w.getStart().getY();
+            double wx2 = w.getEnd().getX();
+            double wy2 = w.getEnd().getY();
+            if (wallHitsAABB(wx1, wy1, wx2, wy2, left, right, bottom, top)) {
+                return w;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns {@code true} if any {@link WallSegment} in {@code walls} separates the
      * line segment from {@code (ex, ey)} to {@code (px, py)}; i.e. the straight line
      * between the two positions crosses a wall.  Used to prevent enemies from

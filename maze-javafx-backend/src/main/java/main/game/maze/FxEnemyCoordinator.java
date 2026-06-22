@@ -196,6 +196,15 @@ public final class FxEnemyCoordinator {
                         pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
                     }
                 }
+                if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
+                    Platform.runLater(() -> {
+                        try {
+                            pbc.updateProjectiles(0.1);
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
+                        }
+                    });
+                }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
             }

@@ -85,7 +85,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     worldModel.maze(),
                     player.x(),
                     player.y(),
-                    player.halfSize());
+                    player.halfSize(),
+                    GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()));
             worldModel.enemyProjectiles().addAll(enemy.projectileVisuals());
             worldModel.enemyBeams().addAll(enemy.beamVisuals());
             var impacts = enemy.impactVisuals();
