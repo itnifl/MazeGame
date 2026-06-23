@@ -158,3 +158,13 @@ These requirements have been implemented and verified.
 - **SR-76:** The scoring constants (`ScoreDeathPenalty`, `ScoreSubtractFactor`, `ScoreWinBonus`, base scores) shall be surfaced in a difficulty/rules summary screen or tooltip so new players can understand the scoring model before starting a run.
 
 - **SR-77:** A dedicated `ScoringRulesService` (or equivalent interface in `maze-common-backend`) shall expose the active penalty constants (death penalty, damage multiplier factor, win bonus) as readable properties so frontends and future UI components can display them without hard-coding `StageConstants` references. This follows the 12-Factor App principle of externalizing configuration and the DDD ubiquitous-language principle of naming domain concepts explicitly.
+
+### F10/F20 Projectile telemetry — follow-on suggestions (PR #77)
+
+- **SR-108** *(12-Factor, Config III)*: Enemy projectile log verbosity (currently `Logger.FINE`) shall be configurable via environment variable `MAZE_LOG_LEVEL` so QA can enable detailed projectile trace logs without recompiling. The `java.util.logging.Logger` hierarchy already supports this via `LogManager`; expose it via installer docs.
+
+- **SR-109** *(Observability)*: `GdxEnemyRuntime.projectileStats()` returns a lightweight `H:N S:N` string. For production observability, consider publishing per-enemy stats as a named metric (e.g., `pumpkinbomber.hits` / `pumpkinbomber.shots`) via a `ProjectileTelemetrySink` interface. This decouples counter accumulation from string formatting and allows future exporters (Micrometer, OpenTelemetry) to consume the data without touching game logic.
+
+- **SR-110** *(DDD)*: `lifetimeHits` and `lifetimeShots` are raw counters embedded in `GdxEnemyRuntime`. Introducing a `ProjectileStats` value object (immutable, `hits + shots + accuracy()`) would make the telemetry a first-class domain concept and allow transfer across the enemy lifecycle (respawn, serialization) without coupling to the mutable runtime state.
+
+- **SR-111** *(Parity, CRR-5)*: `PumpkinBomberCharacter` (JavaFX) logs projectile events at `FINE` level but does not expose a `projectileStats()` accessor. For parity with libGDX, add a `ProjectileStats` record (hits/shots) to `PumpkinBomberCharacter` and expose it via `getProjectileStats()` so unit tests and HUD overlays can read it without parsing log output.
