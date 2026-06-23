@@ -2,6 +2,18 @@
 
 ## Candidate Additions
 
+### BUG-3 / BUG-4 follow-on suggestions
+
+- **SR-113** *(Observability, BUG-3)*: When the JavaFX camera clip is recalculated each frame, a DEBUG-level log entry should be emitted at a throttled rate (e.g., once per second) including `translateX`, `translateY`, `clipX`, `clipY`, `viewportWidth`, and `viewportHeight`. This allows QA to diagnose future clip/translation divergences without attaching a debugger.
+
+- **SR-114** *(DDD, BUG-3)*: `FxGameRenderCoordinator.computeClipRect` and `computeCameraTranslation` represent a mini viewport domain. Consider extracting a `ViewportScrollState` value object that holds translation + clip-rect together, making the dependency between the two values explicit and preventing future callers from updating one without the other.
+
+- **SR-115** *(12-Factor, BUG-4)*: The libGDX audio engine installation sequence (call `GdxBackend.install()` exactly once at startup in `GdxGame.create()`) shall be enforced by a lifecycle contract test: a headless `GdxGame` stub must confirm that after `create()` the `AudioEngine.get()` instance is not a `NoopAudioEngine`. This guards against future regressions where the install call is moved or removed.
+
+- **SR-116** *(Observability, BUG-4)*: `GdxBackend.install()` shall emit a one-time INFO log entry confirming the engine type and the thread on which it was installed (render thread). This makes it immediately apparent in run logs whether the audio backend was successfully initialised before any screen was shown.
+
+- **SR-117** *(Parity, CRR-5)*: `MenuScreenController` now owns a `GdxGameAudioCoordinator`. If future screens are added (e.g., a settings screen or loading screen), each should follow the same pattern: own an audio coordinator instance and call `switchTo*Music()` in `show()` and `stopAll()` in `dispose()`. A shared `AudioAwareScreen` abstract base class (implementing `Screen`) could enforce this contract at compile time.
+
 ### PR #72: F11 Breakable Walls — follow-on requirements
 
 - **SR-99** *(Parity, CRR-5)*: Breakable wall support shall be available in the libGDX frontend as well as JavaFX. The libGDX `GdxGameScreenController` shall integrate `WallCollisionUtil.findFirstHitWall(...)` and delegate wall damage through a shared entry point equivalent to `GameController.applyProjectileDamageToWall(...)` so that wall destruction and nav-graph rewiring behave identically across frontends.
