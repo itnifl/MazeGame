@@ -15,23 +15,31 @@ but not yet present in `maze-common-frontend/src/main/resources/main/game/maze/`
 
 ---
 
-## Zombie walk cycle (3 frames × 4 directions)
+## Zombie character variants (NOT walk-cycle frames)
 
-All three zombie variants share the same frame set.
-Frame numbering follows the naming convention `zombie{N}-{dir}.png`.
+`zombie1-*.png`, `zombie2-*.png`, and `zombie3-*.png` are three **distinct character
+designs** (Classic Zombie, Angry Zombie, Classic Zombie variant), each used by a
+separate `CharacterType` entry in `opponentModel.xmi`. They are **not** walk-cycle
+frames of the same zombie.
 
-| Frame | Right | Left | Up | Down |
-|-------|-------|------|----|------|
-| 1 | ✅ zombie1-right.png | ✅ zombie1-left.png | ✅ zombie1-up.png | ✅ zombie1-down.png |
-| 2 | ✅ zombie2-right.png | ✅ zombie2-left.png | ✅ zombie2-up.png | ✅ zombie2-down.png |
-| 3 | ✅ zombie3-right.png | ✅ zombie3-left.png | ✅ zombie3-up.png | ✅ zombie3-down.png |
+| Variant | Right | Left | Up | Down |
+|---------|-------|------|----|------|
+| zombie1 | ✅ zombie1-right.png | ✅ zombie1-left.png | ✅ zombie1-up.png | ✅ zombie1-down.png |
+| zombie2 | ✅ zombie2-right.png | ✅ zombie2-left.png | ✅ zombie2-up.png | ✅ zombie2-down.png |
+| zombie3 | ✅ zombie3-right.png | ✅ zombie3-left.png | ✅ zombie3-up.png | ✅ zombie3-down.png |
 
-The XMI model sets `animationFrameCount="3"` for all zombie entries. ✅
+`animationFrameCount` is **1** (default) for all zombie entries — no walk animation
+is active yet. ❌
 
-### Suggested improvements
+### To enable zombie walk animation
 
-- **Frame 4** — a fourth walk-cycle frame (zombie4-\*.png per direction) would
-  make the walk animation smoother. Currently blocked on artwork.
+Dedicated per-variant walk-cycle frames must be created. For example, for zombie_weak_1:
+- `zombie_classic_walk1-right.png`, `zombie_classic_walk2-right.png`, `zombie_classic_walk3-right.png`
+- (+ left, up, down variants)
+
+These would need a new naming convention distinct from the variant numbers to avoid
+ambiguity, and the XMI `ImageTurnRight` path updated to point to frame 1 of the
+new walk cycle before `animationFrameCount` can be set above 1.
 
 ---
 
