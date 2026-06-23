@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -23,6 +24,7 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
 
 public final class GdxEnemyRuntime implements EnemyRuntime {
+    private static final Logger LOG = Logger.getLogger(GdxEnemyRuntime.class.getName());
     private static final String FALLBACK_THROW_SOUND = "/main/game/maze/menuselect.wav";
     private static final String FALLBACK_EXPLOSION_SOUND = "/main/game/maze/error.wav";
     private static final long RANGED_SOUND_COOLDOWN_MS = 120L;
@@ -51,6 +53,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
     private float shotCooldownRemaining;
+    private int lifetimeShots = 0;
+    private int lifetimeHits  = 0;
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
@@ -177,6 +181,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                     <= squared(playerRadius + projectile.radius());
             if (projectile.type == ProjectileType.STRAIGHT && hitPlayer) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
+                lifetimeHits++;
+                LOG.fine(() -> String.format("[%s] STRAIGHT hit player at (%.0f,%.0f)", runtimeEnemyId, projectile.x, projectile.y));
                 emitImpact(projectile.x, projectile.y, 18f, 5f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
@@ -192,6 +198,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                         && distanceSquared(playerX, playerY, projectile.targetX, projectile.targetY)
                         <= squared(Math.max(0f, spawn.splashRadius()))) {
                     dealtDamage += Math.max(0, spawn.attackDamage());
+                    lifetimeHits++;
+                    LOG.fine(() -> String.format("[%s] LOB splash hit player at target (%.0f,%.0f)", runtimeEnemyId, projectile.targetX, projectile.targetY));
                 }
                 if (projectile.type == ProjectileType.LOB || projectile.type == ProjectileType.STRAIGHT) {
                     float impactRadius = projectile.type == ProjectileType.LOB
@@ -214,8 +222,6 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             return dealtDamage;
         }
 
-        float dx = playerX - x;
-        float dy = playerY - y;
         float range = Math.max(0f, spawn.attackRange());
         if (distanceSquared(x, y, playerX, playerY) > squared(range)) {
             return dealtDamage;
@@ -227,8 +233,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
         if (projectileType == ProjectileType.BEAM) {
             boolean blocked = maze != null && WallCollisionUtil.wallBetween(x, y, playerX, playerY, maze.walls());
+            lifetimeShots++;
             if (!blocked) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
+                lifetimeHits++;
+                LOG.fine(() -> String.format("[%s] BEAM fired — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
+            } else {
+                LOG.fine(() -> String.format("[%s] BEAM blocked by wall — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
             }
             playThrowSound();
             activeBeams.add(new BeamEffect(x, y, playerX, playerY, blocked, 0.14f));
@@ -253,6 +264,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 playerY,
                 duration,
                 Math.max(0f, spawn.arcHeight())));
+        lifetimeShots++;
+        LOG.fine(() -> String.format("[%s] %s fired — target=(%.0f,%.0f)", runtimeEnemyId, projectileType, playerX, playerY));
         playThrowSound();
         shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
         return dealtDamage;
@@ -438,15 +451,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
     public String debugLabel(boolean showBehaviorType, boolean showMovementType) {
         if (showBehaviorType && showMovementType) {
-            return behaviorTypeLabel + " | " + movementTypeLabel;
+            return behaviorTypeLabel + " | " + movementTypeLabel + " " + projectileStats();
         }
         if (showBehaviorType) {
-            return behaviorTypeLabel;
+            return behaviorTypeLabel + " " + projectileStats();
         }
         if (showMovementType) {
             return movementTypeLabel;
         }
         return null;
+    }
+
+    public String projectileStats() {
+        return "H:" + lifetimeHits + " S:" + lifetimeShots;
     }
 
     public List<ActivePathPoint> activePathPoints(PatrolMovementService patrolService,

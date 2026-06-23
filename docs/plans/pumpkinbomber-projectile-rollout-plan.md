@@ -1,6 +1,6 @@
 # PumpkinBomber Projectile Rollout Plan
 
-**Status:** IN PROGRESS — Phase 1 complete, Phase 2 data model in place (disabled), telemetry pending
+**Status:** COMPLETE — Phase 1 shipped, Phase 2 data model in place (disabled, enable `pb_elite_beam` to ship), telemetry and edge case tests done
 **Scope:** JavaFX and libGDX gameplay behavior and visuals
 **Date:** 2026-06-19
 **Updated:** 2026-06-23
@@ -65,7 +65,7 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 | 7.2 | Integration test per projectile type — JavaFX side (3 types × multiple cases) | **DONE** |
 | 7.3 | Rendering-focused assertion per projectile type — libGDX pipeline tests | **DONE** |
 | 7.4 | Edge case tests: wall blocking, multi-target splash, cooldown boundary, range boundary, zero-dt | **DONE** |
-| 7.5 | Manual playtest script for F10 and F20 in `manual-test-plan-missing-features.md` | **PARTIAL** (smoke pass exists; BEAM Phase 2 script pending) |
+| 7.5 | Manual playtest script for F10 and F20 in `manual-test-plan-missing-features.md` | **DONE** (smoke pass §7.1 + BEAM Phase 2 elite script §7.2) |
 
 ### JavaFX edge cases added (2026-06-23)
 
@@ -86,16 +86,23 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 - `shotCooldown_preventsSecondShotWithinPeriod` — second BEAM within cooldown deals no damage
 - `impactVisual_hasPositiveRadiusAndAlpha_immediatelyAfterImpact` — impact visual structure validated
 - `lobProjectile_firesAgainAfterCooldown` — LOB re-fires after cooldown elapses
+- `updateRangedAttacks_withNegativeDt_returnZeroAndFiresNothing` — negative dt is safe
+- `projectileCap_preventsMoreThanMaxActiveProjectiles` — projectile list bounded
+- `lobProjectile_playerOutsideSplashRadius_dealsNoDamage` — splash radius boundary
+- `updateRangedAttacks_withZeroAttackRange_neverFires` — zero range guard
+- `projectileStats_initialState_isZeroShotsAndHits` — telemetry starts at zero
+- `projectileStats_afterBeamHit_countsOneShotAndOneHit` — hit tracked correctly
+- `projectileStats_beamBlockedByWall_countsShotButNotHit` — miss tracked correctly
 
 ## 8. Telemetry and debugging support
 
 | Item | Status |
 |---|---|
-| Debug event logging for each ranged attack (enemy id, projectile type) | **NOT DONE** |
-| Optional HUD debug counter for projectile hits and misses | **NOT DONE** |
-| Beam blocked reason and wall blocked reason logging when debug mode enabled | **NOT DONE** |
+| Debug event logging for each ranged attack (enemy id, projectile type) | **DONE** |
+| Optional HUD debug counter for projectile hits and misses (`H:N S:N` via `projectileStats()`) | **DONE** |
+| Beam blocked reason and wall blocked reason logging when debug mode enabled | **DONE** |
 
-> **Next action:** Wire `Logger` (or `System.err` behind a debug flag) into `tryShootAt()` and `updateRangedAttacks()`.
+> `GdxEnemyRuntime.debugLabel()` appends `projectileStats()` when `showBehaviorType=true`. `PumpkinBomberCharacter` logs at `FINE` level for all projectile events.
 
 ## 9. Release sequence
 

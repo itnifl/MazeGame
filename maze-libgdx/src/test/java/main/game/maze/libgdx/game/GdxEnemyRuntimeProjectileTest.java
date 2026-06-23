@@ -408,4 +408,37 @@ class GdxEnemyRuntimeProjectileTest {
 
         assertEquals(0, total, "Zero attackRange must never fire a projectile or deal damage");
     }
+
+    // --- projectileStats() tracks shots and hits ----------------------------
+
+    @Test
+    void projectileStats_initialState_isZeroShotsAndHits() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        assertEquals("H:0 S:0", runtime.projectileStats());
+    }
+
+    @Test
+    void projectileStats_afterBeamHit_countsOneShotAndOneHit() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+
+        assertEquals("H:1 S:1", runtime.projectileStats());
+    }
+
+    @Test
+    void projectileStats_beamBlockedByWall_countsShotButNotHit() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        runtime.updateRangedAttacks(1f / 60f, wallMaze(), 200f, 40f, 12f);
+
+        assertEquals("H:0 S:1", runtime.projectileStats());
+    }
 }
