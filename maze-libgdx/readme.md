@@ -24,7 +24,7 @@ The pure-math version `computeCameraPosition(viewW, viewH, mazeW, mazeH, px, py)
 
 ## Building & running
 
-```
+```bash
 mvn package -pl maze-libgdx -am
 java -jar target/maze-libgdx-*.jar
 ```
@@ -33,7 +33,7 @@ Requires **Java 21**. See [root README](../README.md) for auto-detection details
 
 ## Tests
 
-```
+```bash
 mvn test -pl maze-libgdx
 ```
 

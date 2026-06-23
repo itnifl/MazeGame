@@ -22,7 +22,7 @@ returns `[translateX, translateY]` for the canvas group transform:
 
 ## Building & running
 
-```
+```bash
 mvn package -pl maze-javafx-backend -am
 java -jar target/maze-javafx-backend-*.jar
 ```
@@ -31,7 +31,7 @@ Requires **Java 21**. See [root README](../README.md) for auto-detection details
 
 ## Tests
 
-```
+```bash
 mvn test -pl maze-javafx-backend
 ```
 
