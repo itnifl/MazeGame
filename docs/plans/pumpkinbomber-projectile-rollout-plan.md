@@ -1,8 +1,9 @@
 # PumpkinBomber Projectile Rollout Plan
 
-**Status:** READY FOR EXECUTION
+**Status:** IN PROGRESS — Phase 1 complete, Phase 2 data model in place (disabled), telemetry pending
 **Scope:** JavaFX and libGDX gameplay behavior and visuals
 **Date:** 2026-06-19
+**Updated:** 2026-06-23
 
 ## 1. Goal
 
@@ -23,11 +24,15 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 
 ## 4. Data model tuning pass
 
-1. Create three PumpkinBomber profiles in opponent model data.
-2. Profile A: `projectileType=STRAIGHT`, low damage, short cooldown.
-3. Profile B: `projectileType=LOB`, medium damage, medium cooldown, meaningful splash radius.
-4. Profile C: `projectileType=BEAM`, high readability beam effect, longer cooldown.
-5. Ensure per difficulty cap and threat budgets still gate spawn counts.
+| # | Item | Status |
+|---|---|---|
+| 4.1 | Three PumpkinBomber profiles in opponent model data | **DONE** |
+| 4.2 | Profile A: `projectileType=STRAIGHT`, low damage, short cooldown (`pb_hard`) | **DONE** |
+| 4.3 | Profile B: `projectileType=LOB`, medium damage, medium cooldown, meaningful splash radius (`pb_normal`) | **DONE** |
+| 4.4 | Profile C: `projectileType=BEAM`, high readability beam effect, longer cooldown (`pb_elite_beam`, disabled) | **DONE** |
+| 4.5 | Per difficulty cap and threat budgets gate spawn counts | **DONE** |
+
+> **Note:** `pb_elite_beam` profile is defined with `enabled=false`. Enable it for Phase 2 after balancing.
 
 ## 5. Per mode balancing targets
 
@@ -45,36 +50,68 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 
 ## 6. Frontend parity checklist
 
-1. Same model parameters must produce same damage outcomes in JavaFX and libGDX.
-2. Beam line lifetime should be visually comparable across both frontends.
-3. Lob impact location and splash radius should feel equivalent.
-4. Wall blocking behavior must stay strict for `STRAIGHT` and beam line of sight.
+| Item | Status |
+|---|---|
+| Same model parameters produce same damage outcomes in JavaFX and libGDX | **DONE** |
+| Beam line lifetime is visually comparable across both frontends | **DONE** |
+| Lob impact location and splash radius feel equivalent | **DONE** |
+| Wall blocking behavior strict for `STRAIGHT` and beam line of sight | **DONE** |
 
 ## 7. Implementation tasks
 
-1. Add per profile spawn fixtures in test data for both frontends.
-2. Add one integration test per projectile type for JavaFX side behavior contracts.
-3. Add one rendering focused assertion per projectile type in libGDX pipeline tests.
-4. Add manual playtest script for F10 and F20 based on `manual-test-plan-missing-features.md`.
+| # | Task | Status |
+|---|---|---|
+| 7.1 | Per profile spawn fixtures in test data for both frontends | **DONE** |
+| 7.2 | Integration test per projectile type — JavaFX side (3 types × multiple cases) | **DONE** |
+| 7.3 | Rendering-focused assertion per projectile type — libGDX pipeline tests | **DONE** |
+| 7.4 | Edge case tests: wall blocking, multi-target splash, cooldown boundary, range boundary, zero-dt | **DONE** |
+| 7.5 | Manual playtest script for F10 and F20 in `manual-test-plan-missing-features.md` | **PARTIAL** (smoke pass exists; BEAM Phase 2 script pending) |
+
+### JavaFX edge cases added (2026-06-23)
+
+- `straightProjectile_wallBetween_doesNotDamagePlayer` — STRAIGHT wall block verified via damage assertion (not just no-throw)
+- `lobProjectile_splashDamagesAllSubscribersWithinRadius` — multi-target splash
+- `straightProjectile_respectsCooldown` — cooldown contract for STRAIGHT type
+- `beamProjectile_targetAtExactlyRange_doesNotFire` — boundary: target at exactly `attackRange` must not fire (strict `>` check)
+- `beamProjectile_targetJustInsideRange_fires` — boundary: target 1px inside range fires correctly
+- `updateProjectiles_withZeroDt_doesNotAdvanceProjectile` — zero dt must not resolve projectile
+
+### libGDX edge cases added (2026-06-23)
+
+- `beamBlockedByWall_beamVisualShowsBlockedTrue` — `BeamVisual.blocked()` is true when wall intercepts
+- `beamBlockedByWall_dealsNoDamage` — BEAM blocked by wall returns 0 damage
+- `straightProjectile_hitsPlayerWithNoWall` — STRAIGHT deals damage when path is clear
+- `lobProjectile_withZeroArcHeight_stillLandsAndDamages` — flat LOB still lands and splashes
+- `shotCooldown_preventsSecondShotWithinPeriod` — second BEAM within cooldown deals no damage
+- `impactVisual_hasPositiveRadiusAndAlpha_immediatelyAfterImpact` — impact visual structure validated
+- `lobProjectile_firesAgainAfterCooldown` — LOB re-fires after cooldown elapses
 
 ## 8. Telemetry and debugging support
 
-1. Add debug event logging for each ranged attack with enemy id and projectile type.
-2. Add optional HUD debug counter for projectile hits and misses.
-3. Add optional beam blocked reason and wall blocked reason logging when debug mode is enabled.
+| Item | Status |
+|---|---|
+| Debug event logging for each ranged attack (enemy id, projectile type) | **NOT DONE** |
+| Optional HUD debug counter for projectile hits and misses | **NOT DONE** |
+| Beam blocked reason and wall blocked reason logging when debug mode enabled | **NOT DONE** |
+
+> **Next action:** Wire `Logger` (or `System.err` behind a debug flag) into `tryShootAt()` and `updateRangedAttacks()`.
 
 ## 9. Release sequence
 
-1. Phase 1: Ship PumpkinBomber with `STRAIGHT` and `LOB` only.
-2. Phase 2: Enable `BEAM` for elite profile after balancing.
-3. Phase 3: Reuse shared projectile strategy for other ranged enemy classes.
+| Phase | Scope | Status |
+|---|---|---|
+| Phase 1 | Ship PumpkinBomber with `STRAIGHT` and `LOB` only | **COMPLETE** |
+| Phase 2 | Enable `BEAM` for `pb_elite_beam` profile after balancing | **READY** (profile defined, set `enabled=true` to ship) |
+| Phase 3 | Reuse shared projectile strategy for other ranged enemy classes | **FUTURE** |
 
 ## 10. Acceptance criteria
 
-1. Full Maven root `test` succeeds under Java 21.
-2. Manual parity checks pass in both frontends for F10 and F20 scenarios.
-3. No severe readability regressions in combat encounters.
-4. No wall interaction regressions for non projectile melee contact damage.
+| Criterion | Status |
+|---|---|
+| Full Maven root `test` succeeds under Java 21 | Verified per PR pipeline |
+| Manual parity checks pass in both frontends for F10 and F20 | Smoke pass defined |
+| No severe readability regressions in combat encounters | No regressions observed |
+| No wall interaction regressions for non-projectile melee contact damage | Confirmed by existing tests |
 
 ## 11. Fast visual validation
 

@@ -226,20 +226,22 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                     && App.gameController != null
                     && App.gameController.isWallBetween(prevX, prevY, p.node.getLayoutX(), p.node.getLayoutY());
 
-            // early collision while flying
+            // early collision while flying — skip if the projectile already crossed a wall this tick
             boolean hitNow = false;
-            FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
-            for (ICanSubscribeAndNotifyPosition s : touchTargets) {
-                if (p.type == ProjectileType.LOB) {
-                    continue;
-                }
-                if (!(s instanceof ICanDie victim)) continue;
-                Node n = characterGraphicsOf(s);
-                if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
-                    if (p.type == ProjectileType.STRAIGHT) {
-                        victim.subtractHitPoints(p.damage);
+            if (!blockedByWall) {
+                FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
+                for (ICanSubscribeAndNotifyPosition s : touchTargets) {
+                    if (p.type == ProjectileType.LOB) {
+                        continue;
                     }
-                    hitNow = true; break;
+                    if (!(s instanceof ICanDie victim)) continue;
+                    Node n = characterGraphicsOf(s);
+                    if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
+                        if (p.type == ProjectileType.STRAIGHT) {
+                            victim.subtractHitPoints(p.damage);
+                        }
+                        hitNow = true; break;
+                    }
                 }
             }
 
