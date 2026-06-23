@@ -26,21 +26,21 @@ public final class FxGameRenderCoordinator {
     }
 
     private void installGameBoardClip() {
-        if (gameBoard == null || gameBoard.getScene() == null || gameBoard.getScene().getRoot() == null) {
+        if (gameBoard == null) {
             return;
         }
         if (gameBoardClip == null) {
             gameBoardClip = new Rectangle();
             gameBoard.setClip(gameBoardClip);
         }
-
-        gameBoardClip.widthProperty().bind(gameBoard.getScene().widthProperty());
-        gameBoardClip.heightProperty().bind(gameBoard.getScene().heightProperty());
     }
 
     public void updateCameraFollow(PlayerCharacter playerCharacter) {
         if (gameBoard == null || gameBoard.getScene() == null || gameBoard.getScene().getRoot() == null || playerCharacter == null) {
             return;
+        }
+        if (gameBoardClip == null) {
+            installGameBoardClip();
         }
 
         double viewportWidth = gameBoard.getScene().getRoot().getBoundsInLocal().getWidth();
@@ -62,6 +62,26 @@ public final class FxGameRenderCoordinator {
 
         gameBoard.setTranslateX(translation[0]);
         gameBoard.setTranslateY(translation[1]);
+
+        // Shift the clip in the board's local space by the inverse of the translation.
+        // Without this the clip (at local [0,0]) travels with the board and exposes
+        // unrendered regions on the opposite side — producing a white strip.
+        if (gameBoardClip != null) {
+            double[] cr = computeClipRect(translation, viewportWidth, viewportHeight);
+            gameBoardClip.setX(cr[0]);
+            gameBoardClip.setY(cr[1]);
+            gameBoardClip.setWidth(cr[2]);
+            gameBoardClip.setHeight(cr[3]);
+        }
+    }
+
+    /**
+     * Returns {@code [clipX, clipY, clipWidth, clipHeight]} in the board's local
+     * coordinate space. The clip must offset by the inverse of the board translation
+     * so the visible window always frames the correct region of the world content.
+     */
+    static double[] computeClipRect(double[] translation, double viewportWidth, double viewportHeight) {
+        return new double[]{-translation[0], -translation[1], viewportWidth, viewportHeight};
     }
 
     /**

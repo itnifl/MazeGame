@@ -32,7 +32,6 @@ import main.game.maze.common.scoring.GameScoringConstants;
 import main.game.maze.dto.Score;
 import main.game.maze.constants.DataFileConstants;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.libgdx.backend.GdxBackend;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.helper.GdxDebugOverlayState;
 import main.game.maze.libgdx.helper.GdxGameFrameStateSupport;
@@ -244,7 +243,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     @Override
     public void create() {
-        GdxBackend.install();
         var graphicsResources = GdxGameLifecycleSupport.createGraphicsResources();
         batch = graphicsResources.batch();
         shapes = graphicsResources.shapes();

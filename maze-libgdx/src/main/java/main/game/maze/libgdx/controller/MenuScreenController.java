@@ -20,7 +20,9 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.game.audio.GameAudioDirector;
 import main.game.maze.libgdx.GdxGameContext;
+import main.game.maze.libgdx.audio.GdxGameAudioCoordinator;
 import main.game.maze.libgdx.helper.DifficultyBoardConfig;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.libgdx.model.RuntimeVisualModel;
@@ -44,6 +46,8 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     private final Consumer<Difficulty> startGameAction;
     private final Runnable openLegacyMenuAction;
+    private final GdxGameAudioCoordinator audioCoordinator =
+            new GdxGameAudioCoordinator(new GameAudioDirector(AudioEngine::get), visualStyle);
 
     private final List<Difficulty> difficulties = new ArrayList<>();
     private int selectedDifficultyIndex;
@@ -91,6 +95,7 @@ public final class MenuScreenController extends AbstractGdxScreenController {
         }
 
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        audioCoordinator.switchToMenuMusic();
     }
 
     @Override
@@ -125,6 +130,7 @@ public final class MenuScreenController extends AbstractGdxScreenController {
 
     @Override
     public void dispose() {
+        audioCoordinator.stopAll();
         if (batch != null) batch.dispose();
         if (shapes != null) shapes.dispose();
         if (font != null) font.dispose();
