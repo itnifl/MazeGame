@@ -72,7 +72,8 @@ Make PumpkinBomber ranged combat feel intentional in live gameplay, not only tec
 - `straightProjectile_wallBetween_doesNotDamagePlayer` — STRAIGHT wall block verified via damage assertion (not just no-throw)
 - `lobProjectile_splashDamagesAllSubscribersWithinRadius` — multi-target splash
 - `straightProjectile_respectsCooldown` — cooldown contract for STRAIGHT type
-- `beamProjectile_targetAtExactlyRange_doesNotFire` — boundary: target at exactly `attackRange` must not fire (strict `>` check)
+- `beamProjectile_targetAtExactlyRange_fires` — boundary: range is inclusive (`dist² > range²` guard), so target at exactly `attackRange` fires
+- `beamProjectile_targetOnePastRange_doesNotFire` — boundary: target 1px beyond range does not fire
 - `beamProjectile_targetJustInsideRange_fires` — boundary: target 1px inside range fires correctly
 - `updateProjectiles_withZeroDt_doesNotAdvanceProjectile` — zero dt must not resolve projectile
 
