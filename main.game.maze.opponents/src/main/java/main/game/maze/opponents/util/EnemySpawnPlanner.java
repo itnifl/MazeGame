@@ -101,12 +101,13 @@ public final class EnemySpawnPlanner {
      */
     public static int applyDamageMultiplier(int baseDamage, double multiplier) {
         int safeBase = Math.max(0, baseDamage);
-        double safeMul = Math.max(0d, multiplier);
-        int scaled = (int) Math.round(safeBase * safeMul);
-        if (safeBase > 0) {
-            return Math.max(1, scaled);
+        // A negative multiplier is treated as "no damage" rather than clamped to 0 then
+        // re-raised to 1, because a negative difficulty modifier is a deliberate zeroing.
+        if (safeBase == 0 || multiplier < 0d) {
+            return 0;
         }
-        return Math.max(0, scaled);
+        int scaled = (int) Math.round(safeBase * multiplier);
+        return Math.max(1, scaled);
     }
 
     /**
