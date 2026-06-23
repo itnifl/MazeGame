@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -85,10 +86,13 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         }
 
         this.directionSubscriber = (VectorFacing direction) -> {
-            if (direction != null && direction != currentCharacterFacing) {
-                currentCharacterFacing = direction;
-                updateCharacterImage();
-            }
+            if (direction == null) return;
+            Platform.runLater(() -> {
+                if (direction != currentCharacterFacing) {
+                    currentCharacterFacing = direction;
+                    updateCharacterImage();
+                }
+            });
         };
 
         // Initialize with a random direction to avoid zero-length vector (NaN issues)
@@ -102,9 +106,10 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     }
 
     private void updateCharacterImage() {
+        if (getCharacterGraphics() == null) return;
         Image next = currentImage(currentCharacterFacing);
         if (next != null) {
-            this.setCharacterImage(next);
+            setCharacterImage(next);
         }
     }
 
@@ -124,6 +129,14 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 e -> advanceWalkFrame(frameCount)));
         tl.setCycleCount(Animation.INDEFINITE);
         return tl;
+    }
+
+    @Override
+    public void dispose() {
+        if (walkAnimation != null) {
+            walkAnimation.stop();
+        }
+        super.dispose();
     }
 
     private List<Image> loadAnimationFrames(String frame1Path, int frameCount) {
