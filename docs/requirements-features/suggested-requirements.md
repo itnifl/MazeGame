@@ -2,6 +2,14 @@
 
 ## Candidate Additions
 
+### BUG-6 follow-on suggestions
+
+- **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
+
+- **SR-122** *(Observability, BUG-6)*: `FxGameRenderCoordinator.installGameBoardClip()` silently no-ops when `gameBoard` is null. Add a WARN-level log entry listing `gameBoard == null` so developers can detect premature coordinator construction without a debugger.
+
+- **SR-123** *(12-Factor, BUG-6)*: Viewport dimensions are currently read from `Scene.getWidth()/getHeight()` at render time. Add a `MAZE_VIEWPORT_WIDTH` / `MAZE_VIEWPORT_HEIGHT` override environment variable that, if set, bypasses scene introspection — enabling headless integration tests to set a known viewport size without a real JavaFX stage.
+
 ### BUG-5 follow-on suggestions
 
 - **SR-118** *(DDD, BUG-5)*: The `gameBoard` Pane background image in `game.fxml` is now redundant for the in-game state (the maze canvas carries its own background). Consider removing the `<background>` element from `game.fxml` and replacing it with a neutral pre-game placeholder (e.g., a dark-colour CSS fill via `fx:stylesheet`) so the pre-game and in-game states both use the correct difficulty-specific image.

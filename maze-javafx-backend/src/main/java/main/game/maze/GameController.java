@@ -20,7 +20,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -144,7 +143,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     };
 
     private boolean cameraFollowListenersInstalled;
-    private Rectangle gameBoardClip;
 
     // Extracted coordinators
     private final FxEnemyCoordinator  enemyCoordinator;
@@ -329,7 +327,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void setupGame() {
         hpBar.setProgress(1.0);
-        installGameBoardClip();
+        installCameraFollowListeners();
 
         // Remove stale canvases from the previous session
         if (mazeCanvas != null) { gameBoard.getChildren().remove(mazeCanvas); mazeCanvas = null; }
@@ -394,14 +392,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         movementLoopCoordinator.startMovementTimer();
     }
 
-    private void installGameBoardClip() {
+    private void installCameraFollowListeners() {
         if (root == null || gameBoard == null) return;
-        if (gameBoardClip == null) {
-            gameBoardClip = new Rectangle();
-            gameBoard.setClip(gameBoardClip);
-        }
-        if (!gameBoardClip.widthProperty().isBound())  gameBoardClip.widthProperty().bind(root.widthProperty());
-        if (!gameBoardClip.heightProperty().isBound()) gameBoardClip.heightProperty().bind(root.heightProperty());
         if (!cameraFollowListenersInstalled) {
             root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
             root.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());

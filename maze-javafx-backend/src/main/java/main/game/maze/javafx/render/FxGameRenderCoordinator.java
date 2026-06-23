@@ -43,8 +43,8 @@ public final class FxGameRenderCoordinator {
             installGameBoardClip();
         }
 
-        double viewportWidth = gameBoard.getScene().getRoot().getBoundsInLocal().getWidth();
-        double viewportHeight = gameBoard.getScene().getRoot().getBoundsInLocal().getHeight();
+        double viewportWidth  = gameBoard.getScene().getWidth();
+        double viewportHeight = gameBoard.getScene().getHeight();
         if (viewportWidth <= 0 || viewportHeight <= 0) {
             return;
         }

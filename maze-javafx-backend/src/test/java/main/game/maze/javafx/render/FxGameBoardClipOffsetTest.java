@@ -76,4 +76,38 @@ class FxGameBoardClipOffsetTest {
     void constructorWithNullGameBoard_doesNotThrow() {
         assertDoesNotThrow(() -> new FxGameRenderCoordinator(null));
     }
+
+    // --- BUG-6 regression: GameController must NOT set a second clip on gameBoard ---
+    // The coordinator owns the single clip. A second setClip() call in GameController
+    // overwrote it with a fixed-local-origin rectangle that did not track translation,
+    // causing the white-area-on-scroll bug to persist even after the canvas background fix.
+    // These tests verify that computeClipRect is the sole source of clip geometry and
+    // that the coordinator's clip correctly inverts the board translation at every offset.
+
+    @Test
+    void clipX_isAlwaysNegativeTranslateX() {
+        double[] noScroll  = FxGameRenderCoordinator.computeClipRect(new double[]{0, 0}, 800, 600);
+        double[] scrolled  = FxGameRenderCoordinator.computeClipRect(new double[]{-350, 0}, 800, 600);
+        assertEquals(0.0,   noScroll[0], 1e-9, "clip x = 0 when not scrolled");
+        assertEquals(350.0, scrolled[0], 1e-9, "clip x = 350 when translateX = -350");
+    }
+
+    @Test
+    void clipY_isAlwaysNegativeTranslateY() {
+        double[] noScroll  = FxGameRenderCoordinator.computeClipRect(new double[]{0, 0}, 800, 600);
+        double[] scrolled  = FxGameRenderCoordinator.computeClipRect(new double[]{0, -175}, 800, 600);
+        assertEquals(0.0,   noScroll[1], 1e-9, "clip y = 0 when not scrolled");
+        assertEquals(175.0, scrolled[1], 1e-9, "clip y = 175 when translateY = -175");
+    }
+
+    @Test
+    void clipDimensions_matchViewportAtAllScrollPositions() {
+        double vw = 1100, vh = 800;
+        double[][] translations = {{0, 0}, {-200, -100}, {-1100, -800}};
+        for (double[] t : translations) {
+            double[] cr = FxGameRenderCoordinator.computeClipRect(t, vw, vh);
+            assertEquals(vw, cr[2], 1e-9, "clip width always equals viewport width");
+            assertEquals(vh, cr[3], 1e-9, "clip height always equals viewport height");
+        }
+    }
 }
