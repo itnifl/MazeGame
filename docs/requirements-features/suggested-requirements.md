@@ -2,6 +2,14 @@
 
 ## Candidate Additions
 
+### BUG-5 follow-on suggestions
+
+- **SR-118** *(DDD, BUG-5)*: The `gameBoard` Pane background image in `game.fxml` is now redundant for the in-game state (the maze canvas carries its own background). Consider removing the `<background>` element from `game.fxml` and replacing it with a neutral pre-game placeholder (e.g., a dark-colour CSS fill via `fx:stylesheet`) so the pre-game and in-game states both use the correct difficulty-specific image.
+
+- **SR-119** *(Observability, BUG-5)*: `FxMazeCanvasRenderer.drawBackground()` silently skips the fill when the image resource is missing. Add an WARN-level event published to an application-level diagnostic bus (or at minimum a visible in-game notification) so QA can distinguish "background image missing" from "background successfully drawn" without attaching a debugger.
+
+- **SR-120** *(12-Factor, BUG-5)*: The background image path is currently embedded in `MazeVisualStyleConfig` (loaded from XMI or properties). For full 12-Factor compliance (config via environment), add a fallback environment variable `MAZE_BG_EASY`, `MAZE_BG_NORMAL`, `MAZE_BG_HARD` that can override the XMI-configured paths at runtime without recompilation.
+
 ### BUG-3 / BUG-4 follow-on suggestions
 
 - **SR-113** *(Observability, BUG-3)*: When the JavaFX camera clip is recalculated each frame, a DEBUG-level log entry should be emitted at a throttled rate (e.g., once per second) including `translateX`, `translateY`, `clipX`, `clipY`, `viewportWidth`, and `viewportHeight`. This allows QA to diagnose future clip/translation divergences without attaching a debugger.

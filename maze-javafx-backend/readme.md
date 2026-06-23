@@ -36,3 +36,7 @@ mvn test -pl maze-javafx-backend
 ```
 
 Pure-math helpers (`computeCameraTranslation`, `clampBoardToScreen`) are tested headlessly — no JavaFX toolkit required.
+
+## Background rendering (BUG-5)
+
+`FxMazeCanvasRenderer.drawCanvas()` fills the full-map canvas with the difficulty-specific background image (tiled via `ImagePattern`) **before** painting walls. This ensures all areas revealed by the camera scroll have a background, because the `gameBoard` Pane's own background image only tiles within the Pane's window-sized layout bounds.
