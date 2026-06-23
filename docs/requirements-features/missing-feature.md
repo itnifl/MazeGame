@@ -24,15 +24,26 @@ overall feature is marked Done.
 ### F1. Animated character sprites
 
 - **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `CharacterType.animationFrameCount` (default 1), `CharacterType.spriteScale` (default 1.0).
-- **Status**: Missing.
+- **Status**: Done (branch `feature/animated-sprites`).
 - **Backend**: both.
-- **What the model says**: every character type can declare an animation frame
-  count and a sprite scale.
-- **What the game does today**: the sprite is drawn as a single static
-  `ImageView`. No grep hit shows runtime use of `animationFrameCount` or
-  `spriteScale` outside of code generation.
+- **What was implemented**:
+  - **Shared**: `SpriteAnimationUtil.deriveAnimationFramePath(path, frameIndex)` in
+    `maze-common-frontend` replaces the digit in the filename to derive frame N.
+  - **libGDX**: `EnemyAnimationSpec` record carries per-direction frame-1 paths,
+    `animationFrameCount`, and `spriteScale`. `EnemySpawn` gained an `animationSpec`
+    field (22nd). `RuntimeVisualModelLoader` populates the spec from the EMF model
+    (reads `getImageTurnLeft/Right/Up/Down`, `getAnimationFrameCount`,
+    `getSpriteScale`). `GdxEnemyRuntime.currentFramePath(clock)` picks the
+    directional path and derives the frame from the animation clock at 4 fps.
+    `GdxGameRenderPipeline` calls `currentFramePath` instead of `imagePath` and
+    applies `spriteScale()` to the rendered size.
+  - **JavaFX**: `ComputerCharacter` pre-loads all walk-cycle frames per direction
+    and starts a 250 ms `Timeline` to cycle through them when `animationFrameCount > 1`.
+  - **Model data**: `opponentModel.xmi` sets `animationFrameCount="3"` for all
+    three zombie entries. Ghosts and PumpkinBomber remain single-frame (missing
+    directional sprites — see `missing-sprite-asset-list.md`).
 - **Acceptance**: characters with `animationFrameCount > 1` cycle through their
-  frames at runtime, and `spriteScale` controls the rendered size.
+  frames at runtime, and `spriteScale` controls the rendered size. ✅
 
 ### F2. Loot drops on enemy death
 

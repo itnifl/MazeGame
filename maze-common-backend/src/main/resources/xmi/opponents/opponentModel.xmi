@@ -69,6 +69,7 @@
       <threatLevel>1.0</threatLevel>
       <attackDamage>2</attackDamage>
       <behavior>PATROL</behavior>
+      <animationFrameCount>3</animationFrameCount>
       <ImageBase>/main/game/maze/zombie1-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie1-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/zombie1-right.png</ImageTurnRight>
@@ -76,7 +77,7 @@
       <ImageTurnDown>/main/game/maze/zombie1-down.png</ImageTurnDown>
     </characterTypes>
 
-    <characterTypes xsi:type="opponents:Zombie">            
+    <characterTypes xsi:type="opponents:Zombie">
       <id>zombie_angry_1</id>
       <displayName>Angry Zombie</displayName>
       <enabled>true</enabled>
@@ -85,6 +86,7 @@
       <threatLevel>4.0</threatLevel>
       <attackDamage>4</attackDamage>
       <behavior>AGGRESSIVE</behavior>
+      <animationFrameCount>3</animationFrameCount>
       <ImageBase>/main/game/maze/zombie2-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie2-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/zombie2-right.png</ImageTurnRight>
@@ -101,6 +103,7 @@
       <threatLevel>2</threatLevel>
       <attackDamage>1</attackDamage>
       <behavior>WANDER</behavior>
+      <animationFrameCount>3</animationFrameCount>
       <ImageBase>/main/game/maze/zombie3-down.png</ImageBase>
       <ImageTurnLeft>/main/game/maze/zombie3-left.png</ImageTurnLeft>
       <ImageTurnRight>/main/game/maze/zombie3-right.png</ImageTurnRight>

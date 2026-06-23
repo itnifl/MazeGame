@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -16,6 +17,7 @@ import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.game.runtime.EnemyRuntime;
+import main.game.maze.libgdx.model.EnemyAnimationSpec;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
@@ -380,6 +382,59 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     public String imagePath() {
+        return imagePath;
+    }
+
+    /**
+     * Returns the image path to render for this frame of the animation clock.
+     * Picks the directional frame-1 image based on the current movement direction,
+     * then replaces the first digit in the filename with the 1-indexed frame number
+     * derived from {@code animationClock} at {@value #ANIMATION_FPS} fps.
+     * Falls back to {@link #imagePath()} when no animation spec is set.
+     */
+    public String currentFramePath(float animationClock) {
+        EnemyAnimationSpec spec = spawn != null ? spawn.animationSpec() : null;
+        int frameCount = spec != null ? spec.animationFrameCount() : 1;
+        String dirPath = directionalImagePath(spec);
+        if (frameCount <= 1) {
+            return dirPath;
+        }
+        int frameIndex = ((int) (animationClock * ANIMATION_FPS)) % frameCount;
+        return deriveAnimationFramePath(dirPath, frameIndex);
+    }
+
+    /** Returns the sprite-scale multiplier from the animation spec (1.0 if none). */
+    public float spriteScale() {
+        EnemyAnimationSpec spec = spawn != null ? spawn.animationSpec() : null;
+        return spec != null ? spec.spriteScale() : 1.0f;
+    }
+
+    /**
+     * Derives the animation frame path for {@code frameIndex} from the frame-1 path.
+     * Delegates to {@link SpriteAnimationUtil#deriveAnimationFramePath}.
+     */
+    static String deriveAnimationFramePath(String frame1Path, int frameIndex) {
+        return SpriteAnimationUtil.deriveAnimationFramePath(frame1Path, frameIndex);
+    }
+
+    private static final float ANIMATION_FPS = 4.0f;
+
+    private String directionalImagePath(EnemyAnimationSpec spec) {
+        if (spec == null) {
+            return imagePath;
+        }
+        if (directionX > 0) {
+            return spec.imageTurnRight() != null ? spec.imageTurnRight() : imagePath;
+        }
+        if (directionX < 0) {
+            return spec.imageTurnLeft() != null ? spec.imageTurnLeft() : imagePath;
+        }
+        if (directionY > 0) {
+            return spec.imageTurnUp() != null ? spec.imageTurnUp() : imagePath;
+        }
+        if (directionY < 0) {
+            return spec.imageTurnDown() != null ? spec.imageTurnDown() : imagePath;
+        }
         return imagePath;
     }
 

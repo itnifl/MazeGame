@@ -24,6 +24,10 @@ import main.game.maze.opponents.ProjectileType;
  *
  * <p>{@code maxHitPoints} is the enemy's hit-point pool used by the libGDX runtime to
  * track damage. Defaults to {@value #DEFAULT_MAX_HIT_POINTS}.
+ *
+ * <p>{@code animationSpec} carries directional frame-1 image paths, the walk-cycle
+ * frame count, and a sprite-scale multiplier. Defaults to
+ * {@link EnemyAnimationSpec#defaults()} (single frame, 1:1 scale).
  */
 public record EnemySpawn(
         String id,
@@ -46,7 +50,8 @@ public record EnemySpawn(
         int attackCooldownMs,
         float projectileSpeed,
         int resurrectionTimeMs,
-        int maxHitPoints) {
+        int maxHitPoints,
+        EnemyAnimationSpec animationSpec) {
 
     /** Fully-visible value used for non-ghost enemies and as the EMF model default. */
     public static final int DEFAULT_VISIBILITY_LEVEL = 100;
@@ -60,6 +65,38 @@ public record EnemySpawn(
     public static final int DEFAULT_RESURRECTION_TIME_MS = 0;
     /** Default enemy hit-point pool (matches CharacterType health default). */
     public static final int DEFAULT_MAX_HIT_POINTS = 100;
+
+    /**
+     * 21-arg convenience constructor — full spawn data, no animation spec.
+     * Delegates to the canonical constructor with {@link EnemyAnimationSpec#defaults()}.
+     */
+    public EnemySpawn(
+            String id,
+            String imagePath,
+            float x,
+            float y,
+            float size,
+            float effectiveThreat,
+            int attackDamage,
+            int infectionLevel,
+            String touchSoundPath,
+            BehaviorType behavior,
+            float speed,
+            double nonTangibilityEnergy,
+            int visibilityLevel,
+            ProjectileType projectileType,
+            float splashRadius,
+            float arcHeight,
+            float attackRange,
+            int attackCooldownMs,
+            float projectileSpeed,
+            int resurrectionTimeMs,
+            int maxHitPoints) {
+        this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel,
+                touchSoundPath, behavior, speed, nonTangibilityEnergy, visibilityLevel,
+                projectileType, splashRadius, arcHeight, attackRange, attackCooldownMs,
+                projectileSpeed, resurrectionTimeMs, maxHitPoints, EnemyAnimationSpec.defaults());
+    }
 
     /** 10-arg convenience constructor — no behavior, nonTangibilityEnergy, visibilityLevel, or projectile tuning. */
     public EnemySpawn(

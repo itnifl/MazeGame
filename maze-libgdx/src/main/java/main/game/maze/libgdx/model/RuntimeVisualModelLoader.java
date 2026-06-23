@@ -225,7 +225,8 @@ public final class RuntimeVisualModelLoader {
                             attackCooldownFor(picked),
                             projectileSpeedFor(picked),
                             resurrectionTimeMsFor(picked),
-                            maxHitPointsFor(picked));
+                            maxHitPointsFor(picked),
+                            animationSpecFor(picked, fallbackEnemyImage(type)));
                     break;
                 }
                 if (accepted != null) {
@@ -377,6 +378,16 @@ public final class RuntimeVisualModelLoader {
             return defaultIfBlank(zombie.getTouchSound(), DEFAULT_ZOMBIE_TOUCH_SOUND);
         }
         return EMPTY_TEXT;
+    }
+
+    private static EnemyAnimationSpec animationSpecFor(CharacterType type, String fallbackImage) {
+        String left  = defaultIfBlank(type.getImageTurnLeft(),  fallbackImage);
+        String right = defaultIfBlank(type.getImageTurnRight(), fallbackImage);
+        String up    = defaultIfBlank(type.getImageTurnUp(),    fallbackImage);
+        String down  = defaultIfBlank(type.getImageTurnDown(),  fallbackImage);
+        int frameCount = Math.max(1, type.getAnimationFrameCount());
+        float scale = (float) Math.max(0.01d, type.getSpriteScale());
+        return new EnemyAnimationSpec(left, right, up, down, frameCount, scale);
     }
 
     private static boolean isValidSpawn(
