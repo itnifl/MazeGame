@@ -203,10 +203,12 @@ public class GameController implements Initializable, EnemyRegistrar {
         button.setOnMouseExited(evt   -> { button.setTranslateY(0);   button.setStyle(normalStyle); });
     }
 
-    @FXML
+        @FXML
     private void handleKeyReleased(KeyEvent event) {
         pressedKeys.remove(event.getCode());
+        inputSnapshotReader.clearKey(event.getCode());
     }
+
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {

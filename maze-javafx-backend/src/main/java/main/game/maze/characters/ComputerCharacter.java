@@ -16,8 +16,9 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
-    private int speed;
+    private double speed;
     private final CharacterType characterModel;
+
 
     protected VectorFacing currentCharacterFacing = VectorFacing.IDLE;
     private static final Logger _logger = Logger.getLogger(ComputerCharacter.class.getName());
@@ -28,12 +29,13 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     protected final Image imageUp;
     protected final Image imageDown;
 
-    public ComputerCharacter(Node characterGraphics, 
+        public ComputerCharacter(Node characterGraphics, 
         CharacterType characterType, 
         double positionX, 
         double positionY, 
-        int speed) {
+        double speed) {
         super(characterGraphics, positionX, positionY);
+
         this.speed = speed;
         calculateMaxPositions();
         this.characterModel = characterType;
@@ -69,13 +71,15 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         changeDirection();
     }
 
-    @Override
+        @Override
     public boolean move(boolean force) {
         if(force || !isTouchingVector()) {
             boolean hasMoved = false;
 
-            for(int x = 0; x < speed / StageConstants.SpeedReducer; x++) {
+            double steps = speed / StageConstants.SpeedReducer;
+            for(int x = 0; x < steps; x++) {
                 var slowerSpeed = speed - (x *  StageConstants.SpeedReducer);
+
                 var xDirection = this.getDirectionX();
                 var yDirection = this.getDirectionY();
 

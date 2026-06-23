@@ -130,9 +130,10 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         return s == null ? "" : s;
     }
 
-    private static int mapSpeed(double modelSpeed) {
-        return Math.max(1, (int)Math.round(modelSpeed));
+        private static double mapSpeed(double modelSpeed) {
+        return Math.max(1.0, modelSpeed);
     }
+
 
     // animations
     private class HappyAction implements ICharacterAction { public void doAction(Object g) {} }
