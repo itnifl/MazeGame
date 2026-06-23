@@ -345,7 +345,14 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::flashStatus,
                 statusMessageBus,
                 ENEMY_LABEL_SECONDS,
-                ENEMY_PATH_OVERLAY_SECONDS);
+                ENEMY_PATH_OVERLAY_SECONDS,
+                this::killEnemies);
+    }
+
+    private void killEnemies() {
+        int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
+        flashStatus("Killed " + killed + " enemi" + (killed == 1 ? "y" : "es"));
     }
 
     boolean routeGameplayInput(float dt) {
@@ -386,6 +393,16 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     void advanceEnemies(float dt) {
         GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt);
+        GdxGameCombatAndEnemyFlowSupport.tickDeathAnimations(worldModel.dyingEnemies(), dt);
+        if (maze != null && player != null) {
+            GdxGameCombatAndEnemyFlowSupport.tickResurrections(
+                    worldModel.deadEnemies(),
+                    animatedEnemies,
+                    new main.game.maze.libgdx.movement.GdxWorldView(maze, player),
+                    GdxGameScreenMetrics.JAVA_FX_TICK_RATE,
+                    MAX_ENEMY_TICKS_PER_FRAME,
+                    dt);
+        }
     }
 
     void updateCombat(float dt) {

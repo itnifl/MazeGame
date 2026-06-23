@@ -164,14 +164,21 @@ class EnemySpawnPlannerTest {
     }
 
     @Test
-    void resolveRuntimeBehaviorProducesPatrolWanderMixDeterministically() {
-        Random seeded = new Random(1337L);
-        BehaviorType first = EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.WANDER, seeded);
-        BehaviorType second = EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.WANDER, seeded);
-        assertTrue(first == BehaviorType.WANDER || first == BehaviorType.PATROL);
-        assertTrue(second == BehaviorType.WANDER || second == BehaviorType.PATROL);
-        assertTrue(first != second,
-                "Seeded draw should produce a stable non-degenerate mix for parity checks");
+    void resolveRuntimeBehaviorProducesPatrolWanderMix() {
+        // Run enough calls to verify the behavioral contract: both WANDER and PATROL can appear.
+        // A 50-draw sample avoids asserting a specific sequence from a fixed seed; if the method's
+        // internal Random usage ever changes, the exact pair produced by 2 draws could differ.
+        Random seeded = new Random(42L);
+        boolean sawWander = false;
+        boolean sawPatrol = false;
+        for (int i = 0; i < 50; i++) {
+            BehaviorType bt = EnemySpawnPlanner.resolveRuntimeBehavior(BehaviorType.WANDER, seeded);
+            assertTrue(bt == BehaviorType.WANDER || bt == BehaviorType.PATROL);
+            if (bt == BehaviorType.WANDER) sawWander = true;
+            if (bt == BehaviorType.PATROL) sawPatrol = true;
+        }
+        assertTrue(sawWander, "WANDER must appear in a 50-draw sample");
+        assertTrue(sawPatrol, "PATROL must appear in a 50-draw sample");
     }
 
     @Test

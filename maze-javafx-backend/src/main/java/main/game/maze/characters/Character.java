@@ -89,6 +89,17 @@ public class Character  {
         return this.characterPosition;
     }
 
+    public void teleportTo(double x, double y) {
+        characterPosition = new Point2D(x, y);
+        ICharacterView view = characterView;
+        if (view != null) {
+            view.setPosition(x, y);
+        } else if (characterGraphics != null) {
+            final Node gfx = characterGraphics;
+            UiScheduler.get().runOnUiThread(() -> { gfx.setLayoutX(x); gfx.setLayoutY(y); });
+        }
+    }
+
     public Vector2D getCharacterDirection() {
         return this.characterDirection;
     }

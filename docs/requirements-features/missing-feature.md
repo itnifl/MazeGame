@@ -117,15 +117,15 @@ overall feature is marked Done.
 ### F8. EnemyMaxCount caps enforced at runtime
 
 - **Source**: [difficulty-module.ecore](main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `EnemyMaxCount (type: EnemyTypes, maxCount: EInt)` on each `Difficulty`.
-- **Status**: Partial.
+- **Status**: Done (branch `feature/maxCounts`).
 - **Backend**: both.
 - **What the model says**: each difficulty declares per-type spawn caps.
-- **What the game does today**: caps are defined in `difficulties.xmi` but no
-  runtime check enforces them. `OpponentRuntimeFactory` instantiates everything
-  it finds in the opponents XMI.
-- **Acceptance**: trying to spawn more than `EnemyMaxCount.maxCount` of a
-  given `EnemyTypes` for the current difficulty is rejected, with a clear log
-  message.
+- **What was implemented**:
+  - `EnemySpawnPlanner.clampToCapLimit(EnemyTypes, int, Map)` — shared static helper used by both frontends; returns the requested count clamped to the difficulty cap, or the requested count unchanged when no cap is defined.
+  - JavaFX: `OpponentRuntimeFactory.spawnByTarget(...)` now accepts `caps` and calls `clampToCapLimit` per type, logging an `INFO` message when the cap reduces the count (e.g. `EnemyMaxCount cap applied: type=PUMPKINBOMBER, requested=2, capped to=0`).
+  - libGDX: `RuntimeVisualModelLoader.loadEnemySpawns(...)` iterates `caps.entrySet()` directly as the target counts, so the cap is the loop bound; no over-spawn can occur.
+  - Easy difficulty never spawns PumpkinBombers (`maxCount=0` in `difficultiesBasic.xmi`).
+- **Acceptance**: trying to spawn more than `EnemyMaxCount.maxCount` of a given `EnemyTypes` for the current difficulty is rejected, with a clear log message. ✓
 
 ### F9. validateMaxThreat enforced on the runtime opponent set
 
@@ -334,14 +334,15 @@ overall feature is marked Done.
 ### F24. Zombie resurrection time
 
 - **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.resurrectionTime`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ZombieSpecifics.resurrectionTime`.
-- **Status**: Missing.
+- **Status**: Done (branch `feature/zombieResurrection`).
 - **Backend**: both.
-- **What the model says**: zombies can declare a resurrection delay after
-  death.
-- **What the game does today**: zombies are removed on death and do not
-  return after a configured delay.
-- **Acceptance**: a zombie with `resurrectionTime > 0` reappears after that
-  delay using its configured spawn point and stats.
+- **What the model says**: zombies can declare a resurrection delay after death.
+- **What was implemented**:
+  - `EnemySpawn` record extended with `resurrectionTimeMs` and `maxHitPoints`; `RuntimeVisualModelLoader` reads both from the Ecore model.
+  - libGDX: `DeadEnemy` tracks countdown per killed zombie; `GdxGameCombatAndEnemyFlowSupport.killEnemies()` / `tickResurrections()` manage the lifecycle; `GdxEnemyRuntime` gains HP tracking and a respawn invulnerability window.
+  - JavaFX: `ZombieCharacter.die()` schedules a `PauseTransition`; on expiry `resurrect()` resets HP, teleports to spawn coords, and re-registers with `FxEnemyCoordinator`.
+  - `/kill` terminal command available in both frontends to trigger instant death (with resurrection where configured).
+- **Acceptance**: a zombie with `resurrectionTime > 0` reappears after that delay using its configured spawn point and stats. ✓
 
 ### F25. Ghost visibility level
 
@@ -382,7 +383,7 @@ overall feature is marked Done.
 | Opponents + sprites | F1, F10, F14, F18, F24, F26 |
 | Loot | F2, F21 |
 | Patrol + AI | F3, F4, F5, F6, F22, F23 |
-| Difficulty | F8, F9 |
+| Difficulty | F9 |
 | Walls | F11, F12 |
 | Player | F13 |
 | DSL plumbing | F16, F17, F20 |

@@ -144,6 +144,16 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-90** *(Observability)*: `OpponentRuntimeFactory.spawnByTarget` now shuffles candidates on every slot. Add a DEBUG-level log entry emitting the final spawn list (type, threat, slot count) per session so difficulty balancers can audit the result without attaching a debugger.
 
+### F24 follow-on — Zombie Resurrection (identified during implementation)
+
+- **SR-102** *(Observability)*: When a zombie resurrects (either via `ZombieCharacter.resurrect()` in JavaFX or `GdxGameCombatAndEnemyFlowSupport.tickResurrections()` in libGDX), a structured DEBUG log entry shall be emitted including `zombieId`, `resurrectionTimeMs`, `spawnX`, and `spawnY`. This allows balancers to audit resurrection frequency and position without a debugger.
+
+- **SR-103** *(12-Factor, Config)*: The `RESPAWN_INVULNERABILITY_SECONDS` constant (currently `2f` in `GdxEnemyRuntime`) should be externalized to a config property so QA can adjust the post-respawn grace window without recompilation. The JavaFX equivalent (`PauseTransition` duration is zero; invulnerability is implicit via the dead period) should gain an explicit configurable window as well.
+
+- **SR-104** *(DDD)*: The `/kill` terminal command currently short-circuits directly into `killEnemies()` without going through the game's event model. Introduce a `ZombieDeathEvent` domain event emitted on each kill so subscribers (scoring, analytics, wave managers) can react to death without coupling to the command handler.
+
+- **SR-105** *(Testability)*: `ZombieCharacter.resurrect()` is a private method scheduled via `PauseTransition`. Extracting the resurrection payload into a package-private `ResurrectionHandler` functional interface would allow unit tests to invoke it synchronously without waiting for a JavaFX timer, removing the test-time dependency on `Platform.startup()`.
+
 ### DDD boundary suggestions
 
 - **SR-78** *(DDD)*: `PlayerConfig` and `CompositionResolverImpl` should live in a `config` bounded context with its own aggregate root (`DifficultyConfig`) that owns both the player config and enemy composition for a given difficulty level.

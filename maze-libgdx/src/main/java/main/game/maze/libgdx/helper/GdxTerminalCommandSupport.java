@@ -20,6 +20,7 @@ public final class GdxTerminalCommandSupport {
         SHOW_BEHAVIOUR_TYPE,
         SHOW_MOVEMENT_TYPE,
         SHOW_ENEMY_PATH,
+        KILL_ENEMIES,
         UNKNOWN
     }
 
@@ -50,6 +51,9 @@ public final class GdxTerminalCommandSupport {
         }
         if (command == TerminalCommand.SHOW_ENEMY_PATH) {
             return new Outcome(Action.SHOW_ENEMY_PATH, "Showing enemy paths for 10 seconds", 0f);
+        }
+        if (command == TerminalCommand.KILL_ENEMIES) {
+            return new Outcome(Action.KILL_ENEMIES, "Killing all enemies (resurrection timer active where configured)", 0f);
         }
         return new Outcome(Action.UNKNOWN, "Unknown command. Use /h", 0f);
     }

@@ -10,5 +10,6 @@ public enum TerminalCommand {
     SHOW_BEHAVIOUR_TYPE,
     SHOW_MOVEMENT_TYPE,
     SHOW_ENEMY_PATH,
+    KILL_ENEMIES,
     UNKNOWN
 }
