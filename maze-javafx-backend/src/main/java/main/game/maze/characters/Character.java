@@ -78,20 +78,24 @@ public class Character  {
         }
     }
 
-    protected void setCharacterImage(Image image) {
+        protected void setCharacterImage(Image image) {
         Node node = this.getCharacterGraphics();
-        var i = (ImageView)node;
-        i.setImage(image);
+        if (node instanceof ImageView i) {
+            i.setImage(image);
+        }
     }
+
 
 
     public Point2D getCharacterPosition() {
         return this.characterPosition;
     }
 
-    public void teleportTo(double x, double y) {
-        characterPosition = new Point2D(x, y);
-        ICharacterView view = characterView;
+        public void teleportTo(double x, double y) {
+            characterPosition = new Point2D(x, y);
+            ICharacterView view = characterView;
+
+
         if (view != null) {
             view.setPosition(x, y);
         } else if (characterGraphics != null) {
@@ -104,11 +108,13 @@ public class Character  {
         return this.characterDirection;
     }
 
-    public void setCharacterDirection(double x, double y, int speed) {
+            public void setCharacterDirection(double x, double y, double speed) {
         directionX = x;
         directionY = y;
         updateDirection(speed);
     }
+
+
 
     public double getDirectionX() {
         return directionX;
@@ -138,10 +144,10 @@ public class Character  {
         return false;
     }
 
-    public boolean moveUp(double speed, boolean force) {
+        public boolean moveUp(double speed, boolean force) {
         directionX = 0;
         directionY = -speed;
-        updateDirection((int)speed);
+        updateDirection(speed);
         if(moveCharacterUp(speed, force)) {
             updatePosition();
             return true;
@@ -152,7 +158,7 @@ public class Character  {
     public boolean moveDown(double speed, boolean force) {
         directionX = 0;
         directionY = speed;
-        updateDirection((int)speed);
+        updateDirection(speed);
         if(moveCharacterDown(speed, force)) {
             updatePosition();
             return true;
@@ -163,7 +169,7 @@ public class Character  {
     public boolean moveLeft(double speed, boolean force) {
         directionX = -speed;
         directionY = 0;
-        updateDirection((int)speed);
+        updateDirection(speed);
         if(moveCharacterLeft(speed, force)) {
             updatePosition();
             return true;
@@ -174,7 +180,7 @@ public class Character  {
     public boolean moveRight(double speed, boolean force) {
         directionX = speed;
         directionY = 0;
-        updateDirection((int)speed);
+        updateDirection(speed);
         if(moveCharacterRight(speed, force)) {
             updatePosition();
             return true;
@@ -182,82 +188,96 @@ public class Character  {
         return false;
     }
 
-    protected void updateDirection(int factor) {
+    protected void updateDirection(double factor) {
         characterDirection = new Vector2D(this.characterPosition.getX(), this.characterPosition.getY(), 
         this.characterPosition.getX() + this.directionX, this.characterPosition.getY() + this.directionY).normalize(factor);
     }
+
 
     protected void updatePosition() {
         characterPosition = characterPosition.add(directionX, directionY);
     }
 
-    private boolean moveCharacterRight(double speed, boolean force) {
-        if (characterGraphics == null && characterView == null) return false;
-        double newX = characterPosition.getX() + speed;
-        if (newX < maxX && (force || !isTouchingVector())) {
-            ICharacterView view = characterView;
-            if (view != null) {
-                view.setPosition(newX, characterPosition.getY());
-            } else {
-                final Node gfx = characterGraphics;
-                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
-            }
-            doNotifyMovement();
-            return true;
-        }
-        return false;
-    }
+        private boolean moveCharacterRight(double speed, boolean force) {
+            if (characterGraphics == null && characterView == null) return false;
+            double newX = characterPosition.getX() + speed;
+            if (newX < maxX && (force || !isTouchingVector())) {
 
-    private boolean moveCharacterLeft(double speed, boolean force) {
-        if (characterGraphics == null && characterView == null) return false;
-        double newX = characterPosition.getX() - speed;
-        if (newX >= 0 && (force || !isTouchingVector())) {
-            ICharacterView view = characterView;
-            if (view != null) {
-                view.setPosition(newX, characterPosition.getY());
-            } else {
-                final Node gfx = characterGraphics;
-                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
-            }
-            doNotifyMovement();
-            return true;
-        }
-        return false;
-    }
 
-    private boolean moveCharacterDown(double speed, boolean force) {
-        if (characterGraphics == null && characterView == null) return false;
-        double newY = characterPosition.getY() + speed;
-        if (newY < maxY && (force || !isTouchingVector())) {
-            ICharacterView view = characterView;
-            if (view != null) {
-                view.setPosition(characterPosition.getX(), newY);
-            } else {
-                final Node gfx = characterGraphics;
-                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
-            }
-            doNotifyMovement();
-            return true;
-        }
-        return false;
-    }
 
-    private boolean moveCharacterUp(double speed, boolean force) {
-        if (characterGraphics == null && characterView == null) return false;
-        double newY = characterPosition.getY() - speed;
-        if (newY >= 0 && (force || !isTouchingVector())) {
-            ICharacterView view = characterView;
-            if (view != null) {
-                view.setPosition(characterPosition.getX(), newY);
-            } else {
-                final Node gfx = characterGraphics;
-                UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
+                ICharacterView view = characterView;
+                if (view != null) {
+                    view.setPosition(newX, characterPosition.getY());
+                } else if (characterGraphics != null) {
+                    final Node gfx = characterGraphics;
+                    UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
+                }
+                doNotifyMovement();
+                return true;
             }
-            doNotifyMovement();
-            return true;
+            return false;
         }
-        return false;
-    }
+
+        private boolean moveCharacterLeft(double speed, boolean force) {
+            if (characterGraphics == null && characterView == null) return false;
+            double newX = characterPosition.getX() - speed;
+            if (newX >= 0 && (force || !isTouchingVector())) {
+
+
+
+                ICharacterView view = characterView;
+                if (view != null) {
+                    view.setPosition(newX, characterPosition.getY());
+                } else if (characterGraphics != null) {
+                    final Node gfx = characterGraphics;
+                    UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
+                }
+                doNotifyMovement();
+                return true;
+            }
+            return false;
+        }
+
+        private boolean moveCharacterDown(double speed, boolean force) {
+            if (characterGraphics == null && characterView == null) return false;
+            double newY = characterPosition.getY() + speed;
+            if (newY < maxY && (force || !isTouchingVector())) {
+
+
+
+                ICharacterView view = characterView;
+                if (view != null) {
+                    view.setPosition(characterPosition.getX(), newY);
+                } else if (characterGraphics != null) {
+                    final Node gfx = characterGraphics;
+                    UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
+                }
+                doNotifyMovement();
+                return true;
+            }
+            return false;
+        }
+
+        private boolean moveCharacterUp(double speed, boolean force) {
+            if (characterGraphics == null && characterView == null) return false;
+            double newY = characterPosition.getY() - speed;
+            if (newY >= 0 && (force || !isTouchingVector())) {
+
+
+
+                ICharacterView view = characterView;
+                if (view != null) {
+                    view.setPosition(characterPosition.getX(), newY);
+                } else if (characterGraphics != null) {
+                    final Node gfx = characterGraphics;
+                    UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
+                }
+                doNotifyMovement();
+                return true;
+            }
+            return false;
+        }
+
 
     public void doCharacterAnimation(ICharacterAction animation) {
         animation.doAction(characterGraphics);

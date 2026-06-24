@@ -20,7 +20,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -144,7 +143,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     };
 
     private boolean cameraFollowListenersInstalled;
-    private Rectangle gameBoardClip;
 
     // Extracted coordinators
     private final FxEnemyCoordinator  enemyCoordinator;
@@ -186,10 +184,27 @@ public class GameController implements Initializable, EnemyRegistrar {
         mazeCanvasRenderer = new FxMazeCanvasRenderer(VISUAL_STYLE, this::difficultyName);
         bootstrapper       = new FxGameSessionBootstrapper(VISUAL_STYLE, mazeCanvasRenderer, this);
 
-        javafx.application.Platform.runLater(() -> {
+                javafx.application.Platform.runLater(() -> {
             installBottomButtonPressEffects();
-            if (gameBoard != null) gameBoard.requestFocus();
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+                // Re-assert focus whenever the window state or scene graph changes
+                gameBoard.sceneProperty().addListener((obs, oldS, newS) -> {
+                    if (newS != null) {
+                        newS.focusOwnerProperty().addListener((obsF, oldF, newF) -> {
+                            if (newF != null && newF != gameBoard && !(newF instanceof javafx.scene.control.TextInputControl)) {
+                                gameBoard.requestFocus();
+                            }
+                        });
+                    }
+                });
+                // Prevent Tab key from moving focus away from the game board during play.
+                gameBoard.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, evt -> {
+                    if (evt.getCode() == KeyCode.TAB) evt.consume();
+                });
+            }
         });
+
     }
 
     private void installBottomButtonPressEffects() {
@@ -205,10 +220,12 @@ public class GameController implements Initializable, EnemyRegistrar {
         button.setOnMouseExited(evt   -> { button.setTranslateY(0);   button.setStyle(normalStyle); });
     }
 
-    @FXML
+        @FXML
     private void handleKeyReleased(KeyEvent event) {
         pressedKeys.remove(event.getCode());
+        inputSnapshotReader.clearKey(event.getCode());
     }
+
 
     @FXML
     private void handleKeyPressed(KeyEvent event) {
@@ -318,6 +335,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         mouseY = event.getY();
         leftMouseClicked = true;
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
+        // Reclaim keyboard focus whenever the player clicks the game area so that
+        // key events keep reaching handleKeyPressed after any UI element was clicked.
+        if (gameBoard != null) gameBoard.requestFocus();
     }
 
     @FXML
@@ -329,7 +349,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void setupGame() {
         hpBar.setProgress(1.0);
-        installGameBoardClip();
+        installCameraFollowListeners();
 
         // Remove stale canvases from the previous session
         if (mazeCanvas != null) { gameBoard.getChildren().remove(mazeCanvas); mazeCanvas = null; }
@@ -394,14 +414,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         movementLoopCoordinator.startMovementTimer();
     }
 
-    private void installGameBoardClip() {
+    private void installCameraFollowListeners() {
         if (root == null || gameBoard == null) return;
-        if (gameBoardClip == null) {
-            gameBoardClip = new Rectangle();
-            gameBoard.setClip(gameBoardClip);
-        }
-        if (!gameBoardClip.widthProperty().isBound())  gameBoardClip.widthProperty().bind(root.widthProperty());
-        if (!gameBoardClip.heightProperty().isBound()) gameBoardClip.heightProperty().bind(root.heightProperty());
         if (!cameraFollowListenersInstalled) {
             root.widthProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());
             root.heightProperty().addListener((obs, oldVal, newVal) -> updateCameraFollow());

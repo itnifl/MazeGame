@@ -60,9 +60,10 @@ public class ZombieCharacter extends ComputerCharacter
         }
     }
 
-    private static int mapSpeed(double modelSpeed) {
-        return Math.max(1, (int)Math.round(modelSpeed));
+        private static double mapSpeed(double modelSpeed) {
+        return Math.max(1.0, modelSpeed);
     }
+
 
     private class HappyAction implements ICharacterAction {
         public void doAction(Object characterGraphics) { /* animate */ }

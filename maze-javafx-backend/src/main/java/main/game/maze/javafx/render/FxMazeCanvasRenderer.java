@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import main.game.maze.App;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.generated.WallRegistry;
@@ -28,6 +29,7 @@ public final class FxMazeCanvasRenderer {
     private final MazeVisualStyleConfig visualStyle;
     private final Supplier<String> difficultyNameSupplier;
     private final Map<String, Image> wallImageCache = new HashMap<>();
+    private final Map<String, Image> bgImageCache   = new HashMap<>();
 
     public FxMazeCanvasRenderer(MazeVisualStyleConfig visualStyle, Supplier<String> difficultyNameSupplier) {
         this.visualStyle = visualStyle;
@@ -37,6 +39,8 @@ public final class FxMazeCanvasRenderer {
     public Canvas drawCanvas(List<Vector2D> vectors) {
         Canvas canvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
         GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        drawBackground(gc, canvas.getWidth(), canvas.getHeight());
 
         double wallWidth  = StageConstants.WallThicknessPx;
         double wallLength = StageConstants.WallSegmentLengthPx;
@@ -78,6 +82,24 @@ public final class FxMazeCanvasRenderer {
         }
 
         return canvas;
+    }
+
+    private void drawBackground(GraphicsContext gc, double width, double height) {
+        String path = visualStyle.backgroundImageForDifficultyName(difficultyNameSupplier.get());
+        Image bg = bgImageCache.computeIfAbsent(path, p -> {
+            try {
+                var url = FxMazeCanvasRenderer.class.getResource(p);
+                if (url != null) return new Image(url.toExternalForm());
+                LOGGER.warning("Background image not found: " + p);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Failed to load background image: " + p, e);
+            }
+            return null;
+        });
+        if (bg != null && !bg.isError() && bg.getWidth() > 0 && bg.getHeight() > 0) {
+            gc.setFill(new ImagePattern(bg, 0, 0, bg.getWidth(), bg.getHeight(), false));
+            gc.fillRect(0, 0, width, height);
+        }
     }
 
     private Image getOrLoadImage(WallRegistry.WallDefinition def) {

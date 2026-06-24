@@ -101,4 +101,33 @@ class FxMovementLoopCoordinatorTest {
         FxMovementLoopCoordinator coordinator = coordinatorWith(() -> {}, now -> {});
         assertDoesNotThrow(coordinator::dispose, "dispose before any start must not throw");
     }
+
+    /**
+     * Regression test for Bug-2: if {@code onComputerCharacterStep} throws a non-{@link InterruptedException},
+     * the AI thread must survive and continue firing subsequent callbacks rather than dying silently.
+     * The old code only caught {@link InterruptedException} so any other exception killed the thread.
+     */
+    @Test
+    void computerCharacterThreadSurvivesNonInterruptedExceptionInCallback() throws InterruptedException {
+        AtomicInteger callCount = new AtomicInteger(0);
+        FxMovementLoopCoordinator coordinator = coordinatorWith(
+                () -> {
+                    if (callCount.incrementAndGet() == 1) {
+                        throw new RuntimeException("deliberate test exception on first call");
+                    }
+                },
+                now -> {});
+
+        coordinator.startComputerCharacters();
+        try {
+            // Give the thread enough time for at least 2 calls (100 ms sleep each).
+            Thread.sleep(500);
+        } finally {
+            coordinator.dispose();
+        }
+
+        assertTrue(callCount.get() >= 2,
+                "AI thread must continue calling onComputerCharacterStep after a non-interrupted exception; "
+                + "got only " + callCount.get() + " call(s)");
+    }
 }

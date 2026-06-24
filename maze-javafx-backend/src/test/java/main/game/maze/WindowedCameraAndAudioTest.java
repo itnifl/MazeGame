@@ -15,13 +15,10 @@ import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.javafx.render.FxGameRenderCoordinator;
 
 /**
- * Locks in the JavaFX window/scroll/audio behavior the player relies on:
- *  - Camera follows the player only in fullscreen; in windowed mode the board
- *    stays at (0,0) so the map always fits inside the window.
- *  - When the chosen board is bigger than the player's screen, fullscreen is
- *    auto-enabled.
- *  - Game-over screen starts the GAME_OVER_MUSIC loop (regression: previously
- *    relied on FXML controller init which could be fragile).
+ * Locks in the JavaFX window/scroll/audio behavior the player relies on (F27):
+ *  - Window is set to the board size, capped at screen resolution (never fullscreen).
+ *  - Camera always follows the player whenever the world is larger than the viewport.
+ *  - Game-over screen starts the GAME_OVER_MUSIC loop.
  */
 class WindowedCameraAndAudioTest {
 
@@ -38,106 +35,142 @@ class WindowedCameraAndAudioTest {
         AudioEngine.reset();
     }
 
+    // --- Camera follow: world fits viewport ---
+
     @Test
-    void cameraDoesNotScrollWhenNotFullscreen() {
-        // World larger than viewport, but stage is windowed -> no translation.
+    void cameraStaysAtOriginWhenWorldFitsViewport() {
         double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                800, 600,
-                1600, 1200,
-                1500, 1100,
-                false);
+                1920, 1080, 800, 600, 400, 300);
         assertEquals(0d, t[0], 0.0001);
         assertEquals(0d, t[1], 0.0001);
     }
 
     @Test
-    void cameraScrollsAndClampsWhenFullscreen() {
-        // Player near the far corner: translation clamps so the world's far
-        // edge sits flush with the viewport edge (map never scrolls past).
+    void cameraStaysAtOriginWhenWorldExactlyFitsViewport() {
         double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                800, 600,
-                1600, 1200,
-                1500, 1100,
-                true);
-        assertEquals(800 - 1600, t[0], 0.0001, "x clamps to viewport-world");
-        assertEquals(600 - 1200, t[1], 0.0001, "y clamps to viewport-world");
-
-        // Player near origin: translation clamps to 0 so the world's origin
-        // edge sits flush with the viewport origin.
-        double[] t2 = FxGameRenderCoordinator.computeCameraTranslation(
-                800, 600,
-                1600, 1200,
-                10, 10,
-                true);
-        assertEquals(0d, t2[0], 0.0001);
-        assertEquals(0d, t2[1], 0.0001);
-    }
-
-    @Test
-    void cameraDoesNotScrollWhenWorldFitsViewport() {
-        // Even in fullscreen, if the world fits the viewport, no translation.
-        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                1920, 1080,
-                800, 600,
-                400, 300,
-                true);
+                1920, 1080, 1920, 1080, 960, 540);
         assertEquals(0d, t[0], 0.0001);
         assertEquals(0d, t[1], 0.0001);
     }
 
+    // --- Camera follow: world wider than viewport ---
+
     @Test
-    void needsFullscreenWhenBoardExceedsScreen() {
-        assertTrue(App.needsFullscreenForBoard(2000, 1500, 1920, 1080));
-        assertTrue(App.needsFullscreenForBoard(1000, 1500, 1920, 1080));
-        assertTrue(App.needsFullscreenForBoard(2000, 800, 1920, 1080));
+    void cameraFollowsPlayerWhenWorldIsWider() {
+        // viewport 800×600, world 1600×600, player at (400, 300)
+        // translateX = viewportWidth/2 - playerX = 400 - 400 = 0, clamped to [-800, 0] → 0
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 1600, 600, 400, 300);
+        assertEquals(0d, t[0], 0.0001, "player at centre-left: board origin stays flush with viewport left");
+        assertEquals(0d, t[1], 0.0001);
     }
 
     @Test
-    void doesNotNeedFullscreenWhenBoardFitsScreen() {
-        assertFalse(App.needsFullscreenForBoard(1000, 700, 1920, 1080));
-        assertFalse(App.needsFullscreenForBoard(1920, 1080, 1920, 1080));
+    void cameraFollowsPlayerAndClampsWhenNearRightEdge() {
+        // viewport 800×600, world 1600×600, player at (1500, 300)
+        // translateX = 400 - 1500 = -1100, clamped to [-800, 0] → -800
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 1600, 600, 1500, 300);
+        assertEquals(800 - 1600, t[0], 0.0001, "player near right edge: clamp to far-edge flush");
     }
+
+    @Test
+    void cameraFollowsCentrePlayerHorizontally() {
+        // viewport 800×600, world 2000×600, player at centre (1000, 300)
+        // translateX = 400 - 1000 = -600, clamped to [-1200, 0] → -600
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 2000, 600, 1000, 300);
+        assertEquals(800.0 / 2 - 1000, t[0], 0.0001, "player at centre: translation centres player");
+    }
+
+    // --- Camera follow: world taller than viewport ---
+
+    @Test
+    void cameraFollowsPlayerWhenWorldIsTaller() {
+        // viewport 800×600, world 800×1200, player at (400, 300)
+        // translateY = 300 - 300 = 0, clamped to [-600, 0] → 0
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 800, 1200, 400, 300);
+        assertEquals(0d, t[0], 0.0001);
+        assertEquals(0d, t[1], 0.0001, "player near top: board origin stays flush with viewport top");
+    }
+
+    @Test
+    void cameraFollowsPlayerAndClampsWhenNearBottomEdge() {
+        // viewport 800×600, world 800×1200, player at (400, 1100)
+        // translateY = 300 - 1100 = -800, clamped to [-600, 0] → -600
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 800, 1200, 400, 1100);
+        assertEquals(600 - 1200, t[1], 0.0001, "player near bottom: clamp to far-edge flush");
+    }
+
+    // --- Camera follow: both axes overflow ---
+
+    @Test
+    void cameraFollowsPlayerWhenBothAxesOverflow() {
+        // viewport 800×600, world 1600×1200, player at (800, 600) = exact centre of world
+        // translateX = 400 - 800 = -400, clamped to [-800, 0] → -400
+        // translateY = 300 - 600 = -300, clamped to [-600, 0] → -300
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 1600, 1200, 800, 600);
+        assertEquals(800.0 / 2 - 800, t[0], 0.0001, "x: centres on player");
+        assertEquals(600.0 / 2 - 600, t[1], 0.0001, "y: centres on player");
+    }
+
+    @Test
+    void cameraClampsToBothEdgesWhenPlayerNearFarCorner() {
+        // viewport 800×600, world 1600×1200, player at (1500, 1100)
+        // translateX = 400 - 1500 = -1100, clamped to [-800, 0] → -800
+        // translateY = 300 - 1100 = -800, clamped to [-600, 0] → -600
+        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
+                800, 600, 1600, 1200, 1500, 1100);
+        assertEquals(800 - 1600, t[0], 0.0001);
+        assertEquals(600 - 1200, t[1], 0.0001);
+    }
+
+    // --- Window sizing (F27): board clamped to screen, no fullscreen ---
+
+    @Test
+    void windowClampedToScreenWhenBoardFits() {
+        int[] size = App.clampBoardToScreen(800, 600, 1920, 1080);
+        assertEquals(800, size[0]);
+        assertEquals(600, size[1]);
+    }
+
+    @Test
+    void windowClampedToScreenWhenBoardEqualsScreen() {
+        int[] size = App.clampBoardToScreen(1920, 1080, 1920, 1080);
+        assertEquals(1920, size[0]);
+        assertEquals(1080, size[1]);
+    }
+
+    @Test
+    void windowClampedToScreenWidthWhenBoardWider() {
+        int[] size = App.clampBoardToScreen(2000, 600, 1920, 1080);
+        assertEquals(1920, size[0]);
+        assertEquals(600, size[1]);
+    }
+
+    @Test
+    void windowClampedToScreenHeightWhenBoardTaller() {
+        int[] size = App.clampBoardToScreen(800, 1200, 1920, 1080);
+        assertEquals(800, size[0]);
+        assertEquals(1080, size[1]);
+    }
+
+    @Test
+    void windowClampedToBothDimensionsWhenBoardLarger() {
+        int[] size = App.clampBoardToScreen(2000, 1400, 1920, 1080);
+        assertEquals(1920, size[0]);
+        assertEquals(1080, size[1]);
+    }
+
+    // --- Audio ---
 
     @Test
     void gameOverMusicIsStartedOnGameOver() {
         GameOverAction.startGameOverMusic();
         assertTrue(fakeAudio.playedResources().contains(AudioResourceConstants.GameOverSound),
                 "GameOverAction must start the GAME_OVER_MUSIC loop so the player hears the game-over track");
-    }
-
-    @Test
-    void cameraStaysAtOriginWhenWorldSmallerThanViewport() {
-        // Player at centre of a small world inside a large viewport
-        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                1920, 1080,
-                800, 600,
-                400, 300,
-                false);
-        assertEquals(0d, t[0], 0.0001);
-        assertEquals(0d, t[1], 0.0001);
-    }
-
-    @Test
-    void cameraAnchorsWhenWorldIsWiderInWindowedMode() {
-        // In windowed mode with width overflow only, x is anchored to viewport-world.
-        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                1280, 720,
-                2000, 720,
-                1000, 400,
-                false);
-        assertEquals(1280 - 2000, t[0], 0.0001, "x clamps to viewport-world");
-        assertEquals(720 - 720, t[1], 0.0001, "y clamps to viewport-world");
-    }
-
-    @Test
-    void cameraAnchorsWhenWorldIsTallerInWindowedMode() {
-        // In windowed mode with height overflow only, y is anchored to viewport-world.
-        double[] t = FxGameRenderCoordinator.computeCameraTranslation(
-                1280, 720,
-                1280, 1000,
-                1000, 400,
-                false);
-        assertEquals(0d, t[0], 0.0001);
-        assertEquals(720 - 1000, t[1], 0.0001, "y clamps to viewport-world");
     }
 }

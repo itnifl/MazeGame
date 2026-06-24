@@ -2,6 +2,46 @@
 
 ## Candidate Additions
 
+### BUG-7 / BUG-8 follow-on suggestions
+
+- **SR-124** *(Observability, BUG-7)*: When a ghost transitions from phasing to solid, a DEBUG-level event should be emitted including the ghost's ID, position, and the new stored energy value. This allows QA to verify the solidification tick without attaching a debugger, and makes diagnosing future regressions to the `drainNonTangientEnergy` return value trivial.
+
+- **SR-125** *(DDD, BUG-7)*: The EMF model's `nonTangibilityEnergy` field stores a `double` but the XMI-generated EMF setter silently truncates it to `int`. Consider extracting a `GhostEnergyModel` value object that stores the energy as a `double` internally and exposes `setEnergy(double)` / `getEnergy()` without truncation. This removes the hidden invariant that all callers must currently know about and document.
+
+- **SR-126** *(Observability, BUG-8)*: `GameController.handleKeyPressed` and `handleKeyReleased` should emit FINE-level log entries when `gameBoard` loses focus and when it regains it (via the event filter and `requestFocus` calls). This makes focus transitions visible in logs so future regressions (input stops responding) can be diagnosed without a debugger.
+
+- **SR-127** *(12-Factor, BUG-8)*: The `Platform.runLater` queue flooding fix (moving `updateProjectiles` from the AI thread to `Platform.runLater`) is correct but makes the latency of projectile position updates non-deterministic relative to the game loop. Consider introducing a fixed-rate JavaFX `AnimationTimer` solely for projectile updates, decoupled from the AI thread, so projectile physics are always advanced at frame rate rather than at AI tick rate.
+
+- **SR-128** *(Testing, BUG-8)*: The focus-loss scenario (Tab key stealing focus from `gameBoard`) should be covered by an automated UI integration test using `TestFX` (headless). The test would: load `game.fxml`, start gameplay, fire a `KeyCode.TAB` event at the scene, then fire directional key events and assert they are still received by the game.
+
+### BUG-6 follow-on suggestions
+
+- **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
+
+- **SR-122** *(Observability, BUG-6)*: `FxGameRenderCoordinator.installGameBoardClip()` silently no-ops when `gameBoard` is null. Add a WARN-level log entry listing `gameBoard == null` so developers can detect premature coordinator construction without a debugger.
+
+- **SR-123** *(12-Factor, BUG-6)*: Viewport dimensions are currently read from `Scene.getWidth()/getHeight()` at render time. Add a `MAZE_VIEWPORT_WIDTH` / `MAZE_VIEWPORT_HEIGHT` override environment variable that, if set, bypasses scene introspection — enabling headless integration tests to set a known viewport size without a real JavaFX stage.
+
+### BUG-5 follow-on suggestions
+
+- **SR-118** *(DDD, BUG-5)*: The `gameBoard` Pane background image in `game.fxml` is now redundant for the in-game state (the maze canvas carries its own background). Consider removing the `<background>` element from `game.fxml` and replacing it with a neutral pre-game placeholder (e.g., a dark-colour CSS fill via `fx:stylesheet`) so the pre-game and in-game states both use the correct difficulty-specific image.
+
+- **SR-119** *(Observability, BUG-5)*: `FxMazeCanvasRenderer.drawBackground()` silently skips the fill when the image resource is missing. Add an WARN-level event published to an application-level diagnostic bus (or at minimum a visible in-game notification) so QA can distinguish "background image missing" from "background successfully drawn" without attaching a debugger.
+
+- **SR-120** *(12-Factor, BUG-5)*: The background image path is currently embedded in `MazeVisualStyleConfig` (loaded from XMI or properties). For full 12-Factor compliance (config via environment), add a fallback environment variable `MAZE_BG_EASY`, `MAZE_BG_NORMAL`, `MAZE_BG_HARD` that can override the XMI-configured paths at runtime without recompilation.
+
+### BUG-3 / BUG-4 follow-on suggestions
+
+- **SR-113** *(Observability, BUG-3)*: When the JavaFX camera clip is recalculated each frame, a DEBUG-level log entry should be emitted at a throttled rate (e.g., once per second) including `translateX`, `translateY`, `clipX`, `clipY`, `viewportWidth`, and `viewportHeight`. This allows QA to diagnose future clip/translation divergences without attaching a debugger.
+
+- **SR-114** *(DDD, BUG-3)*: `FxGameRenderCoordinator.computeClipRect` and `computeCameraTranslation` represent a mini viewport domain. Consider extracting a `ViewportScrollState` value object that holds translation + clip-rect together, making the dependency between the two values explicit and preventing future callers from updating one without the other.
+
+- **SR-115** *(12-Factor, BUG-4)*: The libGDX audio engine installation sequence (call `GdxBackend.install()` exactly once at startup in `GdxGame.create()`) shall be enforced by a lifecycle contract test: a headless `GdxGame` stub must confirm that after `create()` the `AudioEngine.get()` instance is not a `NoopAudioEngine`. This guards against future regressions where the install call is moved or removed.
+
+- **SR-116** *(Observability, BUG-4)*: `GdxBackend.install()` shall emit a one-time INFO log entry confirming the engine type and the thread on which it was installed (render thread). This makes it immediately apparent in run logs whether the audio backend was successfully initialised before any screen was shown.
+
+- **SR-117** *(Parity, CRR-5)*: `MenuScreenController` now owns a `GdxGameAudioCoordinator`. If future screens are added (e.g., a settings screen or loading screen), each should follow the same pattern: own an audio coordinator instance and call `switchTo*Music()` in `show()` and `stopAll()` in `dispose()`. A shared `AudioAwareScreen` abstract base class (implementing `Screen`) could enforce this contract at compile time.
+
 ### PR #72: F11 Breakable Walls — follow-on requirements
 
 - **SR-99** *(Parity, CRR-5)*: Breakable wall support shall be available in the libGDX frontend as well as JavaFX. The libGDX `GdxGameScreenController` shall integrate `WallCollisionUtil.findFirstHitWall(...)` and delegate wall damage through a shared entry point equivalent to `GameController.applyProjectileDamageToWall(...)` so that wall destruction and nav-graph rewiring behave identically across frontends.
@@ -150,6 +190,18 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-78** *(DDD)*: `PlayerConfig` and `CompositionResolverImpl` should live in a `config` bounded context with its own aggregate root (`DifficultyConfig`) that owns both the player config and enemy composition for a given difficulty level.
 - **SR-79** *(DDD)*: The `characters` package in `maze-javafx-backend` has mixed concerns (rendering, game logic, audio). Consider splitting it into a `characters.domain` sub-package (state, damage, death) and `characters.view` sub-package (graphics, animations) aligned with DDD entity vs. value-object separation.
+
+### F27 follow-on — Window sizing and camera follow (identified during implementation)
+
+- **SR-108** *(Observability, 12-Factor)*: When the window is clamped to screen resolution (i.e. `boardSize > screenSize`), a DEBUG-level log entry should be emitted including `boardW`, `boardH`, `screenW`, `screenH`, and `clampedW`/`clampedH`. This allows QA to confirm the correct clamp is applied per difficulty without attaching a debugger.
+
+- **SR-109** *(12-Factor, Config)*: The per-axis camera dead-zone (currently implicit — the camera starts following immediately when the player moves away from the viewport centre) should be externalisable as a configuration property (e.g., `camera.deadzone.pixels = 0`). A non-zero dead zone reduces camera jitter on small player movements and is a common game-feel tuning knob.
+
+- **SR-110** *(DDD, CRR-5)*: Window-resize events (e.g., when the OS changes the available screen area mid-session on multi-monitor setups) are not currently handled. Both frontends should re-evaluate the clamped window size on a `Screen.onChanged` / libGDX `resize` callback so the game adapts dynamically to screen resolution changes without requiring a restart.
+
+- **SR-111** *(Parity, CRR-5)*: A shared `WindowSizingPolicy` interface (or record) in `maze-common-frontend` could expose `clampToScreen(boardW, boardH, screenW, screenH)` so both JavaFX (`App.clampBoardToScreen`) and libGDX (`GdxGameLayoutSupport.resizeWindowForDifficulty`) share the same clamping logic, eliminating the risk of the two implementations diverging.
+
+- **SR-112** *(UX)*: When the maze is larger than the screen and camera follow is active, a minimap overlay showing the full maze and the player's current position would significantly improve navigation. The minimap should be rendered at a configurable opacity (default 50 %) in a corner of the viewport.
 
 ## Ratified Requirements
 

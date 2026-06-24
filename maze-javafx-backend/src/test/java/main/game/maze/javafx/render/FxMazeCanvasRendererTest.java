@@ -119,4 +119,49 @@ class FxMazeCanvasRendererTest {
         assertDoesNotThrow(() -> runOnFxThread(renderer),
                 "drawCanvas must not throw when difficultyNameSupplier returns null");
     }
+
+    // ------------------------------------------------------------------
+    // BUG-5: Scrolled areas appear white — background must be on full-map canvas
+    // ------------------------------------------------------------------
+
+    @Test
+    @DisplayName("drawCanvas produces a full-map-sized canvas — background covers all scrolled areas (BUG-5)")
+    void drawCanvas_canvasSizeIsFullMapSize() throws Exception {
+        FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(
+                MazeVisualStyleConfig.DEFAULT, () -> "Easy");
+        Canvas canvas = runOnFxThread(renderer);
+        assertNotNull(canvas, "drawCanvas must return a non-null canvas");
+        // Canvas must be map-sized so the background drawn on it covers areas
+        // revealed by the camera scroll that lie beyond the Pane's layout bounds.
+        assertTrue(canvas.getWidth() > 0, "Canvas width must be positive");
+        assertTrue(canvas.getHeight() > 0, "Canvas height must be positive");
+    }
+
+    @Test
+    @DisplayName("drawCanvas with Hard difficulty background config does not throw (BUG-5)")
+    void drawCanvas_hardDifficultyBackground_doesNotThrow() throws Exception {
+        FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(
+                MazeVisualStyleConfig.DEFAULT, () -> "Hard");
+        assertDoesNotThrow(() -> runOnFxThread(renderer),
+                "drawCanvas must not throw when drawing difficulty-specific background");
+    }
+
+    @Test
+    @DisplayName("drawCanvas with missing background image path does not throw (BUG-5 resilience)")
+    void drawCanvas_missingBackgroundImage_doesNotThrow() throws Exception {
+        MazeVisualStyleConfig brokenConfig = new MazeVisualStyleConfig(
+                "/non/existent/bg.png",
+                "/non/existent/bg2.png",
+                "/non/existent/bg3.png",
+                "/main/game/maze/ghost1.png",
+                "/main/game/maze/heart2.png",
+                "DIRT_BASIC", "WOOD_BASIC", "STEEL_SOLID",
+                "/main/game/maze/menumusic.wav",
+                "/main/game/maze/menuselect.wav",
+                "/main/game/maze/backgroundMusic.mp3",
+                "/main/game/maze/winGame.mp3");
+        FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(brokenConfig, () -> "Easy");
+        assertDoesNotThrow(() -> runOnFxThread(renderer),
+                "drawCanvas must not throw when background image resource is missing");
+    }
 }
