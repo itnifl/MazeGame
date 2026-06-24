@@ -184,16 +184,27 @@ public class GameController implements Initializable, EnemyRegistrar {
         mazeCanvasRenderer = new FxMazeCanvasRenderer(VISUAL_STYLE, this::difficultyName);
         bootstrapper       = new FxGameSessionBootstrapper(VISUAL_STYLE, mazeCanvasRenderer, this);
 
-        javafx.application.Platform.runLater(() -> {
+                javafx.application.Platform.runLater(() -> {
             installBottomButtonPressEffects();
             if (gameBoard != null) {
                 gameBoard.requestFocus();
+                // Re-assert focus whenever the window state or scene graph changes
+                gameBoard.sceneProperty().addListener((obs, oldS, newS) -> {
+                    if (newS != null) {
+                        newS.focusOwnerProperty().addListener((obsF, oldF, newF) -> {
+                            if (newF != null && newF != gameBoard && !(newF instanceof javafx.scene.control.TextInputControl)) {
+                                gameBoard.requestFocus();
+                            }
+                        });
+                    }
+                });
                 // Prevent Tab key from moving focus away from the game board during play.
                 gameBoard.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, evt -> {
                     if (evt.getCode() == KeyCode.TAB) evt.consume();
                 });
             }
         });
+
     }
 
     private void installBottomButtonPressEffects() {

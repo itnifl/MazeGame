@@ -166,6 +166,35 @@
     <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
   </characterTypes>
 
+  <!-- Elite late-game bomber: BEAM type, highest threat — Phase 2 release (Section 9) -->
+  <characterTypes xsi:type="opponents:PumpkinBomber">
+    <id>pb_elite_beam</id>
+    <displayName>Pumpkin Bomber Elite</displayName>
+    <enabled>false</enabled>
+    <health>160</health>
+    <speed>1.5</speed>
+    <threatLevel>12.0</threatLevel>
+    <behavior>AGGRESSIVE</behavior>
+
+    <attackDamage>18</attackDamage>
+    <attackRange>400</attackRange>
+    <attackCooldownMs>5000</attackCooldownMs>
+    <projectileSpeed>1.0</projectileSpeed>
+    <projectileType>BEAM</projectileType>
+    <splashRadius>0</splashRadius>
+    <arcHeight>0.0</arcHeight>
+
+    <projectileImage>/main/game/maze/projectiles/pumpkinbomber/pumpkin_beam_core_segment.png</projectileImage>
+    <explosionImage>/main/game/maze/pumpkin-explode.png</explosionImage>
+    <explosionSound>/main/game/maze/error.wav</explosionSound>
+
+    <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+  </characterTypes>
+
   <!-- Disabled zero-threat entry kept to exercise threat-floor logic in RuntimeVisualModelLoader (DO NOT DELETE) -->
   <characterTypes xsi:type="opponents:PumpkinBomber">
     <id>pb_threat_floor_fixture</id>

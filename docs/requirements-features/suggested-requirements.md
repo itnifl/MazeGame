@@ -182,6 +182,10 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-105** *(Testability)*: `ZombieCharacter.resurrect()` is a private method scheduled via `PauseTransition`. Extracting the resurrection payload into a package-private `ResurrectionHandler` functional interface would allow unit tests to invoke it synchronously without waiting for a JavaFX timer, removing the test-time dependency on `Platform.startup()`.
 
+### Ranged projectile speed (F26) — 12-Factor / Config suggestions
+
+- **SR-112** *(12-Factor, Config)*: The `opponentModel.xmi` projectile speed values (220.0 LOB / 280.0 STRAIGHT) should be exposed through the difficulty UI or a developer overlay so level designers can tune them without needing to edit the XMI by hand. This aligns with the 12-Factor App externalised-config principle.
+
 ### DDD boundary suggestions
 
 - **SR-78** *(DDD)*: `PlayerConfig` and `CompositionResolverImpl` should live in a `config` bounded context with its own aggregate root (`DifficultyConfig`) that owns both the player config and enemy composition for a given difficulty level.
@@ -220,3 +224,19 @@ These requirements have been implemented and verified.
 - **SR-76:** The scoring constants (`ScoreDeathPenalty`, `ScoreSubtractFactor`, `ScoreWinBonus`, base scores) shall be surfaced in a difficulty/rules summary screen or tooltip so new players can understand the scoring model before starting a run.
 
 - **SR-77:** A dedicated `ScoringRulesService` (or equivalent interface in `maze-common-backend`) shall expose the active penalty constants (death penalty, damage multiplier factor, win bonus) as readable properties so frontends and future UI components can display them without hard-coding `StageConstants` references. This follows the 12-Factor App principle of externalizing configuration and the DDD ubiquitous-language principle of naming domain concepts explicitly.
+
+### Ranged projectile speed (F26)
+
+- **SR-78:** The projectile speed physics contract (`distance = speed × time`) shall be validated via integration-style unit tests for every projectile type variant (STRAIGHT, LOB, BEAM) in both frontends to guard against accidental reintroduction of hardcoded flight durations.
+
+- **SR-79:** `EnemySpawn.projectileSpeed()` shall enforce a minimum floor (e.g. 1 px/s) at the record level to prevent divide-by-zero and infinite flight duration without requiring defensive guards scattered across `GdxEnemyRuntime` and `PumpkinBomberCharacter`.
+
+### F10/F20 Projectile telemetry — follow-on suggestions (PR #77)
+
+- **SR-108** *(12-Factor, Config III)*: Enemy projectile log verbosity (currently `Logger.FINE`) shall be configurable via environment variable `MAZE_LOG_LEVEL` so QA can enable detailed projectile trace logs without recompiling. The `java.util.logging.Logger` hierarchy already supports this via `LogManager`; expose it via installer docs.
+
+- **SR-109** *(Observability)*: `GdxEnemyRuntime.projectileStats()` returns a lightweight `H:N S:N` string. For production observability, consider publishing per-enemy stats as a named metric (e.g., `pumpkinbomber.hits` / `pumpkinbomber.shots`) via a `ProjectileTelemetrySink` interface. This decouples counter accumulation from string formatting and allows future exporters (Micrometer, OpenTelemetry) to consume the data without touching game logic.
+
+- **SR-110** *(DDD)*: `lifetimeHits` and `lifetimeShots` are raw counters embedded in `GdxEnemyRuntime`. Introducing a `ProjectileStats` value object (immutable, `hits + shots + accuracy()`) would make the telemetry a first-class domain concept and allow transfer across the enemy lifecycle (respawn, serialization) without coupling to the mutable runtime state.
+
+- **SR-111** *(Parity, CRR-5)*: `PumpkinBomberCharacter` (JavaFX) logs projectile events at `FINE` level but does not expose a `projectileStats()` accessor. For parity with libGDX, add a `ProjectileStats` record (hits/shots) to `PumpkinBomberCharacter` and expose it via `getProjectileStats()` so unit tests and HUD overlays can read it without parsing log output.
