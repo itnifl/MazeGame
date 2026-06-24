@@ -464,13 +464,18 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void detonatePlayerBomb(float x, float y) {
+        float playerCx = player.x() + player.halfSize();
+        float playerCy = player.y() + player.halfSize();
         int appliedDamage = GdxGameCombatAndEnemyFlowSupport.applyDirectionalFlameExplosion(
                 animatedEnemies,
                 maze,
                 x,
                 y,
                 playerBombDamage,
-                PLAYER_FLAME_RANGE);
+                PLAYER_FLAME_RANGE,
+                playerCx,
+                playerCy,
+                dmg -> combatState.applyDirectDamage(dmg));
 
         activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x + PLAYER_FLAME_RANGE, y, PLAYER_FLAME_VISUAL_SECONDS));
         activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x - PLAYER_FLAME_RANGE, y, PLAYER_FLAME_VISUAL_SECONDS));

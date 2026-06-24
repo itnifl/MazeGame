@@ -269,65 +269,29 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
 
         List<Vector2D> walls = maze != null ? maze.getMazeVectors() : List.of();
+
+        double playerCx = playerCharacter != null
+                ? playerCharacter.getCharacterPosition().getX() + StageConstants.PlayerCharacterXYSize * 0.5d
+                : Double.NaN;
+        double playerCy = playerCharacter != null
+                ? playerCharacter.getCharacterPosition().getY() + StageConstants.PlayerCharacterXYSize * 0.5d
+                : Double.NaN;
+
         int enemyDamage = enemyCoordinator.applyPlayerFlameExplosion(
                 bomb.x(),
                 bomb.y(),
                 (int) Math.max(1, PLAYER_FLAME_DAMAGE_PER_DIRECTION),
                 PLAYER_BOMB_RANGE,
-                walls);
-        applyPlayerFlameToWalls(bomb.x(), bomb.y(), (int) Math.max(1, PLAYER_FLAME_DAMAGE_PER_DIRECTION), PLAYER_BOMB_RANGE);
+                walls,
+                playerCx,
+                playerCy,
+                dmg -> { if (playerCharacter != null) playerCharacter.subtractHitPoints(dmg); });
         showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE);
 
         if (enemyDamage > 0) {
             setHudMessage("Bomb exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));
         } else {
             setHudMessage("Bomb exploded", Duration.seconds(1.0));
-        }
-    }
-
-    private void applyPlayerFlameToWalls(double originX, double originY, int damagePerDirection, double maxRange) {
-        if (maze == null || damagePerDirection <= 0 || maxRange <= 0d) {
-            return;
-        }
-        applyFlameToWallDirection(originX, originY, 1, 0, damagePerDirection, maxRange);
-        applyFlameToWallDirection(originX, originY, -1, 0, damagePerDirection, maxRange);
-        applyFlameToWallDirection(originX, originY, 0, 1, damagePerDirection, maxRange);
-        applyFlameToWallDirection(originX, originY, 0, -1, damagePerDirection, maxRange);
-    }
-
-    private void applyFlameToWallDirection(double originX,
-                                           double originY,
-                                           int dirX,
-                                           int dirY,
-                                           int damageBudget,
-                                           double maxRange) {
-        int remaining = damageBudget;
-        double step = 6.0;
-        Vector2D lastHit = null;
-        for (double distance = step; distance <= maxRange && remaining > 0; distance += step) {
-            double sampleX = originX + dirX * distance;
-            double sampleY = originY + dirY * distance;
-            Vector2D hitWall = WallCollisionUtil.findFirstHitWall(sampleX, sampleY, 10.0, maze.getMazeVectors());
-            if (hitWall == null || hitWall == lastHit) {
-                continue;
-            }
-            lastHit = hitWall;
-
-            BreakableWall breakableWall = maze.findBreakableWall(hitWall);
-            if (breakableWall == null) {
-                break;
-            }
-
-            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
-            if (toApply <= 0) {
-                break;
-            }
-            boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
-            remaining -= toApply;
-            if (!destroyed) {
-                break;
-            }
-            lastHit = null;
         }
     }
 

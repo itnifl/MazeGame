@@ -173,10 +173,14 @@ public class GameMazeWorld {
      * @param materials non-empty list of breakable material specs to pick from
      */
     public void assignBreakableWalls(long seed, List<WallMaterialSpec> materials) {
-        if (materials == null || materials.isEmpty()) {
-            throw new IllegalArgumentException("materials must not be null or empty");
+        if (materials == null) {
+            throw new IllegalArgumentException("materials must not be null");
         }
         breakableWalls.clear();
+        if (materials.isEmpty()) {
+            // Empty list means no breakable walls; all walls remain solid.
+            return;
+        }
         Random rng = new Random(seed);
         int matCount = materials.size();
         for (Vector2D wall : mazeVectors) {

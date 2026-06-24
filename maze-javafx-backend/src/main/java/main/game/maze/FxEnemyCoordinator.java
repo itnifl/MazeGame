@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,7 +85,8 @@ public final class FxEnemyCoordinator {
     /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
     private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
     private static final double   PLAYER_FLAME_SCAN_STEP   = 6.0d;
-    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 0.375d;
+    /** Half-width of the flame corridor. One full cell wide so the blast fills a corridor. */
+    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize;
 
     /** Evaluated lazily so the coordinator can be created before FXML fields are set. */
     private final Supplier<Pane>        gameBoardSupplier;
@@ -261,22 +263,53 @@ public final class FxEnemyCoordinator {
         return appliedDamage;
     }
 
+    /**
+     * Backward-compatible overload without player damage (used by legacy callers).
+     */
     public int applyPlayerFlameExplosion(double originX,
                                          double originY,
                                          int damagePerDirection,
                                          double maxRange,
                                          List<Vector2D> walls) {
+        return applyPlayerFlameExplosion(originX, originY, damagePerDirection, maxRange, walls,
+                Double.NaN, Double.NaN, null);
+    }
+
+    /**
+     * Fires four cardinal flame corridors from {@code (originX, originY)}.
+     *
+     * <p>Each direction shares a {@code damagePerDirection} budget. Enemies and walls consume
+     * the budget and stop the flame when they survive. The player (if provided) is a
+     * pass-through target: they receive the remaining budget at their position but neither
+     * consume nor block the flame.</p>
+     *
+     * @param playerCenterX  player centre X, or {@code Double.NaN} to skip
+     * @param playerCenterY  player centre Y, or {@code Double.NaN} to skip
+     * @param playerCallback receives the damage dealt to the player; may be {@code null}
+     */
+    public int applyPlayerFlameExplosion(double originX,
+                                         double originY,
+                                         int damagePerDirection,
+                                         double maxRange,
+                                         List<Vector2D> walls,
+                                         double playerCenterX,
+                                         double playerCenterY,
+                                         IntConsumer playerCallback) {
         int safeDamage = Math.max(0, damagePerDirection);
         double safeRange = Math.max(0d, maxRange);
-        if (safeDamage <= 0 || safeRange <= 0d || allComputerCharacters.isEmpty()) {
+        if (safeDamage <= 0 || safeRange <= 0d) {
             return 0;
         }
 
         int totalApplied = 0;
-        totalApplied += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls);
-        totalApplied += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls);
-        totalApplied += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls);
-        totalApplied += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls);
+        totalApplied += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
         return totalApplied;
     }
 
@@ -286,7 +319,10 @@ public final class FxEnemyCoordinator {
                                       int dirY,
                                       int damageBudget,
                                       double maxRange,
-                                      List<Vector2D> walls) {
+                                      List<Vector2D> walls,
+                                      double playerCenterX,
+                                      double playerCenterY,
+                                      IntConsumer playerCallback) {
         GameMazeWorld maze = mazeSupplier.get();
         List<DirectionalTarget> targets = new ArrayList<>();
         for (var character : allComputerCharacters) {
@@ -307,7 +343,14 @@ public final class FxEnemyCoordinator {
             if (distance == null) {
                 continue;
             }
-            targets.add(new DirectionalTarget(canDie, distance, centerX, centerY));
+            targets.add(new DirectionalTarget(canDie, null, distance, centerX, centerY, false));
+        }
+        // Add player as pass-through target if provided
+        if (playerCallback != null && !Double.isNaN(playerCenterX) && !Double.isNaN(playerCenterY)) {
+            Double pd = projectedDistanceOnRay(originX, originY, playerCenterX, playerCenterY, dirX, dirY, maxRange);
+            if (pd != null) {
+                targets.add(new DirectionalTarget(null, playerCallback, pd, playerCenterX, playerCenterY, true));
+            }
         }
 
         targets.sort(Comparator.comparingDouble(DirectionalTarget::distance));
@@ -336,13 +379,23 @@ public final class FxEnemyCoordinator {
                                 if (!destroyed) {
                                     return applied;
                                 }
+                                searchStart = nextWall.distance();
+                                break; // re-evaluate wall list
                             }
                         }
                     }
-                    return applied;
+                    return applied; // indestructible wall
                 }
                 if (currentTarget.distance() >= wallDistance) {
                     break;
+                }
+                if (currentTarget.isPlayer()) {
+                    // Pass-through: player takes remaining damage but does not block
+                    if (currentTarget.playerCallback() != null && remaining > 0) {
+                        currentTarget.playerCallback().accept(remaining);
+                    }
+                    targetIndex++;
+                    continue;
                 }
                 int hp = Math.max(0, currentTarget.target().getHitPoints());
                 if (hp > 0) {
@@ -350,6 +403,9 @@ public final class FxEnemyCoordinator {
                     currentTarget.target().subtractHitPoints(toApply);
                     remaining -= toApply;
                     applied += toApply;
+                    if (hp > toApply) {
+                        return applied; // enemy survived
+                    }
                 }
                 targetIndex++;
                 if (remaining <= 0) {
@@ -380,12 +436,23 @@ public final class FxEnemyCoordinator {
         }
 
         while (remaining > 0 && targetIndex < targets.size()) {
-            int hp = Math.max(0, targets.get(targetIndex).target().getHitPoints());
+            DirectionalTarget current = targets.get(targetIndex);
+            if (current.isPlayer()) {
+                if (current.playerCallback() != null) {
+                    current.playerCallback().accept(remaining);
+                }
+                targetIndex++;
+                continue;
+            }
+            int hp = Math.max(0, current.target().getHitPoints());
             if (hp > 0) {
                 int toApply = Math.min(hp, remaining);
-                targets.get(targetIndex).target().subtractHitPoints(toApply);
+                current.target().subtractHitPoints(toApply);
                 remaining -= toApply;
                 applied += toApply;
+                if (hp > toApply) {
+                    return applied;
+                }
             }
             targetIndex++;
         }
@@ -483,7 +550,12 @@ public final class FxEnemyCoordinator {
         return nearest;
     }
 
-    private record DirectionalTarget(main.game.maze.characters.interfaces.ICanDie target, double distance, double centerX, double centerY) {
+    private record DirectionalTarget(main.game.maze.characters.interfaces.ICanDie target,
+                                     IntConsumer playerCallback,
+                                     double distance,
+                                     double centerX,
+                                     double centerY,
+                                     boolean isPlayer) {
     }
 
     private record WallHit(Vector2D wall, double distance) {

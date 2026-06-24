@@ -322,4 +322,56 @@ class FxEnemyCoordinatorTest {
         assertEquals(Math.max(0, frontBefore - applied), frontZombie.getHitPoints(), "Front enemy should absorb the directional damage budget");
         assertEquals(rearBefore, rearZombie.getHitPoints(), "Rear enemy must stay untouched after the wall stops the flame");
     }
+
+    @Test
+    void applyPlayerFlameExplosion_damagesPlayerInCorridor() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        java.util.concurrent.atomic.AtomicInteger playerDamage =
+                new java.util.concurrent.atomic.AtomicInteger(0);
+
+        // Player directly east of origin — no enemies, full 100 budget reaches player
+        int applied = c.applyPlayerFlameExplosion(
+                20, 60,          // origin
+                100, 400,        // damage / range
+                List.of(),       // no walls
+                120, 60,         // player center (east of origin, same Y)
+                playerDamage::addAndGet);
+
+        assertTrue(playerDamage.get() > 0,
+                "Player in the flame corridor must receive damage from the explosion");
+        assertEquals(100, playerDamage.get(),
+                "Player receives the full remaining budget in the matching corridor direction");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_playerDoesNotBlockFlameForEnemyBeyond() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(100);
+        model.setSpeed(2.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        // Enemy east of player (player at 120, enemy at 200)
+        ZombieCharacter zombie = new ZombieCharacter(new Rectangle(16, 16), 200, 52, model);
+        addComputerCharacter(c, zombie);
+
+        java.util.concurrent.atomic.AtomicInteger playerDamage =
+                new java.util.concurrent.atomic.AtomicInteger(0);
+
+        c.applyPlayerFlameExplosion(
+                20, 60,          // origin
+                100, 400,        // damage / range
+                List.of(),       // no walls
+                120, 60,         // player center (between origin and enemy)
+                playerDamage::addAndGet);
+
+        assertTrue(playerDamage.get() > 0,
+                "Player in the corridor must take damage");
+        assertTrue(zombie.getHitPoints() < 100,
+                "Enemy beyond the player must also take damage since player is pass-through");
+    }
 }
+
