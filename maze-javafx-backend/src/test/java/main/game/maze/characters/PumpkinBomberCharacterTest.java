@@ -472,6 +472,75 @@ class PumpkinBomberCharacterTest {
                 "LOB must not apply splash immediately due to initial overlap; splash is applied at arrival or expiry");
     }
 
+    // --- F26: projectile speed drives physics --------------------------------
+
+    @Test
+    void lobProjectile_arrivesAfterDistanceDividedBySpeed_seconds() throws Exception {
+        // Speed = 200.0, target at x=200: distance = 200 px → duration = 200/200 = 1.0 s.
+        // One updateProjectiles(1.0) call advances the projectile to u = 1.0 (arrived)
+        // and removes it from the internal list. (F26)
+        PumpkinBomber model = OpponentsFactory.eINSTANCE.createPumpkinBomber();
+        model.setHealth(10);
+        model.setSpeed(2.0);
+        model.setAttackDamage(4);
+        model.setThreatLevel(50.0);
+        model.setAttackRange(400.0);
+        model.setProjectileSpeed(200.0);
+        model.setProjectileType(ProjectileType.LOB);
+        model.setSplashRadius(0.0);
+
+        Rectangle gfx = new Rectangle(1, 1);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
+
+        Rectangle target = new Rectangle(1, 1);
+        target.setLayoutX(200); // distance = 200 px
+        target.setLayoutY(0);
+        pbc.tryShootAt(target, Long.MAX_VALUE); // nowMs >> cooldown → fires immediately
+
+        Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
+        field.setAccessible(true);
+        List<?> projectiles = (List<?>) field.get(pbc);
+        assertEquals(1, projectiles.size(), "One LOB projectile must be in flight after firing");
+
+        // Advance exactly distance/speed = 200/200 = 1.0 second → projectile arrives and is removed
+        pbc.updateProjectiles(1.0);
+
+        assertTrue(projectiles.isEmpty(),
+                "LOB projectile must be removed after exactly distance/speed seconds of flight (F26)");
+    }
+
+    @Test
+    void lobProjectile_stillInFlightBeforeDistanceDividedBySpeed_seconds() throws Exception {
+        // Complementary to the arrival test: with speed=100 and distance=200, duration=2s.
+        // After only 1 second, the projectile must still be active.
+        PumpkinBomber model = OpponentsFactory.eINSTANCE.createPumpkinBomber();
+        model.setHealth(10);
+        model.setSpeed(2.0);
+        model.setAttackDamage(4);
+        model.setThreatLevel(50.0);
+        model.setAttackRange(400.0);
+        model.setProjectileSpeed(100.0); // half the speed → double the flight time
+        model.setProjectileType(ProjectileType.LOB);
+        model.setSplashRadius(0.0);
+
+        Rectangle gfx = new Rectangle(1, 1);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
+
+        Rectangle target = new Rectangle(1, 1);
+        target.setLayoutX(200); // distance = 200 → duration = 200/100 = 2.0 s
+        pbc.tryShootAt(target, Long.MAX_VALUE);
+
+        Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
+        field.setAccessible(true);
+        List<?> projectiles = (List<?>) field.get(pbc);
+
+        // After 1 second (half the flight time), projectile must still be in flight
+        pbc.updateProjectiles(1.0);
+
+        assertFalse(projectiles.isEmpty(),
+                "LOB projectile must still be in flight after 1 s when total duration is 2 s (F26)");
+    }
+
     // --- Edge case: STRAIGHT blocked by wall must not damage player ----------
 
     @Test
