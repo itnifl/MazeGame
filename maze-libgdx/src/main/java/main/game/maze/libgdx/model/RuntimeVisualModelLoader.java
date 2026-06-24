@@ -204,9 +204,10 @@ public final class RuntimeVisualModelLoader {
                     float effectiveThreat = instantDeath
                             ? (float) (CollisionDamage.INSTANT_KILL_THREAT_THRESHOLD + 1d)
                             : threat;
+                    String baseImage = defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type));
                     accepted = new EnemySpawn(
                             defaultIfBlank(picked.getId(), type.name().toLowerCase(Locale.ROOT) + GENERATED_ENEMY_ID_SEPARATOR + i),
-                            defaultIfBlank(picked.getImageBase(), fallbackEnemyImage(type)),
+                            baseImage,
                             x,
                             y,
                             size,
@@ -226,7 +227,7 @@ public final class RuntimeVisualModelLoader {
                             projectileSpeedFor(picked),
                             resurrectionTimeMsFor(picked),
                             maxHitPointsFor(picked),
-                            animationSpecFor(picked, fallbackEnemyImage(type)));
+                            animationSpecFor(picked, baseImage));
                     break;
                 }
                 if (accepted != null) {

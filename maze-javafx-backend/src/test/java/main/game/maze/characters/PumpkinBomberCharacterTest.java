@@ -201,7 +201,7 @@ class PumpkinBomberCharacterTest {
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
 
         Rectangle target = new Rectangle(16, 16); // also at layoutX/Y = 0 → dist < 1e-3
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
 
         // No projectile should have been added; updateProjectiles on empty list must not crash.
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016),
@@ -216,7 +216,7 @@ class PumpkinBomberCharacterTest {
         Rectangle target = new Rectangle(16, 16);
         target.setLayoutX(10.0); // dist = 10 → within range 300 → createArc returns non-null
 
-        pbc.tryShootAt(target, Long.MAX_VALUE); // fires; projectile added
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE); // fires; projectile added
 
         // Advance time well past the 5-second life limit so the projectile is removed.
         assertDoesNotThrow(() -> pbc.updateProjectiles(6.0),
@@ -241,7 +241,7 @@ class PumpkinBomberCharacterTest {
             PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 100, 100, basicPumpkin());
             Rectangle target = new Rectangle(16, 16);
             target.setLayoutX(110.0);
-            pbc.tryShootAt(target, Long.MAX_VALUE);
+            pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
             assertDoesNotThrow(() -> pbc.updateProjectiles(6.0),
                     "updateProjectiles must not throw when gameController and mazeWorld are set");
         } finally {
@@ -272,7 +272,7 @@ class PumpkinBomberCharacterTest {
         };
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
 
         assertEquals(hpBefore - 6, player.getHitPoints(),
                 "BEAM should damage the subscribed target represented by the provided Node");
@@ -300,7 +300,7 @@ class PumpkinBomberCharacterTest {
         };
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
 
         assertEquals(hpBefore, player.getHitPoints(),
                 "BEAM must not damage player when line of sight is blocked");
@@ -335,7 +335,7 @@ class PumpkinBomberCharacterTest {
         };
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
         pbc.updateProjectiles(10.0);
 
         assertTrue(player.getHitPoints() < hpBefore,
@@ -376,7 +376,7 @@ class PumpkinBomberCharacterTest {
         target.setLayoutX(80);
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
         pbc.updateProjectiles(10.0);
 
         assertEquals(hpBefore, player.getHitPoints(),
@@ -404,11 +404,11 @@ class PumpkinBomberCharacterTest {
         };
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, 1000L);                  // first shot fires at t=1000ms
-        pbc.tryShootAt(playerGfx, 1500L);                  // within cooldown — must not fire
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 1000L);                  // first shot fires at t=1000ms
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 1500L);                  // within cooldown — must not fire
         assertEquals(hpBefore - 5, player.getHitPoints(), "Second shot within cooldown must not fire");
 
-        pbc.tryShootAt(playerGfx, 2001L);                  // past cooldown — must fire again
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 2001L);                  // past cooldown — must fire again
         assertEquals(hpBefore - 10, player.getHitPoints(), "Third shot after cooldown must fire");
     }
 
@@ -425,22 +425,22 @@ class PumpkinBomberCharacterTest {
         Rectangle target = new Rectangle(16, 16);
         target.setLayoutX(200);   // 200 > range 50
 
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
 
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016),
                 "updateProjectiles with empty list from out-of-range shot must not throw");
     }
 
-    // Ensure BEAM does not fire when target is null.
+    // Ensure BEAM does not fire when target is at dummy coordinates.
     @Test
-    void tryShootAt_withNullTarget_doesNotThrow() {
+    void tryShootAt_withDummyCoordinates_doesNotThrow() {
         PumpkinBomber model = basicPumpkin();
         model.setProjectileType(ProjectileType.BEAM);
         Rectangle gfx = new Rectangle(16, 16);
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
 
-        assertDoesNotThrow(() -> pbc.tryShootAt(null, Long.MAX_VALUE),
-                "tryShootAt(null) must not throw");
+        assertDoesNotThrow(() -> pbc.tryShootAt(0.0, 0.0, Long.MAX_VALUE),
+                "tryShootAt must not throw");
     }
 
     @Test
@@ -465,7 +465,7 @@ class PumpkinBomberCharacterTest {
         target.setLayoutY(0);
 
         int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
         pbc.updateProjectiles(0.01);
 
         assertEquals(hpBefore, player.getHitPoints(),

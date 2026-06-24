@@ -143,17 +143,22 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
     // ranged attack API (uses arcHeight instead of gravity)
 
-    public void tryShootAt(Node target, long nowMs) {
-        if (target == null || getCharacterGraphics() == null) {
+    /**
+     * Attempts to fire at the given target position.
+     * Accepts logical coordinates (not node layout positions) so this can be
+     * called safely from the background movement thread without stale node reads.
+     */
+    public void tryShootAt(double targetX, double targetY, long nowMs) {
+        if (getCharacterGraphics() == null) {
             return;
         }
         int cooldown = defaultIfNull(model.getAttackCooldownMs(), 1000);
         if (nowMs - lastShotMs < cooldown) return;
 
-        double sx = getCharacterGraphics().getLayoutX();
-        double sy = getCharacterGraphics().getLayoutY();
-        double tx = target.getLayoutX();
-        double ty = target.getLayoutY();
+        double sx = getCharacterPosition().getX();
+        double sy = getCharacterPosition().getY();
+        double tx = targetX;
+        double ty = targetY;
 
         double dx = tx - sx, dy = ty - sy;
 
@@ -167,7 +172,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         if (projectileType == ProjectileType.BEAM) {
             boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
             if (!blocked) {
-                ICanDie victim = resolveVictimForTargetNode(target);
+                ICanDie victim = resolveVictimNearPosition(tx, ty);
                 if (victim != null) {
                     victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
                 }
@@ -213,18 +218,19 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         Iterator<PumpkinProjectile> it = projectiles.iterator();
         while (it.hasNext()) {
             PumpkinProjectile p = it.next();
-            double prevX = p.node.getLayoutX();
-            double prevY = p.node.getLayoutY();
+            // Capture computed position BEFORE tick() advances it, for the wall segment check.
+            double prevX = p.computedX;
+            double prevY = p.computedY;
             p.tick(dtSeconds);
 
             boolean outOfBounds =
-                p.node.getLayoutX() < 0 || p.node.getLayoutX() > maxX ||
-                p.node.getLayoutY() < 0 || p.node.getLayoutY() > maxY ||
+                p.computedX < 0 || p.computedX > maxX ||
+                p.computedY < 0 || p.computedY > maxY ||
                 p.lifeSeconds > 5.0;
 
             boolean blockedByWall = p.type == ProjectileType.STRAIGHT
                     && App.gameController != null
-                    && App.gameController.isWallBetween(prevX, prevY, p.node.getLayoutX(), p.node.getLayoutY());
+                    && App.gameController.isWallBetween(prevX, prevY, p.computedX, p.computedY);
 
             // early collision while flying
             boolean hitNow = false;
@@ -245,8 +251,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
             // Wall collision: stop and damage the wall if it is breakable.
             if (!hitNow && App.gameController != null) {
-                double wx = p.node.getLayoutX();
-                double wy = p.node.getLayoutY();
+                double wx = p.computedX;
+                double wy = p.computedY;
                 GameMazeWorld mazeWorld = GameMazeWorld.GetWorld();
                 if (mazeWorld != null) {
                     var hitWall = WallCollisionUtil.findFirstHitWall(wx, wy, 16.0, mazeWorld.getMazeVectors());
@@ -266,8 +272,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                     if (!(s instanceof ICanDie victim)) continue;
                     Node n = characterGraphicsOf(s);
                     if (n == null) continue;
-                    double dx = n.getLayoutX() - p.node.getLayoutX();
-                    double dy = n.getLayoutY() - p.node.getLayoutY();
+                    double dx = n.getLayoutX() - p.computedX;
+                    double dy = n.getLayoutY() - p.computedY;
                     if (shouldApplySplash && (dx*dx + dy*dy) <= p.splashRadius * p.splashRadius) {
                         victim.subtractHitPoints(p.damage);
                     }
@@ -275,7 +281,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 if (!blockedByWall) {
                     playSound(model.getExplosionSound());
                     if (p.type == ProjectileType.LOB || p.type == ProjectileType.STRAIGHT) {
-                        playExplosionVisual(p.node.getLayoutX(), p.node.getLayoutY(), p.splashRadius);
+                        playExplosionVisual(p.computedX, p.computedY, p.splashRadius);
                     }
                 }
                 p.dispose();
@@ -399,18 +405,15 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         });
     }
 
-    private ICanDie resolveVictimForTargetNode(Node target) {
-        if (target instanceof ICanDie directVictim) {
-            return directVictim;
-        }
+    private ICanDie resolveVictimNearPosition(double x, double y) {
+        final double threshold = 64.0;
         for (ICanSubscribeAndNotifyPosition subscriber : touchTargets) {
-            if (!(subscriber instanceof ICanDie victim)) {
-                continue;
-            }
-            Node subscriberGraphics = characterGraphicsOf(subscriber);
-            if (subscriberGraphics == target) {
-                return victim;
-            }
+            if (!(subscriber instanceof ICanDie victim)) continue;
+            Node n = characterGraphicsOf(subscriber);
+            if (n == null) continue;
+            double dx = n.getLayoutX() - x;
+            double dy = n.getLayoutY() - y;
+            if (dx * dx + dy * dy <= threshold * threshold) return victim;
         }
         return null;
     }
@@ -464,6 +467,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         final double duration; // seconds to arrive
         double u = 0.0;        // 0..1 progress
         double lifeSeconds = 0;
+        /** Current computed position — updated synchronously in tick() before the async UI move. */
+        double computedX;
+        double computedY;
 
         private PumpkinProjectile(ProjectileType type,
                                   ImageView node,
@@ -477,6 +483,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             this.arcHeight = Math.max(0.0, arcHeight);
             this.splashRadius = Math.max(0.0, splashRadius);
             this.damage = damage;
+            this.computedX = sx;
+            this.computedY = sy;
         }
 
         public static PumpkinProjectile create(ProjectileType type,
@@ -535,6 +543,10 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             if (type == ProjectileType.LOB) {
                 y -= arcHeight * Math.sin(Math.PI * u);
             }
+            // Store computed position synchronously so updateProjectiles() can use it
+            // for wall and bounds checks without waiting for the async UI update.
+            computedX = x;
+            computedY = y;
             final double drawX = x;
             final double drawY = y;
             main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {

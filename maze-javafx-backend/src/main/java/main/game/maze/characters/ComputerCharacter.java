@@ -54,10 +54,11 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         calculateMaxPositions();
         this.characterModel = characterType;
 
-        var leftPath  = characterType.getImageTurnLeft();
-        var rightPath = characterType.getImageTurnRight();
-        var upPath    = characterType.getImageTurnUp();
-        var downPath  = characterType.getImageTurnDown();
+        var basePath  = characterType.getImageBase();
+        var leftPath  = firstNonBlank(characterType.getImageTurnLeft(),  basePath);
+        var rightPath = firstNonBlank(characterType.getImageTurnRight(), basePath);
+        var upPath    = firstNonBlank(characterType.getImageTurnUp(),    basePath);
+        var downPath  = firstNonBlank(characterType.getImageTurnDown(),  basePath);
 
         _logger.info("Loading character images from paths: " + leftPath + ", " + rightPath + ", " + upPath + ", " + downPath);
 
@@ -225,7 +226,16 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         }
     }
 
+    private static String firstNonBlank(String preferred, String fallback) {
+        return preferred != null && !preferred.isBlank() ? preferred : fallback;
+    }
+
     private static Image loadOrStub(Class<?> anchor, String path) {
+        if (path == null || path.isBlank()) {
+            Logger.getLogger(ComputerCharacter.class.getName())
+                .warning("Missing or blank image path — using 1x1 placeholder");
+            return new WritableImage(1, 1);
+        }
         // Allow both "/a/b.png" and "a/b.png"
         String normalized = path.startsWith("/") ? path : "/" + path;
         URL url = anchor.getResource(normalized);

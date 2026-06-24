@@ -183,7 +183,6 @@ public final class FxEnemyCoordinator {
 
     public void stepAll() {
         PlayerCharacter playerCharacter = playerSupplier.get();
-        Node playerNode = playerCharacter != null ? playerCharacter.getCharacterGraphics() : null;
         long nowMs = System.currentTimeMillis();
         for (var computerCharacter : allComputerCharacters) {
             try {
@@ -191,19 +190,10 @@ public final class FxEnemyCoordinator {
                     movementDispatch
                             .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
                             .accept(computerCharacter);
-                    if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerNode != null) {
-                        pumpkinBomber.tryShootAt(playerNode, nowMs);
+                    if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerCharacter != null) {
+                        pumpkinBomber.tryShootAt(worldView.playerX(), worldView.playerY(), nowMs);
                         pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
                     }
-                }
-                if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
-                    Platform.runLater(() -> {
-                        try {
-                            pbc.updateProjectiles(0.1);
-                        } catch (Exception ex) {
-                            LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
-                        }
-                    });
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
