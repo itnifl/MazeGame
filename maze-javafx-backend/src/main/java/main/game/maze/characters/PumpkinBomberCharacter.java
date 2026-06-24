@@ -172,17 +172,12 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 ? ProjectileType.STRAIGHT
                 : model.getProjectileType();
 
-        if (projectileType == ProjectileType.BEAM) {
+                if (projectileType == ProjectileType.BEAM) {
             boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
-<<<<<<< HEAD
-            if (!blocked) {
-                ICanDie victim = resolveVictimNearPosition(tx, ty);
-=======
             if (blocked) {
                 LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] BEAM blocked by wall — target=(%.0f,%.0f)", sx, sy, tx, ty));
             } else {
-                ICanDie victim = resolveVictimForTargetNode(target);
->>>>>>> origin/main
+                ICanDie victim = resolveVictimNearPosition(tx, ty);
                 if (victim != null) {
                     victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
                 }
