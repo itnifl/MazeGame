@@ -2,6 +2,33 @@
 
 ## Candidate Additions
 
+### PR #72: F11 Breakable Walls — follow-on requirements
+
+- **SR-99** *(Parity, CRR-5)*: Breakable wall support shall be available in the libGDX frontend as well as JavaFX. The libGDX `GdxGameScreenController` shall integrate `WallCollisionUtil.findFirstHitWall(...)` and delegate wall damage through a shared entry point equivalent to `GameController.applyProjectileDamageToWall(...)` so that wall destruction and nav-graph rewiring behave identically across frontends.
+
+- **SR-100** *(Visual feedback, GR)*: When a breakable wall absorbs damage but is not destroyed, a visual damage cue (e.g., crack overlay or color tint) shall be rendered on the wall segment to communicate remaining health to the player. Both frontends must use a shared `WallDamagePresenter` interface so the visual cue logic is not duplicated inline.
+
+- **SR-101** *(UX, Layout)*: Easy difficulty board height has been extended to 665 px (was 600 px). Both JavaFX and libGDX frontends shall continue deriving the Easy board height from `StageConstants.BoardMaxY` (single source of truth) rather than hard-coding it, so future layout adjustments require only that one constant to be changed.
+
+- **SR-102** *(DDD, 12-Factor)*: Board dimension constants (`StageConstants.BoardMaxX/Y`, `BoardMaxXMedium/YMedium`, `BoardMaxXLarge/YLarge`) are currently hard-coded Java constants. Consider externalising per-difficulty board sizes to a config file (YAML or XMI) loaded at runtime so layout changes can be applied without recompilation, aligning with 12-Factor principle IV (backing services / config).
+
+- **SR-101** *(Observability, DDD)*: Wall-destruction events shall be published to a domain event bus (e.g., `WallDestroyedEvent`) that subscribers (HUD, audio, achievement system) can consume independently. This decouples sound and UI feedback from the `GameMazeWorld` damage pipeline.
+
+- **SR-102** *(Model-driven breakability, CRR-1)*: The seeded random assignment of breakable walls shall be replaced by reading the `WallMaterial.breakable` and `WallMaterial.hitPoints` attributes from the loaded XMI model, so level designers can configure which wall types are destructible without code changes. The fallback seeded random strategy shall remain active when no material model is available.
+  - *Partial implementation (F11 Phase 2)*: HP values are now fully driven by `WallMaterialSpec` (Glass 5 HP, Dirt 10 HP, Wood 20 HP, Stone 40 HP) which mirrors `walls.xmi`. `GameMazeWorld.assignBreakableWalls(long, List<WallMaterialSpec>)` accepts XMI-backed specs from callers with `WallRegistry` access. `DEFAULT_BREAKABLE_MATERIALS` provides the fallback. Remaining work: wire `FxGameSessionBootstrapper` / `RuntimeVisualModelLoader` to call the overload with registry-backed specs so the XMI model is the live authority at startup.
+
+- **SR-104** *(DIP boundary, F11)*: The `WallMaterialSpec` record in `main.game.maze.mazeworld` serves as the dependency-inversion boundary between the `mazeworld` domain and the EMF `walls` model. All breakable-wall HP assignment inside `GameMazeWorld` must reference only `WallMaterialSpec`; never import `WallMaterialBaseType`, `WallDefinition`, or `WallRegistry` in the `mazeworld` module. Callers at the application boundary (bootstrapper, visual model loader) bridge the two modules by building `WallMaterialSpec` instances from registry entries before calling `assignBreakableWalls`.
+
+### F11-EXT: Additional wall damage sources (see `docs/plans/f11-wall-damage-sources-plan.md`)
+
+- **SR-105** *(Player weapon, F11-EXT/DS-1)*: The player character shall be able to fire projectiles that damage breakable walls. Each shot deals a configurable HP amount (default 3 HP) so Glass walls (5 HP) require 2 shots, Wood (20 HP) requires 7, and Stone (40 HP) requires 14. Both JavaFX and libGDX frontends must support this via the existing `applyProjectileDamageToWall` / `applyWallDamage` pipeline. The player weapon shall implement `ICanDamageWalls` to formalise the damage contract.
+
+- **SR-106** *(PumpkinBomber explosion splash, F11-EXT/DS-2)*: On projectile detonation, `PumpkinBomberCharacter` shall damage all breakable walls whose geometry intersects the explosion's splash radius, in addition to damaging the player. A shared `WallCollisionUtil.findWallsInRadius(cx, cy, radius, walls)` helper shall be introduced in `main.game.maze.mazeworld` so both frontends share the spatial query without duplication.
+
+- **SR-107** *(Zombie melee wall bash, F11-EXT/DS-3)*: When a `ZombieCharacter`'s movement is blocked by a breakable wall for consecutive ticks, it shall apply melee bash damage (`zombie.getDamage() / 4`, minimum 1) per blocked tick to that wall. This allows zombies to slowly pound through Glass and Dirt walls but be effectively stopped by Stone and Steel, creating emergent difficulty variation based on wall material.
+
+- **SR-103** *(12-Factor, WR-5)*: The breakable-wall seed value (currently `42L`) and the HP tiers (10 HP / 20 HP at 30 % / 20 % probability) shall be externalized to a configuration property or environment variable so they can be tuned per deployment without recompilation.
+
 ### PR #71: Improved Cross-Platform Installer (install.ps1)
 
 These requirements define the automated developer onboarding experience and installer validation:
@@ -105,9 +132,19 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-90** *(Observability)*: `OpponentRuntimeFactory.spawnByTarget` now shuffles candidates on every slot. Add a DEBUG-level log entry emitting the final spawn list (type, threat, slot count) per session so difficulty balancers can audit the result without attaching a debugger.
 
+### F24 follow-on — Zombie Resurrection (identified during implementation)
+
+- **SR-102** *(Observability)*: When a zombie resurrects (either via `ZombieCharacter.resurrect()` in JavaFX or `GdxGameCombatAndEnemyFlowSupport.tickResurrections()` in libGDX), a structured DEBUG log entry shall be emitted including `zombieId`, `resurrectionTimeMs`, `spawnX`, and `spawnY`. This allows balancers to audit resurrection frequency and position without a debugger.
+
+- **SR-103** *(12-Factor, Config)*: The `RESPAWN_INVULNERABILITY_SECONDS` constant (currently `2f` in `GdxEnemyRuntime`) should be externalized to a config property so QA can adjust the post-respawn grace window without recompilation. The JavaFX equivalent (`PauseTransition` duration is zero; invulnerability is implicit via the dead period) should gain an explicit configurable window as well.
+
+- **SR-104** *(DDD)*: The `/kill` terminal command currently short-circuits directly into `killEnemies()` without going through the game's event model. Introduce a `ZombieDeathEvent` domain event emitted on each kill so subscribers (scoring, analytics, wave managers) can react to death without coupling to the command handler.
+
+- **SR-105** *(Testability)*: `ZombieCharacter.resurrect()` is a private method scheduled via `PauseTransition`. Extracting the resurrection payload into a package-private `ResurrectionHandler` functional interface would allow unit tests to invoke it synchronously without waiting for a JavaFX timer, removing the test-time dependency on `Platform.startup()`.
+
 ### Ranged projectile speed (F26) — 12-Factor / Config suggestions
 
-- **SR-102** *(12-Factor, Config)*: The `opponentModel.xmi` projectile speed values (220.0 LOB / 280.0 STRAIGHT) should be exposed through the difficulty UI or a developer overlay so level designers can tune them without needing to edit the XMI by hand. This aligns with the 12-Factor App externalised-config principle.
+- **SR-112** *(12-Factor, Config)*: The `opponentModel.xmi` projectile speed values (220.0 LOB / 280.0 STRAIGHT) should be exposed through the difficulty UI or a developer overlay so level designers can tune them without needing to edit the XMI by hand. This aligns with the 12-Factor App externalised-config principle.
 
 ### DDD boundary suggestions
 
@@ -141,3 +178,13 @@ These requirements have been implemented and verified.
 - **SR-78:** The projectile speed physics contract (`distance = speed × time`) shall be validated via integration-style unit tests for every projectile type variant (STRAIGHT, LOB, BEAM) in both frontends to guard against accidental reintroduction of hardcoded flight durations.
 
 - **SR-79:** `EnemySpawn.projectileSpeed()` shall enforce a minimum floor (e.g. 1 px/s) at the record level to prevent divide-by-zero and infinite flight duration without requiring defensive guards scattered across `GdxEnemyRuntime` and `PumpkinBomberCharacter`.
+
+### F10/F20 Projectile telemetry — follow-on suggestions (PR #77)
+
+- **SR-108** *(12-Factor, Config III)*: Enemy projectile log verbosity (currently `Logger.FINE`) shall be configurable via environment variable `MAZE_LOG_LEVEL` so QA can enable detailed projectile trace logs without recompiling. The `java.util.logging.Logger` hierarchy already supports this via `LogManager`; expose it via installer docs.
+
+- **SR-109** *(Observability)*: `GdxEnemyRuntime.projectileStats()` returns a lightweight `H:N S:N` string. For production observability, consider publishing per-enemy stats as a named metric (e.g., `pumpkinbomber.hits` / `pumpkinbomber.shots`) via a `ProjectileTelemetrySink` interface. This decouples counter accumulation from string formatting and allows future exporters (Micrometer, OpenTelemetry) to consume the data without touching game logic.
+
+- **SR-110** *(DDD)*: `lifetimeHits` and `lifetimeShots` are raw counters embedded in `GdxEnemyRuntime`. Introducing a `ProjectileStats` value object (immutable, `hits + shots + accuracy()`) would make the telemetry a first-class domain concept and allow transfer across the enemy lifecycle (respawn, serialization) without coupling to the mutable runtime state.
+
+- **SR-111** *(Parity, CRR-5)*: `PumpkinBomberCharacter` (JavaFX) logs projectile events at `FINE` level but does not expose a `projectileStats()` accessor. For parity with libGDX, add a `ProjectileStats` record (hits/shots) to `PumpkinBomberCharacter` and expose it via `getProjectileStats()` so unit tests and HUD overlays can read it without parsing log output.

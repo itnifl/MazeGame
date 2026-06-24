@@ -12,6 +12,7 @@ import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
 import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
+import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
 import main.game.maze.libgdx.controller.GdxGameOverOverlayController;
@@ -72,6 +73,7 @@ public final class GdxGameRenderStateAssembler {
                 input.infectionGlowLayers(),
                 input.infectionWarningText(),
                 input.animatedEnemies(),
+                input.dyingEnemies(),
                 input.activePathPoints(),
                 input.enemyProjectiles(),
                 input.enemyBeams(),
@@ -154,6 +156,7 @@ public final class GdxGameRenderStateAssembler {
             int infectionGlowLayers,
             String infectionWarningText,
             List<GdxEnemyRuntime> animatedEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,

@@ -3,6 +3,8 @@ package main.game.maze.libgdx.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -22,6 +24,7 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
 
 public final class GdxEnemyRuntime implements EnemyRuntime {
+    private static final Logger LOG = Logger.getLogger(GdxEnemyRuntime.class.getName());
     private static final String FALLBACK_THROW_SOUND = "/main/game/maze/menuselect.wav";
     private static final String FALLBACK_EXPLOSION_SOUND = "/main/game/maze/error.wav";
     private static final long RANGED_SOUND_COOLDOWN_MS = 120L;
@@ -50,6 +53,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final float javaFxTickRate;
     private final int maxEnemyTicksPerFrame;
     private float shotCooldownRemaining;
+    private int lifetimeShots = 0;
+    private int lifetimeHits  = 0;
+    private int currentHitPoints;
+    private float invulnerableSecondsRemaining;
+    private static final float RESPAWN_INVULNERABILITY_SECONDS = 2f;
+    private static final java.util.concurrent.atomic.AtomicInteger RUNTIME_SEQUENCE =
+            new java.util.concurrent.atomic.AtomicInteger(0);
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
@@ -86,6 +96,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         this.visibilityLevel = spawn.visibilityLevel();
         this.shotCooldownRemaining = 0f;
+        this.currentHitPoints = Math.max(1, spawn.maxHitPoints());
+        this.invulnerableSecondsRemaining = 0f;
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -96,7 +108,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         // spawn.speed() already incorporates difficulty multiplier.
         float speed = Math.max(1f, spawn.speed());
         float phase = index * 0.8f;
-        String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + index;
+        String runtimeId = (spawn.id() == null ? "enemy" : spawn.id()) + "#" + RUNTIME_SEQUENCE.getAndIncrement();
         var resolution = EnemySpawnUnstuckService.nudgeIfColliding(world, spawn.x(), spawn.y(), spawn.size());
         return new GdxEnemyRuntime(
                 spawn,
@@ -109,6 +121,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 (float) resolution.y(),
                 speed,
                 phase);
+    }
+
+    /** The original immutable spawn data this enemy was created from (spawn coords, resurrection time, etc.). */
+    public EnemySpawn originalSpawn() {
+        return spawn;
     }
 
     public EnemySpawn contactSnapshot() {
@@ -131,10 +148,55 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.arcHeight(),
                 spawn.attackRange(),
                 spawn.attackCooldownMs(),
-                spawn.projectileSpeed());
+                spawn.projectileSpeed(),
+                spawn.resurrectionTimeMs(),
+                spawn.maxHitPoints());
+    }
+
+    /** Apply {@code amount} points of damage. Returns {@code true} if the enemy just died. */
+    public boolean takeDamage(int amount) {
+        if (currentHitPoints <= 0 || invulnerableSecondsRemaining > 0f) {
+            return false;
+        }
+        currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, amount));
+        return currentHitPoints <= 0;
+    }
+
+    /** Kill the enemy instantly regardless of current HP. Returns {@code true} always. */
+    public boolean kill() {
+        currentHitPoints = 0;
+        return true;
+    }
+
+    public boolean isAlive() {
+        return currentHitPoints > 0;
+    }
+
+    public int currentHitPoints() {
+        return currentHitPoints;
+    }
+
+    /** Tick the post-respawn invulnerability window down by {@code dt} seconds. */
+    public void tickInvulnerability(float dt) {
+        invulnerableSecondsRemaining = Math.max(0f, invulnerableSecondsRemaining - dt);
+    }
+
+    /** Grant a brief invulnerability window (used on respawn to prevent instant re-kill). */
+    public void grantRespawnInvulnerability() {
+        invulnerableSecondsRemaining = RESPAWN_INVULNERABILITY_SECONDS;
+    }
+
+    /** {@code true} while the post-respawn invulnerability window is active. */
+    public boolean isInvulnerable() {
+        return invulnerableSecondsRemaining > 0f;
     }
 
     public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius) {
+        return updateRangedAttacks(dt, maze, playerX, playerY, playerRadius, null);
+    }
+
+    public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius,
+                                   Consumer<float[]> onProjectileHitWall) {
         if (dt <= 0f) {
             return 0;
         }
@@ -158,6 +220,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             if (projectile.type == ProjectileType.STRAIGHT
                     && maze != null
                     && WallCollisionUtil.wallBetween(previousX, previousY, projectile.x, projectile.y, maze.walls())) {
+                if (onProjectileHitWall != null) {
+                    onProjectileHitWall.accept(new float[]{projectile.x, projectile.y});
+                }
                 emitImpact(projectile.x, projectile.y, 16f, 4f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
@@ -168,6 +233,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                     <= squared(playerRadius + projectile.radius());
             if (projectile.type == ProjectileType.STRAIGHT && hitPlayer) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
+                lifetimeHits++;
+                LOG.fine(() -> String.format("[%s] STRAIGHT hit player at (%.0f,%.0f)", runtimeEnemyId, projectile.x, projectile.y));
                 emitImpact(projectile.x, projectile.y, 18f, 5f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
@@ -183,6 +250,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                         && distanceSquared(playerX, playerY, projectile.targetX, projectile.targetY)
                         <= squared(Math.max(0f, spawn.splashRadius()))) {
                     dealtDamage += Math.max(0, spawn.attackDamage());
+                    lifetimeHits++;
+                    LOG.fine(() -> String.format("[%s] LOB splash hit player at target (%.0f,%.0f)", runtimeEnemyId, projectile.targetX, projectile.targetY));
                 }
                 if (projectile.type == ProjectileType.LOB || projectile.type == ProjectileType.STRAIGHT) {
                     float impactRadius = projectile.type == ProjectileType.LOB
@@ -205,8 +274,6 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             return dealtDamage;
         }
 
-        float dx = playerX - x;
-        float dy = playerY - y;
         float range = Math.max(0f, spawn.attackRange());
         if (distanceSquared(x, y, playerX, playerY) > squared(range)) {
             return dealtDamage;
@@ -218,8 +285,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
         if (projectileType == ProjectileType.BEAM) {
             boolean blocked = maze != null && WallCollisionUtil.wallBetween(x, y, playerX, playerY, maze.walls());
+            lifetimeShots++;
             if (!blocked) {
                 dealtDamage += Math.max(0, spawn.attackDamage());
+                lifetimeHits++;
+                LOG.fine(() -> String.format("[%s] BEAM fired — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
+            } else {
+                LOG.fine(() -> String.format("[%s] BEAM blocked by wall — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
             }
             playThrowSound();
             activeBeams.add(new BeamEffect(x, y, playerX, playerY, blocked, 0.14f));
@@ -244,6 +316,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 playerY,
                 duration,
                 Math.max(0f, spawn.arcHeight())));
+        lifetimeShots++;
+        LOG.fine(() -> String.format("[%s] %s fired — target=(%.0f,%.0f)", runtimeEnemyId, projectileType, playerX, playerY));
         playThrowSound();
         shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
         return dealtDamage;
@@ -388,6 +462,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         return (float) GhostNonTangibilityService.calculateOpacity(nonTangibilityEnergy, visibilityLevel);
     }
 
+    /** Attack damage this enemy deals per hit; used by wall-damage callbacks. */
+    public int attackDamage() {
+        return spawn != null ? spawn.attackDamage() : 0;
+    }
+
     private MovementResult nextMove(WorldView world,
                                     AntiLoopWanderMovementService wanderService,
                                     PatrolMovementService patrolService,
@@ -424,15 +503,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
     public String debugLabel(boolean showBehaviorType, boolean showMovementType) {
         if (showBehaviorType && showMovementType) {
-            return behaviorTypeLabel + " | " + movementTypeLabel;
+            return behaviorTypeLabel + " | " + movementTypeLabel + " " + projectileStats();
         }
         if (showBehaviorType) {
-            return behaviorTypeLabel;
+            return behaviorTypeLabel + " " + projectileStats();
         }
         if (showMovementType) {
             return movementTypeLabel;
         }
         return null;
+    }
+
+    public String projectileStats() {
+        return "H:" + lifetimeHits + " S:" + lifetimeShots;
     }
 
     public List<ActivePathPoint> activePathPoints(PatrolMovementService patrolService,

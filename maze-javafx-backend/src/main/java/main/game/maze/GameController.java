@@ -39,7 +39,9 @@ import main.game.maze.javafx.controller.state.FxPlayingModeController;
 import main.game.maze.javafx.render.FxGameRenderCoordinator;
 import main.game.maze.javafx.render.FxMazeCanvasRenderer;
 import main.game.maze.javafx.render.FxPathHintCoordinator;
+import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.difficulties.Difficulty;
@@ -138,6 +140,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void setHudMessage(String text, Duration visibleFor)     { GameController.this.setHudMessage(text, visibleFor); }
         @Override public void showEnemyDebugLabels(boolean behaviourType)         { enemyCoordinator.showEnemyDebugLabels(behaviourType); }
         @Override public void showEnemyPathsOverlay()                             { enemyCoordinator.showEnemyPathsOverlay(); }
+        @Override public int killAllEnemies()                                     { return enemyCoordinator.killAll(); }
     };
 
     private boolean cameraFollowListenersInstalled;
@@ -242,6 +245,23 @@ public class GameController implements Initializable, EnemyRegistrar {
         var walls = maze.getMazeVectors();
         if (walls == null || walls.isEmpty()) return false;
         return WallCollisionUtil.wallBetweenVectors(ex, ey, px, py, walls);
+    }
+
+    /**
+     * Called from the projectile update loop (background thread) when a projectile
+     * hits a wall. If the wall is breakable its HP is reduced; if it reaches zero
+     * the wall is removed and the navigation graph is rewired. The mutation is
+     * scheduled on the JavaFX Application Thread for thread safety.
+     */
+    public void applyProjectileDamageToWall(Vector2D wall, int damage) {
+        if (maze == null) return;
+        BreakableWall bw = maze.findBreakableWall(wall);
+        if (bw == null) return;
+        if (javafx.application.Platform.isFxApplicationThread()) {
+            maze.applyWallDamage(bw, damage);
+        } else {
+            javafx.application.Platform.runLater(() -> maze.applyWallDamage(bw, damage));
+        }
     }
 
     private void ensureHudLayersOnTop() {

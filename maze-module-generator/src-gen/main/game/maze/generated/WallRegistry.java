@@ -38,6 +38,14 @@ public final class WallRegistry {
 
     static {
         register(new WallDefinition(
+            "GLASS_BASIC",
+            "Glass",
+            WallMaterialBaseType.GLASS,
+            true,
+            5,
+            "/main/game/maze/glassWall.png"
+        ));
+        register(new WallDefinition(
             "DIRT_BASIC",
             "Dirt",
             WallMaterialBaseType.DIRT,
@@ -52,6 +60,14 @@ public final class WallRegistry {
             true,
             20,
             "/main/game/maze/woodWall.png"
+        ));
+        register(new WallDefinition(
+            "STONE_BASIC",
+            "Stone",
+            WallMaterialBaseType.STONE,
+            true,
+            40,
+            "/main/game/maze/stoneWall.png"
         ));
         register(new WallDefinition(
             "STEEL_SOLID",

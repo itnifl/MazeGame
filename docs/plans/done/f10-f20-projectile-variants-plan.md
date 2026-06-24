@@ -1,6 +1,6 @@
 # Implementation Plan — F20 & F10. Projectile Variants (Straight, Lob, Beam)
 
- continu**Status:** IMPLEMENTED
+**Status:** IMPLEMENTED
 **ID:** `F10`, `F20`
 **Source:** `opponents.ecore` / `MazeDsl.xtext` — `ProjectileType {STRAIGHT, LOB, BEAM}`
 **Backend:** both

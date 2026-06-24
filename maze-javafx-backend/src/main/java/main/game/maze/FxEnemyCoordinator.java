@@ -196,6 +196,15 @@ public final class FxEnemyCoordinator {
                         pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
                     }
                 }
+                if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
+                    Platform.runLater(() -> {
+                        try {
+                            pbc.updateProjectiles(0.1);
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
+                        }
+                    });
+                }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
             }
@@ -207,6 +216,20 @@ public final class FxEnemyCoordinator {
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
         ghostPhasingMovementService.reset();
+    }
+
+    public int killAll() {
+        int killed = 0;
+        for (var character : allComputerCharacters) {
+            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie) {
+                int hp = canDie.getHitPoints();
+                if (hp > 0) {
+                    canDie.subtractHitPoints(hp);
+                    killed++;
+                }
+            }
+        }
+        return killed;
     }
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {

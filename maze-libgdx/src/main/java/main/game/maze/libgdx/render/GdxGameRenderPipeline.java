@@ -16,6 +16,7 @@ import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
 import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
+import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
@@ -59,7 +60,8 @@ public final class GdxGameRenderPipeline {
             return state.hudLayout();
         }
 
-        List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(state.animatedEnemies().size());
+        List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(
+                state.animatedEnemies().size() + state.dyingEnemies().size());
         for (GdxEnemyRuntime enemy : state.animatedEnemies()) {
             Texture enemyTexture = state.enemyTextureLoader().apply(enemy.imagePath());
             String label = enemy.debugLabel(state.debugOverlayState().showBehaviourType(), state.debugOverlayState().showMovementType());
@@ -74,6 +76,20 @@ public final class GdxGameRenderPipeline {
                     enemy.phase(),
                     label,
                     state.enemyPathProvider().apply(enemy)));
+        }
+        for (EnemyDeathAnimation anim : state.dyingEnemies()) {
+            Texture frameTexture = state.enemyTextureLoader().apply(anim.currentFramePath());
+            enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
+                    frameTexture,
+                    anim.x(),
+                    anim.y(),
+                    anim.size(),
+                    1.0f,
+                    false,
+                    0f,
+                    0f,
+                    null,
+                    List.of()));
         }
 
         state.gameWorldView().render(new GdxGameWorldView.RenderContext(
@@ -283,6 +299,7 @@ public final class GdxGameRenderPipeline {
             int infectionGlowLayers,
             String infectionWarningText,
             List<GdxEnemyRuntime> animatedEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,

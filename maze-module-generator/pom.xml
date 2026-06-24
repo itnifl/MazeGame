@@ -34,6 +34,14 @@
       <version>${project.version}</version>
     </dependency>
     
+    <!-- mazeworld: pulled in for breakable-wall unit tests -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>main.game.maze.mazeworld</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>

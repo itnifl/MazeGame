@@ -129,6 +129,31 @@ Use this before deeper manual sessions.
 5. Repeat steps 2 to 4 in libGDX.
 6. Mark parity pass only if behavior and readability match across both frontends.
 
+### 7.2 BEAM Phase 2 playtest — elite profile validation
+
+> **Prerequisite:** Set `enabled=true` on the `pb_elite_beam` profile in `opponentModel.xmi` before running this section. Reset to `enabled=false` afterwards.
+
+**Purpose:** Confirm BEAM elite spawns once enabled, deals damage correctly, is blocked by walls, and the cooldown feels balanced in live play.
+
+1. Enable `pb_elite_beam` in `opponentModel.xmi`.
+2. Start JavaFX with a level that spawns PumpkinBombers (e.g. level 3 or later).
+3. Step into range of a `pb_elite_beam` enemy.
+   - **Expected:** A beam flash line extends from enemy to player. Player HP drops by the configured `attackDamage` (18).
+4. Move behind a wall and step back into range.
+   - **Expected:** Beam flash is drawn to the wall intercept point (or full length, blocked variant). No player HP loss.
+5. Stay in range for two full cooldown cycles (~10 seconds each).
+   - **Expected:** Beam fires once per cycle with the beam visual appearing and fading.
+6. Repeat steps 3-5 in libGDX.
+   - **Expected:** Same damage values and visual behavior as JavaFX.
+
+| Check | JavaFX | libGDX |
+|---|---|---|
+| Beam fires on entering range | [ ] Pass / [ ] Fail | [ ] Pass / [ ] Fail |
+| Beam blocked by wall, no damage | [ ] Pass / [ ] Fail | [ ] Pass / [ ] Fail |
+| Cooldown (≈10 s) enforced between shots | [ ] Pass / [ ] Fail | [ ] Pass / [ ] Fail |
+| Beam visual fades after firing | [ ] Pass / [ ] Fail | [ ] Pass / [ ] Fail |
+| Debug label shows H/S counters (debug mode) | [ ] Pass / [ ] Fail | [ ] Pass / [ ] Fail |
+
 ---
 
 ## 8. F3-F6, F22-F23: Patrol and Pathfinding AI Overhaul

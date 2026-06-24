@@ -176,6 +176,78 @@ class ZombieCharacterTest {
     }
 
     // -----------------------------------------------------------------------
+    // Resurrection behaviour
+    // -----------------------------------------------------------------------
+
+    @Test
+    void subtractHitPoints_lethal_withNoResurrection_doesNotResetHp() {
+        // App.gameController is null here — null guard in die() must prevent NPE.
+        Zombie model = basicZombie();
+        model.setResurrectionTime(0);
+        ImageView gfx = new ImageView();
+        ZombieCharacter zombie = new ZombieCharacter(gfx, 50, 50, model);
+
+        assertDoesNotThrow(() -> zombie.subtractHitPoints(Integer.MAX_VALUE));
+        assertTrue(zombie.getHitPoints() <= 0, "HP must be zero after lethal damage");
+    }
+
+    @Test
+    void subtractHitPoints_lethal_withResurrection_doesNotResetHpImmediately() {
+        // App.gameController is null — resurrection timer fires asynchronously on FX thread;
+        // HP must NOT be reset synchronously at the point of death.
+        Zombie model = basicZombie();
+        model.setResurrectionTime(5);
+        ImageView gfx = new ImageView();
+        ZombieCharacter zombie = new ZombieCharacter(gfx, 50, 50, model);
+
+        assertDoesNotThrow(() -> zombie.subtractHitPoints(Integer.MAX_VALUE));
+        assertTrue(zombie.getHitPoints() <= 0,
+                "HP must still be zero immediately after die() — resurrect() fires after the PauseTransition delay");
+    }
+
+    @Test
+    void subtractHitPoints_lethal_notifiesDeathSubscribers() {
+        Zombie model = basicZombie();
+        model.setResurrectionTime(0);
+        ImageView gfx = new ImageView();
+        ZombieCharacter zombie = new ZombieCharacter(gfx, 50, 50, model);
+
+        List<Object> notified = new ArrayList<>();
+        zombie.addDeathNotificationSubscriber(notified::add);
+
+        zombie.subtractHitPoints(Integer.MAX_VALUE);
+
+        assertEquals(1, notified.size(), "Death subscriber must be notified exactly once on lethal damage");
+        assertSame(zombie, notified.get(0));
+    }
+
+    @Test
+    void subtractHitPoints_nonLethal_doesNotNotifyDeathSubscribers() {
+        Zombie model = basicZombie(); // health = 10
+        ImageView gfx = new ImageView();
+        ZombieCharacter zombie = new ZombieCharacter(gfx, 50, 50, model);
+
+        List<Object> notified = new ArrayList<>();
+        zombie.addDeathNotificationSubscriber(notified::add);
+        zombie.subtractHitPoints(1);
+
+        assertTrue(notified.isEmpty(), "Death subscriber must not fire on non-lethal damage");
+    }
+
+    @Test
+    void spawnCoords_arePreservedForResurrectReset() throws Exception {
+        // After dying the zombie should be able to teleport to its spawn coords.
+        // We verify this indirectly: teleportTo must not throw even with a null FX scheduler.
+        Zombie model = basicZombie();
+        model.setResurrectionTime(0);
+        ImageView gfx = new ImageView();
+        ZombieCharacter zombie = new ZombieCharacter(gfx, 77, 88, model);
+
+        // teleportTo is public on Character — call it directly to verify no NPE.
+        assertDoesNotThrow(() -> zombie.teleportTo(77, 88));
+    }
+
+    // -----------------------------------------------------------------------
     private static final class RecordingAudio implements IAudioEngine {
         final List<String> rateLimitedCalls = new ArrayList<>();
         @Override public void play(String p) {}

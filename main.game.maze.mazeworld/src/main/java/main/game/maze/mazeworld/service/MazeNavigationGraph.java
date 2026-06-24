@@ -1,7 +1,7 @@
 package main.game.maze.mazeworld.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import main.game.maze.mazeworld.Point2D;
 
 /**
@@ -17,7 +17,7 @@ public final class MazeNavigationGraph {
         private final int row;
         private final double x;
         private final double y;
-        private final List<Node> neighbors = new ArrayList<>();
+        private final List<Node> neighbors = new CopyOnWriteArrayList<>();
 
         // Valgfritt: lagring av spanning-tree-parent
         private Node treeParent;

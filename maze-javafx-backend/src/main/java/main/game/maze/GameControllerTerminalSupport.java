@@ -11,6 +11,7 @@ final class GameControllerTerminalSupport {
     static final String SHOW_BEHAVIOUR_MESSAGE = "Showing behaviour type above enemies";
     static final String SHOW_MOVEMENT_MESSAGE = "Showing movement type above enemies";
     static final String SHOW_ENEMY_PATH_MESSAGE = "Showing enemy paths for 10 seconds";
+    static final String KILL_ENEMIES_MESSAGE = "Killing all enemies (resurrection timer active where configured)";
     static final String EMPTY_MESSAGE = "No command entered";
     static final String UNKNOWN_MESSAGE = "Unknown command. Use /h";
 
@@ -36,6 +37,10 @@ final class GameControllerTerminalSupport {
                 sink.setHudMessage(SHOW_ENEMY_PATH_MESSAGE);
                 sink.showEnemyPathsOverlay();
             }
+            case KILL_ENEMIES -> {
+                int killed = sink.killAllEnemies();
+                sink.setHudMessage(KILL_ENEMIES_MESSAGE + " (" + killed + " killed)");
+            }
             case EMPTY -> sink.setHudMessage(EMPTY_MESSAGE);
             default -> sink.setHudMessage(UNKNOWN_MESSAGE);
         }
@@ -49,5 +54,7 @@ final class GameControllerTerminalSupport {
         void showEnemyDebugLabels(boolean behaviourType);
 
         void showEnemyPathsOverlay();
+
+        int killAllEnemies();
     }
 }
