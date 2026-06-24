@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import java.util.function.Function;
 import main.game.maze.common.graphics.config.MazeRuntimeConfig;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.libgdx.backend.GdxBackend;
 import main.game.maze.libgdx.controller.LegacyPlayScreenController;
 import main.game.maze.libgdx.controller.MenuScreenController;
 import main.game.maze.libgdx.controller.PlayScreenController;
@@ -36,6 +37,7 @@ public class GdxGame extends Game {
 
     @Override
     public void create() {
+        GdxBackend.install();
         assetService = providedAssetService != null ? providedAssetService : new GdxAssetService();
         context = new GdxGameContext(cfg, assetService);
         Screen initialScreen = initialScreenFactory != null

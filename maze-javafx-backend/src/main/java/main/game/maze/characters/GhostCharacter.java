@@ -112,9 +112,10 @@ public class GhostCharacter extends ComputerCharacter
         return CollisionDamage.effectiveDamage(ghostModel.getThreatLevel(), ghostModel.getAttackDamage());
     }
 
-    private static int mapSpeed(double modelSpeed) {
-        return Math.max(1, (int)Math.round(modelSpeed));
+        private static double mapSpeed(double modelSpeed) {
+        return Math.max(1.0, modelSpeed);
     }
+
 
     @Override
     public double getNonTangientEnergy() {

@@ -192,8 +192,19 @@ public final class FxEnemyCoordinator {
                             .accept(computerCharacter);
                     if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerCharacter != null) {
                         pumpkinBomber.tryShootAt(worldView.playerX(), worldView.playerY(), nowMs);
-                        pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
+                        // updateProjectiles is done on the FX thread below to avoid concurrent
+                        // list mutation between the AI background thread and the FX render thread.
                     }
+                }
+                if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
+                    Platform.runLater(() -> {
+                        try {
+                            // 100 ms per AI tick → 0.1 s dt keeps projectile physics correct.
+                            pbc.updateProjectiles(0.1);
+                        } catch (Exception ex) {
+                            LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
+                        }
+                    });
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
@@ -558,17 +569,37 @@ public final class FxEnemyCoordinator {
         }
     }
 
-    private boolean drainNonTangientEnergy(INonTangientMazeGameCharacter cc) {
+        private boolean drainNonTangientEnergy(INonTangientMazeGameCharacter cc) {
         double energy = cc.getNonTangientEnergy();
-        boolean nonTangient = GhostNonTangibilityService.isPhasing(energy);
+        boolean wasPhasing = GhostNonTangibilityService.isPhasing(energy);
 
-        cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(energy, cc.getVisibilityLevel()));
+        if (wasPhasing) {
+            double newEnergy = GhostNonTangibilityService.drainEnergy(energy, MOVEMENT_TICK_THRESHOLD);
+            cc.setNonTangientEnergy(newEnergy);
 
-        if (nonTangient) {
-            cc.setNonTangientEnergy(GhostNonTangibilityService.drainEnergy(energy, MOVEMENT_TICK_THRESHOLD));
+            // If the ghost JUST became solid, nudge it out of any walls it might be inside.
+            if (!GhostNonTangibilityService.isPhasing(newEnergy) && cc instanceof ComputerCharacter computerCharacter) {
+                nudgeOutOfWalls(computerCharacter);
+            }
         }
-        return nonTangient;
+
+        cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(cc.getNonTangientEnergy(), cc.getVisibilityLevel()));
+        // Return whether the ghost is STILL phasing after the drain.
+        // Returning wasPhasing (old state) caused one extra wall-ignoring move after the nudge,
+        // moving the ghost back into a wall on the solidification tick.
+        return wasPhasing && GhostNonTangibilityService.isPhasing(cc.getNonTangientEnergy());
     }
+
+    private void nudgeOutOfWalls(ComputerCharacter cc) {
+        double size = approximateSize(cc);
+        var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
+                worldView, cc.getCharacterPosition().getX(), cc.getCharacterPosition().getY(), size);
+        if (resolution.moved()) {
+            cc.teleportTo(resolution.x(), resolution.y());
+            LOGGER.fine(() -> "Nudged ghost " + enemyId(cc) + " out of wall to " + resolution.x() + ", " + resolution.y());
+        }
+    }
+
 
     private EnemyState buildEnemyState(ComputerCharacter cc) {
         double speed = Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())));

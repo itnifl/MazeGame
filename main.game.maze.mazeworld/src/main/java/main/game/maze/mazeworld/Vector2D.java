@@ -68,12 +68,13 @@ public class Vector2D {
      *
      * @return the normalized vector
      */
-    public Vector2D normalize(int factor) {
+        public Vector2D normalize(double factor) {
         double mag = magnitude();
         double dx = (end.getX() - start.getX()) / mag;
         double dy = (end.getY() - start.getY()) / mag;
         return new Vector2D(start, new Point2D(start.getX() + dx * factor, start.getY() + dy * factor));
     }
+
 
     /**
      * Adds the given vector to this vector and returns the result.
