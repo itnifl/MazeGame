@@ -495,7 +495,7 @@ class PumpkinBomberCharacterTest {
         Rectangle target = new Rectangle(1, 1);
         target.setLayoutX(200); // distance = 200 px
         target.setLayoutY(0);
-        pbc.tryShootAt(target, Long.MAX_VALUE); // nowMs >> cooldown → fires immediately
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE); // nowMs >> cooldown → fires immediately
 
         Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
         field.setAccessible(true);
@@ -526,9 +526,9 @@ class PumpkinBomberCharacterTest {
         Rectangle gfx = new Rectangle(1, 1);
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, model);
 
-        Rectangle target = new Rectangle(1, 1);
+                Rectangle target = new Rectangle(1, 1);
         target.setLayoutX(200); // distance = 200 → duration = 200/100 = 2.0 s
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
 
         Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
         field.setAccessible(true);
@@ -563,8 +563,8 @@ class PumpkinBomberCharacterTest {
             @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return true; }
         };
 
-        int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+                int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
         pbc.updateProjectiles(10.0);
 
         assertEquals(hpBefore, player.getHitPoints(),
@@ -602,9 +602,9 @@ class PumpkinBomberCharacterTest {
         target.setLayoutX(60);
         target.setLayoutY(0);
 
-        int hp1Before = player1.getHitPoints();
+                int hp1Before = player1.getHitPoints();
         int hp2Before = player2.getHitPoints();
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
         pbc.updateProjectiles(10.0);
 
         assertTrue(player1.getHitPoints() < hp1Before,
@@ -634,20 +634,20 @@ class PumpkinBomberCharacterTest {
             @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return false; }
         };
 
-        // lastShotMs starts at 0; need nowMs >= cooldown for first shot to fire.
+                // lastShotMs starts at 0; need nowMs >= cooldown for first shot to fire.
         // Use t=3000 so (3000-0)=3000 >= 2000ms → fires.
-        pbc.tryShootAt(playerGfx, 3000L);
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 3000L);
         pbc.updateProjectiles(10.0);
         int hpAfterFirst = player.getHitPoints();
 
         // t=4999: (4999-3000)=1999 < 2000ms → must NOT fire
-        pbc.tryShootAt(playerGfx, 4999L);
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 4999L);
         pbc.updateProjectiles(10.0);
         assertEquals(hpAfterFirst, player.getHitPoints(),
                 "STRAIGHT second shot within cooldown must not fire");
 
         // t=5001: (5001-3000)=2001 >= 2000ms → must fire
-        pbc.tryShootAt(playerGfx, 5001L);
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), 5001L);
         pbc.updateProjectiles(10.0);
         assertTrue(player.getHitPoints() < hpAfterFirst,
                 "STRAIGHT must fire again after cooldown expires");
@@ -676,8 +676,8 @@ class PumpkinBomberCharacterTest {
             @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return false; }
         };
 
-        int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+                int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
 
         assertEquals(hpBefore - 8, player.getHitPoints(),
                 "BEAM must fire when target is at exactly range distance (range is inclusive)");
@@ -704,8 +704,8 @@ class PumpkinBomberCharacterTest {
             @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return false; }
         };
 
-        int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+                int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
 
         assertEquals(hpBefore, player.getHitPoints(),
                 "BEAM must not fire when target is beyond attack range");
@@ -733,8 +733,8 @@ class PumpkinBomberCharacterTest {
             @Override public boolean isWallBetween(double ex, double ey, double px, double py) { return false; }
         };
 
-        int hpBefore = player.getHitPoints();
-        pbc.tryShootAt(playerGfx, Long.MAX_VALUE);
+                int hpBefore = player.getHitPoints();
+        pbc.tryShootAt(playerGfx.getLayoutX(), playerGfx.getLayoutY(), Long.MAX_VALUE);
 
         assertEquals(hpBefore - 7, player.getHitPoints(),
                 "BEAM must fire when target is just inside attack range");
@@ -758,9 +758,9 @@ class PumpkinBomberCharacterTest {
         PlayerCharacter player = new PlayerCharacter(playerGfx, 0, 0, null);
         pbc.addPositionSubscriber(player);
 
-        Rectangle target = new Rectangle(16, 16);
+                Rectangle target = new Rectangle(16, 16);
         target.setLayoutX(80);
-        pbc.tryShootAt(target, Long.MAX_VALUE);
+        pbc.tryShootAt(target.getLayoutX(), target.getLayoutY(), Long.MAX_VALUE);
 
         int hpBefore = player.getHitPoints();
         // Zero dt — projectile must not arrive or deal damage.
