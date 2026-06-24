@@ -28,6 +28,7 @@ class JavaFxInputBindingsSupportTest {
         assertTrue(trackedKeys.contains(KeyCode.ESCAPE), "ESC should be tracked for RETURN_TO_MENU");
         assertTrue(trackedKeys.contains(KeyCode.H), "H should be tracked for OPEN_HIGH_SCORES");
         assertTrue(trackedKeys.contains(KeyCode.P), "P should be tracked for APPLY_PATH_HINT");
+        assertTrue(trackedKeys.contains(KeyCode.SPACE), "SPACE should be tracked for FLAME_ATTACK");
         assertTrue(trackedKeys.contains(KeyCode.O), "O should be tracked for TOGGLE_SPANNING_TREE");
         assertTrue(trackedKeys.contains(KeyCode.T), "T should be tracked for TOGGLE_TERMINAL");
         assertTrue(trackedKeys.contains(KeyCode.UP), "UP should be tracked for MOVE_PLAYER");
@@ -58,6 +59,10 @@ class JavaFxInputBindingsSupportTest {
         InputFrame<KeyCode> pHeld = new InputFrame<>(Set.of(KeyCode.P), Set.of(), 0, 0, false);
         assertTrue(registry.isTriggered(GameAction.APPLY_PATH_HINT, pHeld),
                 "P key held should trigger APPLY_PATH_HINT");
+
+        InputFrame<KeyCode> spaceEdge = new InputFrame<>(Set.of(), Set.of(KeyCode.SPACE), 0, 0, false);
+        assertTrue(registry.isTriggered(GameAction.FLAME_ATTACK, spaceEdge),
+            "SPACE edge should trigger FLAME_ATTACK");
 
         InputFrame<KeyCode> upHeld = new InputFrame<>(Set.of(KeyCode.UP), Set.of(), 0, 0, false);
         assertTrue(registry.isTriggered(GameAction.MOVE_PLAYER, upHeld),

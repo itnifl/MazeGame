@@ -30,6 +30,8 @@ class PlayerConfigTest {
         PlayerConfig cfg = PlayerConfig.defaults();
         assertEquals(PlayerConstants.DefaultHealth, cfg.health());
         assertEquals(PlayerConstants.DefaultSpeed, cfg.speed(), 1e-9);
+        assertEquals(3, cfg.bombCount());
+        assertEquals(100, cfg.bombDamage());
     }
 
     @Test

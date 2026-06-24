@@ -109,6 +109,8 @@ public final class RuntimeVisualModelLoader {
                 (float) Math.max(MIN_PLAYER_SPEED, playerConfig.speed()),
                 StageConstants.PlayerCharacterXYSize,
             Math.max(1, playerConfig.health()),
+                Math.max(0, playerConfig.bombCount()),
+                Math.max(1, playerConfig.bombDamage()),
                 style.backgroundImageForDifficultyName(difficultyName(difficulty)),
                 wallDefinition != null ? normalizePath(wallDefinition.baseImage) : DEFAULT_WALL_IMAGE,
                 normalizePath(style.goalImagePath()),

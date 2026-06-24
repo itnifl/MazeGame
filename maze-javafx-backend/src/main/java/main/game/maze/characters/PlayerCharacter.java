@@ -53,6 +53,8 @@ public class PlayerCharacter extends Character
     private IAnimationHandle infectionAnimation = null;
     private final PlayerConfig playerConfig;
     private final int maxHitPoints;
+    private final int flameAttackDamage;
+    private int flameBombsRemaining;
     private final Map<VectorFacing, Image> directionalImages = new EnumMap<>(VectorFacing.class);
     private Image deathImage;
     private volatile boolean deadVisualActive = false;
@@ -77,6 +79,8 @@ public class PlayerCharacter extends Character
         this.statePresenter = statePresenter;
         this.playerConfig = playerConfig == null ? PlayerConfig.defaults() : playerConfig;
         this.maxHitPoints = Math.max(1, this.playerConfig.health());
+        this.flameBombsRemaining = Math.max(0, this.playerConfig.bombCount());
+        this.flameAttackDamage = Math.max(1, this.playerConfig.bombDamage());
         this.hitPoints.set(this.maxHitPoints);
         configureDirectionalImages();
     }
@@ -193,6 +197,22 @@ public class PlayerCharacter extends Character
      */
     public int getMaxHitPoints() {
         return maxHitPoints;
+    }
+
+    public int getFlameAttackDamage() {
+        return flameAttackDamage;
+    }
+
+    public int getFlameBombsRemaining() {
+        return flameBombsRemaining;
+    }
+
+    public boolean consumeFlameBomb() {
+        if (flameBombsRemaining <= 0) {
+            return false;
+        }
+        flameBombsRemaining--;
+        return true;
     }
 
     @Override

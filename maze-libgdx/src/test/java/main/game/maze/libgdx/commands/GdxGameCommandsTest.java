@@ -6,6 +6,7 @@ import main.game.maze.libgdx.input.command.ApplyPathHintCommand;
 import main.game.maze.libgdx.input.command.MovePlayerCommand;
 import main.game.maze.libgdx.input.command.OpenHighScoresCommand;
 import main.game.maze.libgdx.input.command.ReturnToMenuCommand;
+import main.game.maze.libgdx.input.command.TriggerFlameAttackCommand;
 import main.game.maze.libgdx.input.command.ToggleSpanningTreeCommand;
 import main.game.maze.libgdx.input.command.ToggleTerminalCommand;
 import org.junit.jupiter.api.Test;
@@ -81,6 +82,13 @@ class GdxGameCommandsTest {
         assertTrue(ctx.calls.contains("applyMovementFromFrame"));
     }
 
+    @Test
+    void triggerFlameAttackCommand_callsTriggerPlayerFlameAttack() {
+        CapturingContext ctx = new CapturingContext(false);
+        new TriggerFlameAttackCommand().execute(ctx, emptyFrame());
+        assertTrue(ctx.calls.contains("triggerPlayerFlameAttack"));
+    }
+
     // All commands are no-ops when terminal is active.
     @Test
     void allCommands_terminalActive_areNoOps() {
@@ -91,6 +99,7 @@ class GdxGameCommandsTest {
         new ToggleSpanningTreeCommand().execute(ctx, emptyFrame());
         new ToggleTerminalCommand().execute(ctx, emptyFrame());
         new MovePlayerCommand().execute(ctx, emptyFrame());
+        new TriggerFlameAttackCommand().execute(ctx, emptyFrame());
         assertTrue(ctx.calls.isEmpty(),
                 "All commands must be no-ops when terminal is active");
     }
@@ -118,6 +127,7 @@ class GdxGameCommandsTest {
         @Override public void openHighScores() { calls.add("openHighScores"); }
         @Override public void toggleSpanningTree() { calls.add("toggleSpanningTree"); }
         @Override public void applyPathHintHeld(boolean held) { calls.add("applyPathHintHeld:" + held); }
+        @Override public void triggerPlayerFlameAttack() { calls.add("triggerPlayerFlameAttack"); }
         @Override public void applyMovementFromFrame() { calls.add("applyMovementFromFrame"); }
         @Override public void requestStop() { calls.add("requestStop"); }
         @Override public boolean stopRequested() { return false; }

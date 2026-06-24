@@ -51,8 +51,9 @@
         <Label fx:id="coordinatesLabel" text="X: 0, Y: 0" style="-fx-text-fill: white;" />
     </AnchorPane>
 
-    <AnchorPane fx:id="scoreHudContainer" prefHeight="30" prefWidth="170" style="-fx-background-color: rgba(0, 0, 0, 0.45); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.rightAnchor="6" AnchorPane.topAnchor="22">
-        <Label fx:id="scoreLabel" text="Score: 0" style="-fx-font-size: 17px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-padding: 8 10 8 10;" />
+    <AnchorPane fx:id="scoreHudContainer" prefHeight="54" prefWidth="170" style="-fx-background-color: rgba(0, 0, 0, 0.45); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.rightAnchor="6" AnchorPane.topAnchor="22">
+        <Label fx:id="scoreLabel" text="Score: 0" layoutX="0" layoutY="0" style="-fx-font-size: 17px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-padding: 8 10 8 10;" />
+        <Label fx:id="bombsLabel" text="Bombs: 3" layoutX="0" layoutY="24" style="-fx-font-size: 14px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #f2f8ff; -fx-padding: 0 10 8 10;" />
     </AnchorPane>
 
     <AnchorPane fx:id="bottomMenuContainer" prefHeight="40" style="-fx-background-color: rgba(36, 92, 64, 0.05); -fx-border-color: #8fffe0; -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="6" AnchorPane.rightAnchor="6">

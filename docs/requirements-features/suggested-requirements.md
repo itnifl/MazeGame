@@ -14,6 +14,14 @@
 
 - **SR-128** *(Testing, BUG-8)*: The focus-loss scenario (Tab key stealing focus from `gameBoard`) should be covered by an automated UI integration test using `TestFX` (headless). The test would: load `game.fxml`, start gameplay, fire a `KeyCode.TAB` event at the scene, then fire directional key events and assert they are still received by the game.
 
+- **SR-129** *(Observability, Issues 1-2)*: Player bomb lifecycle events shall be emitted at DEBUG level in both frontends, including `placedAt`, `fuseMs`, `detonatedAt`, and `targetsHit`. This enables parity verification that space-bar attacks are delayed-fuse bomb detonations rather than instant damage paths.
+
+- **SR-130** *(UX, Observability)*: When the bomb inventory changes, the HUD should briefly pulse or tint the bomb counter and emit a compact status message such as `Bombs left: 2`. This makes the remaining inventory visible at a glance and helps QA verify that each planted bomb decrements the counter in both frontends.
+
+- **SR-131** *(Correctness, Issue 1)*: A player bomb detonation MUST only damage what its directional flame actually reaches (capped per-direction budget, stopped by walls and the flame corridor). The libGDX detonation path previously also invoked the debug "kill all enemies" routine, defeating the directional budget. Regression covered by `GdxGameCombatAndEnemyFlowSupportTest.applyDirectionalFlameExplosion_leavesEnemiesOffTheFlameCorridorUntouched`. Suggestion: forbid production code from calling the `killEnemies` debug helper outside the terminal command path (e.g. move it behind a `DebugCommands` boundary) so it cannot be wired into gameplay by accident.
+
+- **SR-132** *(Reliability, Issue 2)*: JavaFX gameplay MUST self-heal keyboard focus so player input cannot become permanently unresponsive after focus is lost to a transient node or dropped to `null`. A per-frame guard (`FxFocusGuard.shouldReassertFocus`) re-asserts focus on `gameBoard` unless a text input control (the in-game terminal) legitimately holds it. Unit covered by `FxFocusGuardTest`. Suggestion (extends SR-128): add a headless `TestFX` integration test that drops the focus owner to `null` mid-play and asserts directional keys still drive movement on the next frame.
+
 ### BUG-6 follow-on suggestions
 
 - **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
@@ -60,6 +68,8 @@
 - **SR-104** *(DIP boundary, F11)*: The `WallMaterialSpec` record in `main.game.maze.mazeworld` serves as the dependency-inversion boundary between the `mazeworld` domain and the EMF `walls` model. All breakable-wall HP assignment inside `GameMazeWorld` must reference only `WallMaterialSpec`; never import `WallMaterialBaseType`, `WallDefinition`, or `WallRegistry` in the `mazeworld` module. Callers at the application boundary (bootstrapper, visual model loader) bridge the two modules by building `WallMaterialSpec` instances from registry entries before calling `assignBreakableWalls`.
 
 ### F11-EXT: Additional wall damage sources (see `docs/plans/f11-wall-damage-sources-plan.md`)
+
+- **SR-113** *(Gameplay, CRR-5)*: The player shall be able to trigger a Bomberman style flame attack with the space bar. The player starts with three bombs, each bomb deals 100 HP, and any damage in excess of the first enemy's remaining HP shall carry over to the next enemy in the target order. The same behavior shall be available in both JavaFX and libGDX frontends through their existing input command and character runtime boundaries.
 
 - **SR-105** *(Player weapon, F11-EXT/DS-1)*: The player character shall be able to fire projectiles that damage breakable walls. Each shot deals a configurable HP amount (default 3 HP) so Glass walls (5 HP) require 2 shots, Wood (20 HP) requires 7, and Stone (40 HP) requires 14. Both JavaFX and libGDX frontends must support this via the existing `applyProjectileDamageToWall` / `applyWallDamage` pipeline. The player weapon shall implement `ICanDamageWalls` to formalise the damage contract.
 

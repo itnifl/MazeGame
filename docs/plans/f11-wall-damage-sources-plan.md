@@ -3,10 +3,10 @@
 **Status:** SR-99 IMPLEMENTED — remaining items PLANNED
 **ID:** `F11-EXT`
 **Parent:** `F11` (Breakable Walls — HP tracking, damage, removal)
-**Related:** `F10`, `F20` (Projectile Variants), `SR-99` (libGDX parity), `SR-100` (visual damage cues), `SR-101` (domain events)
+**Related:** `F10`, `F20` (Projectile Variants), `SR-99` (libGDX parity), `SR-100` (visual damage cues), `SR-101` (domain events), `SR-113` (Bomberman flame attack)
 **Backend:** both (JavaFX + libGDX)
 **Target:** Combat engine, characters, game loop
-**Last updated:** 2026-06-20
+**Last updated:** 2026-06-24
 
 ---
 
@@ -29,7 +29,18 @@ or similar).
 
 ## 2. Damage Sources (Prioritised)
 
-### DS-1 — Player weapon projectile (highest priority)
+### DS-0 — Bomberman flame attack (highest priority)
+
+| Attribute | Detail |
+|-----------|--------|
+| Who fires | `PlayerCharacter` when the player presses the space bar |
+| Charges | Player starts with **3 bombs** |
+| Damage | **100 HP** per bomb |
+| Mechanic | The bomb resolves as a chained flame hit, then any leftover damage spills to the next enemy in target order. For example, if the first enemy has 70 HP, it dies and the next enemy takes the remaining 30 HP |
+| Both frontends | JavaFX: space bar action in `GameController` / `PlayerCharacter`; libGDX: matching space bar command in `GdxGameScreenController` |
+| New req | **SR-113** |
+
+### DS-1 — Player weapon projectile
 
 | Attribute | Detail |
 |-----------|--------|
@@ -110,12 +121,26 @@ JavaFX uses `Platform.runLater`; libGDX must use `Gdx.app.postRunnable`. The
 `applyWallDamage` pipeline is thread-safe (`CopyOnWriteArrayList`) but nav-graph rewire
 should be posted to the render thread in libGDX to avoid concurrent iteration.
 
+### 3d. Ecore model mapping for DS-0
+
+The Bomberman flame attack is a player feature, so its authoritative model home is `Player.ecore`, not `opponents.ecore`.
+
+| Ecore model | Role in DS-0 | Relevant features |
+|---|---|---|
+| `maze-common-backend/src/main/resources/xmi/player/Player.ecore` | Player side authority for the new flame attack | `PlayerModel.playerCharacter`, `PlayerType.id`, `displayName`, `health`, `speed`, `ImageBase`, `ImageTurnLeft`, `ImageTurnRight`, `ImageTurnUp`, `ImageTurnDown`, `ImageDeath` |
+| `main.game.maze.opponents/src/main/resources/opponents.ecore` | Enemy side authority for the targets that receive chained damage | `CharacterType.health`, `Zombie.attackDamage`, `Ghost.attackDamage`, `RangedEnemy.attackDamage`, `resurrectionTime`, `projectileType`, `projectileSpeed`, `splashRadius`, `arcHeight` |
+
+The plan should treat the flame attack as runtime player combat logic backed by player tuning data. If the model is extended, the new values should live on `PlayerType`, for example `bombCount` with default `3` and `bombDamage` with default `100`. The chain transfer rule, where leftover damage carries from one enemy to the next, remains runtime logic and consumes enemy HP from `CharacterType.health` in the opponent model.
+
+No new field is required in `opponents.ecore` for the flame attack itself. That model already supplies the target HP values and enemy metadata used by the runtime when resolving the chained hit order.
+
 ---
 
 ## 4. New Requirements
 
 | ID | Summary | Source |
 |----|---------|--------|
+| **SR-113** | Space bar bomberman flame attack with 3 bombs and 100 HP chained damage | DS-0 above |
 | **SR-99** | libGDX parity — projectile wall damage | ✅ IMPLEMENTED 2026-06-20 |
 | **SR-100** | Visual crack/tint cue on partial damage | existing, proposed |
 | **SR-101** | `WallDestroyedEvent` domain event bus | existing, proposed |
@@ -128,11 +153,12 @@ should be posted to the render thread in libGDX to avoid concurrent iteration.
 
 ## 5. Suggested Implementation Order
 
-1. **DS-1 (Player weapon)** — highest gameplay value; no new architecture needed
-2. **DS-4 (libGDX parity)** — unblocks both frontends for all future sources
-3. **3a (ICanDamageWalls interface) + 3b (findWallsInRadius)** — shared plumbing
-4. **DS-2 (Explosion splash)** — depends on `findWallsInRadius`
-5. **DS-3 (Zombie bash)** — lowest complexity; purely in character movement logic
+1. **DS-0 (Bomberman flame attack)** — highest gameplay value; defines the new space bar bomb flow
+2. **DS-1 (Player weapon)** — direct wall damage source with no new architecture needed
+3. **DS-4 (libGDX parity)** — unblocks both frontends for all future sources
+4. **3a (ICanDamageWalls interface) + 3b (findWallsInRadius)** — shared plumbing
+5. **DS-2 (Explosion splash)** — depends on `findWallsInRadius`
+6. **DS-3 (Zombie bash)** — lowest complexity; purely in character movement logic
 
 Each source should be a separate commit on a dedicated branch with:
 - TDD tests written first (mock `GameController` / `applyWallDamage`)

@@ -259,8 +259,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 }
             }
 
-            // Wall collision: stop and damage the wall if it is breakable.
-            if (!hitNow && App.gameController != null) {
+            // Wall collision: only STRAIGHT projectiles collide in-flight.
+            // LOB projectiles must pass over walls and explode at the target area.
+            if (!hitNow && p.type == ProjectileType.STRAIGHT && App.gameController != null) {
                 double wx = p.computedX;
                 double wy = p.computedY;
                 GameMazeWorld mazeWorld = GameMazeWorld.GetWorld();

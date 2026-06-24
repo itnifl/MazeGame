@@ -1,10 +1,13 @@
 package main.game.maze;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,6 +23,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -43,6 +49,7 @@ import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.javafx.hud.FxHudCoordinator;
 import main.game.maze.javafx.lifecycle.FxGameSessionBootstrapper;
@@ -66,6 +73,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     @FXML private Node heart;
     @FXML private Label scoreLabel;
     @FXML private AnchorPane scoreHudContainer;
+    @FXML private Label bombsLabel;
     @FXML private AnchorPane bottomMenuContainer;
     @FXML private AnchorPane commandsOverlay;
     @FXML private Button commandsMenuButton;
@@ -76,6 +84,10 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_STYLE         = "-fx-background-color: rgba(255,229,110,0.90); -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(232,197,79,0.95); -fx-text-fill: #251700; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
+    private static final double PLAYER_BOMB_FUSE_SECONDS = 3.0;
+    private static final double PLAYER_BOMB_RANGE = 220.0;
+    private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
+    private static final double PLAYER_FLAME_VISUAL_SECONDS = 0.35;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -132,6 +144,7 @@ public class GameController implements Initializable, EnemyRegistrar {
             GameController.this.updateScoreHud(score);
         }
         @Override public void openTerminalPrompt()                  { GameController.this.openTerminalPrompt(); }
+        @Override public void triggerPlayerFlameAttack()            { GameController.this.triggerPlayerFlameAttack(); }
     };
 
     private final GameControllerTerminalSupport.TerminalCommandSink terminalCommandSink = new GameControllerTerminalSupport.TerminalCommandSink() {
@@ -143,6 +156,11 @@ public class GameController implements Initializable, EnemyRegistrar {
     };
 
     private boolean cameraFollowListenersInstalled;
+
+    private final List<ActivePlayerBomb> activePlayerBombs = new ArrayList<>();
+
+    private record ActivePlayerBomb(double x, double y, Circle marker, PauseTransition fuse) {
+    }
 
     // Extracted coordinators
     private final FxEnemyCoordinator  enemyCoordinator;
@@ -192,7 +210,8 @@ public class GameController implements Initializable, EnemyRegistrar {
                 gameBoard.sceneProperty().addListener((obs, oldS, newS) -> {
                     if (newS != null) {
                         newS.focusOwnerProperty().addListener((obsF, oldF, newF) -> {
-                            if (newF != null && newF != gameBoard && !(newF instanceof javafx.scene.control.TextInputControl)) {
+                            boolean isTextInput = newF instanceof javafx.scene.control.TextInputControl;
+                            if (FxFocusGuard.shouldReassertFocus(newF, gameBoard, isTextInput)) {
                                 gameBoard.requestFocus();
                             }
                         });
@@ -210,6 +229,140 @@ public class GameController implements Initializable, EnemyRegistrar {
     private void installBottomButtonPressEffects() {
         installButtonPressEffect(commandsMenuButton, COMMANDS_BUTTON_STYLE, COMMANDS_BUTTON_PRESSED_STYLE);
         installButtonPressEffect(terminalMenuButton, TERMINAL_BUTTON_STYLE, TERMINAL_BUTTON_PRESSED_STYLE);
+    }
+
+    void triggerPlayerFlameAttack() {
+        if (playerCharacter == null || !playerCharacter.consumeFlameBomb()) {
+            return;
+        }
+        updateBombHud();
+        double bombX = playerCharacter.getCharacterPosition().getX() + StageConstants.PlayerCharacterXYSize * 0.5d;
+        double bombY = playerCharacter.getCharacterPosition().getY() + StageConstants.PlayerCharacterXYSize * 0.5d;
+        plantPlayerBomb(bombX, bombY);
+    }
+
+    private void plantPlayerBomb(double centerX, double centerY) {
+        if (gameBoard == null) {
+            return;
+        }
+        Circle marker = new Circle(centerX, centerY, 8.0);
+        marker.setFill(Color.rgb(40, 40, 40, 0.9));
+        marker.setStroke(Color.rgb(255, 191, 71, 0.95));
+        marker.setStrokeWidth(2.2);
+        marker.setViewOrder(-8);
+        gameBoard.getChildren().add(marker);
+
+        PauseTransition fuse = new PauseTransition(Duration.seconds(PLAYER_BOMB_FUSE_SECONDS));
+        ActivePlayerBomb bomb = new ActivePlayerBomb(centerX, centerY, marker, fuse);
+        activePlayerBombs.add(bomb);
+        setHudMessage("Bomb planted", Duration.seconds(1.2));
+        fuse.setOnFinished(evt -> detonatePlayerBomb(bomb));
+        fuse.playFromStart();
+    }
+
+    private void detonatePlayerBomb(ActivePlayerBomb bomb) {
+        if (!activePlayerBombs.remove(bomb)) {
+            return;
+        }
+        if (gameBoard != null) {
+            gameBoard.getChildren().remove(bomb.marker());
+        }
+
+        List<Vector2D> walls = maze != null ? maze.getMazeVectors() : List.of();
+        int enemyDamage = enemyCoordinator.applyPlayerFlameExplosion(
+                bomb.x(),
+                bomb.y(),
+                (int) Math.max(1, PLAYER_FLAME_DAMAGE_PER_DIRECTION),
+                PLAYER_BOMB_RANGE,
+                walls);
+        applyPlayerFlameToWalls(bomb.x(), bomb.y(), (int) Math.max(1, PLAYER_FLAME_DAMAGE_PER_DIRECTION), PLAYER_BOMB_RANGE);
+        showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE);
+
+        if (enemyDamage > 0) {
+            setHudMessage("Bomb exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));
+        } else {
+            setHudMessage("Bomb exploded", Duration.seconds(1.0));
+        }
+    }
+
+    private void applyPlayerFlameToWalls(double originX, double originY, int damagePerDirection, double maxRange) {
+        if (maze == null || damagePerDirection <= 0 || maxRange <= 0d) {
+            return;
+        }
+        applyFlameToWallDirection(originX, originY, 1, 0, damagePerDirection, maxRange);
+        applyFlameToWallDirection(originX, originY, -1, 0, damagePerDirection, maxRange);
+        applyFlameToWallDirection(originX, originY, 0, 1, damagePerDirection, maxRange);
+        applyFlameToWallDirection(originX, originY, 0, -1, damagePerDirection, maxRange);
+    }
+
+    private void applyFlameToWallDirection(double originX,
+                                           double originY,
+                                           int dirX,
+                                           int dirY,
+                                           int damageBudget,
+                                           double maxRange) {
+        int remaining = damageBudget;
+        double step = 6.0;
+        Vector2D lastHit = null;
+        for (double distance = step; distance <= maxRange && remaining > 0; distance += step) {
+            double sampleX = originX + dirX * distance;
+            double sampleY = originY + dirY * distance;
+            Vector2D hitWall = WallCollisionUtil.findFirstHitWall(sampleX, sampleY, 10.0, maze.getMazeVectors());
+            if (hitWall == null || hitWall == lastHit) {
+                continue;
+            }
+            lastHit = hitWall;
+
+            BreakableWall breakableWall = maze.findBreakableWall(hitWall);
+            if (breakableWall == null) {
+                break;
+            }
+
+            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
+            if (toApply <= 0) {
+                break;
+            }
+            boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
+            remaining -= toApply;
+            if (!destroyed) {
+                break;
+            }
+            lastHit = null;
+        }
+    }
+
+    private void showFlameExplosionVisual(double centerX, double centerY, double range) {
+        if (gameBoard == null) {
+            return;
+        }
+        Circle core = new Circle(centerX, centerY, 12.0);
+        core.setFill(Color.rgb(255, 170, 36, 0.55));
+        core.setStroke(Color.rgb(255, 232, 160, 0.95));
+        core.setStrokeWidth(2.6);
+        core.setViewOrder(-9);
+
+        Line east = flameSegment(centerX, centerY, centerX + range, centerY);
+        Line west = flameSegment(centerX, centerY, centerX - range, centerY);
+        Line south = flameSegment(centerX, centerY, centerX, centerY + range);
+        Line north = flameSegment(centerX, centerY, centerX, centerY - range);
+        gameBoard.getChildren().addAll(core, east, west, south, north);
+
+        PauseTransition hide = new PauseTransition(Duration.seconds(PLAYER_FLAME_VISUAL_SECONDS));
+        hide.setOnFinished(evt -> {
+            if (gameBoard != null) {
+                gameBoard.getChildren().removeAll(core, east, west, south, north);
+            }
+        });
+        hide.playFromStart();
+    }
+
+    private static Line flameSegment(double x1, double y1, double x2, double y2) {
+        Line segment = new Line(x1, y1, x2, y2);
+        segment.setStroke(Color.rgb(255, 122, 48, 0.85));
+        segment.setStrokeWidth(6.0);
+        segment.setStrokeLineCap(StrokeLineCap.ROUND);
+        segment.setViewOrder(-9);
+        return segment;
     }
 
     private static void installButtonPressEffect(Button button, String normalStyle, String pressedStyle) {
@@ -249,8 +402,13 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     private void updateScoreHud(int score) {
         if (scoreLabel != null)        scoreLabel.setText("Score: " + score);
+        updateBombHud();
         if (coordinatesLabel != null)  coordinatesLabel.setTextFill(Color.WHITE);
         if (mouseCoordsLabel != null)  mouseCoordsLabel.setTextFill(Color.WHITE);
+    }
+
+    private void updateBombHud() {
+        if (bombsLabel != null && playerCharacter != null) bombsLabel.setText("Bombs: " + playerCharacter.getFlameBombsRemaining());
     }
 
     public int getDynamicScorePenalty() {
@@ -348,6 +506,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void setupGame() {
+        clearActivePlayerBombs();
         hpBar.setProgress(1.0);
         installCameraFollowListeners();
 
@@ -428,9 +587,27 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     private void handlePlayerMovementTick(long now) {
         if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) return;
+        ensureGameBoardFocus();
         currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
         leftMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
+    }
+
+    /**
+     * Self-heals keyboard focus once per frame so player input cannot become
+     * permanently dead after focus is lost to a transient node or dropped to
+     * {@code null}. Focus is never stolen from a text input control so the
+     * in-game terminal stays usable.
+     */
+    private void ensureGameBoardFocus() {
+        if (gameBoard == null) return;
+        var scene = gameBoard.getScene();
+        if (scene == null) return;
+        var focusOwner = scene.getFocusOwner();
+        boolean focusOwnerIsTextInput = focusOwner instanceof javafx.scene.control.TextInputControl;
+        if (FxFocusGuard.shouldReassertFocus(focusOwner, gameBoard, focusOwnerIsTextInput)) {
+            gameBoard.requestFocus();
+        }
     }
 
     private void updateCameraFollow() {
@@ -502,6 +679,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void dispose() {
+        clearActivePlayerBombs();
         stopComputerCharacters();
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();
         enemyCoordinator.dispose();
@@ -515,5 +693,15 @@ public class GameController implements Initializable, EnemyRegistrar {
             playerCharacter.dispose();
             playerCharacter = null;
         }
+    }
+
+    private void clearActivePlayerBombs() {
+        for (ActivePlayerBomb bomb : activePlayerBombs) {
+            bomb.fuse().stop();
+            if (gameBoard != null) {
+                gameBoard.getChildren().remove(bomb.marker());
+            }
+        }
+        activePlayerBombs.clear();
     }
 }

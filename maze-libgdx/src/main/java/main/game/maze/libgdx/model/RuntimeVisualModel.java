@@ -12,6 +12,8 @@ public record RuntimeVisualModel(
         float playerSpeed,
         float playerSize,
         int playerMaxHitPoints,
+        int playerBombCount,
+        int playerBombDamage,
         String backgroundImagePath,
         String wallImagePath,
         String goalImagePath,

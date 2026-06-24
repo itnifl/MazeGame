@@ -7,6 +7,7 @@ import javafx.scene.shape.Rectangle;
 import main.game.maze.FxEnemyCoordinator;
 import main.game.maze.FxGameWorldModel;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.Zombie;
@@ -61,6 +62,14 @@ class FxEnemyCoordinatorTest {
                 () -> null,      // playerSupplier
                 () -> {}         // pathCanvasRefreshCallback
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void addComputerCharacter(FxEnemyCoordinator coordinator, Object character)
+            throws Exception {
+        Field field = FxEnemyCoordinator.class.getDeclaredField("allComputerCharacters");
+        field.setAccessible(true);
+        ((List<Object>) field.get(coordinator)).add(character);
     }
 
     // stepAll() with no registered enemies must not throw.
@@ -254,5 +263,63 @@ class FxEnemyCoordinatorTest {
         // stepAll() with null maze → doWanderMove null-maze early return path.
         assertDoesNotThrow(c::stepAll,
                 "stepAll with a wander zombie and null maze must not throw");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_capsDamagePerDirectionAtOneHundred() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie zombieModel = OpponentsFactory.eINSTANCE.createZombie();
+        zombieModel.setHealth(100);
+        zombieModel.setSpeed(2.0);
+        zombieModel.setAttackDamage(1);
+        zombieModel.setThreatLevel(1.0);
+        zombieModel.setBehavior(BehaviorType.WANDER);
+
+        ZombieCharacter zombie = new ZombieCharacter(new Rectangle(16, 16), 120, 40, zombieModel);
+        addComputerCharacter(c, zombie);
+        int before = zombie.getHitPoints();
+
+        int applied = c.applyPlayerFlameExplosion(20, 60, 100, 400, List.of());
+
+        assertEquals(100, applied, "Explosion damage must be capped at 100 per direction");
+        assertEquals(before - 100, zombie.getHitPoints(), "Enemy should lose at most the 100 point directional budget");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_stopsAtWallWhenWallSurvives() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie frontModel = OpponentsFactory.eINSTANCE.createZombie();
+        frontModel.setHealth(20);
+        frontModel.setSpeed(2.0);
+        frontModel.setAttackDamage(1);
+        frontModel.setThreatLevel(1.0);
+        frontModel.setBehavior(BehaviorType.WANDER);
+
+        Zombie rearModel = OpponentsFactory.eINSTANCE.createZombie();
+        rearModel.setHealth(80);
+        rearModel.setSpeed(2.0);
+        rearModel.setAttackDamage(1);
+        rearModel.setThreatLevel(1.0);
+        rearModel.setBehavior(BehaviorType.WANDER);
+
+        ZombieCharacter frontZombie = new ZombieCharacter(new Rectangle(16, 16), 80, 40, frontModel);
+        ZombieCharacter rearZombie = new ZombieCharacter(new Rectangle(16, 16), 160, 40, rearModel);
+        addComputerCharacter(c, frontZombie);
+        addComputerCharacter(c, rearZombie);
+        int frontBefore = frontZombie.getHitPoints();
+        int rearBefore = rearZombie.getHitPoints();
+
+        int applied = c.applyPlayerFlameExplosion(
+                20,
+                60,
+                100,
+                400,
+                List.of(new Vector2D(120, 0, 120, 120)));
+
+        assertTrue(applied <= 100, "A single direction must never apply more than 100 total damage");
+        assertEquals(Math.max(0, frontBefore - applied), frontZombie.getHitPoints(), "Front enemy should absorb the directional damage budget");
+        assertEquals(rearBefore, rearZombie.getHitPoints(), "Rear enemy must stay untouched after the wall stops the flame");
     }
 }

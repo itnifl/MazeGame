@@ -111,6 +111,9 @@ public final class GdxHudView {
         font.draw(batch, "Score: " + context.score(), scoreX + 14f, scoreY + 21f);
         font.getData().setScale(1.0f);
 
+        font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
+        font.draw(batch, "Bombs: " + context.playerBombsRemaining(), 14f, h - 12f);
+
         switch (context.messageMode()) {
             case WON -> {
                 font.setColor(new Color(0.56f, 1.0f, 0.88f, 1f));
@@ -225,6 +228,7 @@ public final class GdxHudView {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int score,
+            int playerBombsRemaining,
             HudMessageMode messageMode,
             String statusMessage,
             boolean terminalActive,

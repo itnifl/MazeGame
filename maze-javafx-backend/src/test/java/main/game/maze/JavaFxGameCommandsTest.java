@@ -21,15 +21,17 @@ class JavaFxGameCommandsTest {
         new ShowHighScoreCommand().execute(context);
         new ReturnToMenuCommand().execute(context);
         new ApplyPathHintCommand().execute(context);
+        new TriggerFlameAttackCommand().execute(context);
         new ToggleSpanningTreeCommand().execute(context);
         new OpenHighScoresCommand().execute(context);
 
-        assertEquals(5, sink.calls.size(), "All commands should have delegated");
+        assertEquals(6, sink.calls.size(), "All commands should have delegated");
         assertEquals("showHighScore", sink.calls.get(0));
         assertEquals("openDifficultyPickerAndMaybeRestart", sink.calls.get(1));
         assertEquals("showNavigationPath", sink.calls.get(2));
-        assertEquals("showSpanningTree", sink.calls.get(3));
-        assertEquals("showHighScore", sink.calls.get(4));
+        assertEquals("triggerPlayerFlameAttack", sink.calls.get(3));
+        assertEquals("showSpanningTree", sink.calls.get(4));
+        assertEquals("showHighScore", sink.calls.get(5));
     }
 
     @Test
@@ -105,6 +107,7 @@ class JavaFxGameCommandsTest {
                     @Override public void openHighScores() {}
                     @Override public void toggleSpanningTree() {}
                     @Override public void applyPathHintHeld(boolean held) {}
+                    @Override public void triggerPlayerFlameAttack() {}
                     @Override public void applyMovementFromFrame() {}
                     @Override public void requestStop() {}
                     @Override public boolean stopRequested() { return false; }
@@ -133,5 +136,6 @@ class JavaFxGameCommandsTest {
         @Override public void updateDebugLabels()                    { calls.add("updateDebugLabels"); }
         @Override public void updateScoreHud()                       { calls.add("updateScoreHud"); }
         @Override public void openTerminalPrompt()                   { calls.add("openTerminalPrompt"); }
+        @Override public void triggerPlayerFlameAttack()             { calls.add("triggerPlayerFlameAttack"); }
     }
 }

@@ -57,6 +57,11 @@ public final class SpyActionSink implements JavaFxInputCommandContext.ActionSink
         calls.add("updateScoreHud");
     }
 
+    @Override
+    public void triggerPlayerFlameAttack() {
+        calls.add("triggerPlayerFlameAttack");
+    }
+
     public int countOf(String methodName) {
         return (int) calls.stream().filter(methodName::equals).count();
     }

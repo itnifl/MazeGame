@@ -46,6 +46,7 @@ class PathHintKeyReleaseTest {
             @Override public void updateDebugLabels() {}
             @Override public void updateScoreHud() {}
             @Override public void openTerminalPrompt() {}
+                        @Override public void triggerPlayerFlameAttack() {}
 
             @Override public void showNavigationPath()  { sinkCalls.add("show");  }
             @Override public void clearNavigationPath() { sinkCalls.add("clear"); }
@@ -115,6 +116,7 @@ class PathHintKeyReleaseTest {
             @Override public void updateDebugLabels() {}
             @Override public void updateScoreHud() {}
             @Override public void openTerminalPrompt() {}
+                        @Override public void triggerPlayerFlameAttack() {}
             @Override public void showNavigationPath()  { calls.add("show"); }
             @Override public void clearNavigationPath() {
                 calls.add("clear");

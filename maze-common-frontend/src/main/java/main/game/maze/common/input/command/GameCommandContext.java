@@ -18,6 +18,8 @@ public interface GameCommandContext {
 
     void applyPathHintHeld(boolean held);
 
+    void triggerPlayerFlameAttack();
+
     void applyMovementFromFrame();
 
     void requestStop();

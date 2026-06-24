@@ -23,6 +23,8 @@ class XmiRulesLoaderPlayerConfigTest {
         assertEquals("player_default", config.id());
         assertEquals(100, config.health());
         assertEquals(10.0, config.speed());
+        assertEquals(3, config.bombCount());
+        assertEquals(100, config.bombDamage());
         assertEquals("/main/game/maze/you2.png", config.imageBase());
         assertEquals("/main/game/maze/you2-dead.png", config.imageDeath());
     }

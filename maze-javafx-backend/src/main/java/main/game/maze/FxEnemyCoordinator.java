@@ -41,12 +41,16 @@ import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +83,8 @@ public final class FxEnemyCoordinator {
     private static final double   ENEMY_LABEL_Y_OFFSET    = 14.0;
     /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
     private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
+    private static final double   PLAYER_FLAME_SCAN_STEP   = 6.0d;
+    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 0.375d;
 
     /** Evaluated lazily so the coordinator can be created before FXML fields are set. */
     private final Supplier<Pane>        gameBoardSupplier;
@@ -231,6 +237,256 @@ public final class FxEnemyCoordinator {
             }
         }
         return killed;
+    }
+
+    public int applyPlayerFlameAttack(int damage) {
+        int remainingDamage = Math.max(0, damage);
+        int appliedDamage = 0;
+        for (var character : allComputerCharacters) {
+            if (remainingDamage <= 0) {
+                break;
+            }
+            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)) {
+                continue;
+            }
+            int hp = Math.max(0, canDie.getHitPoints());
+            if (hp <= 0) {
+                continue;
+            }
+            int damageToApply = Math.min(hp, remainingDamage);
+            canDie.subtractHitPoints(damageToApply);
+            remainingDamage -= damageToApply;
+            appliedDamage += damageToApply;
+        }
+        return appliedDamage;
+    }
+
+    public int applyPlayerFlameExplosion(double originX,
+                                         double originY,
+                                         int damagePerDirection,
+                                         double maxRange,
+                                         List<Vector2D> walls) {
+        int safeDamage = Math.max(0, damagePerDirection);
+        double safeRange = Math.max(0d, maxRange);
+        if (safeDamage <= 0 || safeRange <= 0d || allComputerCharacters.isEmpty()) {
+            return 0;
+        }
+
+        int totalApplied = 0;
+        totalApplied += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls);
+        totalApplied += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls);
+        return totalApplied;
+    }
+
+    private int applyDirectionalFlame(double originX,
+                                      double originY,
+                                      int dirX,
+                                      int dirY,
+                                      int damageBudget,
+                                      double maxRange,
+                                      List<Vector2D> walls) {
+        GameMazeWorld maze = mazeSupplier.get();
+        List<DirectionalTarget> targets = new ArrayList<>();
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)) {
+                continue;
+            }
+            if (!(character instanceof ComputerCharacter cc)) {
+                continue;
+            }
+            int hp = Math.max(0, canDie.getHitPoints());
+            if (hp <= 0) {
+                continue;
+            }
+            double size = approximateSize(cc);
+            double centerX = cc.getCharacterPosition().getX() + size * 0.5d;
+            double centerY = cc.getCharacterPosition().getY() + size * 0.5d;
+            Double distance = projectedDistanceOnRay(originX, originY, centerX, centerY, dirX, dirY, maxRange);
+            if (distance == null) {
+                continue;
+            }
+            targets.add(new DirectionalTarget(canDie, distance, centerX, centerY));
+        }
+
+        targets.sort(Comparator.comparingDouble(DirectionalTarget::distance));
+
+        int remaining = damageBudget;
+        int applied = 0;
+        int targetIndex = 0;
+        double searchStart = 0d;
+
+        while (remaining > 0 && searchStart <= maxRange) {
+            WallHit nextWall = findNextWallHit(originX, originY, dirX, dirY, walls, searchStart, maxRange);
+            double wallDistance = nextWall == null ? Double.POSITIVE_INFINITY : nextWall.distance();
+
+            while (targetIndex < targets.size()) {
+                DirectionalTarget currentTarget = targets.get(targetIndex);
+                if (walls != null && !walls.isEmpty()
+                        && WallCollisionUtil.wallBetweenVectors(originX, originY, currentTarget.centerX(), currentTarget.centerY(), walls)) {
+                    if (nextWall != null && maze != null) {
+                        BreakableWall breakableWall = maze.findBreakableWall(nextWall.wall());
+                        if (breakableWall != null) {
+                            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
+                            if (toApply > 0) {
+                                boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
+                                remaining -= toApply;
+                                applied += toApply;
+                                if (!destroyed) {
+                                    return applied;
+                                }
+                            }
+                        }
+                    }
+                    return applied;
+                }
+                if (currentTarget.distance() >= wallDistance) {
+                    break;
+                }
+                int hp = Math.max(0, currentTarget.target().getHitPoints());
+                if (hp > 0) {
+                    int toApply = Math.min(hp, remaining);
+                    currentTarget.target().subtractHitPoints(toApply);
+                    remaining -= toApply;
+                    applied += toApply;
+                }
+                targetIndex++;
+                if (remaining <= 0) {
+                    return applied;
+                }
+            }
+
+            if (nextWall == null || maze == null) {
+                break;
+            }
+
+            BreakableWall breakableWall = maze.findBreakableWall(nextWall.wall());
+            if (breakableWall == null) {
+                break;
+            }
+
+            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
+            if (toApply <= 0) {
+                break;
+            }
+            boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
+            remaining -= toApply;
+            applied += toApply;
+            if (!destroyed) {
+                break;
+            }
+            searchStart = nextWall.distance();
+        }
+
+        while (remaining > 0 && targetIndex < targets.size()) {
+            int hp = Math.max(0, targets.get(targetIndex).target().getHitPoints());
+            if (hp > 0) {
+                int toApply = Math.min(hp, remaining);
+                targets.get(targetIndex).target().subtractHitPoints(toApply);
+                remaining -= toApply;
+                applied += toApply;
+            }
+            targetIndex++;
+        }
+        return applied;
+    }
+
+    private static Double projectedDistanceOnRay(double originX,
+                                                 double originY,
+                                                 double targetX,
+                                                 double targetY,
+                                                 int dirX,
+                                                 int dirY,
+                                                 double maxRange) {
+        double corridorHalfWidth = PLAYER_FLAME_HALF_WIDTH;
+        if (dirX != 0) {
+            if (Math.abs(targetY - originY) > corridorHalfWidth) {
+                return null;
+            }
+            double delta = targetX - originX;
+            if (Math.signum(delta) != dirX) {
+                return null;
+            }
+            double distance = Math.abs(delta);
+            return distance <= maxRange ? distance : null;
+        }
+
+        if (Math.abs(targetX - originX) > corridorHalfWidth) {
+            return null;
+        }
+        double delta = targetY - originY;
+        if (Math.signum(delta) != dirY) {
+            return null;
+        }
+        double distance = Math.abs(delta);
+        return distance <= maxRange ? distance : null;
+    }
+
+    private WallHit findNextWallHit(double originX,
+                                    double originY,
+                                    int dirX,
+                                    int dirY,
+                                    List<Vector2D> walls,
+                                    double searchStart,
+                                    double maxRange) {
+        if (walls == null || walls.isEmpty()) {
+            return null;
+        }
+
+        WallHit nearest = null;
+        for (Vector2D wall : walls) {
+            double wallStartX = wall.getStart().getX();
+            double wallStartY = wall.getStart().getY();
+            double wallEndX = wall.getEnd().getX();
+            double wallEndY = wall.getEnd().getY();
+
+            if (dirX != 0 && Math.abs(wallStartX - wallEndX) < 0.001d) {
+                double minY = Math.min(wallStartY, wallEndY);
+                double maxY = Math.max(wallStartY, wallEndY);
+                if (originY < minY || originY > maxY) {
+                    continue;
+                }
+                double distance = wallStartX - originX;
+                if (Math.signum(distance) != dirX) {
+                    continue;
+                }
+                double absDistance = Math.abs(distance);
+                if (absDistance <= searchStart || absDistance > maxRange) {
+                    continue;
+                }
+                if (nearest == null || absDistance < nearest.distance()) {
+                    nearest = new WallHit(wall, absDistance);
+                }
+                continue;
+            }
+
+            if (dirY != 0 && Math.abs(wallStartY - wallEndY) < 0.001d) {
+                double minX = Math.min(wallStartX, wallEndX);
+                double maxX = Math.max(wallStartX, wallEndX);
+                if (originX < minX || originX > maxX) {
+                    continue;
+                }
+                double distance = wallStartY - originY;
+                if (Math.signum(distance) != dirY) {
+                    continue;
+                }
+                double absDistance = Math.abs(distance);
+                if (absDistance <= searchStart || absDistance > maxRange) {
+                    continue;
+                }
+                if (nearest == null || absDistance < nearest.distance()) {
+                    nearest = new WallHit(wall, absDistance);
+                }
+            }
+        }
+        return nearest;
+    }
+
+    private record DirectionalTarget(main.game.maze.characters.interfaces.ICanDie target, double distance, double centerX, double centerY) {
+    }
+
+    private record WallHit(Vector2D wall, double distance) {
     }
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {
@@ -505,9 +761,20 @@ public final class FxEnemyCoordinator {
     private boolean applyPhasing(IMovingComputerCharacter character, ComputerCharacter cc) {
         if (!(cc instanceof INonTangientMazeGameCharacter ntcc)) return false;
         if (!drainNonTangientEnergy(ntcc)) return false;
-        MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), worldView);
+        double size = approximateSize(cc);
+        double half = size * 0.5d;
+        MovementResult next = ghostPhasingMovementService.tick(
+            new EnemyState(
+                enemyId(cc),
+                cc.getCharacterPosition().getX() + half,
+                cc.getCharacterPosition().getY() + half,
+                dirSign(cc.getDirectionX()),
+                dirSign(cc.getDirectionY()),
+                size,
+                Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())))),
+            worldView);
         cc.setDirection(new Point2D(next.directionX(), next.directionY()));
-        character.move(true);
+        cc.teleportTo(next.x() - half, next.y() - half);
         return true;
     }
 
