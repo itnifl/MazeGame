@@ -63,13 +63,13 @@ public final class GdxGameRenderPipeline {
         List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(
                 state.animatedEnemies().size() + state.dyingEnemies().size());
         for (GdxEnemyRuntime enemy : state.animatedEnemies()) {
-            Texture enemyTexture = state.enemyTextureLoader().apply(enemy.imagePath());
+            Texture enemyTexture = state.enemyTextureLoader().apply(enemy.currentFramePath(state.enemyAnimationClock()));
             String label = enemy.debugLabel(state.debugOverlayState().showBehaviourType(), state.debugOverlayState().showMovementType());
             enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
                     enemyTexture,
                     enemy.x(),
                     enemy.y(),
-                    enemy.size(),
+                    enemy.size() * enemy.spriteScale(),
                     enemy.renderOpacity(),
                     enemy.infectious(),
                     enemy.infectionStrength(),

@@ -76,7 +76,7 @@
       <ImageTurnDown>/main/game/maze/zombie1-down.png</ImageTurnDown>
     </characterTypes>
 
-    <characterTypes xsi:type="opponents:Zombie">            
+    <characterTypes xsi:type="opponents:Zombie">
       <id>zombie_angry_1</id>
       <displayName>Angry Zombie</displayName>
       <enabled>true</enabled>

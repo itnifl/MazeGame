@@ -13,10 +13,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Consumer;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -226,7 +229,23 @@ public final class MenuScreenController extends AbstractGdxScreenController {
         context().assets().queueTexture(runtimeModel.wallImagePath());
         context().assets().queueTexture(runtimeModel.goalImagePath());
         for (var enemy : runtimeModel.enemies()) {
-            context().assets().queueTexture(enemy.imagePath());
+            Set<String> paths = new LinkedHashSet<>();
+            paths.add(enemy.imagePath());
+            var spec = enemy.animationSpec();
+            if (spec != null && spec.animationFrameCount() > 1) {
+                for (String dir : List.of(
+                        spec.imageTurnLeft(), spec.imageTurnRight(),
+                        spec.imageTurnUp(), spec.imageTurnDown())) {
+                    if (dir != null && !dir.isBlank()) {
+                        for (int f = 0; f < spec.animationFrameCount(); f++) {
+                            paths.add(SpriteAnimationUtil.deriveAnimationFramePath(dir, f));
+                        }
+                    }
+                }
+            }
+            for (String path : paths) {
+                context().assets().queueTexture(path);
+            }
         }
     }
 

@@ -1,13 +1,21 @@
 package main.game.maze.characters;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.util.Duration;
+import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
@@ -16,20 +24,28 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
+    private static final double ANIMATION_FRAME_DURATION_MS = 250.0;
+
     private double speed;
     private final CharacterType characterModel;
 
 
     protected VectorFacing currentCharacterFacing = VectorFacing.IDLE;
     private static final Logger _logger = Logger.getLogger(ComputerCharacter.class.getName());
+
+    /** Frame-0 (static) images per direction, used when animationFrameCount <= 1. */
     private final Map<VectorFacing, Image> images = new EnumMap<>(VectorFacing.class);
+    /** All walk-cycle frames per direction; null when animationFrameCount <= 1. */
+    private final Map<VectorFacing, List<Image>> animationFrames;
+    private int currentWalkFrame = 0;
+    private final Timeline walkAnimation;
 
     protected final Image imageLeft;
     protected final Image imageRight;
     protected final Image imageUp;
     protected final Image imageDown;
 
-        public ComputerCharacter(Node characterGraphics, 
+    public ComputerCharacter(Node characterGraphics, 
         CharacterType characterType, 
         double positionX, 
         double positionY, 
@@ -40,10 +56,11 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         calculateMaxPositions();
         this.characterModel = characterType;
 
-        var leftPath = characterType.getImageTurnLeft();
-        var rightPath = characterType.getImageTurnRight();
-        var upPath = characterType.getImageTurnUp();
-        var downPath = characterType.getImageTurnDown();    
+        var basePath  = characterType.getImageBase();
+        var leftPath  = firstNonBlank(characterType.getImageTurnLeft(),  basePath);
+        var rightPath = firstNonBlank(characterType.getImageTurnRight(), basePath);
+        var upPath    = firstNonBlank(characterType.getImageTurnUp(),    basePath);
+        var downPath  = firstNonBlank(characterType.getImageTurnDown(),  basePath);
 
         _logger.info("Loading character images from paths: " + leftPath + ", " + rightPath + ", " + upPath + ", " + downPath);
 
@@ -57,21 +74,84 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         images.put(VectorFacing.UP,    imageUp);
         images.put(VectorFacing.DOWN,  imageDown);
 
+        int frameCount = Math.max(1, characterType.getAnimationFrameCount());
+        if (frameCount > 1) {
+            animationFrames = new EnumMap<>(VectorFacing.class);
+            animationFrames.put(VectorFacing.LEFT,  loadAnimationFrames(leftPath,  frameCount));
+            animationFrames.put(VectorFacing.RIGHT, loadAnimationFrames(rightPath, frameCount));
+            animationFrames.put(VectorFacing.UP,    loadAnimationFrames(upPath,    frameCount));
+            animationFrames.put(VectorFacing.DOWN,  loadAnimationFrames(downPath,  frameCount));
+            walkAnimation = buildWalkTimeline(frameCount);
+            walkAnimation.play();
+        } else {
+            animationFrames = null;
+            walkAnimation = null;
+        }
+
         this.directionSubscriber = (VectorFacing direction) -> {
-            if (direction != null && direction != currentCharacterFacing) {
-                Image next = images.get(direction);
-                if (next != null) {
+            if (direction == null) return;
+            Platform.runLater(() -> {
+                if (direction != currentCharacterFacing) {
                     currentCharacterFacing = direction;
-                    this.setCharacterImage(next);
+                    updateCharacterImage();
                 }
-            }
+            });
         };
-        
+
         // Initialize with a random direction to avoid zero-length vector (NaN issues)
         changeDirection();
     }
 
-        @Override
+    /** Advance the walk-cycle frame and redraw the current direction. */
+    private void advanceWalkFrame(int frameCount) {
+        currentWalkFrame = (currentWalkFrame + 1) % frameCount;
+        updateCharacterImage();
+    }
+
+    private void updateCharacterImage() {
+        if (getCharacterGraphics() == null) return;
+        Image next = currentImage(currentCharacterFacing);
+        if (next != null) {
+            setCharacterImage(next);
+        }
+    }
+
+    private Image currentImage(VectorFacing facing) {
+        if (animationFrames != null) {
+            List<Image> frames = animationFrames.get(facing);
+            if (frames != null && !frames.isEmpty()) {
+                return frames.get(currentWalkFrame % frames.size());
+            }
+        }
+        return images.get(facing);
+    }
+
+    private Timeline buildWalkTimeline(int frameCount) {
+        Timeline tl = new Timeline(new KeyFrame(
+                Duration.millis(ANIMATION_FRAME_DURATION_MS),
+                e -> advanceWalkFrame(frameCount)));
+        tl.setCycleCount(Animation.INDEFINITE);
+        return tl;
+    }
+
+    @Override
+    public void dispose() {
+        if (walkAnimation != null) {
+            walkAnimation.stop();
+        }
+        super.dispose();
+    }
+
+    private List<Image> loadAnimationFrames(String frame1Path, int frameCount) {
+        List<Image> frames = new ArrayList<>(frameCount);
+        for (int i = 0; i < frameCount; i++) {
+            String path = SpriteAnimationUtil.deriveAnimationFramePath(frame1Path, i);
+            frames.add(loadOrStub(getClass(), path));
+        }
+        return frames;
+    }
+
+    @Override
     public boolean move(boolean force) {
         if(force || !isTouchingVector()) {
             boolean hasMoved = false;
@@ -150,7 +230,16 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         }
     }
 
+    private static String firstNonBlank(String preferred, String fallback) {
+        return preferred != null && !preferred.isBlank() ? preferred : fallback;
+    }
+
     private static Image loadOrStub(Class<?> anchor, String path) {
+        if (path == null || path.isBlank()) {
+            Logger.getLogger(ComputerCharacter.class.getName())
+                .warning("Missing or blank image path — using 1x1 placeholder");
+            return new WritableImage(1, 1);
+        }
         // Allow both "/a/b.png" and "a/b.png"
         String normalized = path.startsWith("/") ? path : "/" + path;
         URL url = anchor.getResource(normalized);

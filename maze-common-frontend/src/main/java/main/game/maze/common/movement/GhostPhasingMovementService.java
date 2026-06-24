@@ -1,5 +1,7 @@
 package main.game.maze.common.movement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,11 +58,11 @@ public final class GhostPhasingMovementService {
         double newY = state.y() + dir[1] * state.speed();
 
         if (outOfBounds(newX, newY, halfSize, world)) {
-            dir = randomDirection();
+            dir = directionAwayFromBoundary(state.x(), state.y(), state.speed(), halfSize, world);
             directions.put(state.id(), dir);
             newX = state.x() + dir[0] * state.speed();
             newY = state.y() + dir[1] * state.speed();
-            // Clamp to ensure the ghost stays within the playfield even after re-pick.
+            // Safety clamp in case the board is narrower than one speed step.
             newX = Math.max(world.minX() + halfSize, Math.min(world.maxX() - halfSize, newX));
             newY = Math.max(world.minY() + halfSize, Math.min(world.maxY() - halfSize, newY));
         }
@@ -74,6 +76,28 @@ public final class GhostPhasingMovementService {
      */
     public void reset() {
         directions.clear();
+    }
+
+    /**
+     * Picks a cardinal direction whose resulting position stays inside the board.
+     * First builds the list of valid in-bounds directions; if more than one is valid
+     * it picks randomly among them. Falls back to a random direction (with clamp) if
+     * the board is so small that no step stays in bounds.
+     */
+    private int[] directionAwayFromBoundary(double x, double y, double speed,
+                                             double halfSize, WorldView world) {
+        List<int[]> valid = new ArrayList<>(4);
+        for (int[] c : CARDINALS) {
+            double nx = x + c[0] * speed;
+            double ny = y + c[1] * speed;
+            if (!outOfBounds(nx, ny, halfSize, world)) {
+                valid.add(c);
+            }
+        }
+        if (valid.isEmpty()) {
+            return randomDirection();
+        }
+        return valid.get(valid.size() == 1 ? 0 : random.nextInt(valid.size()));
     }
 
     private boolean outOfBounds(double x, double y, double halfSize, WorldView world) {

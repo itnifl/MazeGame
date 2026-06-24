@@ -183,7 +183,6 @@ public final class FxEnemyCoordinator {
 
     public void stepAll() {
         PlayerCharacter playerCharacter = playerSupplier.get();
-        Node playerNode = playerCharacter != null ? playerCharacter.getCharacterGraphics() : null;
         long nowMs = System.currentTimeMillis();
         for (var computerCharacter : allComputerCharacters) {
             try {
@@ -191,8 +190,8 @@ public final class FxEnemyCoordinator {
                     movementDispatch
                             .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
                             .accept(computerCharacter);
-                    if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerNode != null) {
-                        pumpkinBomber.tryShootAt(playerNode, nowMs);
+                    if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerCharacter != null) {
+                        pumpkinBomber.tryShootAt(worldView.playerX(), worldView.playerY(), nowMs);
                         // updateProjectiles is done on the FX thread below to avoid concurrent
                         // list mutation between the AI background thread and the FX render thread.
                     }
