@@ -102,6 +102,20 @@ class GdxEnemyRuntimeProjectileTest {
                 "High-arc lob should still have an active projectile visual during early flight");
     }
 
+    /** Spawn with a 5-second cooldown so only one projectile fires during 1-second speed tests. */
+    private static EnemySpawn slowCooldownSpawn(ProjectileType type, float projectileSpeed) {
+        return new EnemySpawn(
+                "speed-test",
+                "/main/game/maze/pumpkinbomber.png",
+                40f, 40f, 40f, 2f, 10, 0, "",
+                BehaviorType.AGGRESSIVE, 2f, 0d,
+                EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                type, 0f, 0f,
+                300f,  // attackRange — covers distance to (240,40)
+                5000,  // attackCooldownMs — prevents a second shot during 1-second test
+                projectileSpeed);
+    }
+
     private static EnemySpawn rangedSpawn(ProjectileType type, float splashRadius, float arcHeight) {
         return rangedSpawn(type, splashRadius, arcHeight, 260f);
     }
@@ -206,16 +220,7 @@ class GdxEnemyRuntimeProjectileTest {
 
     @Test
     void lobProjectile_playerOutsideSplashRadius_dealsNoDamage() {
-        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
-                rangedSpawn(ProjectileType.LOB, 10f, 0f, 300f),  // tiny splash radius
-                0,
-                openWorld(),
-                60f,
-                8);
-
-        // Player is at 200,40; enemy at 40,40; target is the player — 10px splash means
-        // player must be within 10px of impact to take damage. Impact is at player pos so
-        // player IS in range in this test. Validate via opposite: player far from impact.
+        // Validate via opposite: player far from impact.
         GdxEnemyRuntime farRuntime = GdxEnemyRuntime.fromSpawn(
                 rangedSpawn(ProjectileType.LOB, 10f, 0f, 300f),
                 0,
@@ -229,6 +234,194 @@ class GdxEnemyRuntimeProjectileTest {
             totalDamage += farRuntime.updateRangedAttacks(1f / 60f, openMaze(), 300f, 300f, 5f);
         }
         assertEquals(0, totalDamage, "Player outside splash radius must take no LOB damage");
+    }
+
+    // --- F26: projectile speed drives physics --------------------------------
+
+    @Test
+    void lobProjectile_positionAfterOneSecond_equalsProjectileSpeedPixelsFromStart() {
+        // Enemy at (40,40) [from EnemySpawn]; player at (240,40): distance = 200f.
+        // Speed = 100f → duration = 200 / 100 = 2.0 seconds.
+        // After exactly 1 second of flight: progress = 0.5, x = 140f.
+        // Distance from spawn = 140 - 40 = 100f = projectileSpeed. (F26)
+        float speed = 100f;
+        float playerX = 240f, playerY = 40f;
+
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                slowCooldownSpawn(ProjectileType.LOB, speed),
+                0, openWorld(), 60f, 8);
+
+        // First tick fires the shot (shotCooldownRemaining starts at 0)
+        runtime.updateRangedAttacks(1f / 60f, openMaze(), playerX, playerY, 5f);
+
+        // Simulate exactly 1 second of flight (60 ticks of dt = 1/60 s)
+        for (int i = 0; i < 60; i++) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), playerX, playerY, 5f);
+        }
+
+        List<GdxEnemyRuntime.ProjectileVisual> visuals = runtime.projectileVisuals();
+        assertFalse(visuals.isEmpty(),
+                "LOB must still be in flight after 1 s when total flight duration is 2 s");
+
+        // LOB with arcHeight=0: x and y are the straight-line lerp (no arc offset)
+        float distanceTraveled = (float) Math.hypot(
+                visuals.get(0).x() - 40f,
+                visuals.get(0).y() - 40f);
+        assertEquals(speed, distanceTraveled, 0.5f,
+                "After 1 second of flight, distance from spawn must equal projectileSpeed (F26)");
+    }
+
+    // --- Edge case: BEAM blocked by wall shows blocked flag in visuals -------
+
+    @Test
+    void beamBlockedByWall_beamVisualShowsBlockedTrue() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        runtime.updateRangedAttacks(1f / 60f, wallMaze(), 200f, 40f, 12f);
+
+        List<GdxEnemyRuntime.BeamVisual> visuals = runtime.beamVisuals();
+        assertFalse(visuals.isEmpty(), "BEAM must emit a visual even when blocked");
+        assertTrue(visuals.get(0).blocked(), "BEAM visual must report blocked=true when a wall intercepts LOS");
+    }
+
+    // --- Edge case: BEAM blocked by wall deals no damage --------------------
+
+    @Test
+    void beamBlockedByWall_dealsNoDamage() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        // wallMaze has a wall at x=120 between enemy at x=40 and player at x=200.
+        int damage = runtime.updateRangedAttacks(1f / 60f, wallMaze(), 200f, 40f, 12f);
+
+        assertEquals(0, damage, "BEAM blocked by a wall must deal zero damage");
+    }
+
+    // --- Edge case: STRAIGHT hits player when no wall between them ----------
+
+    @Test
+    void straightProjectile_hitsPlayerWithNoWall() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.STRAIGHT, 0f, 0f, 600f), // fast
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        int totalDamage = 0;
+        for (int i = 0; i < 60; i++) {
+            totalDamage += runtime.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f);
+        }
+
+        assertTrue(totalDamage > 0, "STRAIGHT must hit and damage the player when no wall is present");
+    }
+
+    // --- Edge case: LOB with zero arcHeight still lands and applies splash --
+
+    @Test
+    void lobProjectile_withZeroArcHeight_stillLandsAndDamages() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 80f, 0f, 300f), // arcHeight=0
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        int totalDamage = 0;
+        for (int i = 0; i < 240; i++) {
+            totalDamage += runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+        }
+
+        assertTrue(totalDamage > 0, "LOB with zero arcHeight must still travel and apply splash damage");
+    }
+
+    // --- Edge case: shot cooldown prevents a second shot --------------------
+
+    @Test
+    void shotCooldown_preventsSecondShotWithinPeriod() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        // First shot fires (cooldown not yet set).
+        int first = runtime.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f);
+        assertTrue(first > 0, "First BEAM shot must deal damage");
+
+        // Immediately try again within cooldown period.
+        int second = runtime.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f);
+        assertEquals(0, second, "Second BEAM shot within cooldown must deal no damage");
+    }
+
+    // --- Edge case: impact visual has expanding radius and fading alpha -----
+
+    @Test
+    void impactVisual_hasPositiveRadiusAndAlpha_immediatelyAfterImpact() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 60f, 0f, 400f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        boolean hadImpact = false;
+        for (int i = 0; i < 240 && !hadImpact; i++) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+            List<GdxEnemyRuntime.ImpactVisual> impacts = runtime.impactVisuals();
+            if (!impacts.isEmpty()) {
+                GdxEnemyRuntime.ImpactVisual iv = impacts.get(0);
+                assertTrue(iv.radius() > 0f, "Impact visual must have a positive radius");
+                assertTrue(iv.alpha() > 0f, "Impact visual must have positive alpha immediately after impact");
+                hadImpact = true;
+            }
+        }
+
+        assertTrue(hadImpact, "At least one impact visual must be emitted after LOB lands");
+    }
+
+    // --- Edge case: LOB fires again after cooldown --------------------------
+
+    @Test
+    void lobProjectile_firesAgainAfterCooldown() {
+        // attackCooldownMs=200 → 0.2 s cooldown; use fast projectile so it resolves quickly.
+        EnemySpawn shortCooldownSpawn = new EnemySpawn(
+                "lob-cooldown",
+                "/main/game/maze/pumpkinbomber.png",
+                40f, 40f, 40f, 2f, 5, 0, "",
+                BehaviorType.AGGRESSIVE, 2f, 0d,
+                EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                ProjectileType.LOB, 60f, 0f,
+                240f,
+                200,    // 200ms cooldown
+                600f);
+
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(shortCooldownSpawn, 0, openWorld(), 60f, 8);
+
+        // Advance 1 second so first shot fires and projectile resolves.
+        int firstSecondDamage = 0;
+        for (int i = 0; i < 60; i++) {
+            firstSecondDamage += runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+        }
+
+        // Advance another second — cooldown has elapsed; another shot must fire and land.
+        int secondSecondDamage = 0;
+        for (int i = 0; i < 60; i++) {
+            secondSecondDamage += runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+        }
+
+        assertTrue(firstSecondDamage > 0,  "LOB must deal damage in first second");
+        assertTrue(secondSecondDamage > 0, "LOB must deal damage again after cooldown expires");
     }
 
     // --- Edge case: zero attackRange must not fire --------------------------
@@ -254,5 +447,38 @@ class GdxEnemyRuntimeProjectileTest {
         }
 
         assertEquals(0, total, "Zero attackRange must never fire a projectile or deal damage");
+    }
+
+    // --- projectileStats() tracks shots and hits ----------------------------
+
+    @Test
+    void projectileStats_initialState_isZeroShotsAndHits() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        assertEquals("H:0 S:0", runtime.projectileStats());
+    }
+
+    @Test
+    void projectileStats_afterBeamHit_countsOneShotAndOneHit() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+
+        assertEquals("H:1 S:1", runtime.projectileStats());
+    }
+
+    @Test
+    void projectileStats_beamBlockedByWall_countsShotButNotHit() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.BEAM, 0f, 0f),
+                0, openWorld(), 60f, 8);
+
+        runtime.updateRangedAttacks(1f / 60f, wallMaze(), 200f, 40f, 12f);
+
+        assertEquals("H:0 S:1", runtime.projectileStats());
     }
 }

@@ -172,6 +172,7 @@ mvn -pl maze-common-frontend,maze-libgdx -am test
 - [RealMazeTest](src/test/java/main/game/maze/libgdx/game/RealMazeTest.java): `RealMaze` adapter exposes walls / start / goal derived from `GameMazeWorld`.
 - [PlayerStateTest](src/test/java/main/game/maze/libgdx/game/PlayerStateTest.java): collision resolution, border clamping, goal-proximity detection.
 - [GhostTangibilityParityTest](src/test/java/main/game/maze/libgdx/GhostTangibilityParityTest.java): F25 visibility level — `EnemySpawn` carries `visibilityLevel`, default = 100, 12-arg constructor defaults, `GdxEnemyRuntime.renderOpacity()` honours `visibilityLevel` cap, full-phasing floor = 0.1, cross-frontend opacity parity with `GhostNonTangibilityService`.
+- [GdxEnemyRuntimeProjectileTest](src/test/java/main/game/maze/libgdx/game/GdxEnemyRuntimeProjectileTest.java): F26 projectile speed — verifies that after 1 second of flight at `speed=100` over `distance=200`, a LOB projectile is exactly 100 px from its spawn point (`distance = speed × time`); also covers STRAIGHT wall-blocking, LOB splash, BEAM instant-damage, arc bounds, negative-dt guard, projectile cap, splash-radius exclusion, and zero-range no-fire.
 
 ### Extended tests (headless, no GL context required)
 

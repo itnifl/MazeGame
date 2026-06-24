@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -41,6 +42,8 @@ import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
+
+    private static final Logger LOG = Logger.getLogger(PumpkinBomberCharacter.class.getName());
 
     private final PumpkinBomber model;
     private AtomicInteger hitPoints;
@@ -171,11 +174,19 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
         if (projectileType == ProjectileType.BEAM) {
             boolean blocked = App.gameController != null && App.gameController.isWallBetween(sx, sy, tx, ty);
+<<<<<<< HEAD
             if (!blocked) {
                 ICanDie victim = resolveVictimNearPosition(tx, ty);
+=======
+            if (blocked) {
+                LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] BEAM blocked by wall — target=(%.0f,%.0f)", sx, sy, tx, ty));
+            } else {
+                ICanDie victim = resolveVictimForTargetNode(target);
+>>>>>>> origin/main
                 if (victim != null) {
                     victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
                 }
+                LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] BEAM fired — target=(%.0f,%.0f)", sx, sy, tx, ty));
             }
             drawBeam(sx, sy, tx, ty, blocked);
             playSound(model.getThrowSound());
@@ -205,6 +216,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             projectiles.add(p);
             playSound(model.getThrowSound());
             lastShotMs = nowMs;
+            LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] %s fired — target=(%.0f,%.0f)", sx, sy, projectileType, tx, ty));
         }
     }
 
@@ -232,20 +244,22 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                     && App.gameController != null
                     && App.gameController.isWallBetween(prevX, prevY, p.computedX, p.computedY);
 
-            // early collision while flying
+            // early collision while flying — skip if the projectile already crossed a wall this tick
             boolean hitNow = false;
-            FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
-            for (ICanSubscribeAndNotifyPosition s : touchTargets) {
-                if (p.type == ProjectileType.LOB) {
-                    continue;
-                }
-                if (!(s instanceof ICanDie victim)) continue;
-                Node n = characterGraphicsOf(s);
-                if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
-                    if (p.type == ProjectileType.STRAIGHT) {
-                        victim.subtractHitPoints(p.damage);
+            if (!blockedByWall) {
+                FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
+                for (ICanSubscribeAndNotifyPosition s : touchTargets) {
+                    if (p.type == ProjectileType.LOB) {
+                        continue;
                     }
-                    hitNow = true; break;
+                    if (!(s instanceof ICanDie victim)) continue;
+                    Node n = characterGraphicsOf(s);
+                    if (n != null && pb.intersects(new FxPositionBounds(n.getBoundsInParent()))) {
+                        if (p.type == ProjectileType.STRAIGHT) {
+                            victim.subtractHitPoints(p.damage);
+                        }
+                        hitNow = true; break;
+                    }
                 }
             }
 
@@ -265,6 +279,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
             boolean arrived = p.isArrived();
 
+            if (blockedByWall) {
+                LOG.fine(() -> String.format("[PumpkinBomber] STRAIGHT blocked by wall at (%.0f,%.0f)", p.node.getLayoutX(), p.node.getLayoutY()));
+            }
             if (blockedByWall || hitNow || arrived || outOfBounds) {
                 // hitNow is always false for LOB (guarded by the continue above); kept for clarity.
                 boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || outOfBounds);
