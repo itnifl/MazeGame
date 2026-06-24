@@ -2,6 +2,18 @@
 
 ## Candidate Additions
 
+### BUG-7 / BUG-8 follow-on suggestions
+
+- **SR-124** *(Observability, BUG-7)*: When a ghost transitions from phasing to solid, a DEBUG-level event should be emitted including the ghost's ID, position, and the new stored energy value. This allows QA to verify the solidification tick without attaching a debugger, and makes diagnosing future regressions to the `drainNonTangientEnergy` return value trivial.
+
+- **SR-125** *(DDD, BUG-7)*: The EMF model's `nonTangibilityEnergy` field stores a `double` but the XMI-generated EMF setter silently truncates it to `int`. Consider extracting a `GhostEnergyModel` value object that stores the energy as a `double` internally and exposes `setEnergy(double)` / `getEnergy()` without truncation. This removes the hidden invariant that all callers must currently know about and document.
+
+- **SR-126** *(Observability, BUG-8)*: `GameController.handleKeyPressed` and `handleKeyReleased` should emit FINE-level log entries when `gameBoard` loses focus and when it regains it (via the event filter and `requestFocus` calls). This makes focus transitions visible in logs so future regressions (input stops responding) can be diagnosed without a debugger.
+
+- **SR-127** *(12-Factor, BUG-8)*: The `Platform.runLater` queue flooding fix (moving `updateProjectiles` from the AI thread to `Platform.runLater`) is correct but makes the latency of projectile position updates non-deterministic relative to the game loop. Consider introducing a fixed-rate JavaFX `AnimationTimer` solely for projectile updates, decoupled from the AI thread, so projectile physics are always advanced at frame rate rather than at AI tick rate.
+
+- **SR-128** *(Testing, BUG-8)*: The focus-loss scenario (Tab key stealing focus from `gameBoard`) should be covered by an automated UI integration test using `TestFX` (headless). The test would: load `game.fxml`, start gameplay, fire a `KeyCode.TAB` event at the scene, then fire directional key events and assert they are still received by the game.
+
 ### BUG-6 follow-on suggestions
 
 - **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.

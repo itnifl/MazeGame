@@ -1,6 +1,7 @@
 package main.game.maze;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -80,6 +81,9 @@ public final class FxMovementLoopCoordinator {
                         if (isCancelled()) {
                             break;
                         }
+                    } catch (Exception e) {
+                        // Log and continue — one bad AI tick must not kill the thread.
+                        LOGGER.log(Level.WARNING, "Unexpected error in computer-character step; continuing", e);
                     }
                 }
                 return true;

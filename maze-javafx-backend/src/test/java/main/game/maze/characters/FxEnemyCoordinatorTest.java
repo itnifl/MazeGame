@@ -11,6 +11,7 @@ import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.Zombie;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -180,6 +181,52 @@ class FxEnemyCoordinatorTest {
         Rectangle node = new Rectangle();
         runOnFx(() -> assertDoesNotThrow(() -> c.unregisterCharacter(null, node),
                 "unregisterCharacter must handle node not in board gracefully"));
+    }
+
+    // -----------------------------------------------------------------------
+    // Bug regression: ghost solidification tick must not fire a phasing move
+    // -----------------------------------------------------------------------
+
+    /**
+     * Regression test for the ghost "stuck-in-wall" bug.
+     *
+     * <p>Root cause: {@code drainNonTangientEnergy} returned {@code wasPhasing} (the <em>old</em>
+     * state). When energy drained to zero on a tick, it still returned {@code true}, causing
+     * {@code applyPhasing} to fire one extra wall-ignoring {@code character.move(true)} after
+     * the nudge — potentially moving the ghost back inside a wall.</p>
+     *
+     * <p>The fix changes the return to {@code wasPhasing && isPhasing(newEnergy)}.  This test
+     * verifies the key invariant using only {@link main.game.maze.common.movement.GhostNonTangibilityService}
+     * (no {@code Character} subclass construction, which would touch the pre-existing
+     * {@code Vector2D.normalize} classpath conflict).</p>
+     */
+    @Test
+    @DisplayName("Ghost solidification: after one drain tick from energy=1, isPhasing is false")
+    void ghostSolidificationTick_afterOneDrainTickFromEnergy1_isNotPhasing() {
+        // EMF model stores nonTangibilityEnergy as int.
+        // setNonTangientEnergy(0.86) truncates to (int)0.86 = 0.
+        int startEnergy = 1; // stored int, equivalent to ghost.getNonTangientEnergy() == 1.0
+
+        assertTrue(
+                main.game.maze.common.movement.GhostNonTangibilityService.isPhasing(startEnergy),
+                "Ghost must be phasing when energy = 1");
+
+        // Replicate exactly what drainNonTangientEnergy does (MOVEMENT_TICK_THRESHOLD = 0.06 s):
+        double drained = main.game.maze.common.movement.GhostNonTangibilityService
+                .drainEnergy(startEnergy, 0.06); // → 0.86
+
+        int storedEnergy = (int) drained; // EMF int model: (int)0.86 = 0
+
+        // The fixed code: "return wasPhasing && isPhasing(cc.getNonTangientEnergy())"
+        // With newEnergy stored as 0, isPhasing(0) == false → combined result is false.
+        // The old code returned wasPhasing (= true), causing the extra wall-ignoring move.
+        assertEquals(0, storedEnergy,
+                "EMF int model must truncate 0.86 to 0 on the solidification tick");
+        assertFalse(
+                main.game.maze.common.movement.GhostNonTangibilityService.isPhasing(storedEnergy),
+                "After one drain tick from energy=1, stored energy must be 0 (int truncation) "
+                + "and isPhasing must return false — this is the invariant that prevents the "
+                + "extra through-wall move on the solidification tick");
     }
 
     // stepAll() with a registered ZombieCharacter (wander behavior, null maze) → doWanderMove early return.

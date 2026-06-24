@@ -193,12 +193,14 @@ public final class FxEnemyCoordinator {
                             .accept(computerCharacter);
                     if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerNode != null) {
                         pumpkinBomber.tryShootAt(playerNode, nowMs);
-                        pumpkinBomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
+                        // updateProjectiles is done on the FX thread below to avoid concurrent
+                        // list mutation between the AI background thread and the FX render thread.
                     }
                 }
                 if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
                     Platform.runLater(() -> {
                         try {
+                            // 100 ms per AI tick → 0.1 s dt keeps projectile physics correct.
                             pbc.updateProjectiles(0.1);
                         } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
@@ -583,7 +585,10 @@ public final class FxEnemyCoordinator {
         }
 
         cc.setCharacterOpacity(GhostNonTangibilityService.calculateOpacity(cc.getNonTangientEnergy(), cc.getVisibilityLevel()));
-        return wasPhasing;
+        // Return whether the ghost is STILL phasing after the drain.
+        // Returning wasPhasing (old state) caused one extra wall-ignoring move after the nudge,
+        // moving the ghost back into a wall on the solidification tick.
+        return wasPhasing && GhostNonTangibilityService.isPhasing(cc.getNonTangientEnergy());
     }
 
     private void nudgeOutOfWalls(ComputerCharacter cc) {

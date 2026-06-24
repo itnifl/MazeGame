@@ -186,7 +186,13 @@ public class GameController implements Initializable, EnemyRegistrar {
 
         javafx.application.Platform.runLater(() -> {
             installBottomButtonPressEffects();
-            if (gameBoard != null) gameBoard.requestFocus();
+            if (gameBoard != null) {
+                gameBoard.requestFocus();
+                // Prevent Tab key from moving focus away from the game board during play.
+                gameBoard.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, evt -> {
+                    if (evt.getCode() == KeyCode.TAB) evt.consume();
+                });
+            }
         });
     }
 
@@ -318,6 +324,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         mouseY = event.getY();
         leftMouseClicked = true;
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
+        // Reclaim keyboard focus whenever the player clicks the game area so that
+        // key events keep reaching handleKeyPressed after any UI element was clicked.
+        if (gameBoard != null) gameBoard.requestFocus();
     }
 
     @FXML
