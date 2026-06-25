@@ -560,6 +560,18 @@ public final class FxEnemyCoordinator {
     private record WallHit(Vector2D wall, double distance) {
     }
 
+    /**
+     * Returns the pixel distance the flame visually reaches in direction {@code (dirX, dirY)}
+     * before hitting a surviving wall, capped at {@code maxRange}.
+     * Call AFTER applying damage so destroyed walls are already absent from {@code walls}.
+     */
+    public double flameVisualRange(double originX, double originY,
+                                   int dirX, int dirY,
+                                   List<Vector2D> walls, double maxRange) {
+        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0d, maxRange);
+        return hit == null ? maxRange : hit.distance();
+    }
+
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {
         var resolution = EnemySpawnUnstuckService.nudgeIfColliding(
                 worldView, desiredX, desiredY, enemySize);

@@ -33,7 +33,19 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
     /** Full corridor width exposed for rendering — 85 % of one maze hallway for a snug fit. */
-    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85f;
+    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85f * 0.85f;
+
+    /**
+     * Returns the pixel distance the flame visually reaches in direction {@code (dirX, dirY)}
+     * before hitting a surviving wall, capped at {@code maxRange}.
+     * Call AFTER applying damage so that destroyed walls are already absent from {@code walls}.
+     */
+    public static float flameVisualRange(float originX, float originY,
+                                         int dirX, int dirY,
+                                         List<Vector2D> walls, float maxRange) {
+        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0f, maxRange);
+        return hit == null ? maxRange : hit.distance();
+    }
 
     private GdxGameCombatAndEnemyFlowSupport() {
     }

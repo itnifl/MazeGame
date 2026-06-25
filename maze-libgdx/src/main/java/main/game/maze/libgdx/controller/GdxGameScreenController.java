@@ -47,7 +47,10 @@ import main.game.maze.libgdx.helper.GdxGameStartFlowApplySupport;
 import main.game.maze.libgdx.helper.GdxGameUpdateFlowSupport;
 import main.game.maze.libgdx.helper.GdxScoreSupport;
 import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
+import main.game.maze.libgdx.helper.GdxWallDamageSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.common.controller.state.GameModeRouter;
 import main.game.maze.libgdx.controller.state.GdxOverlayModeCoordinator;
 import main.game.maze.libgdx.controller.state.PlayingModeController;
@@ -477,10 +480,22 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 playerCy,
                 dmg -> combatState.applyDirectDamage(dmg));
 
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x + PLAYER_FLAME_RANGE, y, PLAYER_FLAME_VISUAL_SECONDS));
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x - PLAYER_FLAME_RANGE, y, PLAYER_FLAME_VISUAL_SECONDS));
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x, y + PLAYER_FLAME_RANGE, PLAYER_FLAME_VISUAL_SECONDS));
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x, y - PLAYER_FLAME_RANGE, PLAYER_FLAME_VISUAL_SECONDS));
+        // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
+        GameMazeWorld survivingWorld = GdxWallDamageSupport.worldFrom(maze);
+        List<Vector2D> surviving = survivingWorld != null ? survivingWorld.getMazeVectors() : List.of();
+
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
+                x + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, y,  1,  0, surviving, PLAYER_FLAME_RANGE), y,
+                PLAYER_FLAME_VISUAL_SECONDS));
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
+                x - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, y, -1,  0, surviving, PLAYER_FLAME_RANGE), y,
+                PLAYER_FLAME_VISUAL_SECONDS));
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
+                y + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, y,  0,  1, surviving, PLAYER_FLAME_RANGE),
+                PLAYER_FLAME_VISUAL_SECONDS));
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
+                y - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, y,  0, -1, surviving, PLAYER_FLAME_RANGE),
+                PLAYER_FLAME_VISUAL_SECONDS));
 
         worldModel.setExplosionShakeRemainingSeconds(0.20f);
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));

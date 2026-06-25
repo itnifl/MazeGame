@@ -88,8 +88,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final double PLAYER_BOMB_RANGE = 220.0;
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
     private static final double PLAYER_FLAME_VISUAL_SECONDS = 0.35;
-    /** Full corridor width: 85 % of one maze hallway for a snug fit. */
-    private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85;
+    /** Full corridor width: 85 %² of one maze hallway (≈ 43 px) for a snug fit. */
+    private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85 * 0.85;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -291,7 +291,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (mazeCanvas != null && maze != null) {
             mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
         }
-        showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE);
+        // Pass surviving walls (destroyed ones already removed) so visual stops at solid walls.
+        List<Vector2D> survivingWalls = maze != null ? maze.getMazeVectors() : List.of();
+        showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE, survivingWalls);
 
         if (enemyDamage > 0) {
             setHudMessage("Bomb exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));
@@ -300,7 +302,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
     }
 
-    private void showFlameExplosionVisual(double centerX, double centerY, double range) {
+    private void showFlameExplosionVisual(double centerX, double centerY, double range,
+                                          List<Vector2D> survivingWalls) {
         if (gameBoard == null) {
             return;
         }
@@ -310,16 +313,21 @@ public class GameController implements Initializable, EnemyRegistrar {
         core.setStrokeWidth(2.6);
         core.setViewOrder(-9);
 
-        Line east = flameSegment(centerX, centerY, centerX + range, centerY);
-        Line west = flameSegment(centerX, centerY, centerX - range, centerY);
-        Line south = flameSegment(centerX, centerY, centerX, centerY + range);
-        Line north = flameSegment(centerX, centerY, centerX, centerY - range);
-        gameBoard.getChildren().addAll(core, east, west, south, north);
+        double east  = enemyCoordinator.flameVisualRange(centerX, centerY,  1,  0, survivingWalls, range);
+        double west  = enemyCoordinator.flameVisualRange(centerX, centerY, -1,  0, survivingWalls, range);
+        double south = enemyCoordinator.flameVisualRange(centerX, centerY,  0,  1, survivingWalls, range);
+        double north = enemyCoordinator.flameVisualRange(centerX, centerY,  0, -1, survivingWalls, range);
+
+        Line eastLine  = flameSegment(centerX, centerY, centerX + east,  centerY);
+        Line westLine  = flameSegment(centerX, centerY, centerX - west,  centerY);
+        Line southLine = flameSegment(centerX, centerY, centerX,         centerY + south);
+        Line northLine = flameSegment(centerX, centerY, centerX,         centerY - north);
+        gameBoard.getChildren().addAll(core, eastLine, westLine, southLine, northLine);
 
         PauseTransition hide = new PauseTransition(Duration.seconds(PLAYER_FLAME_VISUAL_SECONDS));
         hide.setOnFinished(evt -> {
             if (gameBoard != null) {
-                gameBoard.getChildren().removeAll(core, east, west, south, north);
+                gameBoard.getChildren().removeAll(core, eastLine, westLine, southLine, northLine);
             }
         });
         hide.playFromStart();
