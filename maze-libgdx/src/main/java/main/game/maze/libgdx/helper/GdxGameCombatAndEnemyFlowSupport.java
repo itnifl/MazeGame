@@ -1,7 +1,6 @@
 package main.game.maze.libgdx.helper;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.IntConsumer;
 import main.game.maze.common.movement.WorldView;
@@ -16,10 +15,10 @@ import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.movement.GdxWorldView;
-import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
-import main.game.maze.mazeworld.WallCollisionUtil;
+import main.game.maze.mazeworld.flame.DirectionalFlameEngine;
+import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -32,8 +31,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     private static final float EXPLOSION_SHAKE_DURATION_SECONDS = 0.20f;
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
-    /** Full corridor width exposed for rendering — 85 % of one maze hallway for a snug fit. */
-    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85f * 0.85f;
+    /** Full corridor width exposed for rendering — 85 %³ of one maze hallway for a snug fit. */
+    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85f * 0.85f * 0.85f;
 
     /**
      * Returns the pixel distance the flame visually reaches in direction {@code (dirX, dirY)}
@@ -43,8 +42,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     public static float flameVisualRange(float originX, float originY,
                                          int dirX, int dirY,
                                          List<Vector2D> walls, float maxRange) {
-        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0f, maxRange);
-        return hit == null ? maxRange : hit.distance();
+        return (float) DirectionalFlameEngine.flameVisualRange(originX, originY, dirX, dirY, walls, maxRange);
     }
 
     private GdxGameCombatAndEnemyFlowSupport() {
@@ -177,17 +175,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     }
 
     /**
-     * Applies one directional flame corridor.  Processes all targets (enemies + optional
-     * player + walls) in ascending distance order from the origin.
-     *
-     * <p>Rules:</p>
-     * <ul>
-     *   <li>Enemies and walls consume the budget and stop the flame when they survive.</li>
-     *   <li>The player is a pass-through target: they receive the remaining budget at their
-     *       position but neither consume it nor stop the flame.</li>
-     *   <li>An indestructible wall always stops the flame.</li>
-     *   <li>A breakable wall that is destroyed allows the flame to continue.</li>
-     * </ul>
+     * Applies one directional flame corridor.  Adapts {@link GdxEnemyRuntime} and
+     * the optional player callback to {@link FlameTarget} and delegates to
+     * {@link DirectionalFlameEngine} so both frontends share a single algorithm.
      */
     private static int applyDirectionalFlame(GameMazeWorld world,
                                              List<GdxEnemyRuntime> animatedEnemies,
@@ -201,258 +191,41 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                              float playerCenterX,
                                              float playerCenterY,
                                              IntConsumer playerCallback) {
-        // --- Build sorted target list (enemies, plus optional player as pass-through) ---
-        List<DirectionalTarget> targets = new ArrayList<>();
+        List<FlameTarget> candidates = new ArrayList<>();
 
         if (animatedEnemies != null) {
             for (GdxEnemyRuntime enemy : animatedEnemies) {
                 if (enemy == null || !enemy.isAlive() || enemy.isInvulnerable()) {
                     continue;
                 }
-                float cx = enemy.x() + enemy.size() * 0.5f;
-                float cy = enemy.y() + enemy.size() * 0.5f;
-                Float dist = projectedDistanceOnRay(originX, originY, cx, cy, dirX, dirY, maxRange);
-                if (dist == null) {
-                    continue;
-                }
-                targets.add(new DirectionalTarget(enemy, null, dist, cx, cy, false));
+                final float cx = enemy.x() + enemy.size() * 0.5f;
+                final float cy = enemy.y() + enemy.size() * 0.5f;
+                candidates.add(new FlameTarget() {
+                    @Override public double centerX()        { return cx; }
+                    @Override public double centerY()        { return cy; }
+                    @Override public int    hitPoints()      { return Math.max(0, enemy.currentHitPoints()); }
+                    @Override public void   applyDamage(int amount) { enemy.takeDamage(amount); }
+                    @Override public boolean isPassThrough() { return false; }
+                });
             }
         }
 
         if (playerCallback != null && !Float.isNaN(playerCenterX) && !Float.isNaN(playerCenterY)) {
-            Float pd = projectedDistanceOnRay(originX, originY, playerCenterX, playerCenterY, dirX, dirY, maxRange);
-            if (pd != null) {
-                targets.add(new DirectionalTarget(null, playerCallback, pd, playerCenterX, playerCenterY, true));
-            }
+            final float pcx = playerCenterX;
+            final float pcy = playerCenterY;
+            candidates.add(new FlameTarget() {
+                @Override public double centerX()        { return pcx; }
+                @Override public double centerY()        { return pcy; }
+                @Override public int    hitPoints()      { return Integer.MAX_VALUE; }
+                @Override public void   applyDamage(int amount) { playerCallback.accept(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
         }
 
-        targets.sort(Comparator.comparingDouble(DirectionalTarget::distance));
-
-        // --- Walk targets and walls in ascending distance, spending budget ---
-        int remaining = damageBudget;
-        int applied = 0;
-        int targetIndex = 0;
-        float searchStart = 0f;
-
-        while (remaining > 0 && searchStart <= maxRange) {
-            WallHit nextWall = findNextWallHit(originX, originY, dirX, dirY, wallVectors, searchStart, maxRange);
-            float wallDistance = nextWall == null ? Float.POSITIVE_INFINITY : nextWall.distance();
-
-            // Process all targets that sit before the next wall
-            while (targetIndex < targets.size()) {
-                DirectionalTarget current = targets.get(targetIndex);
-
-                // If a wall is between origin and this target, handle the wall first
-                if (!wallVectors.isEmpty()
-                        && WallCollisionUtil.wallBetweenVectors(
-                                originX, originY, current.centerX(), current.centerY(), wallVectors)) {
-                    if (nextWall != null && world != null) {
-                        BreakableWall bw = world.findBreakableWall(nextWall.wall());
-                        if (bw != null) {
-                            int toApply = Math.min(remaining, Math.max(0, bw.getRemainingHp()));
-                            if (toApply > 0) {
-                                boolean destroyed = world.applyWallDamage(bw, toApply);
-                                remaining -= toApply;
-                                applied += toApply;
-                                if (!destroyed) {
-                                    return applied; // wall survived → flame stops
-                                }
-                                // wall destroyed → continue outer loop with updated searchStart
-                                searchStart = nextWall.distance();
-                                break; // re-evaluate wall list from new searchStart
-                            }
-                        }
-                    }
-                    return applied; // indestructible wall stops the flame
-                }
-
-                if (current.distance() >= wallDistance) {
-                    break; // next wall is closer; handle it in the outer-loop block below
-                }
-
-                if (current.isPlayer()) {
-                    // Pass-through: player takes damage from remaining budget but doesn't block
-                    if (current.playerCallback() != null && remaining > 0) {
-                        current.playerCallback().accept(remaining);
-                    }
-                    targetIndex++;
-                    continue;
-                }
-
-                // Enemy target
-                GdxEnemyRuntime enemy = current.enemy();
-                int hp = Math.max(0, enemy.currentHitPoints());
-                if (hp > 0) {
-                    int toApply = Math.min(hp, remaining);
-                    enemy.takeDamage(toApply);
-                    remaining -= toApply;
-                    applied += toApply;
-                    if (hp > toApply) {
-                        // Enemy survived — flame stops here
-                        return applied;
-                    }
-                }
-                targetIndex++;
-                if (remaining <= 0) {
-                    return applied;
-                }
-            }
-
-            // Handle the next wall if all pre-wall targets are processed
-            if (nextWall == null || world == null) {
-                break;
-            }
-
-            BreakableWall bw = world.findBreakableWall(nextWall.wall());
-            if (bw == null) {
-                break; // indestructible — stops flame
-            }
-
-            int toApply = Math.min(remaining, Math.max(0, bw.getRemainingHp()));
-            if (toApply <= 0) {
-                break;
-            }
-            boolean destroyed = world.applyWallDamage(bw, toApply);
-            remaining -= toApply;
-            applied += toApply;
-            if (!destroyed) {
-                break; // wall survived — stops flame
-            }
-            searchStart = nextWall.distance(); // wall destroyed — advance past it
-        }
-
-        // Budget remains after all walls — apply to any leftover targets beyond the last wall
-        while (remaining > 0 && targetIndex < targets.size()) {
-            DirectionalTarget current = targets.get(targetIndex);
-            if (current.isPlayer()) {
-                if (current.playerCallback() != null) {
-                    current.playerCallback().accept(remaining);
-                }
-                targetIndex++;
-                continue;
-            }
-            GdxEnemyRuntime enemy = current.enemy();
-            int hp = Math.max(0, enemy.currentHitPoints());
-            if (hp > 0) {
-                int toApply = Math.min(hp, remaining);
-                enemy.takeDamage(toApply);
-                remaining -= toApply;
-                applied += toApply;
-                if (hp > toApply) {
-                    return applied;
-                }
-            }
-            targetIndex++;
-        }
-        return applied;
-    }
-
-    /** Returns the signed ray-axis distance if {@code (targetX, targetY)} lies within the
-     *  flame corridor in direction {@code (dirX, dirY)}, or {@code null} otherwise. */
-    private static Float projectedDistanceOnRay(float originX,
-                                                float originY,
-                                                float targetX,
-                                                float targetY,
-                                                int dirX,
-                                                int dirY,
-                                                float maxRange) {
-        float hw = FLAME_CORRIDOR_HALF_WIDTH;
-        if (dirX != 0) {
-            if (Math.abs(targetY - originY) > hw) {
-                return null;
-            }
-            float delta = targetX - originX;
-            if (Math.signum(delta) != dirX) {
-                return null;
-            }
-            float dist = Math.abs(delta);
-            return dist <= maxRange ? dist : null;
-        }
-        if (Math.abs(targetX - originX) > hw) {
-            return null;
-        }
-        float delta = targetY - originY;
-        if (Math.signum(delta) != dirY) {
-            return null;
-        }
-        float dist = Math.abs(delta);
-        return dist <= maxRange ? dist : null;
-    }
-
-    /**
-     * Finds the nearest wall segment that the flame ray will cross in direction
-     * {@code (dirX, dirY)}, beyond {@code searchStart} and within {@code maxRange}.
-     * Uses the actual {@link Vector2D} references from the world so that
-     * {@link GameMazeWorld#findBreakableWall} can match by identity.
-     */
-    private static WallHit findNextWallHit(float originX,
-                                           float originY,
-                                           int dirX,
-                                           int dirY,
-                                           List<Vector2D> wallVectors,
-                                           float searchStart,
-                                           float maxRange) {
-        if (wallVectors == null || wallVectors.isEmpty()) {
-            return null;
-        }
-        WallHit nearest = null;
-        for (Vector2D wall : wallVectors) {
-            double x1 = wall.getStart().getX();
-            double y1 = wall.getStart().getY();
-            double x2 = wall.getEnd().getX();
-            double y2 = wall.getEnd().getY();
-
-            if (dirX != 0 && Math.abs(x1 - x2) < 0.001) {
-                double minY = Math.min(y1, y2);
-                double maxY = Math.max(y1, y2);
-                if (originY < minY || originY > maxY) {
-                    continue;
-                }
-                float dist = (float) (x1 - originX);
-                if (Math.signum(dist) != dirX) {
-                    continue;
-                }
-                float abs = Math.abs(dist);
-                if (abs <= searchStart || abs > maxRange) {
-                    continue;
-                }
-                if (nearest == null || abs < nearest.distance()) {
-                    nearest = new WallHit(wall, abs);
-                }
-                continue;
-            }
-
-            if (dirY != 0 && Math.abs(y1 - y2) < 0.001) {
-                double minX = Math.min(x1, x2);
-                double maxX = Math.max(x1, x2);
-                if (originX < minX || originX > maxX) {
-                    continue;
-                }
-                float dist = (float) (y1 - originY);
-                if (Math.signum(dist) != dirY) {
-                    continue;
-                }
-                float abs = Math.abs(dist);
-                if (abs <= searchStart || abs > maxRange) {
-                    continue;
-                }
-                if (nearest == null || abs < nearest.distance()) {
-                    nearest = new WallHit(wall, abs);
-                }
-            }
-        }
-        return nearest;
-    }
-
-    private record DirectionalTarget(GdxEnemyRuntime enemy,
-                                     IntConsumer playerCallback,
-                                     float distance,
-                                     float centerX,
-                                     float centerY,
-                                     boolean isPlayer) {
-    }
-
-    private record WallHit(Vector2D wall, float distance) {
+        return DirectionalFlameEngine.applyDirectionalFlame(
+                candidates, world, wallVectors,
+                originX, originY, dirX, dirY,
+                damageBudget, maxRange, FLAME_CORRIDOR_HALF_WIDTH);
     }
 
     private static int updateRangedAttacks(
@@ -495,6 +268,40 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), maxShake));
         }
         return totalDamage;
+    }
+
+    /**
+     * Removes enemies that were killed by flame damage ({@code takeDamage} reduced their
+     * HP to 0) and creates death animations for each.  Unlike {@link #killEnemies}, this
+     * processes enemies that are already dead — it skips living ones rather than killing
+     * them.
+     *
+     * <p>Must be called after {@link #applyDirectionalFlameExplosion} so that the game
+     * loop renders the death animations on the next frame.</p>
+     *
+     * @return the number of enemies removed
+     */
+    public static int processKilledByFlame(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies) {
+        int killed = 0;
+        List<GdxEnemyRuntime> toRemove = new ArrayList<>();
+        for (GdxEnemyRuntime enemy : animatedEnemies) {
+            if (enemy.isAlive()) {
+                continue; // still alive — leave it in the list
+            }
+            dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
+            killed++;
+            EnemySpawn spawn = enemy.originalSpawn();
+            if (spawn.resurrectionTimeMs() > 0) {
+                float seconds = spawn.resurrectionTimeMs() / 1000f;
+                deadEnemies.add(new DeadEnemy(spawn, seconds));
+            }
+            toRemove.add(enemy);
+        }
+        animatedEnemies.removeAll(toRemove);
+        return killed;
     }
 
     /**

@@ -41,16 +41,16 @@ import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
-import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.mazeworld.flame.DirectionalFlameEngine;
+import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.opponents.BehaviorType;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -323,7 +323,8 @@ public final class FxEnemyCoordinator {
                                       double playerCenterY,
                                       IntConsumer playerCallback) {
         GameMazeWorld maze = mazeSupplier.get();
-        List<DirectionalTarget> targets = new ArrayList<>();
+        List<FlameTarget> candidates = new ArrayList<>();
+
         for (var character : allComputerCharacters) {
             if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)) {
                 continue;
@@ -331,233 +332,37 @@ public final class FxEnemyCoordinator {
             if (!(character instanceof ComputerCharacter cc)) {
                 continue;
             }
-            int hp = Math.max(0, canDie.getHitPoints());
-            if (hp <= 0) {
+            if (Math.max(0, canDie.getHitPoints()) <= 0) {
                 continue;
             }
             double size = approximateSize(cc);
-            double centerX = cc.getCharacterPosition().getX() + size * 0.5d;
-            double centerY = cc.getCharacterPosition().getY() + size * 0.5d;
-            Double distance = projectedDistanceOnRay(originX, originY, centerX, centerY, dirX, dirY, maxRange);
-            if (distance == null) {
-                continue;
-            }
-            targets.add(new DirectionalTarget(canDie, null, distance, centerX, centerY, false));
+            final double centerX = cc.getCharacterPosition().getX() + size * 0.5d;
+            final double centerY = cc.getCharacterPosition().getY() + size * 0.5d;
+            candidates.add(new FlameTarget() {
+                @Override public double centerX()        { return centerX; }
+                @Override public double centerY()        { return centerY; }
+                @Override public int    hitPoints()      { return Math.max(0, canDie.getHitPoints()); }
+                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount); }
+                @Override public boolean isPassThrough() { return false; }
+            });
         }
-        // Add player as pass-through target if provided
+
         if (playerCallback != null && !Double.isNaN(playerCenterX) && !Double.isNaN(playerCenterY)) {
-            Double pd = projectedDistanceOnRay(originX, originY, playerCenterX, playerCenterY, dirX, dirY, maxRange);
-            if (pd != null) {
-                targets.add(new DirectionalTarget(null, playerCallback, pd, playerCenterX, playerCenterY, true));
-            }
+            final double pcx = playerCenterX;
+            final double pcy = playerCenterY;
+            candidates.add(new FlameTarget() {
+                @Override public double centerX()        { return pcx; }
+                @Override public double centerY()        { return pcy; }
+                @Override public int    hitPoints()      { return Integer.MAX_VALUE; }
+                @Override public void   applyDamage(int amount) { playerCallback.accept(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
         }
 
-        targets.sort(Comparator.comparingDouble(DirectionalTarget::distance));
-
-        int remaining = damageBudget;
-        int applied = 0;
-        int targetIndex = 0;
-        double searchStart = 0d;
-
-        while (remaining > 0 && searchStart <= maxRange) {
-            WallHit nextWall = findNextWallHit(originX, originY, dirX, dirY, walls, searchStart, maxRange);
-            double wallDistance = nextWall == null ? Double.POSITIVE_INFINITY : nextWall.distance();
-
-            while (targetIndex < targets.size()) {
-                DirectionalTarget currentTarget = targets.get(targetIndex);
-                if (walls != null && !walls.isEmpty()
-                        && WallCollisionUtil.wallBetweenVectors(originX, originY, currentTarget.centerX(), currentTarget.centerY(), walls)) {
-                    if (nextWall != null && maze != null) {
-                        BreakableWall breakableWall = maze.findBreakableWall(nextWall.wall());
-                        if (breakableWall != null) {
-                            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
-                            if (toApply > 0) {
-                                boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
-                                remaining -= toApply;
-                                applied += toApply;
-                                if (!destroyed) {
-                                    return applied;
-                                }
-                                searchStart = nextWall.distance();
-                                break; // re-evaluate wall list
-                            }
-                        }
-                    }
-                    return applied; // indestructible wall
-                }
-                if (currentTarget.distance() >= wallDistance) {
-                    break;
-                }
-                if (currentTarget.isPlayer()) {
-                    // Pass-through: player takes remaining damage but does not block
-                    if (currentTarget.playerCallback() != null && remaining > 0) {
-                        currentTarget.playerCallback().accept(remaining);
-                    }
-                    targetIndex++;
-                    continue;
-                }
-                int hp = Math.max(0, currentTarget.target().getHitPoints());
-                if (hp > 0) {
-                    int toApply = Math.min(hp, remaining);
-                    currentTarget.target().subtractHitPoints(toApply);
-                    remaining -= toApply;
-                    applied += toApply;
-                    if (hp > toApply) {
-                        return applied; // enemy survived
-                    }
-                }
-                targetIndex++;
-                if (remaining <= 0) {
-                    return applied;
-                }
-            }
-
-            if (nextWall == null || maze == null) {
-                break;
-            }
-
-            BreakableWall breakableWall = maze.findBreakableWall(nextWall.wall());
-            if (breakableWall == null) {
-                break;
-            }
-
-            int toApply = Math.min(remaining, Math.max(0, breakableWall.getRemainingHp()));
-            if (toApply <= 0) {
-                break;
-            }
-            boolean destroyed = maze.applyWallDamage(breakableWall, toApply);
-            remaining -= toApply;
-            applied += toApply;
-            if (!destroyed) {
-                break;
-            }
-            searchStart = nextWall.distance();
-        }
-
-        while (remaining > 0 && targetIndex < targets.size()) {
-            DirectionalTarget current = targets.get(targetIndex);
-            if (current.isPlayer()) {
-                if (current.playerCallback() != null) {
-                    current.playerCallback().accept(remaining);
-                }
-                targetIndex++;
-                continue;
-            }
-            int hp = Math.max(0, current.target().getHitPoints());
-            if (hp > 0) {
-                int toApply = Math.min(hp, remaining);
-                current.target().subtractHitPoints(toApply);
-                remaining -= toApply;
-                applied += toApply;
-                if (hp > toApply) {
-                    return applied;
-                }
-            }
-            targetIndex++;
-        }
-        return applied;
-    }
-
-    private static Double projectedDistanceOnRay(double originX,
-                                                 double originY,
-                                                 double targetX,
-                                                 double targetY,
-                                                 int dirX,
-                                                 int dirY,
-                                                 double maxRange) {
-        double corridorHalfWidth = PLAYER_FLAME_HALF_WIDTH;
-        if (dirX != 0) {
-            if (Math.abs(targetY - originY) > corridorHalfWidth) {
-                return null;
-            }
-            double delta = targetX - originX;
-            if (Math.signum(delta) != dirX) {
-                return null;
-            }
-            double distance = Math.abs(delta);
-            return distance <= maxRange ? distance : null;
-        }
-
-        if (Math.abs(targetX - originX) > corridorHalfWidth) {
-            return null;
-        }
-        double delta = targetY - originY;
-        if (Math.signum(delta) != dirY) {
-            return null;
-        }
-        double distance = Math.abs(delta);
-        return distance <= maxRange ? distance : null;
-    }
-
-    private WallHit findNextWallHit(double originX,
-                                    double originY,
-                                    int dirX,
-                                    int dirY,
-                                    List<Vector2D> walls,
-                                    double searchStart,
-                                    double maxRange) {
-        if (walls == null || walls.isEmpty()) {
-            return null;
-        }
-
-        WallHit nearest = null;
-        for (Vector2D wall : walls) {
-            double wallStartX = wall.getStart().getX();
-            double wallStartY = wall.getStart().getY();
-            double wallEndX = wall.getEnd().getX();
-            double wallEndY = wall.getEnd().getY();
-
-            if (dirX != 0 && Math.abs(wallStartX - wallEndX) < 0.001d) {
-                double minY = Math.min(wallStartY, wallEndY);
-                double maxY = Math.max(wallStartY, wallEndY);
-                if (originY < minY || originY > maxY) {
-                    continue;
-                }
-                double distance = wallStartX - originX;
-                if (Math.signum(distance) != dirX) {
-                    continue;
-                }
-                double absDistance = Math.abs(distance);
-                if (absDistance <= searchStart || absDistance > maxRange) {
-                    continue;
-                }
-                if (nearest == null || absDistance < nearest.distance()) {
-                    nearest = new WallHit(wall, absDistance);
-                }
-                continue;
-            }
-
-            if (dirY != 0 && Math.abs(wallStartY - wallEndY) < 0.001d) {
-                double minX = Math.min(wallStartX, wallEndX);
-                double maxX = Math.max(wallStartX, wallEndX);
-                if (originX < minX || originX > maxX) {
-                    continue;
-                }
-                double distance = wallStartY - originY;
-                if (Math.signum(distance) != dirY) {
-                    continue;
-                }
-                double absDistance = Math.abs(distance);
-                if (absDistance <= searchStart || absDistance > maxRange) {
-                    continue;
-                }
-                if (nearest == null || absDistance < nearest.distance()) {
-                    nearest = new WallHit(wall, absDistance);
-                }
-            }
-        }
-        return nearest;
-    }
-
-    private record DirectionalTarget(main.game.maze.characters.interfaces.ICanDie target,
-                                     IntConsumer playerCallback,
-                                     double distance,
-                                     double centerX,
-                                     double centerY,
-                                     boolean isPlayer) {
-    }
-
-    private record WallHit(Vector2D wall, double distance) {
+        return DirectionalFlameEngine.applyDirectionalFlame(
+                candidates, maze, walls,
+                originX, originY, dirX, dirY,
+                damageBudget, maxRange, PLAYER_FLAME_HALF_WIDTH);
     }
 
     /**
@@ -568,8 +373,7 @@ public final class FxEnemyCoordinator {
     public double flameVisualRange(double originX, double originY,
                                    int dirX, int dirY,
                                    List<Vector2D> walls, double maxRange) {
-        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0d, maxRange);
-        return hit == null ? maxRange : hit.distance();
+        return DirectionalFlameEngine.flameVisualRange(originX, originY, dirX, dirY, walls, maxRange);
     }
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {

@@ -498,8 +498,14 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.setExplosionShakeRemainingSeconds(0.20f);
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
 
-        if (appliedDamage > 0) {
-            flashStatus("Bomb exploded, enemy damage " + appliedDamage, 1.2f);
+        int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledByFlame(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
+
+        if (appliedDamage > 0 || flamedKilled > 0) {
+            String msg = flamedKilled > 0
+                    ? "Bomb killed " + flamedKilled + " enem" + (flamedKilled == 1 ? "y" : "ies") + "!"
+                    : "Bomb exploded, enemy damage " + appliedDamage;
+            flashStatus(msg, 1.2f);
         } else {
             flashStatus("Bomb exploded", 1.0f);
         }
