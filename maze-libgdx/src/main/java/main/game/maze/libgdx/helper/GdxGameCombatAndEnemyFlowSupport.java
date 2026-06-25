@@ -32,7 +32,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
     /** Full corridor width exposed for rendering: 2 × half-width. */
-    static final float FLAME_CORRIDOR_WIDTH = FLAME_CORRIDOR_HALF_WIDTH * 2f;
+    public static final float FLAME_CORRIDOR_WIDTH = FLAME_CORRIDOR_HALF_WIDTH * 2f;
 
     private GdxGameCombatAndEnemyFlowSupport() {
     }
