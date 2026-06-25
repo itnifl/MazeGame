@@ -65,8 +65,8 @@ public class GameMazeWorld {
             boardMaxX,
             boardMaxY,
             StageConstants.WallSegmentLengthPx,
-            60,
-            60,
+            StageConstants.HallwayWidthPx,
+            StageConstants.HallwayWidthPx,
             40
         );
     }

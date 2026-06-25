@@ -22,6 +22,7 @@ import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
+import main.game.maze.mazeworld.constants.StageConstants;
 
 /**
  * Coordinates enemy movement, combat frame updates, and win transition checks.
@@ -31,8 +32,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     private static final float EXPLOSION_SHAKE_DURATION_SECONDS = 0.20f;
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
-    /** Full corridor width exposed for rendering: 2 × half-width. */
-    public static final float FLAME_CORRIDOR_WIDTH = FLAME_CORRIDOR_HALF_WIDTH * 2f;
+    /** Full corridor width exposed for rendering — matches one maze hallway. */
+    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx;
 
     private GdxGameCombatAndEnemyFlowSupport() {
     }

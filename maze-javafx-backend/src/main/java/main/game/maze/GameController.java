@@ -89,7 +89,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
     private static final double PLAYER_FLAME_VISUAL_SECONDS = 0.35;
     /** Full corridor width: 2 × PLAYER_FLAME_HALF_WIDTH (4 nav-cells each side). */
-    private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.NaviGraphStepSize * 8;
+    private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;

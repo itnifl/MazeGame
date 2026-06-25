@@ -22,5 +22,7 @@ public class StageConstants {
     public final static int NaviGraphStepSize = 30;
     public final static int WallSegmentLengthPx = 20;
     public final static int WallThicknessPx = 5;
+    /** Width of one maze corridor/doorway in pixels; matches MazeGeneratorConfig doorwayWidthPx. */
+    public final static int HallwayWidthPx = 60;
     
 }
