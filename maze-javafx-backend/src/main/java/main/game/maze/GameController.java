@@ -286,6 +286,9 @@ public class GameController implements Initializable, EnemyRegistrar {
                 playerCx,
                 playerCy,
                 dmg -> { if (playerCharacter != null) playerCharacter.subtractHitPoints(dmg); });
+        if (mazeCanvas != null && maze != null) {
+            mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
+        }
         showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE);
 
         if (enemyDamage > 0) {

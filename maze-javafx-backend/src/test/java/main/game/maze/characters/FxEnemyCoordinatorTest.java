@@ -6,8 +6,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.FxEnemyCoordinator;
 import main.game.maze.FxGameWorldModel;
+import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.WallMaterialSpec;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.Zombie;
@@ -372,6 +374,65 @@ class FxEnemyCoordinatorTest {
                 "Player in the corridor must take damage");
         assertTrue(zombie.getHitPoints() < 100,
                 "Enemy beyond the player must also take damage since player is pass-through");
+    }
+
+    @Test
+    void applyPlayerFlame_destroysBreakableWallAndContinuesToEnemyBeyond() throws Exception {
+        // Vertical wall at x=120, spanning y=[0..120] — sits between origin (20,60) and enemy (200,60)
+        Vector2D wallVec = new Vector2D(120, 0, 120, 120);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L,
+                List.of(new WallMaterialSpec("WOOD_BASIC", "Wood", 20)));
+
+        FxEnemyCoordinator c = new FxEnemyCoordinator(
+                () -> null, () -> null, new FxGameWorldModel(),
+                () -> world,
+                () -> null, () -> {});
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(10);
+        model.setSpeed(1.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        ZombieCharacter enemy = new ZombieCharacter(new Rectangle(16, 16), 200, 52, model);
+        addComputerCharacter(c, enemy);
+
+        // Budget 100: wall costs 20 HP, enemy costs 10 HP → total 30 applied at minimum
+        int applied = c.applyPlayerFlameExplosion(
+                20, 60,
+                100, 500,
+                world.getMazeVectors(),
+                Double.NaN, Double.NaN, null);
+
+        assertTrue(world.getBreakableWalls().isEmpty(),
+                "The 20-HP wood wall must be destroyed by the 100-damage blast");
+        assertEquals(0, enemy.getHitPoints(),
+                "Enemy beyond the destroyed wall must be defeated");
+        assertTrue(applied >= 30,
+                "Applied damage must cover wall (20 HP) + enemy (10 HP) at minimum");
+    }
+
+    @Test
+    void applyPlayerFlame_doesNotHitTargetOutsideCorridorHalfWidth() throws Exception {
+        // Enemy is diagonally off all four flame corridors: >120px perpendicular from every axis.
+        // Origin (20,60), enemy top-left at (300,300) → center ~(315,315).
+        // East corridor perpendicular: |315-60|=255>120; north: |315-20|=295>120 — excluded.
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(100);
+        model.setSpeed(1.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        ZombieCharacter offCorridor = new ZombieCharacter(new Rectangle(16, 16), 300, 300, model);
+        addComputerCharacter(c, offCorridor);
+
+        c.applyPlayerFlameExplosion(20, 60, 100, 400, List.of(), Double.NaN, Double.NaN, null);
+
+        assertEquals(100, offCorridor.getHitPoints(),
+                "Enemy outside the flame corridor half-width must take no damage");
     }
 }
 

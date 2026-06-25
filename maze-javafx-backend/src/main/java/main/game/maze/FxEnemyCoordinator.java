@@ -85,8 +85,8 @@ public final class FxEnemyCoordinator {
     /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
     private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
     private static final double   PLAYER_FLAME_SCAN_STEP   = 6.0d;
-    /** Half-width of the flame corridor. One full cell wide so the blast fills a corridor. */
-    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize;
+    /** Half-width of the flame corridor. Four cells wide so the blast fills the corridor visibly. */
+    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 4;
 
     /** Evaluated lazily so the coordinator can be created before FXML fields are set. */
     private final Supplier<Pane>        gameBoardSupplier;

@@ -28,7 +28,8 @@ public class GameMazeWorld {
             new WallMaterialSpec("GLASS_BASIC", "Glass",  5),
             new WallMaterialSpec("DIRT_BASIC",  "Dirt",  10),
             new WallMaterialSpec("WOOD_BASIC",  "Wood",  20),
-            new WallMaterialSpec("STONE_BASIC", "Stone", 40)
+            new WallMaterialSpec("STONE_BASIC", "Stone", 40),
+            new WallMaterialSpec("STEEL_BASIC", "Steel", 80)
     );
 
     private static GameMazeWorld world;

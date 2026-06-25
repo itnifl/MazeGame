@@ -38,9 +38,19 @@ public final class FxMazeCanvasRenderer {
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
         Canvas canvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        renderTo(canvas.getGraphicsContext2D(), canvas.getWidth(), canvas.getHeight(), vectors);
+        return canvas;
+    }
 
-        drawBackground(gc, canvas.getWidth(), canvas.getHeight());
+    /** Clears {@code canvas} and redraws walls from {@code vectors} in-place. */
+    public void redrawInPlace(Canvas canvas, List<Vector2D> vectors) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        renderTo(gc, canvas.getWidth(), canvas.getHeight(), vectors);
+    }
+
+    private void renderTo(GraphicsContext gc, double width, double height, List<Vector2D> vectors) {
+        drawBackground(gc, width, height);
 
         double wallWidth  = StageConstants.WallThicknessPx;
         double wallLength = StageConstants.WallSegmentLengthPx;
@@ -80,8 +90,6 @@ public final class FxMazeCanvasRenderer {
                 gc.restore();
             }
         }
-
-        return canvas;
     }
 
     private void drawBackground(GraphicsContext gc, double width, double height) {

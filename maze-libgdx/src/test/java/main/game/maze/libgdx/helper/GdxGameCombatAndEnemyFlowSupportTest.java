@@ -61,8 +61,10 @@ class GdxGameCombatAndEnemyFlowSupportTest {
 
     @Test
     void applyDirectionalFlameExplosion_capsDamagePerDirectionAtOneHundred() {
+        // Enemy at (200,40): center=(220,60). East perpendicular |60-40|=20≤120; south cross-axis
+        // |220-20|=200>120 so south/north corridors exclude it — enemy is in east only.
         GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
-                rangedSpawn(ProjectileType.LOB, 0f, 0f, 120f, 40f, 160f, 150),
+                rangedSpawn(ProjectileType.LOB, 0f, 0f, 200f, 40f, 160f, 150),
                 0,
                 openWorld(),
                 60f,
