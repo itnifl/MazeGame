@@ -84,7 +84,6 @@ public final class FxEnemyCoordinator {
     private static final double   ENEMY_LABEL_Y_OFFSET    = 14.0;
     /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
     private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
-    private static final double   PLAYER_FLAME_SCAN_STEP   = 6.0d;
     /** Half-width of the flame corridor. Four cells wide so the blast fills the corridor visibly. */
     private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 4;
 

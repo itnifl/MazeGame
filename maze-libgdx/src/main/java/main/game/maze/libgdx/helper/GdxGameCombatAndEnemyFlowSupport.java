@@ -29,7 +29,6 @@ import main.game.maze.mazeworld.generators.PlayerState;
 public final class GdxGameCombatAndEnemyFlowSupport {
 
     private static final float EXPLOSION_SHAKE_DURATION_SECONDS = 0.20f;
-    private static final float FLAME_SCAN_STEP = 6f;
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
 

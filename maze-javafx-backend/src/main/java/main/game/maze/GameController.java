@@ -280,7 +280,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         int enemyDamage = enemyCoordinator.applyPlayerFlameExplosion(
                 bomb.x(),
                 bomb.y(),
-                (int) Math.max(1, PLAYER_FLAME_DAMAGE_PER_DIRECTION),
+                playerCharacter != null ? playerCharacter.getFlameAttackDamage() : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION,
                 PLAYER_BOMB_RANGE,
                 walls,
                 playerCx,
