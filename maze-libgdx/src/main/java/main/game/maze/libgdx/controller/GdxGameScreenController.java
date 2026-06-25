@@ -133,7 +133,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final GdxOverlayModeCoordinator overlayModeCoordinator;
     private final PlayingModeController playingModeController = new PlayingModeController();
     private final PlayingModeController.PlayingModeBridge playingBridge;
-    private final GdxGameMouseInteractionCoordinator mouseInteractionCoordinator;
     private final GdxGameStartFlowRequestFactory startFlowRequestFactory;
     private boolean combatFrameDead;
     private float currentFrameDt;
@@ -227,7 +226,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxGameCollaborators collaborators = GdxGameScreenAssembler.assemble(this);
         this.overlayModeCoordinator = collaborators.overlayModeCoordinator();
         this.inputCommandContext = collaborators.inputCommandContext();
-        this.mouseInteractionCoordinator = collaborators.mouseInteractionCoordinator();
         this.playingBridge = collaborators.playingBridge();
         this.startFlowRequestFactory = collaborators.startFlowRequestFactory();
         this.renderCoordinator = collaborators.renderCoordinator();
