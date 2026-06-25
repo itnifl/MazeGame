@@ -375,7 +375,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         List<BeamVisual> visuals = new ArrayList<>(activeBeams.size());
         for (BeamEffect beam : activeBeams) {
             float alpha = beam.maxDuration <= 0f ? 0f : Math.max(0f, beam.remaining / beam.maxDuration);
-            visuals.add(new BeamVisual(beam.x1, beam.y1, beam.x2, beam.y2, alpha, beam.blocked));
+            visuals.add(new BeamVisual(beam.x1, beam.y1, beam.x2, beam.y2, alpha, beam.blocked, 4f));
         }
         return Collections.unmodifiableList(visuals);
     }
@@ -609,7 +609,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     public record ProjectileVisual(float x, float y, float radius, float shadowRadius, boolean lob) {
     }
 
-    public record BeamVisual(float x1, float y1, float x2, float y2, float alpha, boolean blocked) {
+    public record BeamVisual(float x1, float y1, float x2, float y2, float alpha, boolean blocked, float width) {
     }
 
     public record ImpactVisual(float x, float y, float radius, float alpha, float shakeMagnitude) {

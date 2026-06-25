@@ -88,6 +88,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final double PLAYER_BOMB_RANGE = 220.0;
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
     private static final double PLAYER_FLAME_VISUAL_SECONDS = 0.35;
+    /** Full corridor width: 2 × PLAYER_FLAME_HALF_WIDTH (4 nav-cells each side). */
+    private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.NaviGraphStepSize * 8;
 
     private PlayerCharacter playerCharacter;
     private GameMazeWorld maze;
@@ -326,7 +328,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static Line flameSegment(double x1, double y1, double x2, double y2) {
         Line segment = new Line(x1, y1, x2, y2);
         segment.setStroke(Color.rgb(255, 122, 48, 0.85));
-        segment.setStrokeWidth(6.0);
+        segment.setStrokeWidth(PLAYER_FLAME_CORRIDOR_WIDTH);
         segment.setStrokeLineCap(StrokeLineCap.ROUND);
         segment.setViewOrder(-9);
         return segment;

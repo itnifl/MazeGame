@@ -522,7 +522,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     burst.x2(),
                     burst.y2(),
                     alpha,
-                    true));
+                    true,
+                    GdxGameCombatAndEnemyFlowSupport.FLAME_CORRIDOR_WIDTH));
         }
     }
 

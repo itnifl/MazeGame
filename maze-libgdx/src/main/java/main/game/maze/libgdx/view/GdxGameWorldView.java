@@ -248,7 +248,7 @@ public final class GdxGameWorldView {
             } else {
                 shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
             }
-            shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), 4f);
+            shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
         }
     }
 
