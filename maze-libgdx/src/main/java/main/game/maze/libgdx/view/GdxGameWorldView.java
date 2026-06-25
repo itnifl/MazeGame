@@ -249,6 +249,9 @@ public final class GdxGameWorldView {
                 shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
             }
             shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
+            float capR = beam.width() * 0.5f;
+            shapes.circle(beam.x1(), beam.y1(), capR, 20);
+            shapes.circle(beam.x2(), beam.y2(), capR, 20);
         }
     }
 

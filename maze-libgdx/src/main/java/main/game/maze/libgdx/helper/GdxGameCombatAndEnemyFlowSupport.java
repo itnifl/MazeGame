@@ -32,8 +32,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     private static final float EXPLOSION_SHAKE_DURATION_SECONDS = 0.20f;
     /** Half-width of the flame corridor in pixels. Four cells wide so the blast fills the corridor visibly. */
     private static final float FLAME_CORRIDOR_HALF_WIDTH = 120f;
-    /** Full corridor width exposed for rendering — matches one maze hallway. */
-    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx;
+    /** Full corridor width exposed for rendering — 85 % of one maze hallway for a snug fit. */
+    public static final float FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85f;
 
     private GdxGameCombatAndEnemyFlowSupport() {
     }
