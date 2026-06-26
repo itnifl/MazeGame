@@ -88,13 +88,18 @@ public final class FxMovementLoopCoordinator {
                 // sleep jitter pushes a single iteration past the nominal interval.
                 // This mirrors the libGDX per-enemy accumulator so both frontends
                 // move difficulty-scaled enemies the same distance per real second.
+                //
+                // The sleep is placed at the END of the loop body so that
+                // elapsedSeconds (measured at the TOP) covers the full wall-clock
+                // time between iterations: previous sleep + previous AI work.
+                // Seeding previousNanos one interval in the past gives the first
+                // iteration its correct ~1-tick budget without a cold-start skip.
                 MovementTickAccumulator accumulator = new MovementTickAccumulator(
                         GameplayTickRate.ENEMY_MOVEMENT_TICKS_PER_SECOND,
                         GameplayTickRate.MAX_TICKS_PER_FRAME);
-                long previousNanos = System.nanoTime();
+                long previousNanos = System.nanoTime() - (ENEMY_MOVEMENT_INTERVAL_MS * 1_000_000L);
                 while (!isCancelled()) {
                     try {
-                        Thread.sleep(ENEMY_MOVEMENT_INTERVAL_MS);
                         long now = System.nanoTime();
                         double elapsedSeconds = (now - previousNanos) / 1_000_000_000d;
                         previousNanos = now;
@@ -103,6 +108,7 @@ public final class FxMovementLoopCoordinator {
                         for (int i = 0; i < ticks && !isCancelled(); i++) {
                             callbacks.onComputerCharacterStep();
                         }
+                        Thread.sleep(ENEMY_MOVEMENT_INTERVAL_MS);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         if (isCancelled()) {

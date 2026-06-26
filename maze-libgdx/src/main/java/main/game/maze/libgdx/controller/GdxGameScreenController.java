@@ -465,8 +465,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void detonatePlayerBomb(float x, float y) {
-        float playerCx = player.x() + player.halfSize();
-        float playerCy = player.y() + player.halfSize();
+        // player.x()/y() are already centre coordinates (see PlayerState.collides);
+        // do NOT add halfSize() here.
+        float playerCx = player.x();
+        float playerCy = player.y();
         int appliedDamage = GdxGameCombatAndEnemyFlowSupport.applyDirectionalFlameExplosion(
                 animatedEnemies,
                 maze,

@@ -1,8 +1,10 @@
 package main.game.maze.mazeworld;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -249,14 +251,19 @@ public class GameMazeWorld {
      */
     private List<BreakableWall> collectCascadeWalls(BreakableWall destroyed) {
         List<BreakableWall> result = new ArrayList<>();
+        // Track visited walls in a HashSet (BreakableWall uses identity equals/hashCode)
+        // for O(1) membership checks instead of O(n) List.contains scans.
+        Set<BreakableWall> visited = new HashSet<>();
         result.add(destroyed);
+        visited.add(destroyed);
         int i = 0;
         while (i < result.size()) {
             BreakableWall current = result.get(i++);
             for (BreakableWall candidate : breakableWalls) {
-                if (!result.contains(candidate)
+                if (!visited.contains(candidate)
                         && areAdjacent(current.geometry, candidate.geometry)) {
                     result.add(candidate);
+                    visited.add(candidate);
                 }
             }
         }
