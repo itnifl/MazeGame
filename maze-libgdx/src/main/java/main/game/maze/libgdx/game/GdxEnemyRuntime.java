@@ -15,6 +15,7 @@ import main.game.maze.common.movement.EnemyState;
 import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
+import main.game.maze.common.movement.MovementTickAccumulator;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.game.runtime.EnemyRuntime;
@@ -46,14 +47,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private float y;
     private int directionX;
     private int directionY;
-    private float moveAccumulator;
+    private final MovementTickAccumulator moveAccumulator;
     private String behaviorTypeLabel;
     private String movementTypeLabel;
     // Mirrors JavaFX ghost non-tangibility energy from the opponent model.
     double nonTangibilityEnergy;
     private final int visibilityLevel;
     private final float javaFxTickRate;
-    private final int maxEnemyTicksPerFrame;
     private float shotCooldownRemaining;
     private int lifetimeShots = 0;
     private int lifetimeHits  = 0;
@@ -79,7 +79,6 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         this.spawn = spawn;
         this.runtimeEnemyId = runtimeEnemyId;
         this.javaFxTickRate = javaFxTickRate;
-        this.maxEnemyTicksPerFrame = maxEnemyTicksPerFrame;
         this.imagePath = imagePath;
         this.size = size;
         this.speed = speed;
@@ -91,7 +90,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         int[] initialDirection = seededCardinal(spawn.id(), 0L);
         this.directionX = initialDirection[0];
         this.directionY = initialDirection[1];
-        this.moveAccumulator = 0f;
+        this.moveAccumulator = new MovementTickAccumulator(javaFxTickRate, maxEnemyTicksPerFrame);
         BehaviorType behavior = spawn.behavior() == null ? BehaviorType.WANDER : spawn.behavior();
         this.behaviorTypeLabel = behavior.name();
         this.movementTypeLabel = "WANDER";
@@ -488,13 +487,10 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
             nonTangibilityEnergy = GhostNonTangibilityService.drainEnergy(nonTangibilityEnergy, dt);
         }
 
-        moveAccumulator += dt * javaFxTickRate;
-        int ticks = (int) moveAccumulator;
-        if (ticks <= 0) {
+        int budget = moveAccumulator.accumulate(dt);
+        if (budget <= 0) {
             return;
         }
-        moveAccumulator -= ticks;
-        int budget = Math.min(ticks, maxEnemyTicksPerFrame);
         for (int i = 0; i < budget; i++) {
             if (nonTangibilityEnergy > 0) {
                 EnemyState state = new EnemyState(runtimeEnemyId, x, y, directionX, directionY, size, speed);

@@ -21,6 +21,14 @@ runtime renderer is JavaFX, libGDX, or something else.
   disallow-doctype-decl, external general/parameter entities and external DTD
   loading disabled, XInclude off, entity expansion off) so loading from
   arbitrary file paths is safe.
+- Shared gameplay cadence:
+  `GameplayTickRate` is the single source of truth for the enemy movement
+  rate (`ENEMY_MOVEMENT_TICKS_PER_SECOND = 30`, `SECONDS_PER_TICK = 1/30`,
+  `intervalMillis() = 33`, `MAX_TICKS_PER_FRAME = 4`). `MovementTickAccumulator`
+  is the shared fixed-timestep catch-up timer both frontends use to run the
+  correct number of movement ticks regardless of how long each loop iteration
+  takes (capped at `MAX_TICKS_PER_FRAME`). This keeps JavaFX and libGDX enemy
+  speed identical even when per-frame AI work (e.g. hard-difficulty A*) varies.
 - Shared enemy movement helpers:
   `AdaptiveAggressiveMovementService`, `AntiLoopWanderMovementService`,
   `EnemySpawnUnstuckService`, `GhostNonTangibilityService`, and

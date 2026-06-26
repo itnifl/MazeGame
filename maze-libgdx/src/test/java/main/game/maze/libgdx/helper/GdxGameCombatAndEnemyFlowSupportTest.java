@@ -98,8 +98,9 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 60f,
                 8);
 
-        // Create a real world with one indestructible wall: vertical at x=120, y=[0..120]
-        Vector2D wallVec = new Vector2D(120, 0, 120, 120);
+        // Origin is at screen (20, 40) → world Y = 400-40 = 360.
+        // Wall at world x=120, world Y span [300..420] so the origin (world Y=360) falls within it.
+        Vector2D wallVec = new Vector2D(120, 300, 120, 420);
         GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
         // Clear breakable assignments so the wall is treated as indestructible
         world.assignBreakableWalls(0L, List.of());
@@ -209,8 +210,9 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 60f,
                 8);
 
-        // Create a world with one breakable wall: vertical at x=120, y=[0..120], 20 HP Wood
-        Vector2D wallVec = new Vector2D(120, 0, 120, 120);
+        // Origin at screen (20, 40) → world Y = 400-40 = 360.
+        // Wall at world x=120, world Y span [300..420] so origin (world Y=360) falls within it.
+        Vector2D wallVec = new Vector2D(120, 300, 120, 420);
         GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
         world.assignBreakableWalls(0L,
                 List.of(new main.game.maze.mazeworld.WallMaterialSpec("WOOD_BASIC", "Wood", 20)));

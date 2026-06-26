@@ -194,3 +194,18 @@ MUST be added to the shared core, not to a single frontend.
   direction until blocked, then choose a random passable cardinal direction.
   Immediate reverse is allowed when selected by random choice or when it is
   the only passable option.
+
+- **GR-36**: When a breakable wall is destroyed by any damage source (bomb
+  flame, projectile, etc.) every other breakable wall that shares an endpoint
+  with the destroyed wall MUST also collapse immediately (cascade collapse).
+  The cascade propagates transitively: if a newly collapsed wall also shares an
+  endpoint with another breakable wall, that wall collapses too, and so on until
+  no further adjacent breakable walls remain. Indestructible walls adjacent to a
+  destroyed wall are never affected by the cascade.
+
+- **GR-37**: The bomb flame corridor MUST detect and damage walls whose
+  perpendicular span overlaps the flame corridor, not only walls whose span
+  contains the exact blast origin coordinate. A wall is in the flame corridor
+  if any part of its perpendicular span lies within `corridorHalfWidth` pixels of
+  the blast origin on the perpendicular axis. Both the east/west and north/south
+  directions must apply this rule symmetrically.

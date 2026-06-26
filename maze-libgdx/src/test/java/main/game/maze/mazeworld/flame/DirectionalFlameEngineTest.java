@@ -1,5 +1,6 @@
 package main.game.maze.mazeworld.flame;
 
+import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallMaterialSpec;
@@ -88,34 +89,45 @@ class DirectionalFlameEngineTest {
 
     @Test
     void findNextWallHit_noWalls_returnsNull() {
-        assertNull(DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(), 0, 400));
+        assertNull(DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(), 0, 400, 120));
     }
 
     @Test
     void findNextWallHit_nullWalls_returnsNull() {
-        assertNull(DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, null, 0, 400));
+        assertNull(DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, null, 0, 400, 120));
     }
 
     @Test
     void findNextWallHit_verticalWallInPath_east_returnsCorrectDistance() {
         Vector2D wall = new Vector2D(150, 0, 150, 100);
-        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400);
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400, 120);
         assertNotNull(hit);
         assertEquals(150.0, hit.distance(), 0.001);
     }
 
     @Test
-    void findNextWallHit_verticalWallOriginYOutsideSpan_notHit() {
-        // Wall at x=150 spans y=[200..300]; origin Y=50 is outside that span
+    void findNextWallHit_verticalWallOutsideFlameCorridorCompletely_notHit() {
+        // Wall at x=150 spans y=[200..300]; even with corridorHalfWidth=120 the corridor
+        // reaches only to originY+120 = 50+120 = 170, which is below minY=200.
         Vector2D wall = new Vector2D(150, 200, 150, 300);
-        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400);
-        assertNull(hit, "Vertical wall whose Y span does not include the origin Y must not be hit");
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400, 120);
+        assertNull(hit, "Vertical wall whose Y span does not overlap the flame corridor must not be hit");
+    }
+
+    @Test
+    void findNextWallHit_wallOutsideOriginSpanButInsideCorridor_isFound() {
+        // Wall spans y=[60..150]; originY=50 is outside that span (50 < 60) but the corridor
+        // extends to 50+120=170 which overlaps [60..150].  Must be found.
+        Vector2D wall = new Vector2D(150, 60, 150, 150);
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400, 120);
+        assertNotNull(hit, "Wall overlapping the flame corridor must be detected even when originY is outside the exact span");
+        assertEquals(150.0, hit.distance(), 0.001);
     }
 
     @Test
     void findNextWallHit_wallBehindOrigin_notReturned() {
         Vector2D wall = new Vector2D(-100, 0, -100, 100);
-        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400);
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 0, 400, 120);
         assertNull(hit, "Wall behind the origin in the travel direction must not be hit");
     }
 
@@ -123,7 +135,7 @@ class DirectionalFlameEngineTest {
     void findNextWallHit_twoWalls_nearestReturned() {
         Vector2D near = new Vector2D(100, 0, 100, 100);
         Vector2D far  = new Vector2D(250, 0, 250, 100);
-        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(far, near), 0, 400);
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(far, near), 0, 400, 120);
         assertNotNull(hit);
         assertEquals(100.0, hit.distance(), 0.001, "Nearest wall must be returned");
     }
@@ -131,7 +143,7 @@ class DirectionalFlameEngineTest {
     @Test
     void findNextWallHit_horizontalWall_south() {
         Vector2D wall = new Vector2D(0, 200, 200, 200);
-        var hit = DirectionalFlameEngine.findNextWallHit(100, 50, 0, 1, List.of(wall), 0, 400);
+        var hit = DirectionalFlameEngine.findNextWallHit(100, 50, 0, 1, List.of(wall), 0, 400, 120);
         assertNotNull(hit);
         assertEquals(150.0, hit.distance(), 0.001);
     }
@@ -140,7 +152,7 @@ class DirectionalFlameEngineTest {
     void findNextWallHit_wallPastSearchStart_notReturned() {
         // searchStart=200, wall at x=100 is before that threshold
         Vector2D wall = new Vector2D(100, 0, 100, 100);
-        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 200, 400);
+        var hit = DirectionalFlameEngine.findNextWallHit(0, 50, 1, 0, List.of(wall), 200, 400, 120);
         assertNull(hit, "Wall at or before searchStart must be excluded");
     }
 
@@ -150,14 +162,14 @@ class DirectionalFlameEngineTest {
 
     @Test
     void flameVisualRange_noWalls_returnsMaxRange() {
-        double range = DirectionalFlameEngine.flameVisualRange(0, 50, 1, 0, List.of(), 300);
+        double range = DirectionalFlameEngine.flameVisualRange(0, 50, 1, 0, List.of(), 300, 120);
         assertEquals(300.0, range, 0.001);
     }
 
     @Test
     void flameVisualRange_wallAtHalf_returnsWallDistance() {
         Vector2D wall = new Vector2D(150, 0, 150, 100);
-        double range = DirectionalFlameEngine.flameVisualRange(0, 50, 1, 0, List.of(wall), 300);
+        double range = DirectionalFlameEngine.flameVisualRange(0, 50, 1, 0, List.of(wall), 300, 120);
         assertEquals(150.0, range, 0.001);
     }
 
@@ -268,4 +280,102 @@ class DirectionalFlameEngineTest {
         assertEquals(0, first.hitPoints());
         assertEquals(0, second.hitPoints());
     }
+
+    // -----------------------------------------------------------------------
+    // All four cardinal directions — wall breaking
+    // -----------------------------------------------------------------------
+
+    @Test
+    void applyDirectionalFlame_west_breakableWallDestroyed() {
+        // Vertical wall to the WEST at x=30 (origin at x=100)
+        Vector2D wallVec = new Vector2D(30, 0, 30, 100);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L, List.of(new WallMaterialSpec("GLASS", "Glass", 5)));
+
+        int applied = DirectionalFlameEngine.applyDirectionalFlame(
+                List.of(), world, world.getMazeVectors(), 100, 50, -1, 0, 100, 300, 120);
+
+        assertTrue(applied >= 5, "Flame going west must deal at least the wall's HP");
+        assertEquals(0, world.getMazeVectors().size(), "Breakable wall to the west must be removed");
+    }
+
+    @Test
+    void applyDirectionalFlame_south_breakableWallDestroyed() {
+        // Horizontal wall to the SOUTH at y=150 (origin at y=50)
+        Vector2D wallVec = new Vector2D(0, 150, 100, 150);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L, List.of(new WallMaterialSpec("GLASS", "Glass", 5)));
+
+        int applied = DirectionalFlameEngine.applyDirectionalFlame(
+                List.of(), world, world.getMazeVectors(), 50, 50, 0, 1, 100, 300, 120);
+
+        assertTrue(applied >= 5, "Flame going south must deal at least the wall's HP");
+        assertEquals(0, world.getMazeVectors().size(), "Breakable wall to the south must be removed");
+    }
+
+    @Test
+    void applyDirectionalFlame_north_breakableWallDestroyed() {
+        // Horizontal wall to the NORTH at y=30 (origin at y=100)
+        Vector2D wallVec = new Vector2D(0, 30, 100, 30);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L, List.of(new WallMaterialSpec("GLASS", "Glass", 5)));
+
+        int applied = DirectionalFlameEngine.applyDirectionalFlame(
+                List.of(), world, world.getMazeVectors(), 50, 100, 0, -1, 100, 300, 120);
+
+        assertTrue(applied >= 5, "Flame going north must deal at least the wall's HP");
+        assertEquals(0, world.getMazeVectors().size(), "Breakable wall to the north must be removed");
+    }
+
+    @Test
+    void applyDirectionalFlame_allFourCardinalDirections_eachBreaksItsOwnWall() {
+        // Arrange a cross of four breakable walls, one in each cardinal direction.
+        // Origin at (200, 200).  Each wall is clearly in one corridor only.
+        Vector2D eastWall  = new Vector2D(300, 180, 300, 220);  // vertical wall to the east
+        Vector2D westWall  = new Vector2D(100, 180, 100, 220);  // vertical wall to the west
+        Vector2D southWall = new Vector2D(180, 300, 220, 300);  // horizontal wall to the south
+        Vector2D northWall = new Vector2D(180, 100, 220, 100);  // horizontal wall to the north
+
+        GameMazeWorld world = new GameMazeWorld(
+                () -> List.of(eastWall, westWall, southWall, northWall));
+        // Directly register all four walls as breakable, bypassing the RNG.
+        WallMaterialSpec glass = new WallMaterialSpec("GLASS", "Glass", 5);
+        world.getBreakableWalls().clear();
+        world.getBreakableWalls().add(new BreakableWall(eastWall,  new WallMaterialSpec("GLASS", "Glass", 5)));
+        world.getBreakableWalls().add(new BreakableWall(westWall,  new WallMaterialSpec("GLASS", "Glass", 5)));
+        world.getBreakableWalls().add(new BreakableWall(southWall, new WallMaterialSpec("GLASS", "Glass", 5)));
+        world.getBreakableWalls().add(new BreakableWall(northWall, new WallMaterialSpec("GLASS", "Glass", 5)));
+
+        List<Vector2D> walls = world.getMazeVectors();
+
+        // Fire all four directions; each has independent budget.
+        int east  = DirectionalFlameEngine.applyDirectionalFlame(List.of(), world, walls, 200, 200,  1,  0, 100, 300, 120);
+        int west  = DirectionalFlameEngine.applyDirectionalFlame(List.of(), world, walls, 200, 200, -1,  0, 100, 300, 120);
+        int south = DirectionalFlameEngine.applyDirectionalFlame(List.of(), world, walls, 200, 200,  0,  1, 100, 300, 120);
+        int north = DirectionalFlameEngine.applyDirectionalFlame(List.of(), world, walls, 200, 200,  0, -1, 100, 300, 120);
+
+        assertTrue(east  >= 5, "East flame must damage the east wall");
+        assertTrue(west  >= 5, "West flame must damage the west wall");
+        assertTrue(south >= 5, "South flame must damage the south wall");
+        assertTrue(north >= 5, "North flame must damage the north wall");
+        assertTrue(world.getMazeVectors().isEmpty(), "All four breakable walls must be destroyed");
+    }
+
+    @Test
+    void applyDirectionalFlame_wallOutsideOriginSpanButInsideCorridor_isDestroyed() {
+        // Wall spans y=[60..120]; originY=50 is OUTSIDE that span but within corridorHalfWidth=120.
+        // With the corridor-based span check the wall must be found and damaged.
+        Vector2D wallVec = new Vector2D(200, 60, 200, 120);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L, List.of(new WallMaterialSpec("GLASS", "Glass", 5)));
+
+        int applied = DirectionalFlameEngine.applyDirectionalFlame(
+                List.of(), world, world.getMazeVectors(), 0, 50, 1, 0, 100, 400, 120);
+
+        assertTrue(applied >= 5,
+                "Flame corridor overlapping the wall's span must damage the wall even when originY is outside the exact span");
+        assertEquals(0, world.getMazeVectors().size(),
+                "Wall inside the flame corridor must be destroyed");
+    }
 }
+

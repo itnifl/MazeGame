@@ -36,6 +36,7 @@ import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GameplayTickRate;
 import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
@@ -82,8 +83,14 @@ public final class FxEnemyCoordinator {
 
     private static final Duration ENEMY_LABEL_DURATION    = Duration.seconds(20);
     private static final double   ENEMY_LABEL_Y_OFFSET    = 14.0;
-    /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
-    private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
+    /**
+     * Real seconds elapsed per enemy AI tick. Sourced from the shared
+     * {@link GameplayTickRate} so movement time-accounting, projectile physics,
+     * and ghost energy drain integrate at the correct real-time rate regardless
+     * of the loop frequency. Passed as the {@code deltaSeconds} of the movement
+     * services and as the {@code dt} of {@code updateProjectiles}.
+     */
+    private static final double   MOVEMENT_TICK_THRESHOLD = GameplayTickRate.SECONDS_PER_TICK;
     /** Half-width of the flame corridor. Four cells wide so the blast fills the corridor visibly. */
     private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 4;
 
@@ -206,8 +213,9 @@ public final class FxEnemyCoordinator {
                 if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
                     Platform.runLater(() -> {
                         try {
-                            // 100 ms per AI tick → 0.1 s dt keeps projectile physics correct.
-                            pbc.updateProjectiles(0.1);
+                            // Advance projectile physics by one real AI tick so their
+                            // real-time speed is independent of the loop frequency.
+                            pbc.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
                         } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
                         }
@@ -373,7 +381,8 @@ public final class FxEnemyCoordinator {
     public double flameVisualRange(double originX, double originY,
                                    int dirX, int dirY,
                                    List<Vector2D> walls, double maxRange) {
-        return DirectionalFlameEngine.flameVisualRange(originX, originY, dirX, dirY, walls, maxRange);
+        return DirectionalFlameEngine.flameVisualRange(
+                originX, originY, dirX, dirY, walls, maxRange, PLAYER_FLAME_HALF_WIDTH);
     }
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {

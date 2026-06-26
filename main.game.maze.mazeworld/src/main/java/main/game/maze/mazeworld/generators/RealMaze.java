@@ -22,7 +22,8 @@ public final class RealMaze implements MazeArena {
     private final float startY;
     private final float goalX;
     private final float goalY;
-    private final List<WallSegment> walls;
+    private List<WallSegment> walls;
+    private int wallsSourceSize = -1;
 
     public RealMaze(GameMazeWorld world, int widthPx, int heightPx) {
         if (world == null) throw new IllegalArgumentException("world must not be null");
@@ -33,7 +34,6 @@ public final class RealMaze implements MazeArena {
         this.navigationGraph = world.getNavigationGraph();
         this.widthPx = widthPx;
         this.heightPx = heightPx;
-        this.walls = Collections.unmodifiableList(flipWalls(world.getMazeVectors(), heightPx));
         float[] points = computeStartAndGoal(this.navigationGraph, heightPx, widthPx);
         this.startX = points[0];
         this.startY = points[1];
@@ -45,7 +45,7 @@ public final class RealMaze implements MazeArena {
         return new RealMaze(GameMazeWorld.RegenerateWorld(widthPx, heightPx), widthPx, heightPx);
     }
 
-    @Override public List<WallSegment> walls()    { return walls; }
+    @Override public List<WallSegment> walls()    { return liveWalls(); }
     @Override public float widthPx()              { return widthPx; }
     @Override public float heightPx()             { return heightPx; }
     @Override public float startX()               { return startX; }
@@ -54,6 +54,25 @@ public final class RealMaze implements MazeArena {
     @Override public float goalY()                { return goalY; }
     public GameMazeWorld sourceWorld()            { return world; }
     public MazeNavigationGraph navigationGraph()  { return navigationGraph; }
+
+    /**
+     * Returns the wall segments derived from the live {@link GameMazeWorld}.
+     *
+     * <p>Rebuilt only when the world's wall count changes (e.g. a bomb destroyed a
+     * breakable wall), so the per-frame cost is O(1) in the common case while the
+     * result always reflects the current world. RealMaze previously froze a
+     * snapshot at construction, which made libGDX keep rendering and colliding with
+     * walls the world had already removed — bombs appeared not to break walls,
+     * unlike JavaFX which re-reads the live vector list on every redraw.</p>
+     */
+    private List<WallSegment> liveWalls() {
+        List<Vector2D> live = world.getMazeVectors();
+        if (walls == null || wallsSourceSize != live.size()) {
+            walls = Collections.unmodifiableList(flipWalls(live, (int) heightPx));
+            wallsSourceSize = live.size();
+        }
+        return walls;
+    }
 
     private static List<WallSegment> flipWalls(List<Vector2D> vectors, int heightPx) {
         List<WallSegment> out = new ArrayList<>(vectors.size());

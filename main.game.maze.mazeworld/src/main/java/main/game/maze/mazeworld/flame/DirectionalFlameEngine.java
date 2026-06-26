@@ -89,7 +89,7 @@ public final class DirectionalFlameEngine {
         double searchStart = 0d;
 
         while (remaining > 0 && searchStart <= maxRange) {
-            WallHit nextWall = findNextWallHit(originX, originY, dirX, dirY, wallVectors, searchStart, maxRange);
+            WallHit nextWall = findNextWallHit(originX, originY, dirX, dirY, wallVectors, searchStart, maxRange, corridorHalfWidth);
             double wallDistance = nextWall == null ? Double.POSITIVE_INFINITY : nextWall.distance();
 
             // Process all targets that sit before the next wall
@@ -202,12 +202,17 @@ public final class DirectionalFlameEngine {
      * {@code (dirX, dirY)} before hitting a surviving wall, capped at
      * {@code maxRange}.  Call AFTER applying damage so destroyed walls are
      * already absent from {@code walls}.
+     *
+     * @param corridorHalfWidth perpendicular half-width of the flame corridor;
+     *                          walls whose span overlaps this corridor are
+     *                          considered blocking
      */
     public static double flameVisualRange(
             double originX, double originY,
             int dirX, int dirY,
-            List<Vector2D> walls, double maxRange) {
-        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0d, maxRange);
+            List<Vector2D> walls, double maxRange,
+            double corridorHalfWidth) {
+        WallHit hit = findNextWallHit(originX, originY, dirX, dirY, walls, 0d, maxRange, corridorHalfWidth);
         return hit == null ? maxRange : hit.distance();
     }
 
@@ -251,12 +256,20 @@ public final class DirectionalFlameEngine {
      * Finds the nearest wall segment that the flame ray crosses in direction
      * {@code (dirX, dirY)}, beyond {@code searchStart} and within
      * {@code maxRange}.
+     *
+     * <p>A wall is considered in the flame path if its perpendicular span
+     * overlaps the flame corridor (i.e. the corridor centred on the origin
+     * with half-width {@code corridorHalfWidth}).  This is consistent with
+     * how {@link #projectedDistanceOnRay} filters targets.</p>
+     *
+     * @param corridorHalfWidth perpendicular half-width of the flame corridor
      */
     static WallHit findNextWallHit(
             double originX, double originY,
             int dirX, int dirY,
             List<Vector2D> walls,
-            double searchStart, double maxRange) {
+            double searchStart, double maxRange,
+            double corridorHalfWidth) {
         if (walls == null || walls.isEmpty()) {
             return null;
         }
@@ -268,9 +281,11 @@ public final class DirectionalFlameEngine {
             double y2 = wall.getEnd().getY();
 
             if (dirX != 0 && Math.abs(x1 - x2) < 0.001d) {
+                // Horizontal flame (east/west): blocked by vertical walls whose Y span
+                // overlaps the flame corridor centred on originY.
                 double minY = Math.min(y1, y2);
                 double maxY = Math.max(y1, y2);
-                if (originY < minY || originY > maxY) {
+                if (originY + corridorHalfWidth < minY || originY - corridorHalfWidth > maxY) {
                     continue;
                 }
                 double dist = x1 - originX;
@@ -288,9 +303,11 @@ public final class DirectionalFlameEngine {
             }
 
             if (dirY != 0 && Math.abs(y1 - y2) < 0.001d) {
+                // Vertical flame (north/south): blocked by horizontal walls whose X span
+                // overlaps the flame corridor centred on originX.
                 double minX = Math.min(x1, x2);
                 double maxX = Math.max(x1, x2);
-                if (originX < minX || originX > maxX) {
+                if (originX + corridorHalfWidth < minX || originX - corridorHalfWidth > maxX) {
                     continue;
                 }
                 double dist = y1 - originY;

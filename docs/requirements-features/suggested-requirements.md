@@ -262,3 +262,12 @@ These requirements have been implemented and verified.
 - **SR-110** *(DDD)*: `lifetimeHits` and `lifetimeShots` are raw counters embedded in `GdxEnemyRuntime`. Introducing a `ProjectileStats` value object (immutable, `hits + shots + accuracy()`) would make the telemetry a first-class domain concept and allow transfer across the enemy lifecycle (respawn, serialization) without coupling to the mutable runtime state.
 
 - **SR-111** *(Parity, CRR-5)*: `PumpkinBomberCharacter` (JavaFX) logs projectile events at `FINE` level but does not expose a `projectileStats()` accessor. For parity with libGDX, add a `ProjectileStats` record (hits/shots) to `PumpkinBomberCharacter` and expose it via `getProjectileStats()` so unit tests and HUD overlays can read it without parsing log output.
+
+- **SR-112** *(12-Factor, DDD)*: The cascade collapse rule (GR-36) currently uses a hard-coded `ADJACENCY_EPSILON = 0.5 px` inside `GameMazeWorld`. For 12-Factor config compliance, consider moving this threshold to `StageConstants` (or a dedicated `WallConstants`) so it can be tuned without recompilation, and to make the adjacency rule an explicit domain concept rather than a private magic constant.
+
+- **SR-113** *(Observability, DDD)*: Add a `WallCollapseEvent` domain event (destroyed wall geometry, cascade count) emitted by `GameMazeWorld.applyWallDamage` whenever a cascade occurs. Frontends can subscribe to log, animate, or display the count. This turns the cascade into a first-class observable side-effect rather than a silent internal mutation.
+
+- **SR-114** *(Parity, CRR-5)*: The flame corridor half-width constant (`FLAME_CORRIDOR_HALF_WIDTH = 120f` in libGDX, `PLAYER_FLAME_HALF_WIDTH = 120` in JavaFX) is duplicated across two frontends. Consider promoting a single `StageConstants.FLAME_CORRIDOR_HALF_WIDTH_PX` so that tuning one value propagates to both frontends without risk of divergence.
+
+- **SR-115** *(DDD, SRP)*: Cascade collapse logic lives inside `GameMazeWorld`, mixing world-state management with collapse propagation strategy. Introducing a `CascadeCollapsePolicy` interface (with `collectToCollapse(BreakableWall destroyed, List<BreakableWall> candidates)`) would allow alternate collapse strategies (no cascade, distance-based decay, time-delayed collapse) to be injected per game mode without modifying the world model.
+

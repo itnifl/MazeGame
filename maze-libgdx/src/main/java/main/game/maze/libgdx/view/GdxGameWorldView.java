@@ -244,14 +244,42 @@ public final class GdxGameWorldView {
                 continue;
             }
             if (beam.blocked()) {
-                shapes.setColor(1f, 0.42f, 0.30f, 0.85f * alpha);
+                // Player bomb flame — rendered as layered fire (outer glow → inner hot core).
+                float w = beam.width();
+                float capR = w * 0.5f;
+
+                // Outer heat haze / smoke envelope
+                shapes.setColor(0.80f, 0.22f, 0.04f, 0.22f * alpha);
+                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 1.7f);
+
+                // Main fire body (deep orange)
+                shapes.setColor(1.00f, 0.46f, 0.06f, 0.80f * alpha);
+                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w);
+
+                // Inner bright flame (amber/yellow)
+                shapes.setColor(1.00f, 0.85f, 0.18f, 0.85f * alpha);
+                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 0.45f);
+
+                // White-hot core
+                shapes.setColor(1.00f, 1.00f, 0.90f, 0.55f * alpha);
+                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 0.18f);
+
+                // Flame-tip glow cap (far end)
+                shapes.setColor(1.00f, 0.55f, 0.10f, 0.70f * alpha);
+                shapes.circle(beam.x2(), beam.y2(), capR * 1.3f, 18);
+                shapes.setColor(1.00f, 0.88f, 0.28f, 0.80f * alpha);
+                shapes.circle(beam.x2(), beam.y2(), capR * 0.55f, 14);
+
+                // Base cap at origin (slightly wider, hotter)
+                shapes.setColor(1.00f, 0.68f, 0.14f, 0.60f * alpha);
+                shapes.circle(beam.x1(), beam.y1(), capR, 14);
             } else {
                 shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
+                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
+                float capR = beam.width() * 0.5f;
+                shapes.circle(beam.x1(), beam.y1(), capR, 20);
+                shapes.circle(beam.x2(), beam.y2(), capR, 20);
             }
-            shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
-            float capR = beam.width() * 0.5f;
-            shapes.circle(beam.x1(), beam.y1(), capR, 20);
-            shapes.circle(beam.x2(), beam.y2(), capR, 20);
         }
     }
 
@@ -261,10 +289,15 @@ public final class GdxGameWorldView {
             if (alpha <= 0f) {
                 continue;
             }
-            shapes.setColor(1f, 0.72f, 0.18f, 0.28f * alpha);
+            // Outer orange glow
+            shapes.setColor(1f, 0.44f, 0.06f, 0.28f * alpha);
             shapes.circle(impact.x(), impact.y(), impact.radius(), 28);
-            shapes.setColor(1f, 0.40f, 0.18f, 0.78f * alpha);
-            shapes.circle(impact.x(), impact.y(), Math.max(3f, impact.radius() * 0.55f), 24);
+            // Mid amber ring
+            shapes.setColor(1f, 0.72f, 0.18f, 0.60f * alpha);
+            shapes.circle(impact.x(), impact.y(), Math.max(3f, impact.radius() * 0.65f), 24);
+            // Bright yellow-white hot core
+            shapes.setColor(1f, 0.96f, 0.60f, 0.80f * alpha);
+            shapes.circle(impact.x(), impact.y(), Math.max(2f, impact.radius() * 0.35f), 18);
         }
     }
 

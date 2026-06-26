@@ -42,7 +42,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     public static float flameVisualRange(float originX, float originY,
                                          int dirX, int dirY,
                                          List<Vector2D> walls, float maxRange) {
-        return (float) DirectionalFlameEngine.flameVisualRange(originX, originY, dirX, dirY, walls, maxRange);
+        return (float) DirectionalFlameEngine.flameVisualRange(
+                originX, originY, dirX, dirY, walls, maxRange, FLAME_CORRIDOR_HALF_WIDTH);
     }
 
     private GdxGameCombatAndEnemyFlowSupport() {
@@ -158,19 +159,30 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             return 0;
         }
 
+        // GameMazeWorld wall vectors use Y-down (world/JavaFX) coordinates, but libGDX
+        // player/enemy positions use Y-up (screen) coordinates.  Convert origin and player
+        // centre to world space so DirectionalFlameEngine's wall-span checks are correct.
+        float heightPx = maze.heightPx();
+        float worldOriginY = heightPx - originY;
+        float worldPlayerCY = Float.isNaN(playerCenterY) ? Float.NaN : heightPx - playerCenterY;
+
         GameMazeWorld world = GdxWallDamageSupport.worldFrom(maze);
         // Use the world's actual Vector2D references so findBreakableWall(ref) succeeds.
         List<Vector2D> wallVectors = world != null ? world.getMazeVectors() : List.of();
 
         int totalApplied = 0;
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, originY,
-                1, 0, damagePerDirection, maxRange, playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, originY,
-                -1, 0, damagePerDirection, maxRange, playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, originY,
-                0, 1, damagePerDirection, maxRange, playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, originY,
-                0, -1, damagePerDirection, maxRange, playerCenterX, playerCenterY, playerCallback);
+        // Horizontal rays: dirY=0, no Y-axis flip needed.
+        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
+        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                -1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
+        // Vertical rays: screen dirY and world dirY are opposite (Y-axis is flipped).
+        // Screen (0,+1)="up in libGDX"  → world (0,-1)="decreasing world Y"
+        // Screen (0,-1)="down in libGDX" → world (0,+1)="increasing world Y"
+        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                0, -1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
+        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                0, 1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
         return totalApplied;
     }
 
@@ -183,14 +195,15 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                              List<GdxEnemyRuntime> animatedEnemies,
                                              List<Vector2D> wallVectors,
                                              float originX,
-                                             float originY,
+                                             float worldOriginY,
                                              int dirX,
                                              int dirY,
                                              int damageBudget,
                                              float maxRange,
                                              float playerCenterX,
-                                             float playerCenterY,
-                                             IntConsumer playerCallback) {
+                                             float worldPlayerCY,
+                                             IntConsumer playerCallback,
+                                             float heightPx) {
         List<FlameTarget> candidates = new ArrayList<>();
 
         if (animatedEnemies != null) {
@@ -199,7 +212,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     continue;
                 }
                 final float cx = enemy.x() + enemy.size() * 0.5f;
-                final float cy = enemy.y() + enemy.size() * 0.5f;
+                // Enemy positions are in libGDX screen space (Y-up); convert to world space (Y-down).
+                final float cy = heightPx - (enemy.y() + enemy.size() * 0.5f);
                 candidates.add(new FlameTarget() {
                     @Override public double centerX()        { return cx; }
                     @Override public double centerY()        { return cy; }
@@ -210,9 +224,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             }
         }
 
-        if (playerCallback != null && !Float.isNaN(playerCenterX) && !Float.isNaN(playerCenterY)) {
+        if (playerCallback != null && !Float.isNaN(playerCenterX) && !Float.isNaN(worldPlayerCY)) {
             final float pcx = playerCenterX;
-            final float pcy = playerCenterY;
+            final float pcy = worldPlayerCY;
             candidates.add(new FlameTarget() {
                 @Override public double centerX()        { return pcx; }
                 @Override public double centerY()        { return pcy; }
@@ -224,7 +238,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
 
         return DirectionalFlameEngine.applyDirectionalFlame(
                 candidates, world, wallVectors,
-                originX, originY, dirX, dirY,
+                originX, worldOriginY, dirX, dirY,
                 damageBudget, maxRange, FLAME_CORRIDOR_HALF_WIDTH);
     }
 

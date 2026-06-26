@@ -8,6 +8,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
+import main.game.maze.common.movement.GameplayTickRate;
+import main.game.maze.common.movement.MovementTickAccumulator;
 
 /**
  * Owns the movement Task/thread, the AnimationTimer, the watchdog Timeline,
@@ -20,6 +22,14 @@ public final class FxMovementLoopCoordinator {
     private static final Logger LOGGER = Logger.getLogger(FxMovementLoopCoordinator.class.getName());
     private static final long MOVEMENT_STALL_THRESHOLD_NANOS = 6_000_000_000L; // 6 seconds
     private static final long OPPONENT_THREAD_JOIN_TIMEOUT_MS = 200L;
+    /**
+     * Interval between enemy AI ticks. Sourced from the shared
+     * {@link GameplayTickRate} (≈ 33 ms / 30 Hz) so JavaFX enemies cover the same
+     * distance per real-time second as libGDX. A previous value of 100 ms (10 Hz)
+     * made enemies move at one third of the intended speed, most visible on hard
+     * difficulty where the scaled speed is highest.
+     */
+    public static final long ENEMY_MOVEMENT_INTERVAL_MS = GameplayTickRate.intervalMillis();
 
     private Thread runComputerCharactersThread;
     private Task<Boolean> runComputerCharacters;
@@ -71,11 +81,28 @@ public final class FxMovementLoopCoordinator {
         runComputerCharacters = new Task<>() {
             @Override
             protected Boolean call() {
+                // Time-based catch-up: each iteration runs as many movement ticks
+                // as the real elapsed wall-clock time represents, so the effective
+                // rate stays at GameplayTickRate.ENEMY_MOVEMENT_TICKS_PER_SECOND even
+                // when the per-iteration AI work (heavier on hard difficulty) plus
+                // sleep jitter pushes a single iteration past the nominal interval.
+                // This mirrors the libGDX per-enemy accumulator so both frontends
+                // move difficulty-scaled enemies the same distance per real second.
+                MovementTickAccumulator accumulator = new MovementTickAccumulator(
+                        GameplayTickRate.ENEMY_MOVEMENT_TICKS_PER_SECOND,
+                        GameplayTickRate.MAX_TICKS_PER_FRAME);
+                long previousNanos = System.nanoTime();
                 while (!isCancelled()) {
                     try {
-                        Thread.sleep(100);
-                        lastMovementLoopNanos.set(System.nanoTime());
-                        callbacks.onComputerCharacterStep();
+                        Thread.sleep(ENEMY_MOVEMENT_INTERVAL_MS);
+                        long now = System.nanoTime();
+                        double elapsedSeconds = (now - previousNanos) / 1_000_000_000d;
+                        previousNanos = now;
+                        lastMovementLoopNanos.set(now);
+                        int ticks = accumulator.accumulate(elapsedSeconds);
+                        for (int i = 0; i < ticks && !isCancelled(); i++) {
+                            callbacks.onComputerCharacterStep();
+                        }
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         if (isCancelled()) {
