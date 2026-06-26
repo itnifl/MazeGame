@@ -32,6 +32,9 @@ public final class JavaFxInputBindingsSupport {
                 // Path hint (press = show, release = clear)
                 .bind(GameAction.APPLY_PATH_HINT, KeyCode.P, BindingKind.HELD)
                 .command(GameAction.APPLY_PATH_HINT, new ApplyPathHintCommand())
+                // Flame attack (space bar)
+                .bind(GameAction.FLAME_ATTACK, KeyCode.SPACE, BindingKind.EDGE)
+                .command(GameAction.FLAME_ATTACK, new TriggerFlameAttackCommand())
                 // Spanning tree: each press toggles visibility on/off
                 .bind(GameAction.TOGGLE_SPANNING_TREE, KeyCode.O, BindingKind.EDGE)
                 .command(GameAction.TOGGLE_SPANNING_TREE, new ToggleSpanningTreeCommand())

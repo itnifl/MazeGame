@@ -58,6 +58,7 @@ final class GdxGameScreenAssembler {
                 },
                 () -> c.showSpanningTreeInfo = !c.showSpanningTreeInfo,
                 c::applyPathHintHeld,
+                                c::triggerPlayerFlameAttack,
                 c::applyMovementFromFrame);
 
         GdxGameMouseInteractionCoordinator mouseInteractionCoordinator = new GdxGameMouseInteractionCoordinator(

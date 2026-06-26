@@ -6,7 +6,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.FxEnemyCoordinator;
 import main.game.maze.FxGameWorldModel;
+import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
+import main.game.maze.mazeworld.WallMaterialSpec;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.Zombie;
@@ -61,6 +64,14 @@ class FxEnemyCoordinatorTest {
                 () -> null,      // playerSupplier
                 () -> {}         // pathCanvasRefreshCallback
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void addComputerCharacter(FxEnemyCoordinator coordinator, Object character)
+            throws Exception {
+        Field field = FxEnemyCoordinator.class.getDeclaredField("allComputerCharacters");
+        field.setAccessible(true);
+        ((List<Object>) field.get(coordinator)).add(character);
     }
 
     // stepAll() with no registered enemies must not throw.
@@ -255,4 +266,173 @@ class FxEnemyCoordinatorTest {
         assertDoesNotThrow(c::stepAll,
                 "stepAll with a wander zombie and null maze must not throw");
     }
+
+    @Test
+    void applyPlayerFlameExplosion_capsDamagePerDirectionAtOneHundred() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie zombieModel = OpponentsFactory.eINSTANCE.createZombie();
+        zombieModel.setHealth(100);
+        zombieModel.setSpeed(2.0);
+        zombieModel.setAttackDamage(1);
+        zombieModel.setThreatLevel(1.0);
+        zombieModel.setBehavior(BehaviorType.WANDER);
+
+        ZombieCharacter zombie = new ZombieCharacter(new Rectangle(16, 16), 120, 40, zombieModel);
+        addComputerCharacter(c, zombie);
+        int before = zombie.getHitPoints();
+
+        int applied = c.applyPlayerFlameExplosion(20, 60, 100, 400, List.of());
+
+        assertEquals(100, applied, "Explosion damage must be capped at 100 per direction");
+        assertEquals(before - 100, zombie.getHitPoints(), "Enemy should lose at most the 100 point directional budget");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_stopsAtWallWhenWallSurvives() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie frontModel = OpponentsFactory.eINSTANCE.createZombie();
+        frontModel.setHealth(20);
+        frontModel.setSpeed(2.0);
+        frontModel.setAttackDamage(1);
+        frontModel.setThreatLevel(1.0);
+        frontModel.setBehavior(BehaviorType.WANDER);
+
+        Zombie rearModel = OpponentsFactory.eINSTANCE.createZombie();
+        rearModel.setHealth(80);
+        rearModel.setSpeed(2.0);
+        rearModel.setAttackDamage(1);
+        rearModel.setThreatLevel(1.0);
+        rearModel.setBehavior(BehaviorType.WANDER);
+
+        ZombieCharacter frontZombie = new ZombieCharacter(new Rectangle(16, 16), 80, 40, frontModel);
+        ZombieCharacter rearZombie = new ZombieCharacter(new Rectangle(16, 16), 160, 40, rearModel);
+        addComputerCharacter(c, frontZombie);
+        addComputerCharacter(c, rearZombie);
+        int frontBefore = frontZombie.getHitPoints();
+        int rearBefore = rearZombie.getHitPoints();
+
+        int applied = c.applyPlayerFlameExplosion(
+                20,
+                60,
+                100,
+                400,
+                List.of(new Vector2D(120, 0, 120, 120)));
+
+        assertTrue(applied <= 100, "A single direction must never apply more than 100 total damage");
+        assertEquals(Math.max(0, frontBefore - applied), frontZombie.getHitPoints(), "Front enemy should absorb the directional damage budget");
+        assertEquals(rearBefore, rearZombie.getHitPoints(), "Rear enemy must stay untouched after the wall stops the flame");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_damagesPlayerInCorridor() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        java.util.concurrent.atomic.AtomicInteger playerDamage =
+                new java.util.concurrent.atomic.AtomicInteger(0);
+
+        // Player directly east of origin — no enemies, full 100 budget reaches player
+        int applied = c.applyPlayerFlameExplosion(
+                20, 60,          // origin
+                100, 400,        // damage / range
+                List.of(),       // no walls
+                120, 60,         // player center (east of origin, same Y)
+                playerDamage::addAndGet);
+
+        assertTrue(playerDamage.get() > 0,
+                "Player in the flame corridor must receive damage from the explosion");
+        assertEquals(100, playerDamage.get(),
+                "Player receives the full remaining budget in the matching corridor direction");
+    }
+
+    @Test
+    void applyPlayerFlameExplosion_playerDoesNotBlockFlameForEnemyBeyond() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(100);
+        model.setSpeed(2.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        // Enemy east of player (player at 120, enemy at 200)
+        ZombieCharacter zombie = new ZombieCharacter(new Rectangle(16, 16), 200, 52, model);
+        addComputerCharacter(c, zombie);
+
+        java.util.concurrent.atomic.AtomicInteger playerDamage =
+                new java.util.concurrent.atomic.AtomicInteger(0);
+
+        c.applyPlayerFlameExplosion(
+                20, 60,          // origin
+                100, 400,        // damage / range
+                List.of(),       // no walls
+                120, 60,         // player center (between origin and enemy)
+                playerDamage::addAndGet);
+
+        assertTrue(playerDamage.get() > 0,
+                "Player in the corridor must take damage");
+        assertTrue(zombie.getHitPoints() < 100,
+                "Enemy beyond the player must also take damage since player is pass-through");
+    }
+
+    @Test
+    void applyPlayerFlame_destroysBreakableWallAndContinuesToEnemyBeyond() throws Exception {
+        // Vertical wall at x=120, spanning y=[0..120] — sits between origin (20,60) and enemy (200,60)
+        Vector2D wallVec = new Vector2D(120, 0, 120, 120);
+        GameMazeWorld world = new GameMazeWorld(() -> List.of(wallVec));
+        world.assignBreakableWalls(0L,
+                List.of(new WallMaterialSpec("WOOD_BASIC", "Wood", 20)));
+
+        FxEnemyCoordinator c = new FxEnemyCoordinator(
+                () -> null, () -> null, new FxGameWorldModel(),
+                () -> world,
+                () -> null, () -> {});
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(10);
+        model.setSpeed(1.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        ZombieCharacter enemy = new ZombieCharacter(new Rectangle(16, 16), 200, 52, model);
+        addComputerCharacter(c, enemy);
+
+        // Budget 100: wall costs 20 HP, enemy costs 10 HP → total 30 applied at minimum
+        int applied = c.applyPlayerFlameExplosion(
+                20, 60,
+                100, 500,
+                world.getMazeVectors(),
+                Double.NaN, Double.NaN, null);
+
+        assertTrue(world.getBreakableWalls().isEmpty(),
+                "The 20-HP wood wall must be destroyed by the 100-damage blast");
+        assertEquals(0, enemy.getHitPoints(),
+                "Enemy beyond the destroyed wall must be defeated");
+        assertTrue(applied >= 30,
+                "Applied damage must cover wall (20 HP) + enemy (10 HP) at minimum");
+    }
+
+    @Test
+    void applyPlayerFlame_doesNotHitTargetOutsideCorridorHalfWidth() throws Exception {
+        // Enemy is diagonally off all four flame corridors: >120px perpendicular from every axis.
+        // Origin (20,60), enemy top-left at (300,300) → center ~(315,315).
+        // East corridor perpendicular: |315-60|=255>120; north: |315-20|=295>120 — excluded.
+        FxEnemyCoordinator c = coordinator();
+
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(100);
+        model.setSpeed(1.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        ZombieCharacter offCorridor = new ZombieCharacter(new Rectangle(16, 16), 300, 300, model);
+        addComputerCharacter(c, offCorridor);
+
+        c.applyPlayerFlameExplosion(20, 60, 100, 400, List.of(), Double.NaN, Double.NaN, null);
+
+        assertEquals(100, offCorridor.getHitPoints(),
+                "Enemy outside the flame corridor half-width must take no damage");
+    }
 }
+

@@ -1,7 +1,10 @@
 package main.game.maze.mazeworld;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import main.game.maze.mazeworld.constants.StageConstants;
@@ -28,7 +31,8 @@ public class GameMazeWorld {
             new WallMaterialSpec("GLASS_BASIC", "Glass",  5),
             new WallMaterialSpec("DIRT_BASIC",  "Dirt",  10),
             new WallMaterialSpec("WOOD_BASIC",  "Wood",  20),
-            new WallMaterialSpec("STONE_BASIC", "Stone", 40)
+            new WallMaterialSpec("STONE_BASIC", "Stone", 40),
+            new WallMaterialSpec("STEEL_BASIC", "Steel", 80)
     );
 
     private static GameMazeWorld world;
@@ -64,8 +68,8 @@ public class GameMazeWorld {
             boardMaxX,
             boardMaxY,
             StageConstants.WallSegmentLengthPx,
-            60,
-            60,
+            StageConstants.HallwayWidthPx,
+            StageConstants.HallwayWidthPx,
             40
         );
     }
@@ -173,10 +177,14 @@ public class GameMazeWorld {
      * @param materials non-empty list of breakable material specs to pick from
      */
     public void assignBreakableWalls(long seed, List<WallMaterialSpec> materials) {
-        if (materials == null || materials.isEmpty()) {
-            throw new IllegalArgumentException("materials must not be null or empty");
+        if (materials == null) {
+            throw new IllegalArgumentException("materials must not be null");
         }
         breakableWalls.clear();
+        if (materials.isEmpty()) {
+            // Empty list means no breakable walls; all walls remain solid.
+            return;
+        }
         Random rng = new Random(seed);
         int matCount = materials.size();
         for (Vector2D wall : mazeVectors) {
@@ -213,20 +221,69 @@ public class GameMazeWorld {
      * is removed from the active wall list and the navigation graph edges that
      * crossed it are restored.
      *
+     * <p>Structural cascade: when a breakable wall collapses, every adjacent
+     * breakable wall that shares an endpoint with the destroyed segment also
+     * collapses instantly, propagating through connected chains.</p>
+     *
      * @return {@code true} if the wall was destroyed by this damage
      */
     public boolean applyWallDamage(BreakableWall bw, int damage) {
         if (!breakableWalls.contains(bw)) return false;
         int remaining = bw.applyDamage(damage);
         if (remaining <= 0) {
-            mazeVectors.remove(bw.geometry);
-            breakableWalls.remove(bw);
+            List<BreakableWall> toCollapse = collectCascadeWalls(bw);
+            for (BreakableWall w : toCollapse) {
+                mazeVectors.remove(w.geometry);
+                breakableWalls.remove(w);
+            }
             if (navigationGraph != null) {
                 MazeNavigationGraphService.rewireAfterWallRemoval(navigationGraph, mazeVectors);
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns all breakable walls reachable from {@code destroyed} via endpoint
+     * adjacency (BFS).  Always includes {@code destroyed} itself as the first
+     * element.
+     */
+    private List<BreakableWall> collectCascadeWalls(BreakableWall destroyed) {
+        List<BreakableWall> result = new ArrayList<>();
+        // Track visited walls in a HashSet (BreakableWall uses identity equals/hashCode)
+        // for O(1) membership checks instead of O(n) List.contains scans.
+        Set<BreakableWall> visited = new HashSet<>();
+        result.add(destroyed);
+        visited.add(destroyed);
+        int i = 0;
+        while (i < result.size()) {
+            BreakableWall current = result.get(i++);
+            for (BreakableWall candidate : breakableWalls) {
+                if (!visited.contains(candidate)
+                        && areAdjacent(current.geometry, candidate.geometry)) {
+                    result.add(candidate);
+                    visited.add(candidate);
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Two wall segments are adjacent when any endpoint of one touches any endpoint of the other. */
+    private static final double ADJACENCY_EPSILON = 0.5d;
+
+    private static boolean areAdjacent(Vector2D a, Vector2D b) {
+        return endpointsClose(a.getStart(), b.getStart())
+                || endpointsClose(a.getStart(), b.getEnd())
+                || endpointsClose(a.getEnd(),   b.getStart())
+                || endpointsClose(a.getEnd(),   b.getEnd());
+    }
+
+    private static boolean endpointsClose(Point2D p1, Point2D p2) {
+        double dx = p1.getX() - p2.getX();
+        double dy = p1.getY() - p2.getY();
+        return (dx * dx + dy * dy) <= ADJACENCY_EPSILON * ADJACENCY_EPSILON;
     }
 
     public MazeNavigationGraph getNavigationGraph() {

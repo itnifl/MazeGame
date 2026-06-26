@@ -56,7 +56,7 @@ public final class GdxWallDamageSupport {
         }
     }
 
-    static GameMazeWorld worldFrom(MazeArena arena) {
+    public static GameMazeWorld worldFrom(MazeArena arena) {
         if (arena instanceof RealMaze realMaze) {
             return realMaze.sourceWorld();
         }

@@ -153,5 +153,10 @@ class JavaFxInputCommandContextTest {
         public void openTerminalPrompt() {
             calls.add("openTerminalPrompt");
         }
+
+        @Override
+        public void triggerPlayerFlameAttack() {
+            calls.add("triggerPlayerFlameAttack");
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import main.game.maze.common.graphics.AudioEngine;
@@ -46,7 +47,10 @@ import main.game.maze.libgdx.helper.GdxGameStartFlowApplySupport;
 import main.game.maze.libgdx.helper.GdxGameUpdateFlowSupport;
 import main.game.maze.libgdx.helper.GdxScoreSupport;
 import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
+import main.game.maze.libgdx.helper.GdxWallDamageSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
+import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.common.controller.state.GameModeRouter;
 import main.game.maze.libgdx.controller.state.GdxOverlayModeCoordinator;
 import main.game.maze.libgdx.controller.state.PlayingModeController;
@@ -84,6 +88,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     static final float GOAL_SIZE = 50f;
     static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
+    private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
+    private static final float PLAYER_FLAME_RANGE = 220.0f;
+    private static final float PLAYER_FLAME_VISUAL_SECONDS = 0.35f;
+    private static final float PLAYER_FLAME_SHAKE_INTENSITY = 7.0f;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
@@ -125,10 +133,13 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final GdxOverlayModeCoordinator overlayModeCoordinator;
     private final PlayingModeController playingModeController = new PlayingModeController();
     private final PlayingModeController.PlayingModeBridge playingBridge;
-    private final GdxGameMouseInteractionCoordinator mouseInteractionCoordinator;
     private final GdxGameStartFlowRequestFactory startFlowRequestFactory;
     private boolean combatFrameDead;
     private float currentFrameDt;
+    private int playerBombsRemaining;
+    private int playerBombDamage;
+    private final List<PendingPlayerBomb> pendingPlayerBombs = new ArrayList<>();
+    private final List<ActivePlayerFlameBurst> activePlayerFlameBursts = new ArrayList<>();
     private final GameSessionStartFlowCoordinator gameSessionStartFlowCoordinator = new GameSessionStartFlowCoordinator();
     final GameWorldModel worldModel = new GameWorldModel();
     private final GdxGameRenderCoordinator renderCoordinator;
@@ -169,6 +180,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     final GdxGameOverOverlayView gameOverOverlayView = new GdxGameOverOverlayView();
     final GdxInfectionOverlayView infectionOverlayView = new GdxInfectionOverlayView();
     HudLayout hudLayout = HudLayout.zero();
+
+    private record PendingPlayerBomb(float x, float y, float fuseSecondsRemaining) {
+    }
+
+    private record ActivePlayerFlameBurst(float x1, float y1, float x2, float y2, float ttlSecondsRemaining) {
+    }
     
 
     public GdxGameScreenController() {
@@ -209,7 +226,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxGameCollaborators collaborators = GdxGameScreenAssembler.assemble(this);
         this.overlayModeCoordinator = collaborators.overlayModeCoordinator();
         this.inputCommandContext = collaborators.inputCommandContext();
-        this.mouseInteractionCoordinator = collaborators.mouseInteractionCoordinator();
         this.playingBridge = collaborators.playingBridge();
         this.startFlowRequestFactory = collaborators.startFlowRequestFactory();
         this.renderCoordinator = collaborators.renderCoordinator();
@@ -391,6 +407,15 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 session::incrementMoveCount);
     }
 
+    void triggerPlayerFlameAttack() {
+        if (playerBombsRemaining <= 0 || player == null) {
+            return;
+        }
+        playerBombsRemaining--;
+        pendingPlayerBombs.add(new PendingPlayerBomb(player.x(), player.y(), PLAYER_BOMB_FUSE_SECONDS));
+        flashStatus("Bomb planted", 1.2f);
+    }
+
     void advanceEnemies(float dt) {
         GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt);
         GdxGameCombatAndEnemyFlowSupport.tickDeathAnimations(worldModel.dyingEnemies(), dt);
@@ -407,6 +432,127 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
+        tickPlayerBombs(dt);
+        emitPlayerFlameVisuals();
+    }
+
+    private void tickPlayerBombs(float dt) {
+        if (dt <= 0f) {
+            return;
+        }
+
+        for (int i = pendingPlayerBombs.size() - 1; i >= 0; i--) {
+            PendingPlayerBomb bomb = pendingPlayerBombs.get(i);
+            float remainingFuse = bomb.fuseSecondsRemaining() - dt;
+            if (remainingFuse > 0f) {
+                pendingPlayerBombs.set(i, new PendingPlayerBomb(bomb.x(), bomb.y(), remainingFuse));
+                continue;
+            }
+            pendingPlayerBombs.remove(i);
+            detonatePlayerBomb(bomb.x(), bomb.y());
+        }
+
+        for (int i = activePlayerFlameBursts.size() - 1; i >= 0; i--) {
+            ActivePlayerFlameBurst burst = activePlayerFlameBursts.get(i);
+            float ttl = burst.ttlSecondsRemaining() - dt;
+            if (ttl > 0f) {
+                activePlayerFlameBursts.set(i, new ActivePlayerFlameBurst(
+                        burst.x1(), burst.y1(), burst.x2(), burst.y2(), ttl));
+            } else {
+                activePlayerFlameBursts.remove(i);
+            }
+        }
+    }
+
+    private void detonatePlayerBomb(float x, float y) {
+        // player.x()/y() are already centre coordinates (see PlayerState.collides);
+        // do NOT add halfSize() here.
+        float playerCx = player.x();
+        float playerCy = player.y();
+        int appliedDamage = GdxGameCombatAndEnemyFlowSupport.applyDirectionalFlameExplosion(
+                animatedEnemies,
+                maze,
+                x,
+                y,
+                playerBombDamage,
+                PLAYER_FLAME_RANGE,
+                playerCx,
+                playerCy,
+                dmg -> combatState.applyDirectDamage(dmg));
+
+        // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
+        GameMazeWorld survivingWorld = GdxWallDamageSupport.worldFrom(maze);
+        List<Vector2D> surviving = survivingWorld != null ? survivingWorld.getMazeVectors() : List.of();
+
+        // Wall vectors are in world space (Y-down); convert screen origin Y for correct visual ranges.
+        float worldOriginY = maze.heightPx() - y;
+
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
+                x + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  1,  0, surviving, PLAYER_FLAME_RANGE), y,
+                PLAYER_FLAME_VISUAL_SECONDS));
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
+                x - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY, -1,  0, surviving, PLAYER_FLAME_RANGE), y,
+                PLAYER_FLAME_VISUAL_SECONDS));
+        // Screen dirY=+1 (up in libGDX) → world dirY=-1; endpoint still at y + range (screen space).
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
+                y + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0, -1, surviving, PLAYER_FLAME_RANGE),
+                PLAYER_FLAME_VISUAL_SECONDS));
+        // Screen dirY=-1 (down in libGDX) → world dirY=+1; endpoint at y - range (screen space).
+        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
+                y - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0,  1, surviving, PLAYER_FLAME_RANGE),
+                PLAYER_FLAME_VISUAL_SECONDS));
+
+        worldModel.setExplosionShakeRemainingSeconds(0.20f);
+        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
+
+        int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledByFlame(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
+
+        if (appliedDamage > 0 || flamedKilled > 0) {
+            String msg = flamedKilled > 0
+                    ? "Bomb killed " + flamedKilled + " enem" + (flamedKilled == 1 ? "y" : "ies") + "!"
+                    : "Bomb exploded, enemy damage " + appliedDamage;
+            flashStatus(msg, 1.2f);
+        } else {
+            flashStatus("Bomb exploded", 1.0f);
+        }
+    }
+
+    private void emitPlayerFlameVisuals() {
+        for (PendingPlayerBomb bomb : pendingPlayerBombs) {
+            float alpha = Math.max(0.35f, Math.min(1f, bomb.fuseSecondsRemaining() / PLAYER_BOMB_FUSE_SECONDS));
+            worldModel.enemyImpacts().add(new GdxEnemyRuntime.ImpactVisual(
+                    bomb.x(),
+                    bomb.y(),
+                    8f,
+                    alpha,
+                    0f));
+        }
+
+        if (activePlayerFlameBursts.isEmpty()) {
+            return;
+        }
+
+        float burstAlpha = Math.max(0f, Math.min(1f,
+                activePlayerFlameBursts.get(0).ttlSecondsRemaining() / PLAYER_FLAME_VISUAL_SECONDS));
+        worldModel.enemyImpacts().add(new GdxEnemyRuntime.ImpactVisual(
+                activePlayerFlameBursts.get(0).x1(),
+                activePlayerFlameBursts.get(0).y1(),
+                34f,
+                0.95f * burstAlpha,
+                PLAYER_FLAME_SHAKE_INTENSITY));
+
+        for (ActivePlayerFlameBurst burst : activePlayerFlameBursts) {
+            float alpha = Math.max(0f, Math.min(1f, burst.ttlSecondsRemaining() / PLAYER_FLAME_VISUAL_SECONDS));
+            worldModel.enemyBeams().add(new GdxEnemyRuntime.BeamVisual(
+                    burst.x1(),
+                    burst.y1(),
+                    burst.x2(),
+                    burst.y2(),
+                    alpha,
+                    true,
+                    GdxGameCombatAndEnemyFlowSupport.FLAME_CORRIDOR_WIDTH));
+        }
     }
 
     void applyDeathSequence(float dt) {
@@ -458,6 +604,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 pathHintRemainingSeconds(),
                 showSpanningTreeInfo,
                 currentScore(),
+                playerBombsRemaining,
                 currentBreakdown(),
                 hudLayout));
     }
@@ -532,6 +679,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         maze = applied.maze();
         player = applied.player();
         viewport = applied.viewport();
+        playerBombsRemaining = Math.max(0, startFlow.startState().runtimeModel().playerBombCount());
+        playerBombDamage = Math.max(1, startFlow.startState().runtimeModel().playerBombDamage());
+        pendingPlayerBombs.clear();
+        activePlayerFlameBursts.clear();
         applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         var textures = applied.runtimeTextures();
         playerTexture = textures.playerTexture();
@@ -593,6 +744,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        pendingPlayerBombs.clear();
+        activePlayerFlameBursts.clear();
         gameAudioCoordinator.stopAll();
         if (ownsAssetService) {
             assetService.dispose();

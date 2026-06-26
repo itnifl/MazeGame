@@ -39,7 +39,9 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
     }
 
     /** Full sink interface used by {@link main.game.maze.GameController}. Composes all three. */
-    interface ActionSink extends NavigationSink, OverlaySink, HudSink {}
+    interface ActionSink extends NavigationSink, OverlaySink, HudSink {
+        void triggerPlayerFlameAttack();
+    }
 
     private final ActionSink sink;
     private boolean spanningTreeVisible = false;
@@ -86,6 +88,11 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
         } else {
             sink.clearNavigationPath();
         }
+    }
+
+    @Override
+    public void triggerPlayerFlameAttack() {
+        sink.triggerPlayerFlameAttack();
     }
 
     @Override

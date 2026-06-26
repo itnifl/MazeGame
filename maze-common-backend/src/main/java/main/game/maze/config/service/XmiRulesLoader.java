@@ -96,6 +96,8 @@ public final class XmiRulesLoader {
     boolean enabled = asBoolean(readFeature(playerCharacter, "enabled"), true);
     int health = asInt(readFeature(playerCharacter, "health"), PlayerConstants.DefaultHealth);
     double speed = asDouble(readFeature(playerCharacter, "speed"), PlayerConstants.DefaultSpeed);
+    int bombCount = asInt(readFeature(playerCharacter, "bombCount"), 3);
+    int bombDamage = asInt(readFeature(playerCharacter, "bombDamage"), 100);
 
     String imageBase = asString(readFeature(playerCharacter, "ImageBase"), PlayerConstants.DefaultPlayerImage);
     String imageTurnLeft = asString(readFeature(playerCharacter, "ImageTurnLeft"), imageBase);
@@ -110,6 +112,8 @@ public final class XmiRulesLoader {
         enabled,
         health,
         speed,
+        bombCount,
+        bombDamage,
         imageBase,
         imageTurnLeft,
         imageTurnRight,

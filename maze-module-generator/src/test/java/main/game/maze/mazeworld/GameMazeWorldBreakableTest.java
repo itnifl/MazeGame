@@ -233,4 +233,111 @@ class GameMazeWorldBreakableTest {
         assertEquals(secondLayout.size(), generatedWorld.getMazeVectors().size());
         assertTrue(generatedWorld.getMazeVectors().containsAll(secondLayout));
     }
+
+    // -----------------------------------------------------------------------
+    // Cascade wall collapse
+    // -----------------------------------------------------------------------
+
+    /** Registers specific walls as breakable, bypassing the RNG in assignBreakableWalls. */
+    private static void makeBreakable(GameMazeWorld world, WallMaterialSpec spec, Vector2D... geoms) {
+        world.getBreakableWalls().clear();
+        for (Vector2D g : geoms) {
+            world.getBreakableWalls().add(new BreakableWall(g,
+                    new WallMaterialSpec(spec.id(), spec.displayName(), spec.hitPoints())));
+        }
+    }
+
+    @Test
+    @DisplayName("applyWallDamage cascades and collapses adjacent breakable wall")
+    void applyWallDamage_cascade_destroysAdjacentBreakableWall() {
+        // A (vertical) and B (horizontal) share endpoint (100, 200).
+        Vector2D geomA = new Vector2D(100, 100, 100, 200);
+        Vector2D geomB = new Vector2D(100, 200, 200, 200);
+        GameMazeWorld cascadeWorld = new GameMazeWorld(() -> List.of(geomA, geomB));
+        WallMaterialSpec glass = new WallMaterialSpec("GLASS_BASIC", "Glass", 5);
+        makeBreakable(cascadeWorld, glass, geomA, geomB);
+
+        assertEquals(2, cascadeWorld.getMazeVectors().size());
+        BreakableWall bwA = cascadeWorld.findBreakableWall(geomA);
+        assertNotNull(bwA);
+
+        boolean destroyed = cascadeWorld.applyWallDamage(bwA, 5);
+
+        assertTrue(destroyed, "Primary wall must be reported as destroyed");
+        assertEquals(0, cascadeWorld.getMazeVectors().size(),
+                "Adjacent wall B must cascade-collapse when A is destroyed");
+        assertNull(cascadeWorld.findBreakableWall(geomB),
+                "Wall B must no longer be registered as breakable");
+    }
+
+    @Test
+    @DisplayName("applyWallDamage cascade does not collapse indestructible (non-breakable) adjacent wall")
+    void applyWallDamage_cascade_doesNotCollapseIndestructibleAdjacentWall() {
+        // A is breakable; B shares an endpoint but is a plain (indestructible) wall.
+        Vector2D geomA = new Vector2D(100, 100, 100, 200);
+        Vector2D geomB = new Vector2D(100, 200, 200, 200);
+        GameMazeWorld cascadeWorld = new GameMazeWorld(() -> List.of(geomA, geomB));
+        // Only mark geomA as breakable; geomB stays indestructible.
+        WallMaterialSpec glass = new WallMaterialSpec("GLASS_BASIC", "Glass", 5);
+        makeBreakable(cascadeWorld, glass, geomA);
+
+        BreakableWall bwA = cascadeWorld.findBreakableWall(geomA);
+        assertNotNull(bwA);
+
+        boolean destroyed = cascadeWorld.applyWallDamage(bwA, 5);
+
+        assertTrue(destroyed);
+        // geomB should still be in the world (it is indestructible)
+        assertTrue(cascadeWorld.getMazeVectors().contains(geomB),
+                "Indestructible adjacent wall must NOT collapse in the cascade");
+        assertEquals(1, cascadeWorld.getMazeVectors().size());
+    }
+
+    @Test
+    @DisplayName("applyWallDamage cascade propagates through a chain A-B-C")
+    void applyWallDamage_cascade_propagatesThroughChain() {
+        // Chain: A=(0,0,0,100), B=(0,100,100,100), C=(100,100,100,200)
+        // A shares endpoint (0,100) with B; B shares endpoint (100,100) with C.
+        Vector2D geomA = new Vector2D(0,   0,   0, 100);
+        Vector2D geomB = new Vector2D(0, 100, 100, 100);
+        Vector2D geomC = new Vector2D(100, 100, 100, 200);
+        GameMazeWorld cascadeWorld = new GameMazeWorld(() -> List.of(geomA, geomB, geomC));
+        WallMaterialSpec glass = new WallMaterialSpec("GLASS_BASIC", "Glass", 5);
+        makeBreakable(cascadeWorld, glass, geomA, geomB, geomC);
+
+        assertEquals(3, cascadeWorld.getMazeVectors().size());
+        BreakableWall bwA = cascadeWorld.findBreakableWall(geomA);
+        assertNotNull(bwA);
+
+        boolean destroyed = cascadeWorld.applyWallDamage(bwA, 5);
+
+        assertTrue(destroyed);
+        assertEquals(0, cascadeWorld.getMazeVectors().size(),
+                "Cascade must propagate through the full chain A-B-C");
+    }
+
+    @Test
+    @DisplayName("applyWallDamage on an isolated wall causes no extra cascade")
+    void applyWallDamage_noAdjacentBreakables_noExtraCascade() {
+        // Only one breakable wall, far from any other; destroying it must leave others intact.
+        Vector2D isolated   = new Vector2D(0,   0,   0, 100);
+        Vector2D unrelated1 = new Vector2D(500, 500, 500, 600);
+        Vector2D unrelated2 = new Vector2D(500, 600, 600, 600);
+        GameMazeWorld cascadeWorld = new GameMazeWorld(
+                () -> List.of(isolated, unrelated1, unrelated2));
+        WallMaterialSpec glass = new WallMaterialSpec("GLASS_BASIC", "Glass", 5);
+        makeBreakable(cascadeWorld, glass, isolated, unrelated1, unrelated2);
+
+        BreakableWall bwIsolated = cascadeWorld.findBreakableWall(isolated);
+        assertNotNull(bwIsolated);
+
+        boolean destroyed = cascadeWorld.applyWallDamage(bwIsolated, 5);
+
+        assertTrue(destroyed);
+        assertEquals(2, cascadeWorld.getMazeVectors().size(),
+                "Only the isolated wall must be removed; unrelated walls must survive");
+        assertTrue(cascadeWorld.getMazeVectors().contains(unrelated1));
+        assertTrue(cascadeWorld.getMazeVectors().contains(unrelated2));
+    }
 }
+

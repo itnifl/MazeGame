@@ -4,10 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
+import main.game.maze.common.input.GameAction;
+import main.game.maze.common.input.InputFrame;
+import main.game.maze.common.input.KeyBindingRegistry;
 
 /**
  * Verifies the terminal keyboard {@link InputProcessor} routing extracted from
@@ -86,5 +91,18 @@ class GdxGameInputBindingsSupportTest {
 
         assertEquals(1, winCount.get(), "first keystroke captured by win-name field");
         assertEquals(1, terminalCount.get(), "second keystroke routed to terminal after capture ended");
+    }
+
+    @Test
+    void configureDefaultBindingsMapsSpaceToFlameAttack() {
+        KeyBindingRegistry<Integer> registry = new KeyBindingRegistry<>();
+        GdxGameInputBindingsSupport.configureDefaultBindings(registry);
+
+        assertTrue(registry.trackedKeys().contains(Input.Keys.SPACE),
+                "SPACE should be tracked for FLAME_ATTACK");
+
+        InputFrame<Integer> spaceEdge = new InputFrame<>(Set.of(), Set.of(Input.Keys.SPACE), 0, 0, false);
+        assertTrue(registry.isTriggered(GameAction.FLAME_ATTACK, spaceEdge),
+                "SPACE edge should trigger FLAME_ATTACK");
     }
 }

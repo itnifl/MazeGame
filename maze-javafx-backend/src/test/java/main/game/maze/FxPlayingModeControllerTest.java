@@ -44,6 +44,7 @@ class FxPlayingModeControllerTest {
             public void updateDebugLabels() {}
             public void updateScoreHud() {}
             public void openTerminalPrompt() {}
+                        public void triggerPlayerFlameAttack() {}
         });
     }
 

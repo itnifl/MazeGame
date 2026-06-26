@@ -11,6 +11,8 @@
       enabled="true"
       health="100"
       speed="10.0"
+      bombCount="3"
+      bombDamage="100"
       ImageBase="/main/game/maze/you2.png"
       ImageTurnLeft="/main/game/maze/you2.png"
       ImageTurnRight="/main/game/maze/you2.png"

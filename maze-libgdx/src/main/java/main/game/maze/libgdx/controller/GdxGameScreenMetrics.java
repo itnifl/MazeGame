@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.controller;
 
+import main.game.maze.common.movement.GameplayTickRate;
 import main.game.maze.libgdx.model.EnemySpawn;
 
 /**
@@ -12,8 +13,12 @@ import main.game.maze.libgdx.model.EnemySpawn;
  */
 public final class GdxGameScreenMetrics {
 
-    /** JavaFX gameplay tick rate; libGDX speeds are scaled by this for parity. */
-    public static final float JAVA_FX_TICK_RATE = 30f;
+    /**
+     * Gameplay tick rate; libGDX speeds are scaled by this for parity with the
+     * JavaFX frontend. Sourced from the shared {@link GameplayTickRate} so both
+     * frontends move enemies the same distance per real-time second.
+     */
+    public static final float JAVA_FX_TICK_RATE = (float) GameplayTickRate.ENEMY_MOVEMENT_TICKS_PER_SECOND;
 
     /** HUD pixel height reserved for the bottom command row. */
     public static final float BOTTOM_BAR_HEIGHT = 40f;

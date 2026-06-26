@@ -15,6 +15,7 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
     private final Runnable openHighScores;
     private final Runnable toggleSpanningTree;
     private final BiConsumer<Boolean, Float> applyPathHintHeld;
+    private final Runnable triggerPlayerFlameAttack;
     private final Runnable applyMovementFromFrame;
 
     private float dt;
@@ -27,6 +28,7 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
             Runnable openHighScores,
             Runnable toggleSpanningTree,
             BiConsumer<Boolean, Float> applyPathHintHeld,
+            Runnable triggerPlayerFlameAttack,
             Runnable applyMovementFromFrame) {
         this.terminalActive = terminalActive;
         this.requestReturnToMenu = requestReturnToMenu;
@@ -34,6 +36,7 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
         this.openHighScores = openHighScores;
         this.toggleSpanningTree = toggleSpanningTree;
         this.applyPathHintHeld = applyPathHintHeld;
+        this.triggerPlayerFlameAttack = triggerPlayerFlameAttack;
         this.applyMovementFromFrame = applyMovementFromFrame;
     }
 
@@ -70,6 +73,11 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
     @Override
     public void applyPathHintHeld(boolean held) {
         applyPathHintHeld.accept(held, dt);
+    }
+
+    @Override
+    public void triggerPlayerFlameAttack() {
+        triggerPlayerFlameAttack.run();
     }
 
     @Override

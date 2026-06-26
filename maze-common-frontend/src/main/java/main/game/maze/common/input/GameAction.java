@@ -10,5 +10,6 @@ public enum GameAction {
     OPEN_HIGH_SCORES,
     TOGGLE_SPANNING_TREE,
     APPLY_PATH_HINT,
+    FLAME_ATTACK,
     MOVE_PLAYER
 }

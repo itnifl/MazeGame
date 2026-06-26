@@ -36,6 +36,7 @@ import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
 import main.game.maze.common.movement.EnemySpawnUnstuckService;
 import main.game.maze.common.movement.EnemyState;
+import main.game.maze.common.movement.GameplayTickRate;
 import main.game.maze.common.movement.GhostNonTangibilityService;
 import main.game.maze.common.movement.GhostPhasingMovementService;
 import main.game.maze.common.movement.MovementResult;
@@ -43,16 +44,21 @@ import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.mazeworld.flame.DirectionalFlameEngine;
+import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.opponents.BehaviorType;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,8 +83,16 @@ public final class FxEnemyCoordinator {
 
     private static final Duration ENEMY_LABEL_DURATION    = Duration.seconds(20);
     private static final double   ENEMY_LABEL_Y_OFFSET    = 14.0;
-    /** Movement tick size used for patrol, aggressive, and phasing energy drain. */
-    private static final double   MOVEMENT_TICK_THRESHOLD = 0.06d;
+    /**
+     * Real seconds elapsed per enemy AI tick. Sourced from the shared
+     * {@link GameplayTickRate} so movement time-accounting, projectile physics,
+     * and ghost energy drain integrate at the correct real-time rate regardless
+     * of the loop frequency. Passed as the {@code deltaSeconds} of the movement
+     * services and as the {@code dt} of {@code updateProjectiles}.
+     */
+    private static final double   MOVEMENT_TICK_THRESHOLD = GameplayTickRate.SECONDS_PER_TICK;
+    /** Half-width of the flame corridor. Four cells wide so the blast fills the corridor visibly. */
+    private static final double   PLAYER_FLAME_HALF_WIDTH  = StageConstants.NaviGraphStepSize * 4;
 
     /** Evaluated lazily so the coordinator can be created before FXML fields are set. */
     private final Supplier<Pane>        gameBoardSupplier;
@@ -199,8 +213,9 @@ public final class FxEnemyCoordinator {
                 if (computerCharacter instanceof PumpkinBomberCharacter pbc) {
                     Platform.runLater(() -> {
                         try {
-                            // 100 ms per AI tick → 0.1 s dt keeps projectile physics correct.
-                            pbc.updateProjectiles(0.1);
+                            // Advance projectile physics by one real AI tick so their
+                            // real-time speed is independent of the loop frequency.
+                            pbc.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
                         } catch (Exception ex) {
                             LOGGER.log(Level.WARNING, "Error updating projectiles for: " + pbc, ex);
                         }
@@ -231,6 +246,143 @@ public final class FxEnemyCoordinator {
             }
         }
         return killed;
+    }
+
+    public int applyPlayerFlameAttack(int damage) {
+        int remainingDamage = Math.max(0, damage);
+        int appliedDamage = 0;
+        for (var character : allComputerCharacters) {
+            if (remainingDamage <= 0) {
+                break;
+            }
+            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)) {
+                continue;
+            }
+            int hp = Math.max(0, canDie.getHitPoints());
+            if (hp <= 0) {
+                continue;
+            }
+            int damageToApply = Math.min(hp, remainingDamage);
+            canDie.subtractHitPoints(damageToApply);
+            remainingDamage -= damageToApply;
+            appliedDamage += damageToApply;
+        }
+        return appliedDamage;
+    }
+
+    /**
+     * Backward-compatible overload without player damage (used by legacy callers).
+     */
+    public int applyPlayerFlameExplosion(double originX,
+                                         double originY,
+                                         int damagePerDirection,
+                                         double maxRange,
+                                         List<Vector2D> walls) {
+        return applyPlayerFlameExplosion(originX, originY, damagePerDirection, maxRange, walls,
+                Double.NaN, Double.NaN, null);
+    }
+
+    /**
+     * Fires four cardinal flame corridors from {@code (originX, originY)}.
+     *
+     * <p>Each direction shares a {@code damagePerDirection} budget. Enemies and walls consume
+     * the budget and stop the flame when they survive. The player (if provided) is a
+     * pass-through target: they receive the remaining budget at their position but neither
+     * consume nor block the flame.</p>
+     *
+     * @param playerCenterX  player centre X, or {@code Double.NaN} to skip
+     * @param playerCenterY  player centre Y, or {@code Double.NaN} to skip
+     * @param playerCallback receives the damage dealt to the player; may be {@code null}
+     */
+    public int applyPlayerFlameExplosion(double originX,
+                                         double originY,
+                                         int damagePerDirection,
+                                         double maxRange,
+                                         List<Vector2D> walls,
+                                         double playerCenterX,
+                                         double playerCenterY,
+                                         IntConsumer playerCallback) {
+        int safeDamage = Math.max(0, damagePerDirection);
+        double safeRange = Math.max(0d, maxRange);
+        if (safeDamage <= 0 || safeRange <= 0d) {
+            return 0;
+        }
+
+        int totalApplied = 0;
+        totalApplied += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        totalApplied += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls,
+                playerCenterX, playerCenterY, playerCallback);
+        return totalApplied;
+    }
+
+    private int applyDirectionalFlame(double originX,
+                                      double originY,
+                                      int dirX,
+                                      int dirY,
+                                      int damageBudget,
+                                      double maxRange,
+                                      List<Vector2D> walls,
+                                      double playerCenterX,
+                                      double playerCenterY,
+                                      IntConsumer playerCallback) {
+        GameMazeWorld maze = mazeSupplier.get();
+        List<FlameTarget> candidates = new ArrayList<>();
+
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)) {
+                continue;
+            }
+            if (!(character instanceof ComputerCharacter cc)) {
+                continue;
+            }
+            if (Math.max(0, canDie.getHitPoints()) <= 0) {
+                continue;
+            }
+            double size = approximateSize(cc);
+            final double centerX = cc.getCharacterPosition().getX() + size * 0.5d;
+            final double centerY = cc.getCharacterPosition().getY() + size * 0.5d;
+            candidates.add(new FlameTarget() {
+                @Override public double centerX()        { return centerX; }
+                @Override public double centerY()        { return centerY; }
+                @Override public int    hitPoints()      { return Math.max(0, canDie.getHitPoints()); }
+                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount); }
+                @Override public boolean isPassThrough() { return false; }
+            });
+        }
+
+        if (playerCallback != null && !Double.isNaN(playerCenterX) && !Double.isNaN(playerCenterY)) {
+            final double pcx = playerCenterX;
+            final double pcy = playerCenterY;
+            candidates.add(new FlameTarget() {
+                @Override public double centerX()        { return pcx; }
+                @Override public double centerY()        { return pcy; }
+                @Override public int    hitPoints()      { return Integer.MAX_VALUE; }
+                @Override public void   applyDamage(int amount) { playerCallback.accept(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
+        }
+
+        return DirectionalFlameEngine.applyDirectionalFlame(
+                candidates, maze, walls,
+                originX, originY, dirX, dirY,
+                damageBudget, maxRange, PLAYER_FLAME_HALF_WIDTH);
+    }
+
+    /**
+     * Returns the pixel distance the flame visually reaches in direction {@code (dirX, dirY)}
+     * before hitting a surviving wall, capped at {@code maxRange}.
+     * Call AFTER applying damage so destroyed walls are already absent from {@code walls}.
+     */
+    public double flameVisualRange(double originX, double originY,
+                                   int dirX, int dirY,
+                                   List<Vector2D> walls, double maxRange) {
+        return DirectionalFlameEngine.flameVisualRange(
+                originX, originY, dirX, dirY, walls, maxRange, PLAYER_FLAME_HALF_WIDTH);
     }
 
     public Point2D resolveSpawnPosition(double desiredX, double desiredY, double enemySize) {
@@ -505,9 +657,20 @@ public final class FxEnemyCoordinator {
     private boolean applyPhasing(IMovingComputerCharacter character, ComputerCharacter cc) {
         if (!(cc instanceof INonTangientMazeGameCharacter ntcc)) return false;
         if (!drainNonTangientEnergy(ntcc)) return false;
-        MovementResult next = ghostPhasingMovementService.tick(buildEnemyState(cc), worldView);
+        double size = approximateSize(cc);
+        double half = size * 0.5d;
+        MovementResult next = ghostPhasingMovementService.tick(
+            new EnemyState(
+                enemyId(cc),
+                cc.getCharacterPosition().getX() + half,
+                cc.getCharacterPosition().getY() + half,
+                dirSign(cc.getDirectionX()),
+                dirSign(cc.getDirectionY()),
+                size,
+                Math.max(1d, Math.max(Math.abs(cc.getDirectionX()), Math.abs(cc.getDirectionY())))),
+            worldView);
         cc.setDirection(new Point2D(next.directionX(), next.directionY()));
-        character.move(true);
+        cc.teleportTo(next.x() - half, next.y() - half);
         return true;
     }
 

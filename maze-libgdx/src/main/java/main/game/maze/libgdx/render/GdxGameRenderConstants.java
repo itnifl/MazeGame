@@ -26,7 +26,8 @@ public final class GdxGameRenderConstants {
     private static final String INFECTION_WARNING_TEXT = "Infected!";
     private static final float TOP_MARGIN = 22f;
     private static final float SCORE_PANEL_WIDTH = 170f;
-    private static final float SCORE_PANEL_HEIGHT = 30f;
+    /** Tall enough for the score line and the bombs line (≈24 px each + padding). */
+    private static final float SCORE_PANEL_HEIGHT = 54f;
 
     private GdxGameRenderConstants() {
     }

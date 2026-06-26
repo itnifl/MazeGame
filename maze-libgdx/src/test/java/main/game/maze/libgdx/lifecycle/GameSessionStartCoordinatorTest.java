@@ -32,6 +32,8 @@ class GameSessionStartCoordinatorTest {
                 220f,
                 24f,
                 140,
+            3,
+            100,
                 "/bg.png",
                 "/wall.png",
                 "/goal.png",

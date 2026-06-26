@@ -31,7 +31,7 @@ class GdxGameRenderConstantsTest {
         assertEquals("Infected!", c.infectionWarningText());
         assertEquals(22f, c.topMargin(), DELTA);
         assertEquals(170f, c.scorePanelWidth(), DELTA);
-        assertEquals(30f, c.scorePanelHeight(), DELTA);
+        assertEquals(54f, c.scorePanelHeight(), DELTA);
     }
 
     @Test

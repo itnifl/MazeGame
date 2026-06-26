@@ -168,6 +168,7 @@ public final class GdxGameRenderCoordinator {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
+                input.playerBombsRemaining(),
                 input.scoreBreakdown(),
                 terminalController.isActive(),
                 terminalController.bufferText(),
@@ -233,6 +234,7 @@ public final class GdxGameRenderCoordinator {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
+            int playerBombsRemaining,
             ScoreBreakdown scoreBreakdown,
             HudLayout hudLayout) {
     }

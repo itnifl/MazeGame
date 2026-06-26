@@ -30,6 +30,10 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="100"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="speed" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="10.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bombCount" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="3"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bombDamage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="100"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageBase"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/you2.png"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ImageTurnLeft"

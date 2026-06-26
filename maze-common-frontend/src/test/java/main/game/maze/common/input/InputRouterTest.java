@@ -82,6 +82,10 @@ class InputRouterTest {
         }
 
         @Override
+        public void triggerPlayerFlameAttack() {
+        }
+
+        @Override
         public void applyMovementFromFrame() {
         }
 
