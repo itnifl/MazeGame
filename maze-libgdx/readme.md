@@ -29,7 +29,7 @@ mvn package -pl maze-libgdx -am
 java -jar target/maze-libgdx-*.jar
 ```
 
-Requires **Java 21**. See [root README](../README.md) for auto-detection details.
+Requires **Java 21**. See [root README](../readme.md) for auto-detection details.
 
 ## Tests
 

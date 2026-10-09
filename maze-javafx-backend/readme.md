@@ -27,7 +27,7 @@ mvn package -pl maze-javafx-backend -am
 java -jar target/maze-javafx-backend-*.jar
 ```
 
-Requires **Java 21**. See [root README](../README.md) for auto-detection details.
+Requires **Java 21**. See [root README](../readme.md) for auto-detection details.
 
 ## Tests
 

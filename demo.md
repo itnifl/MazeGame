@@ -35,8 +35,8 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 * Runtime XMI files on the classpath:
 
-  * `maze/src/main/resources/xmi/difficulties/difficulties.xmi`
-  * `maze/src/main/resources/xmi/opponents/opponentModel.xmi`
+  * `maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi`
+  * `maze-common-backend/src/main/resources/xmi/opponents/opponentModel.xmi`
   * `main.game.maze.walls/xmi/walls.xmi` (model for wall types and properties)
 
 * DSL configuration files (`.mazegame`):
@@ -53,7 +53,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 * Main application class:
 
-  * `maze/src/main/java/main/game/maze/App.java`
+  * `maze-javafx-backend/src/main/java/main/game/maze/App.java`
 
 In Visual Studio Code, use the supplied `.vscode/launch.json` and run **Start Debugging** from the `maze` module.
 
@@ -220,7 +220,7 @@ To show that the game also fails fast on invalid models:
 1．Replace the runtime opponent model:
 
 * Copy the contents of `opponentModelFailMaxThreat.xmi`.
-* Paste it over `maze/src/main/resources/xmi/opponents/opponentModel.xmi`.
+* Paste it over `maze-common-backend/src/main/resources/xmi/opponents/opponentModel.xmi`.
 
 2．Rebuild and run the game:
 

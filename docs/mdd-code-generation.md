@@ -357,9 +357,9 @@ Warnings are printed for fields using defaults, but generation continues. Specia
 
 | Document | Description |
 |----------|-------------|
-| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of MDD concepts in everyday terms |
-| [FreeMarker Guide](freemarker.readme.md) | Detailed FreeMarker usage in this project |
-| [Metamodel Architecture](docs/metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
-| [DSL Reference Guide](docs/dsl-reference.md) | MazeGame DSL syntax documentation |
-| [DSL Tutorial](docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
-| [Generated Code Module](maze-module-generator/readme.md) | Documentation for the generated code module |
+| [Technology Layman's Guide](technology-laymans-guide.md) | Simple explanation of MDD concepts in everyday terms |
+| [FreeMarker Guide](../freemarker.readme.md) | Detailed FreeMarker usage in this project |
+| [Metamodel Architecture](metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
+| [DSL Reference Guide](dsl-reference.md) | MazeGame DSL syntax documentation |
+| [DSL Tutorial](dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |
