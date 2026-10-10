@@ -247,11 +247,9 @@ Explain that this is intentional:
 
 ## 4．Behaviour / movements model demo
 
-This part shows how a **behaviour model** (patrol definition) is:
+This part shows the **behaviour model** (patrol definition) and how patrol movement currently works at runtime.
 
-* loaded as EMF,
-* validated at a code level,
-* and used to drive patrol movement.
+Note: the EMF `PatrolBehavior` classes and `patrol_behavior_example.xmi` still exist, but they are not part of the current production patrol-movement path. Patrol movement is implemented by the shared `PatrolMovementService` in `maze-common-frontend`, which is used by both JavaFX and libGDX.
 
 ### 4．1 Behaviour model artefacts
 
@@ -278,11 +276,11 @@ Relevant files and modules:
     and `maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java` (libGDX)
 
   * `maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`
-    unit test for the shared patrol flow
+    unit test for the shared patrol flow (the frontend integration tests also cover it)
 
 ### 4．2 Running the patrol example
 
-1．Open `patrol_behavior_example.xmi`:
+1．Open `patrol_behavior_example.xmi` (a sample model; not part of the current production patrol path):
 
 * File: `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi`
 * Show that it describes:
@@ -473,11 +471,11 @@ Use this as a compact spoken script.
 
 4．**Show the behaviour / movements module**
 
-* Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition.
+* Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition (sample only; not used by the production patrol path).
 * Start the game and watch a patrolling enemy, or run `PatrolMovementServiceTest`.
 * Explain:
 
-  * the patrol path is defined in the EMF behaviour model,
+  * `patrol_behavior_example.xmi` and the EMF `PatrolBehavior` classes still exist, but are not part of the current production patrol-movement path,
   * `PatrolMovementService` moves patrolling enemies at runtime,
   * `EnemyDirectorService` dispatches the movement each tick (via `FxEnemyCoordinator` in JavaFX and `GdxEnemyRuntime` in libGDX).
 
