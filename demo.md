@@ -277,6 +277,9 @@ Relevant files and modules:
     `maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java` (JavaFX)
     and `maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java` (libGDX)
 
+  * `maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`
+    unit test for the shared patrol flow
+
 ### 4．2 Running the patrol example
 
 1．Open `patrol_behavior_example.xmi`:
@@ -290,6 +293,7 @@ Relevant files and modules:
 2．Start the game as described above and look for patrolling enemies:
 
 * Patrol movement is computed by `PatrolMovementService` and dispatched by `EnemyDirectorService`.
+* Run the unit test `PatrolMovementServiceTest` from your IDE (`maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`). It covers shortest-path movement around a barrier, the five-second wander when no path exists, and the current target waypoint.
 
 3．Observe:
 
@@ -470,7 +474,7 @@ Use this as a compact spoken script.
 4．**Show the behaviour / movements module**
 
 * Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition.
-* Start the game and watch a patrolling enemy.
+* Start the game and watch a patrolling enemy, or run `PatrolMovementServiceTest`.
 * Explain:
 
   * the patrol path is defined in the EMF behaviour model,
