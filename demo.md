@@ -75,7 +75,7 @@ mvn clean install
 Then, in VS Code:
 
 * Open the workspace.
-* Use “Run → Start Debugging” (or the configured Java launch for `main.game.maze.App`).
+* Use “Run → Start Debugging” (or the configured Java launch for `main.game.maze.Launcher`).
 
 **From Eclipse**
 

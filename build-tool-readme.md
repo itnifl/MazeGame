@@ -150,3 +150,15 @@ Use one of these commands when Java changes on your machine:
    platform inputs changed, or when dependencies look stale.
 4. The libGDX scripts do not touch Tycho or the p2 mirror; they only need
    Maven Central reachability for the libGDX 1.12.1 dependencies.
+
+### Interrupted or slow p2 mirror downloads
+
+The JavaFX mirror target resumes an incomplete `releng/local-p2` download. A
+completed mirror is reused until its inputs change; `force-mirror` is the
+explicit clean-rebuild option.
+
+The source repositories default to Eclipse's official download service. To use
+a nearby Eclipse mirror, set `MAZEGAME_ECLIPSE_REPOSITORY_BASE` to that mirror's
+`/eclipse` base URL before running the existing `mirror` or `all` target. This
+changes only the current process environment and does not embed a machine path
+or account name in the project.

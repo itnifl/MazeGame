@@ -15,6 +15,11 @@ $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
 )
+$EclipseRepositoryBase = if ($env:MAZEGAME_ECLIPSE_REPOSITORY_BASE) {
+    $env:MAZEGAME_ECLIPSE_REPOSITORY_BASE.TrimEnd('/')
+} else {
+    $null
+}
 $UserHome       = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile) }
 $TychoCache     = Join-Path $UserHome '.m2\repository\.cache\tycho'
 $RequiredJavaMajor = 21
@@ -564,7 +569,8 @@ function Test-MirrorOutdated {
     if (-not (Test-Path $LocalP2Dir)) { return $true }
     if (-not (Test-Path $MirrorStamp)) { return $true }
 
-    $stampTime = (Get-Item $MirrorStamp).LastWriteTime
+    # Dotfiles are hidden on Unix; -Force is required for .mirror.stamp.
+    $stampTime = (Get-Item -Force $MirrorStamp).LastWriteTime
 
     foreach ($path in $MirrorInputs) {
         if (-not (Test-Path $path)) { 
@@ -594,14 +600,28 @@ function Invoke-Mirror([switch]$Force) {
         Write-Host "=== Rebuilding local p2 mirror (inputs changed or missing) ==="
     }
 
-    if (Test-Path $LocalP2Dir) {
+    $hasMirrorDirectory = Test-Path $LocalP2Dir
+    $hasCompletedStamp = Test-Path $MirrorStamp
+
+    if ($hasMirrorDirectory -and ($Force -or $hasCompletedStamp)) {
         Write-Host "Removing $LocalP2Dir"
         Remove-Item -Recurse -Force $LocalP2Dir
+    } elseif ($hasMirrorDirectory) {
+        Write-Host "=== Resuming incomplete local p2 mirror ==="
     }
 
-    $mirrorCmd = "$Mvn -f releng/mirror/pom.xml -U verify"
-    Write-Host "Running: $mirrorCmd"
-    & $Mvn -f releng/mirror/pom.xml -U verify
+    $mirrorArgs = @('-f', 'releng/mirror/pom.xml', '-U')
+    if ($EclipseRepositoryBase) {
+        Write-Host "Using Eclipse repository mirror: $EclipseRepositoryBase"
+        $mirrorArgs += "-Declipse.repository.base=$EclipseRepositoryBase"
+        # A selected mirror may still advertise the global Eclipse mirror list.
+        # Disable that redirect so all artifacts stay on the requested endpoint.
+        $mirrorArgs += '-Declipse.p2.mirrors=false'
+    }
+    $mirrorArgs += 'verify'
+
+    Write-Host "Running: $Mvn $($mirrorArgs -join ' ')"
+    & $Mvn @mirrorArgs
     $exit = $LASTEXITCODE
 
     if ($exit -ne 0) {
@@ -627,9 +647,11 @@ function Clear-TychoCache {
 }
 
 function Invoke-Build {
-    $cmd = "$Mvn -U -DskipTests=false clean verify"
+    # The mirror is managed by Invoke-Mirror; do not execute its Maven module again.
+    $reactorWithoutMirror = '!releng/mirror'
+    $cmd = "$Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify"
     Write-Host "=== Running full build: $cmd ==="
-    & $Mvn -U -DskipTests=false clean verify
+    & $Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Build failed with exit code $exit."
@@ -641,9 +663,11 @@ function Invoke-QuickBuild {
     param([switch]$SkipTests)
 
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
-    $cmd = "$Mvn -DskipTests=$skipValue verify"
+    # Quick builds reuse the existing mirror and exclude its Maven module.
+    $reactorWithoutMirror = '!releng/mirror'
+    $cmd = "$Mvn -pl $reactorWithoutMirror -DskipTests=$skipValue verify"
     Write-Host "=== Running quick build without mirror rebuild: $cmd ==="
-    & $Mvn "-DskipTests=$skipValue" verify
+    & $Mvn -pl $reactorWithoutMirror "-DskipTests=$skipValue" verify
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Quick build failed with exit code $exit."
