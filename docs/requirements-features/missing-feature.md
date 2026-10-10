@@ -220,8 +220,8 @@ overall feature is marked Done.
 
 - **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `instantKillOnCollision = threatLevel > 100`.
 - **Status**: Done.
-- **Backend**: both (shared `CollisionDamage` lives in the JavaFX `maze`
-  module; libGDX backend will reuse it once enemies are rendered there).
+- **Backend**: both (shared `CollisionDamage` lives in `maze-common-backend`
+  and is already used by the JavaFX and libGDX backends).
 - **What the model says**: any enemy with threat level above 100 should
   instantly kill the player on contact, irrespective of player HP.
 - **What the game does today**: `ZombieCharacter.getDamage`,
