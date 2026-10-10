@@ -11,6 +11,7 @@ Set-Location $scriptRoot
 $Mvn            = 'mvn'   # change to 'mvnw' if you prefer wrapper
 $LocalP2Dir     = 'releng\local-p2'
 $MirrorStamp    = Join-Path $LocalP2Dir '.mirror.stamp'
+$MirrorResumeState = Join-Path $LocalP2Dir '.mirror.inputs'
 $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
@@ -586,6 +587,17 @@ function Test-MirrorOutdated {
     return $false
 }
 
+function Get-MirrorInputState {
+    $entries = foreach ($path in $MirrorInputs) {
+        if (Test-Path $path) {
+            "$path=$((Get-FileHash -Algorithm SHA256 -Path $path).Hash)"
+        } else {
+            "$path=<missing>"
+        }
+    }
+    return $entries -join "`n"
+}
+
 function Invoke-Mirror([switch]$Force) {
     $rebuild = $Force -or (Test-MirrorOutdated)
 
@@ -602,13 +614,26 @@ function Invoke-Mirror([switch]$Force) {
 
     $hasMirrorDirectory = Test-Path $LocalP2Dir
     $hasCompletedStamp = Test-Path $MirrorStamp
+    $currentInputState = Get-MirrorInputState
+    $canResume = $false
 
-    if ($hasMirrorDirectory -and ($Force -or $hasCompletedStamp)) {
+    if ($hasMirrorDirectory -and -not $hasCompletedStamp -and
+        (Test-Path $MirrorResumeState)) {
+        $previousInputState = Get-Content -Raw -Path $MirrorResumeState
+        $canResume = $previousInputState -eq $currentInputState
+    }
+
+    if ($hasMirrorDirectory -and ($Force -or $hasCompletedStamp -or -not $canResume)) {
         Write-Host "Removing $LocalP2Dir"
         Remove-Item -Recurse -Force $LocalP2Dir
     } elseif ($hasMirrorDirectory) {
         Write-Host "=== Resuming incomplete local p2 mirror ==="
     }
+
+    if (-not (Test-Path $LocalP2Dir)) {
+        New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
+    }
+    Set-Content -NoNewline -Path $MirrorResumeState -Value $currentInputState
 
     $mirrorArgs = @('-f', 'releng/mirror/pom.xml', '-U')
     if ($EclipseRepositoryBase) {
@@ -628,9 +653,7 @@ function Invoke-Mirror([switch]$Force) {
         throw "Mirror build failed with exit code $exit."
     }
 
-    if (-not (Test-Path $LocalP2Dir)) {
-        New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
-    }
+    Remove-Item -Force $MirrorResumeState -ErrorAction SilentlyContinue
     New-Item -ItemType File -Path $MirrorStamp -Force | Out-Null
     Write-Host "=== Mirror built and stamp updated: $MirrorStamp ==="
 }

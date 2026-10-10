@@ -161,4 +161,5 @@ The source repositories default to Eclipse's official download service. To use
 a nearby Eclipse mirror, set `MAZEGAME_ECLIPSE_REPOSITORY_BASE` to that mirror's
 `/eclipse` base URL before running the existing `mirror` or `all` target. This
 changes only the current process environment and does not embed a machine path
-or account name in the project.
+or account name in the project. Orbit and MWE2 remain on Eclipse's official
+service because commonly used mirrors do not publish those repository trees.

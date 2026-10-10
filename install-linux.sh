@@ -248,7 +248,7 @@ MAVEN_DESTINATION="$INSTALL_ROOT/apache-maven-$MAVEN_VERSION"
 if [[ ! -x "$MAVEN_DESTINATION/bin/mvn" ]] || \
   ! "$MAVEN_DESTINATION/bin/mvn" --version 2>/dev/null | head -n 1 | grep -Fqx "Apache Maven $MAVEN_VERSION"; then
   download_verified sha512 "$MAVEN_SHA512" \
-    "https://downloads.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" \
+    "https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" \
     "$MAVEN_ARCHIVE"
   rm -rf -- "$MAVEN_DESTINATION"
   tar -xzf "$MAVEN_ARCHIVE" -C "$INSTALL_ROOT"
