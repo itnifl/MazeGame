@@ -98,10 +98,11 @@ sudo env \
   ./install-linux.sh
 ```
 
-After installation, open a new terminal and continue as your normal user, not
-with `sudo`. See the [build tool guide](build-tool-readme.md) for the maintained
-build and launch commands. The supplied VS Code launch configurations are also
-ready to use.
+After installation, run the `source` command printed by the installer, or log
+out and back in, then continue as your normal user rather than with `sudo`.
+Opening another non-login terminal alone may not load the system profile. See
+the [build tool guide](build-tool-readme.md) for the maintained build and launch
+commands. The supplied VS Code launch configurations are also ready to use.
 
 ### Windows, macOS, and other Linux distributions
 

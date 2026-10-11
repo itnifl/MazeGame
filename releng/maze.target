@@ -6,14 +6,8 @@
         includeAllPlugins="false" includeAllPlatforms="false" 
         includeConfigurePhase="true" includeSource="true" 
         type="InstallableUnit">
-        <!-- Pinned repositories kept aligned with releng/mirror/pom.xml. -->
-        <repository location="https://download.eclipse.org/eclipse/updates/4.33/"/>
-        <repository location="https://download.eclipse.org/releases/2024-09/"/>
-        <repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.33.0/"/>
-        <!-- EMF is supplied by Eclipse 2024-09. -->
-        <repository location="https://download.eclipse.org/modeling/mdt/ocl/updates/releases/6.19.0/"/>
-        <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.42.0/"/>
-        <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.27.0/"/>
+        <!-- make-javafx.ps1 populates this portable local mirror first. -->
+        <repository id="local-p2" location="file:${project_loc:/MazeGame}/releng/local-p2"/>
       
       <!-- Eclipse Core Runtime -->
       <unit id="org.eclipse.core.runtime" version="0.0.0"/>

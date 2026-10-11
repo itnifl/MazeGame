@@ -80,6 +80,24 @@ step() {
   printf '\n==> %s\n' "$1"
 }
 
+replace_with_symlink() {
+  local target="$1"
+  local link="$2"
+  local backup
+
+  if [[ -e "$link" && ! -L "$link" ]]; then
+    backup="${link}.pre-mazegame"
+    if [[ -e "$backup" || -L "$backup" ]]; then
+      echo "Cannot replace $link because its backup already exists: $backup" >&2
+      exit 1
+    fi
+    mv -- "$link" "$backup"
+    echo "Preserved the existing path as $backup"
+  fi
+
+  ln -sfnT -- "$target" "$link"
+}
+
 download() {
   local url="$1"
   local destination="$2"
@@ -245,8 +263,14 @@ done
 step "Installing Apache Maven $MAVEN_VERSION"
 MAVEN_ARCHIVE="$CACHE_DIR/apache-maven-$MAVEN_VERSION-bin.tar.gz"
 MAVEN_DESTINATION="$INSTALL_ROOT/apache-maven-$MAVEN_VERSION"
-if [[ ! -x "$MAVEN_DESTINATION/bin/mvn" ]] || \
-  ! "$MAVEN_DESTINATION/bin/mvn" --version 2>/dev/null | head -n 1 | grep -Fqx "Apache Maven $MAVEN_VERSION"; then
+MAVEN_INSTALLED_VERSION=""
+if [[ -x "$MAVEN_DESTINATION/bin/mvn" ]]; then
+  MAVEN_INSTALLED_VERSION="$(
+    "$MAVEN_DESTINATION/bin/mvn" --version 2>/dev/null |
+      awk 'NR == 1 { print $3 }'
+  )" || true
+fi
+if [[ "$MAVEN_INSTALLED_VERSION" != "$MAVEN_VERSION" ]]; then
   download_verified sha512 "$MAVEN_SHA512" \
     "https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" \
     "$MAVEN_ARCHIVE"
@@ -255,9 +279,9 @@ if [[ ! -x "$MAVEN_DESTINATION/bin/mvn" ]] || \
 else
   echo "Apache Maven $MAVEN_VERSION is already installed."
 fi
-ln -sfn "$MAVEN_DESTINATION" "$MAVEN_HOME_LINK"
-ln -sfn "$MAVEN_HOME_LINK/bin/mvn" "$BIN_DIR/mvn"
-ln -sfn "$MAVEN_HOME_LINK/bin/mvnDebug" "$BIN_DIR/mvnDebug"
+replace_with_symlink "$MAVEN_DESTINATION" "$MAVEN_HOME_LINK"
+replace_with_symlink "$MAVEN_HOME_LINK/bin/mvn" "$BIN_DIR/mvn"
+replace_with_symlink "$MAVEN_HOME_LINK/bin/mvnDebug" "$BIN_DIR/mvnDebug"
 
 step "Installing PowerShell $POWERSHELL_VERSION"
 POWERSHELL_ARCHIVE="$CACHE_DIR/powershell-$POWERSHELL_VERSION-linux-x64.tar.gz"
@@ -274,7 +298,7 @@ if [[ ! -x "$POWERSHELL_DESTINATION/pwsh" ]] || \
 else
   echo "PowerShell $POWERSHELL_VERSION is already installed."
 fi
-ln -sfn "$POWERSHELL_DESTINATION/pwsh" "$BIN_DIR/pwsh"
+replace_with_symlink "$POWERSHELL_DESTINATION/pwsh" "$BIN_DIR/pwsh"
 
 step "Installing JavaFX SDK $JAVAFX_VERSION"
 JAVAFX_ARCHIVE="$CACHE_DIR/openjfx-$JAVAFX_VERSION-linux-x64-bin-sdk.zip"
@@ -309,7 +333,7 @@ if [[ "$JAVAFX_INSTALL_VALID" != true ]]; then
 else
   echo "JavaFX SDK $JAVAFX_VERSION is already installed."
 fi
-ln -sfn "$JAVAFX_DESTINATION" "$JAVAFX_HOME_LINK"
+replace_with_symlink "$JAVAFX_DESTINATION" "$JAVAFX_HOME_LINK"
 
 step "Writing system-wide MazeGame environment"
 cat >"$PROFILE_FILE" <<EOF
@@ -347,7 +371,12 @@ cat <<EOF
 
 MazeGame prerequisites are installed.
 
-Open a new terminal so the system environment is loaded. Then return to the
-repository as your normal user and follow the Quick start section in readme.md.
-Build and launch commands are maintained in build-tool-readme.md.
+Load the installed environment in your normal user's shell with:
+
+  source "$PROFILE_FILE"
+
+Alternatively, log out and back in. Opening another non-login terminal alone
+may not load files from /etc/profile.d. Then return to the repository and follow
+the Quick start section in readme.md. Build and launch commands are maintained
+in build-tool-readme.md.
 EOF

@@ -155,7 +155,9 @@ Use one of these commands when Java changes on your machine:
 
 The JavaFX mirror target resumes an incomplete `releng/local-p2` download. A
 completed mirror is reused until its inputs change; `force-mirror` is the
-explicit clean-rebuild option.
+explicit clean-rebuild option. The Tycho target definition resolves from this
+local mirror, so the build does not bypass the selected repository source after
+the mirror step completes.
 
 The source repositories default to Eclipse's official download service. To use
 a nearby Eclipse mirror, set `MAZEGAME_ECLIPSE_REPOSITORY_BASE` to that mirror's

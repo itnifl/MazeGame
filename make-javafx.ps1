@@ -17,7 +17,7 @@ $MirrorInputs   = @(
     # add more files here if you want them to trigger a mirror rebuild
 )
 $EclipseRepositoryBase = if ($env:MAZEGAME_ECLIPSE_REPOSITORY_BASE) {
-    $env:MAZEGAME_ECLIPSE_REPOSITORY_BASE.TrimEnd('/')
+    $env:MAZEGAME_ECLIPSE_REPOSITORY_BASE.Trim().TrimEnd('/')
 } else {
     $null
 }
@@ -588,13 +588,17 @@ function Test-MirrorOutdated {
 }
 
 function Get-MirrorInputState {
-    $entries = foreach ($path in $MirrorInputs) {
-        if (Test-Path $path) {
-            "$path=$((Get-FileHash -Algorithm SHA256 -Path $path).Hash)"
-        } else {
-            "$path=<missing>"
+    $repositoryBaseState = if ($EclipseRepositoryBase) { $EclipseRepositoryBase } else { '<default>' }
+    $entries = @(
+        "eclipse.repository.base=$repositoryBaseState"
+        foreach ($path in $MirrorInputs) {
+            if (Test-Path $path) {
+                "$path=$((Get-FileHash -Algorithm SHA256 -Path $path).Hash)"
+            } else {
+                "$path=<missing>"
+            }
         }
-    }
+    )
     return $entries -join "`n"
 }
 
