@@ -171,7 +171,7 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 
 * The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
-* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Both debugging and running without debugging will still work.
+* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case: `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run `pwsh -File ./make-javafx.ps1 -Target quick` and finally run the game in VS Code. You may need to select `Continue` if VS Code asks whether to continue after a language-server build failure.
 * You can pass walls by running into them through the edge.
 
 ## Sources
@@ -330,17 +330,8 @@ For a focused build command guide with fastest paths and no mirror rebuild optio
 Xtext generation and reactor builds that include DSL modules should be run with Java 21 in the shell session.
 
 ```powershell
-# PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build
-
-# 1) start clean so the mirror is rebuilt
-Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
-mvn -f releng/mirror/pom.xml -U verify
-
-# 2) force Tycho to reread the target (clear its p2 cache)
-Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
-
-# 3) full build (Tycho + app)
-mvn -U clean verify
+# Refresh the local mirror, reset Tycho's cache, then build and test the reactor.
+pwsh -File ./make-javafx.ps1 -Target all
 ```
 
 #### **Fast incremental run**
@@ -356,9 +347,9 @@ make mirror
 Other handy targets:
 
 ```bash
-# build only the JavaFX runtime module, then full build with tests
+# build only the JavaFX runtime module, then use the mirror-aware full build
 mvn -U -pl maze-javafx-backend -am clean package
-mvn -U clean install
+pwsh -File ./make-javafx.ps1 -Target all
 
 # run all unit tests
 mvn test

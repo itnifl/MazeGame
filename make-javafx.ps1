@@ -11,7 +11,7 @@ Set-Location $scriptRoot
 $Mvn            = 'mvn'   # change to 'mvnw' if you prefer wrapper
 $LocalP2Dir     = 'releng\local-p2'
 $MirrorStamp    = Join-Path $LocalP2Dir '.mirror.stamp'
-$MirrorResumeState = Join-Path $LocalP2Dir '.mirror.inputs'
+$MirrorInputStateFile = Join-Path $LocalP2Dir '.mirror.inputs'
 $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
@@ -569,22 +569,10 @@ function Ensure-RuntimeModulesCompiled {
 function Test-MirrorOutdated {
     if (-not (Test-Path $LocalP2Dir)) { return $true }
     if (-not (Test-Path $MirrorStamp)) { return $true }
+    if (-not (Test-Path $MirrorInputStateFile)) { return $true }
 
-    # Dotfiles are hidden on Unix; -Force is required for .mirror.stamp.
-    $stampTime = (Get-Item -Force $MirrorStamp).LastWriteTime
-
-    foreach ($path in $MirrorInputs) {
-        if (-not (Test-Path $path)) { 
-            # missing input → be safe and rebuild
-            return $true 
-        }
-        $inputTime = (Get-Item $path).LastWriteTime
-        if ($inputTime -gt $stampTime) {
-            return $true
-        }
-    }
-
-    return $false
+    $previousInputState = Get-Content -Raw -Path $MirrorInputStateFile
+    return $previousInputState -ne (Get-MirrorInputState)
 }
 
 function Get-MirrorInputState {
@@ -617,27 +605,19 @@ function Invoke-Mirror([switch]$Force) {
     }
 
     $hasMirrorDirectory = Test-Path $LocalP2Dir
-    $hasCompletedStamp = Test-Path $MirrorStamp
     $currentInputState = Get-MirrorInputState
-    $canResume = $false
 
-    if ($hasMirrorDirectory -and -not $hasCompletedStamp -and
-        (Test-Path $MirrorResumeState)) {
-        $previousInputState = Get-Content -Raw -Path $MirrorResumeState
-        $canResume = $previousInputState -eq $currentInputState
-    }
-
-    if ($hasMirrorDirectory -and ($Force -or $hasCompletedStamp -or -not $canResume)) {
+    # Tycho's mirror goal cannot safely append an IU set to a partially written
+    # destination. Reuse only completed mirrors; restart interrupted runs cleanly.
+    if ($hasMirrorDirectory) {
         Write-Host "Removing $LocalP2Dir"
         Remove-Item -Recurse -Force $LocalP2Dir
-    } elseif ($hasMirrorDirectory) {
-        Write-Host "=== Resuming incomplete local p2 mirror ==="
     }
 
     if (-not (Test-Path $LocalP2Dir)) {
         New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
     }
-    Set-Content -NoNewline -Path $MirrorResumeState -Value $currentInputState
+    Set-Content -NoNewline -Path $MirrorInputStateFile -Value $currentInputState
 
     $mirrorArgs = @('-f', 'releng/mirror/pom.xml', '-U')
     if ($EclipseRepositoryBase) {
@@ -657,7 +637,6 @@ function Invoke-Mirror([switch]$Force) {
         throw "Mirror build failed with exit code $exit."
     }
 
-    Remove-Item -Force $MirrorResumeState -ErrorAction SilentlyContinue
     New-Item -ItemType File -Path $MirrorStamp -Force | Out-Null
     Write-Host "=== Mirror built and stamp updated: $MirrorStamp ==="
 }

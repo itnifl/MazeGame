@@ -30,7 +30,7 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 * For a quick rebuild when the mirror already exists:
 
   ```bash
-  mvn clean install
+  pwsh -File ./make-javafx.ps1 -Target quick
   ```
 
 * Runtime XMI files on the classpath:
@@ -69,7 +69,7 @@ You can start the game in one of two ways.
 
 ```bash
 # From the repository root
-mvn clean install
+pwsh -File ./make-javafx.ps1 -Target quick
 ```
 
 Then, in VS Code:
@@ -225,7 +225,7 @@ To show that the game also fails fast on invalid models:
 2．Rebuild and run the game:
 
 ```bash
-mvn clean install
+pwsh -File ./make-javafx.ps1 -Target quick
 ```
 
 Then start `App` as described in section 2.

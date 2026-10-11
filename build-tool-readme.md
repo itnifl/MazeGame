@@ -153,11 +153,13 @@ Use one of these commands when Java changes on your machine:
 
 ### Interrupted or slow p2 mirror downloads
 
-The JavaFX mirror target resumes an incomplete `releng/local-p2` download. A
-completed mirror is reused until its inputs change; `force-mirror` is the
-explicit clean-rebuild option. The Tycho target definition resolves from this
-local mirror, so the build does not bypass the selected repository source after
-the mirror step completes.
+The JavaFX mirror target reuses a completed `releng/local-p2` repository until
+its hashed inputs or repository source change. An interrupted mirror is removed
+and restarted because Tycho cannot safely append the same units to a partial
+destination; Maven's download cache still avoids fetching unchanged artifacts
+again. `force-mirror` remains the explicit clean-rebuild option. The Tycho
+target definition resolves from this local mirror, so the build does not bypass
+the selected repository source after the mirror step completes.
 
 The source repositories default to Eclipse's official download service. To use
 a nearby Eclipse mirror, set `MAZEGAME_ECLIPSE_REPOSITORY_BASE` to that mirror's
