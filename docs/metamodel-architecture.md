@@ -554,7 +554,7 @@ Workflow {
 | Model | Location |
 |-------|----------|
 | OpponentModel.xmi | `main.game.maze.opponents/src/main/resources/OpponentModel.xmi` |
-| difficulties.xmi | `maze/src/main/resources/xmi/difficulties/difficulties.xmi` |
+| difficulties.xmi | `maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi` |
 | walls.xmi | `main.game.maze.walls/xmi/walls.xmi` |
 | DSL levels | `main.game.maze.dsl/src/main/resources/levels/*.mazegame` |
 

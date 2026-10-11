@@ -23,7 +23,7 @@ overall feature is marked Done.
 
 ### F1. Animated character sprites
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `CharacterType.animationFrameCount` (default 1), `CharacterType.spriteScale` (default 1.0).
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `CharacterType.animationFrameCount` (default 1), `CharacterType.spriteScale` (default 1.0).
 - **Status**: Done (branch `feature/animated-sprites`).
 - **Backend**: both.
 - **What was implemented**:
@@ -47,7 +47,7 @@ overall feature is marked Done.
 
 ### F2. Loot drops on enemy death
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.zombieLootTable`, `LootTable.weightCapacity`, `LootItem (name, type, value, weight, graphicBase)`, `LootItemType {FOOD, BOMB, TRAP, WEAPON}`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.zombieLootTable`, `LootTable.weightCapacity`, `LootItem (name, type, value, weight, graphicBase)`, `LootItemType {FOOD, BOMB, TRAP, WEAPON}`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model says**: zombies (and any type that gains a `LootTable`) can
@@ -60,8 +60,8 @@ overall feature is marked Done.
 
 ### F3. Patrol behaviour with explicit waypoints
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior (currentIndex, behavior: PatrolPathBehavior)`, `PatrolPoint (point, events)`, `PatrolZone (topLeft, width, height)`, `PatrolPathBehavior {LOOP, BACKWARD, RANDOM}`.
-- **Example**: [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) demonstrates the expected XMI format with five `<path time="N">` waypoints, where each `path.time` attribute (milliseconds) is the dwell period before the enemy advances to the next point.
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior (currentIndex, behavior: PatrolPathBehavior)`, `PatrolPoint (point, events)`, `PatrolZone (topLeft, width, height)`, `PatrolPathBehavior {LOOP, BACKWARD, RANDOM}`.
+- **Example**: [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](../../main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) demonstrates the expected XMI format with five `<path time="N">` waypoints, where each `path.time` attribute (milliseconds) is the dwell period before the enemy advances to the next point.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: a patrol is an ordered list of `path` entries, each with an optional `time` (dwell ms) and a `point (posX, posY)`, optionally scoped to a rectangular zone, with three traversal strategies (LOOP, BACKWARD, RANDOM).
@@ -76,7 +76,7 @@ overall feature is marked Done.
 
 ### F4. CharacterEvents along a patrol path
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolPoint.events: CharacterEvent[0..*]`, with subclasses `HealthEvent, SpeedEvent, TimeEvent, AttackEvent, VisionEvent` and a `probability` 0..100.
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolPoint.events: CharacterEvent[0..*]`, with subclasses `HealthEvent, SpeedEvent, TimeEvent, AttackEvent, VisionEvent` and a `probability` 0..100.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model says**: arriving at a patrol point may trigger a typed
@@ -88,7 +88,7 @@ overall feature is marked Done.
 
 ### F5. Pathfinding algorithm selection
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PathCalculator` with `DijkstraPathCalculator`, `AstarPathCalculator (heuristicMethod)`, `LocalPathCalculator`, and `DistanceMethod {MANHATTAN, EUCLIDEAN}`.
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PathCalculator` with `DijkstraPathCalculator`, `AstarPathCalculator (heuristicMethod)`, `LocalPathCalculator`, and `DistanceMethod {MANHATTAN, EUCLIDEAN}`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: each behaviour can pick its path-finding algorithm
@@ -101,7 +101,7 @@ overall feature is marked Done.
 
 ### F6. ChaseBehavior
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `ChaseBehavior (relativePositionTarget, pathcalculator)`.
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `ChaseBehavior (relativePositionTarget, pathcalculator)`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model says**: a chase behaviour pursues a target offset from a
@@ -113,7 +113,7 @@ overall feature is marked Done.
 
 ### F7. Difficulty multipliers applied to opponents
 
-- **Source**: [difficulty-module.ecore](main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `Difficulty.monstersMovementSpeedMultiplier`, `Difficulty.monstersDamageMultiplier`.
+- **Source**: [difficulty-module.ecore](../../main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `Difficulty.monstersMovementSpeedMultiplier`, `Difficulty.monstersDamageMultiplier`.
 - **Status**: Done.
 - **Backend**: both.
 - **What the model says**: enemy speed and damage should scale per difficulty.
@@ -127,7 +127,7 @@ overall feature is marked Done.
 
 ### F8. EnemyMaxCount caps enforced at runtime
 
-- **Source**: [difficulty-module.ecore](main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `EnemyMaxCount (type: EnemyTypes, maxCount: EInt)` on each `Difficulty`.
+- **Source**: [difficulty-module.ecore](../../main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `EnemyMaxCount (type: EnemyTypes, maxCount: EInt)` on each `Difficulty`.
 - **Status**: Done (branch `feature/maxCounts`).
 - **Backend**: both.
 - **What the model says**: each difficulty declares per-type spawn caps.
@@ -140,7 +140,7 @@ overall feature is marked Done.
 
 ### F9. validateMaxThreat enforced on the runtime opponent set
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `OpponentModel.validateMaxThreat`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `OpponentModel.validateMaxThreat`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: the sum of `characterTypes.threatLevel` must be
@@ -153,7 +153,7 @@ overall feature is marked Done.
 
 ### F10. Ranged enemy projectile variants
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `RangedEnemy.projectileType: ProjectileType {STRAIGHT, LOB, BEAM}`, `splashRadius`, `arcHeight`, `attackCooldownMs`, `attackRange`, `explosionImage`, `explosionSound`, `throwSound`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `RangedEnemy.projectileType: ProjectileType {STRAIGHT, LOB, BEAM}`, `splashRadius`, `arcHeight`, `attackCooldownMs`, `attackRange`, `explosionImage`, `explosionSound`, `throwSound`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: ranged enemies (`PumpkinBomber` is one) can throw
@@ -167,7 +167,7 @@ overall feature is marked Done.
 
 ### F11. Breakable walls and hit points
 
-- **Source**: [walls.ecore](main.game.maze.walls/model/walls.ecore) — `WallMaterial.breakable`, `WallMaterial.hitPoints`, OCL `ValidHitPoints`.
+- **Source**: [walls.ecore](../../main.game.maze.walls/model/walls.ecore) — `WallMaterial.breakable`, `WallMaterial.hitPoints`, OCL `ValidHitPoints`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model says**: a wall can be marked breakable with a positive
@@ -180,7 +180,7 @@ overall feature is marked Done.
 
 ### F12. Full wall material catalogue surfaced
 
-- **Source**: [walls.ecore](main.game.maze.walls/model/walls.ecore) — `WallMaterialBaseType {GLASS, DIRT, WOOD, STONE, STEEL}`.
+- **Source**: [walls.ecore](../../main.game.maze.walls/model/walls.ecore) — `WallMaterialBaseType {GLASS, DIRT, WOOD, STONE, STEEL}`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: five base materials are available.
@@ -192,7 +192,7 @@ overall feature is marked Done.
 
 ### F13. Player death sprite
 
-- **Source**: [Player.ecore](maze/src/main/resources/xmi/player/Player.ecore) — `PlayerType.ImageDeath` (default `/main/game/maze/you2-dead.png`).
+- **Source**: [Player.ecore](../../maze-common-backend/src/main/resources/xmi/player/Player.ecore) — `PlayerType.ImageDeath` (default `/main/game/maze/you2-dead.png`).
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: the player has an explicit death image distinct
@@ -205,7 +205,7 @@ overall feature is marked Done.
 
 ### F14. Ghost non-tangibility energy as a UI gauge
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.nonTangibilityEnergy (default 100)`. [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `ignoreWalls = nonTangibilityEnergy > 0`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.nonTangibilityEnergy (default 100)`. [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `ignoreWalls = nonTangibilityEnergy > 0`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the model says**: ghosts ignore walls while their energy is
@@ -218,15 +218,15 @@ overall feature is marked Done.
 
 ### F15. instantKillOnCollision for high-threat enemies
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `instantKillOnCollision = threatLevel > 100`.
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — derived `instantKillOnCollision = threatLevel > 100`.
 - **Status**: Done.
-- **Backend**: both (shared `CollisionDamage` lives in the JavaFX `maze`
-  module; libGDX backend will reuse it once enemies are rendered there).
+- **Backend**: both (shared `CollisionDamage` lives in `maze-common-backend`
+  and is already used by the JavaFX and libGDX backends).
 - **What the model says**: any enemy with threat level above 100 should
   instantly kill the player on contact, irrespective of player HP.
 - **What the game does today**: `ZombieCharacter.getDamage`,
   `GhostCharacter.getDamage` and `PumpkinBomberCharacter.getDamage` route
-  through [CollisionDamage](maze/src/main/java/main/game/maze/characters/CollisionDamage.java),
+  through [CollisionDamage](../../maze-common-backend/src/main/java/main/game/maze/characters/CollisionDamage.java),
   which returns `Integer.MAX_VALUE` whenever
   `CharacterType.threatLevel > 100`.
 - **Acceptance**: an enemy authored with `threatLevel > 100` reduces the
@@ -238,11 +238,11 @@ overall feature is marked Done.
 
 ### F16. DSL is grammar-only; no loader feeds the game
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) and the empty `dsl/` examples folder.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) and the empty `dsl/` examples folder.
 - **Status**: In progress (Phase 4 scaffold landed). A backend-neutral
   `MazeRuntimeConfig` record + `MazeConfigLoader` interface +
   `PropertiesMazeConfigLoader` default impl live in
-  [maze-common-frontend](maze-common-frontend/src/main/java/main/game/maze/common/graphics/config/);
+  [maze-common-frontend](../../maze-common-frontend/src/main/java/main/game/maze/common/graphics/config/);
   the libGDX launcher now reads window size, maze grid and arena selection
   from it. Still missing: an Xtext-driven loader that parses a real
   `.mazedsl` file into the same record.
@@ -259,7 +259,7 @@ overall feature is marked Done.
 
 ### F17. DSL `import` directive
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Import: 'import' importURI=STRING`.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Import: 'import' importURI=STRING`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the grammar says**: a DSL file can pull in additional resources
@@ -270,7 +270,7 @@ overall feature is marked Done.
 
 ### F18. DSL `pumpkinbomber` opponent variant
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `CharacterTypeEnum.pumpkinbomber`; corresponding `RangedSpecifics`. [difficulty-module.ecore](main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `EnemyTypes.PUMPKINBOMBER`.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `CharacterTypeEnum.pumpkinbomber`; corresponding `RangedSpecifics`. [difficulty-module.ecore](../../main.game.maze.difficulties/src/main/resources/difficulty-module.ecore) — `EnemyTypes.PUMPKINBOMBER`.
 - **Status**: Partial.
 - **Backend**: both.
 - **What the grammar/model says**: pumpkin bomber is a first-class opponent
@@ -283,23 +283,31 @@ overall feature is marked Done.
 
 ### F19. DSL `passive` and `aggressive` behaviors
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `BehaviorTypeEnum {passive, wander, aggressive, patrol}`.
-- **Status**: Done.
-- **Backend**: both (JavaFX runtime today; libGDX inherits once enemies are
-  ported).
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `BehaviorTypeEnum {passive, wander, aggressive, patrol}`.
+- **Status**: Partial (`aggressive` done; `passive` is deliberately run as `wander`).
+- **Backend**: both. JavaFX dispatches the modes in
+  [FxEnemyCoordinator](../../maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java);
+  libGDX in
+  [GdxEnemyRuntime](../../maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java).
 - **What the grammar says**: four behaviour modes are selectable.
-- **What the game does today**: `GameController` switches on all four
-  behaviour modes. `PASSIVE` opponents stay still; `AGGRESSIVE` opponents
-  chase the player every tick via
-  [ChaseController](maze/src/main/java/main/game/maze/ChaseController.java),
-  which computes a 4-way grid-aligned unit vector from the opponent toward
-  the player position.
+- **What the game does today**: `AGGRESSIVE` opponents chase the player
+  through the shared
+  [AdaptiveAggressiveMovementService](../../maze-common-frontend/src/main/java/main/game/maze/common/movement/AdaptiveAggressiveMovementService.java)
+  in both backends. `PASSIVE` opponents do not stand still:
+  [EnemySpawnPlanner.resolveRuntimeBehavior](../../main.game.maze.opponents/src/main/java/main/game/maze/opponents/util/EnemySpawnPlanner.java)
+  normalizes `PASSIVE` to `WANDER` so enemies do not stay at their spawn
+  point, and both backends also map `PASSIVE` to wander movement.
+  `ChaseController` remains in `maze-javafx-backend`, but only its tests use it.
+- **Open decision**: define what `passive` means. Either it stands still (the
+  acceptance below, which the game does not do today), or it only means "does
+  not chase the player" (today's wander behaviour). Update the acceptance and
+  the status to match the decision.
 - **Acceptance**: an opponent declared as `behavior passive` stands still and
   one declared as `behavior aggressive` actively chases the player.
 
 ### F20. DSL `straight` / `lob` / `beam` projectile dispatch
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ProjectileTypeEnum {straight, lob, beam}` in `RangedSpecifics`.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ProjectileTypeEnum {straight, lob, beam}` in `RangedSpecifics`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the grammar says**: ranged enemies can declare three projectile
@@ -311,7 +319,7 @@ overall feature is marked Done.
 
 ### F21. DSL loot configuration
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `LootTableConfig`, `LootItemConfig`, `LootItemTypeEnum {food, bomb, trap, weapon}`, opponent `loot` reference.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `LootTableConfig`, `LootItemConfig`, `LootItemTypeEnum {food, bomb, trap, weapon}`, opponent `loot` reference.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the grammar says**: loot tables are first-class DSL constructs.
@@ -322,8 +330,8 @@ overall feature is marked Done.
 
 ### F22. Waypoint dwell time (`path.time` in XMI, `N ms` in DSL)
 
-- **Source**: [movements.ecore](main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior.path.time` (integer, milliseconds); [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Waypoint: '(' x ',' y ')' (':' waitTime 'ms')?`.
-- **Example**: the `time` attribute is demonstrated in [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) (e.g. `<path time="1000">`).
+- **Source**: [movements.ecore](../../main.game.maze.behaviour/src/main/resources/movements/movements.ecore) — `PatrolBehavior.path.time` (integer, milliseconds); [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `Waypoint: '(' x ',' y ')' (':' waitTime 'ms')?`.
+- **Example**: the `time` attribute is demonstrated in [main.game.maze.behaviour/xmi/patrol_behavior_example.xmi](../../main.game.maze.behaviour/xmi/patrol_behavior_example.xmi) (e.g. `<path time="1000">`).
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model/grammar says**: both the XMI `<path time="N">` attribute and the DSL `(x, y) : N ms` syntax declare a per-waypoint dwell period; the ecore attribute and DSL grammar both exist but no runtime code reads either value.
@@ -332,7 +340,7 @@ overall feature is marked Done.
 
 ### F23. DSL `PatrolZoneConfig` bounding rectangle
 
-- **Source**: [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `PatrolZoneConfig: topLeft (x, y), width, height`.
+- **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `PatrolZoneConfig: topLeft (x, y), width, height`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the grammar says**: a patrol can be constrained to a rectangular
@@ -344,7 +352,7 @@ overall feature is marked Done.
 
 ### F24. Zombie resurrection time
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.resurrectionTime`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ZombieSpecifics.resurrectionTime`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `Zombie.resurrectionTime`; [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `ZombieSpecifics.resurrectionTime`.
 - **Status**: Done (branch `feature/zombieResurrection`).
 - **Backend**: both.
 - **What the model says**: zombies can declare a resurrection delay after death.
@@ -357,7 +365,7 @@ overall feature is marked Done.
 
 ### F25. Ghost visibility level
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.visibilityLevel`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `GhostSpecifics.visibilityLevel`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `Ghost.visibilityLevel`; [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `GhostSpecifics.visibilityLevel`.
 - **Status**: Done.
 - **Backend**: both.
 - **What the model says**: ghosts can expose a visibility percentage that
@@ -376,7 +384,7 @@ overall feature is marked Done.
 
 ### F26. Ranged projectile speed from DSL/model
 
-- **Source**: [opponents.ecore](main.game.maze.opponents/src/main/resources/opponents.ecore) — `RangedEnemy.projectileSpeed`; [MazeDsl.xtext](main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `RangedSpecifics.projectileSpeed`.
+- **Source**: [opponents.ecore](../../main.game.maze.opponents/src/main/resources/opponents.ecore) — `RangedEnemy.projectileSpeed`; [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `RangedSpecifics.projectileSpeed`.
 - **Status**: Missing.
 - **Backend**: both.
 - **What the model says**: ranged enemies can tune projectile velocity.

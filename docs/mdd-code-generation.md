@@ -55,7 +55,7 @@ We want the **model to drive the code**, not the other way around:
 |-------|----------|-------------|---------------|
 | **walls** | `walls.ecore` | `WallMaterial`, `WallModel`, `WallMaterialBaseType` | Manual wall rendering |
 | **difficulties** | `difficulty-module.ecore` | `Difficulty`, `EasyDifficulty`, `NormalDifficulty`, `HardDifficulty`, `EnemyMaxCount` | `DifficultyService.java` interprets XMI |
-| **behaviour** | `movements.ecore` | `MovementBehavior`, `PatrolBehavior`, `ChaseBehavior`, `RandomBehavior`, `PathCalculator` variants | `PatrolHelper.java` interprets |
+| **behaviour** | `movements.ecore` | `MovementBehavior`, `PatrolBehavior`, `ChaseBehavior`, `RandomBehavior`, `PathCalculator` variants | `PatrolMovementService.java` (shared runtime patrol logic; the `PatrolBehavior` model is not part of the production patrol path) |
 | **opponents** | `opponents.ecore` | `CharacterType`, `Zombie`, `Ghost`, `PumpkinBomber` | `OpponentRuntimeFactory.java` |
 
 ---
@@ -299,7 +299,7 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | **Difficulties generation** | ❌ | Create templates and generator |
 | **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
-| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
+| Wire the behaviour model into `PatrolMovementService.java` | ❌ | Feed patrol paths from the `PatrolBehavior` model through the generated `BehaviorDispatcher`; today the service does not read the model (blocked on Behaviour generator) |
 | Add `src-gen` to `maze-javafx-backend/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
 
@@ -357,9 +357,9 @@ Warnings are printed for fields using defaults, but generation continues. Specia
 
 | Document | Description |
 |----------|-------------|
-| [Technology Layman's Guide](docs/technology-laymans-guide.md) | Simple explanation of MDD concepts in everyday terms |
-| [FreeMarker Guide](freemarker.readme.md) | Detailed FreeMarker usage in this project |
-| [Metamodel Architecture](docs/metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
-| [DSL Reference Guide](docs/dsl-reference.md) | MazeGame DSL syntax documentation |
-| [DSL Tutorial](docs/dsl-tutorial.md) | Step-by-step guide to creating game levels |
-| [Generated Code Module](maze-module-generator/readme.md) | Documentation for the generated code module |
+| [Technology Layman's Guide](technology-laymans-guide.md) | Simple explanation of MDD concepts in everyday terms |
+| [FreeMarker Guide](../freemarker.readme.md) | Detailed FreeMarker usage in this project |
+| [Metamodel Architecture](metamodel-architecture.md) | Technical details about metamodels and Xtext integration |
+| [DSL Reference Guide](dsl-reference.md) | MazeGame DSL syntax documentation |
+| [DSL Tutorial](dsl-tutorial.md) | Step-by-step guide to creating game levels |
+| [Generated Code Module](../maze-module-generator/readme.md) | Documentation for the generated code module |

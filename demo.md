@@ -35,8 +35,8 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 * Runtime XMI files on the classpath:
 
-  * `maze/src/main/resources/xmi/difficulties/difficulties.xmi`
-  * `maze/src/main/resources/xmi/opponents/opponentModel.xmi`
+  * `maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi`
+  * `maze-common-backend/src/main/resources/xmi/opponents/opponentModel.xmi`
   * `main.game.maze.walls/xmi/walls.xmi` (model for wall types and properties)
 
 * DSL configuration files (`.mazegame`):
@@ -53,9 +53,9 @@ This demo shows how the **models** and the **runtime code** work together in Maz
 
 * Main application class:
 
-  * `maze/src/main/java/main/game/maze/App.java`
+  * `maze-javafx-backend/src/main/java/main/game/maze/App.java`
 
-In Visual Studio Code, use the supplied `.vscode/launch.json` and run **Start Debugging** from the `maze` module.
+In Visual Studio Code, use the supplied `.vscode/launch.json` and run **Launch MazeGame (JavaFX)**.
 
 ---
 
@@ -79,7 +79,7 @@ Then, in VS Code:
 
 **From Eclipse**
 
-* Right click `App.java` in the `maze` module.
+* Right click `App.java` in the `maze-javafx-backend` module.
 * Choose **Run As → Java Application**.
 * Make sure the VM arguments include something like:
 
@@ -220,7 +220,7 @@ To show that the game also fails fast on invalid models:
 1．Replace the runtime opponent model:
 
 * Copy the contents of `opponentModelFailMaxThreat.xmi`.
-* Paste it over `maze/src/main/resources/xmi/opponents/opponentModel.xmi`.
+* Paste it over `maze-common-backend/src/main/resources/xmi/opponents/opponentModel.xmi`.
 
 2．Rebuild and run the game:
 
@@ -247,11 +247,9 @@ Explain that this is intentional:
 
 ## 4．Behaviour / movements model demo
 
-This part shows how a **behaviour model** (patrol definition) is:
+This part shows the **behaviour model** (patrol definition) and how patrol movement currently works at runtime.
 
-* loaded as EMF,
-* validated at a code level,
-* and used to drive patrol movement.
+Note: the EMF `PatrolBehavior` classes and `patrol_behavior_example.xmi` still exist, but they are not part of the current production patrol-movement path. Patrol movement is implemented by the shared `PatrolMovementService` in `maze-common-frontend`, which is used by both JavaFX and libGDX.
 
 ### 4．1 Behaviour model artefacts
 
@@ -267,25 +265,27 @@ Relevant files and modules:
   * `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi`
     Contains a `behaviour:PatrolBehavior` with a path and waypoints.
 
-* Helper and controller code (typical setup):
+* Runtime patrol code (current layout):
 
-  * `maze/src/main/java/main/game/maze/config/PatrolHelper.java`
-    will:
+  * `maze-common-frontend/src/main/java/main/game/maze/common/movement/PatrolMovementService.java`
+    shared patrol movement logic
 
-    * load the XMI patrol model
-    * check basic structural rules
-    * convert it into a runtime patrol definition
+  * `maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java` (JavaFX)
+    creates its own `PatrolMovementService` and calls it in `doPatrolMove`; it does not go through `EnemyDirectorService`
 
-  * `maze/src/main/java/main/game/maze/ai/TestPatrolMovementController.java`
-    demo harness that:
+  * `maze-libgdx/src/main/java/main/game/maze/libgdx/helper/GdxGameCombatAndEnemyFlowSupport.java` (libGDX)
+    calls `EnemyDirectorService.advanceAll`; the director then calls `GdxEnemyRuntime.advance`
+    (`maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java`), which uses the shared `PatrolMovementService`
 
-    * uses `PatrolHelper` to load the patrol model
-    * steps through the patrol path using runtime behaviour classes
-    * prints or visualises movement over time
+  * `maze-common-backend/src/main/java/main/game/maze/game/runtime/EnemyDirectorService.java`
+    enemy director used by the libGDX flow
+
+  * `maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`
+    unit test for `PatrolMovementService`
 
 ### 4．2 Running the patrol example
 
-1．Open `patrol_behavior_example.xmi`:
+1．Open `patrol_behavior_example.xmi` (a sample model; not part of the current production patrol path):
 
 * File: `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi`
 * Show that it describes:
@@ -293,35 +293,18 @@ Relevant files and modules:
   * a patrol path
   * a list of waypoints with coordinates and timing
 
-2．Run the patrol demo harness from your IDE:
+2．Start the game as described above and look for patrolling enemies:
 
-* Main class: `TestPatrolMovementController`
-  in `maze/src/main/java/main/game/maze/ai/`
+* Patrol movement is computed by `PatrolMovementService`; JavaFX calls it from `FxEnemyCoordinator`, libGDX reaches it through `EnemyDirectorService` and `GdxEnemyRuntime`.
+* Run the unit test `PatrolMovementServiceTest` from your IDE (`maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`). It covers shortest-path movement around a barrier, the five-second wander when no path exists, and the current target waypoint.
 
 3．Observe:
 
-* The patrol model is loaded as an EMF object (for example a `PatrolBehavior` instance).
-* `PatrolHelper` validates and transforms the model into runtime structures:
+* Patrolling enemies follow their patrol path in the running game.
+* `PatrolMovementService` (in `maze-common-frontend`) computes the movement.
+* In JavaFX, `FxEnemyCoordinator` calls the service from `doPatrolMove`. In libGDX, `GdxGameCombatAndEnemyFlowSupport` calls `EnemyDirectorService.advanceAll`, which calls `GdxEnemyRuntime.advance`.
 
-  * ensures there is at least one path
-  * checks coordinates are within expected bounds
-  * rejects obviously invalid structures via exceptions
-* `PatrolMovementController` and related classes then step through the patrol:
-
-  * position over time changes according to the model
-  * you get a clear mapping from XMI → behaviour → movement
-
-4．Optional: show a validation failure
-
-* Edit `patrol_behavior_example.xmi` to introduce an error (for example move a waypoint far outside the map or remove required elements).
-* Re run `TestPatrolMovementController`.
-* The helper or controller should fail clearly instead of running with nonsense data.
-
-This demonstrates that the **behaviour model** is treated similarly to the opponent model:
-
-* loaded as EMF,
-* validated,
-* and used as the source for runtime behaviour.
+This demonstrates that patrol behaviour runs through the shared `PatrolMovementService` instead of a separate demo harness.
 
 ---
 
@@ -493,13 +476,13 @@ Use this as a compact spoken script.
 
 4．**Show the behaviour / movements module**
 
-* Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition.
-* Run `TestPatrolMovementController`.
+* Open `main.game.maze.behaviour/xmi/patrol_behavior_example.xmi` and briefly show the patrol definition (sample only; not used by the production patrol path).
+* Start the game and watch a patrolling enemy, or run `PatrolMovementServiceTest`.
 * Explain:
 
-  * the patrol path is defined in the EMF behaviour model,
-  * a helper loads and validates it,
-  * the controller moves a simulated enemy along that path using the same core logic the game will use once you integrate patrols into real enemies.
+  * `patrol_behavior_example.xmi` and the EMF `PatrolBehavior` classes still exist, but are not part of the current production patrol-movement path,
+  * `PatrolMovementService` moves patrolling enemies at runtime,
+  * JavaFX calls the service from `FxEnemyCoordinator`; libGDX calls `EnemyDirectorService.advanceAll`, which calls `GdxEnemyRuntime.advance`.
 
 5．**Explain the walls and generated code pipeline**
 

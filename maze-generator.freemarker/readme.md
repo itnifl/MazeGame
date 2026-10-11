@@ -707,7 +707,7 @@ After generating code, integrate it with the existing runtime:
 |-----------------|-----------------|---------|
 | `CharacterRegistrar` | `OpponentRuntimeFactory` | Delegate registration logic |
 | `CharacterAttributeSetter` | Difficulty system | Apply multipliers |
-| `BehaviorDispatcher` | `PatrolHelper` | Route behaviour calls |
+| `BehaviorDispatcher` | `PatrolMovementService` | Feed the `PatrolBehavior` model into runtime patrol movement (the service does not read the model today) |
 
 **Example integration** (in `OpponentRuntimeFactory.java`):
 ```java
@@ -1316,7 +1316,7 @@ Here's the complete workflow for making model-driven changes:
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  5. INTEGRATE: Wire generated code into runtime                             │
 │     • Update OpponentRuntimeFactory to delegate to CharacterRegistrar       │
-│     • Update PatrolHelper to use BehaviorDispatcher                         │
+│     • Wire the behaviour model into PatrolMovementService (Dispatcher)      │
 │     • Run full build: mvn clean verify                                      │
 └─────────────────────────────────────────────────────────────────────────────┘
                                       │

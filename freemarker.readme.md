@@ -29,7 +29,7 @@ and produces domain code that the app and tests consume.
 - **Generated sources** → [`maze-module-generator`](./maze-module-generator)  
   Receives generated Java sources (for example under `src-gen`) and builds them into a JAR that other modules depend on.
 
-- **Model input** → for example [`models/DifficultyGameData.xmi`](./models/DifficultyGameData.xmi)  
+- **Model input** → for example [`maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi`](./maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi)  
   Canonical input file(s) for the generator.
 
 - **Build plumbing** → [`releng`](./releng)  
@@ -164,7 +164,7 @@ Run tests with: `mvn -pl maze-module-generator test`
   Check that:
 
   * the runner configuration points at the correct model files
-    for example `models/DifficultyGameData.xmi`
+    for example `maze-common-backend/src/main/resources/xmi/difficulties/difficulties.xmi`
   * the output folder is a writable directory inside `maze-module-generator`
     for example `src-gen`
   * the FreeMarker templates are present in `maze-generator.freemarker/src/main/resources/templates/`.
