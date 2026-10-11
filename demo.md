@@ -270,13 +270,18 @@ Relevant files and modules:
   * `maze-common-frontend/src/main/java/main/game/maze/common/movement/PatrolMovementService.java`
     shared patrol movement logic
 
+  * `maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java` (JavaFX)
+    creates its own `PatrolMovementService` and calls it in `doPatrolMove`; it does not go through `EnemyDirectorService`
+
+  * `maze-libgdx/src/main/java/main/game/maze/libgdx/helper/GdxGameCombatAndEnemyFlowSupport.java` (libGDX)
+    calls `EnemyDirectorService.advanceAll`; the director then calls `GdxEnemyRuntime.advance`
+    (`maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java`), which uses the shared `PatrolMovementService`
+
   * `maze-common-backend/src/main/java/main/game/maze/game/runtime/EnemyDirectorService.java`
-    dispatches enemy movement, called from
-    `maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java` (JavaFX)
-    and `maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java` (libGDX)
+    enemy director used by the libGDX flow
 
   * `maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`
-    unit test for the shared patrol flow (the frontend integration tests also cover it)
+    unit test for `PatrolMovementService`
 
 ### 4．2 Running the patrol example
 
@@ -290,16 +295,16 @@ Relevant files and modules:
 
 2．Start the game as described above and look for patrolling enemies:
 
-* Patrol movement is computed by `PatrolMovementService` and dispatched by `EnemyDirectorService`.
+* Patrol movement is computed by `PatrolMovementService`; JavaFX calls it from `FxEnemyCoordinator`, libGDX reaches it through `EnemyDirectorService` and `GdxEnemyRuntime`.
 * Run the unit test `PatrolMovementServiceTest` from your IDE (`maze-common-frontend/src/test/java/main/game/maze/common/movement/PatrolMovementServiceTest.java`). It covers shortest-path movement around a barrier, the five-second wander when no path exists, and the current target waypoint.
 
 3．Observe:
 
 * Patrolling enemies follow their patrol path in the running game.
 * `PatrolMovementService` (in `maze-common-frontend`) computes the movement.
-* `EnemyDirectorService` (in `maze-common-backend`) dispatches it each tick, via `FxEnemyCoordinator` in JavaFX and `GdxEnemyRuntime` in libGDX.
+* In JavaFX, `FxEnemyCoordinator` calls the service from `doPatrolMove`. In libGDX, `GdxGameCombatAndEnemyFlowSupport` calls `EnemyDirectorService.advanceAll`, which calls `GdxEnemyRuntime.advance`.
 
-This demonstrates that patrol behaviour runs through shared runtime services (`PatrolMovementService`, `EnemyDirectorService`) instead of a separate demo harness.
+This demonstrates that patrol behaviour runs through the shared `PatrolMovementService` instead of a separate demo harness.
 
 ---
 
@@ -477,7 +482,7 @@ Use this as a compact spoken script.
 
   * `patrol_behavior_example.xmi` and the EMF `PatrolBehavior` classes still exist, but are not part of the current production patrol-movement path,
   * `PatrolMovementService` moves patrolling enemies at runtime,
-  * `EnemyDirectorService` dispatches the movement each tick (via `FxEnemyCoordinator` in JavaFX and `GdxEnemyRuntime` in libGDX).
+  * JavaFX calls the service from `FxEnemyCoordinator`; libGDX calls `EnemyDirectorService.advanceAll`, which calls `GdxEnemyRuntime.advance`.
 
 5．**Explain the walls and generated code pipeline**
 

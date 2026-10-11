@@ -55,7 +55,7 @@ We want the **model to drive the code**, not the other way around:
 |-------|----------|-------------|---------------|
 | **walls** | `walls.ecore` | `WallMaterial`, `WallModel`, `WallMaterialBaseType` | Manual wall rendering |
 | **difficulties** | `difficulty-module.ecore` | `Difficulty`, `EasyDifficulty`, `NormalDifficulty`, `HardDifficulty`, `EnemyMaxCount` | `DifficultyService.java` interprets XMI |
-| **behaviour** | `movements.ecore` | `MovementBehavior`, `PatrolBehavior`, `ChaseBehavior`, `RandomBehavior`, `PathCalculator` variants | `PatrolHelper.java` interprets |
+| **behaviour** | `movements.ecore` | `MovementBehavior`, `PatrolBehavior`, `ChaseBehavior`, `RandomBehavior`, `PathCalculator` variants | `PatrolMovementService.java` (shared runtime patrol logic; the `PatrolBehavior` model is not part of the production patrol path) |
 | **opponents** | `opponents.ecore` | `CharacterType`, `Zombie`, `Ghost`, `PumpkinBomber` | `OpponentRuntimeFactory.java` |
 
 ---
@@ -299,7 +299,7 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | **Difficulties generation** | ❌ | Create templates and generator |
 | **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
-| Refactor `PatrolHelper.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
+| Refactor `PatrolMovementService.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
 | Add `src-gen` to `maze-javafx-backend/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
 
