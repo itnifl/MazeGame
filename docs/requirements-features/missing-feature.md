@@ -284,16 +284,24 @@ overall feature is marked Done.
 ### F19. DSL `passive` and `aggressive` behaviors
 
 - **Source**: [MazeDsl.xtext](../../main.game.maze.dsl/src/main/java/main/game/maze/dsl/MazeDsl.xtext) — `BehaviorTypeEnum {passive, wander, aggressive, patrol}`.
-- **Status**: Done.
-- **Backend**: both (JavaFX runtime today; libGDX inherits once enemies are
-  ported).
+- **Status**: Partial (`aggressive` done; `passive` is deliberately run as `wander`).
+- **Backend**: both. JavaFX dispatches the modes in
+  [FxEnemyCoordinator](../../maze-javafx-backend/src/main/java/main/game/maze/FxEnemyCoordinator.java);
+  libGDX in
+  [GdxEnemyRuntime](../../maze-libgdx/src/main/java/main/game/maze/libgdx/game/GdxEnemyRuntime.java).
 - **What the grammar says**: four behaviour modes are selectable.
-- **What the game does today**: `GameController` switches on all four
-  behaviour modes. `PASSIVE` opponents stay still; `AGGRESSIVE` opponents
-  chase the player every tick via
-  [ChaseController](../../maze-javafx-backend/src/main/java/main/game/maze/ChaseController.java),
-  which computes a 4-way grid-aligned unit vector from the opponent toward
-  the player position.
+- **What the game does today**: `AGGRESSIVE` opponents chase the player
+  through the shared
+  [AdaptiveAggressiveMovementService](../../maze-common-frontend/src/main/java/main/game/maze/common/movement/AdaptiveAggressiveMovementService.java)
+  in both backends. `PASSIVE` opponents do not stand still:
+  [EnemySpawnPlanner.resolveRuntimeBehavior](../../main.game.maze.opponents/src/main/java/main/game/maze/opponents/util/EnemySpawnPlanner.java)
+  normalizes `PASSIVE` to `WANDER` so enemies do not stay at their spawn
+  point, and both backends also map `PASSIVE` to wander movement.
+  `ChaseController` remains in `maze-javafx-backend`, but only its tests use it.
+- **Open decision**: define what `passive` means. Either it stands still (the
+  acceptance below, which the game does not do today), or it only means "does
+  not chase the player" (today's wander behaviour). Update the acceptance and
+  the status to match the decision.
 - **Acceptance**: an opponent declared as `behavior passive` stands still and
   one declared as `behavior aggressive` actively chases the player.
 
