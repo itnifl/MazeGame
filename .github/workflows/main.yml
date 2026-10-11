@@ -1,7 +1,13 @@
 name: Build & Test (JavaFX only)
 
-on:
-  workflow_dispatch:
+on:  
+  pull_request:
+    paths:
+      - "maze-javafx/**"
+      - "maze-javafx-backend/**"
+      - "maze-common-backend/**"
+      - "maze-common-frontend/**"
+      - ".github/workflows/**"
 
 jobs:
   game:
