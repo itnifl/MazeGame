@@ -22,6 +22,8 @@
 
 - **SR-132** *(Reliability, Issue 2)*: JavaFX gameplay MUST self-heal keyboard focus so player input cannot become permanently unresponsive after focus is lost to a transient node or dropped to `null`. A per-frame guard (`FxFocusGuard.shouldReassertFocus`) re-asserts focus on `gameBoard` unless a text input control (the in-game terminal) legitimately holds it. Unit covered by `FxFocusGuardTest`. Suggestion (extends SR-128): add a headless `TestFX` integration test that drops the focus owner to `null` mid-play and asserts directional keys still drive movement on the next frame.
 
+- **SR-133** *(Portability, CRR-9, Issue #155)*: The Tycho target definition (`releng/maze.target`) MUST resolve on Windows, Linux and macOS without per-machine edits. `${project_loc:...}` expands to an OS-native path, so on Windows it produces an invalid `file:` URI with backslashes. Suggestion: add a CI matrix job (ubuntu + windows) that runs `make-javafx.ps1 quick-no-tests` so OS-specific target or script regressions are caught before merge. For 12-Factor config, let a `MAZEGAME_P2_URI`-style setting override the mirror location.
+
 ### BUG-6 follow-on suggestions
 
 - **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
