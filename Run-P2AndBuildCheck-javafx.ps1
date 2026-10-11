@@ -521,23 +521,25 @@ if ($StartAt -gt 3) {
 }
 
 # Step 4 - build
+# The mirror module is handled by step 1; re-running it against a populated
+# releng/local-p2 fails because Tycho's mirror goal appends by default.
 $step4 = "4. Build"
 switch ($BuildMode) {
     'full' {
         $cmdText4 = @'
-mvn -U -DskipTests=false clean verify -e -X
+mvn -pl '!releng/mirror' -U -DskipTests=false clean verify -e -X
 '@
         $buildLabel = "Full build (Tycho + app)"
     }
     'fast' {
         $cmdText4 = @'
-mvn -DskipTests=false verify
+mvn -pl '!releng/mirror' -DskipTests=false verify
 '@
         $buildLabel = "Fast build with tests"
     }
     'fastest' {
         $cmdText4 = @'
-mvn -DskipTests=true verify
+mvn -pl '!releng/mirror' -DskipTests=true verify
 '@
         $buildLabel = "Fastest build without tests"
     }
@@ -546,9 +548,9 @@ mvn -DskipTests=true verify
 Write-Host "Starting step 4: $buildLabel..."
 $output4 = & {
     switch ($BuildMode) {
-        'full'    { & mvn -U -DskipTests=false clean verify -e -X }
-        'fast'    { & mvn -DskipTests=false verify }
-        'fastest' { & mvn -DskipTests=true verify }
+        'full'    { & mvn -pl '!releng/mirror' -U -DskipTests=false clean verify -e -X }
+        'fast'    { & mvn -pl '!releng/mirror' -DskipTests=false verify }
+        'fastest' { & mvn -pl '!releng/mirror' -DskipTests=true verify }
     }
 } 2>&1
 if ($LASTEXITCODE -eq 0) {

@@ -100,7 +100,9 @@ sudo env \
 
 After installation, run the `source` command printed by the installer, or log
 out and back in, then continue as your normal user rather than with `sudo`.
-Opening another non-login terminal alone may not load the system profile. See
+Opening another non-login terminal alone may not load the system profile. The
+profile puts Java, Maven and `MAZEGAME_BIN_DIR` (where `pwsh` is linked) on
+`PATH`. See
 the [build tool guide](build-tool-readme.md) for the maintained build and launch
 commands. The supplied VS Code launch configurations are also ready to use.
 
@@ -549,7 +551,7 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 1. Optionally clears `releng\local-p2` and rebuilds the mirror.
 2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
 3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
-4. Performs a clean verify from the root with tests enabled.
+4. Performs a clean verify from the root with tests enabled, excluding `releng/mirror` (already handled in step 1).
 5. Prints a compact result table and writes the full log under `releng\test-results`.
 
 **Quick start**

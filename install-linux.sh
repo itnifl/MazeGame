@@ -230,7 +230,7 @@ apt-get install --yes --no-install-recommends \
   libgstreamer1.0-0 \
   gstreamer1.0-plugins-base \
   libicu74 \
-  libssl3 \
+  libssl3t64 \
   libx11-6 \
   libxcursor1 \
   libxi6 \
@@ -341,7 +341,7 @@ cat >"$PROFILE_FILE" <<EOF
 export JAVA_HOME="$JAVA_HOME"
 export MAVEN_HOME="$MAVEN_HOME_LINK"
 export PATH_TO_FX="$JAVAFX_HOME_LINK"
-export PATH="\$JAVA_HOME/bin:\$MAVEN_HOME/bin:\$PATH"
+export PATH="\$JAVA_HOME/bin:\$MAVEN_HOME/bin:$BIN_DIR:\$PATH"
 EOF
 chmod 0644 "$PROFILE_FILE"
 
