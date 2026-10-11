@@ -299,7 +299,7 @@ Generated files in `maze-module-generator/src-gen/main/game/maze/generated/`:
 | **Difficulties generation** | ❌ | Create templates and generator |
 | **Behaviour generation** | ❌ | Create templates and generator |
 | Refactor `OpponentRuntimeFactory.java` | ✅ | Delegates to generated `CharacterRegistrar` and `CharacterAttributeSetter` |
-| Refactor `PatrolMovementService.java` | ❌ | Use generated `BehaviorDispatcher` (blocked on Behaviour generator) |
+| Wire the behaviour model into `PatrolMovementService.java` | ❌ | Feed patrol paths from the `PatrolBehavior` model through the generated `BehaviorDispatcher`; today the service does not read the model (blocked on Behaviour generator) |
 | Add `src-gen` to `maze-javafx-backend/pom.xml` | ✅ | Already configured as dependency on `maze-module-generator` |
 | End-to-end test | ❌ | Add new model element, verify no manual code needed |
 
