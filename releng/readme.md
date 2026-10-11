@@ -19,14 +19,14 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Generated local p2 repository created by the mirror. Contains `artifacts.jar`, `content.jar`, platform specific executables under `binary/`, and the mirrored plug ins and features.
 
 * `releng/maze.target`
-  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It points at `releng/local-p2` and lists the required units (EMF, OCL, Equinox executable and related dependencies).
+  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It is a single `Directory` location pointing at `releng/local-p2`; the required units (EMF, OCL, Xtext, MWE2, Equinox executable and their dependencies) are selected in `releng/mirror/pom.xml`.
 
 * `releng/test-results/`
   Log files written by the helper script `Run-P2AndBuildCheck-javafx.ps1` when you run full mirror and build checks.
 
 ## Local p2 mirror
 
-The local p2 mirror is built from the public Eclipse in this source code repositories using the Tycho p2 extras plugin configured in `releng/mirror/pom.xml`. It mirrors the units that are also referenced from `releng/maze.target`, such as
+The local p2 mirror is built from the public Eclipse in this source code repositories using the Tycho p2 extras plugin configured in `releng/mirror/pom.xml`. `releng/mirror/pom.xml` is the single list of required units, such as
 
 * core runtime and Equinox bundles
 * EMF runtime and code generation
@@ -69,6 +69,12 @@ The Tycho build uses the target file `releng/maze.target` through the `target-pl
 The target file points at `releng/local-p2`. The separate mirror step obtains
 the pinned units from the public Eclipse repositories before Tycho reads the
 target definition.
+
+The target uses a `Directory` location (`path="${project_loc:/MazeGame}/releng/local-p2"`)
+instead of an `InstallableUnit` repository URI. `${project_loc}` expands to a native
+path such as `D:\Source\MazeGame` on Windows. That is valid for a directory path but
+is not a valid `file:` URI, so an `InstallableUnit` location would fail target resolution on
+Windows (see issue #155).
 
 You can also open `releng/maze.target` inside Eclipse to use the same platform for PDE development:
 

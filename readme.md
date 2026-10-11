@@ -234,7 +234,7 @@ VS Code Java runtime:
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
-⚡ Finally, in Visual Studio Code select [App.java](maze-javafx-backend/src/main/java/main/game/maze/App.java) and run it.
+⚡ Finally, in Visual Studio Code run the **Launch MazeGame (JavaFX)** configuration (Ctrl+F5), which starts [Launcher.java](maze-javafx-backend/src/main/java/main/game/maze/Launcher.java) (the JavaFX launcher shim).
 
 ### Graphics backends (JavaFX vs libGDX)
 
