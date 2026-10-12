@@ -4,7 +4,10 @@ param(
     [int]$StartAt = 1,   # 1=run all, 2=skip mirror rebuild, 3=skip mirror+verify, 4=skip mirror+verify+cache clear
     [switch]$SkipMirror,
     [ValidateSet('full','fast','fastest')]
-    [string]$BuildMode = 'full'
+    [string]$BuildMode = 'full',
+    # Opt-in: step 1 also deletes the whole ~/.m2/repository (shared with every other
+    # Maven project on the machine). Off by default; Tycho's cache is cleared in step 3.
+    [switch]$PurgeMavenRepository
 )
 
 # Ensure we run from the script directory (repo root assumed)
@@ -16,7 +19,9 @@ New-Item -ItemType Directory -Force -Path $LogDirectory | Out-Null
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $logFile   = Join-Path $LogDirectory "p2-and-build-check_$timestamp.log"
 $UserHome  = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile) }
-$M2RepoDir = Join-Path $UserHome '.m2\repository'
+$M2RepoDir = Join-Path $UserHome '.m2/repository'
+$TychoCacheDir = Join-Path $M2RepoDir '.cache/tycho'
+$LocalP2Dir = Join-Path 'releng' 'local-p2'
 
 $stepSummaries = New-Object System.Collections.Generic.List[object]
 
@@ -29,6 +34,7 @@ Write-Host "Avoid mirror rebuild: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror"
 Write-Host "Avoid mirror rebuild (equivalent): .\Run-P2AndBuildCheck-javafx.ps1 -StartAt 2"
 Write-Host "Fast build with tests: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror -BuildMode fast"
 Write-Host "Fastest build, skip tests: .\Run-P2AndBuildCheck-javafx.ps1 -SkipMirror -BuildMode fastest"
+Write-Host "Also wipe ~/.m2/repository in step 1 (opt-in): .\Run-P2AndBuildCheck-javafx.ps1 -PurgeMavenRepository"
 Write-Host "=======================================" -ForegroundColor Cyan
 
 function Get-JavaMajorFromExecutable {
@@ -213,11 +219,12 @@ function Use-Java21OrFail {
     }
 
     $env:JAVA_HOME = $javaHome
+    # Always put Java 21 first (an earlier JDK on PATH would otherwise stay active), and use
+    # $env:PATH: environment names are case-sensitive on Linux/macOS, so $env:Path is not PATH there.
     $javaBinPath = Join-Path $javaHome 'bin'
     $pathSeparator = [IO.Path]::PathSeparator
-    if (-not (($env:Path -split [regex]::Escape($pathSeparator)) -contains $javaBinPath)) {
-        $env:Path = "$javaBinPath$pathSeparator$env:Path"
-    }
+    $otherEntries = @($env:PATH -split [regex]::Escape($pathSeparator) | Where-Object { $_ -and $_ -ne $javaBinPath })
+    $env:PATH = (@($javaBinPath) + $otherEntries) -join $pathSeparator
 
     $activeJavaExe = Get-JavaExecutablePathForHome -JavaHome $javaHome
     $activeMajor = Get-JavaMajorFromExecutable -JavaExe $activeJavaExe
@@ -292,18 +299,26 @@ Write-StepResult -Step $step0 -Status "OK" -CommandText $cmdText0 -Summary "Reco
 # Step 1 - rebuild local p2 mirror
 $step1   = "1. Rebuild local p2 mirror"
 $cmdText1 = @'
-Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
-mkdir -p releng\local-p2
+Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path releng/local-p2
 mvn -f releng/mirror/pom.xml -U verify
 '@
+if ($PurgeMavenRepository) {
+    $cmdText1 = "Remove-Item -Recurse -Force ~/.m2/repository -ErrorAction SilentlyContinue`n" + $cmdText1
+}
 if ($StartAt -gt 1) {
     Skip-Step -Step $step1 -Cmd $cmdText1
 } else {
     Write-Host "Starting step 1: Rebuild local p2 mirror..."
     $output1 = & {
-        Remove-Item -Recurse -Force $M2RepoDir -ErrorAction SilentlyContinue
-        Remove-Item -Recurse -Force releng\local-p2 -ErrorAction SilentlyContinue
-        & mkdir -p releng\local-p2
+        if ($PurgeMavenRepository) {
+            Write-Host "Purging $M2RepoDir (-PurgeMavenRepository)" -ForegroundColor Yellow
+            Remove-Item -Recurse -Force $M2RepoDir -ErrorAction SilentlyContinue
+        }
+        Remove-Item -Recurse -Force $LocalP2Dir -ErrorAction SilentlyContinue
+        # New-Item, not mkdir: in pwsh on Linux/macOS mkdir is the native binary,
+        # which would create a directory literally named 'releng\local-p2'.
+        New-Item -ItemType Directory -Force -Path $LocalP2Dir | Out-Null
         & mvn -f releng/mirror/pom.xml -U verify
     } 2>&1
     if ($LASTEXITCODE -eq 0) {
@@ -504,14 +519,15 @@ if ($StartAt -gt 2) {
 # Step 3 - clear Tycho p2 cache
 $step3   = "3. Clear Tycho p2 cache"
 $cmdText3 = @'
-Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force ~/.m2/repository/.cache/tycho -ErrorAction SilentlyContinue
 '@
 if ($StartAt -gt 3) {
     Skip-Step -Step $step3 -Cmd $cmdText3
 } else {
     Write-Host "Starting step 3: Clear Tycho p2 cache..."
     $output3 = & {
-        Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
+        # USERPROFILE is unset on Linux/macOS; $TychoCacheDir derives from the portable $UserHome.
+        Remove-Item -Recurse -Force $TychoCacheDir -ErrorAction SilentlyContinue
     } 2>&1
     $status3  = "OK"
     $summary3 = "Tycho cache folder removed if it existed."

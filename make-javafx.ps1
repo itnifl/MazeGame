@@ -194,6 +194,17 @@ function Get-JavaMajorFromExecutable([string]$javaExe) {
     return -1
 }
 
+# Returns PathValue with Entry first and any other occurrences removed. Only prepending
+# when Entry is missing is not enough: a caller such as install.ps1 may already have
+# appended it after another Java, which would then stay active.
+function Get-PathWithEntryFirst([string]$PathValue, [string]$Entry, [string]$Separator = [IO.Path]::PathSeparator) {
+    $ignoreCase = (Get-OSKind) -eq 'windows'
+    $rest = @($PathValue -split [regex]::Escape($Separator) | Where-Object {
+        $_ -and -not [string]::Equals($_, $Entry, $(if ($ignoreCase) { 'OrdinalIgnoreCase' } else { 'Ordinal' }))
+    })
+    return (@($Entry) + $rest) -join $Separator
+}
+
 function Use-Java21OrFail {
     $javaHomePath = Get-Java21Home
     if (-not $javaHomePath) {
@@ -202,11 +213,8 @@ function Use-Java21OrFail {
     }
 
     $env:JAVA_HOME = $javaHomePath
-    $javaBinPath = Join-Path $javaHomePath 'bin'
-    $pathSeparator = [IO.Path]::PathSeparator
-    if (-not (($env:Path -split [regex]::Escape($pathSeparator)) -contains $javaBinPath)) {
-        $env:Path = "$javaBinPath$pathSeparator$env:Path"
-    }
+    # $env:PATH, not $env:Path: environment names are case-sensitive on Linux/macOS.
+    $env:PATH = Get-PathWithEntryFirst -PathValue $env:PATH -Entry (Join-Path $javaHomePath 'bin')
 
     $currentMajor = Test-JavaVersion
     if ($currentMajor -ne $RequiredJavaMajor) {
@@ -283,9 +291,7 @@ function Write-LaunchEnvFile {
         throw "Java $RequiredJavaMajor not found. `n`n$guidance"
     }
 
-    $javaBinPath = Join-Path $javaHomePath 'bin'
-    $pathSeparator = [IO.Path]::PathSeparator
-    $launchPath = if ($env:Path) { "$javaBinPath$pathSeparator$env:Path" } else { $javaBinPath }
+    $launchPath = Get-PathWithEntryFirst -PathValue $env:PATH -Entry (Join-Path $javaHomePath 'bin')
 
     $launchEnvFile = Join-Path '.vscode' 'maze.launch.env'
     New-Item -ItemType Directory -Path '.vscode' -Force | Out-Null

@@ -75,7 +75,12 @@ Use one of these commands when Java changes on your machine:
 
 # Equivalent mirror skip syntax
 .\Run-P2AndBuildCheck-javafx.ps1 -StartAt 2
+
+# Opt-in: also delete the whole ~/.m2/repository in step 1 (affects every Maven project)
+.\Run-P2AndBuildCheck-javafx.ps1 -PurgeMavenRepository
 ```
+
+By default, step 1 rebuilds only `releng/local-p2`; your shared Maven repository is kept.
 
 ### make-javafx wrapper
 
@@ -141,6 +146,17 @@ Use one of these commands when Java changes on your machine:
 4. Deep JavaFX diagnostics with step logs: `.\Run-P2AndBuildCheck-javafx.ps1`.
 5. Iterating on the libGDX gameplay subset: `.\make-libgdx.ps1 quick` or `.\make-libgdx.ps1 run`.
 6. CI smoke test for the libGDX backend: `.\Run-P2AndBuildCheck-libgdx.ps1 -BuildMode fast`.
+
+## Build script tests
+
+Helper functions in the build scripts have Pester 5 tests under [tools/tests](tools/tests):
+
+```powershell
+Invoke-Pester ./tools/tests
+```
+
+Example: `Get-PathWithEntryFirst` makes sure the detected Java 21 `bin` folder comes first on
+`PATH`, even when a caller such as `install.ps1` has already appended it after another JDK.
 
 ## Notes
 

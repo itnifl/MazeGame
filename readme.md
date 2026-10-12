@@ -548,7 +548,7 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 
 **Typical flow**
 
-1. Optionally clears `releng\local-p2` and rebuilds the mirror.
+1. Optionally clears `releng\local-p2` and rebuilds the mirror. Your shared `~/.m2/repository` is kept unless you pass `-PurgeMavenRepository`.
 2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
 3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
 4. Performs a clean verify from the root with tests enabled, excluding `releng/mirror` (already handled in step 1).
