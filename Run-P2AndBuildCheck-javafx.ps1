@@ -209,6 +209,13 @@ function Get-Java21Home {
     return $null
 }
 
+<#
+.SYNOPSIS
+    Activates Java 21 for this process or exits with setup guidance.
+.DESCRIPTION
+    Sets JAVA_HOME to the detected Java 21 JDK, puts its bin folder first on PATH and
+    confirms the JDK reports version 21. Exits with status 1 if none is found.
+#>
 function Use-Java21OrFail {
     $requiredJavaMajor = 21
     $javaHome = Get-Java21Home -RequiredJavaMajor $requiredJavaMajor

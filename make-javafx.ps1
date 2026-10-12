@@ -194,9 +194,20 @@ function Get-JavaMajorFromExecutable([string]$javaExe) {
     return -1
 }
 
-# Returns PathValue with Entry first and any other occurrences removed. Only prepending
-# when Entry is missing is not enough: a caller such as install.ps1 may already have
-# appended it after another Java, which would then stay active.
+<#
+.SYNOPSIS
+    Returns a PATH-style string with Entry first and any other occurrences removed.
+.DESCRIPTION
+    Only prepending when Entry is missing is not enough: a caller such as install.ps1
+    may already have appended it after another Java, which would then stay active.
+    Comparison ignores case on Windows and is case-sensitive elsewhere.
+.PARAMETER PathValue
+    The current PATH value; may be empty.
+.PARAMETER Entry
+    The directory to put first, e.g. the Java 21 bin folder.
+.PARAMETER Separator
+    The PATH separator; defaults to the current OS separator (';' or ':').
+#>
 function Get-PathWithEntryFirst([string]$PathValue, [string]$Entry, [string]$Separator = [IO.Path]::PathSeparator) {
     $ignoreCase = (Get-OSKind) -eq 'windows'
     $rest = @($PathValue -split [regex]::Escape($Separator) | Where-Object {
@@ -205,6 +216,14 @@ function Get-PathWithEntryFirst([string]$PathValue, [string]$Entry, [string]$Sep
     return (@($Entry) + $rest) -join $Separator
 }
 
+<#
+.SYNOPSIS
+    Activates Java 21 for this process or throws with setup guidance.
+.DESCRIPTION
+    Finds a Java 21 JDK (JAVA_HOME first, then common install locations), sets
+    JAVA_HOME, puts its bin folder first on PATH and confirms that java now reports
+    version 21. Throws if no Java 21 is found or another version is still active.
+#>
 function Use-Java21OrFail {
     $javaHomePath = Get-Java21Home
     if (-not $javaHomePath) {
@@ -284,6 +303,13 @@ function Show-Usage {
     Write-Host "=================================" -ForegroundColor Cyan
 }
 
+<#
+.SYNOPSIS
+    Writes .vscode/maze.launch.env for the VS Code launch configurations.
+.DESCRIPTION
+    Records the detected Java 21 home as JAVA_HOME and a PATH with its bin folder
+    first. Throws if no Java 21 is found.
+#>
 function Write-LaunchEnvFile {
     $javaHomePath = Get-Java21Home
     if (-not $javaHomePath) {
@@ -572,6 +598,13 @@ function Ensure-RuntimeModulesCompiled {
     Write-Host '=== Stale modules rebuilt successfully ===' -ForegroundColor Green
 }
 
+<#
+.SYNOPSIS
+    Returns $true when releng/local-p2 must be (re)built.
+.DESCRIPTION
+    True if the mirror folder, its completion stamp or its saved input state is
+    missing (e.g. an interrupted run), or if the inputs changed since the last build.
+#>
 function Test-MirrorOutdated {
     if (-not (Test-Path $LocalP2Dir)) { return $true }
     if (-not (Test-Path $MirrorStamp)) { return $true }
@@ -581,6 +614,14 @@ function Test-MirrorOutdated {
     return $previousInputState -ne (Get-MirrorInputState)
 }
 
+<#
+.SYNOPSIS
+    Returns a text fingerprint of everything that determines the mirror contents.
+.DESCRIPTION
+    One line for the Eclipse repository override (MAZEGAME_ECLIPSE_REPOSITORY_BASE)
+    plus one SHA-256 line per file in $MirrorInputs. Saved next to the mirror and
+    compared by Test-MirrorOutdated.
+#>
 function Get-MirrorInputState {
     $repositoryBaseState = if ($EclipseRepositoryBase) { $EclipseRepositoryBase } else { '<default>' }
     $entries = @(
@@ -596,6 +637,16 @@ function Get-MirrorInputState {
     return $entries -join "`n"
 }
 
+<#
+.SYNOPSIS
+    Builds releng/local-p2 from releng/mirror/pom.xml when needed.
+.DESCRIPTION
+    Skips the build when Test-MirrorOutdated says the mirror is current. Otherwise
+    deletes any existing (possibly partial) mirror, runs the mirror build and writes
+    the input state and completion stamp. Throws if Maven fails.
+.PARAMETER Force
+    Rebuild even when the mirror is up to date.
+#>
 function Invoke-Mirror([switch]$Force) {
     $rebuild = $Force -or (Test-MirrorOutdated)
 
@@ -658,6 +709,12 @@ function Clear-TychoCache {
     Write-Host "Tycho cache cleared (if it existed)."
 }
 
+<#
+.SYNOPSIS
+    Runs the full clean verify of the reactor with tests, excluding releng/mirror.
+.DESCRIPTION
+    Expects Invoke-Mirror to have populated releng/local-p2 first. Throws if Maven fails.
+#>
 function Invoke-Build {
     # The mirror is managed by Invoke-Mirror; do not execute its Maven module again.
     $reactorWithoutMirror = '!releng/mirror'
@@ -671,6 +728,12 @@ function Invoke-Build {
     Write-Host "=== Build finished successfully ==="
 }
 
+<#
+.SYNOPSIS
+    Runs an incremental verify (no clean, no mirror rebuild), excluding releng/mirror.
+.PARAMETER SkipTests
+    Skip test execution.
+#>
 function Invoke-QuickBuild {
     param([switch]$SkipTests)
 

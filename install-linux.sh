@@ -24,6 +24,15 @@ BIN_DIR="${MAZEGAME_BIN_DIR:-/usr/local/bin}"
 CACHE_DIR="${MAZEGAME_CACHE_DIR:-/var/cache/mazegame-installer}"
 PROFILE_FILE="${MAZEGAME_PROFILE_FILE:-/etc/profile.d/mazegame.sh}"
 
+#######################################
+# Exits unless a configurable system path is absolute and not "/".
+# Guards the MAZEGAME_* overrides before anything is created or replaced there.
+# Arguments:
+#   $1 - Name of the environment variable, used in the error message.
+#   $2 - Path value to check.
+# Returns:
+#   0 when the path is safe; otherwise exits the script with status 2.
+#######################################
 require_safe_absolute_path() {
   local variable_name="$1"
   local value="$2"
@@ -76,10 +85,27 @@ install -d -m 0755 \
   "$CACHE_DIR" \
   "$(dirname -- "$PROFILE_FILE")"
 
+#######################################
+# Prints a progress heading for the next installer phase.
+# Arguments:
+#   $1 - Heading text.
+# Outputs:
+#   Writes "==> <text>" to stdout.
+#######################################
 step() {
   printf '\n==> %s\n' "$1"
 }
 
+#######################################
+# Points a symlink at a target, keeping any real file or directory that was there.
+# An existing non-symlink path is moved to "<link>.pre-mazegame" first, so the
+# installer never deletes something it did not create.
+# Arguments:
+#   $1 - Symlink target.
+#   $2 - Symlink path to create or replace.
+# Returns:
+#   0 on success; exits with status 1 if the backup path already exists.
+#######################################
 replace_with_symlink() {
   local target="$1"
   local link="$2"
@@ -98,6 +124,15 @@ replace_with_symlink() {
   ln -sfnT -- "$target" "$link"
 }
 
+#######################################
+# Downloads a URL, resuming a partial file and retrying up to 5 times.
+# Arguments:
+#   $1 - URL to download.
+#   $2 - Destination file; an existing partial file is continued.
+# Returns:
+#   0 on success; 33 when curl cannot resume the existing byte range (the
+#   caller should delete the file and start again); 1 after 5 failed attempts.
+#######################################
 download() {
   local url="$1"
   local destination="$2"
@@ -134,18 +169,48 @@ download() {
   return 1
 }
 
+#######################################
+# Checks a file against an expected SHA-256 checksum.
+# Arguments:
+#   $1 - Expected SHA-256 checksum (hex).
+#   $2 - File to check.
+# Returns:
+#   0 if the checksum matches; non-zero otherwise.
+#######################################
 verify_sha256() {
   local expected="$1"
   local file="$2"
   printf '%s  %s\n' "$expected" "$file" | sha256sum --check --status
 }
 
+#######################################
+# Checks a file against an expected SHA-512 checksum.
+# Arguments:
+#   $1 - Expected SHA-512 checksum (hex).
+#   $2 - File to check.
+# Returns:
+#   0 if the checksum matches; non-zero otherwise.
+#######################################
 verify_sha512() {
   local expected="$1"
   local file="$2"
   printf '%s  %s\n' "$expected" "$file" | sha512sum --check --status
 }
 
+#######################################
+# Provides a checksum-verified download, reusing or resuming the cached copy.
+# A cached file that already verifies is reused. Otherwise the download resumes;
+# if resuming is impossible or the result fails verification, the file is
+# downloaded again from scratch and verified once more.
+# Arguments:
+#   $1 - Checksum algorithm: "sha256" or "sha512".
+#   $2 - Expected checksum (hex).
+#   $3 - URL to download.
+#   $4 - Destination file in the download cache.
+# Returns:
+#   0 when the destination verifies; non-zero if the download or the final
+#   verification fails (a partial file is kept so a later run can resume it).
+#######################################
 download_verified() {
   local algorithm="$1"
   local expected="$2"

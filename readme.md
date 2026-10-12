@@ -186,6 +186,14 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
 
+## License
+
+The MazeGame source code is released under the [MIT License](LICENSE).
+
+Third-party assets listed under [Sources](#sources), such as music, sounds and images,
+are not covered by the MIT License and remain under their original creators' terms.
+Check those terms before redistributing them.
+
 ---
 
 ## Prerequisites and setup
