@@ -1,0 +1,3 @@
+# Shell scripts must keep LF line endings in every checkout, including Windows
+# checkouts with core.autocrlf=true that are then used from WSL or a container.
+*.sh text eol=lf

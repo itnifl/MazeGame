@@ -134,7 +134,7 @@ The PowerShell installer:
 4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
 5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
 6. Sets `JAVA_HOME` as a persistent user-level environment variable
-7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`
+7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`. If that fails, the installer prints an `[!!]` error and exits with code 1.
 
 > **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
 
@@ -557,7 +557,7 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 **Typical flow**
 
 1. Optionally clears `releng\local-p2` and rebuilds the mirror. Your shared `~/.m2/repository` is kept unless you pass `-PurgeMavenRepository`.
-2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
+2. Verifies that every unit listed in `releng/mirror/pom.xml` (EMF, OCL, Xtext, MWE2, Equinox, JUnit platform) is in the mirror metadata and has its plug-in or feature jar.
 3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
 4. Performs a clean verify from the root with tests enabled, excluding `releng/mirror` (already handled in step 1).
 5. Prints a compact result table and writes the full log under `releng\test-results`.

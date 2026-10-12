@@ -639,6 +639,68 @@ function Get-MirrorInputState {
 
 <#
 .SYNOPSIS
+    Returns the installable unit ids that releng/mirror/pom.xml asks the mirror to contain.
+.DESCRIPTION
+    The mirror pom is the single list of required units; checks derive from it instead of
+    keeping their own copy that can drift.
+.PARAMETER MirrorPomPath
+    Path to the mirror pom (normally releng/mirror/pom.xml).
+#>
+function Get-MirrorRequiredUnitIds([string]$MirrorPomPath) {
+    [xml]$pom = Get-Content -Raw -Path $MirrorPomPath
+    # local-name() matches with or without the Maven POM namespace declaration.
+    return @($pom.SelectNodes("//*[local-name()='iu']/*[local-name()='id']") | ForEach-Object { $_.InnerText.Trim() })
+}
+
+<#
+.SYNOPSIS
+    Returns the installable unit ids listed in a p2 repository's content.jar.
+.PARAMETER MirrorDir
+    The p2 repository folder (normally releng/local-p2).
+#>
+function Get-MirrorAvailableUnitIds([string]$MirrorDir) {
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("p2units_{0}" -f [guid]::NewGuid())
+    try {
+        Expand-Archive -Path (Join-Path $MirrorDir 'content.jar') -DestinationPath $tmp
+        [xml]$content = Get-Content -Raw -Path (Join-Path $tmp 'content.xml')
+        return @($content.SelectNodes('//units/unit') | ForEach-Object { $_.GetAttribute('id') })
+    }
+    finally {
+        Remove-Item -Recurse -Force -Path $tmp -ErrorAction SilentlyContinue
+    }
+}
+
+<#
+.SYNOPSIS
+    Checks each required unit against the mirror metadata and its artifact file.
+.DESCRIPTION
+    Returns one object per required id with Id, InMetadata and HasArtifact. Feature groups
+    ("x.feature.group") are expected as features/x_*.jar, bundles as plugins/<id>_*.jar.
+.PARAMETER MirrorDir
+    The p2 repository folder.
+.PARAMETER RequiredIds
+    Unit ids that must be present (see Get-MirrorRequiredUnitIds).
+.PARAMETER AvailableUnitIds
+    Unit ids found in the mirror metadata (see Get-MirrorAvailableUnitIds).
+#>
+function Test-MirrorUnits([string]$MirrorDir, [string[]]$RequiredIds, [string[]]$AvailableUnitIds) {
+    $available = [System.Collections.Generic.HashSet[string]]::new([string[]]@($AvailableUnitIds))
+    foreach ($id in $RequiredIds) {
+        $artifactPattern = if ($id -like '*.feature.group') {
+            Join-Path (Join-Path $MirrorDir 'features') ("{0}_*.jar" -f ($id -replace '\.feature\.group$', ''))
+        } else {
+            Join-Path (Join-Path $MirrorDir 'plugins') ("{0}_*.jar" -f $id)
+        }
+        [pscustomobject]@{
+            Id          = $id
+            InMetadata  = $available.Contains($id)
+            HasArtifact = [bool](Get-ChildItem -Path $artifactPattern -ErrorAction SilentlyContinue)
+        }
+    }
+}
+
+<#
+.SYNOPSIS
     Builds releng/local-p2 from releng/mirror/pom.xml when needed.
 .DESCRIPTION
     Skips the build when Test-MirrorOutdated says the mirror is current. Otherwise

@@ -566,13 +566,17 @@ if ($SkipVSCodeExtensions) {
 
 Write-Step "VS Code launch environment"
 $makeScript = Join-Path $PSScriptRoot 'make-javafx.ps1'
+$launchEnvFailed = $false
 if (Test-Path $makeScript) {
     try {
         & $makeScript -Target write-launch-env
         Write-OK "Generated .vscode/maze.launch.env"
     } catch {
-        Write-Info "make-javafx.ps1 reported: $_"
-        Write-Info "Run '.\make-javafx.ps1 -Target write-launch-env' manually after restarting your terminal."
+        # Reported as an error and reflected in the exit code (see the end of this script),
+        # so callers such as install-linux.sh and CI do not treat the setup as complete.
+        $launchEnvFailed = $true
+        Write-Err "make-javafx.ps1 reported: $_"
+        Write-Err "Run '.\make-javafx.ps1 -Target write-launch-env' manually after restarting your terminal."
     }
 } else {
     Write-Info "make-javafx.ps1 not found — skipping launch env generation."
@@ -590,3 +594,8 @@ Write-Host "    2. Open this repo in VS Code"
 Write-Host "    3. Run:  .\make-javafx.ps1        (full build — also downloads libGDX via Maven)"
 Write-Host "    4. Press Ctrl+F5 in VS Code to launch the game"
 Write-Host ""
+
+if ($launchEnvFailed) {
+    Write-Err "Setup incomplete: .vscode/maze.launch.env could not be generated (see the error above)."
+    exit 1
+}

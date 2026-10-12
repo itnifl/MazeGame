@@ -113,3 +113,6 @@ build.log
 .vscode/maze.launch.env
 CLAUDE.md
 .continue/permissions.yaml
+
+# Pester -CI output (tools/tests)
+testResults.xml

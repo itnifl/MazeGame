@@ -5,6 +5,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  script-tests:
+    # Pester tests for the build-script helpers (tools/tests). Run on Linux and Windows
+    # because PATH, environment-variable and path handling differ between them.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Run Pester tests
+        shell: pwsh
+        run: |
+          Install-Module Pester -RequiredVersion 5.7.1 -Force -Scope CurrentUser -SkipPublisherCheck
+          Invoke-Pester ./tools/tests -CI
+
   tycho:
     runs-on: ubuntu-latest
     steps:

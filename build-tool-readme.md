@@ -155,8 +155,13 @@ Helper functions in the build scripts have Pester 5 tests under [tools/tests](to
 Invoke-Pester ./tools/tests
 ```
 
-Example: `Get-PathWithEntryFirst` makes sure the detected Java 21 `bin` folder comes first on
+Examples: `Get-PathWithEntryFirst` makes sure the detected Java 21 `bin` folder comes first on
 `PATH`, even when a caller such as `install.ps1` has already appended it after another JDK.
+`Get-MirrorRequiredUnitIds` / `Test-MirrorUnits` drive step 2 of `Run-P2AndBuildCheck-javafx.ps1`
+from `releng/mirror/pom.xml`, so the check cannot drift from what the mirror contains.
+
+The `script-tests` job in `.github/workflows/buildtest.yml` runs these tests on Ubuntu and
+Windows for every pull request.
 
 ## Notes
 
