@@ -370,7 +370,8 @@ Check for these bundles/features in releng\local-p2 and content.xml:
 if ($StartAt -gt 2) {
     Skip-Step -Step $step2 -Cmd $cmdText2
 } else {
-    $tmp = Join-Path $env:TEMP ("p2check_{0}" -f [guid]::NewGuid())
+    # GetTempPath() instead of $env:TEMP, which is not set on Linux/macOS.
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("p2check_{0}" -f [guid]::NewGuid())
     $dirOutput   = $null
     $grepOutput  = $null
     $missingJars = @()
