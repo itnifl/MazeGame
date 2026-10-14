@@ -225,6 +225,13 @@ public class GameMazeWorld {
      * breakable wall that shares an endpoint with the destroyed segment also
      * collapses instantly, propagating through connected chains.</p>
      *
+     * <p><strong>Threading:</strong> callers must invoke this method on the
+     * frontend's UI/render thread. The wall collections tolerate concurrent
+     * reads, but navigation-graph rewiring mutates graph edges and must not run
+     * concurrently with graph traversal. JavaFX callers should dispatch with
+     * {@code Platform.runLater}; libGDX callers should dispatch with
+     * {@code Gdx.app.postRunnable} (normally through their UI scheduler).</p>
+     *
      * @return {@code true} if the wall was destroyed by this damage
      */
     public boolean applyWallDamage(BreakableWall bw, int damage) {

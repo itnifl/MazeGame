@@ -6,6 +6,7 @@ import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.RealMaze;
+import main.game.maze.common.graphics.UiScheduler;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,7 +15,9 @@ import java.util.function.Consumer;
  * Provides the wall-damage callback used by
  * {@link GdxGameCombatAndEnemyFlowSupport} when a STRAIGHT projectile hits a wall.
  *
- * <p>Runs on the libGDX render thread — no {@code postRunnable} needed.</p>
+ * <p>Wall mutation is always handed to the active UI scheduler. In libGDX,
+ * off-thread callers are therefore dispatched through
+ * {@code Gdx.app.postRunnable} before the navigation graph is rewired.</p>
  */
 public final class GdxWallDamageSupport {
 
@@ -50,10 +53,13 @@ public final class GdxWallDamageSupport {
     static final float PROJECTILE_HIT_RADIUS = 10f;
 
     static void applyProjectileDamageToWall(GameMazeWorld world, Vector2D wall, int damage) {
-        BreakableWall bw = world.findBreakableWall(wall);
-        if (bw != null) {
-            world.applyWallDamage(bw, damage);
-        }
+        if (world == null || wall == null) return;
+        UiScheduler.get().runOnUiThread(() -> {
+            BreakableWall bw = world.findBreakableWall(wall);
+            if (bw != null) {
+                world.applyWallDamage(bw, damage);
+            }
+        });
     }
 
     public static GameMazeWorld worldFrom(MazeArena arena) {
