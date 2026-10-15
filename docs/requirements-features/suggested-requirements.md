@@ -271,3 +271,9 @@ These requirements have been implemented and verified.
 
 - **SR-115** *(DDD, SRP)*: Cascade collapse logic lives inside `GameMazeWorld`, mixing world-state management with collapse propagation strategy. Introducing a `CascadeCollapsePolicy` interface (with `collectToCollapse(BreakableWall destroyed, List<BreakableWall> candidates)`) would allow alternate collapse strategies (no cascade, distance-based decay, time-delayed collapse) to be injected per game mode without modifying the world model.
 
+
+- **SR-203** *(Parity, CRR-5)*: Mirror the libGDX wall-damage threading tests (`GdxWallDamageThreadSafetyTest`) for JavaFX: verify `GameController.applyProjectileDamageToWall` defers mutation via `Platform.runLater` when called off the FX thread, applies queued hits idempotently, and that `FxUiScheduler` (if present) honours the same inline-vs-post contract as `GdxUiScheduler`. A shared, frontend-agnostic `IUiScheduler` contract test (abstract JUnit class in `maze-common-frontend` test utilities) would let both backends run the same assertions.
+
+- **SR-204** *(DDD, Observability)*: Add a debug-mode assertion (or `FINE` log with thread name) in `GameMazeWorld.applyWallDamage` when invoked off the registered UI thread, so a future regression of the #132 threading contract is detectable at runtime instead of only via a nav-graph `ConcurrentModificationException`.
+
+- **SR-205** *(12-Factor, Observability)*: Builds behind a TLS-intercepting proxy fail Tycho p2 resolution with `PKIX path building failed`. Document (and optionally honour in `make-*.ps1` / `make-*` via an environment variable) `MAVEN_OPTS=-Djavax.net.ssl.trustStoreType=Windows-ROOT` on Windows so the build uses the OS trust store without modifying the JDK.
