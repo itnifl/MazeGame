@@ -116,7 +116,7 @@ class GdxGameAudioCoordinatorTest {
         assertTrue(engine.stoppedChannels.contains(AudioChannelConstants.GAME_OVER_MUSIC));
     }
 
-    // --- BUG-3 regression: menu music was silent on initial load (MenuScreenController.show()
+    // --- Regression: menu music was silent on initial load (MenuScreenController.show()
     //     was the first audio call but GdxBackend.install() hadn't been called yet, so
     //     AudioEngine.get() returned NoopAudioEngine). Fix: GdxGame.create() calls
     //     GdxBackend.install() before routing to the first screen, and MenuScreenController.show()

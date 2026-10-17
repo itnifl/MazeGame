@@ -1,65 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- releng/maze.target -->
-<target name="Maze Target" sequenceNumber="68">
+<target name="Maze Target" sequenceNumber="69">
   <locations>
-    <location 
-        includeAllPlugins="false" includeAllPlatforms="false" 
-        includeConfigurePhase="true" includeSource="true" 
-        type="InstallableUnit">
-        <!-- Pinned repositories to keep Tycho resolution stable and aligned with releng/mirror -->
-        <repository location="https://download.eclipse.org/eclipse/updates/4.33/"/>
-        <repository location="https://download.eclipse.org/releases/2024-09/"/>
-        <repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.33.0/"/>
-        <repository location="https://download.eclipse.org/modeling/emf/emf/updates/"/>
-        <repository location="https://download.eclipse.org/modeling/mdt/ocl/updates/releases/"/>
-        <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.42.0/"/>
-        <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/"/>
-      
-      <!-- Eclipse Core Runtime -->
-      <unit id="org.eclipse.core.runtime" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.common" version="0.0.0"/>
-      <unit id="org.eclipse.core.jobs" version="0.0.0"/>
-      
-      <!-- EMF Core -->
-      <unit id="org.eclipse.emf.ecore" version="0.0.0"/>
-      <unit id="org.eclipse.emf.common" version="0.0.0"/>
-      <unit id="org.eclipse.emf.ecore.xmi" version="0.0.0"/>
-      <unit id="org.eclipse.emf.codegen.ecore" version="0.0.0"/>
-      <unit id="org.eclipse.emf.common.ui" version="0.0.0"/>
-      <unit id="org.eclipse.emf.edit" version="0.0.0"/>
-      <unit id="org.eclipse.emf.edit.ui" version="0.0.0"/>
-      <unit id="org.eclipse.emf.ecore.editor" version="0.0.0"/>
-      
-      <!-- OCL for model validation (required by main.game.maze.opponents, main.game.maze.difficulties) -->
-      <unit id="org.eclipse.ocl.ecore" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.pivot" version="0.0.0"/>
-      <unit id="org.eclipse.ocl.common" version="0.0.0"/>
-      
-      <!-- Equinox for headless applications -->
-      <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
-      
-      <!-- Xtext dependencies (without Xbase - DSL uses common.Terminals only) -->
-      <unit id="org.eclipse.xtext" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.xbase.lib" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.util" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.ide" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.ui" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.ui.shared" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.ui.codetemplates.ui" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.builder" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.testing" version="0.0.0"/>
-      <unit id="org.eclipse.xtext.xbase.testing" version="0.0.0"/>
-      <unit id="org.antlr.runtime" version="0.0.0"/>
-      
-      <!-- MWE2 for Xtext code generation -->
-      <unit id="org.eclipse.emf.mwe2.runtime" version="0.0.0"/>
-      <unit id="org.eclipse.emf.mwe2.launch" version="0.0.0"/>
-      <unit id="org.eclipse.emf.mwe2.lib" version="0.0.0"/>
-      <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="0.0.0"/>
-      
-      <!-- Note: Code generators use FreeMarker (embedded JAR).
-           OCL is still required for EMF model validation constraints.
-           JUnit 5 testing comes via org.eclipse.xtext.testing. -->
-    </location>
+    <!--
+      make-javafx.ps1 populates releng/local-p2 first; the units it contains are
+      selected in releng/mirror/pom.xml (EMF, OCL, Xtext, MWE2, Equinox and their
+      dependencies).
+
+      A Directory location takes an OS path rather than a URI. ${project_loc}
+      expands to D:\... on Windows, which is a valid path but an invalid
+      file: URI, so an InstallableUnit repository location cannot be used here.
+    -->
+    <location path="${project_loc:/MazeGame}/releng/local-p2" type="Directory"/>
   </locations>
 </target>

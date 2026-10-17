@@ -121,11 +121,11 @@ class FxMazeCanvasRendererTest {
     }
 
     // ------------------------------------------------------------------
-    // BUG-5: Scrolled areas appear white — background must be on full-map canvas
+    // Regression: scrolled areas appeared white — background must be on full-map canvas
     // ------------------------------------------------------------------
 
     @Test
-    @DisplayName("drawCanvas produces a full-map-sized canvas — background covers all scrolled areas (BUG-5)")
+    @DisplayName("drawCanvas produces a full-map-sized canvas — background covers all scrolled areas")
     void drawCanvas_canvasSizeIsFullMapSize() throws Exception {
         FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(
                 MazeVisualStyleConfig.DEFAULT, () -> "Easy");
@@ -138,7 +138,7 @@ class FxMazeCanvasRendererTest {
     }
 
     @Test
-    @DisplayName("drawCanvas with Hard difficulty background config does not throw (BUG-5)")
+    @DisplayName("drawCanvas with Hard difficulty background config does not throw")
     void drawCanvas_hardDifficultyBackground_doesNotThrow() throws Exception {
         FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(
                 MazeVisualStyleConfig.DEFAULT, () -> "Hard");
@@ -147,7 +147,7 @@ class FxMazeCanvasRendererTest {
     }
 
     @Test
-    @DisplayName("drawCanvas with missing background image path does not throw (BUG-5 resilience)")
+    @DisplayName("drawCanvas with missing background image path does not throw")
     void drawCanvas_missingBackgroundImage_doesNotThrow() throws Exception {
         MazeVisualStyleConfig brokenConfig = new MazeVisualStyleConfig(
                 "/non/existent/bg.png",

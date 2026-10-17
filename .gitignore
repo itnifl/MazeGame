@@ -74,6 +74,7 @@ out/
 *.rej
 /releng/local-p2/binary
 releng/local-p2/.mirror.stamp
+releng/local-p2/.mirror.inputs
 # Note: src-gen is committed to allow CI builds without running generators
 # This applies to FreeMarker (maze-module-generator) and Xtext DSL modules
 # /maze-module-generator/src-gen
@@ -112,3 +113,6 @@ build.log
 .vscode/maze.launch.env
 CLAUDE.md
 .continue/permissions.yaml
+
+# Pester -CI output (tools/tests)
+testResults.xml

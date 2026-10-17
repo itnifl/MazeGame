@@ -25,6 +25,7 @@
 * 🎨 [maze-javafx](maze-javafx/readme.md) — JavaFX backend adapters
 * 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX backend
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
+* ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 x86_64 prerequisite installer
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
   * 📄 [Maze Generation Rules](docs/requirements-features/maze-generation-rules.md) (MGR-1..19)
@@ -53,7 +54,62 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 
 ## Quick start
 
-Run the install script once to download and configure every prerequisite automatically. PowerShell 7+ is required (`pwsh`); install it first if you don't have it:
+### Ubuntu 24.04 x86_64
+
+From the repository root, run the native installer:
+
+```bash
+sudo ./install-linux.sh
+```
+
+The installer performs a complete prerequisite audit on every run. It installs
+missing or wrong-version components and reuses only components that already
+match the required version. Interrupted downloads use a persistent cache and
+resume on the next run.
+
+It installs and configures:
+
+1. OpenJDK 21
+2. Apache Maven 3.9.16
+3. PowerShell 7.6.6
+4. JavaFX SDK 21.0.9
+5. Linux graphics, audio, GStreamer, and Xvfb dependencies
+6. Recommended VS Code extensions, when the `code` command is available
+7. `JAVA_HOME`, `MAVEN_HOME`, and `PATH_TO_FX` through a system profile file
+8. `.vscode/maze.launch.env` for the supplied launch configurations
+
+The downloaded Maven, PowerShell, and JavaFX archives are verified against
+pinned checksums before installation.
+
+For user-level setup, the Linux bootstrap reuses the existing `install.ps1`
+installer. That script installs the recommended VS Code extensions and calls
+the existing `make-javafx.ps1` target that writes `.vscode/maze.launch.env`.
+
+No repository path or account name is embedded in the installer. It discovers
+both from the script location and the invoking `sudo` account. System locations
+also have overridable defaults:
+
+```bash
+sudo env \
+  MAZEGAME_INSTALL_ROOT=/path/to/system/tools \
+  MAZEGAME_BIN_DIR=/path/to/system/bin \
+  MAZEGAME_CACHE_DIR=/path/to/cache \
+  MAZEGAME_PROFILE_FILE=/path/to/profile.d/mazegame.sh \
+  ./install-linux.sh
+```
+
+After installation, run the `source` command printed by the installer, or log
+out and back in, then continue as your normal user rather than with `sudo`.
+Opening another non-login terminal alone may not load the system profile. The
+profile puts Java, Maven and `MAZEGAME_BIN_DIR` (where `pwsh` is linked) on
+`PATH`. See
+the [build tool guide](build-tool-readme.md) for the maintained build and launch
+commands. The supplied VS Code launch configurations are also ready to use.
+
+### Windows, macOS, and other Linux distributions
+
+Use the cross-platform PowerShell installer. PowerShell 7+ (`pwsh`) must be
+available first:
 
 | OS | PowerShell 7 install |
 |---|---|
@@ -61,7 +117,7 @@ Run the install script once to download and configure every prerequisite automat
 | macOS | `brew install powershell` |
 | Linux | See [Microsoft docs](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux) |
 
-Then, from the repo root:
+Then run from the repository root:
 
 ```powershell
 # JDK 21 + Maven only
@@ -71,14 +127,14 @@ pwsh -File ./install.ps1
 pwsh -File ./install.ps1 -JavaFX
 ```
 
-The script:
+The PowerShell installer:
 1. Detects your OS (Windows / macOS / Linux) and CPU architecture
 2. Installs **JDK 21** via winget / Chocolatey / Homebrew / apt / dnf / pacman
 3. Installs **Apache Maven** via the same package manager
 4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
 5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
 6. Sets `JAVA_HOME` as a persistent user-level environment variable
-7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`
+7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`. If that fails, the installer prints an `[!!]` error and exits with code 1.
 
 > **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
 
@@ -117,7 +173,7 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 
 * The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
-* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case:  `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run: `mvn clean install` and finally run the game in VS Code, and possibly select `Continue` if VS Code says: "Build failed, do you want to continue?". Both debugging and running without debugging will still work.
+* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case: `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run `pwsh -File ./make-javafx.ps1 -Target quick` and finally run the game in VS Code. You may need to select `Continue` if VS Code asks whether to continue after a language-server build failure.
 * You can pass walls by running into them through the edge.
 
 ## Sources
@@ -130,12 +186,20 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 * Images: [https://opengameart.org/](https://opengameart.org/)
 * A lot of the graphics is generated at: [https://artlist.io/](https://artlist.io/)
 
+## License
+
+The MazeGame source code is released under the [MIT License](LICENSE).
+
+Third-party assets listed under [Sources](#sources), such as music, sounds and images,
+are not covered by the MIT License and remain under their original creators' terms.
+Check those terms before redistributing them.
+
 ---
 
 ## Prerequisites and setup
 
 This project requires JDK 21 for full builds (Xtext generation + Tycho reactor).
-JavaFX 25 may be used for running the game only.
+The supported JavaFX SDK version is 21.0.9, matching the Maven build.
 
 * Visual Studio Code: [https://code.visualstudio.com/download](https://code.visualstudio.com/download)
   Extensions:
@@ -154,9 +218,9 @@ JavaFX 25 may be used for running the game only.
 Download and install:
 
   * JDK 21: [https://www.oracle.com/java/technologies/downloads/#java21](https://www.oracle.com/java/technologies/downloads/#java21)
-  * JavaFX 25 SDK (optional for game runtime): [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
+  * JavaFX 21.0.9 SDK (optional when Maven supplies the runtime modules): [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/)
     Setup guide: [https://dev.java/learn/javafx/install/#javafx-windows](https://dev.java/learn/javafx/install/#javafx-windows)
-  * Apache Maven: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
+  * Apache Maven 3.9.6 or newer: [https://maven.apache.org/install.html](https://maven.apache.org/install.html)
     - Or install [Chocolatey](https://chocolatey.org/install) and use Chocolatey to [install Maven](https://community.chocolatey.org/packages/maven) for you.
   * PowerShell [PowerShell 7.x](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.5#msi) or higher
     - Note that PowerShell can be installed on Linux and macOS also.
@@ -165,7 +229,7 @@ Download and install:
 Environment variables (examples on Windows):
 
 * 🛠️ `JAVA_HOME=C:\Program Files\Java\jdk-21`
-* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-25`
+* 🛠️ `PATH_TO_FX=C:\Program Files\Java\javafx-sdk-21.0.9`
 * 🛠️ `PATH+=C:\Program Files\Java\jdk-21\bin`
 * 🛠️ `MAVEN_HOME=C:\Program Files\Apache\Apache Maven`
 * 🛠️ `PATH+=C:\Program Files\Apache\Apache Maven\bin`
@@ -178,7 +242,7 @@ VS Code Java runtime:
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
-⚡ Finally, in Visual Studio Code select [App.java](maze-javafx-backend/src/main/java/main/game/maze/App.java) and run it.
+⚡ Finally, in Visual Studio Code run the **Launch MazeGame (JavaFX)** configuration (Ctrl+F5), which starts [Launcher.java](maze-javafx-backend/src/main/java/main/game/maze/Launcher.java) (the JavaFX launcher shim).
 
 ### Graphics backends (JavaFX vs libGDX)
 
@@ -206,7 +270,7 @@ If you install or switch Java versions, regenerate the file before launching:
 .\make-javafx.ps1 -Target prepare-run
 ```
 
-- **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.App`.
+- **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.Launcher`.
 - **Launch MazeGame (libGDX backend)** — runs
   `main.game.maze.libgdx.GdxAppLauncher`.
 
@@ -276,17 +340,8 @@ For a focused build command guide with fastest paths and no mirror rebuild optio
 Xtext generation and reactor builds that include DSL modules should be run with Java 21 in the shell session.
 
 ```powershell
-# PowerShell — refresh local mirror, prove key IU exists, reset Tycho cache, full build
-
-# 1) start clean so the mirror is rebuilt
-Remove-Item -Recurse -Force releng/local-p2 -ErrorAction SilentlyContinue
-mvn -f releng/mirror/pom.xml -U verify
-
-# 2) force Tycho to reread the target (clear its p2 cache)
-Remove-Item -Recurse -Force "$Env:USERPROFILE\.m2\repository\.cache\tycho" -ErrorAction SilentlyContinue
-
-# 3) full build (Tycho + app)
-mvn -U clean verify
+# Refresh the local mirror, reset Tycho's cache, then build and test the reactor.
+pwsh -File ./make-javafx.ps1 -Target all
 ```
 
 #### **Fast incremental run**
@@ -302,9 +357,9 @@ make mirror
 Other handy targets:
 
 ```bash
-# build only the JavaFX runtime module, then full build with tests
+# build only the JavaFX runtime module, then use the mirror-aware full build
 mvn -U -pl maze-javafx-backend -am clean package
-mvn -U clean install
+pwsh -File ./make-javafx.ps1 -Target all
 
 # run all unit tests
 mvn test
@@ -483,6 +538,7 @@ Helper scripts for installing prerequisites, packaging the source, and running r
 
 | Script | Purpose |
 |---|---|
+| ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 x86_64; reuses `install.ps1` for user setup |
 | ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
 | 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
 | 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |
@@ -500,10 +556,10 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 
 **Typical flow**
 
-1. Optionally clears `releng\local-p2` and rebuilds the mirror.
-2. Verifies required Eclipse bundles and features including Xtext SDK for DSL support.
+1. Optionally clears `releng\local-p2` and rebuilds the mirror. Your shared `~/.m2/repository` is kept unless you pass `-PurgeMavenRepository`.
+2. Verifies that every unit listed in `releng/mirror/pom.xml` (EMF, OCL, Xtext, MWE2, Equinox, JUnit platform) is in the mirror metadata and has its plug-in or feature jar.
 3. Optionally clears `~\.m2\repository\.cache\tycho` to force a fresh resolve.
-4. Performs a clean verify from the root with tests enabled.
+4. Performs a clean verify from the root with tests enabled, excluding `releng/mirror` (already handled in step 1).
 5. Prints a compact result table and writes the full log under `releng\test-results`.
 
 **Quick start**

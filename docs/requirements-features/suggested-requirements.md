@@ -2,17 +2,17 @@
 
 ## Candidate Additions
 
-### BUG-7 / BUG-8 follow-on suggestions
+### Ghost solidification and JavaFX input focus follow-on suggestions
 
-- **SR-124** *(Observability, BUG-7)*: When a ghost transitions from phasing to solid, a DEBUG-level event should be emitted including the ghost's ID, position, and the new stored energy value. This allows QA to verify the solidification tick without attaching a debugger, and makes diagnosing future regressions to the `drainNonTangientEnergy` return value trivial.
+- **SR-124** *(Observability, ghost solidification)*: When a ghost transitions from phasing to solid, a DEBUG-level event should be emitted including the ghost's ID, position, and the new stored energy value. This allows QA to verify the solidification tick without attaching a debugger, and makes diagnosing future regressions to the `drainNonTangientEnergy` return value trivial.
 
-- **SR-125** *(DDD, BUG-7)*: The EMF model's `nonTangibilityEnergy` field stores a `double` but the XMI-generated EMF setter silently truncates it to `int`. Consider extracting a `GhostEnergyModel` value object that stores the energy as a `double` internally and exposes `setEnergy(double)` / `getEnergy()` without truncation. This removes the hidden invariant that all callers must currently know about and document.
+- **SR-125** *(DDD, ghost solidification)*: The EMF model's `nonTangibilityEnergy` field stores a `double` but the XMI-generated EMF setter silently truncates it to `int`. Consider extracting a `GhostEnergyModel` value object that stores the energy as a `double` internally and exposes `setEnergy(double)` / `getEnergy()` without truncation. This removes the hidden invariant that all callers must currently know about and document.
 
-- **SR-126** *(Observability, BUG-8)*: `GameController.handleKeyPressed` and `handleKeyReleased` should emit FINE-level log entries when `gameBoard` loses focus and when it regains it (via the event filter and `requestFocus` calls). This makes focus transitions visible in logs so future regressions (input stops responding) can be diagnosed without a debugger.
+- **SR-126** *(Observability, JavaFX input focus)*: `GameController.handleKeyPressed` and `handleKeyReleased` should emit FINE-level log entries when `gameBoard` loses focus and when it regains it (via the event filter and `requestFocus` calls). This makes focus transitions visible in logs so future regressions (input stops responding) can be diagnosed without a debugger.
 
-- **SR-127** *(12-Factor, BUG-8)*: The `Platform.runLater` queue flooding fix (moving `updateProjectiles` from the AI thread to `Platform.runLater`) is correct but makes the latency of projectile position updates non-deterministic relative to the game loop. Consider introducing a fixed-rate JavaFX `AnimationTimer` solely for projectile updates, decoupled from the AI thread, so projectile physics are always advanced at frame rate rather than at AI tick rate.
+- **SR-127** *(12-Factor, JavaFX input focus)*: The `Platform.runLater` queue flooding fix (moving `updateProjectiles` from the AI thread to `Platform.runLater`) is correct but makes the latency of projectile position updates non-deterministic relative to the game loop. Consider introducing a fixed-rate JavaFX `AnimationTimer` solely for projectile updates, decoupled from the AI thread, so projectile physics are always advanced at frame rate rather than at AI tick rate.
 
-- **SR-128** *(Testing, BUG-8)*: The focus-loss scenario (Tab key stealing focus from `gameBoard`) should be covered by an automated UI integration test using `TestFX` (headless). The test would: load `game.fxml`, start gameplay, fire a `KeyCode.TAB` event at the scene, then fire directional key events and assert they are still received by the game.
+- **SR-128** *(Testing, JavaFX input focus)*: The focus-loss scenario (Tab key stealing focus from `gameBoard`) should be covered by an automated UI integration test using `TestFX` (headless). The test would: load `game.fxml`, start gameplay, fire a `KeyCode.TAB` event at the scene, then fire directional key events and assert they are still received by the game.
 
 - **SR-129** *(Observability, Issues 1-2)*: Player bomb lifecycle events shall be emitted at DEBUG level in both frontends, including `placedAt`, `fuseMs`, `detonatedAt`, and `targetsHit`. This enables parity verification that space-bar attacks are delayed-fuse bomb detonations rather than instant damage paths.
 
@@ -22,31 +22,40 @@
 
 - **SR-132** *(Reliability, Issue 2)*: JavaFX gameplay MUST self-heal keyboard focus so player input cannot become permanently unresponsive after focus is lost to a transient node or dropped to `null`. A per-frame guard (`FxFocusGuard.shouldReassertFocus`) re-asserts focus on `gameBoard` unless a text input control (the in-game terminal) legitimately holds it. Unit covered by `FxFocusGuardTest`. Suggestion (extends SR-128): add a headless `TestFX` integration test that drops the focus owner to `null` mid-play and asserts directional keys still drive movement on the next frame.
 
-### BUG-6 follow-on suggestions
+- **SR-203** *(Portability, CRR-9, Issue #155)*: The Tycho target definition (`releng/maze.target`) MUST resolve on Windows, Linux and macOS without per-machine edits. `${project_loc:...}` expands to an OS-native path, so on Windows it produces an invalid `file:` URI with backslashes. Suggestion: add a CI matrix job (ubuntu + windows) that runs `make-javafx.ps1 quick-no-tests` so OS-specific target or script regressions are caught before merge. For 12-Factor config, let a `MAZEGAME_P2_URI`-style setting override the mirror location.
+  - *Status (PR #152):* target resolution implemented (`Directory` location) and validated on Windows and Ubuntu 24.04; see RTM SR-203. The CI build matrix and the `MAZEGAME_P2_URI` override remain suggestions.
 
-- **SR-121** *(DDD, BUG-6)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
+- **SR-204** *(Testability, Observability, Java 21 selection)*: Build-script helpers MUST have automated tests that CI runs. `tools/tests` now holds Pester 5 tests for `make-javafx.ps1` (`Get-PathWithEntryFirst`). Suggestions: (1) add an `Invoke-Pester ./tools/tests` step to the GitHub workflows on Windows and Ubuntu runners; (2) have `install.ps1` fail with a non-zero exit code (or a clear `[!!]` line) when `write-launch-env` fails, instead of logging `[..]` and exiting 0; (3) update the step 2 check list in `Run-P2AndBuildCheck-javafx.ps1`, which still expects `org.eclipse.emf.sdk`, `org.eclipse.emf.codegen` and `org.eclipse.xtext.sdk` features that `releng/mirror/pom.xml` does not mirror, so step 2 reports a false FAIL; (4) DRY: `Run-P2AndBuildCheck-javafx.ps1` keeps its own copy of the Java 21 detection (`Get-Java21Home`, `Use-Java21OrFail`); dot-source `make-javafx.ps1` as `make-libgdx.ps1` already does, so fixes such as the Java 21 PATH ordering (`install.ps1` left an earlier JDK active) land in one place.
+  - *Status (PR #152):* (1)–(4) implemented. `script-tests` CI job (Ubuntu + Windows); `install.ps1` exits 1 with `[!!]` lines; step 2 derives its check from `releng/mirror/pom.xml` (`Get-MirrorRequiredUnitIds`, `Get-MirrorAvailableUnitIds`, `Test-MirrorUnits`); `Run-P2AndBuildCheck-javafx.ps1` dot-sources `make-javafx.ps1`. See RTM SR-204.
 
-- **SR-122** *(Observability, BUG-6)*: `FxGameRenderCoordinator.installGameBoardClip()` silently no-ops when `gameBoard` is null. Add a WARN-level log entry listing `gameBoard == null` so developers can detect premature coordinator construction without a debugger.
+- **SR-205** *(Compliance, Maintainability)*: The source code is now MIT-licensed (`LICENSE`). Suggestions: (1) audit the third-party assets under `data/` (YouTube-sourced music and sounds, artlist.io and OpenGameArt images) and record each asset's license and attribution in a `THIRD_PARTY_NOTICES.md`, replacing any asset whose terms do not allow redistribution; (2) confirm with past contributors that they agree to MIT for their contributions; (3) add a `.gitattributes` with `*.sh text eol=lf`, so shell scripts keep LF line endings even when copied out of a Windows checkout (for example into WSL).
+  - *Status (PR #152):* (3) implemented (`.gitattributes`). (1) and (2) are owner decisions and remain open.
 
-- **SR-123** *(12-Factor, BUG-6)*: Viewport dimensions are currently read from `Scene.getWidth()/getHeight()` at render time. Add a `MAZE_VIEWPORT_WIDTH` / `MAZE_VIEWPORT_HEIGHT` override environment variable that, if set, bypasses scene introspection — enabling headless integration tests to set a known viewport size without a real JavaFX stage.
+### gameBoard clip ownership follow-on suggestions
 
-### BUG-5 follow-on suggestions
+- **SR-121** *(DDD, gameBoard clip)*: Extract a `GameBoardClipOwner` interface with a single `setClip(Rectangle)` method. `FxGameRenderCoordinator` implements it; no other class may call `gameBoard.setClip()` directly. This makes the single-owner contract explicit and prevents future regressions where a second class overwrites the clip.
 
-- **SR-118** *(DDD, BUG-5)*: The `gameBoard` Pane background image in `game.fxml` is now redundant for the in-game state (the maze canvas carries its own background). Consider removing the `<background>` element from `game.fxml` and replacing it with a neutral pre-game placeholder (e.g., a dark-colour CSS fill via `fx:stylesheet`) so the pre-game and in-game states both use the correct difficulty-specific image.
+- **SR-122** *(Observability, gameBoard clip)*: `FxGameRenderCoordinator.installGameBoardClip()` silently no-ops when `gameBoard` is null. Add a WARN-level log entry listing `gameBoard == null` so developers can detect premature coordinator construction without a debugger.
 
-- **SR-119** *(Observability, BUG-5)*: `FxMazeCanvasRenderer.drawBackground()` silently skips the fill when the image resource is missing. Add an WARN-level event published to an application-level diagnostic bus (or at minimum a visible in-game notification) so QA can distinguish "background image missing" from "background successfully drawn" without attaching a debugger.
+- **SR-123** *(12-Factor, gameBoard clip)*: Viewport dimensions are currently read from `Scene.getWidth()/getHeight()` at render time. Add a `MAZE_VIEWPORT_WIDTH` / `MAZE_VIEWPORT_HEIGHT` override environment variable that, if set, bypasses scene introspection — enabling headless integration tests to set a known viewport size without a real JavaFX stage.
 
-- **SR-120** *(12-Factor, BUG-5)*: The background image path is currently embedded in `MazeVisualStyleConfig` (loaded from XMI or properties). For full 12-Factor compliance (config via environment), add a fallback environment variable `MAZE_BG_EASY`, `MAZE_BG_NORMAL`, `MAZE_BG_HARD` that can override the XMI-configured paths at runtime without recompilation.
+### Scrolled-area background follow-on suggestions
 
-### BUG-3 / BUG-4 follow-on suggestions
+- **SR-118** *(DDD, scrolled-area background)*: The `gameBoard` Pane background image in `game.fxml` is now redundant for the in-game state (the maze canvas carries its own background). Consider removing the `<background>` element from `game.fxml` and replacing it with a neutral pre-game placeholder (e.g., a dark-colour CSS fill via `fx:stylesheet`) so the pre-game and in-game states both use the correct difficulty-specific image.
 
-- **SR-113** *(Observability, BUG-3)*: When the JavaFX camera clip is recalculated each frame, a DEBUG-level log entry should be emitted at a throttled rate (e.g., once per second) including `translateX`, `translateY`, `clipX`, `clipY`, `viewportWidth`, and `viewportHeight`. This allows QA to diagnose future clip/translation divergences without attaching a debugger.
+- **SR-119** *(Observability, scrolled-area background)*: `FxMazeCanvasRenderer.drawBackground()` silently skips the fill when the image resource is missing. Add an WARN-level event published to an application-level diagnostic bus (or at minimum a visible in-game notification) so QA can distinguish "background image missing" from "background successfully drawn" without attaching a debugger.
 
-- **SR-114** *(DDD, BUG-3)*: `FxGameRenderCoordinator.computeClipRect` and `computeCameraTranslation` represent a mini viewport domain. Consider extracting a `ViewportScrollState` value object that holds translation + clip-rect together, making the dependency between the two values explicit and preventing future callers from updating one without the other.
+- **SR-120** *(12-Factor, scrolled-area background)*: The background image path is currently embedded in `MazeVisualStyleConfig` (loaded from XMI or properties). For full 12-Factor compliance (config via environment), add a fallback environment variable `MAZE_BG_EASY`, `MAZE_BG_NORMAL`, `MAZE_BG_HARD` that can override the XMI-configured paths at runtime without recompilation.
 
-- **SR-115** *(12-Factor, BUG-4)*: The libGDX audio engine installation sequence (call `GdxBackend.install()` exactly once at startup in `GdxGame.create()`) shall be enforced by a lifecycle contract test: a headless `GdxGame` stub must confirm that after `create()` the `AudioEngine.get()` instance is not a `NoopAudioEngine`. This guards against future regressions where the install call is moved or removed.
+### Camera scroll clip and libGDX menu music follow-on suggestions
 
-- **SR-116** *(Observability, BUG-4)*: `GdxBackend.install()` shall emit a one-time INFO log entry confirming the engine type and the thread on which it was installed (render thread). This makes it immediately apparent in run logs whether the audio backend was successfully initialised before any screen was shown.
+- **SR-113** *(Observability, camera scroll clip)*: When the JavaFX camera clip is recalculated each frame, a DEBUG-level log entry should be emitted at a throttled rate (e.g., once per second) including `translateX`, `translateY`, `clipX`, `clipY`, `viewportWidth`, and `viewportHeight`. This allows QA to diagnose future clip/translation divergences without attaching a debugger.
+
+- **SR-114** *(DDD, camera scroll clip)*: `FxGameRenderCoordinator.computeClipRect` and `computeCameraTranslation` represent a mini viewport domain. Consider extracting a `ViewportScrollState` value object that holds translation + clip-rect together, making the dependency between the two values explicit and preventing future callers from updating one without the other.
+
+- **SR-115** *(12-Factor, libGDX menu music)*: The libGDX audio engine installation sequence (call `GdxBackend.install()` exactly once at startup in `GdxGame.create()`) shall be enforced by a lifecycle contract test: a headless `GdxGame` stub must confirm that after `create()` the `AudioEngine.get()` instance is not a `NoopAudioEngine`. This guards against future regressions where the install call is moved or removed.
+
+- **SR-116** *(Observability, libGDX menu music)*: `GdxBackend.install()` shall emit a one-time INFO log entry confirming the engine type and the thread on which it was installed (render thread). This makes it immediately apparent in run logs whether the audio backend was successfully initialised before any screen was shown.
 
 - **SR-117** *(Parity, CRR-5)*: `MenuScreenController` now owns a `GdxGameAudioCoordinator`. If future screens are added (e.g., a settings screen or loading screen), each should follow the same pattern: own an audio coordinator instance and call `switchTo*Music()` in `show()` and `stopAll()` in `dispose()`. A shared `AudioAwareScreen` abstract base class (implementing `Screen`) could enforce this contract at compile time.
 
@@ -172,7 +181,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-92** *(Observability)*: JaCoCo line-coverage thresholds should be split per package within `maze-javafx-backend` (e.g., separate minimums for `characters`, `javafx.controller`, `runtime`) so coverage regressions in a single package are immediately identifiable rather than masked by a module-level aggregate.
 
-### BUG-1 / BUG-2 post-fix — DDD / 12-Factor / Observability suggestions
+### Wall registry classpath and spawn retry post-fix — DDD / 12-Factor / Observability suggestions
 
 - **SR-87** *(DDD)*: `WallRegistry` and `WallMaterialBaseType` are generated artifacts tightly coupled to the wall sub-domain. Introduce a `WallDomainService` façade that hides the static registry behind an injectable, mockable interface. This removes static dependency coupling from consumers (`FxGameSessionBootstrapper`, `RuntimeVisualModelLoader`) and aligns with DDD's domain-service pattern.
 

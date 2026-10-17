@@ -11,10 +11,16 @@ Set-Location $scriptRoot
 $Mvn            = 'mvn'   # change to 'mvnw' if you prefer wrapper
 $LocalP2Dir     = 'releng\local-p2'
 $MirrorStamp    = Join-Path $LocalP2Dir '.mirror.stamp'
+$MirrorInputStateFile = Join-Path $LocalP2Dir '.mirror.inputs'
 $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
 )
+$EclipseRepositoryBase = if ($env:MAZEGAME_ECLIPSE_REPOSITORY_BASE) {
+    $env:MAZEGAME_ECLIPSE_REPOSITORY_BASE.Trim().TrimEnd('/')
+} else {
+    $null
+}
 $UserHome       = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { [Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile) }
 $TychoCache     = Join-Path $UserHome '.m2\repository\.cache\tycho'
 $RequiredJavaMajor = 21
@@ -188,6 +194,36 @@ function Get-JavaMajorFromExecutable([string]$javaExe) {
     return -1
 }
 
+<#
+.SYNOPSIS
+    Returns a PATH-style string with Entry first and any other occurrences removed.
+.DESCRIPTION
+    Only prepending when Entry is missing is not enough: a caller such as install.ps1
+    may already have appended it after another Java, which would then stay active.
+    Comparison ignores case on Windows and is case-sensitive elsewhere.
+.PARAMETER PathValue
+    The current PATH value; may be empty.
+.PARAMETER Entry
+    The directory to put first, e.g. the Java 21 bin folder.
+.PARAMETER Separator
+    The PATH separator; defaults to the current OS separator (';' or ':').
+#>
+function Get-PathWithEntryFirst([string]$PathValue, [string]$Entry, [string]$Separator = [IO.Path]::PathSeparator) {
+    $ignoreCase = (Get-OSKind) -eq 'windows'
+    $rest = @($PathValue -split [regex]::Escape($Separator) | Where-Object {
+        $_ -and -not [string]::Equals($_, $Entry, $(if ($ignoreCase) { 'OrdinalIgnoreCase' } else { 'Ordinal' }))
+    })
+    return (@($Entry) + $rest) -join $Separator
+}
+
+<#
+.SYNOPSIS
+    Activates Java 21 for this process or throws with setup guidance.
+.DESCRIPTION
+    Finds a Java 21 JDK (JAVA_HOME first, then common install locations), sets
+    JAVA_HOME, puts its bin folder first on PATH and confirms that java now reports
+    version 21. Throws if no Java 21 is found or another version is still active.
+#>
 function Use-Java21OrFail {
     $javaHomePath = Get-Java21Home
     if (-not $javaHomePath) {
@@ -196,11 +232,8 @@ function Use-Java21OrFail {
     }
 
     $env:JAVA_HOME = $javaHomePath
-    $javaBinPath = Join-Path $javaHomePath 'bin'
-    $pathSeparator = [IO.Path]::PathSeparator
-    if (-not (($env:Path -split [regex]::Escape($pathSeparator)) -contains $javaBinPath)) {
-        $env:Path = "$javaBinPath$pathSeparator$env:Path"
-    }
+    # $env:PATH, not $env:Path: environment names are case-sensitive on Linux/macOS.
+    $env:PATH = Get-PathWithEntryFirst -PathValue $env:PATH -Entry (Join-Path $javaHomePath 'bin')
 
     $currentMajor = Test-JavaVersion
     if ($currentMajor -ne $RequiredJavaMajor) {
@@ -270,6 +303,13 @@ function Show-Usage {
     Write-Host "=================================" -ForegroundColor Cyan
 }
 
+<#
+.SYNOPSIS
+    Writes .vscode/maze.launch.env for the VS Code launch configurations.
+.DESCRIPTION
+    Records the detected Java 21 home as JAVA_HOME and a PATH with its bin folder
+    first. Throws if no Java 21 is found.
+#>
 function Write-LaunchEnvFile {
     $javaHomePath = Get-Java21Home
     if (-not $javaHomePath) {
@@ -277,9 +317,7 @@ function Write-LaunchEnvFile {
         throw "Java $RequiredJavaMajor not found. `n`n$guidance"
     }
 
-    $javaBinPath = Join-Path $javaHomePath 'bin'
-    $pathSeparator = [IO.Path]::PathSeparator
-    $launchPath = if ($env:Path) { "$javaBinPath$pathSeparator$env:Path" } else { $javaBinPath }
+    $launchPath = Get-PathWithEntryFirst -PathValue $env:PATH -Entry (Join-Path $javaHomePath 'bin')
 
     $launchEnvFile = Join-Path '.vscode' 'maze.launch.env'
     New-Item -ItemType Directory -Path '.vscode' -Force | Out-Null
@@ -560,26 +598,117 @@ function Ensure-RuntimeModulesCompiled {
     Write-Host '=== Stale modules rebuilt successfully ===' -ForegroundColor Green
 }
 
+<#
+.SYNOPSIS
+    Returns $true when releng/local-p2 must be (re)built.
+.DESCRIPTION
+    True if the mirror folder, its completion stamp or its saved input state is
+    missing (e.g. an interrupted run), or if the inputs changed since the last build.
+#>
 function Test-MirrorOutdated {
     if (-not (Test-Path $LocalP2Dir)) { return $true }
     if (-not (Test-Path $MirrorStamp)) { return $true }
+    if (-not (Test-Path $MirrorInputStateFile)) { return $true }
 
-    $stampTime = (Get-Item $MirrorStamp).LastWriteTime
-
-    foreach ($path in $MirrorInputs) {
-        if (-not (Test-Path $path)) { 
-            # missing input → be safe and rebuild
-            return $true 
-        }
-        $inputTime = (Get-Item $path).LastWriteTime
-        if ($inputTime -gt $stampTime) {
-            return $true
-        }
-    }
-
-    return $false
+    $previousInputState = Get-Content -Raw -Path $MirrorInputStateFile
+    return $previousInputState -ne (Get-MirrorInputState)
 }
 
+<#
+.SYNOPSIS
+    Returns a text fingerprint of everything that determines the mirror contents.
+.DESCRIPTION
+    One line for the Eclipse repository override (MAZEGAME_ECLIPSE_REPOSITORY_BASE)
+    plus one SHA-256 line per file in $MirrorInputs. Saved next to the mirror and
+    compared by Test-MirrorOutdated.
+#>
+function Get-MirrorInputState {
+    $repositoryBaseState = if ($EclipseRepositoryBase) { $EclipseRepositoryBase } else { '<default>' }
+    $entries = @(
+        "eclipse.repository.base=$repositoryBaseState"
+        foreach ($path in $MirrorInputs) {
+            if (Test-Path $path) {
+                "$path=$((Get-FileHash -Algorithm SHA256 -Path $path).Hash)"
+            } else {
+                "$path=<missing>"
+            }
+        }
+    )
+    return $entries -join "`n"
+}
+
+<#
+.SYNOPSIS
+    Returns the installable unit ids that releng/mirror/pom.xml asks the mirror to contain.
+.DESCRIPTION
+    The mirror pom is the single list of required units; checks derive from it instead of
+    keeping their own copy that can drift.
+.PARAMETER MirrorPomPath
+    Path to the mirror pom (normally releng/mirror/pom.xml).
+#>
+function Get-MirrorRequiredUnitIds([string]$MirrorPomPath) {
+    [xml]$pom = Get-Content -Raw -Path $MirrorPomPath
+    # local-name() matches with or without the Maven POM namespace declaration.
+    return @($pom.SelectNodes("//*[local-name()='iu']/*[local-name()='id']") | ForEach-Object { $_.InnerText.Trim() })
+}
+
+<#
+.SYNOPSIS
+    Returns the installable unit ids listed in a p2 repository's content.jar.
+.PARAMETER MirrorDir
+    The p2 repository folder (normally releng/local-p2).
+#>
+function Get-MirrorAvailableUnitIds([string]$MirrorDir) {
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("p2units_{0}" -f [guid]::NewGuid())
+    try {
+        Expand-Archive -Path (Join-Path $MirrorDir 'content.jar') -DestinationPath $tmp
+        [xml]$content = Get-Content -Raw -Path (Join-Path $tmp 'content.xml')
+        return @($content.SelectNodes('//units/unit') | ForEach-Object { $_.GetAttribute('id') })
+    }
+    finally {
+        Remove-Item -Recurse -Force -Path $tmp -ErrorAction SilentlyContinue
+    }
+}
+
+<#
+.SYNOPSIS
+    Checks each required unit against the mirror metadata and its artifact file.
+.DESCRIPTION
+    Returns one object per required id with Id, InMetadata and HasArtifact. Feature groups
+    ("x.feature.group") are expected as features/x_*.jar, bundles as plugins/<id>_*.jar.
+.PARAMETER MirrorDir
+    The p2 repository folder.
+.PARAMETER RequiredIds
+    Unit ids that must be present (see Get-MirrorRequiredUnitIds).
+.PARAMETER AvailableUnitIds
+    Unit ids found in the mirror metadata (see Get-MirrorAvailableUnitIds).
+#>
+function Test-MirrorUnits([string]$MirrorDir, [string[]]$RequiredIds, [string[]]$AvailableUnitIds) {
+    $available = [System.Collections.Generic.HashSet[string]]::new([string[]]@($AvailableUnitIds))
+    foreach ($id in $RequiredIds) {
+        $artifactPattern = if ($id -like '*.feature.group') {
+            Join-Path (Join-Path $MirrorDir 'features') ("{0}_*.jar" -f ($id -replace '\.feature\.group$', ''))
+        } else {
+            Join-Path (Join-Path $MirrorDir 'plugins') ("{0}_*.jar" -f $id)
+        }
+        [pscustomobject]@{
+            Id          = $id
+            InMetadata  = $available.Contains($id)
+            HasArtifact = [bool](Get-ChildItem -Path $artifactPattern -ErrorAction SilentlyContinue)
+        }
+    }
+}
+
+<#
+.SYNOPSIS
+    Builds releng/local-p2 from releng/mirror/pom.xml when needed.
+.DESCRIPTION
+    Skips the build when Test-MirrorOutdated says the mirror is current. Otherwise
+    deletes any existing (possibly partial) mirror, runs the mirror build and writes
+    the input state and completion stamp. Throws if Maven fails.
+.PARAMETER Force
+    Rebuild even when the mirror is up to date.
+#>
 function Invoke-Mirror([switch]$Force) {
     $rebuild = $Force -or (Test-MirrorOutdated)
 
@@ -594,23 +723,39 @@ function Invoke-Mirror([switch]$Force) {
         Write-Host "=== Rebuilding local p2 mirror (inputs changed or missing) ==="
     }
 
-    if (Test-Path $LocalP2Dir) {
+    $hasMirrorDirectory = Test-Path $LocalP2Dir
+    $currentInputState = Get-MirrorInputState
+
+    # Tycho's mirror goal cannot safely append an IU set to a partially written
+    # destination. Reuse only completed mirrors; restart interrupted runs cleanly.
+    if ($hasMirrorDirectory) {
         Write-Host "Removing $LocalP2Dir"
         Remove-Item -Recurse -Force $LocalP2Dir
     }
 
-    $mirrorCmd = "$Mvn -f releng/mirror/pom.xml -U verify"
-    Write-Host "Running: $mirrorCmd"
-    & $Mvn -f releng/mirror/pom.xml -U verify
+    if (-not (Test-Path $LocalP2Dir)) {
+        New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
+    }
+    Set-Content -NoNewline -Path $MirrorInputStateFile -Value $currentInputState
+
+    $mirrorArgs = @('-f', 'releng/mirror/pom.xml', '-U')
+    if ($EclipseRepositoryBase) {
+        Write-Host "Using Eclipse repository mirror: $EclipseRepositoryBase"
+        $mirrorArgs += "-Declipse.repository.base=$EclipseRepositoryBase"
+        # A selected mirror may still advertise the global Eclipse mirror list.
+        # Disable that redirect so all artifacts stay on the requested endpoint.
+        $mirrorArgs += '-Declipse.p2.mirrors=false'
+    }
+    $mirrorArgs += 'verify'
+
+    Write-Host "Running: $Mvn $($mirrorArgs -join ' ')"
+    & $Mvn @mirrorArgs
     $exit = $LASTEXITCODE
 
     if ($exit -ne 0) {
         throw "Mirror build failed with exit code $exit."
     }
 
-    if (-not (Test-Path $LocalP2Dir)) {
-        New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
-    }
     New-Item -ItemType File -Path $MirrorStamp -Force | Out-Null
     Write-Host "=== Mirror built and stamp updated: $MirrorStamp ==="
 }
@@ -626,10 +771,18 @@ function Clear-TychoCache {
     Write-Host "Tycho cache cleared (if it existed)."
 }
 
+<#
+.SYNOPSIS
+    Runs the full clean verify of the reactor with tests, excluding releng/mirror.
+.DESCRIPTION
+    Expects Invoke-Mirror to have populated releng/local-p2 first. Throws if Maven fails.
+#>
 function Invoke-Build {
-    $cmd = "$Mvn -U -DskipTests=false clean verify"
+    # The mirror is managed by Invoke-Mirror; do not execute its Maven module again.
+    $reactorWithoutMirror = '!releng/mirror'
+    $cmd = "$Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify"
     Write-Host "=== Running full build: $cmd ==="
-    & $Mvn -U -DskipTests=false clean verify
+    & $Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Build failed with exit code $exit."
@@ -637,13 +790,21 @@ function Invoke-Build {
     Write-Host "=== Build finished successfully ==="
 }
 
+<#
+.SYNOPSIS
+    Runs an incremental verify (no clean, no mirror rebuild), excluding releng/mirror.
+.PARAMETER SkipTests
+    Skip test execution.
+#>
 function Invoke-QuickBuild {
     param([switch]$SkipTests)
 
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
-    $cmd = "$Mvn -DskipTests=$skipValue verify"
+    # Quick builds reuse the existing mirror and exclude its Maven module.
+    $reactorWithoutMirror = '!releng/mirror'
+    $cmd = "$Mvn -pl $reactorWithoutMirror -DskipTests=$skipValue verify"
     Write-Host "=== Running quick build without mirror rebuild: $cmd ==="
-    & $Mvn "-DskipTests=$skipValue" verify
+    & $Mvn -pl $reactorWithoutMirror "-DskipTests=$skipValue" verify
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Quick build failed with exit code $exit."

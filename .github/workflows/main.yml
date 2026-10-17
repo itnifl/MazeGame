@@ -20,11 +20,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
+
+      - name: Build local p2 mirror
+        run: pwsh -NoLogo -NoProfile -File ./make-javafx.ps1 -Target mirror
           
       - name: Build Eclipse plug-ins + p2 site (Tycho only)
         run: |
           mvn -B -U -e \
-            -pl releng/mirror,main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze-javafx \
+            -pl main.game.maze.walls,main.game.maze.mazeworld,main.game.maze.behaviour,main.game.maze.difficulties,main.game.maze.opponents,maze-generator.freemarker,main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.ui,main.game.maze.dsl.tests,maze-feature,maze-module-repository,maze-generator.freemarker-runner,maze-module-generator,maze-javafx \
             -am \
             -DskipTests=true \
             clean install
