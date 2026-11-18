@@ -19,14 +19,14 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Generated local p2 repository created by the mirror. Contains `artifacts.jar`, `content.jar`, platform specific executables under `binary/`, and the mirrored plug ins and features.
 
 * `releng/maze.target`
-  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It currently points at the public Eclipse release and Orbit repositories and lists the required units (EMF, OCL, Equinox executable and related dependencies).
+  Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It is a single `Directory` location pointing at `releng/local-p2`; the required units (EMF, OCL, Xtext, MWE2, Equinox executable and their dependencies) are selected in `releng/mirror/pom.xml`.
 
 * `releng/test-results/`
   Log files written by the helper script `Run-P2AndBuildCheck-javafx.ps1` when you run full mirror and build checks.
 
 ## Local p2 mirror
 
-The local p2 mirror is built from the public Eclipse in this source code repositories using the Tycho p2 extras plugin configured in `releng/mirror/pom.xml`. It mirrors the units that are also referenced from `releng/maze.target`, such as
+The local p2 mirror is built from the public Eclipse in this source code repositories using the Tycho p2 extras plugin configured in `releng/mirror/pom.xml`. `releng/mirror/pom.xml` is the single list of required units, such as
 
 * core runtime and Equinox bundles
 * EMF runtime and code generation
@@ -34,34 +34,28 @@ The local p2 mirror is built from the public Eclipse in this source code reposit
 * FreeMarker for code generation (via embedded JAR)
 * Equinox executable feature group
 
-The mirror is written to `releng/local-p2` and can be used for offline builds, for diagnostics, and for verifying that all required units are available in a single place.
+The mirror is written to `releng/local-p2`. Tycho resolves the shared target
+platform from this repository, so the mirror must be built before starting the
+main reactor on a clean checkout.
 
 ### Refresh the local p2 mirror
 
-From the repository root you can rebuild the mirror with Maven:
+From the repository root, use the maintained build script:
 
 ```bash
-mvn -f releng/mirror/pom.xml -U verify
+pwsh -File ./make-javafx.ps1 -Target mirror
 ```
 
-This creates or updates `releng/local-p2` based on the IU list in `releng/mirror/pom.xml`.
+This reuses a completed mirror when its saved input state still matches. An
+interrupted mirror is removed and restarted because Tycho cannot safely append
+the same installable units to a partial destination.
 
 ### Clean the mirror and rebuild
 
-If you want to start from a clean local mirror, remove the directory and run the mirror build again.
-
-On Unix like systems:
-
-```bash
-rm -rf releng/local-p2
-mvn -f releng/mirror/pom.xml -U verify
-```
-
-On Windows PowerShell:
+If you want to start from a clean local mirror, use the force target:
 
 ```powershell
-Remove-Item -Recurse -Force releng\local-p2
-mvn -f releng/mirror/pom.xml -U verify
+pwsh -File ./make-javafx.ps1 -Target force-mirror
 ```
 
 ## Target platform and Tycho
@@ -72,7 +66,15 @@ The Tycho build uses the target file `releng/maze.target` through the `target-pl
 * All Eclipse plug in modules inherit this configuration
 * There is no need to configure the target again in individual module `pom.xml` files
 
-The target file currently points at the public Eclipse release and Orbit repositories. The local p2 mirror reproduces the same units and can be used for offline builds or for debugging dependency problems, even though Tycho itself is wired directly against `releng/maze.target`.
+The target file points at `releng/local-p2`. The separate mirror step obtains
+the pinned units from the public Eclipse repositories before Tycho reads the
+target definition.
+
+The target uses a `Directory` location (`path="${project_loc:/MazeGame}/releng/local-p2"`)
+instead of an `InstallableUnit` repository URI. `${project_loc}` expands to a native
+path such as `D:\Source\MazeGame` on Windows. That is valid for a directory path but
+is not a valid `file:` URI, so an `InstallableUnit` location would fail target resolution on
+Windows (see issue #155).
 
 You can also open `releng/maze.target` inside Eclipse to use the same platform for PDE development:
 
@@ -178,7 +180,7 @@ Behaviour:
 
 * Always changes the current directory to the script location, so you can run it from anywhere.
 * Validates that Java 21 is active before running builds (required for Xtext/MWE2 generation).
-* For `mirror` it checks a stamp file in `releng\local-p2\.mirror.stamp` and only rebuilds the mirror if the inputs (currently `releng\mirror\pom.xml`) are newer or the mirror is missing.
+* For `mirror` it compares saved hashes and the selected repository source, reuses only a completed matching mirror, and restarts interrupted mirrors cleanly.
 * `force-mirror` always deletes `releng\local-p2` and reruns `mvn -f releng/mirror/pom.xml -U verify`, then updates the stamp file.
 * `clear-cache` deletes the Tycho cache at `%USERPROFILE%\.m2\repository\.cache\tycho` if it exists.
 * `build` clears the Tycho cache first, then runs `mvn -U -DskipTests=false clean verify` and fails the script if Maven returns a non zero exit code.
@@ -213,4 +215,3 @@ Key points:
 * `clear-tycho-cache` removes the Tycho cache folder under `%USERPROFILE%\.m2\repository\.cache\tycho` if it exists.
 
 * The default target `all` runs `toolchain-info`, `mirror`, `clear-tycho-cache` and `build` in that order.
-

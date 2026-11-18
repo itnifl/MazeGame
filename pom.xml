@@ -13,9 +13,59 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <emf.version>2.38.0</emf.version>
     <javafx.version>21.0.9</javafx.version>
-    <javafx.platform>win</javafx.platform> <!-- Default, can be overridden by profile -->
+    <javafx.platform>win</javafx.platform> <!-- Fallback; OS profiles override this. -->
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>javafx-linux</id>
+      <activation>
+        <os><name>Linux</name></os>
+      </activation>
+      <properties>
+        <javafx.platform>linux</javafx.platform>
+      </properties>
+    </profile>
+    <profile>
+      <id>javafx-macos</id>
+      <activation>
+        <os><family>mac</family></os>
+      </activation>
+      <properties>
+        <javafx.platform>mac</javafx.platform>
+      </properties>
+    </profile>
+    <profile>
+      <id>javafx-windows</id>
+      <activation>
+        <os><family>Windows</family></os>
+      </activation>
+      <properties>
+        <javafx.platform>win</javafx.platform>
+      </properties>
+    </profile>
+    <!-- These profiles are declared after the generic OS profiles so ARM64
+         classifiers take precedence when both profiles are active. -->
+    <profile>
+      <id>javafx-linux-aarch64</id>
+      <activation>
+        <os><name>Linux</name><arch>aarch64</arch></os>
+      </activation>
+      <properties>
+        <javafx.platform>linux-aarch64</javafx.platform>
+      </properties>
+    </profile>
+    <profile>
+      <id>javafx-macos-aarch64</id>
+      <activation>
+        <os><family>mac</family><arch>aarch64</arch></os>
+      </activation>
+      <properties>
+        <javafx.platform>mac-aarch64</javafx.platform>
+      </properties>
+    </profile>
+  </profiles>
   
   <modules>
     <!-- 1: p2 mirror bygges først -->

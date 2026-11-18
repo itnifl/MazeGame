@@ -75,7 +75,12 @@ Use one of these commands when Java changes on your machine:
 
 # Equivalent mirror skip syntax
 .\Run-P2AndBuildCheck-javafx.ps1 -StartAt 2
+
+# Opt-in: also delete the whole ~/.m2/repository in step 1 (affects every Maven project)
+.\Run-P2AndBuildCheck-javafx.ps1 -PurgeMavenRepository
 ```
+
+By default, step 1 rebuilds only `releng/local-p2`; your shared Maven repository is kept.
 
 ### make-javafx wrapper
 
@@ -142,6 +147,22 @@ Use one of these commands when Java changes on your machine:
 5. Iterating on the libGDX gameplay subset: `.\make-libgdx.ps1 quick` or `.\make-libgdx.ps1 run`.
 6. CI smoke test for the libGDX backend: `.\Run-P2AndBuildCheck-libgdx.ps1 -BuildMode fast`.
 
+## Build script tests
+
+Helper functions in the build scripts have Pester 5 tests under [tools/tests](tools/tests):
+
+```powershell
+Invoke-Pester ./tools/tests
+```
+
+Examples: `Get-PathWithEntryFirst` makes sure the detected Java 21 `bin` folder comes first on
+`PATH`, even when a caller such as `install.ps1` has already appended it after another JDK.
+`Get-MirrorRequiredUnitIds` / `Test-MirrorUnits` drive step 2 of `Run-P2AndBuildCheck-javafx.ps1`
+from `releng/mirror/pom.xml`, so the check cannot drift from what the mirror contains.
+
+The `script-tests` job in `.github/workflows/buildtest.yml` runs these tests on Ubuntu and
+Windows for every pull request.
+
 ## Notes
 
 1. Java 21 is required for all reactor workflows.
@@ -150,3 +171,20 @@ Use one of these commands when Java changes on your machine:
    platform inputs changed, or when dependencies look stale.
 4. The libGDX scripts do not touch Tycho or the p2 mirror; they only need
    Maven Central reachability for the libGDX 1.12.1 dependencies.
+
+### Interrupted or slow p2 mirror downloads
+
+The JavaFX mirror target reuses a completed `releng/local-p2` repository until
+its hashed inputs or repository source change. An interrupted mirror is removed
+and restarted because Tycho cannot safely append the same units to a partial
+destination; Maven's download cache still avoids fetching unchanged artifacts
+again. `force-mirror` remains the explicit clean-rebuild option. The Tycho
+target definition resolves from this local mirror, so the build does not bypass
+the selected repository source after the mirror step completes.
+
+The source repositories default to Eclipse's official download service. To use
+a nearby Eclipse mirror, set `MAZEGAME_ECLIPSE_REPOSITORY_BASE` to that mirror's
+`/eclipse` base URL before running the existing `mirror` or `all` target. This
+changes only the current process environment and does not embed a machine path
+or account name in the project. Orbit and MWE2 remain on Eclipse's official
+service because commonly used mirrors do not publish those repository trees.

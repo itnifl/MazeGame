@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * Regression tests for BUG-3: JavaFX camera follow produced a white strip
+ * Regression tests: JavaFX camera follow produced a white strip
  * because the clip Rectangle on gameBoard was in local coordinates and moved
  * with the board when translated, leaving the opposite edge unrendered.
  *
@@ -77,7 +77,7 @@ class FxGameBoardClipOffsetTest {
         assertDoesNotThrow(() -> new FxGameRenderCoordinator(null));
     }
 
-    // --- BUG-6 regression: GameController must NOT set a second clip on gameBoard ---
+    // --- Regression: GameController must NOT set a second clip on gameBoard ---
     // The coordinator owns the single clip. A second setClip() call in GameController
     // overwrote it with a fixed-local-origin rectangle that did not track translation,
     // causing the white-area-on-scroll bug to persist even after the canvas background fix.
