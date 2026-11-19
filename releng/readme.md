@@ -8,7 +8,7 @@ This folder contains the build infrastructure for the Eclipse plug in modules an
 * a local p2 mirror that can be used for offline or stable builds
 * log files with the result of automated mirror and build checks
 
-The configuration is consumed by the root `pom.xml` and by the helper PowerShell script `Run-P2AndBuildCheck-javafx.ps1` in the repository root.
+The configuration is consumed by the root `pom.xml` and by the helper PowerShell script `Run-P2AndBuildCheck-javafx.ps1` (with `Run-P2AndBuildCheck-libgdx.ps1` handling libGDX diagnostics) in the repository root.
 
 ## Layout
 
@@ -22,7 +22,7 @@ The configuration is consumed by the root `pom.xml` and by the helper PowerShell
   Target platform definition used by Tycho through the `target-platform-configuration` plugin in the root `pom.xml`. It is a single `Directory` location pointing at `releng/local-p2`; the required units (EMF, OCL, Xtext, MWE2, Equinox executable and their dependencies) are selected in `releng/mirror/pom.xml`.
 
 * `releng/test-results/`
-  Log files written by the helper script `Run-P2AndBuildCheck-javafx.ps1` when you run full mirror and build checks.
+  Log files written by the helper script `Run-P2AndBuildCheck-javafx.ps1` when you run full mirror and build checks (libGDX logs are written to `releng/test-results-libgdx/`).
 
 ## Local p2 mirror
 
@@ -90,6 +90,7 @@ You can also open `releng/maze.target` inside Eclipse to use the same platform f
 | [Technology Layman's Guide](../docs/technology-laymans-guide.md) | Simple explanation of the build technologies in everyday terms |
 | [Eclipse Modules](../eclipse.modules.md) | Eclipse plugin architecture and build worlds |
 | [Main README](../readme.md) | Project overview and module index |
+| [Build Tool README](../build-tool-readme.md) | Fast build paths and dual-frontend command matrix |
 | [Feature Module](../maze-feature/readme.md) | Eclipse feature packaging |
 | [Repository Module](../maze-module-repository/readme.md) | P2 update site |
 

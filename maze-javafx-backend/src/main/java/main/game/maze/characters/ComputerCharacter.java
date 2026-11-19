@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -16,17 +17,24 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
+import main.game.maze.App;
+import main.game.maze.characters.interfaces.ICanDie;
+import main.game.maze.characters.interfaces.ICharacterAnimations;
 import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
+import main.game.maze.common.remains.DeathCause;
+import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
+import main.game.maze.service.EnemyVitals;
+import main.game.maze.service.MortalityRules;
 
-public class ComputerCharacter extends Character implements IMovingComputerCharacter {
+public class ComputerCharacter extends Character implements IMovingComputerCharacter, ICanDie {
     private static final double ANIMATION_FRAME_DURATION_MS = 250.0;
 
     /** Shared by all characters so each damage-sprite lookup happens once per game. */
@@ -54,6 +62,10 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     protected int maxHp;
     protected DamageState currentDamageState = DamageState.HEALTHY;
     private DamagePathResolver damagePathResolver = CLASSPATH_DAMAGE_PATHS;
+    /** HP, death and respawn protection: the same implementation libGDX enemies use. */
+    private final EnemyVitals vitals;
+    private final double spawnX;
+    private final double spawnY;
 
     protected final Image imageLeft;
     protected final Image imageRight;
@@ -71,7 +83,20 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         calculateMaxPositions();
         this.characterModel = characterType;
 
-        this.maxHp = characterType != null ? Math.max(1, characterType.getHealth()) : 100;
+        this.spawnX = positionX;
+        this.spawnY = positionY;
+        this.vitals = new EnemyVitals(this, MortalityRules.maxHitPoints(characterType), new EnemyVitals.Listener() {
+            @Override
+            public void onHitPointsChanged(int hitPoints, int maxHitPoints) {
+                onHpChanged(hitPoints, maxHitPoints);
+            }
+
+            @Override
+            public void onDied(DeathCause cause) {
+                handleDeath(cause);
+            }
+        });
+        this.maxHp = vitals.getMaxHitPoints();
         this.currentHp = this.maxHp;
         this.currentDamageState = DamageState.of(this.currentHp, this.maxHp);
 
@@ -202,28 +227,110 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         }
     }
 
+    // --- ICanDie: delegated to the shared EnemyVitals (same rules as libGDX GdxEnemyRuntime) ---
+
+    @Override
     public int getHitPoints() {
-        return currentHp;
+        return vitals.getHitPoints();
     }
 
     public int getMaxHitPoints() {
-        return maxHp;
+        return vitals.getMaxHitPoints();
     }
 
     public DamageState getDamageState() {
         return currentDamageState;
     }
 
+    @Override
     public void setHitPoints(int hp) {
-        onHpChanged(hp, this.maxHp);
+        vitals.setHitPoints(hp);
     }
 
+    @Override
     public void subtractHitPoints(int hp) {
-        onHpChanged(this.currentHp - hp, this.maxHp);
+        vitals.subtractHitPoints(hp, DeathCause.OTHER);
     }
 
+    /** Damage dealt by {@code cause} (bomb fire, a shot, a crushing wall); a killing blow decides the remains. */
+    @Override
+    public void subtractHitPoints(int hp, DeathCause cause) {
+        vitals.subtractHitPoints(hp, cause);
+    }
+
+    @Override
     public void addHitPoints(int hp) {
-        onHpChanged(this.currentHp + hp, this.maxHp);
+        vitals.addHitPoints(hp);
+    }
+
+    @Override
+    public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) {
+        vitals.addDeathSubscriber(subscriber);
+    }
+
+    @Override
+    public DeathCause deathCause() {
+        return vitals.deathCause();
+    }
+
+    /** {@code true} during the brief protection right after a respawn. */
+    @Override
+    public boolean isInvulnerable() {
+        return vitals.isInvulnerable();
+    }
+
+    /**
+     * Shared death flow for every JavaFX enemy (zombie, ghost, pumpkin bomber), matching libGDX:
+     * leave remains for the cause, play the die animation, leave the board, and come back after
+     * {@link MortalityRules#resurrectionTimeMs} if the type resurrects.
+     */
+    protected void handleDeath(DeathCause cause) {
+        leaveRemains(cause);
+        if (this instanceof ICharacterAnimations animations) {
+            animations.PlayDieAnimation();
+        }
+        if (App.gameController != null) {
+            App.gameController.unregisterComputerCharacter(this, getCharacterGraphics());
+        }
+        int resurrectionMs = MortalityRules.resurrectionTimeMs(characterModel);
+        // the controller owns the timer and cancels it on level teardown, so a pending
+        // resurrection can never register this enemy into a later level
+        if (resurrectionMs > 0 && App.gameController != null) {
+            App.gameController.scheduleResurrection(resurrectionMs / 1000.0, this::resurrect);
+        }
+    }
+
+    /** Back at the spawn point with full health and brief protection (same as libGDX). */
+    protected void resurrect() {
+        if (App.gameController != null) {
+            App.gameController.clearRemains(this);
+        }
+        vitals.respawn(MortalityRules.RESPAWN_INVULNERABILITY_SECONDS);
+        teleportTo(spawnX, spawnY);
+        if (App.gameController != null) {
+            App.gameController.registerComputerCharacter(this, getCharacterGraphics());
+        }
+        after(MortalityRules.RESPAWN_INVULNERABILITY_SECONDS, vitals::clearInvulnerability);
+    }
+
+    private static void after(double seconds, Runnable action) {
+        PauseTransition pause = new PauseTransition(Duration.seconds(seconds));
+        pause.setOnFinished(event -> action.run());
+        pause.play();
+    }
+
+    /**
+     * Leaves remains where this character's sprite is, for the cause of the killing blow.
+     * Called while the character is still on the board (before unregistering it).
+     */
+    protected void leaveRemains(DeathCause cause) {
+        Node graphics = getCharacterGraphics();
+        if (graphics == null || App.gameController == null) {
+            return;
+        }
+        var bounds = graphics.getBoundsInParent();
+        App.gameController.leaveRemains(this, cause, basePath,
+                bounds.getMinX(), bounds.getMinY(), Math.max(bounds.getWidth(), bounds.getHeight()));
     }
 
     private void scheduleImageUpdate() {

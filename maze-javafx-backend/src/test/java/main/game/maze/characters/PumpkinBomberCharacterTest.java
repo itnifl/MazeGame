@@ -92,14 +92,17 @@ class PumpkinBomberCharacterTest {
         assertEquals(42, pbc.getHitPoints());
     }
 
-    // addHitPoints increases HP.
+    // addHitPoints heals, capped at max HP (shared EnemyVitals rule, same as libGDX).
     @Test
-    void addHitPoints_increasesHp() {
+    void addHitPoints_healsUpToMax() {
         Rectangle gfx = new Rectangle(16, 16);
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
-        int before = pbc.getHitPoints();
+        int max = pbc.getHitPoints();
+        pbc.subtractHitPoints(8);
         pbc.addHitPoints(5);
-        assertEquals(before + 5, pbc.getHitPoints());
+        assertEquals(max - 3, pbc.getHitPoints());
+        pbc.addHitPoints(1_000);
+        assertEquals(max, pbc.getHitPoints(), "healing never exceeds max HP");
     }
 
     // doPositionEvaluation with a non-null entity: must not throw.
@@ -206,6 +209,25 @@ class PumpkinBomberCharacterTest {
         // No projectile should have been added; updateProjectiles on empty list must not crash.
         assertDoesNotThrow(() -> pbc.updateProjectiles(0.016),
                 "updateProjectiles must be safe after tryShootAt skips zero-distance shot");
+    }
+
+    @Test
+    void tryShootAt_deadBomberStartsNoNewAttack() throws Exception {
+        PumpkinBomberCharacter alive = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        PumpkinBomberCharacter dead = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        dead.subtractHitPoints(dead.getHitPoints(), main.game.maze.common.remains.DeathCause.CRUSHED);
+
+        alive.tryShootAt(10.0, 0.0, Long.MAX_VALUE);
+        dead.tryShootAt(10.0, 0.0, Long.MAX_VALUE);
+
+        assertEquals(1, projectiles(alive).size(), "control: a living bomber fires");
+        assertTrue(projectiles(dead).isEmpty(), "a dead bomber (e.g. crushed this frame) must not fire");
+    }
+
+    private static List<?> projectiles(PumpkinBomberCharacter bomber) throws Exception {
+        Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
+        field.setAccessible(true);
+        return (List<?>) field.get(bomber);
     }
 
     @Test

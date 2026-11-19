@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.common.remains.DeathCause;
+import main.game.maze.common.remains.RemainsLedger;
+import main.game.maze.service.MortalityService;
 import main.game.maze.game.runtime.EnemyDirectorService;
+import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
@@ -14,6 +18,7 @@ import main.game.maze.libgdx.model.DeadEnemy;
 import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.GameWorldModel;
+import main.game.maze.libgdx.model.RemainsVisual;
 import main.game.maze.libgdx.movement.GdxWorldView;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
@@ -102,7 +107,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             if (enemy == null || !enemy.isAlive() || enemy.isInvulnerable()) {
                 continue;
             }
-            int hp = Math.max(0, enemy.currentHitPoints());
+            int hp = Math.max(0, enemy.getHitPoints());
             if (hp <= 0) {
                 continue;
             }
@@ -110,7 +115,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             if (damageToApply <= 0) {
                 continue;
             }
-            enemy.takeDamage(damageToApply);
+            enemy.subtractHitPoints(damageToApply, DeathCause.FIRE);
             remainingDamage -= damageToApply;
             appliedDamage += damageToApply;
         }
@@ -217,8 +222,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                 candidates.add(new FlameTarget() {
                     @Override public double centerX()        { return cx; }
                     @Override public double centerY()        { return cy; }
-                    @Override public int    hitPoints()      { return Math.max(0, enemy.currentHitPoints()); }
-                    @Override public void   applyDamage(int amount) { enemy.takeDamage(amount); }
+                    @Override public int    hitPoints()      { return Math.max(0, enemy.getHitPoints()); }
+                    @Override public void   applyDamage(int amount) { enemy.subtractHitPoints(amount, DeathCause.FIRE); }
                     @Override public boolean isPassThrough() { return false; }
                 });
             }
@@ -261,7 +266,10 @@ public final class GdxGameCombatAndEnemyFlowSupport {
 
         int totalDamage = 0;
         float maxShake = 0f;
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
+        // living enemies, plus dead ones whose pumpkins are still in the air (they start no new attacks)
+        List<GdxEnemyRuntime> shooters = new ArrayList<>(animatedEnemies);
+        shooters.addAll(worldModel.retiredShooters().active());
+        for (GdxEnemyRuntime enemy : shooters) {
             totalDamage += enemy.updateRangedAttacks(
                     dt,
                     worldModel.maze(),
@@ -282,37 +290,57 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     }
 
     /**
-     * Removes enemies that were killed by flame damage ({@code takeDamage} reduced their
-     * HP to 0) and creates death animations for each.  Unlike {@link #killEnemies}, this
-     * processes enemies that are already dead — it skips living ones rather than killing
-     * them.
+     * Removes enemies that died this frame (bomb flame, a collapsing wall, ...), starts their death
+     * animation, leaves their remains according to {@link GdxEnemyRuntime#deathCause()} and queues
+     * resurrection where configured. Living enemies are left alone. Safe to call every frame.
      *
-     * <p>Must be called after {@link #applyDirectionalFlameExplosion} so that the game
-     * loop renders the death animations on the next frame.</p>
-     *
+     * @param remains where remains are recorded; may be null for no remains
      * @return the number of enemies removed
      */
-    public static int processKilledByFlame(
+    public static int processKilledEnemies(
             List<GdxEnemyRuntime> animatedEnemies,
             List<DeadEnemy> deadEnemies,
-            List<EnemyDeathAnimation> dyingEnemies) {
+            List<EnemyDeathAnimation> dyingEnemies,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains, null);
+    }
+
+    /**
+     * As above; dead enemies whose shots are still in the air go to {@code retiredShooters}
+     * (may be null) so those projectiles keep flying until they land.
+     */
+    public static int processKilledEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains,
+            RetiredShooters<GdxEnemyRuntime> retiredShooters) {
         int killed = 0;
         List<GdxEnemyRuntime> toRemove = new ArrayList<>();
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             if (enemy.isAlive()) {
-                continue; // still alive — leave it in the list
+                continue;
             }
-            dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
+            retire(enemy, deadEnemies, dyingEnemies, remains);
+            if (retiredShooters != null) {
+                retiredShooters.retire(enemy);
+            }
             killed++;
-            EnemySpawn spawn = enemy.originalSpawn();
-            if (spawn.resurrectionTimeMs() > 0) {
-                float seconds = spawn.resurrectionTimeMs() / 1000f;
-                deadEnemies.add(new DeadEnemy(spawn, seconds));
-            }
             toRemove.add(enemy);
         }
         animatedEnemies.removeAll(toRemove);
         return killed;
+    }
+
+    private static void retire(GdxEnemyRuntime enemy, List<DeadEnemy> deadEnemies,
+                               List<EnemyDeathAnimation> dyingEnemies,
+                               RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
+        GdxRemainsSupport.leaveRemains(remains, enemy);
+        EnemySpawn spawn = enemy.originalSpawn();
+        if (spawn.resurrectionTimeMs() > 0) {
+            deadEnemies.add(new DeadEnemy(spawn, spawn.resurrectionTimeMs() / 1000f));
+        }
     }
 
     /**
@@ -327,24 +355,32 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             List<GdxEnemyRuntime> animatedEnemies,
             List<DeadEnemy> deadEnemies,
             List<EnemyDeathAnimation> dyingEnemies) {
-        int killed = 0;
-        List<GdxEnemyRuntime> toRemove = new ArrayList<>();
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
-            if (!enemy.isAlive()) {
-                continue;
-            }
-            dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
-            enemy.kill();
-            killed++;
-            EnemySpawn spawn = enemy.originalSpawn();
-            if (spawn.resurrectionTimeMs() > 0) {
-                float seconds = spawn.resurrectionTimeMs() / 1000f;
-                deadEnemies.add(new DeadEnemy(spawn, seconds));
-            }
-            toRemove.add(enemy);
-        }
-        animatedEnemies.removeAll(toRemove);
-        return killed;
+        return killEnemies(animatedEnemies, deadEnemies, dyingEnemies, DeathCause.OTHER, null);
+    }
+
+    /**
+     * Kills every living enemy by {@code cause} (e.g. terminal {@code /kill fire}); they leave the
+     * matching remains in {@code remains} (may be null).
+     */
+    public static int killEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            DeathCause cause,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        return killEnemies(animatedEnemies, deadEnemies, dyingEnemies, cause, remains, null);
+    }
+
+    /** As above; shots of killed shooters keep flying via {@code retiredShooters} (may be null). */
+    public static int killEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            DeathCause cause,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains,
+            RetiredShooters<GdxEnemyRuntime> retiredShooters) {
+        MortalityService.killAll(animatedEnemies, cause);
+        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains, retiredShooters);
     }
 
     /**
@@ -369,6 +405,18 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             float javaFxTickRate,
             int maxEnemyTicksPerFrame,
             float dt) {
+        tickResurrections(deadEnemies, animatedEnemies, world, javaFxTickRate, maxEnemyTicksPerFrame, dt, null);
+    }
+
+    /** As above; a risen enemy's remains are cleared from {@code remains} (may be null). */
+    public static void tickResurrections(
+            List<DeadEnemy> deadEnemies,
+            List<GdxEnemyRuntime> animatedEnemies,
+            WorldView world,
+            float javaFxTickRate,
+            int maxEnemyTicksPerFrame,
+            float dt,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains) {
         if (deadEnemies.isEmpty()) {
             return;
         }
@@ -386,6 +434,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     dead.spawn(), phaseOffset++, world, javaFxTickRate, maxEnemyTicksPerFrame);
             risen.grantRespawnInvulnerability();
             animatedEnemies.add(risen);
+            if (remains != null) {
+                remains.remove(dead.spawn());
+            }
         }
     }
 

@@ -171,28 +171,57 @@ class ZombieResurrectionTest {
     // -----------------------------------------------------------------------
 
     @Test
-    void takeDamage_returnsTrueWhenKilled() {
+    void subtractHitPoints_lethalDamageKills() {
         GdxEnemyRuntime e = enemy(0);
-        boolean died = e.takeDamage(Integer.MAX_VALUE);
-        assertTrue(died, "takeDamage should return true when HP drops to zero");
+        e.subtractHitPoints(Integer.MAX_VALUE);
         assertFalse(e.isAlive());
+        assertEquals(0, e.getHitPoints());
     }
 
     @Test
-    void takeDamage_returnsFalseWhenStillAlive() {
+    void subtractHitPoints_survivableDamageLeavesItAlive() {
         GdxEnemyRuntime e = enemy(0);
-        boolean died = e.takeDamage(1);
-        assertFalse(died, "takeDamage should return false when enemy survives the hit");
+        e.subtractHitPoints(1);
         assertTrue(e.isAlive());
+        assertEquals(49, e.getHitPoints());
+    }
+
+    @Test
+    void iCanDieContract_notifiesSubscribersOnceWithTheCause() {
+        GdxEnemyRuntime e = enemy(0);
+        main.game.maze.characters.interfaces.ICanDie mortal = e;
+        List<main.game.maze.common.remains.DeathCause> deaths = new ArrayList<>();
+        mortal.addDeathNotificationSubscriber(dead -> deaths.add(dead.deathCause()));
+
+        mortal.subtractHitPoints(10, main.game.maze.common.remains.DeathCause.FIRE);
+        assertTrue(deaths.isEmpty(), "a non-lethal hit is not a death");
+        mortal.subtractHitPoints(1_000, main.game.maze.common.remains.DeathCause.SHOT);
+        mortal.subtractHitPoints(1_000, main.game.maze.common.remains.DeathCause.CRUSHED);
+
+        assertEquals(List.of(main.game.maze.common.remains.DeathCause.SHOT), deaths,
+                "only the killing blow counts, and only once");
+        assertEquals(main.game.maze.common.remains.DeathCause.SHOT, mortal.deathCause());
+    }
+
+    @Test
+    void iCanDieContract_healingIsCappedAndSettingZeroKills() {
+        GdxEnemyRuntime e = enemy(0);
+        e.subtractHitPoints(20);
+        e.addHitPoints(1_000);
+        assertEquals(50, e.getHitPoints(), "healing stops at the spawn maximum");
+        e.setHitPoints(0);
+        assertFalse(e.isAlive());
+        assertEquals(main.game.maze.common.remains.DeathCause.OTHER, e.deathCause());
+        e.addHitPoints(10);
+        assertFalse(e.isAlive(), "dead enemies are not healed back to life");
     }
 
     @Test
     void invulnerability_preventsDamage() {
         GdxEnemyRuntime e = enemy(0);
         e.grantRespawnInvulnerability();
-        boolean died = e.takeDamage(Integer.MAX_VALUE);
-        assertFalse(died, "Invulnerable enemy should not take lethal damage");
-        assertTrue(e.isAlive());
+        e.subtractHitPoints(Integer.MAX_VALUE);
+        assertTrue(e.isAlive(), "Invulnerable enemy should not take lethal damage");
     }
 
     @Test

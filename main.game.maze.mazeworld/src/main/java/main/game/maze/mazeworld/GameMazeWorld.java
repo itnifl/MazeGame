@@ -41,6 +41,15 @@ public class GameMazeWorld {
     private final List<Vector2D> mazeVectors = new CopyOnWriteArrayList<>();
     /** Walls that can be damaged; subset of mazeVectors. */
     private final List<BreakableWall> breakableWalls = new CopyOnWriteArrayList<>();
+
+    /** Notified after breakable walls collapse (already removed from the maze). */
+    @FunctionalInterface
+    public interface WallCollapseListener {
+        /** @param collapsed the destroyed wall first, then any walls that fell with it */
+        void onWallsCollapsed(List<BreakableWall> collapsed);
+    }
+
+    private final List<WallCollapseListener> collapseListeners = new CopyOnWriteArrayList<>();
     private MazeNavigationGraph navigationGraph;
 
     /*
@@ -234,6 +243,17 @@ public class GameMazeWorld {
      *
      * @return {@code true} if the wall was destroyed by this damage
      */
+    /** Registers a listener for wall collapses (e.g. rubble visuals, crushing enemies). */
+    public void addWallCollapseListener(WallCollapseListener listener) {
+        if (listener != null) {
+            collapseListeners.add(listener);
+        }
+    }
+
+    public void removeWallCollapseListener(WallCollapseListener listener) {
+        collapseListeners.remove(listener);
+    }
+
     public boolean applyWallDamage(BreakableWall bw, int damage) {
         if (!breakableWalls.contains(bw)) return false;
         int remaining = bw.applyDamage(damage);
@@ -245,6 +265,10 @@ public class GameMazeWorld {
             }
             if (navigationGraph != null) {
                 MazeNavigationGraphService.rewireAfterWallRemoval(navigationGraph, mazeVectors);
+            }
+            List<BreakableWall> collapsed = List.copyOf(toCollapse);
+            for (WallCollapseListener listener : collapseListeners) {
+                listener.onWallsCollapsed(collapsed);
             }
             return true;
         }

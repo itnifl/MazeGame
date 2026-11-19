@@ -60,6 +60,45 @@ class GdxGameCombatAndEnemyFlowSupportTest {
     }
 
     @Test
+    void deadShootersPumpkinKeepsFlyingAndExplodes() {
+        GameWorldModel worldModel = new GameWorldModel();
+        MazeArena maze = openMaze();
+        main.game.maze.mazeworld.generators.PlayerState player =
+                new main.game.maze.mazeworld.generators.PlayerState(200f, 40f, 24f);
+        worldModel.setMaze(maze);
+        worldModel.setPlayer(player);
+        GdxEnemyRuntime shooter = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 70f, 80f, 160f), 0, openWorld(), 60f, 8);
+        java.util.List<GdxEnemyRuntime> enemies = new java.util.ArrayList<>(List.of(shooter));
+        PlayerCombatStateService combatState = new PlayerCombatStateService();
+        combatState.reset(100);
+        combatState.setMaze(maze);
+
+        // let it throw a pumpkin
+        for (int i = 0; i < 60 && worldModel.enemyProjectiles().isEmpty(); i++) {
+            GdxGameCombatAndEnemyFlowSupport.updateCombat(1f / 60f, player, combatState, enemies, worldModel);
+        }
+        assertTrue(!worldModel.enemyProjectiles().isEmpty(), "the shooter threw a pumpkin");
+
+        // the shooter is crushed while the pumpkin is in the air
+        shooter.subtractHitPoints(shooter.getHitPoints(), main.game.maze.common.remains.DeathCause.CRUSHED);
+        GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(enemies, worldModel.deadEnemies(),
+                worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
+        assertTrue(enemies.isEmpty(), "the dead shooter no longer moves or touches the player");
+
+        boolean stillFlying = false;
+        boolean exploded = false;
+        for (int i = 0; i < 300 && !exploded; i++) {
+            GdxGameCombatAndEnemyFlowSupport.updateCombat(1f / 60f, player, combatState, enemies, worldModel);
+            stillFlying |= !worldModel.enemyProjectiles().isEmpty();
+            exploded |= !worldModel.enemyBursts().isEmpty();
+        }
+        assertTrue(stillFlying, "the pumpkin keeps flying after its thrower died");
+        assertTrue(exploded, "the pumpkin still lands and explodes");
+        assertTrue(shooter.projectileVisuals().size() <= 1, "the dead shooter threw nothing new");
+    }
+
+    @Test
     void applyDirectionalFlameExplosion_capsDamagePerDirectionAtOneHundred() {
         // Enemy at (200,40): center=(220,60). East perpendicular |60-40|=20≤120; south cross-axis
         // |220-20|=200>120 so south/north corridors exclude it — enemy is in east only.
@@ -79,7 +118,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 400f);
 
         assertEquals(100, applied, "Explosion damage must be capped at 100 per direction");
-        assertEquals(50, runtime.currentHitPoints(),
+        assertEquals(50, runtime.getHitPoints(),
                 "Enemy should keep the remaining hit points after capped damage");
     }
 
@@ -116,9 +155,9 @@ class GdxGameCombatAndEnemyFlowSupportTest {
 
         assertEquals(20, applied,
                 "Only the enemy before the wall should be damaged when the wall is indestructible");
-        assertEquals(0, frontRuntime.currentHitPoints(),
+        assertEquals(0, frontRuntime.getHitPoints(),
                 "Front enemy should be defeated by the available budget");
-        assertEquals(80, rearRuntime.currentHitPoints(),
+        assertEquals(80, rearRuntime.getHitPoints(),
                 "Rear enemy must stay untouched after the wall stops the flame");
     }
 
@@ -143,7 +182,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 400f);
 
         assertEquals(0, applied, "Enemy outside every flame corridor must not be damaged");
-        assertEquals(100, offCorridor.currentHitPoints(),
+        assertEquals(100, offCorridor.getHitPoints(),
                 "Off-corridor enemy must retain full hit points after the explosion");
     }
 
@@ -198,7 +237,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 playerDamage::addAndGet);
 
         assertTrue(playerDamage.get() > 0, "Player must take damage from the blast");
-        assertTrue(enemy.currentHitPoints() < 100, "Enemy beyond the player must also take damage");
+        assertTrue(enemy.getHitPoints() < 100, "Enemy beyond the player must also take damage");
     }
 
     @Test
@@ -229,7 +268,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
         // Wall costs 20 HP, enemy costs 10 HP = 30 applied in this direction
         assertTrue(applied >= 30,
                 "Budget should cover the wall (20 HP) and the enemy beyond it (10 HP)");
-        assertEquals(0, enemyBeyondWall.currentHitPoints(),
+        assertEquals(0, enemyBeyondWall.getHitPoints(),
                 "Enemy beyond the destroyed wall should be defeated");
     }
 

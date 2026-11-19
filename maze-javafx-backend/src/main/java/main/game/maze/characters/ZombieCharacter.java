@@ -2,11 +2,9 @@ package main.game.maze.characters;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -23,7 +21,6 @@ import main.game.maze.opponents.Zombie;                // generated EMF class
 import main.game.maze.opponents.BehaviorType;         // generated enum
 import main.game.maze.actions.MovementNotifierAction;
 import main.game.maze.mazeworld.constants.StageConstants;
-import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.common.graphics.AudioEngine;
 
 public class ZombieCharacter extends ComputerCharacter
@@ -31,23 +28,15 @@ public class ZombieCharacter extends ComputerCharacter
 
     private static final Logger LOGGER = Logger.getLogger(ZombieCharacter.class.getName());
     private final Zombie zombieModel;
-    private AtomicInteger hitPoints;
     private static final long ZOMBIE_SCREAM_COOLDOWN_MS = 600L;
 
-    private final double spawnX;
-    private final double spawnY;
-    private PauseTransition resurrectTransition;
 
-    private List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
 
     public ZombieCharacter(Node characterGraphics, double x, double y, Zombie model) {
         super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
         this.zombieModel = model;
-        this.hitPoints = new AtomicInteger(Math.max(1, model.getHealth()));
-        this.spawnX = x;
-        this.spawnY = y;
         this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
 
@@ -109,49 +98,6 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     @Override
-    public void subtractHitPoints(int hp) {
-        hitPoints.addAndGet(-hp);
-        onHpChanged(hitPoints.get(), zombieModel.getHealth());
-
-        if (hitPoints.get() <= 0) {
-            die();
-        }
-    }
-
-    private void die() {
-        PlayDieAnimation();
-        for (var subscriber : deathSubscribers) {
-            subscriber.AddDeathNotification(this);
-        }
-        var graphics = this.getCharacterGraphics();
-        if (App.gameController != null) {
-            App.gameController.unregisterComputerCharacter(this, graphics);
-        }
-
-        int resurrectionSeconds = zombieModel.getResurrectionTime();
-        if (resurrectionSeconds > 0) {
-            if (resurrectTransition == null) {
-                resurrectTransition = new PauseTransition();
-                resurrectTransition.setOnFinished(evt -> resurrect());
-            }
-            resurrectTransition.setDuration(Duration.seconds(resurrectionSeconds));
-            resurrectTransition.stop();
-            resurrectTransition.playFromStart();
-        }
-    }
-
-    private void resurrect() {
-        hitPoints.set(Math.max(1, zombieModel.getHealth()));
-        onHpChanged(hitPoints.get(), zombieModel.getHealth());
-        teleportTo(spawnX, spawnY);
-        var graphics = this.getCharacterGraphics();
-        if (App.gameController != null) {
-            App.gameController.registerComputerCharacter(this, graphics);
-        }
-    }
-
-
-    @Override
     public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
         var graphics = this.getCharacterGraphics();
         if (nodeBounds == null || graphics == null) {
@@ -192,28 +138,6 @@ public class ZombieCharacter extends ComputerCharacter
     @Override
     public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() {
         return touchTargets;
-    }
-
-    @Override
-    public int getHitPoints() {
-       return this.hitPoints.get();
-    }
-
-    @Override
-    public void setHitPoints(int hp) {
-        hitPoints = new AtomicInteger(hp);
-        onHpChanged(hp, zombieModel.getHealth());
-    }
-
-    @Override
-    public void addHitPoints(int hp) {
-        hitPoints.addAndGet(hp);
-        onHpChanged(hitPoints.get(), zombieModel.getHealth());
-    }
-
-    @Override
-    public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) {
-        deathSubscribers.add(subscriber);
     }
 
     public Zombie getModel() {

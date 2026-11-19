@@ -136,6 +136,13 @@ Because of this structure it is easy to swap maze generators, adjust difficulty 
 
 ---
 
+## Wall Collapse Listeners
+
+`GameMazeWorld.addWallCollapseListener(listener)` notifies after `applyWallDamage` destroys a breakable
+wall, with the destroyed wall first and every wall that fell with it (cascade), already removed from
+the maze. Both frontends use it to play the rubble animation and crush enemies beside the wall. The
+world is recreated per level, so frontends re-register when they get a new world.
+
 ## Wall Collision Utilities
 
 The module provides `WallCollisionUtil`, a shared, backend-neutral utility class for wall-related geometry tests.

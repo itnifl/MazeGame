@@ -30,6 +30,13 @@ runtime renderer is JavaFX, libGDX, or something else.
   painted solid on top of the glow), and embers. Size follows the splash radius
   (`PumpkinBurst.lobRadius`, `STRAIGHT_SHOT_RADIUS`); bigger bursts last longer
   (`lifetimeFor`, 0.45–1.0 s). Shares its flame drawing with `FireBlastModel` via `PuffFrame`.
+- `remains` package: `DeathCause` (FIRE, SHOT, CRUSHED, OTHER; used by the domain `ICanDie`),
+  `RemainsSpriteResolver` (coal pile for fire, the enemy's own shot / crushed remains or a generic
+  blood fallback), `RemainsLedger` (one remains per enemy, identity-keyed, capped, cleared on respawn)
+  and `CrushZone` (which enemies a collapsing wall segment crushes).
+- `WallRubble`, `WallRubbleModel`, `RubbleMaterial` (`common.graphics.fire`): a collapsing wall as
+  layered puffs: blocks and gravel tumble out to both sides under a dust cloud and settle; colours
+  follow the walls-model material id (`STONE_BASIC` -> stone); steel throws sparks.
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
@@ -125,6 +132,8 @@ singletons.
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [DamageStateTest](src/test/java/main/game/maze/common/graphics/DamageStateTest.java) — HP ratio threshold boundaries (0, 1, 25, 26, 50, 51, 75, 76, 100), scaled HP, and zero/negative maxHp handling
 - [DamageStateResolverTest](src/test/java/main/game/maze/common/graphics/DamageStateResolverTest.java) — direction-suffixed and non-suffixed sprite path derivation, HEALTHY passthrough, and silent classpath fallback
+- [WallRubbleModelTest](src/test/java/main/game/maze/common/graphics/fire/WallRubbleModelTest.java) — chunks start on the wall and fall to both sides, dust rises and settles, extent bounds, more chunks for longer walls, steel sparks, material from model id.
+- [RemainsSpriteResolverTest](src/test/java/main/game/maze/common/remains/RemainsSpriteResolverTest.java), [RemainsLedgerTest](src/test/java/main/game/maze/common/remains/RemainsLedgerTest.java), [CrushZoneTest](src/test/java/main/game/maze/common/remains/CrushZoneTest.java) — remains sprite choice and fallback (and that all shipped remains exist), per-owner ledger with cap, crush geometry.
 - [PumpkinBurstModelTest](src/test/java/main/game/maze/common/graphics/fire/PumpkinBurstModelTest.java) — puffs stay within `maxExtent()`, white-hot flash at the start, rind and stem debris fly outward, debris is not additive, ends in smoke, layer order, determinism per seed, lifetime and radius rules.
 - [FireBlastModelTest](src/test/java/main/game/maze/common/graphics/fire/FireBlastModelTest.java) — puffs stay inside the corridors and arm reach, blocked arms stay empty, flame fronts travel outwards, white-hot core gives way to smoke, layer ordering, value ranges, determinism with clock flicker
 - [CachingDamagePathResolverTest](src/test/java/main/game/maze/common/graphics/CachingDamagePathResolverTest.java) — fallback, one lookup per (path, state), pass-through for HEALTHY/blank, classpath factory.

@@ -288,8 +288,8 @@ class GdxEnemyRuntimeAnimationTest {
 
     /** Lowers HP through the real damage path (max HP is 100 in these spawns). */
     private static void dropHpTo(GdxEnemyRuntime runtime, int hp) {
-        runtime.takeDamage(runtime.currentHitPoints() - hp);
-        assertEquals(hp, runtime.currentHitPoints());
+        runtime.subtractHitPoints(runtime.getHitPoints() - hp);
+        assertEquals(hp, runtime.getHitPoints());
     }
 
     private static GdxEnemyRuntime makeRuntime(EnemySpawn spawn) {

@@ -26,7 +26,7 @@ Run it **before** `DamageSpriteGenerator`, which also derives damage states for 
 directional sprites.
 
 Full order: `GhostDirectionalSpriteGenerator` → `DamageSpriteGenerator` →
-`PumpkinBomberDirectionalSpriteGenerator`.
+`PumpkinBomberDirectionalSpriteGenerator` → `RemainsSpriteGenerator`.
 
 ## PumpkinBomberDirectionalSpriteGenerator
 
@@ -44,6 +44,26 @@ Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGen
 
 ```sh
 "$JAVA_HOME/bin/java" tools/sprite-gen/PumpkinBomberDirectionalSpriteGenerator.java
+```
+
+Output is deterministic and overwrites existing files.
+
+## RemainsSpriteGenerator
+
+Creates the enemy death remains in `main/game/maze/remains/` (all 256x256, transparent):
+
+| File | Look |
+|------|------|
+| `burned-{1,2,3}.png` | pile of coal lumps with glowing cracks on an ash ring (fire / bomb deaths, any enemy) |
+| `<variant>-shot.png` | the bleeding enemy sprite lying on its side in a blood pool, chunks torn out, splashes around |
+| `<variant>-crushed.png` | the enemy flattened onto a large blood splat with gore |
+| `generic-shot.png`, `generic-crushed.png` | blood only: the fallback for enemies without their own remains |
+
+Variants: zombie1-3, ghost1-3, pumpkinbomber. Ground marks are drawn on a 64x64 grid and scaled up 4x to match
+the pixel-art sprites. Needs the `*-bleeding*` damage sprites, so run it **after** `DamageSpriteGenerator`:
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/RemainsSpriteGenerator.java
 ```
 
 Output is deterministic and overwrites existing files.

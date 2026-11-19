@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.controller;
 
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.graphics.fire.FireBlast;
 import main.game.maze.libgdx.model.BombFuseGlow;
 import main.game.maze.libgdx.model.FireBlastVisual;
@@ -50,6 +51,7 @@ import main.game.maze.libgdx.helper.GdxGameStartFlowApplySupport;
 import main.game.maze.libgdx.helper.GdxGameUpdateFlowSupport;
 import main.game.maze.libgdx.helper.GdxScoreSupport;
 import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
+import main.game.maze.libgdx.helper.GdxWallCollapseSupport;
 import main.game.maze.libgdx.helper.GdxWallDamageSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
@@ -165,6 +167,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         private final GdxAssetService assetService;
         private final boolean ownsAssetService;
     final List<GdxEnemyRuntime> animatedEnemies = worldModel.animatedEnemies();
+    /** Collapse handling for the current level's world (see {@link #watchWallCollapses}). */
+    private final GameMazeWorld.WallCollapseListener wallCollapseListener =
+            GdxWallCollapseSupport.listener(worldModel, animatedEnemies, () -> maze != null ? maze.heightPx() : 0f);
+    private GameMazeWorld watchedWorld;
     final PlayerCombatStateService combatState = new PlayerCombatStateService();
     private Texture playerTexture;
     private Texture playerDeathTexture;
@@ -368,9 +374,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::killEnemies);
     }
 
-    private void killEnemies() {
+    private void killEnemies(DeathCause cause) {
         int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), cause, worldModel.remains(),
+                worldModel.retiredShooters());
         flashStatus("Killed " + killed + " enemi" + (killed == 1 ? "y" : "es"));
     }
 
@@ -429,13 +436,18 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     new main.game.maze.libgdx.movement.GdxWorldView(maze, player),
                     GdxGameScreenMetrics.JAVA_FX_TICK_RATE,
                     MAX_ENEMY_TICKS_PER_FRAME,
-                    dt);
+                    dt,
+                    worldModel.remains());
         }
     }
 
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
         tickPlayerBombs(dt);
+        // enemies can die outside the bomb flow too (e.g. crushed by a wall a projectile brought down)
+        GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
+        GdxWallCollapseSupport.tick(worldModel, dt);
         emitPlayerFlameVisuals();
     }
 
@@ -502,8 +514,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.setExplosionShakeRemainingSeconds(0.20f);
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
 
-        int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledByFlame(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies());
+        int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
 
         if (appliedDamage > 0 || flamedKilled > 0) {
             String msg = flamedKilled > 0
@@ -640,6 +652,17 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         return GameScoringConstants.baseScoreFor(difficulty);
     }
 
+    /** Collapsing walls fall as rubble and crush enemies next to them; follows the current level's world. */
+    private void watchWallCollapses(GameMazeWorld world) {
+        if (watchedWorld != null) {
+            watchedWorld.removeWallCollapseListener(wallCollapseListener);
+        }
+        watchedWorld = world;
+        if (world != null) {
+            world.addWallCollapseListener(wallCollapseListener);
+        }
+    }
+
     private void applyStartFlow(GameSessionStartFlowCoordinator.StartFlowResult startFlow, Difficulty selected) {
         var applied = GdxGameStartFlowApplySupport.apply(
                 startFlow,
@@ -651,6 +674,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::flashStatus,
                 gameAudioCoordinator::switchToInGameMusic);
         maze = applied.maze();
+        watchWallCollapses(GdxWallDamageSupport.worldFrom(maze));
         player = applied.player();
         viewport = applied.viewport();
         playerBombsRemaining = Math.max(0, startFlow.startState().runtimeModel().playerBombCount());
@@ -660,6 +684,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.fireBlasts().clear();
         worldModel.enemyBursts().clear();
         worldModel.bombFuseGlows().clear();
+        worldModel.wallRubble().clear();
+        worldModel.remains().clear();
+        worldModel.retiredShooters().clear();
         applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         var textures = applied.runtimeTextures();
         playerTexture = textures.playerTexture();
@@ -721,6 +748,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        watchWallCollapses(null);
+        worldModel.retiredShooters().clear();
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();

@@ -3,7 +3,6 @@ package main.game.maze.characters;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javafx.scene.Node;
@@ -30,7 +29,6 @@ import main.game.maze.characters.interfaces.IHaveModel;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
-import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
@@ -47,20 +45,18 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     private static final double BURST_VIEW_ORDER = -9;
 
     private final PumpkinBomber model;
-    private AtomicInteger hitPoints;
 
-    private final List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
     private final List<ICanSubscribeAndNotifyPosition> touchTargets = new ArrayList<>();
 
     // ranged state
     private long lastShotMs = 0L;
     private final List<PumpkinProjectile> projectiles = new ArrayList<>();
     private long burstCount;
+    private Pane boardPane;
 
     public PumpkinBomberCharacter(Node characterGraphics, double x, double y, PumpkinBomber model) {
         super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
         this.model = model;
-        this.hitPoints = new AtomicInteger(Math.max(1, model.getHealth()));
         this.characterXYSizeFromPoint = StageConstants.ZombieCharacterXYSize;
         calculateMaxPositions();
         this.notifyMovement = new MovementNotifierAction(characterGraphics, this);
@@ -144,7 +140,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
      * called safely from the background movement thread without stale node reads.
      */
     public void tryShootAt(double targetX, double targetY, long nowMs) {
-        if (getCharacterGraphics() == null) {
+        // dead (e.g. crushed this frame) or detached bombers start no new attack
+        if (getCharacterGraphics() == null || !isAlive()) {
             return;
         }
         int cooldown = defaultIfNull(model.getAttackCooldownMs(), 1000);
@@ -301,32 +298,6 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         return CollisionDamage.effectiveDamage(model.getThreatLevel(), defaultIfNull(model.getAttackDamage(), 5));
     }
 
-    // ICanDie
-
-    @Override
-    public void subtractHitPoints(int hp) {
-        hitPoints.addAndGet(-hp);
-        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
-        var g = this.getCharacterGraphics();
-        if (hitPoints.get() <= 0) {
-            PlayDieAnimation();
-            for (var sub : deathSubscribers) sub.AddDeathNotification(this);
-            if (App.gameController != null) {
-                App.gameController.unregisterComputerCharacter(this, g);
-            }
-        }
-    }
-
-    @Override public int  getHitPoints() { return hitPoints.get(); }
-    @Override public void setHitPoints(int hp) {
-        hitPoints = new AtomicInteger(hp);
-        onHpChanged(hp, model != null ? model.getHealth() : 100);
-    }
-    @Override public void addHitPoints(int hp) {
-        hitPoints.addAndGet(hp);
-        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
-    }
-
     // subscriptions
 
     @Override public void addPositionSubscriber(ICanSubscribeAndNotifyPosition e) { touchTargets.add(e); }
@@ -358,7 +329,6 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // model
 
     @Override public PumpkinBomber getModel() { return this.model; }
-    public  void addDeathNotificationSubscriber(IDeathSubscriber s) { deathSubscribers.add(s); }
 
     // helpers
 
@@ -415,14 +385,21 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         return null;
     }
 
+    /**
+     * The board this bomber plays on. Remembered, so pumpkins still in the air after the bomber
+     * died (and left the board) can still show their explosion there.
+     */
     private Pane hostPane() {
-        if (getCharacterGraphics() == null || getCharacterGraphics().getParent() == null) {
-            return null;
+        Node graphics = getCharacterGraphics();
+        if (graphics != null && graphics.getParent() instanceof Pane pane) {
+            boardPane = pane;
         }
-        if (getCharacterGraphics().getParent() instanceof Pane pane) {
-            return pane;
-        }
-        return null;
+        return boardPane;
+    }
+
+    /** Whether pumpkins thrown by this bomber are still in the air. */
+    public boolean hasShotsInFlight() {
+        return !projectiles.isEmpty();
     }
 
     private void drawBeam(double sx, double sy, double tx, double ty, boolean blocked) {

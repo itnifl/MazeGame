@@ -339,5 +339,34 @@ class GameMazeWorldBreakableTest {
         assertTrue(cascadeWorld.getMazeVectors().contains(unrelated1));
         assertTrue(cascadeWorld.getMazeVectors().contains(unrelated2));
     }
-}
 
+    @Test
+    @DisplayName("collapse listeners receive every wall removed by a collapse, including the cascade")
+    void collapseListenerReceivesCascade() {
+        BreakableWall target = world.getBreakableWalls().get(0);
+        List<List<BreakableWall>> notifications = new ArrayList<>();
+        world.addWallCollapseListener(notifications::add);
+
+        assertFalse(world.applyWallDamage(target, 0), "no damage, no collapse");
+        assertTrue(notifications.isEmpty(), "listeners only hear about collapses");
+
+        assertTrue(world.applyWallDamage(target, Integer.MAX_VALUE / 2));
+        assertEquals(1, notifications.size());
+        List<BreakableWall> collapsed = notifications.get(0);
+        assertSame(target, collapsed.get(0), "the destroyed wall comes first");
+        for (BreakableWall wall : collapsed) {
+            assertFalse(world.getMazeVectors().contains(wall.geometry), "collapsed walls are already removed");
+        }
+    }
+
+    @Test
+    @DisplayName("a removed collapse listener is no longer notified")
+    void removedListenerNotNotified() {
+        List<List<BreakableWall>> notifications = new ArrayList<>();
+        GameMazeWorld.WallCollapseListener listener = notifications::add;
+        world.addWallCollapseListener(listener);
+        world.removeWallCollapseListener(listener);
+        world.applyWallDamage(world.getBreakableWalls().get(0), Integer.MAX_VALUE / 2);
+        assertTrue(notifications.isEmpty());
+    }
+}

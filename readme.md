@@ -21,9 +21,9 @@
 * 🧩 [maze-module-repository](maze-module-repository/readme.md)
 * 🗄️ [maze-common-backend](maze-common-backend/readme.md)
 * 🖼️ [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic interfaces and inert defaults
-* 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md)
+* 🖥️ [maze-javafx-backend](maze-javafx-backend/readme.md) — JavaFX game runtime and desktop UI
 * 🎨 [maze-javafx](maze-javafx/readme.md) — JavaFX backend adapters
-* 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX backend
+* 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX OpenGL game runtime and desktop UI
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
 * ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 x86_64 prerequisite installer
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
@@ -40,6 +40,7 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 ## Project Tech stack:
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/JavaFX-%234285F4.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![libGDX](https://img.shields.io/badge/libGDX-%23E10098.svg?style=for-the-badge&logo=libgdx&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-%23C71A36.svg?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![Tycho](https://img.shields.io/badge/Tycho-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
 ![Eclipse](https://img.shields.io/badge/Eclipse-%232C2255.svg?style=for-the-badge&logo=eclipseide&logoColor=white)
@@ -51,6 +52,15 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 ![FreeMarker](https://img.shields.io/badge/FreeMarker-%23E34F26.svg?style=for-the-badge&logo=apache&logoColor=white)
 ![Makefile](https://img.shields.io/badge/Makefile-%23A81D33.svg?style=for-the-badge&logo=gnumake&logoColor=white)
 <br/>
+
+## Dual Frontends: JavaFX and libGDX
+
+MazeGame provides two first-class graphical desktop frontends that run the same gameplay rules from the shared backend modules. For example, enemy health, damage, death causes, remains and resurrection come from `ICanDie`, `EnemyVitals`, `MortalityRules` and `MortalityService` in `maze-common-backend`, so both frontends behave the same:
+
+* **JavaFX Frontend** ([maze-javafx-backend](maze-javafx-backend/readme.md), [maze-javafx](maze-javafx/readme.md)): SceneGraph & Canvas based UI with FXML styling and JavaFX audio.
+* **libGDX Frontend** ([maze-libgdx](maze-libgdx/readme.md)): High-performance OpenGL / LWJGL3 screen runtime with sprite batch rendering and zero native SDK dependencies.
+
+Both frontends share the identical game rules, scoring engine, maze generation, enemy AI movement services, bomb detonation physics, audio transition director, and damage-state sprite resolution via [maze-common-frontend](maze-common-frontend/readme.md).
 
 ## Quick start
 
@@ -143,7 +153,9 @@ The PowerShell installer:
 
 > **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
 
-Restart your terminal after the script finishes, then open VS Code and press **Ctrl+F5** to launch the game.
+Restart your terminal after the script finishes, then open VS Code and press **Ctrl+F5** to launch either frontend:
+* **Launch MazeGame (JavaFX)** — starts the JavaFX desktop frontend via [Launcher.java](maze-javafx-backend/src/main/java/main/game/maze/Launcher.java)
+* **Launch MazeGame (libGDX backend)** — starts the OpenGL libGDX frontend via [GdxAppLauncher.java](maze-libgdx/src/main/java/main/game/maze/libgdx/GdxAppLauncher.java)
 
 > **Tip:** If your system already has JDK 21 and Maven, the script skips those steps and only sets up environment variables, VS Code extensions, and the launch file.
 
@@ -158,7 +170,7 @@ Restart your terminal after the script finishes, then open VS Code and press **C
 * Press the **SPACE** bar to plant a directional flame bomb. Bombs detonate after 3 seconds, firing flames along corridors in four directions to damage or eliminate monsters and destroy breakable walls (Glass, Dirt, Wood, Steel). Watch out: you will also take damage if caught in your own blast corridor!
 * You can press and hold the P key to see the navigation path to your win area; this will lower your score (move around a little if it doesn't work at first). The P key has a time budget per difficulty: 45 s (Easy), 25 s (Normal), 15 s (Hard). Once the budget is spent, the hint is unavailable for the rest of the game.
 * You can press and hold the O key to see all possible navigation paths in the game; this will lower your score (move around a little if it doesn't work at first).
-* Press the **T** key to open the in-game command terminal. Type a command and press **Enter** to run it, or press **Esc** to close the terminal (e.g. `/kill` to defeat all active enemies, `/h` to view available commands).
+* Press the **T** key to open the in-game command terminal. Type a command and press **Enter** to run it, or press **Esc** to close the terminal (e.g. `/kill` to defeat all active enemies, `/kill fire`, `/kill shot` or `/kill crushed` to defeat them and leave that kind of remains, `/h` to view available commands). In both frontends they skip an enemy during its brief invulnerability window right after it respawns.
 * Press the H key to show high scores.
 * Press the ESC key to restart the game.
 * You can save your scores when you die or win.
@@ -180,7 +192,7 @@ Ghosts start in a semi-transparent *phasing* state and materialise over time (ro
 
 * The Non-player characters sometimes don't start. In such case, restart the game (use the ESC key).
 * The action screens for win and game over can occasionally fail to show after adding the player flash effect. This is rare. Try restarting the game (use the ESC key).
-* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case: `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run `pwsh -File ./make-javafx.ps1 -Target quick` and finally run the game in VS Code. You may need to select `Continue` if VS Code asks whether to continue after a language-server build failure.
+* Sometimes when compiling and starting the game in VS Code, you will see error messages stating missing projects or packages. If that is the case: `Ctrl + Shift + P → "Java: Clean Java Language Server Workspace"`, then run `pwsh -File ./make-javafx.ps1 -Target quick` (for JavaFX) or `pwsh -File ./make-libgdx.ps1 -Target prepare-run` (for libGDX), and finally run the game in VS Code. You may need to select `Continue` if VS Code asks whether to continue after a language-server build failure.
 * You can pass walls by running into them through the edge.
 
 ## Sources
@@ -255,37 +267,33 @@ VS Code Java runtime:
 * If you also run the JavaFX app with newer JDK locally, keep shell builds on JDK 21
 * Reload Window
 
-⚡ Finally, in Visual Studio Code run the **Launch MazeGame (JavaFX)** configuration (Ctrl+F5), which starts [Launcher.java](maze-javafx-backend/src/main/java/main/game/maze/Launcher.java) (the JavaFX launcher shim).
+⚡ Finally, in Visual Studio Code launch either frontend via the debug configurations (Ctrl+F5):
+* **Launch MazeGame (JavaFX)** — starts [Launcher.java](maze-javafx-backend/src/main/java/main/game/maze/Launcher.java) (the JavaFX launcher shim)
+* **Launch MazeGame (libGDX backend)** — starts [GdxAppLauncher.java](maze-libgdx/src/main/java/main/game/maze/libgdx/GdxAppLauncher.java) (the libGDX LWJGL3 launcher)
 
-### Graphics backends (JavaFX vs libGDX)
+### Graphics backends (JavaFX and libGDX)
 
-The graphics, threading and audio facades have been extracted into three
-sibling modules so the renderer can be swapped:
+The graphics, threading, and audio facades are modularised across three frontend packages so the renderer can be swapped without touching core game rules:
 
-- [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic
-  interfaces and inert defaults used by the gameplay code.
-- [maze-javafx](maze-javafx/readme.md) — the production JavaFX backend adapters
-  used by the JavaFX runtime entry point in `maze-javafx-backend`.
-- [maze-libgdx](maze-libgdx/readme.md) — a parallel libGDX backend with a
-  working launcher and game screen runtime.
+- [maze-common-frontend](maze-common-frontend/readme.md) — backend-agnostic interfaces, scoring logic, enemy movement services, damage-state sprite resolution, explosion models, and inert defaults.
+- [maze-javafx](maze-javafx/readme.md) & [maze-javafx-backend](maze-javafx-backend/readme.md) — the JavaFX 21 backend: SceneGraph & Canvas rendering (`FxGameRenderCoordinator`), FXML styling, JavaFX MediaPlayer audio, and UI scheduling via `Platform.runLater`.
+- [maze-libgdx](maze-libgdx/readme.md) — the libGDX backend: hardware-accelerated OpenGL / LWJGL3 screen runtime, `SpriteBatch` / `ShapeRenderer` pipeline (`GdxGameRenderPipeline`, `GdxExplosionRenderer`), libGDX Audio, and UI scheduling via `GdxUiScheduler`.
 
-To launch either backend, use the configurations in
-[.vscode/launch.json](.vscode/launch.json):
+To launch either backend in VS Code, use the configurations in [.vscode/launch.json](.vscode/launch.json):
 
-The launch configurations read `.vscode/maze.launch.env`, which is generated
-from discovered Java 21 paths by the helper scripts.
+The launch configurations read `.vscode/maze.launch.env`, which is generated from discovered Java 21 paths by the helper scripts.
 
 If you install or switch Java versions, regenerate the file before launching:
 
 ```powershell
+# Using the JavaFX toolchain:
 .\make-javafx.ps1 -Target write-launch-env
-# or
-.\make-javafx.ps1 -Target prepare-run
+# Or using the libGDX toolchain:
+.\make-libgdx.ps1 -Target write-launch-env
 ```
 
 - **Launch MazeGame (JavaFX)** — runs the full game via `main.game.maze.Launcher`.
-- **Launch MazeGame (libGDX backend)** — runs
-  `main.game.maze.libgdx.GdxAppLauncher`.
+- **Launch MazeGame (libGDX backend)** — runs the full game via `main.game.maze.libgdx.GdxAppLauncher`.
 
 ### libGDX MVC overview
 
@@ -370,18 +378,25 @@ make mirror
 Other handy targets:
 
 ```bash
-# build only the JavaFX runtime module, then use the mirror-aware full build
+# build only the JavaFX runtime module:
 mvn -U -pl maze-javafx-backend -am clean package
-pwsh -File ./make-javafx.ps1 -Target all
 
-# run all unit tests
+# build only the libGDX runtime module:
+mvn -U -pl maze-libgdx -am clean package
+
+# run all unit tests across the repository
 mvn test
+
+# run unit tests only in maze-libgdx
+mvn -pl maze-libgdx -am test
 
 # run unit tests only in main.game.maze.opponents
 mvn -pl main.game.maze.opponents -am test
 
-# Run the JavaFX game (Windows)
-# -> Start in VSCode (Ctrl + F5)
+# Run either game frontend:
+# -> Start in VS Code (Ctrl + F5) with either launch configuration
+# -> Or run libGDX from CLI:
+pwsh -File ./make-libgdx.ps1 -Target run
 ```
 
 ### make-javafx.ps1 targets — Windows / macOS / Linux
@@ -599,6 +614,48 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 
 * A log file named like `p2-and-build-check_yyyyMMdd_HHmmss.log` under the chosen log directory
 * A terminal summary showing step name, status, and a short note
+
+---
+
+### Run-P2AndBuildCheck-libgdx.ps1
+
+**What it does**
+Runs dedicated Maven compilation and diagnostics for the libGDX frontend modules (`maze-common-frontend` and `maze-libgdx`). It auto-detects Java 21, builds and tests the modules, validates launch classes, and writes a timestamped transcript log with step-by-step elapsed timings and status summaries.
+
+**Typical flow**
+
+1. Toolchain verification (detects and validates Java 21 + Maven).
+2. Executes Maven clean verify / verify for `maze-common-frontend` and `maze-libgdx` according to `-BuildMode`.
+3. Verifies required runtime launch classes (`GdxAppLauncher.class`).
+4. Prints a summary table to the terminal and records full output in `releng\test-results-libgdx`.
+
+**Quick start**
+
+```powershell
+# From the repo root - full clean verify
+.\Run-P2AndBuildCheck-libgdx.ps1
+
+# Fast verification with tests enabled (no clean)
+.\Run-P2AndBuildCheck-libgdx.ps1 -BuildMode fast
+
+# Fastest verification with tests skipped (no clean)
+.\Run-P2AndBuildCheck-libgdx.ps1 -BuildMode fastest
+```
+
+**Parameters**
+
+```powershell
+# Default output folder for logs
+.\Run-P2AndBuildCheck-libgdx.ps1 -LogDirectory "releng\test-results-libgdx"
+
+# Build mode: full (default), fast, or fastest
+.\Run-P2AndBuildCheck-libgdx.ps1 -BuildMode fast
+```
+
+**Outputs**
+
+* A log file named like `libgdx-build-check_yyyyMMdd_HHmmss.log` under the chosen log directory (`releng\test-results-libgdx`)
+* A terminal summary table showing step name, outcome (`OK` / `FAILED`), and execution time
 <br/>
 <br/>
 

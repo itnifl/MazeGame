@@ -31,6 +31,10 @@ import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
+import main.game.maze.common.remains.CrushZone;
+import main.game.maze.common.remains.DeathCause;
+import main.game.maze.service.MortalityService;
+import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -103,6 +107,9 @@ public final class FxEnemyCoordinator {
     private final Runnable pathCanvasRefreshCallback;
 
     private final List<IMovingComputerCharacter> allComputerCharacters  = new CopyOnWriteArrayList<>();
+    /** Dead bombers whose pumpkins are still in the air (shared rule with libGDX). */
+    private final RetiredShooters<PumpkinBomberCharacter> retiredShooters =
+            new RetiredShooters<>(PumpkinBomberCharacter::hasShotsInFlight);
     private final Map<Node, Timeline>            infectiousMists        = new ConcurrentHashMap<>();
     private final List<Node>                     activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
 
@@ -178,10 +185,18 @@ public final class FxEnemyCoordinator {
     public void unregisterCharacter(IMovingComputerCharacter character, Node node) {
         Platform.runLater(() -> {
             allComputerCharacters.remove(character);
+            // a dead bomber's pumpkins in the air keep flying and can still hit the player (as in libGDX)
+            boolean keepsShooting = character instanceof PumpkinBomberCharacter bomber
+                    && !bomber.isAlive() && bomber.hasShotsInFlight();
+            if (keepsShooting) {
+                retiredShooters.retire((PumpkinBomberCharacter) character);
+            }
             PlayerCharacter player = playerSupplier.get();
             if (character instanceof ICanSubscribeAndNotifyPosition subscribable && player != null) {
                 player.removePositionSubscriber(subscribable);
-                subscribable.removePositionSubscriber(player);
+                if (!keepsShooting) {
+                    subscribable.removePositionSubscriber(player);
+                }
             }
             stopInfectiousMist(node);
             Pane board = gameBoardSupplier.get();
@@ -225,9 +240,22 @@ public final class FxEnemyCoordinator {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
             }
         }
+        Platform.runLater(this::updateRetiredShooters);
+    }
+
+    /** Advances the pumpkins of dead bombers until they land (FX thread). */
+    void updateRetiredShooters() {
+        for (PumpkinBomberCharacter bomber : retiredShooters.active()) {
+            try {
+                bomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error updating projectiles for dead bomber: " + bomber, ex);
+            }
+        }
     }
 
     public void reset() {
+        retiredShooters.clear();
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
@@ -235,17 +263,32 @@ public final class FxEnemyCoordinator {
     }
 
     public int killAll() {
-        int killed = 0;
-        for (var character : allComputerCharacters) {
-            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie) {
-                int hp = canDie.getHitPoints();
-                if (hp > 0) {
-                    canDie.subtractHitPoints(hp);
-                    killed++;
-                }
-            }
+        return killAll(DeathCause.OTHER);
+    }
+
+    /** Kills every living enemy by {@code cause}; they leave the matching remains. */
+    public int killAll(DeathCause cause) {
+        return MortalityService.killAll(allComputerCharacters, cause);
+    }
+
+    /**
+     * Crushes every living enemy touching a collapsed wall segment from (ax, ay) to (bx, by)
+     * (board coordinates, y-down).
+     *
+     * @return the number of enemies crushed
+     */
+    public int crushAlong(double ax, double ay, double bx, double by) {
+        return MortalityService.crushAlong(allComputerCharacters, FxEnemyCoordinator::bodyOf, ax, ay, bx, by);
+    }
+
+    /** An enemy's body on the board for crushing; null for non-enemies. */
+    private static MortalityService.Body bodyOf(IMovingComputerCharacter character) {
+        if (!(character instanceof ComputerCharacter cc)) {
+            return null;
         }
-        return killed;
+        double size = approximateSize(cc);
+        return new MortalityService.Body(cc.getCharacterPosition().getX() + size * 0.5d,
+                cc.getCharacterPosition().getY() + size * 0.5d, size * CrushZone.BODY_RADIUS_FACTOR);
     }
 
     public int applyPlayerFlameAttack(int damage) {
@@ -259,11 +302,12 @@ public final class FxEnemyCoordinator {
                 continue;
             }
             int hp = Math.max(0, canDie.getHitPoints());
-            if (hp <= 0) {
+            // a respawn-protected enemy would ignore the hit; leave the budget for the next one
+            if (hp <= 0 || canDie.isInvulnerable()) {
                 continue;
             }
             int damageToApply = Math.min(hp, remainingDamage);
-            canDie.subtractHitPoints(damageToApply);
+            canDie.subtractHitPoints(damageToApply, DeathCause.FIRE);
             remainingDamage -= damageToApply;
             appliedDamage += damageToApply;
         }
@@ -340,7 +384,7 @@ public final class FxEnemyCoordinator {
             if (!(character instanceof ComputerCharacter cc)) {
                 continue;
             }
-            if (Math.max(0, canDie.getHitPoints()) <= 0) {
+            if (Math.max(0, canDie.getHitPoints()) <= 0 || canDie.isInvulnerable()) {
                 continue;
             }
             double size = approximateSize(cc);
@@ -350,7 +394,7 @@ public final class FxEnemyCoordinator {
                 @Override public double centerX()        { return centerX; }
                 @Override public double centerY()        { return centerY; }
                 @Override public int    hitPoints()      { return Math.max(0, canDie.getHitPoints()); }
-                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount); }
+                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount, DeathCause.FIRE); }
                 @Override public boolean isPassThrough() { return false; }
             });
         }
@@ -611,6 +655,7 @@ public final class FxEnemyCoordinator {
     // -----------------------------------------------------------------------
 
     public void dispose() {
+        retiredShooters.clear();
         if (enemyPathOverlayTimer != null) {
             enemyPathOverlayTimer.stop();
             enemyPathOverlayTimer = null;
