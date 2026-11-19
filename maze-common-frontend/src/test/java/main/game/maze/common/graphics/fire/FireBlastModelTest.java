@@ -125,10 +125,11 @@ class FireBlastModelTest {
     }
 
     @Test
-    @DisplayName("only smoke uses normal blending")
-    void onlySmokeIsNotAdditive() {
+    @DisplayName("only smoke and solid debris use normal blending")
+    void onlySmokeAndDebrisAreNotAdditive() {
         for (FirePuff.Layer layer : FirePuff.Layer.values()) {
-            assertEquals(layer != FirePuff.Layer.SMOKE, layer.additive(), layer.name());
+            boolean painted = layer == FirePuff.Layer.SMOKE || layer == FirePuff.Layer.DEBRIS;
+            assertEquals(!painted, layer.additive(), layer.name());
         }
     }
 

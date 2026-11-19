@@ -257,7 +257,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         }
         worldModel.enemyProjectiles().clear();
         worldModel.enemyBeams().clear();
-        worldModel.enemyImpacts().clear();
+        worldModel.enemyBursts().clear();
 
         int totalDamage = 0;
         float maxShake = 0f;
@@ -271,11 +271,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()));
             worldModel.enemyProjectiles().addAll(enemy.projectileVisuals());
             worldModel.enemyBeams().addAll(enemy.beamVisuals());
-            var impacts = enemy.impactVisuals();
-            worldModel.enemyImpacts().addAll(impacts);
-            for (GdxEnemyRuntime.ImpactVisual impact : impacts) {
-                maxShake = Math.max(maxShake, impact.shakeMagnitude());
-            }
+            worldModel.enemyBursts().addAll(enemy.explosionVisuals());
+            maxShake = Math.max(maxShake, enemy.impactShake());
         }
         if (maxShake > 0f) {
             worldModel.setExplosionShakeRemainingSeconds(EXPLOSION_SHAKE_DURATION_SECONDS);

@@ -779,4 +779,12 @@ class PumpkinBomberCharacterTest {
             public List<ICanSubscribeAndNotifyPosition> getPositionSubscribers() { return List.of(); }
         };
     }
+
+    @Test
+    void burstRadius_matchesLibgdx_lobFillsSplashRadius_straightIsSmall() {
+        assertEquals(52.0, PumpkinBomberCharacter.burstRadius(ProjectileType.LOB, 52.0), 1e-9);
+        assertEquals(24.0, PumpkinBomberCharacter.burstRadius(ProjectileType.LOB, 10.0), 1e-9,
+                "small splash radii still get a visible burst");
+        assertEquals(18.0, PumpkinBomberCharacter.burstRadius(ProjectileType.STRAIGHT, 52.0), 1e-9);
+    }
 }

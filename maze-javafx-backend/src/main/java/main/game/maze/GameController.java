@@ -1,7 +1,7 @@
 package main.game.maze;
 
 import main.game.maze.common.graphics.fire.FireBlast;
-import main.game.maze.javafx.render.FxFireBlastView;
+import main.game.maze.javafx.render.FxExplosionView;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -315,7 +315,7 @@ public class GameController implements Initializable, EnemyRegistrar {
                 enemyCoordinator.flameVisualRange(centerX, centerY,  0, -1, survivingWalls, range),
                 PLAYER_FLAME_CORRIDOR_WIDTH,
                 FireBlast.seedFor(centerX, centerY));
-        FxFireBlastView.play(gameBoard, blast, PLAYER_FLAME_VISUAL_SECONDS, -9);
+        FxExplosionView.of(blast).play(gameBoard, PLAYER_FLAME_VISUAL_SECONDS, -9);
     }
 
     private static void installButtonPressEffect(Button button, String normalStyle, String pressedStyle) {

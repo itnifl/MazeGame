@@ -9,6 +9,8 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
+import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.common.graphics.fire.PumpkinBurst;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -23,6 +25,7 @@ import main.game.maze.common.movement.WorldView;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemyAnimationSpec;
 import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.libgdx.model.PumpkinBurstVisual;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.opponents.BehaviorType;
@@ -33,7 +36,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private static final String FALLBACK_THROW_SOUND = "/main/game/maze/menuselect.wav";
     private static final String FALLBACK_EXPLOSION_SOUND = "/main/game/maze/error.wav";
     private static final long RANGED_SOUND_COOLDOWN_MS = 120L;
-    private static final float IMPACT_DURATION_SECONDS = 0.24f;
+    /** Impacts shake the screen only right after they land, however long the burst stays visible. */
+    private static final float IMPACT_SHAKE_SECONDS = 0.24f;
 
     private final EnemySpawn spawn;
     private final String runtimeEnemyId;
@@ -67,6 +71,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
+    private long impactCount;
 
     /** Shared by all enemies so each damage-sprite lookup happens once per game. */
     private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
@@ -237,7 +242,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 if (onProjectileHitWall != null) {
                     onProjectileHitWall.accept(new float[]{projectile.x, projectile.y});
                 }
-                emitImpact(projectile.x, projectile.y, 16f, 4f);
+                emitImpact(projectile.x, projectile.y, (float) PumpkinBurst.STRAIGHT_SHOT_RADIUS, 4f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
                 continue;
@@ -249,7 +254,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 dealtDamage += Math.max(0, spawn.attackDamage());
                 lifetimeHits++;
                 LOG.fine(() -> String.format("[%s] STRAIGHT hit player at (%.0f,%.0f)", runtimeEnemyId, projectile.x, projectile.y));
-                emitImpact(projectile.x, projectile.y, 18f, 5f);
+                emitImpact(projectile.x, projectile.y, (float) PumpkinBurst.STRAIGHT_SHOT_RADIUS, 5f);
                 playExplosionSound();
                 activeProjectiles.remove(i);
                 continue;
@@ -268,9 +273,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                     LOG.fine(() -> String.format("[%s] LOB splash hit player at target (%.0f,%.0f)", runtimeEnemyId, projectile.targetX, projectile.targetY));
                 }
                 if (projectile.type == ProjectileType.LOB || projectile.type == ProjectileType.STRAIGHT) {
-                    float impactRadius = projectile.type == ProjectileType.LOB
-                            ? Math.max(24f, Math.max(0f, spawn.splashRadius()))
-                            : 18f;
+                    float impactRadius = (float) (projectile.type == ProjectileType.LOB
+                            ? PumpkinBurst.lobRadius(spawn.splashRadius())
+                            : PumpkinBurst.STRAIGHT_SHOT_RADIUS);
                     float shakeMagnitude = projectile.type == ProjectileType.LOB ? 8f : 5f;
                     emitImpact(projectile.boundsX(), projectile.boundsY(), impactRadius, shakeMagnitude);
                     playExplosionSound();
@@ -353,12 +358,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     private void emitImpact(float impactX, float impactY, float maxRadius, float shakeMagnitude) {
+        float radius = Math.max(8f, maxRadius);
+        // vary the debris scatter between shots that land on the same spot
+        long seed = FireBlast.seedFor(impactX, impactY) + 31L * ++impactCount;
         activeImpacts.add(new ImpactEffect(
-                impactX,
-                impactY,
-                Math.max(8f, maxRadius),
+                new PumpkinBurst(impactX, impactY, radius, seed),
                 Math.max(0f, shakeMagnitude),
-                IMPACT_DURATION_SECONDS));
+                (float) PumpkinBurst.lifetimeFor(radius)));
     }
 
     public List<ProjectileVisual> projectileVisuals() {
@@ -392,18 +398,28 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         return Collections.unmodifiableList(visuals);
     }
 
-    public List<ImpactVisual> impactVisuals() {
+    /** Projectile explosions to draw this frame. */
+    public List<PumpkinBurstVisual> explosionVisuals() {
         if (activeImpacts.isEmpty()) {
             return List.of();
         }
-        List<ImpactVisual> visuals = new ArrayList<>(activeImpacts.size());
+        List<PumpkinBurstVisual> visuals = new ArrayList<>(activeImpacts.size());
         for (ImpactEffect impact : activeImpacts) {
             float progress = impact.maxDuration <= 0f ? 1f : 1f - Math.max(0f, impact.remaining / impact.maxDuration);
-            float alpha = Math.max(0f, 1f - progress);
-            float radius = Math.max(2f, impact.maxRadius * (0.35f + 0.65f * progress));
-            visuals.add(new ImpactVisual(impact.x, impact.y, radius, alpha, impact.shakeMagnitude));
+            visuals.add(new PumpkinBurstVisual(impact.burst, progress));
         }
         return Collections.unmodifiableList(visuals);
+    }
+
+    /** Strongest screen shake requested by impacts that landed within the last {@value #IMPACT_SHAKE_SECONDS} s. */
+    public float impactShake() {
+        float shake = 0f;
+        for (ImpactEffect impact : activeImpacts) {
+            if (impact.maxDuration - impact.remaining < IMPACT_SHAKE_SECONDS) {
+                shake = Math.max(shake, impact.shakeMagnitude);
+            }
+        }
+        return shake;
     }
 
     public String imagePath() {
@@ -629,9 +645,6 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     public record BeamVisual(float x1, float y1, float x2, float y2, float alpha, boolean blocked, float width) {
     }
 
-    public record ImpactVisual(float x, float y, float radius, float alpha, float shakeMagnitude) {
-    }
-
     private static final class ActiveProjectile {
         private final ProjectileType type;
         private final float sx;
@@ -725,17 +738,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     private static final class ImpactEffect {
-        private final float x;
-        private final float y;
-        private final float maxRadius;
+        private final PumpkinBurst burst;
         private final float shakeMagnitude;
         private final float maxDuration;
         private float remaining;
 
-        private ImpactEffect(float x, float y, float maxRadius, float shakeMagnitude, float duration) {
-            this.x = x;
-            this.y = y;
-            this.maxRadius = maxRadius;
+        private ImpactEffect(PumpkinBurst burst, float shakeMagnitude, float duration) {
+            this.burst = burst;
             this.shakeMagnitude = shakeMagnitude;
             this.maxDuration = duration;
             this.remaining = duration;

@@ -244,6 +244,14 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-223** *(Assets)*: Distinct `pumpkinbomber-elite.png` art for `pb_hard`/`pb_elite_beam`, then its `-left/-up` and damaged/bleeding/tired variants via the sprite-gen tools (the optional `pumpkinbomber-elite-*` set from #80).
 
+- **SR-225** *(UX)*: Leave a fading scorch mark with pumpkin pulp where a pumpkin bomb lands (a few seconds, drawn under enemies), so players can read where the bomber has been aiming.
+
+- **SR-226** *(DDD)*: Have `GdxEnemyRuntime` / `PumpkinBomberCharacter` publish a `ProjectileDetonated(x, y, type, splashRadius)` domain event and let a presentation listener create the burst visual and screen shake, instead of the runtime holding visual state (`ImpactEffect`). This also lets audio and stats subscribe to the same event.
+
+- **SR-227** *(12-Factor, Config)*: Make the pumpkin burst lifetime range and shake window configurable (e.g. `MazeVisualStyleConfig` or env vars), alongside SR-216 for the fire blast.
+
+- **SR-228** *(Observability)*: Count projectile detonations per bomber type (lob/straight, hit/miss) in the existing projectile telemetry, and show active explosion count in the debug overlay.
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.

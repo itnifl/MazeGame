@@ -14,11 +14,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.animation.FadeTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
-import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
@@ -38,12 +34,17 @@ import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.common.graphics.fire.PumpkinBurst;
+import main.game.maze.javafx.render.FxExplosionView;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 
 public class PumpkinBomberCharacter extends ComputerCharacter
         implements ICanKill, ICharacterAnimations, ICanSubscribeAndNotifyPosition, ICanDie, IHaveModel<PumpkinBomber> {
 
     private static final Logger LOG = Logger.getLogger(PumpkinBomberCharacter.class.getName());
+    /** In front of the board like the player's fire blast. */
+    private static final double BURST_VIEW_ORDER = -9;
 
     private final PumpkinBomber model;
     private AtomicInteger hitPoints;
@@ -54,6 +55,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ranged state
     private long lastShotMs = 0L;
     private final List<PumpkinProjectile> projectiles = new ArrayList<>();
+    private long burstCount;
 
     public PumpkinBomberCharacter(Node characterGraphics, double x, double y, PumpkinBomber model) {
         super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
@@ -284,7 +286,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 if (!blockedByWall) {
                     playSound(model.getExplosionSound());
                     if (p.type == ProjectileType.LOB || p.type == ProjectileType.STRAIGHT) {
-                        playExplosionVisual(p.computedX, p.computedY, p.splashRadius);
+                        playExplosionVisual(p.computedX, p.computedY, p.type, p.splashRadius);
                     }
                 }
                 p.dispose();
@@ -367,39 +369,20 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         AudioEngine.get().play(path);
     }
 
-    private void playExplosionVisual(double cx, double cy, double splashRadius) {
+    /** Same burst size as libGDX: lobbed bombs fill their splash radius, straight shots are small. */
+    static double burstRadius(ProjectileType type, double splashRadius) {
+        return type == ProjectileType.LOB ? PumpkinBurst.lobRadius(splashRadius) : PumpkinBurst.STRAIGHT_SHOT_RADIUS;
+    }
+
+    private void playExplosionVisual(double cx, double cy, ProjectileType type, double splashRadius) {
         Pane pane = hostPane();
         if (pane == null) {
             return;
         }
-        double radius = Math.max(12.0, splashRadius * 0.5);
+        double radius = burstRadius(type, splashRadius);
+        PumpkinBurst burst = new PumpkinBurst(cx, cy, radius, FireBlast.seedFor(cx, cy) + 31L * ++burstCount);
         main.game.maze.common.graphics.UiScheduler.get().runOnUiThread(() -> {
-            Circle ring = new Circle(cx, cy, 6);
-            ring.setFill(Color.TRANSPARENT);
-            ring.setStroke(Color.ORANGERED);
-            ring.setStrokeWidth(3);
-            ring.setMouseTransparent(true);
-            pane.getChildren().add(ring);
-
-            Circle core = new Circle(cx, cy, 4);
-            core.setFill(Color.YELLOW);
-            core.setOpacity(0.9);
-            core.setMouseTransparent(true);
-            pane.getChildren().add(core);
-
-            Timeline expand = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                    new KeyValue(ring.radiusProperty(), 6),
-                    new KeyValue(ring.opacityProperty(), 1.0)),
-                new KeyFrame(Duration.millis(240),
-                    new KeyValue(ring.radiusProperty(), radius),
-                    new KeyValue(ring.opacityProperty(), 0.0))
-            );
-            expand.setOnFinished(e -> pane.getChildren().removeAll(ring, core));
-
-            FadeTransition coreFade = new FadeTransition(Duration.millis(180), core);
-            coreFade.setFromValue(0.9);
-            coreFade.setToValue(0.0);
+            FxExplosionView.of(burst).play(pane, PumpkinBurst.lifetimeFor(radius), BURST_VIEW_ORDER);
 
             // Brief screen shake on the board pane's parent (camera layer)
             Node shakeTarget = pane.getParent() != null ? pane.getParent() : pane;
@@ -409,9 +392,6 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             shakeX.setCycleCount(4);
             shakeX.setOnFinished(e -> shakeTarget.setTranslateX(0));
             shakeX.play();
-
-            expand.play();
-            coreFade.play();
         });
     }
 

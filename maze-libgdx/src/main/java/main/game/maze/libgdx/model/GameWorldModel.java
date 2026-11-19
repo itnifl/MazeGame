@@ -43,8 +43,9 @@ public final class GameWorldModel {
     private final List<Point2D> activePathPoints = new ArrayList<>();
     private final List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles = new ArrayList<>();
     private final List<GdxEnemyRuntime.BeamVisual> enemyBeams = new ArrayList<>();
-    private final List<GdxEnemyRuntime.ImpactVisual> enemyImpacts = new ArrayList<>();
+    private final List<BombFuseGlow> bombFuseGlows = new ArrayList<>();
     private final List<FireBlastVisual> fireBlasts = new ArrayList<>();
+    private final List<PumpkinBurstVisual> enemyBursts = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -231,13 +232,26 @@ public final class GameWorldModel {
         return enemyBeams;
     }
 
-    public List<GdxEnemyRuntime.ImpactVisual> enemyImpacts() {
-        return enemyImpacts;
+    public List<BombFuseGlow> bombFuseGlows() {
+        return bombFuseGlows;
     }
 
     /** Player bomb fire blasts to draw this frame; rebuilt each frame by the screen controller. */
     public List<FireBlastVisual> fireBlasts() {
         return fireBlasts;
+    }
+
+    /** Enemy projectile explosions to draw this frame; rebuilt each frame with the other enemy visuals. */
+    public List<PumpkinBurstVisual> enemyBursts() {
+        return enemyBursts;
+    }
+
+    /** Everything explosive to draw this frame: enemy bursts first, player blasts on top. */
+    public List<ExplosionVisual> explosions() {
+        List<ExplosionVisual> all = new ArrayList<>(enemyBursts.size() + fireBlasts.size());
+        all.addAll(enemyBursts);
+        all.addAll(fireBlasts);
+        return all;
     }
 
     public List<Score> highScoreRows() {

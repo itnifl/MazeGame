@@ -1,9 +1,8 @@
 package main.game.maze.common.graphics.fire;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
+import static main.game.maze.common.graphics.fire.PuffFrame.easeOutCubic;
+
 import java.util.List;
-import java.util.Map;
 import java.util.SplittableRandom;
 
 /**
@@ -49,10 +48,7 @@ public final class FireBlastModel {
             return List.of();
         }
         double p = Math.max(0.0, progress);
-        Map<FirePuff.Layer, List<FirePuff>> layers = new EnumMap<>(FirePuff.Layer.class);
-        for (FirePuff.Layer layer : FirePuff.Layer.values()) {
-            layers.put(layer, new ArrayList<>());
-        }
+        PuffFrame frame = new PuffFrame();
 
         double width = blast.corridorWidth();
         double reach = easeOutCubic(Math.min(1.0, p / FRONT_PHASE));
@@ -72,53 +68,27 @@ public final class FireBlastModel {
                 double phase = rnd.nextDouble() * Math.PI * 2;
                 double staticJitter = (rnd.nextDouble() * 2 - 1) * 0.5;
                 double lateral = width * MAX_LATERAL
-                        * clamp(staticJitter + 0.5 * Math.sin(clockSeconds * 13.0 + phase), -1, 1);
+                        * PuffFrame.clamp(staticJitter + 0.5 * Math.sin(clockSeconds * 13.0 + phase), -1, 1);
                 double x = blast.centerX() + dx * along - dy * lateral;
                 double y = blast.centerY() + dy * along + dx * lateral;
                 // the travelling front billows larger; puffs taper slightly towards the far end
                 boolean front = i == count && reach < 1.0;
                 double taper = 1.0 - 0.25 * Math.pow(along / Math.max(arms[a], 1e-6), 2);
                 double radius = width * 0.5 * (0.85 + 0.3 * rnd.nextDouble()) * taper * (front ? 1.25 : 1.0);
-                addFlame(layers, x, y, radius, p, clockSeconds, phase);
+                frame.flame(x, y, radius, p, clockSeconds, phase);
             }
         }
 
         // central fireball, bigger and longer-lived than the arm puffs
         double coreRadius = width * (0.85 + 0.45 * easeOutCubic(Math.min(1.0, p / 0.3)));
-        addFlame(layers, blast.centerX(), blast.centerY(), coreRadius, p * 0.85, clockSeconds, 0.0);
+        frame.flame(blast.centerX(), blast.centerY(), coreRadius, p * 0.85, clockSeconds, 0.0);
 
-        addShockwave(layers, blast, p);
-        addEmbers(layers, blast, p, clockSeconds);
-
-        List<FirePuff> ordered = new ArrayList<>();
-        for (FirePuff.Layer layer : FirePuff.Layer.values()) {
-            ordered.addAll(layers.get(layer));
-        }
-        return ordered;
+        addShockwave(frame, blast, p);
+        addEmbers(frame, blast, p, clockSeconds);
+        return frame.ordered();
     }
 
-    /** Adds one billowing fire puff as concentric smoke, rim, body, inner and core circles. */
-    private static void addFlame(Map<FirePuff.Layer, List<FirePuff>> layers,
-                                 double x, double y, double baseRadius,
-                                 double p, double clock, double phase) {
-        double swell = 0.8 + 0.4 * Math.sin(Math.PI * Math.min(1.0, p * 1.3));
-        double flicker = 1.0 + 0.12 * Math.sin(clock * 17.0 + phase) + 0.06 * Math.sin(clock * 31.0 + phase * 2);
-        double r = baseRadius * swell * flicker;
-
-        double fire = 1.0 - smoothstep(0.55, 1.0, p);
-        double heat = 1.0 - smoothstep(0.0, 0.75, p);
-        double whiteHot = 1.0 - smoothstep(0.0, 0.4, p);
-        double smoke = smoothstep(0.15, 0.6, p) * (1.0 - smoothstep(0.7, 1.0, p));
-
-        // additive layers overlap ~3x along an arm, so per-puff alphas stay low to avoid flat saturation
-        add(layers, FirePuff.Layer.SMOKE, x, y, r * (1.25 + 0.5 * p), 0.12f, 0.10f, 0.10f, 0.65 * smoke);
-        add(layers, FirePuff.Layer.RIM, x, y, r * 1.12, 0.78f, 0.10f, 0.02f, 0.45 * fire);
-        add(layers, FirePuff.Layer.BODY, x, y, r * (0.75 + 0.15 * heat), 1.0f, 0.42f, 0.04f, 0.42 * fire);
-        add(layers, FirePuff.Layer.INNER, x, y, r * 0.55 * (0.6 + 0.4 * heat), 1.0f, 0.80f, 0.22f, 0.45 * fire * heat);
-        add(layers, FirePuff.Layer.CORE, x, y, r * 0.28, 1.0f, 0.97f, 0.85f, 0.85 * whiteHot);
-    }
-
-    private static void addShockwave(Map<FirePuff.Layer, List<FirePuff>> layers, FireBlast blast, double p) {
+    private static void addShockwave(PuffFrame frame, FireBlast blast, double p) {
         double life = p / 0.4;
         if (life >= 1.0) {
             return;
@@ -128,15 +98,14 @@ public final class FireBlastModel {
         double alpha = 0.5 * (1.0 - life);
         for (int i = 0; i < SHOCKWAVE_POINTS; i++) {
             double angle = Math.PI * 2 * i / SHOCKWAVE_POINTS;
-            add(layers, FirePuff.Layer.SHOCKWAVE,
+            frame.add(FirePuff.Layer.SHOCKWAVE,
                     blast.centerX() + Math.cos(angle) * ringRadius,
                     blast.centerY() + Math.sin(angle) * ringRadius,
                     width * 0.07, 1.0f, 0.90f, 0.62f, alpha);
         }
     }
 
-    private static void addEmbers(Map<FirePuff.Layer, List<FirePuff>> layers, FireBlast blast,
-                                  double p, double clock) {
+    private static void addEmbers(PuffFrame frame, FireBlast blast, double p, double clock) {
         SplittableRandom rnd = new SplittableRandom(blast.seed() ^ 0x5DEECE66DL);
         double width = blast.corridorWidth();
         double maxDistance = Math.min(blast.maxArm() + width * 0.5, width * 2.6);
@@ -145,34 +114,10 @@ public final class FireBlastModel {
             double angle = rnd.nextDouble() * Math.PI * 2;
             double distance = (0.3 + 0.7 * rnd.nextDouble()) * maxDistance * travel;
             double twinkle = 0.75 + 0.25 * Math.sin(clock * 23.0 + i);
-            add(layers, FirePuff.Layer.EMBER,
+            frame.add(FirePuff.Layer.EMBER,
                     blast.centerX() + Math.cos(angle) * distance,
                     blast.centerY() + Math.sin(angle) * distance,
                     width * 0.08 * (1.0 - 0.5 * p), 1.0f, 0.72f, 0.25f, (1.0 - p) * twinkle);
         }
-    }
-
-    private static void add(Map<FirePuff.Layer, List<FirePuff>> layers, FirePuff.Layer layer,
-                            double x, double y, double radius,
-                            float red, float green, float blue, double alpha) {
-        float a = (float) clamp(alpha, 0, 1);
-        if (a <= 0.004f || radius <= 0) {
-            return;
-        }
-        layers.get(layer).add(new FirePuff(layer, x, y, radius, red, green, blue, a));
-    }
-
-    static double easeOutCubic(double t) {
-        double inv = 1.0 - clamp(t, 0, 1);
-        return 1.0 - inv * inv * inv;
-    }
-
-    static double smoothstep(double edge0, double edge1, double x) {
-        double t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
-        return t * t * (3 - 2 * t);
-    }
-
-    private static double clamp(double v, double lo, double hi) {
-        return Math.max(lo, Math.min(hi, v));
     }
 }

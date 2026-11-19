@@ -37,9 +37,11 @@ mvn test -pl maze-javafx-backend
 
 Pure-math helpers (`computeCameraTranslation`, `clampBoardToScreen`) are tested headlessly — no JavaFX toolkit required.
 
-`FxFireBlastViewTest` covers the bomb fire blast view (`javafx.render.FxFireBlastView`, drawn
-from the shared `FireBlastModel` on a transparent canvas): the canvas covers every puff for the
-whole blast life, progress timing, and a rendered frame paints fire at the centre.
+`FxExplosionViewTest` covers the explosion view (`javafx.render.FxExplosionView`, drawn from the
+shared `FireBlastModel` / `PumpkinBurstModel` on a transparent canvas). It is used for the player's
+bomb fire blast and for pumpkin bomber projectile bursts (`PumpkinBomberCharacter`). The tests check
+that the canvas covers every puff for the whole life of both kinds, progress timing, that a fire
+blast frame paints fire at the centre, and that a pumpkin burst frame paints solid pumpkin debris.
 
 ## Clip ownership
 
