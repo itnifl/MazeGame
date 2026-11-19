@@ -123,17 +123,22 @@ Then run from the repository root:
 # JDK 21 + Maven only
 pwsh -File ./install.ps1
 
-# JDK 21 + Maven + JavaFX SDK
+# JDK 21 + Maven + JavaFX SDK (recommended for JavaFX frontend)
 pwsh -File ./install.ps1 -JavaFX
+
+# Custom / headless: skip VS Code extensions or persistent environment variables
+pwsh -File ./install.ps1 -JavaFX -SkipVSCodeExtensions -SkipEnvSetup
 ```
+
+> **Note for Windows:** Run PowerShell as Administrator if your package manager (winget or Chocolatey) requires elevation. If script execution is restricted, run with bypass: `pwsh -ExecutionPolicy Bypass -File ./install.ps1 -JavaFX`.
 
 The PowerShell installer:
 1. Detects your OS (Windows / macOS / Linux) and CPU architecture
 2. Installs **JDK 21** via winget / Chocolatey / Homebrew / apt / dnf / pacman
 3. Installs **Apache Maven** via the same package manager
-4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
-5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
-6. Sets `JAVA_HOME` as a persistent user-level environment variable
+4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools) unless `-SkipVSCodeExtensions` is passed
+5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** (21.0.9) and sets `PATH_TO_FX` (unless `-SkipEnvSetup` is passed; then set `PATH_TO_FX` to the SDK folder yourself if your setup needs it)
+6. Sets `JAVA_HOME` as a persistent user-level environment variable (unless `-SkipEnvSetup` is passed)
 7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`. If that fails, the installer prints an `[!!]` error and exits with code 1.
 
 > **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
@@ -150,8 +155,10 @@ Restart your terminal after the script finishes, then open VS Code and press **C
 * Your score will lower for each move you make and the more life you lose.
 * You will get an extra 4 000 in score for reaching the heart.
 * You will lose 4 000 in score for dying.
+* Press the **SPACE** bar to plant a directional flame bomb. Bombs detonate after 3 seconds, firing flames along corridors in four directions to damage or eliminate monsters and destroy breakable walls (Glass, Dirt, Wood, Steel). Watch out: you will also take damage if caught in your own blast corridor!
 * You can press and hold the P key to see the navigation path to your win area; this will lower your score (move around a little if it doesn't work at first). The P key has a time budget per difficulty: 45 s (Easy), 25 s (Normal), 15 s (Hard). Once the budget is spent, the hint is unavailable for the rest of the game.
 * You can press and hold the O key to see all possible navigation paths in the game; this will lower your score (move around a little if it doesn't work at first).
+* Press the **T** key to open the in-game command terminal. Type a command and press **Enter** to run it, or press **Esc** to close the terminal (e.g. `/kill` to defeat all active enemies, `/h` to view available commands).
 * Press the H key to show high scores.
 * Press the ESC key to restart the game.
 * You can save your scores when you die or win.
@@ -197,6 +204,12 @@ Check those terms before redistributing them.
 ---
 
 ## Prerequisites and setup
+
+> **Quick setup:** Automated installers are provided for all platforms — see the [Quick start](#quick-start) section above:
+> - **Ubuntu 24.04:** `sudo ./install-linux.sh`
+> - **Windows / macOS / Linux:** `pwsh -File ./install.ps1 -JavaFX`
+>
+> The instructions below are for manual configuration or reference.
 
 This project requires JDK 21 for full builds (Xtext generation + Tycho reactor).
 The supported JavaFX SDK version is 21.0.9, matching the Maven build.
@@ -590,5 +603,5 @@ Runs the end to end Tycho and Maven build in a controlled order, regenerates or 
 <br/>
 
 ## Contributors
-| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) | [<img src="https://github.com/itnifl.png" width="100px;"/><br /><sub><b>itnifl</b></sub>](https://github.com/itnifl) | [<img src="https://github.com/sakshi048.png" width="100px;"/><br /><sub><b>sakshi048</b></sub>](https://github.com/sakshi048) |
+| [<img src="https://github.com/Natvs.png" width="100px;"/><br /><sub><b>Natvs</b></sub>](https://github.com/Natvs) | [<img src="https://github.com/gabri-berri.png" width="100px;"/><br /><sub><b>gabri-berri</b></sub>](https://github.com/gabri-berri) | [<img src="https://github.com/itnifl.png" width="100px;"/><br /><sub><b>itnifl</b></sub>](https://github.com/itnifl) | [<img src="https://github.com/jorgeballesta.png" width="100px;"/><br /><sub><b>jorgeballesta</b></sub>](https://github.com/jorgeballesta) | [<img src="https://github.com/sakshi048.png" width="100px;"/><br /><sub><b>sakshi048</b></sub>](https://github.com/sakshi048) |
 | :---: | :---: | :---: | :---: | :---: |

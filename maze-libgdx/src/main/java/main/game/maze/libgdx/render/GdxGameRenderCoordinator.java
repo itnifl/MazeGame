@@ -145,6 +145,7 @@ public final class GdxGameRenderCoordinator {
                 worldModel.enemyProjectiles(),
                 worldModel.enemyBeams(),
                 worldModel.enemyImpacts(),
+                worldModel.fireBlasts(),
                 shakeOffsetX(input.enemyAnimationClock()),
                 shakeOffsetY(input.enemyAnimationClock()),
                 session,

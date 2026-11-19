@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.render;
 
+import main.game.maze.libgdx.model.FireBlastVisual;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -78,6 +79,7 @@ public final class GdxGameRenderStateAssembler {
                 input.enemyProjectiles(),
                 input.enemyBeams(),
                 input.enemyImpacts(),
+                input.fireBlasts(),
                 input.shakeOffsetX(),
                 input.shakeOffsetY(),
                 input.session(),
@@ -162,6 +164,7 @@ public final class GdxGameRenderStateAssembler {
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
             List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            List<FireBlastVisual> fireBlasts,
             float shakeOffsetX,
             float shakeOffsetY,
             GameSession session,

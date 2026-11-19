@@ -1,5 +1,7 @@
 package main.game.maze.libgdx.controller;
 
+import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.libgdx.model.FireBlastVisual;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -90,7 +92,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
     private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
     private static final float PLAYER_FLAME_RANGE = 220.0f;
-    private static final float PLAYER_FLAME_VISUAL_SECONDS = 0.35f;
+    private static final float PLAYER_FLAME_VISUAL_SECONDS = (float) FireBlast.DEFAULT_LIFETIME_SECONDS;
     private static final float PLAYER_FLAME_SHAKE_INTENSITY = 7.0f;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
@@ -139,7 +141,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private int playerBombsRemaining;
     private int playerBombDamage;
     private final List<PendingPlayerBomb> pendingPlayerBombs = new ArrayList<>();
-    private final List<ActivePlayerFlameBurst> activePlayerFlameBursts = new ArrayList<>();
+    private final List<ActivePlayerFireBlast> activePlayerFireBlasts = new ArrayList<>();
     private final GameSessionStartFlowCoordinator gameSessionStartFlowCoordinator = new GameSessionStartFlowCoordinator();
     final GameWorldModel worldModel = new GameWorldModel();
     private final GdxGameRenderCoordinator renderCoordinator;
@@ -184,7 +186,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private record PendingPlayerBomb(float x, float y, float fuseSecondsRemaining) {
     }
 
-    private record ActivePlayerFlameBurst(float x1, float y1, float x2, float y2, float ttlSecondsRemaining) {
+    private record ActivePlayerFireBlast(FireBlast blast, float ttlSecondsRemaining) {
     }
     
 
@@ -452,14 +454,13 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             detonatePlayerBomb(bomb.x(), bomb.y());
         }
 
-        for (int i = activePlayerFlameBursts.size() - 1; i >= 0; i--) {
-            ActivePlayerFlameBurst burst = activePlayerFlameBursts.get(i);
-            float ttl = burst.ttlSecondsRemaining() - dt;
+        for (int i = activePlayerFireBlasts.size() - 1; i >= 0; i--) {
+            ActivePlayerFireBlast active = activePlayerFireBlasts.get(i);
+            float ttl = active.ttlSecondsRemaining() - dt;
             if (ttl > 0f) {
-                activePlayerFlameBursts.set(i, new ActivePlayerFlameBurst(
-                        burst.x1(), burst.y1(), burst.x2(), burst.y2(), ttl));
+                activePlayerFireBlasts.set(i, new ActivePlayerFireBlast(active.blast(), ttl));
             } else {
-                activePlayerFlameBursts.remove(i);
+                activePlayerFireBlasts.remove(i);
             }
         }
     }
@@ -487,20 +488,15 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         // Wall vectors are in world space (Y-down); convert screen origin Y for correct visual ranges.
         float worldOriginY = maze.heightPx() - y;
 
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
-                x + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  1,  0, surviving, PLAYER_FLAME_RANGE), y,
-                PLAYER_FLAME_VISUAL_SECONDS));
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y,
-                x - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY, -1,  0, surviving, PLAYER_FLAME_RANGE), y,
-                PLAYER_FLAME_VISUAL_SECONDS));
-        // Screen dirY=+1 (up in libGDX) → world dirY=-1; endpoint still at y + range (screen space).
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
-                y + GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0, -1, surviving, PLAYER_FLAME_RANGE),
-                PLAYER_FLAME_VISUAL_SECONDS));
-        // Screen dirY=-1 (down in libGDX) → world dirY=+1; endpoint at y - range (screen space).
-        activePlayerFlameBursts.add(new ActivePlayerFlameBurst(x, y, x,
-                y - GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0,  1, surviving, PLAYER_FLAME_RANGE),
-                PLAYER_FLAME_VISUAL_SECONDS));
+        // Screen +y (up in libGDX) is world dirY=-1 (walls are Y-down); screen -y is world dirY=+1.
+        FireBlast blast = new FireBlast(x, y,
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  1,  0, surviving, PLAYER_FLAME_RANGE),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY, -1,  0, surviving, PLAYER_FLAME_RANGE),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0, -1, surviving, PLAYER_FLAME_RANGE),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0,  1, surviving, PLAYER_FLAME_RANGE),
+                GdxGameCombatAndEnemyFlowSupport.FLAME_CORRIDOR_WIDTH,
+                FireBlast.seedFor(x, y));
+        activePlayerFireBlasts.add(new ActivePlayerFireBlast(blast, PLAYER_FLAME_VISUAL_SECONDS));
 
         worldModel.setExplosionShakeRemainingSeconds(0.20f);
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
@@ -529,29 +525,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     0f));
         }
 
-        if (activePlayerFlameBursts.isEmpty()) {
-            return;
-        }
-
-        float burstAlpha = Math.max(0f, Math.min(1f,
-                activePlayerFlameBursts.get(0).ttlSecondsRemaining() / PLAYER_FLAME_VISUAL_SECONDS));
-        worldModel.enemyImpacts().add(new GdxEnemyRuntime.ImpactVisual(
-                activePlayerFlameBursts.get(0).x1(),
-                activePlayerFlameBursts.get(0).y1(),
-                34f,
-                0.95f * burstAlpha,
-                PLAYER_FLAME_SHAKE_INTENSITY));
-
-        for (ActivePlayerFlameBurst burst : activePlayerFlameBursts) {
-            float alpha = Math.max(0f, Math.min(1f, burst.ttlSecondsRemaining() / PLAYER_FLAME_VISUAL_SECONDS));
-            worldModel.enemyBeams().add(new GdxEnemyRuntime.BeamVisual(
-                    burst.x1(),
-                    burst.y1(),
-                    burst.x2(),
-                    burst.y2(),
-                    alpha,
-                    true,
-                    GdxGameCombatAndEnemyFlowSupport.FLAME_CORRIDOR_WIDTH));
+        worldModel.fireBlasts().clear();
+        for (ActivePlayerFireBlast active : activePlayerFireBlasts) {
+            float progress = 1f - Math.max(0f, Math.min(1f, active.ttlSecondsRemaining() / PLAYER_FLAME_VISUAL_SECONDS));
+            worldModel.fireBlasts().add(new FireBlastVisual(active.blast(), progress));
         }
     }
 
@@ -682,7 +659,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         playerBombsRemaining = Math.max(0, startFlow.startState().runtimeModel().playerBombCount());
         playerBombDamage = Math.max(1, startFlow.startState().runtimeModel().playerBombDamage());
         pendingPlayerBombs.clear();
-        activePlayerFlameBursts.clear();
+        activePlayerFireBlasts.clear();
+        worldModel.fireBlasts().clear();
         applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         var textures = applied.runtimeTextures();
         playerTexture = textures.playerTexture();
@@ -745,7 +723,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     @Override
     public void dispose() {
         pendingPlayerBombs.clear();
-        activePlayerFlameBursts.clear();
+        activePlayerFireBlasts.clear();
+        worldModel.fireBlasts().clear();
         gameAudioCoordinator.stopAll();
         if (ownsAssetService) {
             assetService.dispose();

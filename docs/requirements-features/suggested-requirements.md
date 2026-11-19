@@ -222,6 +222,22 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-112** *(UX)*: When the maze is larger than the screen and camera follow is active, a minimap overlay showing the full maze and the player's current position would significantly improve navigation. The minimap should be rendered at a configurable opacity (default 50 %) in a corner of the viewport.
 
+- **SR-210** *(Observability)*: When `damageStatesEnabled=true` but `DamageStateResolver.resolveWithFallback` falls back, count the misses per path (e.g. a `SpriteResolutionStats` counter dumped on exit or in the debug overlay) so missing art is visible without enabling FINE logging.
+
+- **SR-211** *(12-Factor, Build)*: Run `tools/sprite-gen/DamageSpriteGenerator.java` from the make scripts (`make-*.ps1 sprites`) and fail CI if regenerating changes committed PNGs, so generated assets never drift from the generator.
+
+- **SR-212** *(DDD)*: Model the damage-state art set as part of `CharacterType` (e.g. an optional `DamageStateArtSet` value object with explicit per-state paths) once hand-drawn art with non-conventional names arrives, keeping the naming convention as the default.
+
+- **SR-213** *(Assets)*: ~~Create the 8 missing directional ghost sprites~~ — done as SR-214 (generated). Replace with hand-drawn art when available, keeping the names. **Warning:** rerunning `tools/sprite-gen` generators overwrites existing files without asking, so commit hand-drawn art first and remove its base sprite from the generator's list (`GHOSTS` / `baseSprites()`) so it is not regenerated.
+
+- **SR-216** *(12-Factor, Config)*: Expose the fire blast lifetime and corridor width (`FireBlast.DEFAULT_LIFETIME_SECONDS`, `FLAME_CORRIDOR_WIDTH`) through `PlayerConfig` / `Player.ecore` so designers can tune the blast without recompiling, with libGDX and JavaFX reading the same value.
+
+- **SR-217** *(Observability)*: Show the number of fire puffs drawn per frame in the debug overlay (both frontends) so the cost of overlapping blasts is visible; cap the total if it grows large.
+
+- **SR-218** *(UX, Parity)*: Use a soft radial-gradient puff texture in libGDX (one small generated texture drawn with `SpriteBatch`) so fire puffs get soft edges like a particle system instead of hard-edged `ShapeRenderer` circles; JavaFX can use `RadialGradient` fills for the same look.
+
+- **SR-219** *(Assets, DDD)*: Ghost walk animation needs per-variant walk-frame naming (e.g. `ghost_medium_walk1-left.png`), because `SpriteAnimationUtil` treats the first digit in a file name as the frame number and the digit in `ghostN` is the variant. Add an explicit walk-frame path pattern on `CharacterType` instead of digit replacement.
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.

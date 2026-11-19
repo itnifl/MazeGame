@@ -38,10 +38,10 @@
       <attackDamage>2</attackDamage>
       <behavior>WANDER</behavior>
       <ImageBase>/main/game/maze/ghost2.png</ImageBase>
-      <ImageTurnLeft>/main/game/maze/ghost2.png</ImageTurnLeft>
-      <ImageTurnRight>/main/game/maze/ghost2.png</ImageTurnRight>
-      <ImageTurnUp>/main/game/maze/ghost2.png</ImageTurnUp>
-      <ImageTurnDown>/main/game/maze/ghost2.png</ImageTurnDown>
+      <ImageTurnLeft>/main/game/maze/ghost2-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost2-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost2-up.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost2-down.png</ImageTurnDown>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">
@@ -54,10 +54,10 @@
       <attackDamage>5</attackDamage>
       <behavior>WANDER</behavior>
       <ImageBase>/main/game/maze/ghost3.png</ImageBase>
-      <ImageTurnLeft>/main/game/maze/ghost3.png</ImageTurnLeft>
-      <ImageTurnRight>/main/game/maze/ghost3.png</ImageTurnRight>
-      <ImageTurnUp>/main/game/maze/ghost3.png</ImageTurnUp>
-      <ImageTurnDown>/main/game/maze/ghost3.png</ImageTurnDown>
+      <ImageTurnLeft>/main/game/maze/ghost3-left.png</ImageTurnLeft>
+      <ImageTurnRight>/main/game/maze/ghost3-right.png</ImageTurnRight>
+      <ImageTurnUp>/main/game/maze/ghost3-up.png</ImageTurnUp>
+      <ImageTurnDown>/main/game/maze/ghost3-down.png</ImageTurnDown>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Zombie">
