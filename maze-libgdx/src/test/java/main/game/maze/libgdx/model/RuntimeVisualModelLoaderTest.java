@@ -180,4 +180,18 @@ class RuntimeVisualModelLoaderTest {
                     "when resolveWallDefinition returns null, load() must fall back to the default wall image");
         }
     }
+
+    @Test
+    @DisplayName("enemy spawns preserve damageStatesEnabled setting from model (default false in XMI)")
+    void enemySpawnsPreserveDamageStatesEnabled() {
+        RuntimeVisualModelLoader loader = new RuntimeVisualModelLoader();
+        RuntimeVisualModel model = loader.load(800f, 600f);
+        assertNotNull(model);
+        assertFalse(model.enemies().isEmpty());
+        for (EnemySpawn spawn : model.enemies()) {
+            assertNotNull(spawn.animationSpec());
+            assertFalse(spawn.animationSpec().damageStatesEnabled(),
+                    "Default XMI enemy models must have damageStatesEnabled=false");
+        }
+    }
 }

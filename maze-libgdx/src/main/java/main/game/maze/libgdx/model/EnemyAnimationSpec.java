@@ -18,17 +18,31 @@ public record EnemyAnimationSpec(
         String imageTurnUp,
         String imageTurnDown,
         int animationFrameCount,
-        float spriteScale) {
+        float spriteScale,
+        boolean damageStatesEnabled) {
 
-    /** No-animation default: single frame, 1:1 scale, no directional overrides. */
-    public static EnemyAnimationSpec defaults() {
-        return new EnemyAnimationSpec(null, null, null, null, 1, 1.0f);
+    /**
+     * Backward-compatible 6-argument constructor with {@code damageStatesEnabled = false}.
+     */
+    public EnemyAnimationSpec(
+            String imageTurnLeft,
+            String imageTurnRight,
+            String imageTurnUp,
+            String imageTurnDown,
+            int animationFrameCount,
+            float spriteScale) {
+        this(imageTurnLeft, imageTurnRight, imageTurnUp, imageTurnDown, animationFrameCount, spriteScale, false);
     }
 
-    /** Directional images with no walk animation and 1:1 scale. */
+    /** No-animation default: single frame, 1:1 scale, no directional overrides, damage states disabled. */
+    public static EnemyAnimationSpec defaults() {
+        return new EnemyAnimationSpec(null, null, null, null, 1, 1.0f, false);
+    }
+
+    /** Directional images with no walk animation, 1:1 scale, damage states disabled. */
     public static EnemyAnimationSpec staticDirectional(
             String imageTurnLeft, String imageTurnRight,
             String imageTurnUp, String imageTurnDown) {
-        return new EnemyAnimationSpec(imageTurnLeft, imageTurnRight, imageTurnUp, imageTurnDown, 1, 1.0f);
+        return new EnemyAnimationSpec(imageTurnLeft, imageTurnRight, imageTurnUp, imageTurnDown, 1, 1.0f, false);
     }
 }

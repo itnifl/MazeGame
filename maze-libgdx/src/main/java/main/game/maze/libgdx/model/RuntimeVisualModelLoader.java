@@ -390,7 +390,8 @@ public final class RuntimeVisualModelLoader {
         String down  = defaultIfBlank(type.getImageTurnDown(),  fallbackImage);
         int frameCount = Math.max(1, type.getAnimationFrameCount());
         float scale = (float) Math.max(0.01d, type.getSpriteScale());
-        return new EnemyAnimationSpec(left, right, up, down, frameCount, scale);
+        boolean damageStatesEnabled = type != null && type.isDamageStatesEnabled();
+        return new EnemyAnimationSpec(left, right, up, down, frameCount, scale, damageStatesEnabled);
     }
 
     private static boolean isValidSpawn(

@@ -19,6 +19,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.DamageState;
+import main.game.maze.common.graphics.DamageStateResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
@@ -232,13 +234,29 @@ public final class MenuScreenController extends AbstractGdxScreenController {
             Set<String> paths = new LinkedHashSet<>();
             paths.add(enemy.imagePath());
             var spec = enemy.animationSpec();
-            if (spec != null && spec.animationFrameCount() > 1) {
+            if (spec != null) {
                 for (String dir : List.of(
                         spec.imageTurnLeft(), spec.imageTurnRight(),
                         spec.imageTurnUp(), spec.imageTurnDown())) {
                     if (dir != null && !dir.isBlank()) {
-                        for (int f = 0; f < spec.animationFrameCount(); f++) {
-                            paths.add(SpriteAnimationUtil.deriveAnimationFramePath(dir, f));
+                        paths.add(dir);
+                        if (spec.animationFrameCount() > 1) {
+                            for (int f = 0; f < spec.animationFrameCount(); f++) {
+                                paths.add(SpriteAnimationUtil.deriveAnimationFramePath(dir, f));
+                            }
+                        }
+                    }
+                }
+                if (spec.damageStatesEnabled()) {
+                    List<String> basePaths = new ArrayList<>(paths);
+                    for (String bp : basePaths) {
+                        for (DamageState ds : DamageState.values()) {
+                            if (ds != DamageState.HEALTHY) {
+                                String resolved = DamageStateResolver.resolveWithFallback(MenuScreenController.class, bp, ds);
+                                if (resolved != null && !resolved.equals(bp)) {
+                                    paths.add(resolved);
+                                }
+                            }
                         }
                     }
                 }

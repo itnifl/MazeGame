@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.IntSupplier;
 import java.util.logging.Logger;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.DamageState;
+import main.game.maze.common.graphics.DamageStateResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -65,6 +68,15 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
+
+    @FunctionalInterface
+    public interface DamagePathResolver {
+        String resolve(String basePath, DamageState state);
+    }
+
+    private DamagePathResolver damagePathResolver =
+            (basePath, state) -> DamageStateResolver.resolveWithFallback(GdxEnemyRuntime.class, basePath, state);
+    private IntSupplier hpSupplier;
 
     private GdxEnemyRuntime(EnemySpawn spawn,
                             String runtimeEnemyId,
@@ -151,7 +163,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.attackCooldownMs(),
                 spawn.projectileSpeed(),
                 spawn.resurrectionTimeMs(),
-                spawn.maxHitPoints());
+                spawn.maxHitPoints(),
+                spawn.animationSpec());
     }
 
     /** Apply {@code amount} points of damage. Returns {@code true} if the enemy just died. */
@@ -174,7 +187,25 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     }
 
     public int currentHitPoints() {
-        return currentHitPoints;
+        return hpSupplier != null ? hpSupplier.getAsInt() : currentHitPoints;
+    }
+
+    public void setHpSupplier(IntSupplier hpSupplier) {
+        this.hpSupplier = hpSupplier;
+    }
+
+    public void setCurrentHitPoints(int hp) {
+        this.currentHitPoints = hp;
+    }
+
+    public void setDamagePathResolver(DamagePathResolver resolver) {
+        this.damagePathResolver = resolver != null
+                ? resolver
+                : (basePath, state) -> DamageStateResolver.resolveWithFallback(GdxEnemyRuntime.class, basePath, state);
+    }
+
+    public DamagePathResolver damagePathResolver() {
+        return damagePathResolver;
     }
 
     /** Tick the post-respawn invulnerability window down by {@code dt} seconds. */
@@ -408,11 +439,23 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         EnemyAnimationSpec spec = spawn != null ? spawn.animationSpec() : null;
         int frameCount = spec != null ? spec.animationFrameCount() : 1;
         String dirPath = directionalImagePath(spec);
-        if (frameCount <= 1) {
-            return dirPath;
+        String framePath = dirPath;
+        if (frameCount > 1) {
+            int frameIndex = ((int) (animationClock * ANIMATION_FPS)) % frameCount;
+            framePath = deriveAnimationFramePath(dirPath, frameIndex);
         }
-        int frameIndex = ((int) (animationClock * ANIMATION_FPS)) % frameCount;
-        return deriveAnimationFramePath(dirPath, frameIndex);
+        if (spec != null && spec.damageStatesEnabled()) {
+            int maxHp = spawn != null ? Math.max(1, spawn.maxHitPoints()) : 100;
+            int hp = currentHitPoints();
+            DamageState state = DamageState.of(hp, maxHp);
+            if (state != DamageState.HEALTHY && framePath != null && !framePath.isBlank()) {
+                String resolved = damagePathResolver.resolve(framePath, state);
+                if (resolved != null && !resolved.isBlank()) {
+                    return resolved;
+                }
+            }
+        }
+        return framePath;
     }
 
     /** Returns the sprite-scale multiplier from the animation spec (1.0 if none). */
