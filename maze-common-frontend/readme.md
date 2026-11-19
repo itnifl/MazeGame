@@ -12,6 +12,10 @@ runtime renderer is JavaFX, libGDX, or something else.
   classpath path, with optional per-sound cooldown.
 - `ICharacterView`: a renderer-neutral view facade exposing position, scale,
   opacity, visibility, view order, effect clearing, and parent detachment.
+- `DamageState` and `DamageStateResolver`: visual damage-state enum based on
+  remaining HP ratio (`HEALTHY` > 75 %, `DAMAGED` 51–75 %, `BLEEDING` 26–50 %,
+  `TIRED` &le; 25 %) and convention-based sprite path derivation (e.g.
+  `zombie1-damaged-right.png`, `pumpkinbomber-damaged.png`) with silent classpath fallback.
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
@@ -105,6 +109,8 @@ singletons.
 
 - [UiSchedulerTest](src/test/java/main/game/maze/common/graphics/UiSchedulerTest.java)
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
+- [DamageStateTest](src/test/java/main/game/maze/common/graphics/DamageStateTest.java) — HP ratio threshold boundaries (0, 1, 25, 26, 50, 51, 75, 76, 100), scaled HP, and zero/negative maxHp handling
+- [DamageStateResolverTest](src/test/java/main/game/maze/common/graphics/DamageStateResolverTest.java) — direction-suffixed and non-suffixed sprite path derivation, HEALTHY passthrough, and silent classpath fallback
 - [PropertiesMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/PropertiesMazeVisualStyleLoaderTest.java)
 - [XmiMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/XmiMazeVisualStyleLoaderTest.java)
 - [EdgeKeyTrackerTest](src/test/java/main/game/maze/common/input/EdgeKeyTrackerTest.java)
