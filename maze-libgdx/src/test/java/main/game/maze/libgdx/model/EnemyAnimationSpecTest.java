@@ -1,7 +1,9 @@
 package main.game.maze.libgdx.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,7 @@ class EnemyAnimationSpecTest {
         EnemyAnimationSpec spec = EnemyAnimationSpec.defaults();
         assertEquals(1, spec.animationFrameCount());
         assertEquals(1.0f, spec.spriteScale(), 1e-6f);
+        assertFalse(spec.damageStatesEnabled(), "damageStatesEnabled must default to false");
         assertNull(spec.imageTurnLeft());
         assertNull(spec.imageTurnRight());
         assertNull(spec.imageTurnUp());
@@ -24,6 +27,7 @@ class EnemyAnimationSpecTest {
                 "/l.png", "/r.png", "/u.png", "/d.png");
         assertEquals(1, spec.animationFrameCount());
         assertEquals(1.0f, spec.spriteScale(), 1e-6f);
+        assertFalse(spec.damageStatesEnabled(), "damageStatesEnabled must default to false");
         assertEquals("/l.png", spec.imageTurnLeft());
         assertEquals("/r.png", spec.imageTurnRight());
         assertEquals("/u.png", spec.imageTurnUp());
@@ -32,11 +36,20 @@ class EnemyAnimationSpecTest {
 
     @Test
     void canonicalConstructorPreservesAllFields() {
+        EnemyAnimationSpec spec = new EnemyAnimationSpec("/l.png", "/r.png", "/u.png", "/d.png", 3, 1.5f, true);
+        assertEquals(3, spec.animationFrameCount());
+        assertEquals(1.5f, spec.spriteScale(), 1e-6f);
+        assertTrue(spec.damageStatesEnabled());
+        assertEquals("/l.png", spec.imageTurnLeft());
+        assertEquals("/r.png", spec.imageTurnRight());
+    }
+
+    @Test
+    void sixArgConstructorDefaultsDamageStatesToFalse() {
         EnemyAnimationSpec spec = new EnemyAnimationSpec("/l.png", "/r.png", "/u.png", "/d.png", 3, 1.5f);
         assertEquals(3, spec.animationFrameCount());
         assertEquals(1.5f, spec.spriteScale(), 1e-6f);
-        assertEquals("/l.png", spec.imageTurnLeft());
-        assertEquals("/r.png", spec.imageTurnRight());
+        assertFalse(spec.damageStatesEnabled(), "6-arg constructor must set damageStatesEnabled to false");
     }
 
     @Test
@@ -45,11 +58,12 @@ class EnemyAnimationSpecTest {
                 1, 0, "", main.game.maze.opponents.BehaviorType.WANDER, 1f);
         assertEquals(1, spawn.animationSpec().animationFrameCount());
         assertEquals(1.0f, spawn.animationSpec().spriteScale(), 1e-6f);
+        assertFalse(spawn.animationSpec().damageStatesEnabled());
     }
 
     @Test
     void enemySpawnWithCustomSpecPreservesAnimationData() {
-        EnemyAnimationSpec spec = new EnemyAnimationSpec("/l.png", "/r.png", "/u.png", "/d.png", 3, 1.0f);
+        EnemyAnimationSpec spec = new EnemyAnimationSpec("/l.png", "/r.png", "/u.png", "/d.png", 3, 1.0f, true);
         EnemySpawn spawn = new EnemySpawn("id", "/img.png", 10f, 20f, 32f, 1f,
                 1, 0, "", main.game.maze.opponents.BehaviorType.WANDER, 1f,
                 0.0, 100,
@@ -57,5 +71,6 @@ class EnemyAnimationSpecTest {
                 0, 100, spec);
         assertEquals(3, spawn.animationSpec().animationFrameCount());
         assertEquals("/r.png", spawn.animationSpec().imageTurnRight());
+        assertTrue(spawn.animationSpec().damageStatesEnabled());
     }
 }

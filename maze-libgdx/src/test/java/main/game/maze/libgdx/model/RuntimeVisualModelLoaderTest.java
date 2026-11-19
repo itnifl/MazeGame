@@ -15,7 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
+import java.util.List;
 import java.util.Locale;
+import main.game.maze.common.graphics.DamageState;
+import main.game.maze.common.graphics.DamageStateResolver;
 import main.game.maze.difficulties.DifficultiesFactory;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.difficulties.EnemyMaxCount;
@@ -178,6 +181,27 @@ class RuntimeVisualModelLoaderTest {
 
             assertEquals("/main/game/maze/woodWall.png", model.wallImagePath(),
                     "when resolveWallDefinition returns null, load() must fall back to the default wall image");
+        }
+    }
+
+    @Test
+    @DisplayName("shipped enemies have damage states enabled and every damage sprite they resolve to exists")
+    void shippedEnemiesHaveDamageStatesWithAssets() {
+        RuntimeVisualModel model = new RuntimeVisualModelLoader().load(800f, 600f);
+        assertNotNull(model);
+        assertFalse(model.enemies().isEmpty());
+        for (EnemySpawn spawn : model.enemies()) {
+            EnemyAnimationSpec spec = spawn.animationSpec();
+            assertNotNull(spec);
+            assertTrue(spec.damageStatesEnabled(), spawn.id() + " must have damageStatesEnabled=true");
+            for (String dir : List.of(spec.imageTurnLeft(), spec.imageTurnRight(),
+                    spec.imageTurnUp(), spec.imageTurnDown())) {
+                for (DamageState state : List.of(DamageState.DAMAGED, DamageState.BLEEDING, DamageState.TIRED)) {
+                    String derived = DamageStateResolver.deriveStatePath(dir, state);
+                    assertTrue(DamageStateResolver.resourceExists(RuntimeVisualModelLoaderTest.class, derived),
+                            spawn.id() + ": missing damage sprite " + derived);
+                }
+            }
         }
     }
 }

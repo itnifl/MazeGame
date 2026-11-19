@@ -34,7 +34,7 @@ class DamageStateSpriteAssetsTest {
             "ghost1.png", "ghost1-left.png", "ghost1-right.png",
             "ghost2.png", "ghost2-left.png", "ghost2-right.png", "ghost2-up.png", "ghost2-down.png",
             "ghost3.png", "ghost3-left.png", "ghost3-right.png", "ghost3-up.png", "ghost3-down.png",
-            "pumpkinbomber.png");
+            "pumpkinbomber.png", "pumpkinbomber-left.png", "pumpkinbomber-up.png");
 
     static Stream<Arguments> baseAndState() {
         List<Arguments> args = new ArrayList<>();

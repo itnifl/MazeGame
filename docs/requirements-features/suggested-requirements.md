@@ -238,6 +238,12 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-219** *(Assets, DDD)*: Ghost walk animation needs per-variant walk-frame naming (e.g. `ghost_medium_walk1-left.png`), because `SpriteAnimationUtil` treats the first digit in a file name as the frame number and the digit in `ghostN` is the variant. Add an explicit walk-frame path pattern on `CharacterType` instead of digit replacement.
 
+- **SR-221** *(12-Factor, Config)*: Allow damage states to be switched off at runtime (e.g. `MAZE_DAMAGE_STATES=off` env var or a terminal command) without editing `opponentModel.xmi`, for performance testing and players who prefer the classic look.
+
+- **SR-222** *(Observability)*: Show each enemy's `DamageState` in the debug overlay label (both frontends) next to behaviour/movement type, so damage-state transitions can be verified in game.
+
+- **SR-223** *(Assets)*: Distinct `pumpkinbomber-elite.png` art for `pb_hard`/`pb_elite_beam`, then its `-left/-up` and damaged/bleeding/tired variants via the sprite-gen tools (the optional `pumpkinbomber-elite-*` set from #80).
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.

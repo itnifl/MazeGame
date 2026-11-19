@@ -25,6 +25,7 @@
       <ImageTurnRight>/main/game/maze/ghost1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost1.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/ghost1.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
       <nonTangibilityEnergy>100.0</nonTangibilityEnergy>
     </characterTypes>
 
@@ -42,6 +43,7 @@
       <ImageTurnRight>/main/game/maze/ghost2-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost2-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/ghost2-down.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Ghost">
@@ -58,6 +60,7 @@
       <ImageTurnRight>/main/game/maze/ghost3-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/ghost3-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/ghost3-down.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Zombie">
@@ -74,6 +77,7 @@
       <ImageTurnRight>/main/game/maze/zombie1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie1-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie1-down.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Zombie">
@@ -90,6 +94,7 @@
       <ImageTurnRight>/main/game/maze/zombie2-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie2-down.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie2-down.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
     <characterTypes xsi:type="opponents:Zombie">
@@ -106,6 +111,7 @@
       <ImageTurnRight>/main/game/maze/zombie3-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie3-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie3-down.png</ImageTurnDown>
+      <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
   <!-- Normal difficulty bomber: LOB type, medium threat -->
@@ -131,10 +137,11 @@
     <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
-    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber-left.png</ImageTurnLeft>
     <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
-    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber-up.png</ImageTurnUp>
     <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+    <damageStatesEnabled>true</damageStatesEnabled>
   </characterTypes>
 
   <!-- Hard difficulty elite bomber: STRAIGHT type, higher threat -->
@@ -160,10 +167,11 @@
     <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
-    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber-left.png</ImageTurnLeft>
     <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
-    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber-up.png</ImageTurnUp>
     <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+    <damageStatesEnabled>true</damageStatesEnabled>
   </characterTypes>
 
   <!-- Elite late-game bomber: BEAM type, highest threat — Phase 2 release (Section 9) -->
@@ -189,10 +197,11 @@
     <explosionSound>/main/game/maze/error.wav</explosionSound>
 
     <ImageBase>/main/game/maze/pumpkinbomber.png</ImageBase>
-    <ImageTurnLeft>/main/game/maze/pumpkinbomber.png</ImageTurnLeft>
+    <ImageTurnLeft>/main/game/maze/pumpkinbomber-left.png</ImageTurnLeft>
     <ImageTurnRight>/main/game/maze/pumpkinbomber.png</ImageTurnRight>
-    <ImageTurnUp>/main/game/maze/pumpkinbomber.png</ImageTurnUp>
+    <ImageTurnUp>/main/game/maze/pumpkinbomber-up.png</ImageTurnUp>
     <ImageTurnDown>/main/game/maze/pumpkinbomber.png</ImageTurnDown>
+    <damageStatesEnabled>true</damageStatesEnabled>
   </characterTypes>
 
   <!-- Disabled zero-threat entry kept to exercise threat-floor logic in RuntimeVisualModelLoader (DO NOT DELETE) -->

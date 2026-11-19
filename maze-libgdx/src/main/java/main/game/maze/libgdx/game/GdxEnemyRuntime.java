@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.DamageState;
+import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -65,6 +67,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
+
+    /** Shared by all enemies so each damage-sprite lookup happens once per game. */
+    private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
+            DamagePathResolver.classpath(GdxEnemyRuntime.class);
+    private DamagePathResolver damagePathResolver = CLASSPATH_DAMAGE_PATHS;
 
     private GdxEnemyRuntime(EnemySpawn spawn,
                             String runtimeEnemyId,
@@ -151,7 +158,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.attackCooldownMs(),
                 spawn.projectileSpeed(),
                 spawn.resurrectionTimeMs(),
-                spawn.maxHitPoints());
+                spawn.maxHitPoints(),
+                spawn.animationSpec());
     }
 
     /** Apply {@code amount} points of damage. Returns {@code true} if the enemy just died. */
@@ -175,6 +183,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
 
     public int currentHitPoints() {
         return currentHitPoints;
+    }
+
+    /** Test seam: replaces the damage-sprite lookup; {@code null} restores the classpath lookup. */
+    void setDamagePathResolver(DamagePathResolver resolver) {
+        this.damagePathResolver = resolver != null ? resolver : CLASSPATH_DAMAGE_PATHS;
     }
 
     /** Tick the post-respawn invulnerability window down by {@code dt} seconds. */
@@ -408,11 +421,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
         EnemyAnimationSpec spec = spawn != null ? spawn.animationSpec() : null;
         int frameCount = spec != null ? spec.animationFrameCount() : 1;
         String dirPath = directionalImagePath(spec);
-        if (frameCount <= 1) {
-            return dirPath;
+        String framePath = dirPath;
+        if (frameCount > 1) {
+            int frameIndex = ((int) (animationClock * ANIMATION_FPS)) % frameCount;
+            framePath = deriveAnimationFramePath(dirPath, frameIndex);
         }
-        int frameIndex = ((int) (animationClock * ANIMATION_FPS)) % frameCount;
-        return deriveAnimationFramePath(dirPath, frameIndex);
+        if (spec != null && spec.damageStatesEnabled()) {
+            // spec comes from spawn, so spawn is non-null here
+            DamageState state = DamageState.of(currentHitPoints, Math.max(1, spawn.maxHitPoints()));
+            if (state != DamageState.HEALTHY) {
+                return damagePathResolver.resolve(framePath, state);
+            }
+        }
+        return framePath;
     }
 
     /** Returns the sprite-scale multiplier from the animation spec (1.0 if none). */
