@@ -96,6 +96,33 @@ and set `animationFrameCount="3"` for the ghost entries in `opponentModel.xmi`.
 
 ---
 
+## Enemy damage-state sprites (issue #80)
+
+Paths follow `DamageStateResolver.deriveStatePath` (`zombie1-right.png` →
+`zombie1-damaged-right.png`, `ghost2.png` → `ghost2-damaged.png`). All 54 files
+are **generated** from the healthy sprites by
+[tools/sprite-gen/DamageSpriteGenerator.java](../../tools/sprite-gen/DamageSpriteGenerator.java)
+(scratches → blood → desaturated slump). Replace any of them with hand-drawn art
+under the same name at any time. `DamageStateSpriteAssetsTest` verifies all of them.
+
+| Variant | Damaged | Bleeding | Tired |
+|---------|---------|----------|-------|
+| zombie1 | ✅ zombie1-damaged-{left,right,up,down}.png | ✅ zombie1-bleeding-{left,right,up,down}.png | ✅ zombie1-tired-{left,right,up,down}.png |
+| zombie2 | ✅ zombie2-damaged-{left,right,up,down}.png | ✅ zombie2-bleeding-{left,right,up,down}.png | ✅ zombie2-tired-{left,right,up,down}.png |
+| zombie3 | ✅ zombie3-damaged-{left,right,up,down}.png | ✅ zombie3-bleeding-{left,right,up,down}.png | ✅ zombie3-tired-{left,right,up,down}.png |
+| ghost1 | ✅ ghost1-damaged{,-left,-right}.png | ✅ ghost1-bleeding{,-left,-right}.png | ✅ ghost1-tired{,-left,-right}.png |
+| ghost2 | ✅ ghost2-damaged.png | ✅ ghost2-bleeding.png | ✅ ghost2-tired.png |
+| ghost3 | ✅ ghost3-damaged.png | ✅ ghost3-bleeding.png | ✅ ghost3-tired.png |
+| pumpkinbomber | ✅ pumpkinbomber-damaged.png | ✅ pumpkinbomber-bleeding.png | ✅ pumpkinbomber-tired.png |
+| pumpkinbomber-elite | 🚧 optional | 🚧 optional | 🚧 optional |
+
+`pb_hard` uses `pumpkinbomber.png`, so the resolver derives the `pumpkinbomber-*`
+names for it; the `pumpkinbomber-elite-*` set is only needed if the elite gets its
+own base image. Sprites will only appear in game once `damageStatesEnabled` (#137)
+and the frontend wiring (#138, #139) land.
+
+---
+
 ## Player walk cycle
 
 Player sprites are in the player config (`PlayerConfig`), not in the opponent model.
@@ -131,4 +158,4 @@ Walk animation for the player is not yet implemented.
 
 ---
 
-*Last updated: 2026-06-23 as part of F1 Animated Sprites implementation.*
+*Last updated: 2026-11-19 — damage-state sprites generated (issue #80).*

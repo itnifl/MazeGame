@@ -111,6 +111,7 @@ singletons.
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [DamageStateTest](src/test/java/main/game/maze/common/graphics/DamageStateTest.java) — HP ratio threshold boundaries (0, 1, 25, 26, 50, 51, 75, 76, 100), scaled HP, and zero/negative maxHp handling
 - [DamageStateResolverTest](src/test/java/main/game/maze/common/graphics/DamageStateResolverTest.java) — direction-suffixed and non-suffixed sprite path derivation, HEALTHY passthrough, and silent classpath fallback
+- [DamageStateSpriteAssetsTest](src/test/java/main/game/maze/common/graphics/DamageStateSpriteAssetsTest.java) — every generated damage-state sprite (see [tools/sprite-gen](../tools/sprite-gen/readme.md)) resolves via `DamageStateResolver` and matches its healthy sprite's dimensions
 - [PropertiesMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/PropertiesMazeVisualStyleLoaderTest.java)
 - [XmiMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/XmiMazeVisualStyleLoaderTest.java)
 - [EdgeKeyTrackerTest](src/test/java/main/game/maze/common/input/EdgeKeyTrackerTest.java)

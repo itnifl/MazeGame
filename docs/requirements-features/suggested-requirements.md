@@ -222,6 +222,14 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-112** *(UX)*: When the maze is larger than the screen and camera follow is active, a minimap overlay showing the full maze and the player's current position would significantly improve navigation. The minimap should be rendered at a configurable opacity (default 50 %) in a corner of the viewport.
 
+- **SR-210** *(Observability)*: When `damageStatesEnabled=true` but `DamageStateResolver.resolveWithFallback` falls back, count the misses per path (e.g. a `SpriteResolutionStats` counter dumped on exit or in the debug overlay) so missing art is visible without enabling FINE logging.
+
+- **SR-211** *(12-Factor, Build)*: Run `tools/sprite-gen/DamageSpriteGenerator.java` from the make scripts (`make-*.ps1 sprites`) and fail CI if regenerating changes committed PNGs, so generated assets never drift from the generator.
+
+- **SR-212** *(DDD)*: Model the damage-state art set as part of `CharacterType` (e.g. an optional `DamageStateArtSet` value object with explicit per-state paths) once hand-drawn art with non-conventional names arrives, keeping the naming convention as the default.
+
+- **SR-213** *(Assets)*: Create the 8 missing directional ghost sprites (`ghost2/3-{left,right,up,down}.png`). These need real art (up/down views), so they were not generated; once they exist, rerun the damage-state generator to add their damaged/bleeding/tired variants.
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.
