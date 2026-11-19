@@ -9,9 +9,12 @@ import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.opponents.OpponentsFactory;
 import main.game.maze.opponents.PumpkinBomber;
 import main.game.maze.opponents.Zombie;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +35,92 @@ class ComputerCharacterDamageStateTest {
         } catch (IllegalStateException ignored) {
             // Toolkit already started
         }
+    }
+
+    private final List<ComputerCharacter> created = new ArrayList<>();
+
+    @AfterEach
+    void disposeCharacters() {
+        onFx(() -> created.forEach(ComputerCharacter::dispose));
+        created.clear();
+    }
+
+    private <T extends ComputerCharacter> T track(T character) {
+        created.add(character);
+        return character;
+    }
+
+    /** Runs {@code action} on the FX thread, waits for it, and rethrows any failure. */
+    private static void onFx(Runnable action) {
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                action.run();
+            } catch (Throwable t) {
+                failure.set(t);
+            } finally {
+                latch.countDown();
+            }
+        });
+        try {
+            assertTrue(latch.await(5, TimeUnit.SECONDS), "FX action timed out");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            fail("Interrupted waiting for FX action");
+        }
+        if (failure.get() instanceof AssertionError ae) {
+            throw ae;
+        }
+        if (failure.get() != null) {
+            throw new RuntimeException(failure.get());
+        }
+    }
+
+    private static PumpkinBomber createBomberModel(boolean damageStatesEnabled) {
+        PumpkinBomber model = OpponentsFactory.eINSTANCE.createPumpkinBomber();
+        model.setHealth(100);
+        model.setSpeed(1.0);
+        model.setImageBase("/main/game/maze/pumpkinbomber.png");
+        model.setImageTurnLeft("/main/game/maze/pumpkinbomber.png");
+        model.setImageTurnRight("/main/game/maze/pumpkinbomber.png");
+        model.setImageTurnUp("/main/game/maze/pumpkinbomber.png");
+        model.setImageTurnDown("/main/game/maze/pumpkinbomber.png");
+        model.setDamageStatesEnabled(damageStatesEnabled);
+        return model;
+    }
+
+    /** True when {@code a} is the horizontal mirror of {@code b} and not identical to it. */
+    private static boolean isMirrorOf(Image a, Image b) {
+        int w = (int) b.getWidth();
+        int h = (int) b.getHeight();
+        if ((int) a.getWidth() != w || (int) a.getHeight() != h || samePixels(a, b)) {
+            return false;
+        }
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (a.getPixelReader().getArgb(x, y) != b.getPixelReader().getArgb(w - 1 - x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean samePixels(Image a, Image b) {
+        int w = (int) b.getWidth();
+        int h = (int) b.getHeight();
+        if ((int) a.getWidth() != w || (int) a.getHeight() != h) {
+            return false;
+        }
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (a.getPixelReader().getArgb(x, y) != b.getPixelReader().getArgb(x, y)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static void waitForFxEvents() {
@@ -63,7 +152,7 @@ class ComputerCharacterDamageStateTest {
     void damageStatesDisabled_hpChangeDoesNotChangeHealthyImage() {
         Zombie model = createZombieModel(false, 1);
         ImageView view = new ImageView();
-        ComputerCharacter character = new ComputerCharacter(view, model, 0, 0, 1.0);
+        ComputerCharacter character = track(new ComputerCharacter(view, model, 0, 0, 1.0));
 
         character.directionSubscriber.notifyCurrentDirection(VectorFacing.RIGHT);
         waitForFxEvents();
@@ -100,7 +189,7 @@ class ComputerCharacterDamageStateTest {
         model.setDamageStatesEnabled(true);
 
         ImageView view = new ImageView();
-        ComputerCharacter character = new ComputerCharacter(view, model, 0, 0, 1.0);
+        ComputerCharacter character = track(new ComputerCharacter(view, model, 0, 0, 1.0));
 
         character.directionSubscriber.notifyCurrentDirection(VectorFacing.RIGHT);
         waitForFxEvents();
@@ -139,7 +228,7 @@ class ComputerCharacterDamageStateTest {
     void damageStatesEnabled_realClasspathAssets_updatesSprite() {
         Zombie model = createZombieModel(true, 1);
         ImageView view = new ImageView();
-        ComputerCharacter character = new ComputerCharacter(view, model, 0, 0, 1.0);
+        ComputerCharacter character = track(new ComputerCharacter(view, model, 0, 0, 1.0));
 
         character.directionSubscriber.notifyCurrentDirection(VectorFacing.RIGHT);
         waitForFxEvents();
@@ -159,7 +248,7 @@ class ComputerCharacterDamageStateTest {
     void damageStatesEnabled_mockResolver_updatesPerHpTierAndDirection() {
         Zombie model = createZombieModel(true, 1);
         ImageView view = new ImageView();
-        ComputerCharacter character = new ComputerCharacter(view, model, 0, 0, 1.0);
+        ComputerCharacter character = track(new ComputerCharacter(view, model, 0, 0, 1.0));
 
         Image mockDamagedRight = new WritableImage(10, 10);
         Image mockBleedingRight = new WritableImage(20, 20);
@@ -221,7 +310,9 @@ class ComputerCharacterDamageStateTest {
     void damageStatesEnabled_walkCycleAnimationComposition() {
         Zombie model = createZombieModel(true, 3);
         ImageView view = new ImageView();
-        ComputerCharacter character = new ComputerCharacter(view, model, 0, 0, 1.0);
+        ComputerCharacter character = track(new ComputerCharacter(view, model, 0, 0, 1.0));
+        // Freeze the 250 ms walk timer so a tick cannot change the frame between step and assert.
+        onFx(character::pauseWalkAnimation);
 
         Image mockDamagedFrame0 = new WritableImage(11, 11);
         Image mockDamagedFrame1 = new WritableImage(22, 22);
@@ -249,32 +340,32 @@ class ComputerCharacterDamageStateTest {
         waitForFxEvents();
         assertEquals(DamageState.DAMAGED, character.getDamageState());
 
-        // Walk frame 0
-        character.setCurrentWalkFrame(0);
-        waitForFxEvents();
-        assertSame(mockDamagedFrame0, view.getImage(), "Frame 0 should display damaged variant");
-
-        // Advance to frame 1
-        character.setCurrentWalkFrame(1);
-        waitForFxEvents();
-        assertSame(mockDamagedFrame1, view.getImage(), "Frame 1 should display damaged variant");
-
-        // Advance to frame 2
-        character.setCurrentWalkFrame(2);
-        waitForFxEvents();
-        assertSame(mockDamagedFrame2, view.getImage(), "Frame 2 should display damaged variant");
-
+        // Each frame step and its assertion run together on the FX thread.
+        onFx(() -> {
+            character.setCurrentWalkFrame(0);
+            assertSame(mockDamagedFrame0, view.getImage(), "Frame 0 should display damaged variant");
+        });
+        onFx(() -> {
+            character.setCurrentWalkFrame(1);
+            assertSame(mockDamagedFrame1, view.getImage(), "Frame 1 should display damaged variant");
+        });
+        onFx(() -> {
+            character.setCurrentWalkFrame(2);
+            assertSame(mockDamagedFrame2, view.getImage(), "Frame 2 should display damaged variant");
+        });
         // While at frame 2, HP drops to BLEEDING
-        character.onHpChanged(35, 100);
-        waitForFxEvents();
-        assertSame(mockBleedingFrame2, view.getImage(), "Frame 2 should re-resolve to bleeding variant on HP change");
+        onFx(() -> {
+            character.onHpChanged(35, 100);
+            assertSame(mockBleedingFrame2, view.getImage(),
+                    "Frame 2 should re-resolve to bleeding variant on HP change");
+        });
     }
 
     @Test
     void zombieCharacter_subtractHitPoints_triggersDamageState() {
         Zombie model = createZombieModel(true, 1);
         ImageView view = new ImageView();
-        ZombieCharacter zombie = new ZombieCharacter(view, 0, 0, model);
+        ZombieCharacter zombie = track(new ZombieCharacter(view, 0, 0, model));
 
         Image mockDamaged = new WritableImage(15, 15);
         zombie.registerImageForPath("/main/game/maze/zombie1-damaged-right.png", mockDamaged);
@@ -294,18 +385,10 @@ class ComputerCharacterDamageStateTest {
 
     @Test
     void pumpkinBomberCharacter_subtractHitPoints_triggersDamageState() {
-        PumpkinBomber model = OpponentsFactory.eINSTANCE.createPumpkinBomber();
-        model.setHealth(100);
-        model.setSpeed(1.0);
-        model.setImageBase("/main/game/maze/pumpkinbomber.png");
-        model.setImageTurnLeft("/main/game/maze/pumpkinbomber.png");
-        model.setImageTurnRight("/main/game/maze/pumpkinbomber.png");
-        model.setImageTurnUp("/main/game/maze/pumpkinbomber.png");
-        model.setImageTurnDown("/main/game/maze/pumpkinbomber.png");
-        model.setDamageStatesEnabled(true);
+        PumpkinBomber model = createBomberModel(true);
 
         ImageView view = new ImageView();
-        PumpkinBomberCharacter bomber = new PumpkinBomberCharacter(view, 0, 0, model);
+        PumpkinBomberCharacter bomber = track(new PumpkinBomberCharacter(view, 0, 0, model));
 
         Image mockBleeding = new WritableImage(50, 50);
         bomber.registerImageForPath("/main/game/maze/pumpkinbomber-bleeding.png", mockBleeding);
@@ -318,5 +401,47 @@ class ComputerCharacterDamageStateTest {
         assertEquals(35, bomber.getHitPoints());
         assertEquals(DamageState.BLEEDING, bomber.getDamageState());
         assertSame(mockBleeding, view.getImage());
+    }
+
+    @Test
+    void pumpkinBomber_damageStatesDisabled_hpChangeKeepsGeneratedLeftMirror() {
+        ImageView view = new ImageView();
+        PumpkinBomberCharacter bomber = track(new PumpkinBomberCharacter(view, 0, 0, createBomberModel(false)));
+
+        onFx(() -> {
+            bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
+            Image mirrored = view.getImage();
+            assertNotNull(mirrored);
+            assertTrue(isMirrorOf(mirrored, bomber.imageRight), "LEFT must show the generated mirror");
+
+            bomber.subtractHitPoints(50);
+            assertSame(mirrored, view.getImage(),
+                    "HP change must not replace the mirror when damageStatesEnabled=false");
+        });
+    }
+
+    @Test
+    void pumpkinBomber_damageStatesEnabled_usesGeneratedImagesWhenHealthyOrAssetMissing() {
+        ImageView view = new ImageView();
+        PumpkinBomberCharacter bomber = track(new PumpkinBomberCharacter(view, 0, 0, createBomberModel(true)));
+        // Simulate a missing damage asset: the resolver falls back to the healthy path.
+        bomber.setDamagePathResolver((anchor, basePath, state) -> basePath);
+
+        onFx(() -> {
+            bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
+            Image mirrored = view.getImage();
+            assertTrue(isMirrorOf(mirrored, bomber.imageRight), "Healthy LEFT must show the generated mirror");
+
+            bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.UP);
+            Image tinted = view.getImage();
+            assertFalse(samePixels(tinted, bomber.imageRight), "Healthy UP must show the generated tint");
+
+            bomber.subtractHitPoints(30); // 70 HP -> DAMAGED
+            assertEquals(DamageState.DAMAGED, bomber.getDamageState());
+            assertSame(tinted, view.getImage(), "Missing damage asset must fall back to the generated UP tint");
+
+            bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
+            assertSame(mirrored, view.getImage(), "Missing damage asset must fall back to the generated LEFT mirror");
+        });
     }
 }

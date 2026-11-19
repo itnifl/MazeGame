@@ -157,7 +157,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     }
 
     private Image currentImage(VectorFacing facing) {
-        if (characterModel != null && characterModel.isDamageStatesEnabled() && currentDamageState != DamageState.HEALTHY) {
+        if (isDamageStatesEnabled() && currentDamageState != DamageState.HEALTHY) {
             String dirPath = getDirectionalPath(facing);
             if (dirPath != null && !dirPath.isBlank()) {
                 String framePath = dirPath;
@@ -245,7 +245,25 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         this.maxHp = Math.max(1, maxHp);
         this.currentHp = currentHp;
         this.currentDamageState = DamageState.of(this.currentHp, this.maxHp);
-        scheduleImageUpdate();
+        if (isDamageStatesEnabled()) {
+            scheduleImageUpdate();
+        }
+    }
+
+    /** True when the opponent model opts in to damage-state sprites. */
+    protected boolean isDamageStatesEnabled() {
+        return characterModel != null && characterModel.isDamageStatesEnabled();
+    }
+
+    /**
+     * Replaces the healthy (non-damaged) image shown for {@code facing}, e.g. a sprite variant
+     * generated at runtime. It is also the fallback when a damage-state asset is missing.
+     * Only affects single-frame characters; walk-cycle frames are loaded from assets.
+     */
+    protected void overrideHealthyImage(VectorFacing facing, Image image) {
+        if (facing != null && image != null) {
+            images.put(facing, image);
+        }
     }
 
     public void onHpChanged(int currentHp) {
@@ -254,6 +272,13 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
 
     int getCurrentWalkFrame() {
         return currentWalkFrame;
+    }
+
+    /** Test seam: stops the automatic walk-cycle timer so frames can be stepped manually. */
+    void pauseWalkAnimation() {
+        if (walkAnimation != null) {
+            walkAnimation.stop();
+        }
     }
 
     void setCurrentWalkFrame(int frame) {
