@@ -72,4 +72,20 @@ class TerminalCommandParserTest {
         assertNotNull(TerminalCommandParser.HELP_TEXT);
         assertFalse(TerminalCommandParser.HELP_TEXT.isBlank(), "HELP_TEXT must contain usage info");
     }
+
+    @Test
+    void kill_acceptsOptionalDeathCause() {
+        assertEquals(TerminalCommand.KILL_ENEMIES, TerminalCommandParser.parse("/kill"));
+        assertEquals(TerminalCommand.KILL_ENEMIES, TerminalCommandParser.parse("/kill fire"));
+        assertEquals(TerminalCommand.KILL_ENEMIES, TerminalCommandParser.parse("/KILL  Shot"));
+        assertEquals(TerminalCommand.KILL_ENEMIES, TerminalCommandParser.parse("/kill	crushed"));
+        assertEquals(TerminalCommand.UNKNOWN, TerminalCommandParser.parse("/kill laser"));
+        assertEquals(TerminalCommand.UNKNOWN, TerminalCommandParser.parse("/kill fire now"));
+        assertEquals(TerminalCommand.UNKNOWN, TerminalCommandParser.parse("/killall"));
+
+        assertEquals(main.game.maze.common.remains.DeathCause.OTHER, TerminalCommandParser.killCause("/kill"));
+        assertEquals(main.game.maze.common.remains.DeathCause.FIRE, TerminalCommandParser.killCause("/kill burn"));
+        assertEquals(main.game.maze.common.remains.DeathCause.SHOT, TerminalCommandParser.killCause("/kill shoot"));
+        assertEquals(main.game.maze.common.remains.DeathCause.CRUSHED, TerminalCommandParser.killCause("/kill squash"));
+    }
 }

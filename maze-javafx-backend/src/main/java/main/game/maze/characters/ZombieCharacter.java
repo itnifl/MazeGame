@@ -119,6 +119,7 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     private void die() {
+        leaveRemains();
         PlayDieAnimation();
         for (var subscriber : deathSubscribers) {
             subscriber.AddDeathNotification(this);
@@ -141,6 +142,9 @@ public class ZombieCharacter extends ComputerCharacter
     }
 
     private void resurrect() {
+        if (App.gameController != null) {
+            App.gameController.clearRemains(this);
+        }
         hitPoints.set(Math.max(1, zombieModel.getHealth()));
         onHpChanged(hitPoints.get(), zombieModel.getHealth());
         teleportTo(spawnX, spawnY);

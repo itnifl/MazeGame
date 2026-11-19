@@ -8,6 +8,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import main.game.maze.common.remains.DeathCause;
+import main.game.maze.common.terminal.TerminalCommandParser;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.controller.GdxHudInteractionStateController;
 import main.game.maze.libgdx.controller.GdxTerminalController;
@@ -122,11 +124,11 @@ public final class GdxGameInteractionSupport {
             Consumer<String> statusMessage,
             float enemyLabelSeconds,
             float enemyPathOverlaySeconds,
-            Runnable killEnemiesCallback) {
+            Consumer<DeathCause> killEnemiesCallback) {
         GdxTerminalCommandSupport.Outcome outcome = GdxTerminalCommandSupport.evaluate(raw);
         debugOverlayState.applyTerminalAction(outcome.action(), enemyLabelSeconds, enemyPathOverlaySeconds);
         if (outcome.action() == GdxTerminalCommandSupport.Action.KILL_ENEMIES && killEnemiesCallback != null) {
-            killEnemiesCallback.run();
+            killEnemiesCallback.accept(TerminalCommandParser.killCause(raw));
         }
         statusMessage.accept(outcome.statusText());
     }

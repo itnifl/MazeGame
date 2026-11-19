@@ -16,9 +16,11 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
+import main.game.maze.App;
 import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
@@ -54,6 +56,8 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     protected int maxHp;
     protected DamageState currentDamageState = DamageState.HEALTHY;
     private DamagePathResolver damagePathResolver = CLASSPATH_DAMAGE_PATHS;
+    /** Cause of the damage being applied right now; read by subclasses when that damage kills. */
+    private DeathCause damageCause = DeathCause.OTHER;
 
     protected final Image imageLeft;
     protected final Image imageRight;
@@ -220,6 +224,38 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
 
     public void subtractHitPoints(int hp) {
         onHpChanged(this.currentHp - hp, this.maxHp);
+    }
+
+    /**
+     * Applies damage dealt by {@code cause} (bomb fire, a shot, a crushing wall); if it kills,
+     * the character leaves the matching remains. Overrides {@code ICanDie}'s default for subclasses.
+     */
+    public void subtractHitPoints(int hp, DeathCause cause) {
+        damageCause = cause != null ? cause : DeathCause.OTHER;
+        try {
+            subtractHitPoints(hp);
+        } finally {
+            damageCause = DeathCause.OTHER;
+        }
+    }
+
+    /** Cause of the damage currently being applied ({@link DeathCause#OTHER} outside a caused hit). */
+    protected DeathCause damageCause() {
+        return damageCause;
+    }
+
+    /**
+     * Leaves remains where this character's sprite is, for the cause of the killing blow.
+     * Call while the character is still on the board (before unregistering it).
+     */
+    protected void leaveRemains() {
+        Node graphics = getCharacterGraphics();
+        if (graphics == null || App.gameController == null) {
+            return;
+        }
+        var bounds = graphics.getBoundsInParent();
+        App.gameController.leaveRemains(this, damageCause, basePath,
+                bounds.getMinX(), bounds.getMinY(), Math.max(bounds.getWidth(), bounds.getHeight()));
     }
 
     public void addHitPoints(int hp) {

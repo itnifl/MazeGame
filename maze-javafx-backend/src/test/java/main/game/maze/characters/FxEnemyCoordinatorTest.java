@@ -6,6 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import main.game.maze.FxEnemyCoordinator;
 import main.game.maze.FxGameWorldModel;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
@@ -434,5 +435,73 @@ class FxEnemyCoordinatorTest {
         assertEquals(100, offCorridor.getHitPoints(),
                 "Enemy outside the flame corridor half-width must take no damage");
     }
-}
 
+    // --- Death causes: fire and collapsing walls ---------------------------------------------
+
+    /** Zombie that records the cause of every hit it takes. */
+    private static final class CauseRecordingZombie extends ZombieCharacter {
+        private final List<DeathCause> causes = new java.util.ArrayList<>();
+
+        CauseRecordingZombie(double x, double y) {
+            super(new Rectangle(16, 16), x, y, zombieModel(100));
+        }
+
+        @Override
+        public void subtractHitPoints(int hp) {
+            causes.add(damageCause());
+            super.subtractHitPoints(hp);
+        }
+    }
+
+    private static Zombie zombieModel(int health) {
+        Zombie model = OpponentsFactory.eINSTANCE.createZombie();
+        model.setHealth(health);
+        model.setSpeed(2.0);
+        model.setAttackDamage(1);
+        model.setThreatLevel(1.0);
+        model.setBehavior(BehaviorType.WANDER);
+        return model;
+    }
+
+    @Test
+    void crushAlong_crushesTheEnemyBesideTheWall_notOneFurtherAway() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+        CauseRecordingZombie beside = new CauseRecordingZombie(120, 40);
+        CauseRecordingZombie farAway = new CauseRecordingZombie(400, 400);
+        addComputerCharacter(c, beside);
+        addComputerCharacter(c, farAway);
+        double size = main.game.maze.mazeworld.constants.StageConstants.ZombieCharacterXYSize;
+        double wallY = 40 + size * 0.5;   // horizontal wall through the first zombie's centre
+
+        int crushed = c.crushAlong(0, wallY, 300, wallY);
+
+        assertEquals(1, crushed);
+        assertEquals(0, beside.getHitPoints());
+        assertEquals(List.of(DeathCause.CRUSHED), beside.causes);
+        assertEquals(100, farAway.getHitPoints());
+        assertTrue(farAway.causes.isEmpty());
+    }
+
+    @Test
+    void playerFlame_tagsTheDamageAsFire() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+        CauseRecordingZombie zombie = new CauseRecordingZombie(120, 40);
+        addComputerCharacter(c, zombie);
+
+        c.applyPlayerFlameAttack(30);
+        c.applyPlayerFlameExplosion(20, 60, 100, 400, List.of());
+
+        assertFalse(zombie.causes.isEmpty());
+        assertTrue(zombie.causes.stream().allMatch(cause -> cause == DeathCause.FIRE), zombie.causes.toString());
+    }
+
+    @Test
+    void killAll_passesTheCause() throws Exception {
+        FxEnemyCoordinator c = coordinator();
+        CauseRecordingZombie zombie = new CauseRecordingZombie(120, 40);
+        addComputerCharacter(c, zombie);
+
+        assertEquals(1, c.killAll(DeathCause.SHOT));
+        assertEquals(List.of(DeathCause.SHOT), zombie.causes);
+    }
+}

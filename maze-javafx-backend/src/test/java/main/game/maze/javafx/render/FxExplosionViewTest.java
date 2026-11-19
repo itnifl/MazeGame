@@ -16,6 +16,9 @@ import main.game.maze.common.graphics.fire.FireBlastModel;
 import main.game.maze.common.graphics.fire.FirePuff;
 import main.game.maze.common.graphics.fire.PumpkinBurst;
 import main.game.maze.common.graphics.fire.PumpkinBurstModel;
+import main.game.maze.common.graphics.fire.RubbleMaterial;
+import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.graphics.fire.WallRubbleModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -137,5 +140,21 @@ class FxExplosionViewTest {
                 (int) (chunk.x() - origin.get()[0]), (int) (chunk.y() - origin.get()[1]));
         assertTrue(pixel.getOpacity() > 0.5, "debris should be painted, got " + pixel);
         assertTrue(pixel.getRed() > pixel.getBlue() + 0.3, "debris should be pumpkin-coloured, got " + pixel);
+    }
+
+    @Test
+    @DisplayName("wall rubble canvas covers every puff over the whole collapse")
+    void rubbleCanvasCoversAllPuffs() {
+        WallRubble rubble = new WallRubble(40, 300, 40, 180, 12, RubbleMaterial.STEEL, 3L);
+        Canvas canvas = FxExplosionView.of(rubble).canvas();
+        double minX = canvas.getLayoutX();
+        double minY = canvas.getLayoutY();
+        for (double p = 0; p < 1.0; p += 0.02) {
+            for (FirePuff puff : WallRubbleModel.puffs(rubble, p, p)) {
+                assertTrue(puff.x() - puff.radius() >= minX && puff.x() + puff.radius() <= minX + canvas.getWidth()
+                        && puff.y() - puff.radius() >= minY && puff.y() + puff.radius() <= minY + canvas.getHeight(),
+                        "puff outside canvas at progress " + p + ": " + puff);
+            }
+        }
     }
 }

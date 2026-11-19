@@ -252,6 +252,18 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-228** *(Observability)*: Count projectile detonations per bomber type (lob/straight, hit/miss) in the existing projectile telemetry, and show active explosion count in the debug overlay.
 
+- **SR-232** *(Gameplay, MDD)*: Gun pickup. The player does not start with it; it is found in the maze. Model it in the Xtext DSL, which already has `loot-table` / `item` with `type weapon` and `loot` references on opponents (nothing reads loot at runtime yet): add the weapon kind (`gun`), damage, ammo and the inflicted `DeathCause` (`shot`). Hits call `subtractHitPoints(dmg, DeathCause.SHOT)` (JavaFX) / `takeDamage(dmg, DeathCause.SHOT)` (libGDX); the shot remains (SR-229) already work.
+
+- **SR-233** *(Gameplay, MDD)*: Sledgehammer pickup, found in the maze (not at start), crushes adjacent enemies (`DeathCause.CRUSHED`, remains already in place). Same DSL loot model as SR-232 (`weapon` kind `sledgehammer`, swing damage / reach); it could also let the player knock down breakable walls, which then fall and crush via SR-230.
+
+- **SR-234** *(MDD, DDD)*: Per-enemy death rules in `opponents.ecore`: which `DeathCause`s a character type can suffer (e.g. ghosts immune to crushing) and whether it leaves remains, next to `damageStatesEnabled`; needs EMF regeneration. Today every enemy can die by every cause and remains are chosen by sprite naming convention.
+
+- **SR-235** *(MDD)*: Per-material collapse rules in `walls.ecore`: `crushesOnCollapse` (glass might shatter harmlessly) and the rubble palette, instead of the code-side `RubbleMaterial` mapping keyed by the material id prefix; needs regeneration of the walls model code.
+
+- **SR-236** *(Parity bug)*: JavaFX ghosts cannot die: `GhostCharacter` does not implement `ICanDie`, so bombs, `/kill` and collapsing walls skip them, while libGDX ghosts die normally. Make `GhostCharacter` mortal (with resurrection like zombies) so they also leave remains.
+
+- **SR-237** *(Observability, 12-Factor)*: Count deaths per `DeathCause` per level in the run summary / debug overlay, and make the remains cap (`RemainsLedger.DEFAULT_CAPACITY`, 60) configurable.
+
 ## Ratified Requirements
 
 These requirements have been implemented and verified.

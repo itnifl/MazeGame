@@ -1,6 +1,7 @@
 package main.game.maze;
 
 import javafx.util.Duration;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.terminal.TerminalCommand;
 import main.game.maze.common.terminal.TerminalCommandParser;
 
@@ -38,7 +39,7 @@ final class GameControllerTerminalSupport {
                 sink.showEnemyPathsOverlay();
             }
             case KILL_ENEMIES -> {
-                int killed = sink.killAllEnemies();
+                int killed = sink.killAllEnemies(TerminalCommandParser.killCause(raw));
                 sink.setHudMessage(KILL_ENEMIES_MESSAGE + " (" + killed + " killed)");
             }
             case EMPTY -> sink.setHudMessage(EMPTY_MESSAGE);
@@ -55,6 +56,7 @@ final class GameControllerTerminalSupport {
 
         void showEnemyPathsOverlay();
 
-        int killAllEnemies();
+        /** Kills all enemies by {@code cause} (from {@code /kill [cause]}). */
+        int killAllEnemies(DeathCause cause);
     }
 }

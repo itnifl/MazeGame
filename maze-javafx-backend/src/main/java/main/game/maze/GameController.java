@@ -1,7 +1,12 @@
 package main.game.maze;
 
+import main.game.maze.common.graphics.UiScheduler;
 import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.common.graphics.fire.RubbleMaterial;
+import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.javafx.render.FxExplosionView;
+import main.game.maze.javafx.render.FxRemainsLayer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -154,10 +159,19 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void setHudMessage(String text, Duration visibleFor)     { GameController.this.setHudMessage(text, visibleFor); }
         @Override public void showEnemyDebugLabels(boolean behaviourType)         { enemyCoordinator.showEnemyDebugLabels(behaviourType); }
         @Override public void showEnemyPathsOverlay()                             { enemyCoordinator.showEnemyPathsOverlay(); }
-        @Override public int killAllEnemies()                                     { return enemyCoordinator.killAll(); }
+        @Override public int killAllEnemies(DeathCause cause)                     { return enemyCoordinator.killAll(cause); }
     };
 
     private boolean cameraFollowListenersInstalled;
+
+    /** Remains of killed enemies on the board; gameBoard is injected by FXML, so it is looked up lazily. */
+    private final FxRemainsLayer remainsLayer = new FxRemainsLayer(() -> gameBoard);
+    /** Collapsing breakable walls fall as rubble and crush enemies beside them. */
+    private final GameMazeWorld.WallCollapseListener wallCollapseListener = this::onWallsCollapsed;
+    private GameMazeWorld watchedWorld;
+    private static final double RUBBLE_THICKNESS = WallRubble.visualThickness(StageConstants.WallThicknessPx);
+    /** Rubble draws in front of the board like the other explosions. */
+    private static final double RUBBLE_VIEW_ORDER = -9;
 
     private final List<ActivePlayerBomb> activePlayerBombs = new ArrayList<>();
 
@@ -376,6 +390,46 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     /**
+     * Leaves remains for a killed enemy (called by the character as it dies). Coal for fire,
+     * a bloody body when shot, a splat when crushed; nothing for other causes.
+     */
+    public void leaveRemains(Object owner, DeathCause cause, String bodySprite, double x, double y, double size) {
+        UiScheduler.get().runOnUiThread(() -> remainsLayer.show(owner, cause, bodySprite, x, y, size));
+    }
+
+    /** Removes the remains of {@code owner}, e.g. when it resurrects. */
+    public void clearRemains(Object owner) {
+        UiScheduler.get().runOnUiThread(() -> remainsLayer.clear(owner));
+    }
+
+    private void watchWallCollapses(GameMazeWorld world) {
+        if (watchedWorld != null) {
+            watchedWorld.removeWallCollapseListener(wallCollapseListener);
+        }
+        watchedWorld = world;
+        if (world != null) {
+            world.addWallCollapseListener(wallCollapseListener);
+        }
+    }
+
+    /** Runs on the FX thread: wall damage is always applied there. */
+    private void onWallsCollapsed(List<BreakableWall> collapsed) {
+        for (BreakableWall wall : collapsed) {
+            Vector2D g = wall.geometry;
+            double ax = g.getStart().getX();
+            double ay = g.getStart().getY();
+            double bx = g.getEnd().getX();
+            double by = g.getEnd().getY();
+            if (gameBoard != null) {
+                WallRubble rubble = new WallRubble(ax, ay, bx, by, RUBBLE_THICKNESS,
+                        RubbleMaterial.fromMaterialId(wall.material.id()), Double.doubleToLongBits(ax * 31 + by));
+                FxExplosionView.of(rubble).play(gameBoard, WallRubble.LIFETIME_SECONDS, RUBBLE_VIEW_ORDER);
+            }
+            enemyCoordinator.crushAlong(ax, ay, bx, by);
+        }
+    }
+
+    /**
      * Called from the projectile update loop (background thread) when a projectile
      * hits a wall. If the wall is breakable its HP is reduced; if it reaches zero
      * the wall is removed and the navigation graph is rewired. The mutation is
@@ -460,6 +514,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void setupGame() {
         clearActivePlayerBombs();
+        remainsLayer.clearAll();
         hpBar.setProgress(1.0);
         installCameraFollowListeners();
 
@@ -472,6 +527,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         var result = bootstrapper.setup(gameBoard, player, hpBar, startDifficulty);
         playerCharacter = result.playerCharacter();
         maze            = result.maze();
+        watchWallCollapses(maze);
         mazeCanvas      = result.mazeCanvas();
         pathCanvas      = result.pathCanvas();
         treeCanvas      = result.treeCanvas();

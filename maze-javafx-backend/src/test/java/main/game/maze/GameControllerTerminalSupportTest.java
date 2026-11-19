@@ -1,5 +1,6 @@
 package main.game.maze;
 
+import main.game.maze.common.remains.DeathCause;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,6 +12,18 @@ import main.game.maze.common.terminal.TerminalCommand;
 import org.junit.jupiter.api.Test;
 
 class GameControllerTerminalSupportTest {
+
+    @Test
+    void killWithCausePassesTheCauseToTheSink() {
+        RecordingSink sink = new RecordingSink();
+        GameControllerTerminalSupport.executeTerminalCommand("/kill crushed", sink);
+        assertTrue(sink.killAllCalled);
+        assertEquals(DeathCause.CRUSHED, sink.killCause);
+
+        RecordingSink plain = new RecordingSink();
+        GameControllerTerminalSupport.executeTerminalCommand("/kill", plain);
+        assertEquals(DeathCause.OTHER, plain.killCause, "plain /kill leaves no remains, as before");
+    }
 
     @Test
     void parseTerminalCommandRecognizesSharedVocab() {
@@ -77,6 +90,7 @@ class GameControllerTerminalSupportTest {
         private boolean behaviourLabelsShown;
         private boolean pathOverlayShown;
         private boolean killAllCalled;
+        private DeathCause killCause;
         private int killCount;
 
         @Override
@@ -103,8 +117,9 @@ class GameControllerTerminalSupportTest {
         }
 
         @Override
-        public int killAllEnemies() {
+        public int killAllEnemies(DeathCause cause) {
             killAllCalled = true;
+            killCause = cause;
             return killCount;
         }
     }

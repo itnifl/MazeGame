@@ -309,6 +309,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
         var g = this.getCharacterGraphics();
         if (hitPoints.get() <= 0) {
+            leaveRemains();
             PlayDieAnimation();
             for (var sub : deathSubscribers) sub.AddDeathNotification(this);
             if (App.gameController != null) {

@@ -22,6 +22,7 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamageStateResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
+import main.game.maze.libgdx.helper.GdxRemainsSupport;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
@@ -261,6 +262,8 @@ public final class MenuScreenController extends AbstractGdxScreenController {
                     }
                 }
             }
+            // remains this enemy can leave (no damage-state variants of those)
+            paths.addAll(GdxRemainsSupport.possibleSprites(enemy.imagePath()));
             for (String path : paths) {
                 context().assets().queueTexture(path);
             }

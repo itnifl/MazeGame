@@ -31,6 +31,8 @@ import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
+import main.game.maze.common.remains.CrushZone;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -235,17 +237,50 @@ public final class FxEnemyCoordinator {
     }
 
     public int killAll() {
+        return killAll(DeathCause.OTHER);
+    }
+
+    /** Kills every living enemy by {@code cause}; they leave the matching remains. */
+    public int killAll(DeathCause cause) {
         int killed = 0;
         for (var character : allComputerCharacters) {
             if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie) {
                 int hp = canDie.getHitPoints();
                 if (hp > 0) {
-                    canDie.subtractHitPoints(hp);
+                    canDie.subtractHitPoints(hp, cause);
                     killed++;
                 }
             }
         }
         return killed;
+    }
+
+    /**
+     * Crushes every living enemy touching a collapsed wall segment from (ax, ay) to (bx, by)
+     * (board coordinates, y-down).
+     *
+     * @return the number of enemies crushed
+     */
+    public int crushAlong(double ax, double ay, double bx, double by) {
+        int crushed = 0;
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)
+                    || !(character instanceof ComputerCharacter cc)) {
+                continue;
+            }
+            int hp = canDie.getHitPoints();
+            if (hp <= 0) {
+                continue;
+            }
+            double size = approximateSize(cc);
+            double cx = cc.getCharacterPosition().getX() + size * 0.5d;
+            double cy = cc.getCharacterPosition().getY() + size * 0.5d;
+            if (CrushZone.crushes(ax, ay, bx, by, cx, cy, size * CrushZone.BODY_RADIUS_FACTOR)) {
+                canDie.subtractHitPoints(hp, DeathCause.CRUSHED);
+                crushed++;
+            }
+        }
+        return crushed;
     }
 
     public int applyPlayerFlameAttack(int damage) {
@@ -263,7 +298,7 @@ public final class FxEnemyCoordinator {
                 continue;
             }
             int damageToApply = Math.min(hp, remainingDamage);
-            canDie.subtractHitPoints(damageToApply);
+            canDie.subtractHitPoints(damageToApply, DeathCause.FIRE);
             remainingDamage -= damageToApply;
             appliedDamage += damageToApply;
         }
@@ -350,7 +385,7 @@ public final class FxEnemyCoordinator {
                 @Override public double centerX()        { return centerX; }
                 @Override public double centerY()        { return centerY; }
                 @Override public int    hitPoints()      { return Math.max(0, canDie.getHitPoints()); }
-                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount); }
+                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount, DeathCause.FIRE); }
                 @Override public boolean isPassThrough() { return false; }
             });
         }

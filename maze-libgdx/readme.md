@@ -87,7 +87,7 @@ flowchart LR
    - Coordinates overlays for victory (`GdxWinOverlayView`), defeat (`GdxGameOverOverlayView`), and damage flash (`GdxInfectionOverlayView`).
 4. **Input Controllers**:
    - `GdxPlayerInputController` maps arrow keys / WASD to directional player movement, **SPACE** to bomb placement, and **P** / **O** to path hint queries.
-   - `GdxTerminalController` intercepts the **T** key to toggle the in-game command terminal (e.g. `/kill`, `/h`).
+   - `GdxTerminalController` intercepts the **T** key to toggle the in-game command terminal (e.g. `/kill`, `/kill fire|shot|crushed`, `/h`).
 
 ---
 
@@ -188,6 +188,7 @@ Unit tests in `maze-libgdx` verify rendering logic, physics, entity lifecycles, 
 - **GdxEnemyRuntimeAnimationTest**: Tests walk-cycle derivation, damage-state sprite switching across all 4 tiers, direction-facing resolution, and healthy-sprite fallback.
 - **RuntimeVisualModelLoaderTest**: Verifies that every enemy configured in the shipped `opponentModel.xmi` has damage states enabled and that all derived sprite files exist on disk.
 - **GdxEnemyRuntimeProjectileTest**: Verifies F26 projectile speeds, LOB ballistic arcs (`distance = speed × time`), straight-shot wall collision, and splash-radius damage triggers.
+- **EnemyRemainsFlowTest**: Enemies killed by fire / shot / crushed leave coal / bloody / splat remains where they died (none for plain `/kill`); remains vanish when that enemy respawns; a collapsing wall falls as `WallRubbleVisual` rubble (y-down converted to y-up) and crushes the enemy beside it but not one further away; rubble expires after its lifetime.
 - **GdxWallDamageThreadSafetyTest**: Tests thread-safe deferral of wall hits to the render thread and ensures duplicate queued hits damage walls exactly once.
 - **GhostTangibilityParityTest**: Verifies F25 ghost phasing mechanics, `visibilityLevel` capping, and cross-frontend opacity parity with JavaFX `GhostNonTangibilityService`.
 - **SampleMazeTest & RealMazeTest**: Validates deterministic maze generation, axis-aligned walls, and dynamic synchronization with breakable wall state.

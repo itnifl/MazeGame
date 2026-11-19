@@ -22,6 +22,7 @@ import main.game.maze.common.movement.MovementResult;
 import main.game.maze.common.movement.MovementTickAccumulator;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemyAnimationSpec;
 import main.game.maze.libgdx.model.EnemySpawn;
@@ -72,6 +73,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
     private long impactCount;
+    private DeathCause deathCause = DeathCause.OTHER;
 
     /** Shared by all enemies so each damage-sprite lookup happens once per game. */
     private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
@@ -167,19 +169,44 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.animationSpec());
     }
 
-    /** Apply {@code amount} points of damage. Returns {@code true} if the enemy just died. */
+    /** Apply {@code amount} points of damage of unknown kind. Returns {@code true} if the enemy just died. */
     public boolean takeDamage(int amount) {
+        return takeDamage(amount, DeathCause.OTHER);
+    }
+
+    /**
+     * Apply {@code amount} points of damage dealt by {@code cause}; a killing blow decides the
+     * remains the enemy leaves. Returns {@code true} if the enemy just died.
+     */
+    public boolean takeDamage(int amount, DeathCause cause) {
         if (currentHitPoints <= 0 || invulnerableSecondsRemaining > 0f) {
             return false;
         }
         currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, amount));
-        return currentHitPoints <= 0;
+        if (currentHitPoints <= 0) {
+            deathCause = cause != null ? cause : DeathCause.OTHER;
+            return true;
+        }
+        return false;
     }
 
     /** Kill the enemy instantly regardless of current HP. Returns {@code true} always. */
     public boolean kill() {
+        return kill(DeathCause.OTHER);
+    }
+
+    /** Kill the enemy instantly by {@code cause}, regardless of HP or invulnerability. */
+    public boolean kill(DeathCause cause) {
+        if (currentHitPoints > 0) {
+            deathCause = cause != null ? cause : DeathCause.OTHER;
+        }
         currentHitPoints = 0;
         return true;
+    }
+
+    /** How the enemy died ({@link DeathCause#OTHER} while alive or when unknown). */
+    public DeathCause deathCause() {
+        return deathCause;
     }
 
     public boolean isAlive() {

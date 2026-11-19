@@ -12,9 +12,11 @@ import main.game.maze.common.graphics.fire.FireBlastModel;
 import main.game.maze.common.graphics.fire.FirePuff;
 import main.game.maze.common.graphics.fire.PumpkinBurst;
 import main.game.maze.common.graphics.fire.PumpkinBurstModel;
+import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.graphics.fire.WallRubbleModel;
 
 /**
- * JavaFX view of one explosion (player bomb fire blast or pumpkin bomber burst): a transparent
+ * JavaFX view of one explosion (player bomb fire blast, pumpkin bomber burst or collapsing wall): a transparent
  * {@link Canvas} covering the explosion, redrawn every frame from the shared puff models and
  * removed when it ends. Smoke and debris are painted with normal blending, flame layers with
  * {@link BlendMode#ADD} so overlapping puffs glow.
@@ -60,6 +62,14 @@ public final class FxExplosionView {
         return new FxExplosionView((p, clock) -> PumpkinBurstModel.puffs(burst, p, clock),
                 burst.centerX() - extent, burst.centerY() - extent,
                 burst.centerX() + extent, burst.centerY() + extent);
+    }
+
+    /** View for a breakable wall collapsing into rubble. */
+    public static FxExplosionView of(WallRubble rubble) {
+        double extent = rubble.maxExtent();
+        return new FxExplosionView((p, clock) -> WallRubbleModel.puffs(rubble, p, clock),
+                Math.min(rubble.ax(), rubble.bx()) - extent, Math.min(rubble.ay(), rubble.by()) - extent,
+                Math.max(rubble.ax(), rubble.bx()) + extent, Math.max(rubble.ay(), rubble.by()) + extent);
     }
 
     public Canvas canvas() {

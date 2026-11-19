@@ -2,6 +2,8 @@ package main.game.maze.libgdx.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.remains.RemainsLedger;
 import main.game.maze.dto.Score;
 import main.game.maze.libgdx.model.DeadEnemy;
 import main.game.maze.libgdx.model.EnemyDeathAnimation;
@@ -46,6 +48,8 @@ public final class GameWorldModel {
     private final List<BombFuseGlow> bombFuseGlows = new ArrayList<>();
     private final List<FireBlastVisual> fireBlasts = new ArrayList<>();
     private final List<PumpkinBurstVisual> enemyBursts = new ArrayList<>();
+    private final List<ActiveWallRubble> wallRubble = new ArrayList<>();
+    private final RemainsLedger<EnemySpawn, RemainsVisual> remains = new RemainsLedger<>(RemainsLedger.DEFAULT_CAPACITY);
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -246,12 +250,47 @@ public final class GameWorldModel {
         return enemyBursts;
     }
 
-    /** Everything explosive to draw this frame: enemy bursts first, player blasts on top. */
+    /** Walls currently collapsing; ticked by {@code GdxWallCollapseSupport}. */
+    public List<ActiveWallRubble> wallRubble() {
+        return wallRubble;
+    }
+
+    /** Remains of killed enemies, kept until each enemy respawns or the level restarts. */
+    public RemainsLedger<EnemySpawn, RemainsVisual> remains() {
+        return remains;
+    }
+
+    /** Everything explosive to draw this frame: wall rubble, enemy bursts, then player blasts on top. */
     public List<ExplosionVisual> explosions() {
-        List<ExplosionVisual> all = new ArrayList<>(enemyBursts.size() + fireBlasts.size());
+        List<ExplosionVisual> all = new ArrayList<>(wallRubble.size() + enemyBursts.size() + fireBlasts.size());
+        for (ActiveWallRubble active : wallRubble) {
+            all.add(active.visual());
+        }
         all.addAll(enemyBursts);
         all.addAll(fireBlasts);
         return all;
+    }
+
+    /** A collapsing wall and how long it has been falling. */
+    public static final class ActiveWallRubble {
+        private final WallRubble rubble;
+        private float elapsedSeconds;
+
+        public ActiveWallRubble(WallRubble rubble) {
+            this.rubble = rubble;
+        }
+
+        public void tick(float dt) {
+            elapsedSeconds += Math.max(0f, dt);
+        }
+
+        public boolean finished() {
+            return elapsedSeconds >= WallRubble.LIFETIME_SECONDS;
+        }
+
+        public WallRubbleVisual visual() {
+            return new WallRubbleVisual(rubble, (float) Math.min(1.0, elapsedSeconds / WallRubble.LIFETIME_SECONDS));
+        }
     }
 
     public List<Score> highScoreRows() {

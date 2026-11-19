@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.helper;
 
 import java.util.function.Consumer;
+import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.input.KeyBindingRegistry;
 import main.game.maze.game.status.StatusMessageBus;
@@ -27,7 +28,7 @@ public final class GdxGameFrameStateSupport {
             StatusMessageBus statusMessageBus,
             float enemyLabelSeconds,
             float enemyPathOverlaySeconds,
-            Runnable killEnemiesCallback) {
+            Consumer<DeathCause> killEnemiesCallback) {
         InputFrame<Integer> currentInputFrame = inputSnapshotReader.read(keyBindingRegistry.trackedKeys());
         hudInteractionState.tick(dt);
 
