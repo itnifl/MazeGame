@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.opponents.CharacterType#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getAnimationFrameCount <em>Animation Frame Count</em>}</li>
  *   <li>{@link main.game.maze.opponents.CharacterType#getSpriteScale <em>Sprite Scale</em>}</li>
+ *   <li>{@link main.game.maze.opponents.CharacterType#isDamageStatesEnabled <em>Damage States Enabled</em>}</li>
  * </ul>
  *
  * @see main.game.maze.opponents.OpponentsPackage#getCharacterType()
@@ -369,5 +370,28 @@ public interface CharacterType extends EObject {
 	 * @generated
 	 */
 	void setSpriteScale(double value);
+
+	/**
+	 * Returns the value of the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Damage States Enabled</em>' attribute.
+	 * @see #setDamageStatesEnabled(boolean)
+	 * @see main.game.maze.opponents.OpponentsPackage#getCharacterType_DamageStatesEnabled()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isDamageStatesEnabled();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.opponents.CharacterType#isDamageStatesEnabled <em>Damage States Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Damage States Enabled</em>' attribute.
+	 * @see #isDamageStatesEnabled()
+	 * @generated
+	 */
+	void setDamageStatesEnabled(boolean value);
 
 } // CharacterType

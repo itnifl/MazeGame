@@ -278,13 +278,22 @@ public interface OpponentsPackage extends EPackage {
 	int CHARACTER_TYPE__SPRITE_SCALE = 14;
 
 	/**
+	 * The feature id for the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHARACTER_TYPE__DAMAGE_STATES_ENABLED = 15;
+
+	/**
 	 * The number of structural features of the '<em>Character Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHARACTER_TYPE_FEATURE_COUNT = 15;
+	int CHARACTER_TYPE_FEATURE_COUNT = 16;
 
 	/**
 	 * The number of operations of the '<em>Character Type</em>' class.
@@ -439,6 +448,15 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ZOMBIE__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
+
+	/**
+	 * The feature id for the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ZOMBIE__DAMAGE_STATES_ENABLED = CHARACTER_TYPE__DAMAGE_STATES_ENABLED;
 
 	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
@@ -768,6 +786,15 @@ public interface OpponentsPackage extends EPackage {
 	int GHOST__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
 
 	/**
+	 * The feature id for the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GHOST__DAMAGE_STATES_ENABLED = CHARACTER_TYPE__DAMAGE_STATES_ENABLED;
+
+	/**
 	 * The feature id for the '<em><b>Attack Damage</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -956,6 +983,15 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int RANGED_ENEMY__SPRITE_SCALE = CHARACTER_TYPE__SPRITE_SCALE;
+
+	/**
+	 * The feature id for the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RANGED_ENEMY__DAMAGE_STATES_ENABLED = CHARACTER_TYPE__DAMAGE_STATES_ENABLED;
 
 	/**
 	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
@@ -1218,6 +1254,15 @@ public interface OpponentsPackage extends EPackage {
 	 * @ordered
 	 */
 	int PUMPKIN_BOMBER__SPRITE_SCALE = RANGED_ENEMY__SPRITE_SCALE;
+
+	/**
+	 * The feature id for the '<em><b>Damage States Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PUMPKIN_BOMBER__DAMAGE_STATES_ENABLED = RANGED_ENEMY__DAMAGE_STATES_ENABLED;
 
 	/**
 	 * The feature id for the '<em><b>Attack Range</b></em>' attribute.
@@ -1607,6 +1652,17 @@ public interface OpponentsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCharacterType_SpriteScale();
+
+	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.opponents.CharacterType#isDamageStatesEnabled <em>Damage States Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Damage States Enabled</em>'.
+	 * @see main.game.maze.opponents.CharacterType#isDamageStatesEnabled()
+	 * @see #getCharacterType()
+	 * @generated
+	 */
+	EAttribute getCharacterType_DamageStatesEnabled();
 
 	/**
 	 * Returns the meta object for class '{@link main.game.maze.opponents.Zombie <em>Zombie</em>}'.
@@ -2186,6 +2242,14 @@ public interface OpponentsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHARACTER_TYPE__SPRITE_SCALE = eINSTANCE.getCharacterType_SpriteScale();
+
+		/**
+		 * The meta object literal for the '<em><b>Damage States Enabled</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHARACTER_TYPE__DAMAGE_STATES_ENABLED = eINSTANCE.getCharacterType_DamageStatesEnabled();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.opponents.impl.ZombieImpl <em>Zombie</em>}' class.
