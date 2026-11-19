@@ -111,6 +111,7 @@ public class ZombieCharacter extends ComputerCharacter
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
+        onHpChanged(hitPoints.get(), zombieModel.getHealth());
 
         if (hitPoints.get() <= 0) {
             die();
@@ -141,6 +142,7 @@ public class ZombieCharacter extends ComputerCharacter
 
     private void resurrect() {
         hitPoints.set(Math.max(1, zombieModel.getHealth()));
+        onHpChanged(hitPoints.get(), zombieModel.getHealth());
         teleportTo(spawnX, spawnY);
         var graphics = this.getCharacterGraphics();
         if (App.gameController != null) {
@@ -200,11 +202,13 @@ public class ZombieCharacter extends ComputerCharacter
     @Override
     public void setHitPoints(int hp) {
         hitPoints = new AtomicInteger(hp);
+        onHpChanged(hp, zombieModel.getHealth());
     }
 
     @Override
     public void addHitPoints(int hp) {
         hitPoints.addAndGet(hp);
+        onHpChanged(hitPoints.get(), zombieModel.getHealth());
     }
 
     @Override

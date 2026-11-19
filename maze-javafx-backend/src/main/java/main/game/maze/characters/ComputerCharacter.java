@@ -2,6 +2,7 @@ package main.game.maze.characters;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -15,6 +16,8 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
+import main.game.maze.common.graphics.DamageState;
+import main.game.maze.common.graphics.DamageStateResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
@@ -26,9 +29,13 @@ import main.game.maze.opponents.CharacterType;
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
     private static final double ANIMATION_FRAME_DURATION_MS = 250.0;
 
+    @FunctionalInterface
+    public interface DamagePathResolver {
+        String resolve(Class<?> anchor, String basePath, DamageState state);
+    }
+
     private double speed;
     private final CharacterType characterModel;
-
 
     protected VectorFacing currentCharacterFacing = VectorFacing.IDLE;
     private static final Logger _logger = Logger.getLogger(ComputerCharacter.class.getName());
@@ -39,6 +46,15 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     private final Map<VectorFacing, List<Image>> animationFrames;
     private int currentWalkFrame = 0;
     private final Timeline walkAnimation;
+
+    private final Map<VectorFacing, String> directionalPaths = new EnumMap<>(VectorFacing.class);
+    private final Map<String, Image> imageCache = new HashMap<>();
+    private final String basePath;
+
+    protected int currentHp;
+    protected int maxHp;
+    protected DamageState currentDamageState = DamageState.HEALTHY;
+    private DamagePathResolver damagePathResolver = DamageStateResolver::resolveWithFallback;
 
     protected final Image imageLeft;
     protected final Image imageRight;
@@ -56,11 +72,21 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         calculateMaxPositions();
         this.characterModel = characterType;
 
-        var basePath  = characterType.getImageBase();
-        var leftPath  = firstNonBlank(characterType.getImageTurnLeft(),  basePath);
-        var rightPath = firstNonBlank(characterType.getImageTurnRight(), basePath);
-        var upPath    = firstNonBlank(characterType.getImageTurnUp(),    basePath);
-        var downPath  = firstNonBlank(characterType.getImageTurnDown(),  basePath);
+        this.maxHp = characterType != null ? Math.max(1, characterType.getHealth()) : 100;
+        this.currentHp = this.maxHp;
+        this.currentDamageState = DamageState.of(this.currentHp, this.maxHp);
+
+        this.basePath = characterType != null ? characterType.getImageBase() : null;
+        var leftPath  = firstNonBlank(characterType != null ? characterType.getImageTurnLeft() : null,  basePath);
+        var rightPath = firstNonBlank(characterType != null ? characterType.getImageTurnRight() : null, basePath);
+        var upPath    = firstNonBlank(characterType != null ? characterType.getImageTurnUp() : null,    basePath);
+        var downPath  = firstNonBlank(characterType != null ? characterType.getImageTurnDown() : null,  basePath);
+
+        directionalPaths.put(VectorFacing.LEFT,  leftPath);
+        directionalPaths.put(VectorFacing.RIGHT, rightPath);
+        directionalPaths.put(VectorFacing.UP,    upPath);
+        directionalPaths.put(VectorFacing.DOWN,  downPath);
+        directionalPaths.put(VectorFacing.IDLE,  rightPath);
 
         _logger.info("Loading character images from paths: " + leftPath + ", " + rightPath + ", " + upPath + ", " + downPath);
 
@@ -73,6 +99,11 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         images.put(VectorFacing.RIGHT, imageRight);
         images.put(VectorFacing.UP,    imageUp);
         images.put(VectorFacing.DOWN,  imageDown);
+
+        if (leftPath != null)  imageCache.put(leftPath,  imageLeft);
+        if (rightPath != null) imageCache.put(rightPath, imageRight);
+        if (upPath != null)    imageCache.put(upPath,    imageUp);
+        if (downPath != null)  imageCache.put(downPath,  imageDown);
 
         int frameCount = Math.max(1, characterType.getAnimationFrameCount());
         if (frameCount > 1) {
@@ -90,12 +121,21 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
 
         this.directionSubscriber = (VectorFacing direction) -> {
             if (direction == null) return;
-            Platform.runLater(() -> {
+            Runnable r = () -> {
                 if (direction != currentCharacterFacing) {
                     currentCharacterFacing = direction;
                     updateCharacterImage();
                 }
-            });
+            };
+            if (Platform.isFxApplicationThread()) {
+                r.run();
+            } else {
+                try {
+                    Platform.runLater(r);
+                } catch (IllegalStateException e) {
+                    r.run();
+                }
+            }
         };
 
         // Initialize with a random direction to avoid zero-length vector (NaN issues)
@@ -108,7 +148,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         updateCharacterImage();
     }
 
-    private void updateCharacterImage() {
+    protected void updateCharacterImage() {
         if (getCharacterGraphics() == null) return;
         Image next = currentImage(currentCharacterFacing);
         if (next != null) {
@@ -117,6 +157,19 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     }
 
     private Image currentImage(VectorFacing facing) {
+        if (characterModel != null && characterModel.isDamageStatesEnabled() && currentDamageState != DamageState.HEALTHY) {
+            String dirPath = getDirectionalPath(facing);
+            if (dirPath != null && !dirPath.isBlank()) {
+                String framePath = dirPath;
+                if (animationFrames != null) {
+                    framePath = SpriteAnimationUtil.deriveAnimationFramePath(dirPath, currentWalkFrame);
+                }
+                String resolvedPath = damagePathResolver.resolve(getClass(), framePath, currentDamageState);
+                if (resolvedPath != null && !resolvedPath.equals(framePath)) {
+                    return getOrLoadImage(resolvedPath);
+                }
+            }
+        }
         if (animationFrames != null) {
             List<Image> frames = animationFrames.get(facing);
             if (frames != null && !frames.isEmpty()) {
@@ -124,6 +177,88 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
             }
         }
         return images.get(facing);
+    }
+
+    private String getDirectionalPath(VectorFacing facing) {
+        if (facing != null && directionalPaths.containsKey(facing)) {
+            return directionalPaths.get(facing);
+        }
+        return directionalPaths.getOrDefault(VectorFacing.RIGHT, basePath);
+    }
+
+    Image getOrLoadImage(String path) {
+        if (path == null || path.isBlank()) return null;
+        return imageCache.computeIfAbsent(path, p -> loadOrStub(getClass(), p));
+    }
+
+    public void setDamagePathResolver(DamagePathResolver resolver) {
+        this.damagePathResolver = resolver != null ? resolver : DamageStateResolver::resolveWithFallback;
+    }
+
+    public DamagePathResolver getDamagePathResolver() {
+        return damagePathResolver;
+    }
+
+    public void registerImageForPath(String path, Image image) {
+        if (path != null && image != null) {
+            imageCache.put(path, image);
+        }
+    }
+
+    public int getHitPoints() {
+        return currentHp;
+    }
+
+    public int getMaxHitPoints() {
+        return maxHp;
+    }
+
+    public DamageState getDamageState() {
+        return currentDamageState;
+    }
+
+    public void setHitPoints(int hp) {
+        onHpChanged(hp, this.maxHp);
+    }
+
+    public void subtractHitPoints(int hp) {
+        onHpChanged(this.currentHp - hp, this.maxHp);
+    }
+
+    public void addHitPoints(int hp) {
+        onHpChanged(this.currentHp + hp, this.maxHp);
+    }
+
+    private void scheduleImageUpdate() {
+        if (Platform.isFxApplicationThread()) {
+            updateCharacterImage();
+        } else {
+            try {
+                Platform.runLater(this::updateCharacterImage);
+            } catch (IllegalStateException e) {
+                updateCharacterImage();
+            }
+        }
+    }
+
+    public void onHpChanged(int currentHp, int maxHp) {
+        this.maxHp = Math.max(1, maxHp);
+        this.currentHp = currentHp;
+        this.currentDamageState = DamageState.of(this.currentHp, this.maxHp);
+        scheduleImageUpdate();
+    }
+
+    public void onHpChanged(int currentHp) {
+        onHpChanged(currentHp, this.maxHp);
+    }
+
+    int getCurrentWalkFrame() {
+        return currentWalkFrame;
+    }
+
+    void setCurrentWalkFrame(int frame) {
+        this.currentWalkFrame = frame;
+        updateCharacterImage();
     }
 
     private Timeline buildWalkTimeline(int frameCount) {

@@ -123,8 +123,13 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         // Replace the direction subscriber to use our richer image map
         this.directionSubscriber = facing -> {
             if (facing != null) {
-                Image next = localImages.getOrDefault(facing, base);
-                setCharacterImage(next);
+                if (model != null && model.isDamageStatesEnabled()) {
+                    currentCharacterFacing = facing;
+                    updateCharacterImage();
+                } else {
+                    Image next = localImages.getOrDefault(facing, base);
+                    setCharacterImage(next);
+                }
             }
         };
     }
@@ -315,6 +320,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
+        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
         var g = this.getCharacterGraphics();
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
@@ -326,8 +332,14 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     }
 
     @Override public int  getHitPoints() { return hitPoints.get(); }
-    @Override public void setHitPoints(int hp) { hitPoints = new AtomicInteger(hp); }
-    @Override public void addHitPoints(int hp) { hitPoints.addAndGet(hp); }
+    @Override public void setHitPoints(int hp) {
+        hitPoints = new AtomicInteger(hp);
+        onHpChanged(hp, model != null ? model.getHealth() : 100);
+    }
+    @Override public void addHitPoints(int hp) {
+        hitPoints.addAndGet(hp);
+        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
+    }
 
     // subscriptions
 
