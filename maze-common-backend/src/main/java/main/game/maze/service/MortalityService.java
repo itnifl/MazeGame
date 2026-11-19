@@ -19,16 +19,15 @@ public final class MortalityService {
     }
 
     /**
-     * Kills every living {@link ICanDie} among {@code characters} by {@code cause}
-     * (other objects are ignored).
+     * Kills every living, unprotected {@link ICanDie} among {@code characters} by {@code cause}
+     * (other objects and enemies in respawn protection are left alone).
      *
-     * @return the number of characters killed
+     * @return the number of characters that actually died
      */
     public static int killAll(Iterable<?> characters, DeathCause cause) {
         int killed = 0;
         for (Object character : characters) {
-            if (character instanceof ICanDie mortal && mortal.isAlive()) {
-                mortal.subtractHitPoints(mortal.getHitPoints(), cause);
+            if (character instanceof ICanDie mortal && kill(mortal, cause)) {
                 killed++;
             }
         }
@@ -40,7 +39,7 @@ public final class MortalityService {
      * from (ax, ay) to (bx, by) ({@link DeathCause#CRUSHED}).
      *
      * @param bodyOf where a character's body is; null for characters that cannot be crushed
-     * @return the number of characters crushed
+     * @return the number of characters that were actually crushed
      */
     public static <T> int crushAlong(Iterable<T> characters, Function<? super T, Body> bodyOf,
                                      double ax, double ay, double bx, double by) {
@@ -50,11 +49,20 @@ public final class MortalityService {
                 continue;
             }
             Body body = bodyOf.apply(character);
-            if (body != null && CrushZone.crushes(ax, ay, bx, by, body.centerX(), body.centerY(), body.radius())) {
-                mortal.subtractHitPoints(mortal.getHitPoints(), DeathCause.CRUSHED);
+            if (body != null && CrushZone.crushes(ax, ay, bx, by, body.centerX(), body.centerY(), body.radius())
+                    && kill(mortal, DeathCause.CRUSHED)) {
                 crushed++;
             }
         }
         return crushed;
+    }
+
+    /** Deals a lethal hit; true only if it actually killed (not dead already, not protected). */
+    private static boolean kill(ICanDie mortal, DeathCause cause) {
+        if (!mortal.isAlive() || mortal.isInvulnerable()) {
+            return false;
+        }
+        mortal.subtractHitPoints(mortal.getHitPoints(), cause);
+        return !mortal.isAlive();
     }
 }

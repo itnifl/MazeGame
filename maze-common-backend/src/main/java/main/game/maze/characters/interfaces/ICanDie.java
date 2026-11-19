@@ -26,6 +26,14 @@ public interface ICanDie {
     public void addHitPoints(int hp);
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber);
 
+    /**
+     * Whether damage is currently ignored (e.g. the brief protection right after a respawn).
+     * Callers that share out a damage budget skip such targets so the damage is not wasted.
+     */
+    default boolean isInvulnerable() {
+        return false;
+    }
+
     /** Whether this still has hit points left. */
     default boolean isAlive() {
         return getHitPoints() > 0;

@@ -21,6 +21,7 @@ class MortalityServiceTest {
         private final double x;
         private final double y;
         private final List<DeathCause> hits = new ArrayList<>();
+        private boolean invulnerable;
 
         Mortal(int hp, double x, double y) {
             this.hp = hp;
@@ -31,7 +32,13 @@ class MortalityServiceTest {
         @Override public int getHitPoints() { return hp; }
         @Override public void setHitPoints(int value) { hp = value; }
         @Override public void subtractHitPoints(int amount) { subtractHitPoints(amount, DeathCause.OTHER); }
-        @Override public void subtractHitPoints(int amount, DeathCause cause) { hits.add(cause); hp -= amount; }
+        @Override public void subtractHitPoints(int amount, DeathCause cause) {
+            hits.add(cause);
+            if (!invulnerable) {
+                hp -= amount;
+            }
+        }
+        @Override public boolean isInvulnerable() { return invulnerable; }
         @Override public void addHitPoints(int amount) { hp += amount; }
         @Override public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) { }
     }
@@ -68,6 +75,23 @@ class MortalityServiceTest {
         assertFalse(touching.isAlive());
         assertTrue(farAway.isAlive());
         assertTrue(dead.hits.isEmpty());
+    }
+
+    @Test
+    @DisplayName("protected enemies are neither killed nor counted, by killAll or crushAlong")
+    void protectedEnemiesAreNotCounted() {
+        Mortal protectedOne = new Mortal(40, 50, 100);
+        protectedOne.invulnerable = true;
+        Mortal normal = new Mortal(40, 60, 100);
+
+        assertEquals(1, MortalityService.killAll(List.of(protectedOne, normal), DeathCause.FIRE));
+        assertTrue(protectedOne.isAlive());
+        assertTrue(protectedOne.hits.isEmpty(), "no hit is wasted on a protected enemy");
+
+        Mortal protectedTwo = new Mortal(40, 50, 100);
+        protectedTwo.invulnerable = true;
+        assertEquals(0, MortalityService.crushAlong(List.of(protectedTwo), MortalityServiceTest::bodyOf, 0, 100, 200, 100));
+        assertTrue(protectedTwo.isAlive());
     }
 
     @Test

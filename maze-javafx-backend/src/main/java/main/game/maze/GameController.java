@@ -6,6 +6,7 @@ import main.game.maze.common.graphics.fire.RubbleMaterial;
 import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.javafx.render.FxExplosionView;
+import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
 import main.game.maze.javafx.render.FxRemainsLayer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -166,6 +167,8 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     /** Remains of killed enemies on the board; gameBoard is injected by FXML, so it is looked up lazily. */
     private final FxRemainsLayer remainsLayer = new FxRemainsLayer(() -> gameBoard);
+    /** Pending enemy resurrections of the current level; cancelled on level teardown. */
+    private final FxResurrectionScheduler resurrections = new FxResurrectionScheduler();
     /** Collapsing breakable walls fall as rubble and crush enemies beside them. */
     private final GameMazeWorld.WallCollapseListener wallCollapseListener = this::onWallsCollapsed;
     private GameMazeWorld watchedWorld;
@@ -397,6 +400,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         UiScheduler.get().runOnUiThread(() -> remainsLayer.show(owner, cause, bodySprite, x, y, size));
     }
 
+    /** Runs an enemy resurrection after {@code seconds}; cancelled if the level is torn down first. */
+    public void scheduleResurrection(double seconds, Runnable resurrection) {
+        UiScheduler.get().runOnUiThread(() -> resurrections.schedule(seconds, resurrection));
+    }
+
     /** Removes the remains of {@code owner}, e.g. when it resurrects. */
     public void clearRemains(Object owner) {
         UiScheduler.get().runOnUiThread(() -> remainsLayer.clear(owner));
@@ -514,6 +522,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void setupGame() {
         clearActivePlayerBombs();
+        resurrections.cancelAll();
         remainsLayer.clearAll();
         hpBar.setProgress(1.0);
         installCameraFollowListeners();
@@ -689,6 +698,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void dispose() {
         clearActivePlayerBombs();
+        resurrections.cancelAll();
         stopComputerCharacters();
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();
         enemyCoordinator.dispose();

@@ -52,6 +52,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     private long lastShotMs = 0L;
     private final List<PumpkinProjectile> projectiles = new ArrayList<>();
     private long burstCount;
+    private Pane boardPane;
 
     public PumpkinBomberCharacter(Node characterGraphics, double x, double y, PumpkinBomber model) {
         super(characterGraphics, model, x, y, mapSpeed(model.getSpeed()));
@@ -384,14 +385,21 @@ public class PumpkinBomberCharacter extends ComputerCharacter
         return null;
     }
 
+    /**
+     * The board this bomber plays on. Remembered, so pumpkins still in the air after the bomber
+     * died (and left the board) can still show their explosion there.
+     */
     private Pane hostPane() {
-        if (getCharacterGraphics() == null || getCharacterGraphics().getParent() == null) {
-            return null;
+        Node graphics = getCharacterGraphics();
+        if (graphics != null && graphics.getParent() instanceof Pane pane) {
+            boardPane = pane;
         }
-        if (getCharacterGraphics().getParent() instanceof Pane pane) {
-            return pane;
-        }
-        return null;
+        return boardPane;
+    }
+
+    /** Whether pumpkins thrown by this bomber are still in the air. */
+    public boolean hasShotsInFlight() {
+        return !projectiles.isEmpty();
     }
 
     private void drawBeam(double sx, double sy, double tx, double ty, boolean blocked) {

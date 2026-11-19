@@ -20,7 +20,6 @@ import javafx.util.Duration;
 import main.game.maze.App;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.characters.interfaces.ICharacterAnimations;
-import main.game.maze.common.graphics.UiScheduler;
 import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
@@ -275,6 +274,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     }
 
     /** {@code true} during the brief protection right after a respawn. */
+    @Override
     public boolean isInvulnerable() {
         return vitals.isInvulnerable();
     }
@@ -293,8 +293,10 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
             App.gameController.unregisterComputerCharacter(this, getCharacterGraphics());
         }
         int resurrectionMs = MortalityRules.resurrectionTimeMs(characterModel);
-        if (resurrectionMs > 0) {
-            UiScheduler.get().runOnUiThread(() -> after(resurrectionMs / 1000.0, this::resurrect));
+        // the controller owns the timer and cancels it on level teardown, so a pending
+        // resurrection can never register this enemy into a later level
+        if (resurrectionMs > 0 && App.gameController != null) {
+            App.gameController.scheduleResurrection(resurrectionMs / 1000.0, this::resurrect);
         }
     }
 

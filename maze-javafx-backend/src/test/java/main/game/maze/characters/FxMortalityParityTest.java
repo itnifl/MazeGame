@@ -150,4 +150,54 @@ class FxMortalityParityTest {
         assertTrue(MortalityRules.resurrectionTimeMs(model) > 0);
         assertEquals(0, MortalityRules.resurrectionTimeMs(ghostModel()), "ghosts stay dead, as in libGDX");
     }
+
+    @Test
+    @DisplayName("bomb flame skips a respawn-protected enemy so its damage reaches the next one (as in libGDX)")
+    void flameBudgetIsNotWastedOnProtectedEnemies() throws Exception {
+        onFx(() -> {
+            try {
+                ZombieCharacter protectedZombie = new ZombieCharacter(new Rectangle(16, 16), 50, 60, zombieModel());
+                protectedZombie.subtractHitPoints(1_000, DeathCause.FIRE);
+                protectedZombie.resurrect();   // whole again, protected for 2 s
+                ZombieCharacter next = new ZombieCharacter(new Rectangle(16, 16), 200, 60, zombieModel());
+
+                int applied = coordinatorWith(protectedZombie, next).applyPlayerFlameAttack(30);
+
+                assertEquals(30, applied, "only damage that was actually dealt is reported");
+                assertEquals(60, protectedZombie.getHitPoints());
+                assertEquals(30, next.getHitPoints(), "the budget reached the unprotected enemy");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    @DisplayName("a dead bomber's pumpkin keeps flying until it lands (as in libGDX)")
+    void deadBombersPumpkinKeepsFlying() throws Exception {
+        main.game.maze.opponents.PumpkinBomber model = OpponentsFactory.eINSTANCE.createPumpkinBomber();
+        model.setHealth(40);
+        model.setSpeed(2.0);
+        model.setAttackDamage(4);
+        model.setThreatLevel(50.0);
+        model.setAttackRange(300.0);
+        model.setProjectileSpeed(200.0);
+        model.setSplashRadius(40.0);
+        PumpkinBomberCharacter bomber = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, model);
+        FxEnemyCoordinator coordinator = coordinatorWith(bomber);
+
+        onFx(() -> {
+            bomber.tryShootAt(10.0, 0.0, Long.MAX_VALUE);
+            assertTrue(bomber.hasShotsInFlight(), "the bomber threw a pumpkin");
+            bomber.subtractHitPoints(1_000, DeathCause.CRUSHED);
+            coordinator.unregisterCharacter(bomber, bomber.getCharacterGraphics());
+        });
+        onFx(() -> { });   // let the queued unregistration run
+
+        for (int i = 0; i < 400 && bomber.hasShotsInFlight(); i++) {
+            coordinator.stepAll();   // the real AI tick; it queues the retired-shooter update on the FX thread
+            onFx(() -> { });
+        }
+        assertFalse(bomber.hasShotsInFlight(), "the pumpkin was still updated after its thrower died, and landed");
+    }
 }

@@ -222,7 +222,13 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         vitals.respawn(MortalityRules.RESPAWN_INVULNERABILITY_SECONDS);
     }
 
+    /** Whether projectiles, beams or impact explosions of this enemy are still playing out. */
+    public boolean hasShotsInFlight() {
+        return !activeProjectiles.isEmpty() || !activeBeams.isEmpty() || !activeImpacts.isEmpty();
+    }
+
     /** {@code true} while the post-respawn invulnerability window is active. */
+    @Override
     public boolean isInvulnerable() {
         return vitals.isInvulnerable();
     }

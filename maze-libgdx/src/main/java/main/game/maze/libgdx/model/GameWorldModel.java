@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.RemainsLedger;
+import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.dto.Score;
 import main.game.maze.libgdx.model.DeadEnemy;
 import main.game.maze.libgdx.model.EnemyDeathAnimation;
@@ -50,6 +51,7 @@ public final class GameWorldModel {
     private final List<PumpkinBurstVisual> enemyBursts = new ArrayList<>();
     private final List<ActiveWallRubble> wallRubble = new ArrayList<>();
     private final RemainsLedger<EnemySpawn, RemainsVisual> remains = new RemainsLedger<>(RemainsLedger.DEFAULT_CAPACITY);
+    private final RetiredShooters<GdxEnemyRuntime> retiredShooters = new RetiredShooters<>(GdxEnemyRuntime::hasShotsInFlight);
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -253,6 +255,11 @@ public final class GameWorldModel {
     /** Walls currently collapsing; ticked by {@code GdxWallCollapseSupport}. */
     public List<ActiveWallRubble> wallRubble() {
         return wallRubble;
+    }
+
+    /** Dead enemies whose shots are still in the air; updated until their projectiles land. */
+    public RetiredShooters<GdxEnemyRuntime> retiredShooters() {
+        return retiredShooters;
     }
 
     /** Remains of killed enemies, kept until each enemy respawns or the level restarts. */

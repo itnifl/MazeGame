@@ -376,7 +376,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private void killEnemies(DeathCause cause) {
         int killed = GdxGameCombatAndEnemyFlowSupport.killEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), cause, worldModel.remains());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), cause, worldModel.remains(),
+                worldModel.retiredShooters());
         flashStatus("Killed " + killed + " enemi" + (killed == 1 ? "y" : "es"));
     }
 
@@ -445,7 +446,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         tickPlayerBombs(dt);
         // enemies can die outside the bomb flow too (e.g. crushed by a wall a projectile brought down)
         GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
         GdxWallCollapseSupport.tick(worldModel, dt);
         emitPlayerFlameVisuals();
     }
@@ -514,7 +515,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
 
         int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
 
         if (appliedDamage > 0 || flamedKilled > 0) {
             String msg = flamedKilled > 0
@@ -685,6 +686,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.bombFuseGlows().clear();
         worldModel.wallRubble().clear();
         worldModel.remains().clear();
+        worldModel.retiredShooters().clear();
         applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         var textures = applied.runtimeTextures();
         playerTexture = textures.playerTexture();
@@ -747,6 +749,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     @Override
     public void dispose() {
         watchWallCollapses(null);
+        worldModel.retiredShooters().clear();
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();

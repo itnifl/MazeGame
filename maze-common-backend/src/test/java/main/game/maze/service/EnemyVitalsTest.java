@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.interfaces.IDeathSubscriber;
@@ -106,5 +109,36 @@ class EnemyVitalsTest {
     void validation() {
         assertThrows(IllegalArgumentException.class, () -> new EnemyVitals(null, 10, null));
         assertEquals(1, new Owner(0).getHitPoints(), "max HP is at least 1");
+    }
+
+    @Test
+    @DisplayName("concurrent hits: the last HP delivered to the listener is the current HP, never a stale one")
+    void notificationsAreNotDeliveredOutOfOrder() throws Exception {
+        AtomicReference<EnemyVitals> vitalsRef = new AtomicReference<>();
+        AtomicReference<Thread> secondHit = new AtomicReference<>();
+        List<Integer> delivered = Collections.synchronizedList(new ArrayList<>());
+        EnemyVitals vitals = new EnemyVitals(new Owner(100), 100, new EnemyVitals.Listener() {
+            @Override
+            public void onHitPointsChanged(int hp, int max) {
+                if (secondHit.get() == null) {
+                    // thread A is notifying about its hit; thread B lands a second hit meanwhile
+                    Thread b = new Thread(() -> vitalsRef.get().subtractHitPoints(60, DeathCause.FIRE));
+                    secondHit.set(b);
+                    b.start();
+                    long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+                    while (vitalsRef.get().getHitPoints() != 20 && System.nanoTime() < deadline) {
+                        Thread.onSpinWait();
+                    }
+                }
+                delivered.add(hp);
+            }
+        });
+        vitalsRef.set(vitals);
+
+        vitals.subtractHitPoints(20, DeathCause.FIRE);   // thread A
+        secondHit.get().join(3_000);
+
+        assertEquals(20, vitals.getHitPoints());
+        assertEquals(20, delivered.get(delivered.size() - 1).intValue(), "stale HP delivered last: " + delivered);
     }
 }

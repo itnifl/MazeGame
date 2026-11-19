@@ -8,6 +8,7 @@ import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.remains.RemainsLedger;
 import main.game.maze.service.MortalityService;
 import main.game.maze.game.runtime.EnemyDirectorService;
+import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
@@ -265,7 +266,10 @@ public final class GdxGameCombatAndEnemyFlowSupport {
 
         int totalDamage = 0;
         float maxShake = 0f;
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
+        // living enemies, plus dead ones whose pumpkins are still in the air (they start no new attacks)
+        List<GdxEnemyRuntime> shooters = new ArrayList<>(animatedEnemies);
+        shooters.addAll(worldModel.retiredShooters().active());
+        for (GdxEnemyRuntime enemy : shooters) {
             totalDamage += enemy.updateRangedAttacks(
                     dt,
                     worldModel.maze(),
@@ -298,6 +302,19 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             List<DeadEnemy> deadEnemies,
             List<EnemyDeathAnimation> dyingEnemies,
             RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains, null);
+    }
+
+    /**
+     * As above; dead enemies whose shots are still in the air go to {@code retiredShooters}
+     * (may be null) so those projectiles keep flying until they land.
+     */
+    public static int processKilledEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains,
+            RetiredShooters<GdxEnemyRuntime> retiredShooters) {
         int killed = 0;
         List<GdxEnemyRuntime> toRemove = new ArrayList<>();
         for (GdxEnemyRuntime enemy : animatedEnemies) {
@@ -305,6 +322,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                 continue;
             }
             retire(enemy, deadEnemies, dyingEnemies, remains);
+            if (retiredShooters != null) {
+                retiredShooters.retire(enemy);
+            }
             killed++;
             toRemove.add(enemy);
         }
@@ -348,8 +368,19 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             List<EnemyDeathAnimation> dyingEnemies,
             DeathCause cause,
             RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        return killEnemies(animatedEnemies, deadEnemies, dyingEnemies, cause, remains, null);
+    }
+
+    /** As above; shots of killed shooters keep flying via {@code retiredShooters} (may be null). */
+    public static int killEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            DeathCause cause,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains,
+            RetiredShooters<GdxEnemyRuntime> retiredShooters) {
         MortalityService.killAll(animatedEnemies, cause);
-        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains);
+        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains, retiredShooters);
     }
 
     /**

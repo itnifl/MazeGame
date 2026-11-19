@@ -33,6 +33,8 @@ public final class EnemyVitals {
     private final ICanDie owner;
     private final Listener listener;
     private final List<IDeathSubscriber> subscribers = new CopyOnWriteArrayList<>();
+    /** Serialises listener notifications (separate from the state lock so hits never wait on the UI). */
+    private final Object notifyLock = new Object();
     private final int maxHitPoints;
     private int hitPoints;
     private double invulnerableSeconds;
@@ -72,7 +74,6 @@ public final class EnemyVitals {
     /** Sets HP directly (at least 0); dropping to 0 from alive is a death of unknown cause. */
     public void setHitPoints(int hp) {
         boolean died;
-        int now;
         synchronized (this) {
             boolean wasAlive = hitPoints > 0;
             hitPoints = Math.max(0, hp);
@@ -80,16 +81,14 @@ public final class EnemyVitals {
             if (died) {
                 deathCause = DeathCause.OTHER;
             }
-            now = hitPoints;
         }
-        changed(now, died, DeathCause.OTHER);
+        changed(died, DeathCause.OTHER);
     }
 
     /** Applies damage dealt by {@code cause}; ignored while dead or invulnerable. */
     public void subtractHitPoints(int hp, DeathCause cause) {
         DeathCause effective = cause != null ? cause : DeathCause.OTHER;
         boolean died;
-        int now;
         synchronized (this) {
             if (hitPoints <= 0 || invulnerableSeconds > 0) {
                 return;
@@ -99,22 +98,19 @@ public final class EnemyVitals {
             if (died) {
                 deathCause = effective;
             }
-            now = hitPoints;
         }
-        changed(now, died, effective);
+        changed(died, effective);
     }
 
     /** Heals a living enemy, up to its maximum. */
     public void addHitPoints(int hp) {
-        int now;
         synchronized (this) {
             if (hitPoints <= 0) {
                 return;
             }
             hitPoints = Math.min(maxHitPoints, hitPoints + Math.max(0, hp));
-            now = hitPoints;
         }
-        listener.onHitPointsChanged(now, maxHitPoints);
+        changed(false, DeathCause.OTHER);
     }
 
     /** Brings the enemy back at full health, invulnerable for {@code invulnerableSeconds}. */
@@ -124,7 +120,7 @@ public final class EnemyVitals {
             deathCause = DeathCause.OTHER;
             this.invulnerableSeconds = Math.max(0, invulnerableSeconds);
         }
-        listener.onHitPointsChanged(maxHitPoints, maxHitPoints);
+        changed(false, DeathCause.OTHER);
     }
 
     /** Counts the invulnerability window down (frame-driven frontends). */
@@ -143,13 +139,27 @@ public final class EnemyVitals {
         }
     }
 
-    private void changed(int now, boolean died, DeathCause cause) {
-        listener.onHitPointsChanged(now, maxHitPoints);
-        if (died) {
-            listener.onDied(cause);
-            for (IDeathSubscriber subscriber : subscribers) {
-                subscriber.AddDeathNotification(owner);
+    /**
+     * Notifies one change at a time and always with the current HP, so a slower thread can never
+     * deliver an older HP after a newer one (the damage-state sprite would go stale).
+     */
+    private void changed(boolean died, DeathCause cause) {
+        synchronized (notifyLock) {
+            notifyHitPoints();
+            if (died) {
+                notifyDeath(cause);
             }
+        }
+    }
+
+    private void notifyHitPoints() {
+        listener.onHitPointsChanged(getHitPoints(), maxHitPoints);
+    }
+
+    private void notifyDeath(DeathCause cause) {
+        listener.onDied(cause);
+        for (IDeathSubscriber subscriber : subscribers) {
+            subscriber.AddDeathNotification(owner);
         }
     }
 }

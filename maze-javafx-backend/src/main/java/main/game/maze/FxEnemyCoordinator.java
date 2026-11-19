@@ -34,6 +34,7 @@ import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.common.remains.CrushZone;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.service.MortalityService;
+import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -106,6 +107,9 @@ public final class FxEnemyCoordinator {
     private final Runnable pathCanvasRefreshCallback;
 
     private final List<IMovingComputerCharacter> allComputerCharacters  = new CopyOnWriteArrayList<>();
+    /** Dead bombers whose pumpkins are still in the air (shared rule with libGDX). */
+    private final RetiredShooters<PumpkinBomberCharacter> retiredShooters =
+            new RetiredShooters<>(PumpkinBomberCharacter::hasShotsInFlight);
     private final Map<Node, Timeline>            infectiousMists        = new ConcurrentHashMap<>();
     private final List<Node>                     activeEnemyDebugLabels = new CopyOnWriteArrayList<>();
 
@@ -181,10 +185,18 @@ public final class FxEnemyCoordinator {
     public void unregisterCharacter(IMovingComputerCharacter character, Node node) {
         Platform.runLater(() -> {
             allComputerCharacters.remove(character);
+            // a dead bomber's pumpkins in the air keep flying and can still hit the player (as in libGDX)
+            boolean keepsShooting = character instanceof PumpkinBomberCharacter bomber
+                    && !bomber.isAlive() && bomber.hasShotsInFlight();
+            if (keepsShooting) {
+                retiredShooters.retire((PumpkinBomberCharacter) character);
+            }
             PlayerCharacter player = playerSupplier.get();
             if (character instanceof ICanSubscribeAndNotifyPosition subscribable && player != null) {
                 player.removePositionSubscriber(subscribable);
-                subscribable.removePositionSubscriber(player);
+                if (!keepsShooting) {
+                    subscribable.removePositionSubscriber(player);
+                }
             }
             stopInfectiousMist(node);
             Pane board = gameBoardSupplier.get();
@@ -228,9 +240,22 @@ public final class FxEnemyCoordinator {
                 LOGGER.log(Level.WARNING, "Error moving character: " + computerCharacter, ex);
             }
         }
+        Platform.runLater(this::updateRetiredShooters);
+    }
+
+    /** Advances the pumpkins of dead bombers until they land (FX thread). */
+    void updateRetiredShooters() {
+        for (PumpkinBomberCharacter bomber : retiredShooters.active()) {
+            try {
+                bomber.updateProjectiles(MOVEMENT_TICK_THRESHOLD);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Error updating projectiles for dead bomber: " + bomber, ex);
+            }
+        }
     }
 
     public void reset() {
+        retiredShooters.clear();
         antiLoopWanderMovementService.reset();
         adaptiveAggressiveMovementService.reset();
         patrolMovementService.reset();
@@ -277,7 +302,8 @@ public final class FxEnemyCoordinator {
                 continue;
             }
             int hp = Math.max(0, canDie.getHitPoints());
-            if (hp <= 0) {
+            // a respawn-protected enemy would ignore the hit; leave the budget for the next one
+            if (hp <= 0 || canDie.isInvulnerable()) {
                 continue;
             }
             int damageToApply = Math.min(hp, remainingDamage);
@@ -358,7 +384,7 @@ public final class FxEnemyCoordinator {
             if (!(character instanceof ComputerCharacter cc)) {
                 continue;
             }
-            if (Math.max(0, canDie.getHitPoints()) <= 0) {
+            if (Math.max(0, canDie.getHitPoints()) <= 0 || canDie.isInvulnerable()) {
                 continue;
             }
             double size = approximateSize(cc);
@@ -629,6 +655,7 @@ public final class FxEnemyCoordinator {
     // -----------------------------------------------------------------------
 
     public void dispose() {
+        retiredShooters.clear();
         if (enemyPathOverlayTimer != null) {
             enemyPathOverlayTimer.stop();
             enemyPathOverlayTimer = null;
