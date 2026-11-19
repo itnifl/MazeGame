@@ -32,6 +32,11 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 | Location | Description |
 |----------|-------------|
 | [Main README](../readme.md) | Project overview and module index |
+| [JavaFX Backend Module](../maze-javafx-backend/readme.md) | JavaFX desktop UI and game runtime |
+| [libGDX Backend Module](../maze-libgdx/readme.md) | libGDX OpenGL desktop UI and screen runtime |
+| [Common Frontend Module](../maze-common-frontend/readme.md) | Backend-agnostic interfaces, models, and inert defaults |
+| [JavaFX Adapters Module](../maze-javafx/readme.md) | JavaFX backend adapters implementing common frontend interfaces |
+| [Build Tool README](../build-tool-readme.md) | Fast build paths and dual-frontend command matrix |
 | [DSL Module README](../main.game.maze.dsl/readme.md) | DSL project structure and technical details |
 | [DSL IDE Module](../main.game.maze.dsl.ide/readme.md) | Language server support |
 | [DSL UI Module](../main.game.maze.dsl.ui/readme.md) | Eclipse editor integration |
