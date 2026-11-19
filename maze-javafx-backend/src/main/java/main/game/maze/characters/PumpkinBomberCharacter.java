@@ -108,25 +108,14 @@ public class PumpkinBomberCharacter extends ComputerCharacter
                 pwUp.setColor(col, row, c.brighter().saturate());     // tint lighter
             }
         }
-        // Override the images registered in ComputerCharacter's internal map
-        // by installing them via the inherited setCharacterImage path.
-        // We do this by re-registering via the package-accessible images field.
-        // Since that map is private we instead use a VectorFacing subscription trick:
-        // register our generated images into a small local map and intercept direction changes.
-        var localImages = new java.util.EnumMap<VectorFacing, Image>(VectorFacing.class);
-        localImages.put(VectorFacing.RIGHT, base);
-        localImages.put(VectorFacing.LEFT,  left);
-        localImages.put(VectorFacing.UP,    up);
-        localImages.put(VectorFacing.DOWN,  base);
-        localImages.put(VectorFacing.IDLE,  base);
-
-        // Replace the direction subscriber to use our richer image map
-        this.directionSubscriber = facing -> {
-            if (facing != null) {
-                Image next = localImages.getOrDefault(facing, base);
-                setCharacterImage(next);
-            }
-        };
+        // Install the generated variants as the healthy directional images. ComputerCharacter's
+        // direction subscriber, HP-change refresh and damage-asset fallback all use them.
+        overrideHealthyImage(VectorFacing.RIGHT, base);
+        overrideHealthyImage(VectorFacing.LEFT,  left);
+        overrideHealthyImage(VectorFacing.UP,    up);
+        overrideHealthyImage(VectorFacing.DOWN,  base);
+        overrideHealthyImage(VectorFacing.IDLE,  base);
+        updateCharacterImage();
     }
 
     private static String safeId(String s) {
@@ -315,6 +304,7 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     @Override
     public void subtractHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
+        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
         var g = this.getCharacterGraphics();
         if (hitPoints.get() <= 0) {
             PlayDieAnimation();
@@ -326,8 +316,14 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     }
 
     @Override public int  getHitPoints() { return hitPoints.get(); }
-    @Override public void setHitPoints(int hp) { hitPoints = new AtomicInteger(hp); }
-    @Override public void addHitPoints(int hp) { hitPoints.addAndGet(hp); }
+    @Override public void setHitPoints(int hp) {
+        hitPoints = new AtomicInteger(hp);
+        onHpChanged(hp, model != null ? model.getHealth() : 100);
+    }
+    @Override public void addHitPoints(int hp) {
+        hitPoints.addAndGet(hp);
+        onHpChanged(hitPoints.get(), model != null ? model.getHealth() : 100);
+    }
 
     // subscriptions
 
