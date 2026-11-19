@@ -228,7 +228,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-212** *(DDD)*: Model the damage-state art set as part of `CharacterType` (e.g. an optional `DamageStateArtSet` value object with explicit per-state paths) once hand-drawn art with non-conventional names arrives, keeping the naming convention as the default.
 
-- **SR-213** *(Assets)*: ~~Create the 8 missing directional ghost sprites~~ — done as SR-214 (generated). Replace with hand-drawn art when available, keeping the names.
+- **SR-213** *(Assets)*: ~~Create the 8 missing directional ghost sprites~~ — done as SR-214 (generated). Replace with hand-drawn art when available, keeping the names. **Warning:** rerunning `tools/sprite-gen` generators overwrites existing files without asking, so commit hand-drawn art first and remove its base sprite from the generator's list (`GHOSTS` / `baseSprites()`) so it is not regenerated.
 
 - **SR-216** *(12-Factor, Config)*: Expose the fire blast lifetime and corridor width (`FireBlast.DEFAULT_LIFETIME_SECONDS`, `FLAME_CORRIDOR_WIDTH`) through `PlayerConfig` / `Player.ecore` so designers can tune the blast without recompiling, with libGDX and JavaFX reading the same value.
 
