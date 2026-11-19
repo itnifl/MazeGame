@@ -53,6 +53,7 @@ classDiagram
         +BehaviorType behavior = WANDER
         +EInt animationFrameCount = 1
         +EDouble spriteScale = 1.0
+        +EBoolean damageStatesEnabled = false
     }
     class Zombie {
         +EInt attackDamage = 10
@@ -172,6 +173,7 @@ classDiagram
     +behavior : BehaviorType
     +animationFrameCount : int
     +spriteScale : double
+    +damageStatesEnabled : boolean
   }
 
   class Zombie {

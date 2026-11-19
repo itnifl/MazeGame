@@ -47,6 +47,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnUp"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/ImageTurnDown"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/behavior"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/animationFrameCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/spriteScale"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//CharacterType/damageStatesEnabled"/>
     </genClasses>
     <genClasses ecoreClass="opponents.ecore#//Zombie">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute opponents.ecore#//Zombie/attackDamage"/>

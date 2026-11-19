@@ -330,6 +330,26 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	protected double spriteScale = SPRITE_SCALE_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #isDamageStatesEnabled() <em>Damage States Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDamageStatesEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DAMAGE_STATES_ENABLED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDamageStatesEnabled() <em>Damage States Enabled</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDamageStatesEnabled()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean damageStatesEnabled = DAMAGE_STATES_ENABLED_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -691,6 +711,29 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	@Override
+	public boolean isDamageStatesEnabled() {
+		return damageStatesEnabled;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setDamageStatesEnabled(boolean newDamageStatesEnabled) {
+		boolean oldDamageStatesEnabled = damageStatesEnabled;
+		damageStatesEnabled = newDamageStatesEnabled;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpponentsPackage.CHARACTER_TYPE__DAMAGE_STATES_ENABLED, oldDamageStatesEnabled, damageStatesEnabled));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpponentsPackage.CHARACTER_TYPE__ID:
@@ -723,6 +766,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return getAnimationFrameCount();
 			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
 				return getSpriteScale();
+			case OpponentsPackage.CHARACTER_TYPE__DAMAGE_STATES_ENABLED:
+				return isDamageStatesEnabled();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -776,6 +821,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return;
 			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
 				setSpriteScale((Double)newValue);
+				return;
+			case OpponentsPackage.CHARACTER_TYPE__DAMAGE_STATES_ENABLED:
+				setDamageStatesEnabled((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -831,6 +879,9 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
 				setSpriteScale(SPRITE_SCALE_EDEFAULT);
 				return;
+			case OpponentsPackage.CHARACTER_TYPE__DAMAGE_STATES_ENABLED:
+				setDamageStatesEnabled(DAMAGE_STATES_ENABLED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -873,6 +924,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 				return animationFrameCount != ANIMATION_FRAME_COUNT_EDEFAULT;
 			case OpponentsPackage.CHARACTER_TYPE__SPRITE_SCALE:
 				return spriteScale != SPRITE_SCALE_EDEFAULT;
+			case OpponentsPackage.CHARACTER_TYPE__DAMAGE_STATES_ENABLED:
+				return damageStatesEnabled != DAMAGE_STATES_ENABLED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -915,6 +968,8 @@ public abstract class CharacterTypeImpl extends MinimalEObjectImpl.Container imp
 		result.append(animationFrameCount);
 		result.append(", spriteScale: ");
 		result.append(spriteScale);
+		result.append(", damageStatesEnabled: ");
+		result.append(damageStatesEnabled);
 		result.append(')');
 		return result.toString();
 	}
