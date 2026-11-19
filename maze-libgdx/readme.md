@@ -37,7 +37,8 @@ Requires **Java 21**. See [root README](../readme.md) for auto-detection details
 mvn test -pl maze-libgdx
 ```
 
-- [GdxBackendTest](src/test/java/main/game/maze/libgdx/GdxBackendTest.java): adapters degrade gracefully without libGDX initialised.
+- [GdxBackendTest](src/test/java/main/game/maze/libgdx/GdxBackendTest.java): adapters degrade gracefully without libGDX initialised; `GdxUiScheduler` runs inline on the captured render thread, posts via `Gdx.app.postRunnable` from worker threads, and `runLater` always posts.
+- [GdxWallDamageThreadSafetyTest](src/test/java/main/game/maze/libgdx/helper/GdxWallDamageThreadSafetyTest.java): wall damage from worker threads (direct helper and public `wallHitCallback`) is deferred to the render thread; render-thread hits apply inline; non-lethal hits leave the wall in place; repeated queued hits destroy a wall exactly once.
 - [SampleMazeTest](src/test/java/main/game/maze/libgdx/game/SampleMazeTest.java): deterministic generation, axis-aligned walls, immutability, input validation, full-grid connectivity.
 - [RealMazeTest](src/test/java/main/game/maze/libgdx/game/RealMazeTest.java): `RealMaze` adapter exposes walls / start / goal derived from `GameMazeWorld`. Walls are read live from the source world (rebuilt only when the wall count changes), so bombs that destroy breakable walls remove them from rendering and collision just like JavaFX.
 - [PlayerStateTest](src/test/java/main/game/maze/libgdx/game/PlayerStateTest.java): collision resolution, border clamping, goal-proximity detection.
