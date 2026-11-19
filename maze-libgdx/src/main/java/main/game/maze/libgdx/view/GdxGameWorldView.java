@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.view;
 
-import main.game.maze.libgdx.model.FireBlastVisual;
+import main.game.maze.libgdx.model.BombFuseGlow;
+import main.game.maze.libgdx.model.ExplosionVisual;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,7 +24,7 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
  */
 public final class GdxGameWorldView {
 
-    private final GdxFireBlastRenderer fireBlastRenderer = new GdxFireBlastRenderer();
+    private final GdxExplosionRenderer explosionRenderer = new GdxExplosionRenderer();
 
     public void render(RenderContext context) {
         context.viewport().apply();
@@ -61,8 +62,8 @@ public final class GdxGameWorldView {
         drawEnemyFallback(context, shapes);
         drawEnemyProjectiles(context, shapes);
         drawEnemyBeams(context, shapes);
-        drawEnemyImpacts(context, shapes);
-        fireBlastRenderer.draw(shapes, context.fireBlasts(), context.enemyAnimationClock());
+        drawBombFuseGlows(context, shapes);
+        explosionRenderer.draw(shapes, context.explosions(), context.enemyAnimationClock());
         drawPlayerFallback(context, shapes, player);
         drawHintPath(context, shapes, maze);
         if (context.showEnemyPathSeconds() > 0f) {
@@ -247,7 +248,7 @@ public final class GdxGameWorldView {
             if (alpha <= 0f) {
                 continue;
             }
-            // Enemy beam; player bomb flames are drawn by GdxFireBlastRenderer.
+            // Enemy beam; player bomb flames are drawn by GdxExplosionRenderer.
             shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
             shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
             float capR = beam.width() * 0.5f;
@@ -256,21 +257,21 @@ public final class GdxGameWorldView {
         }
     }
 
-    private void drawEnemyImpacts(RenderContext context, ShapeRenderer shapes) {
-        for (GdxEnemyRuntime.ImpactVisual impact : context.enemyImpacts()) {
-            float alpha = Math.max(0f, Math.min(1f, impact.alpha()));
+    private void drawBombFuseGlows(RenderContext context, ShapeRenderer shapes) {
+        for (BombFuseGlow glow : context.bombFuseGlows()) {
+            float alpha = Math.max(0f, Math.min(1f, glow.alpha()));
             if (alpha <= 0f) {
                 continue;
             }
             // Outer orange glow
             shapes.setColor(1f, 0.44f, 0.06f, 0.28f * alpha);
-            shapes.circle(impact.x(), impact.y(), impact.radius(), 28);
+            shapes.circle(glow.x(), glow.y(), glow.radius(), 28);
             // Mid amber ring
             shapes.setColor(1f, 0.72f, 0.18f, 0.60f * alpha);
-            shapes.circle(impact.x(), impact.y(), Math.max(3f, impact.radius() * 0.65f), 24);
+            shapes.circle(glow.x(), glow.y(), Math.max(3f, glow.radius() * 0.65f), 24);
             // Bright yellow-white hot core
             shapes.setColor(1f, 0.96f, 0.60f, 0.80f * alpha);
-            shapes.circle(impact.x(), impact.y(), Math.max(2f, impact.radius() * 0.35f), 18);
+            shapes.circle(glow.x(), glow.y(), Math.max(2f, glow.radius() * 0.35f), 18);
         }
     }
 
@@ -432,8 +433,8 @@ public final class GdxGameWorldView {
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
-            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
-            List<FireBlastVisual> fireBlasts,
+            List<BombFuseGlow> bombFuseGlows,
+            List<ExplosionVisual> explosions,
             float shakeOffsetX,
             float shakeOffsetY,
             float showEnemyPathSeconds,

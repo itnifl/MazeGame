@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.render;
 
-import main.game.maze.libgdx.model.FireBlastVisual;
+import main.game.maze.libgdx.model.BombFuseGlow;
+import main.game.maze.libgdx.model.ExplosionVisual;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -123,8 +124,8 @@ public final class GdxGameRenderPipeline {
                 state.activePathPoints(),
                 state.enemyProjectiles(),
                 state.enemyBeams(),
-                state.enemyImpacts(),
-                state.fireBlasts(),
+                state.bombFuseGlows(),
+                state.explosions(),
                 state.shakeOffsetX(),
                 state.shakeOffsetY(),
                 state.debugOverlayState().enemyPathSecondsRemaining(),
@@ -306,8 +307,8 @@ public final class GdxGameRenderPipeline {
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
-            List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
-            List<FireBlastVisual> fireBlasts,
+            List<BombFuseGlow> bombFuseGlows,
+            List<ExplosionVisual> explosions,
             float shakeOffsetX,
             float shakeOffsetY,
             GameSession session,

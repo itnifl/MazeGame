@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.controller;
 
 import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.libgdx.model.BombFuseGlow;
 import main.game.maze.libgdx.model.FireBlastVisual;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -515,14 +516,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void emitPlayerFlameVisuals() {
+        worldModel.bombFuseGlows().clear();
         for (PendingPlayerBomb bomb : pendingPlayerBombs) {
             float alpha = Math.max(0.35f, Math.min(1f, bomb.fuseSecondsRemaining() / PLAYER_BOMB_FUSE_SECONDS));
-            worldModel.enemyImpacts().add(new GdxEnemyRuntime.ImpactVisual(
-                    bomb.x(),
-                    bomb.y(),
-                    8f,
-                    alpha,
-                    0f));
+            worldModel.bombFuseGlows().add(new BombFuseGlow(bomb.x(), bomb.y(), 8f, alpha));
         }
 
         worldModel.fireBlasts().clear();
@@ -661,6 +658,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();
+        worldModel.enemyBursts().clear();
+        worldModel.bombFuseGlows().clear();
         applyGameViewportBounds(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         var textures = applied.runtimeTextures();
         playerTexture = textures.playerTexture();
@@ -725,6 +724,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();
+        worldModel.enemyBursts().clear();
+        worldModel.bombFuseGlows().clear();
         gameAudioCoordinator.stopAll();
         if (ownsAssetService) {
             assetService.dispose();

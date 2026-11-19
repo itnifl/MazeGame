@@ -3,17 +3,20 @@ package main.game.maze.libgdx.view;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import main.game.maze.common.graphics.fire.FireBlastModel;
 import main.game.maze.common.graphics.fire.FirePuff;
-import main.game.maze.libgdx.model.FireBlastVisual;
+import main.game.maze.libgdx.model.ExplosionVisual;
 
 /**
- * Draws bomb fire blasts with a filled {@link ShapeRenderer}: smoke with normal alpha
- * blending, flame layers additively so overlapping puffs glow. Restores the previous
- * GL blend state afterwards. The puff geometry comes from the shared {@link FireBlastModel}.
+ * Draws explosions (player bomb fire blasts, pumpkin bomber bursts) with a filled
+ * {@link ShapeRenderer}: smoke and debris with normal alpha blending, flame layers additively
+ * so overlapping puffs glow. Puffs from all explosions are drawn together, back to front by
+ * {@link FirePuff.Layer}, which also keeps blend-mode switches to a minimum. Restores the
+ * previous GL blend state afterwards. Puff geometry comes from the shared models.
  */
-public final class GdxFireBlastRenderer {
+public final class GdxExplosionRenderer {
 
     private static final int SEGMENTS = 18;
 
@@ -28,38 +31,45 @@ public final class GdxFireBlastRenderer {
 
     private final Blending blending;
 
-    public GdxFireBlastRenderer() {
+    public GdxExplosionRenderer() {
         this(new GlBlending());
     }
 
-    GdxFireBlastRenderer(Blending blending) {
+    GdxExplosionRenderer(Blending blending) {
         this.blending = blending;
     }
 
     /**
      * @param shapes       a ShapeRenderer that has been begun in Filled mode
-     * @param blasts       blasts to draw
+     * @param explosions   explosions to draw
      * @param clockSeconds running clock for flicker
      */
-    public void draw(ShapeRenderer shapes, List<FireBlastVisual> blasts, float clockSeconds) {
-        if (blasts == null || blasts.isEmpty()) {
+    public void draw(ShapeRenderer shapes, List<? extends ExplosionVisual> explosions, float clockSeconds) {
+        if (explosions == null || explosions.isEmpty()) {
             return;
         }
+        List<FirePuff> puffs = new ArrayList<>();
+        for (ExplosionVisual explosion : explosions) {
+            puffs.addAll(explosion.puffs(clockSeconds));
+        }
+        if (puffs.isEmpty()) {
+            return;
+        }
+        puffs.sort(Comparator.comparing(FirePuff::layer)); // stable: keeps each model's order within a layer
+
         boolean wasEnabled = blending.isEnabled();
         shapes.flush();
         blending.setEnabled(true);
         Boolean additive = null;
-        for (FireBlastVisual visual : blasts) {
-            for (FirePuff puff : FireBlastModel.puffs(visual.blast(), visual.progress(), clockSeconds)) {
-                boolean wantAdditive = puff.layer().additive();
-                if (additive == null || additive != wantAdditive) {
-                    shapes.flush();
-                    blending.setAdditive(wantAdditive);
-                    additive = wantAdditive;
-                }
-                shapes.setColor(puff.red(), puff.green(), puff.blue(), puff.alpha());
-                shapes.circle((float) puff.x(), (float) puff.y(), (float) puff.radius(), SEGMENTS);
+        for (FirePuff puff : puffs) {
+            boolean wantAdditive = puff.layer().additive();
+            if (additive == null || additive != wantAdditive) {
+                shapes.flush();
+                blending.setAdditive(wantAdditive);
+                additive = wantAdditive;
             }
+            shapes.setColor(puff.red(), puff.green(), puff.blue(), puff.alpha());
+            shapes.circle((float) puff.x(), (float) puff.y(), (float) puff.radius(), SEGMENTS);
         }
         shapes.flush();
         blending.setAdditive(false);

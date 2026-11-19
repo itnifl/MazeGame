@@ -2,11 +2,14 @@ package main.game.maze.libgdx.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import main.game.maze.common.graphics.fire.PumpkinBurst;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.libgdx.model.EnemySpawn;
+import main.game.maze.libgdx.model.PumpkinBurstVisual;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.opponents.BehaviorType;
@@ -61,7 +64,7 @@ class GdxEnemyRuntimeProjectileTest {
         boolean hadImpactVisual = false;
         for (int i = 0; i < 240; i++) {
             runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
-            hadImpactVisual = hadImpactVisual || !runtime.impactVisuals().isEmpty();
+            hadImpactVisual = hadImpactVisual || !runtime.explosionVisuals().isEmpty();
         }
 
         assertTrue(hadImpactVisual, "LOB impact should emit at least one explosion visual in libGDX");
@@ -121,6 +124,11 @@ class GdxEnemyRuntimeProjectileTest {
     }
 
     private static EnemySpawn rangedSpawn(ProjectileType type, float splashRadius, float arcHeight, float projectileSpeed) {
+        return rangedSpawn(type, splashRadius, arcHeight, projectileSpeed, 200);
+    }
+
+    private static EnemySpawn rangedSpawn(ProjectileType type, float splashRadius, float arcHeight,
+                                          float projectileSpeed, int attackCooldownMs) {
         return new EnemySpawn(
                 "pumpkin-test",
                 "/main/game/maze/pumpkinbomber.png",
@@ -139,7 +147,7 @@ class GdxEnemyRuntimeProjectileTest {
                 splashRadius,
                 arcHeight,
                 240f,
-                200,
+                attackCooldownMs,
                 projectileSpeed);
     }
 
@@ -364,30 +372,43 @@ class GdxEnemyRuntimeProjectileTest {
         assertEquals(0, second, "Second BEAM shot within cooldown must deal no damage");
     }
 
-    // --- Edge case: impact visual has expanding radius and fading alpha -----
+    // --- Pumpkin burst explosion visuals -----------------------------------
 
     @Test
-    void impactVisual_hasPositiveRadiusAndAlpha_immediatelyAfterImpact() {
+    void lobImpact_emitsPumpkinBurstSizedToSplash_thatLastsItsLifetime() {
+        // long cooldown: exactly one shot, so one burst can be followed through its life
         GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
-                rangedSpawn(ProjectileType.LOB, 60f, 0f, 400f),
+                rangedSpawn(ProjectileType.LOB, 60f, 0f, 400f, 10_000),
                 0,
                 openWorld(),
                 60f,
                 8);
 
-        boolean hadImpact = false;
-        for (int i = 0; i < 240 && !hadImpact; i++) {
+        PumpkinBurstVisual first = null;
+        for (int i = 0; i < 240 && first == null; i++) {
             runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
-            List<GdxEnemyRuntime.ImpactVisual> impacts = runtime.impactVisuals();
-            if (!impacts.isEmpty()) {
-                GdxEnemyRuntime.ImpactVisual iv = impacts.get(0);
-                assertTrue(iv.radius() > 0f, "Impact visual must have a positive radius");
-                assertTrue(iv.alpha() > 0f, "Impact visual must have positive alpha immediately after impact");
-                hadImpact = true;
+            if (!runtime.explosionVisuals().isEmpty()) {
+                first = runtime.explosionVisuals().get(0);
             }
         }
+        assertNotNull(first, "A pumpkin burst must be emitted after the LOB lands");
+        assertTrue(first.burst().radius() >= 24f, "LOB burst radius must be at least 24 px (splash radius)");
+        assertTrue(first.progress() >= 0f && first.progress() < 0.1f, "burst starts at the beginning of its life");
+        assertTrue(runtime.impactShake() > 0f, "a fresh impact shakes the screen");
 
-        assertTrue(hadImpact, "At least one impact visual must be emitted after LOB lands");
+        double lifetime = PumpkinBurst.lifetimeFor(first.burst().radius());
+        assertTrue(lifetime > 0.24, "the burst outlives the shake window");
+        int frames = 0;
+        while (!runtime.explosionVisuals().isEmpty() && frames < 600) {
+            runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f);
+            frames++;
+            assertTrue(runtime.explosionVisuals().size() <= 1, "only the one shot is in play");
+            if (frames == 20) {
+                assertEquals(0f, runtime.impactShake(), "shake only lasts for the first 0.24 s of the burst");
+            }
+        }
+        assertTrue(frames > 20);
+        assertEquals(lifetime * 60, frames, 3, "burst stays visible for its lifetime");
     }
 
     // --- Edge case: LOB fires again after cooldown --------------------------

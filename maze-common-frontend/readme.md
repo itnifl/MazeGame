@@ -23,7 +23,13 @@ runtime renderer is JavaFX, libGDX, or something else.
   bomb fire blast. `FireBlastModel.puffs(blast, progress, clock)` returns layered circles
   (smoke, red rim, orange body, yellow, white-hot core, shockwave ring, embers) for one
   frame; flame fronts shoot out along each corridor arm, billow, flicker, cool and turn
-  to smoke. Both frontends only draw the circles (smoke normal-blended, the rest additive).
+  to smoke. Both frontends only draw the circles (smoke and debris normal-blended, the rest additive).
+- `PumpkinBurst` and `PumpkinBurstModel` (`common.graphics.fire`): pumpkin bomber projectile
+  explosion. A white-hot flash, a lumpy fireball that swells and burns down to smoke, a shockwave
+  ring, orange rind chunks, green stem bits and seeds that fly out (`FirePuff.Layer.DEBRIS`,
+  painted solid on top of the glow), and embers. Size follows the splash radius
+  (`PumpkinBurst.lobRadius`, `STRAIGHT_SHOT_RADIUS`); bigger bursts last longer
+  (`lifetimeFor`, 0.45–1.0 s). Shares its flame drawing with `FireBlastModel` via `PuffFrame`.
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
@@ -119,6 +125,7 @@ singletons.
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [DamageStateTest](src/test/java/main/game/maze/common/graphics/DamageStateTest.java) — HP ratio threshold boundaries (0, 1, 25, 26, 50, 51, 75, 76, 100), scaled HP, and zero/negative maxHp handling
 - [DamageStateResolverTest](src/test/java/main/game/maze/common/graphics/DamageStateResolverTest.java) — direction-suffixed and non-suffixed sprite path derivation, HEALTHY passthrough, and silent classpath fallback
+- [PumpkinBurstModelTest](src/test/java/main/game/maze/common/graphics/fire/PumpkinBurstModelTest.java) — puffs stay within `maxExtent()`, white-hot flash at the start, rind and stem debris fly outward, debris is not additive, ends in smoke, layer order, determinism per seed, lifetime and radius rules.
 - [FireBlastModelTest](src/test/java/main/game/maze/common/graphics/fire/FireBlastModelTest.java) — puffs stay inside the corridors and arm reach, blocked arms stay empty, flame fronts travel outwards, white-hot core gives way to smoke, layer ordering, value ranges, determinism with clock flicker
 - [CachingDamagePathResolverTest](src/test/java/main/game/maze/common/graphics/CachingDamagePathResolverTest.java) — fallback, one lookup per (path, state), pass-through for HEALTHY/blank, classpath factory.
 - [DamageStateSpriteAssetsTest](src/test/java/main/game/maze/common/graphics/DamageStateSpriteAssetsTest.java) — every generated damage-state sprite (see [tools/sprite-gen](../tools/sprite-gen/readme.md)) resolves via `DamageStateResolver` and matches its healthy sprite's dimensions
