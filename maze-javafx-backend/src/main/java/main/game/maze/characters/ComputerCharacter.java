@@ -58,6 +58,8 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     private DamagePathResolver damagePathResolver = CLASSPATH_DAMAGE_PATHS;
     /** Cause of the damage being applied right now; read by subclasses when that damage kills. */
     private DeathCause damageCause = DeathCause.OTHER;
+    /** Cause of the last death; {@code ICanDie.deathCause()} for the mortal subclasses. */
+    private DeathCause deathCause = DeathCause.OTHER;
 
     protected final Image imageLeft;
     protected final Image imageRight;
@@ -231,12 +233,21 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
      * the character leaves the matching remains. Overrides {@code ICanDie}'s default for subclasses.
      */
     public void subtractHitPoints(int hp, DeathCause cause) {
+        boolean wasAlive = getHitPoints() > 0;
         damageCause = cause != null ? cause : DeathCause.OTHER;
         try {
             subtractHitPoints(hp);
+            if (wasAlive && getHitPoints() <= 0) {
+                deathCause = damageCause;
+            }
         } finally {
             damageCause = DeathCause.OTHER;
         }
+    }
+
+    /** How the last death happened (same meaning as {@code ICanDie.deathCause()} in libGDX). */
+    public DeathCause deathCause() {
+        return deathCause;
     }
 
     /** Cause of the damage currently being applied ({@link DeathCause#OTHER} outside a caused hit). */

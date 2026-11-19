@@ -3,6 +3,12 @@ package main.game.maze.characters.interfaces;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.interfaces.IDeathSubscriber;
 
+/**
+ * Contract for anything that has hit points and can die. Shared by both frontends: JavaFX
+ * characters ({@code ZombieCharacter}, {@code PumpkinBomberCharacter}, the player) and libGDX
+ * enemies ({@code GdxEnemyRuntime}) implement it, so damage, deaths and death causes go through
+ * the same calls everywhere (see {@code MortalityService}).
+ */
 public interface ICanDie {
     public int getHitPoints();
     public void setHitPoints(int hp);
@@ -16,6 +22,20 @@ public interface ICanDie {
     default void subtractHitPoints(int hp, DeathCause cause) {
         subtractHitPoints(hp);
     }
+
     public void addHitPoints(int hp);
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber);
+
+    /** Whether this still has hit points left. */
+    default boolean isAlive() {
+        return getHitPoints() > 0;
+    }
+
+    /**
+     * How the last death happened ({@link DeathCause#OTHER} while alive, or when the
+     * implementation does not track causes).
+     */
+    default DeathCause deathCause() {
+        return DeathCause.OTHER;
+    }
 }

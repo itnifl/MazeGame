@@ -478,7 +478,11 @@ class FxEnemyCoordinatorTest {
         assertEquals(1, crushed);
         assertEquals(0, beside.getHitPoints());
         assertEquals(List.of(DeathCause.CRUSHED), beside.causes);
+        main.game.maze.characters.interfaces.ICanDie mortal = beside;
+        assertFalse(mortal.isAlive());
+        assertEquals(DeathCause.CRUSHED, mortal.deathCause(), "same ICanDie contract as libGDX enemies");
         assertEquals(100, farAway.getHitPoints());
+        assertEquals(DeathCause.OTHER, ((main.game.maze.characters.interfaces.ICanDie) farAway).deathCause());
         assertTrue(farAway.causes.isEmpty());
     }
 

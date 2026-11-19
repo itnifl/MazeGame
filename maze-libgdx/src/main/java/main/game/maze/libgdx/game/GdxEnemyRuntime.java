@@ -23,6 +23,8 @@ import main.game.maze.common.movement.MovementTickAccumulator;
 import main.game.maze.common.movement.PatrolMovementService;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.remains.DeathCause;
+import main.game.maze.characters.interfaces.ICanDie;
+import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemyAnimationSpec;
 import main.game.maze.libgdx.model.EnemySpawn;
@@ -32,7 +34,7 @@ import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
 
-public final class GdxEnemyRuntime implements EnemyRuntime {
+public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
     private static final Logger LOG = Logger.getLogger(GdxEnemyRuntime.class.getName());
     private static final String FALLBACK_THROW_SOUND = "/main/game/maze/menuselect.wav";
     private static final String FALLBACK_EXPLOSION_SOUND = "/main/game/maze/error.wav";
@@ -74,6 +76,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
     private long impactCount;
     private DeathCause deathCause = DeathCause.OTHER;
+    private final List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
 
     /** Shared by all enemies so each damage-sprite lookup happens once per game. */
     private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
@@ -169,52 +172,70 @@ public final class GdxEnemyRuntime implements EnemyRuntime {
                 spawn.animationSpec());
     }
 
-    /** Apply {@code amount} points of damage of unknown kind. Returns {@code true} if the enemy just died. */
-    public boolean takeDamage(int amount) {
-        return takeDamage(amount, DeathCause.OTHER);
+    // --- ICanDie: the hit-point contract shared with the JavaFX characters -------------------
+
+    @Override
+    public int getHitPoints() {
+        return currentHitPoints;
+    }
+
+    /** Sets HP directly (clamped at 0); dropping to 0 from alive counts as a death of unknown cause. */
+    @Override
+    public void setHitPoints(int hp) {
+        boolean wasAlive = currentHitPoints > 0;
+        currentHitPoints = Math.max(0, hp);
+        if (wasAlive && currentHitPoints <= 0) {
+            die(DeathCause.OTHER);
+        }
+    }
+
+    @Override
+    public void subtractHitPoints(int hp) {
+        subtractHitPoints(hp, DeathCause.OTHER);
     }
 
     /**
-     * Apply {@code amount} points of damage dealt by {@code cause}; a killing blow decides the
-     * remains the enemy leaves. Returns {@code true} if the enemy just died.
+     * Applies {@code hp} damage dealt by {@code cause}, unless the enemy is already dead or in its
+     * post-respawn invulnerability window. A killing blow records the cause (which decides the
+     * remains) and notifies death subscribers.
      */
-    public boolean takeDamage(int amount, DeathCause cause) {
+    @Override
+    public void subtractHitPoints(int hp, DeathCause cause) {
         if (currentHitPoints <= 0 || invulnerableSecondsRemaining > 0f) {
-            return false;
+            return;
         }
-        currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, amount));
+        currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, hp));
         if (currentHitPoints <= 0) {
-            deathCause = cause != null ? cause : DeathCause.OTHER;
-            return true;
+            die(cause);
         }
-        return false;
     }
 
-    /** Kill the enemy instantly regardless of current HP. Returns {@code true} always. */
-    public boolean kill() {
-        return kill(DeathCause.OTHER);
-    }
-
-    /** Kill the enemy instantly by {@code cause}, regardless of HP or invulnerability. */
-    public boolean kill(DeathCause cause) {
-        if (currentHitPoints > 0) {
-            deathCause = cause != null ? cause : DeathCause.OTHER;
+    /** Heals a living enemy, up to its spawn maximum. */
+    @Override
+    public void addHitPoints(int hp) {
+        if (currentHitPoints <= 0) {
+            return;
         }
-        currentHitPoints = 0;
-        return true;
+        currentHitPoints = Math.min(Math.max(1, spawn.maxHitPoints()), currentHitPoints + Math.max(0, hp));
     }
 
-    /** How the enemy died ({@link DeathCause#OTHER} while alive or when unknown). */
+    @Override
+    public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) {
+        if (subscriber != null) {
+            deathSubscribers.add(subscriber);
+        }
+    }
+
+    @Override
     public DeathCause deathCause() {
         return deathCause;
     }
 
-    public boolean isAlive() {
-        return currentHitPoints > 0;
-    }
-
-    public int currentHitPoints() {
-        return currentHitPoints;
+    private void die(DeathCause cause) {
+        deathCause = cause != null ? cause : DeathCause.OTHER;
+        for (IDeathSubscriber subscriber : deathSubscribers) {
+            subscriber.AddDeathNotification(this);
+        }
     }
 
     /** Test seam: replaces the damage-sprite lookup; {@code null} restores the classpath lookup. */

@@ -252,7 +252,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-228** *(Observability)*: Count projectile detonations per bomber type (lob/straight, hit/miss) in the existing projectile telemetry, and show active explosion count in the debug overlay.
 
-- **SR-232** *(Gameplay, MDD)*: Gun pickup. The player does not start with it; it is found in the maze. Model it in the Xtext DSL, which already has `loot-table` / `item` with `type weapon` and `loot` references on opponents (nothing reads loot at runtime yet): add the weapon kind (`gun`), damage, ammo and the inflicted `DeathCause` (`shot`). Hits call `subtractHitPoints(dmg, DeathCause.SHOT)` (JavaFX) / `takeDamage(dmg, DeathCause.SHOT)` (libGDX); the shot remains (SR-229) already work.
+- **SR-232** *(Gameplay, MDD)*: Gun pickup. The player does not start with it; it is found in the maze. Model it in the Xtext DSL, which already has `loot-table` / `item` with `type weapon` and `loot` references on opponents (nothing reads loot at runtime yet): add the weapon kind (`gun`), damage, ammo and the inflicted `DeathCause` (`shot`). Hits call `subtractHitPoints(dmg, DeathCause.SHOT)` (JavaFX) / the same `ICanDie.subtractHitPoints(dmg, DeathCause.SHOT)` on libGDX `GdxEnemyRuntime`; the shot remains (SR-229) already work.
 
 - **SR-233** *(Gameplay, MDD)*: Sledgehammer pickup, found in the maze (not at start), crushes adjacent enemies (`DeathCause.CRUSHED`, remains already in place). Same DSL loot model as SR-232 (`weapon` kind `sledgehammer`, swing damage / reach); it could also let the player knock down breakable walls, which then fall and crush via SR-230.
 

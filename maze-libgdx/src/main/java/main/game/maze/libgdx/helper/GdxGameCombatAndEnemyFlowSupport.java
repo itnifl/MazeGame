@@ -6,6 +6,7 @@ import java.util.function.IntConsumer;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.remains.RemainsLedger;
+import main.game.maze.service.MortalityService;
 import main.game.maze.game.runtime.EnemyDirectorService;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
@@ -105,7 +106,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             if (enemy == null || !enemy.isAlive() || enemy.isInvulnerable()) {
                 continue;
             }
-            int hp = Math.max(0, enemy.currentHitPoints());
+            int hp = Math.max(0, enemy.getHitPoints());
             if (hp <= 0) {
                 continue;
             }
@@ -113,7 +114,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             if (damageToApply <= 0) {
                 continue;
             }
-            enemy.takeDamage(damageToApply, DeathCause.FIRE);
+            enemy.subtractHitPoints(damageToApply, DeathCause.FIRE);
             remainingDamage -= damageToApply;
             appliedDamage += damageToApply;
         }
@@ -220,8 +221,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                 candidates.add(new FlameTarget() {
                     @Override public double centerX()        { return cx; }
                     @Override public double centerY()        { return cy; }
-                    @Override public int    hitPoints()      { return Math.max(0, enemy.currentHitPoints()); }
-                    @Override public void   applyDamage(int amount) { enemy.takeDamage(amount, DeathCause.FIRE); }
+                    @Override public int    hitPoints()      { return Math.max(0, enemy.getHitPoints()); }
+                    @Override public void   applyDamage(int amount) { enemy.subtractHitPoints(amount, DeathCause.FIRE); }
                     @Override public boolean isPassThrough() { return false; }
                 });
             }
@@ -347,11 +348,7 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             List<EnemyDeathAnimation> dyingEnemies,
             DeathCause cause,
             RemainsLedger<EnemySpawn, RemainsVisual> remains) {
-        for (GdxEnemyRuntime enemy : animatedEnemies) {
-            if (enemy.isAlive()) {
-                enemy.kill(cause);
-            }
-        }
+        MortalityService.killAll(animatedEnemies, cause);
         return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains);
     }
 

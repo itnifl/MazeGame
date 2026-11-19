@@ -5,13 +5,13 @@ import java.util.function.Supplier;
 import main.game.maze.common.graphics.fire.RubbleMaterial;
 import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.CrushZone;
-import main.game.maze.common.remains.DeathCause;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.mazeworld.BreakableWall;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.constants.StageConstants;
+import main.game.maze.service.MortalityService;
 
 /**
  * Reacts to breakable walls collapsing (libGDX): each collapsed segment falls as animated
@@ -53,20 +53,19 @@ public final class GdxWallCollapseSupport {
     }
 
     static void crush(List<GdxEnemyRuntime> enemies, double ax, double ay, double bx, double by) {
-        if (enemies == null) {
-            return;
+        if (enemies != null) {
+            MortalityService.crushAlong(enemies, GdxWallCollapseSupport::bodyOf, ax, ay, bx, by);
         }
-        for (GdxEnemyRuntime enemy : enemies) {
-            if (enemy == null || !enemy.isAlive()) {
-                continue;
-            }
-            float size = enemy.size() * enemy.spriteScale();
-            double cx = enemy.x() + size * 0.5;
-            double cy = enemy.y() + size * 0.5;
-            if (CrushZone.crushes(ax, ay, bx, by, cx, cy, size * CrushZone.BODY_RADIUS_FACTOR)) {
-                enemy.kill(DeathCause.CRUSHED);
-            }
+    }
+
+    /** The enemy's body on screen: centre of its drawn sprite, radius from its size. */
+    static MortalityService.Body bodyOf(GdxEnemyRuntime enemy) {
+        if (enemy == null) {
+            return null;
         }
+        float size = enemy.size() * enemy.spriteScale();
+        return new MortalityService.Body(enemy.x() + size * 0.5, enemy.y() + size * 0.5,
+                size * CrushZone.BODY_RADIUS_FACTOR);
     }
 
     /** Advances the rubble animations and drops finished ones. */

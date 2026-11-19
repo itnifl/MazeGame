@@ -79,7 +79,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 400f);
 
         assertEquals(100, applied, "Explosion damage must be capped at 100 per direction");
-        assertEquals(50, runtime.currentHitPoints(),
+        assertEquals(50, runtime.getHitPoints(),
                 "Enemy should keep the remaining hit points after capped damage");
     }
 
@@ -116,9 +116,9 @@ class GdxGameCombatAndEnemyFlowSupportTest {
 
         assertEquals(20, applied,
                 "Only the enemy before the wall should be damaged when the wall is indestructible");
-        assertEquals(0, frontRuntime.currentHitPoints(),
+        assertEquals(0, frontRuntime.getHitPoints(),
                 "Front enemy should be defeated by the available budget");
-        assertEquals(80, rearRuntime.currentHitPoints(),
+        assertEquals(80, rearRuntime.getHitPoints(),
                 "Rear enemy must stay untouched after the wall stops the flame");
     }
 
@@ -143,7 +143,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 400f);
 
         assertEquals(0, applied, "Enemy outside every flame corridor must not be damaged");
-        assertEquals(100, offCorridor.currentHitPoints(),
+        assertEquals(100, offCorridor.getHitPoints(),
                 "Off-corridor enemy must retain full hit points after the explosion");
     }
 
@@ -198,7 +198,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
                 playerDamage::addAndGet);
 
         assertTrue(playerDamage.get() > 0, "Player must take damage from the blast");
-        assertTrue(enemy.currentHitPoints() < 100, "Enemy beyond the player must also take damage");
+        assertTrue(enemy.getHitPoints() < 100, "Enemy beyond the player must also take damage");
     }
 
     @Test
@@ -229,7 +229,7 @@ class GdxGameCombatAndEnemyFlowSupportTest {
         // Wall costs 20 HP, enemy costs 10 HP = 30 applied in this direction
         assertTrue(applied >= 30,
                 "Budget should cover the wall (20 HP) and the enemy beyond it (10 HP)");
-        assertEquals(0, enemyBeyondWall.currentHitPoints(),
+        assertEquals(0, enemyBeyondWall.getHitPoints(),
                 "Enemy beyond the destroyed wall should be defeated");
     }
 

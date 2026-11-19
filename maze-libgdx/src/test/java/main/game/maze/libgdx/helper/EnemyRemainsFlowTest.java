@@ -41,7 +41,7 @@ class EnemyRemainsFlowTest {
         GdxEnemyRuntime zombie = enemy(50, 50, 0);
         enemies.add(zombie);
 
-        zombie.takeDamage(1_000, DeathCause.FIRE);
+        zombie.subtractHitPoints(1_000, DeathCause.FIRE);
         int killed = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(enemies, dead, dying, world.remains());
 
         assertEquals(1, killed);
@@ -130,10 +130,10 @@ class EnemyRemainsFlowTest {
     @DisplayName("damage of unknown kind and a cause-less kill leave no remains")
     void unknownCause() {
         GdxEnemyRuntime zombie = enemy(50, 50, 0);
-        zombie.takeDamage(1_000);
+        zombie.subtractHitPoints(1_000);
         assertEquals(DeathCause.OTHER, zombie.deathCause());
         GdxEnemyRuntime other = enemy(50, 50, 0);
-        other.takeDamage(1, DeathCause.FIRE);
+        other.subtractHitPoints(1, DeathCause.FIRE);
         assertEquals(DeathCause.OTHER, other.deathCause(), "a non-lethal hit does not set the death cause");
     }
 

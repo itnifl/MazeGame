@@ -33,6 +33,7 @@ import main.game.maze.characters.interfaces.IMovingComputerCharacter;
 import main.game.maze.characters.interfaces.INonTangientMazeGameCharacter;
 import main.game.maze.common.remains.CrushZone;
 import main.game.maze.common.remains.DeathCause;
+import main.game.maze.service.MortalityService;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
 import main.game.maze.common.movement.AntiLoopWanderMovementService;
@@ -242,17 +243,7 @@ public final class FxEnemyCoordinator {
 
     /** Kills every living enemy by {@code cause}; they leave the matching remains. */
     public int killAll(DeathCause cause) {
-        int killed = 0;
-        for (var character : allComputerCharacters) {
-            if (character instanceof main.game.maze.characters.interfaces.ICanDie canDie) {
-                int hp = canDie.getHitPoints();
-                if (hp > 0) {
-                    canDie.subtractHitPoints(hp, cause);
-                    killed++;
-                }
-            }
-        }
-        return killed;
+        return MortalityService.killAll(allComputerCharacters, cause);
     }
 
     /**
@@ -262,25 +253,17 @@ public final class FxEnemyCoordinator {
      * @return the number of enemies crushed
      */
     public int crushAlong(double ax, double ay, double bx, double by) {
-        int crushed = 0;
-        for (var character : allComputerCharacters) {
-            if (!(character instanceof main.game.maze.characters.interfaces.ICanDie canDie)
-                    || !(character instanceof ComputerCharacter cc)) {
-                continue;
-            }
-            int hp = canDie.getHitPoints();
-            if (hp <= 0) {
-                continue;
-            }
-            double size = approximateSize(cc);
-            double cx = cc.getCharacterPosition().getX() + size * 0.5d;
-            double cy = cc.getCharacterPosition().getY() + size * 0.5d;
-            if (CrushZone.crushes(ax, ay, bx, by, cx, cy, size * CrushZone.BODY_RADIUS_FACTOR)) {
-                canDie.subtractHitPoints(hp, DeathCause.CRUSHED);
-                crushed++;
-            }
+        return MortalityService.crushAlong(allComputerCharacters, FxEnemyCoordinator::bodyOf, ax, ay, bx, by);
+    }
+
+    /** An enemy's body on the board for crushing; null for non-enemies. */
+    private static MortalityService.Body bodyOf(IMovingComputerCharacter character) {
+        if (!(character instanceof ComputerCharacter cc)) {
+            return null;
         }
-        return crushed;
+        double size = approximateSize(cc);
+        return new MortalityService.Body(cc.getCharacterPosition().getX() + size * 0.5d,
+                cc.getCharacterPosition().getY() + size * 0.5d, size * CrushZone.BODY_RADIUS_FACTOR);
     }
 
     public int applyPlayerFlameAttack(int damage) {
