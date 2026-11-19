@@ -79,6 +79,12 @@ public final class DamageSpriteGenerator {
         }
         bases.addAll(List.of("ghost1.png", "ghost1-left.png", "ghost1-right.png",
                 "ghost2.png", "ghost3.png", "pumpkinbomber.png"));
+        // ghost2/3 directional sprites come from GhostDirectionalSpriteGenerator
+        for (String ghost : List.of("ghost2", "ghost3")) {
+            for (String dir : DIRECTIONS) {
+                bases.add(ghost + "-" + dir + ".png");
+            }
+        }
         return bases;
     }
 

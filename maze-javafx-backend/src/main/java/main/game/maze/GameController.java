@@ -1,5 +1,7 @@
 package main.game.maze;
 
+import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.javafx.render.FxFireBlastView;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -24,8 +26,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -87,7 +87,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final double PLAYER_BOMB_FUSE_SECONDS = 3.0;
     private static final double PLAYER_BOMB_RANGE = 220.0;
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
-    private static final double PLAYER_FLAME_VISUAL_SECONDS = 0.35;
+    private static final double PLAYER_FLAME_VISUAL_SECONDS = FireBlast.DEFAULT_LIFETIME_SECONDS;
     /** Full corridor width: 85 %³ of one maze hallway (≈ 37 px) for a snug fit. */
     private static final double PLAYER_FLAME_CORRIDOR_WIDTH = StageConstants.HallwayWidthPx * 0.85 * 0.85 * 0.85;
 
@@ -307,39 +307,15 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (gameBoard == null) {
             return;
         }
-        Circle core = new Circle(centerX, centerY, 12.0);
-        core.setFill(Color.rgb(255, 170, 36, 0.55));
-        core.setStroke(Color.rgb(255, 232, 160, 0.95));
-        core.setStrokeWidth(2.6);
-        core.setViewOrder(-9);
-
-        double east  = enemyCoordinator.flameVisualRange(centerX, centerY,  1,  0, survivingWalls, range);
-        double west  = enemyCoordinator.flameVisualRange(centerX, centerY, -1,  0, survivingWalls, range);
-        double south = enemyCoordinator.flameVisualRange(centerX, centerY,  0,  1, survivingWalls, range);
-        double north = enemyCoordinator.flameVisualRange(centerX, centerY,  0, -1, survivingWalls, range);
-
-        Line eastLine  = flameSegment(centerX, centerY, centerX + east,  centerY);
-        Line westLine  = flameSegment(centerX, centerY, centerX - west,  centerY);
-        Line southLine = flameSegment(centerX, centerY, centerX,         centerY + south);
-        Line northLine = flameSegment(centerX, centerY, centerX,         centerY - north);
-        gameBoard.getChildren().addAll(core, eastLine, westLine, southLine, northLine);
-
-        PauseTransition hide = new PauseTransition(Duration.seconds(PLAYER_FLAME_VISUAL_SECONDS));
-        hide.setOnFinished(evt -> {
-            if (gameBoard != null) {
-                gameBoard.getChildren().removeAll(core, eastLine, westLine, southLine, northLine);
-            }
-        });
-        hide.playFromStart();
-    }
-
-    private static Line flameSegment(double x1, double y1, double x2, double y2) {
-        Line segment = new Line(x1, y1, x2, y2);
-        segment.setStroke(Color.rgb(255, 122, 48, 0.85));
-        segment.setStrokeWidth(PLAYER_FLAME_CORRIDOR_WIDTH);
-        segment.setStrokeLineCap(StrokeLineCap.ROUND);
-        segment.setViewOrder(-9);
-        return segment;
+        // JavaFX is y-down: +y arm reaches south, -y arm reaches north.
+        FireBlast blast = new FireBlast(centerX, centerY,
+                enemyCoordinator.flameVisualRange(centerX, centerY,  1,  0, survivingWalls, range),
+                enemyCoordinator.flameVisualRange(centerX, centerY, -1,  0, survivingWalls, range),
+                enemyCoordinator.flameVisualRange(centerX, centerY,  0,  1, survivingWalls, range),
+                enemyCoordinator.flameVisualRange(centerX, centerY,  0, -1, survivingWalls, range),
+                PLAYER_FLAME_CORRIDOR_WIDTH,
+                FireBlast.seedFor(centerX, centerY));
+        FxFireBlastView.play(gameBoard, blast, PLAYER_FLAME_VISUAL_SECONDS, -9);
     }
 
     private static void installButtonPressEffect(Button button, String normalStyle, String pressedStyle) {

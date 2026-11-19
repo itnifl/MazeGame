@@ -16,6 +16,11 @@ runtime renderer is JavaFX, libGDX, or something else.
   remaining HP ratio (`HEALTHY` > 75 %, `DAMAGED` 51–75 %, `BLEEDING` 26–50 %,
   `TIRED` &le; 25 %) and convention-based sprite path derivation (e.g.
   `zombie1-damaged-right.png`, `pumpkinbomber-damaged.png`) with silent classpath fallback.
+- `FireBlast`, `FirePuff` and `FireBlastModel` (`common.graphics.fire`): frontend-neutral
+  bomb fire blast. `FireBlastModel.puffs(blast, progress, clock)` returns layered circles
+  (smoke, red rim, orange body, yellow, white-hot core, shockwave ring, embers) for one
+  frame; flame fronts shoot out along each corridor arm, billow, flicker, cool and turn
+  to smoke. Both frontends only draw the circles (smoke normal-blended, the rest additive).
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
@@ -111,6 +116,7 @@ singletons.
 - [AudioEngineTest](src/test/java/main/game/maze/common/graphics/AudioEngineTest.java)
 - [DamageStateTest](src/test/java/main/game/maze/common/graphics/DamageStateTest.java) — HP ratio threshold boundaries (0, 1, 25, 26, 50, 51, 75, 76, 100), scaled HP, and zero/negative maxHp handling
 - [DamageStateResolverTest](src/test/java/main/game/maze/common/graphics/DamageStateResolverTest.java) — direction-suffixed and non-suffixed sprite path derivation, HEALTHY passthrough, and silent classpath fallback
+- [FireBlastModelTest](src/test/java/main/game/maze/common/graphics/fire/FireBlastModelTest.java) — puffs stay inside the corridors and arm reach, blocked arms stay empty, flame fronts travel outwards, white-hot core gives way to smoke, layer ordering, value ranges, determinism with clock flicker
 - [DamageStateSpriteAssetsTest](src/test/java/main/game/maze/common/graphics/DamageStateSpriteAssetsTest.java) — every generated damage-state sprite (see [tools/sprite-gen](../tools/sprite-gen/readme.md)) resolves via `DamageStateResolver` and matches its healthy sprite's dimensions
 - [PropertiesMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/PropertiesMazeVisualStyleLoaderTest.java)
 - [XmiMazeVisualStyleLoaderTest](src/test/java/main/game/maze/common/graphics/config/XmiMazeVisualStyleLoaderTest.java)

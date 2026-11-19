@@ -2,6 +2,29 @@
 
 Asset tooling for enemy sprites.
 
+## GhostDirectionalSpriteGenerator
+
+Creates `ghost2-{left,right,up,down}.png` and `ghost3-{left,right,up,down}.png` from the
+single front-facing `ghost2.png` / `ghost3.png`, in the style of the hand-drawn
+`ghost1-left/right.png`:
+
+| Direction | Look |
+|-----------|------|
+| left | face slid towards the travel direction, lower body sheared back as a trailing tail |
+| right | mirror of left |
+| up | back view: face removed, sheet texture continued over it |
+| down | face shifted down, towards the viewer |
+
+Face boxes are measured per sprite and listed in `GHOSTS`, with a flag for sheets that
+carry a texture (ghost2's grid) so erased areas copy the texture instead of a flat fill.
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/GhostDirectionalSpriteGenerator.java
+```
+
+Run it **before** `DamageSpriteGenerator`, which also derives damage states for these
+directional sprites.
+
 ## DamageSpriteGenerator
 
 Generates the enemy damage-state sprites from issue #80 out of the existing healthy

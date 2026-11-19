@@ -44,6 +44,7 @@ public final class GameWorldModel {
     private final List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles = new ArrayList<>();
     private final List<GdxEnemyRuntime.BeamVisual> enemyBeams = new ArrayList<>();
     private final List<GdxEnemyRuntime.ImpactVisual> enemyImpacts = new ArrayList<>();
+    private final List<FireBlastVisual> fireBlasts = new ArrayList<>();
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -232,6 +233,11 @@ public final class GameWorldModel {
 
     public List<GdxEnemyRuntime.ImpactVisual> enemyImpacts() {
         return enemyImpacts;
+    }
+
+    /** Player bomb fire blasts to draw this frame; rebuilt each frame by the screen controller. */
+    public List<FireBlastVisual> fireBlasts() {
+        return fireBlasts;
     }
 
     public List<Score> highScoreRows() {

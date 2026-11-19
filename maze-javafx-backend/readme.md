@@ -37,6 +37,10 @@ mvn test -pl maze-javafx-backend
 
 Pure-math helpers (`computeCameraTranslation`, `clampBoardToScreen`) are tested headlessly — no JavaFX toolkit required.
 
+`FxFireBlastViewTest` covers the bomb fire blast view (`javafx.render.FxFireBlastView`, drawn
+from the shared `FireBlastModel` on a transparent canvas): the canvas covers every puff for the
+whole blast life, progress timing, and a rendered frame paints fire at the centre.
+
 ## Clip ownership
 
 `FxGameRenderCoordinator` is the **sole owner** of the `gameBoard` clip rectangle. `GameController` must never call `gameBoard.setClip()` — JavaFX's last-call-wins semantics would override the coordinator's correctly-offset clip and reintroduce the white-scroll-area bug.

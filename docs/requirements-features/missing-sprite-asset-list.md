@@ -69,18 +69,24 @@ no walk animation is active yet.
 | ghost1-left.png | ✅ | |
 | ghost1-right.png | ✅ | |
 | ghost2.png | ✅ | ghost\_medium\_1 base |
-| ghost2-left.png | ❌ | Needed for directional walk on ghost\_medium\_1 |
-| ghost2-right.png | ❌ | |
-| ghost2-up.png | ❌ | |
-| ghost2-down.png | ❌ | |
+| ghost2-left.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost2-right.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost2-up.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost2-down.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
 | ghost3.png | ✅ | ghost\_hard\_1 base |
-| ghost3-left.png | ❌ | Needed for directional walk on ghost\_hard\_1 |
-| ghost3-right.png | ❌ | |
-| ghost3-up.png | ❌ | |
-| ghost3-down.png | ❌ | |
+| ghost3-left.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost3-right.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost3-up.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
+| ghost3-down.png | ✅ | Generated (tools/sprite-gen/GhostDirectionalSpriteGenerator.java) |
 
-**To unlock ghost walk animation:** create the 8 missing directional PNG files
-and set `animationFrameCount="3"` for the ghost entries in `opponentModel.xmi`.
+All directional ghost sprites now exist and `opponentModel.xmi` points
+`ImageTurnLeft/Right/Up/Down` of ghost\_medium\_1 / ghost\_hard\_1 at them.
+
+**Ghost walk animation is still not possible:** `SpriteAnimationUtil` replaces the first
+digit in the file name with the frame number, and the digit in `ghostN` is the *variant*,
+not a frame. Setting `animationFrameCount="3"` would cycle between the three different
+ghost designs (the same flicker seen with zombies). Real walk frames need their own
+naming, e.g. `ghost_medium_walk1-left.png` (SR-219).
 
 ---
 
@@ -99,7 +105,7 @@ and set `animationFrameCount="3"` for the ghost entries in `opponentModel.xmi`.
 ## Enemy damage-state sprites (issue #80)
 
 Paths follow `DamageStateResolver.deriveStatePath` (`zombie1-right.png` →
-`zombie1-damaged-right.png`, `ghost2.png` → `ghost2-damaged.png`). All 54 files
+`zombie1-damaged-right.png`, `ghost2.png` → `ghost2-damaged.png`). All 78 files
 are **generated** from the healthy sprites by
 [tools/sprite-gen/DamageSpriteGenerator.java](../../tools/sprite-gen/DamageSpriteGenerator.java)
 (scratches → blood → desaturated slump). Replace any of them with hand-drawn art
@@ -111,8 +117,8 @@ under the same name at any time. `DamageStateSpriteAssetsTest` verifies all of t
 | zombie2 | ✅ zombie2-damaged-{left,right,up,down}.png | ✅ zombie2-bleeding-{left,right,up,down}.png | ✅ zombie2-tired-{left,right,up,down}.png |
 | zombie3 | ✅ zombie3-damaged-{left,right,up,down}.png | ✅ zombie3-bleeding-{left,right,up,down}.png | ✅ zombie3-tired-{left,right,up,down}.png |
 | ghost1 | ✅ ghost1-damaged{,-left,-right}.png | ✅ ghost1-bleeding{,-left,-right}.png | ✅ ghost1-tired{,-left,-right}.png |
-| ghost2 | ✅ ghost2-damaged.png | ✅ ghost2-bleeding.png | ✅ ghost2-tired.png |
-| ghost3 | ✅ ghost3-damaged.png | ✅ ghost3-bleeding.png | ✅ ghost3-tired.png |
+| ghost2 | ✅ ghost2-damaged{,-left,-right,-up,-down}.png | ✅ ghost2-bleeding{,-left,-right,-up,-down}.png | ✅ ghost2-tired{,-left,-right,-up,-down}.png |
+| ghost3 | ✅ ghost3-damaged{,-left,-right,-up,-down}.png | ✅ ghost3-bleeding{,-left,-right,-up,-down}.png | ✅ ghost3-tired{,-left,-right,-up,-down}.png |
 | pumpkinbomber | ✅ pumpkinbomber-damaged.png | ✅ pumpkinbomber-bleeding.png | ✅ pumpkinbomber-tired.png |
 | pumpkinbomber-elite | 🚧 optional | 🚧 optional | 🚧 optional |
 

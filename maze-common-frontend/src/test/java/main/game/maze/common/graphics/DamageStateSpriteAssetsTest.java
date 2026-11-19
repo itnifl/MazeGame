@@ -32,7 +32,8 @@ class DamageStateSpriteAssetsTest {
             "zombie2-left.png", "zombie2-right.png", "zombie2-up.png", "zombie2-down.png",
             "zombie3-left.png", "zombie3-right.png", "zombie3-up.png", "zombie3-down.png",
             "ghost1.png", "ghost1-left.png", "ghost1-right.png",
-            "ghost2.png", "ghost3.png",
+            "ghost2.png", "ghost2-left.png", "ghost2-right.png", "ghost2-up.png", "ghost2-down.png",
+            "ghost3.png", "ghost3-left.png", "ghost3-right.png", "ghost3-up.png", "ghost3-down.png",
             "pumpkinbomber.png");
 
     static Stream<Arguments> baseAndState() {

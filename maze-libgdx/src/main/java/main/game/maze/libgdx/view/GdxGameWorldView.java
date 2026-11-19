@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.view;
 
+import main.game.maze.libgdx.model.FireBlastVisual;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,6 +22,8 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
  * Renders the game world, including maze geometry, entities, and world-space overlays.
  */
 public final class GdxGameWorldView {
+
+    private final GdxFireBlastRenderer fireBlastRenderer = new GdxFireBlastRenderer();
 
     public void render(RenderContext context) {
         context.viewport().apply();
@@ -59,6 +62,7 @@ public final class GdxGameWorldView {
         drawEnemyProjectiles(context, shapes);
         drawEnemyBeams(context, shapes);
         drawEnemyImpacts(context, shapes);
+        fireBlastRenderer.draw(shapes, context.fireBlasts(), context.enemyAnimationClock());
         drawPlayerFallback(context, shapes, player);
         drawHintPath(context, shapes, maze);
         if (context.showEnemyPathSeconds() > 0f) {
@@ -243,43 +247,12 @@ public final class GdxGameWorldView {
             if (alpha <= 0f) {
                 continue;
             }
-            if (beam.blocked()) {
-                // Player bomb flame — rendered as layered fire (outer glow → inner hot core).
-                float w = beam.width();
-                float capR = w * 0.5f;
-
-                // Outer heat haze / smoke envelope
-                shapes.setColor(0.80f, 0.22f, 0.04f, 0.22f * alpha);
-                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 1.7f);
-
-                // Main fire body (deep orange)
-                shapes.setColor(1.00f, 0.46f, 0.06f, 0.80f * alpha);
-                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w);
-
-                // Inner bright flame (amber/yellow)
-                shapes.setColor(1.00f, 0.85f, 0.18f, 0.85f * alpha);
-                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 0.45f);
-
-                // White-hot core
-                shapes.setColor(1.00f, 1.00f, 0.90f, 0.55f * alpha);
-                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), w * 0.18f);
-
-                // Flame-tip glow cap (far end)
-                shapes.setColor(1.00f, 0.55f, 0.10f, 0.70f * alpha);
-                shapes.circle(beam.x2(), beam.y2(), capR * 1.3f, 18);
-                shapes.setColor(1.00f, 0.88f, 0.28f, 0.80f * alpha);
-                shapes.circle(beam.x2(), beam.y2(), capR * 0.55f, 14);
-
-                // Base cap at origin (slightly wider, hotter)
-                shapes.setColor(1.00f, 0.68f, 0.14f, 0.60f * alpha);
-                shapes.circle(beam.x1(), beam.y1(), capR, 14);
-            } else {
-                shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
-                shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
-                float capR = beam.width() * 0.5f;
-                shapes.circle(beam.x1(), beam.y1(), capR, 20);
-                shapes.circle(beam.x2(), beam.y2(), capR, 20);
-            }
+            // Enemy beam; player bomb flames are drawn by GdxFireBlastRenderer.
+            shapes.setColor(0.42f, 1f, 0.96f, 0.9f * alpha);
+            shapes.rectLine(beam.x1(), beam.y1(), beam.x2(), beam.y2(), beam.width());
+            float capR = beam.width() * 0.5f;
+            shapes.circle(beam.x1(), beam.y1(), capR, 20);
+            shapes.circle(beam.x2(), beam.y2(), capR, 20);
         }
     }
 
@@ -460,6 +433,7 @@ public final class GdxGameWorldView {
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
             List<GdxEnemyRuntime.ImpactVisual> enemyImpacts,
+            List<FireBlastVisual> fireBlasts,
             float shakeOffsetX,
             float shakeOffsetY,
             float showEnemyPathSeconds,

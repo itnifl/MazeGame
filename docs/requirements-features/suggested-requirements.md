@@ -228,7 +228,15 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-212** *(DDD)*: Model the damage-state art set as part of `CharacterType` (e.g. an optional `DamageStateArtSet` value object with explicit per-state paths) once hand-drawn art with non-conventional names arrives, keeping the naming convention as the default.
 
-- **SR-213** *(Assets)*: Create the 8 missing directional ghost sprites (`ghost2/3-{left,right,up,down}.png`). These need real art (up/down views), so they were not generated; once they exist, rerun the damage-state generator to add their damaged/bleeding/tired variants.
+- **SR-213** *(Assets)*: ~~Create the 8 missing directional ghost sprites~~ — done as SR-214 (generated). Replace with hand-drawn art when available, keeping the names.
+
+- **SR-216** *(12-Factor, Config)*: Expose the fire blast lifetime and corridor width (`FireBlast.DEFAULT_LIFETIME_SECONDS`, `FLAME_CORRIDOR_WIDTH`) through `PlayerConfig` / `Player.ecore` so designers can tune the blast without recompiling, with libGDX and JavaFX reading the same value.
+
+- **SR-217** *(Observability)*: Show the number of fire puffs drawn per frame in the debug overlay (both frontends) so the cost of overlapping blasts is visible; cap the total if it grows large.
+
+- **SR-218** *(UX, Parity)*: Use a soft radial-gradient puff texture in libGDX (one small generated texture drawn with `SpriteBatch`) so fire puffs get soft edges like a particle system instead of hard-edged `ShapeRenderer` circles; JavaFX can use `RadialGradient` fills for the same look.
+
+- **SR-219** *(Assets, DDD)*: Ghost walk animation needs per-variant walk-frame naming (e.g. `ghost_medium_walk1-left.png`), because `SpriteAnimationUtil` treats the first digit in a file name as the frame number and the digit in `ghostN` is the variant. Add an explicit walk-frame path pattern on `CharacterType` instead of digit replacement.
 
 ## Ratified Requirements
 
