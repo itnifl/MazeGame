@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 
+import main.game.maze.service.MortalityRules;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
 import main.game.maze.common.graphics.config.XmiMazeVisualStyleLoader;
@@ -61,7 +62,6 @@ public final class RuntimeVisualModelLoader {
     private static final float MIN_THREAT_BUDGET = 1f;
     // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
     private static final int DEFAULT_OPPONENT_MAX_THREAT = 20;
-    private static final int DEFAULT_ZOMBIE_RESURRECTION_TIME_MS = 5000;
     private static final int DEFAULT_ZOMBIE_CAP = 2;
     private static final int DEFAULT_GHOST_CAP = 2;
     private static final int DEFAULT_PUMPKIN_CAP = 1;
@@ -364,16 +364,14 @@ public final class RuntimeVisualModelLoader {
         return EnemySpawn.DEFAULT_PROJECTILE_SPEED;
     }
 
+    /** Shared with JavaFX: see {@link MortalityRules#resurrectionTimeMs}. */
     private static int resurrectionTimeMsFor(CharacterType type) {
-        if (type instanceof Zombie zombie) {
-            int modelMs = Math.max(0, zombie.getResurrectionTime()) * 1000;
-            return modelMs > 0 ? modelMs : DEFAULT_ZOMBIE_RESURRECTION_TIME_MS;
-        }
-        return EnemySpawn.DEFAULT_RESURRECTION_TIME_MS;
+        return MortalityRules.resurrectionTimeMs(type);
     }
 
+    /** Shared with JavaFX: see {@link MortalityRules#maxHitPoints}. */
     private static int maxHitPointsFor(CharacterType type) {
-        return Math.max(1, type.getHealth());
+        return MortalityRules.maxHitPoints(type);
     }
 
     private static String touchSoundFor(CharacterType type) {

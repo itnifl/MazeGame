@@ -92,14 +92,17 @@ class PumpkinBomberCharacterTest {
         assertEquals(42, pbc.getHitPoints());
     }
 
-    // addHitPoints increases HP.
+    // addHitPoints heals, capped at max HP (shared EnemyVitals rule, same as libGDX).
     @Test
-    void addHitPoints_increasesHp() {
+    void addHitPoints_healsUpToMax() {
         Rectangle gfx = new Rectangle(16, 16);
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());
-        int before = pbc.getHitPoints();
+        int max = pbc.getHitPoints();
+        pbc.subtractHitPoints(8);
         pbc.addHitPoints(5);
-        assertEquals(before + 5, pbc.getHitPoints());
+        assertEquals(max - 3, pbc.getHitPoints());
+        pbc.addHitPoints(1_000);
+        assertEquals(max, pbc.getHitPoints(), "healing never exceeds max HP");
     }
 
     // doPositionEvaluation with a non-null entity: must not throw.

@@ -447,9 +447,9 @@ class FxEnemyCoordinatorTest {
         }
 
         @Override
-        public void subtractHitPoints(int hp) {
-            causes.add(damageCause());
-            super.subtractHitPoints(hp);
+        public void subtractHitPoints(int hp, DeathCause cause) {
+            causes.add(cause);
+            super.subtractHitPoints(hp, cause);
         }
     }
 

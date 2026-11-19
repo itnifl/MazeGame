@@ -55,7 +55,7 @@ Also, see Xtext setup and learning guide: [docs/xtext-readme.md](docs/xtext-read
 
 ## Dual Frontends: JavaFX and libGDX
 
-MazeGame provides two first-class graphical desktop frontends sharing the same gameplay, with one known gap: JavaFX ghosts cannot die yet (they do not implement `ICanDie`; see SR-236), while libGDX ghosts can:
+MazeGame provides two first-class graphical desktop frontends that run the same gameplay rules from the shared backend modules. For example, enemy health, damage, death causes, remains and resurrection come from `ICanDie`, `EnemyVitals`, `MortalityRules` and `MortalityService` in `maze-common-backend`, so both frontends behave the same:
 
 * **JavaFX Frontend** ([maze-javafx-backend](maze-javafx-backend/readme.md), [maze-javafx](maze-javafx/readme.md)): SceneGraph & Canvas based UI with FXML styling and JavaFX audio.
 * **libGDX Frontend** ([maze-libgdx](maze-libgdx/readme.md)): High-performance OpenGL / LWJGL3 screen runtime with sprite batch rendering and zero native SDK dependencies.
@@ -170,7 +170,7 @@ Restart your terminal after the script finishes, then open VS Code and press **C
 * Press the **SPACE** bar to plant a directional flame bomb. Bombs detonate after 3 seconds, firing flames along corridors in four directions to damage or eliminate monsters and destroy breakable walls (Glass, Dirt, Wood, Steel). Watch out: you will also take damage if caught in your own blast corridor!
 * You can press and hold the P key to see the navigation path to your win area; this will lower your score (move around a little if it doesn't work at first). The P key has a time budget per difficulty: 45 s (Easy), 25 s (Normal), 15 s (Hard). Once the budget is spent, the hint is unavailable for the rest of the game.
 * You can press and hold the O key to see all possible navigation paths in the game; this will lower your score (move around a little if it doesn't work at first).
-* Press the **T** key to open the in-game command terminal. Type a command and press **Enter** to run it, or press **Esc** to close the terminal (e.g. `/kill` to defeat all active enemies, `/kill fire`, `/kill shot` or `/kill crushed` to defeat them and leave that kind of remains, `/h` to view available commands). In JavaFX the `/kill` commands do not affect ghosts until SR-236 is fixed; in libGDX they affect every enemy except one in its brief invulnerability window right after respawning.
+* Press the **T** key to open the in-game command terminal. Type a command and press **Enter** to run it, or press **Esc** to close the terminal (e.g. `/kill` to defeat all active enemies, `/kill fire`, `/kill shot` or `/kill crushed` to defeat them and leave that kind of remains, `/h` to view available commands). In both frontends they skip an enemy during its brief invulnerability window right after it respawns.
 * Press the H key to show high scores.
 * Press the ESC key to restart the game.
 * You can save your scores when you die or win.

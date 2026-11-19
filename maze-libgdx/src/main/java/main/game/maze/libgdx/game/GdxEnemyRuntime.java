@@ -25,6 +25,8 @@ import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.interfaces.IDeathSubscriber;
+import main.game.maze.service.EnemyVitals;
+import main.game.maze.service.MortalityRules;
 import main.game.maze.game.runtime.EnemyRuntime;
 import main.game.maze.libgdx.model.EnemyAnimationSpec;
 import main.game.maze.libgdx.model.EnemySpawn;
@@ -66,17 +68,14 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
     private float shotCooldownRemaining;
     private int lifetimeShots = 0;
     private int lifetimeHits  = 0;
-    private int currentHitPoints;
-    private float invulnerableSecondsRemaining;
-    private static final float RESPAWN_INVULNERABILITY_SECONDS = 2f;
+    /** HP, death and respawn protection: the same implementation the JavaFX enemies use. */
+    private final EnemyVitals vitals;
     private static final java.util.concurrent.atomic.AtomicInteger RUNTIME_SEQUENCE =
             new java.util.concurrent.atomic.AtomicInteger(0);
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
     private final List<BeamEffect> activeBeams = new ArrayList<>();
     private final List<ImpactEffect> activeImpacts = new ArrayList<>();
     private long impactCount;
-    private DeathCause deathCause = DeathCause.OTHER;
-    private final List<IDeathSubscriber> deathSubscribers = new ArrayList<>();
 
     /** Shared by all enemies so each damage-sprite lookup happens once per game. */
     private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
@@ -114,8 +113,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         this.nonTangibilityEnergy = spawn.nonTangibilityEnergy();
         this.visibilityLevel = spawn.visibilityLevel();
         this.shotCooldownRemaining = 0f;
-        this.currentHitPoints = Math.max(1, spawn.maxHitPoints());
-        this.invulnerableSecondsRemaining = 0f;
+        this.vitals = new EnemyVitals(this, spawn.maxHitPoints(), null);
     }
 
     public static GdxEnemyRuntime fromSpawn(EnemySpawn spawn,
@@ -172,70 +170,41 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
                 spawn.animationSpec());
     }
 
-    // --- ICanDie: the hit-point contract shared with the JavaFX characters -------------------
+    // --- ICanDie: delegated to the shared EnemyVitals (same rules as the JavaFX enemies) ------
 
     @Override
     public int getHitPoints() {
-        return currentHitPoints;
+        return vitals.getHitPoints();
     }
 
-    /** Sets HP directly (clamped at 0); dropping to 0 from alive counts as a death of unknown cause. */
     @Override
     public void setHitPoints(int hp) {
-        boolean wasAlive = currentHitPoints > 0;
-        currentHitPoints = Math.max(0, hp);
-        if (wasAlive && currentHitPoints <= 0) {
-            die(DeathCause.OTHER);
-        }
+        vitals.setHitPoints(hp);
     }
 
     @Override
     public void subtractHitPoints(int hp) {
-        subtractHitPoints(hp, DeathCause.OTHER);
+        vitals.subtractHitPoints(hp, DeathCause.OTHER);
     }
 
-    /**
-     * Applies {@code hp} damage dealt by {@code cause}, unless the enemy is already dead or in its
-     * post-respawn invulnerability window. A killing blow records the cause (which decides the
-     * remains) and notifies death subscribers.
-     */
     @Override
     public void subtractHitPoints(int hp, DeathCause cause) {
-        if (currentHitPoints <= 0 || invulnerableSecondsRemaining > 0f) {
-            return;
-        }
-        currentHitPoints = Math.max(0, currentHitPoints - Math.max(0, hp));
-        if (currentHitPoints <= 0) {
-            die(cause);
-        }
+        vitals.subtractHitPoints(hp, cause);
     }
 
-    /** Heals a living enemy, up to its spawn maximum. */
     @Override
     public void addHitPoints(int hp) {
-        if (currentHitPoints <= 0) {
-            return;
-        }
-        currentHitPoints = Math.min(Math.max(1, spawn.maxHitPoints()), currentHitPoints + Math.max(0, hp));
+        vitals.addHitPoints(hp);
     }
 
     @Override
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber) {
-        if (subscriber != null) {
-            deathSubscribers.add(subscriber);
-        }
+        vitals.addDeathSubscriber(subscriber);
     }
 
     @Override
     public DeathCause deathCause() {
-        return deathCause;
-    }
-
-    private void die(DeathCause cause) {
-        deathCause = cause != null ? cause : DeathCause.OTHER;
-        for (IDeathSubscriber subscriber : deathSubscribers) {
-            subscriber.AddDeathNotification(this);
-        }
+        return vitals.deathCause();
     }
 
     /** Test seam: replaces the damage-sprite lookup; {@code null} restores the classpath lookup. */
@@ -245,17 +214,17 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
 
     /** Tick the post-respawn invulnerability window down by {@code dt} seconds. */
     public void tickInvulnerability(float dt) {
-        invulnerableSecondsRemaining = Math.max(0f, invulnerableSecondsRemaining - dt);
+        vitals.tick(dt);
     }
 
     /** Grant a brief invulnerability window (used on respawn to prevent instant re-kill). */
     public void grantRespawnInvulnerability() {
-        invulnerableSecondsRemaining = RESPAWN_INVULNERABILITY_SECONDS;
+        vitals.respawn(MortalityRules.RESPAWN_INVULNERABILITY_SECONDS);
     }
 
     /** {@code true} while the post-respawn invulnerability window is active. */
     public boolean isInvulnerable() {
-        return invulnerableSecondsRemaining > 0f;
+        return vitals.isInvulnerable();
     }
 
     public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius) {
@@ -497,7 +466,7 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         }
         if (spec != null && spec.damageStatesEnabled()) {
             // spec comes from spawn, so spawn is non-null here
-            DamageState state = DamageState.of(currentHitPoints, Math.max(1, spawn.maxHitPoints()));
+            DamageState state = DamageState.of(vitals.getHitPoints(), vitals.getMaxHitPoints());
             if (state != DamageState.HEALTHY) {
                 return damagePathResolver.resolve(framePath, state);
             }

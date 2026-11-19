@@ -43,6 +43,8 @@ bomb fire blast and for pumpkin bomber projectile bursts (`PumpkinBomberCharacte
 that the canvas covers every puff for the whole life of both kinds, progress timing, that a fire
 blast frame paints fire at the centre, and that a pumpkin burst frame paints solid pumpkin debris.
 
+`FxMortalityParityTest` checks JavaFX enemies follow the same life rules as libGDX (shared `EnemyVitals` / `MortalityRules`): ghosts are mortal and reached by bomb fire, crushing walls and `/kill`; a resurrected zombie is whole and briefly invulnerable; the zombie resurrection default applies.
+
 `FxRemainsLayerTest` covers enemy death remains (`javafx.render.FxRemainsLayer`): remains lie just
 above the maze canvas at the spot where the enemy died, one per enemy (a second death replaces it), cleared
 when the enemy resurrects or the level restarts, capped (oldest removed from the board), nothing for

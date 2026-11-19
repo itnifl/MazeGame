@@ -20,7 +20,7 @@ both the JavaFX and libGDX frontends. No rendering or input code lives here.
 | `game.status` | `StatusMessageBus` — publish/subscribe for transient HUD status messages |
 | `interfaces` | `IDeathSubscriber`, `INotifyMovement` |
 | `runtime` | `OclBootstrap` — OCL/EMF delegate factory initialisation |
-| `service` | `DifficultyService` (XMI-backed difficulty list), `DifficultyPresentationSupport`, `MortalityService` (kill-all and crushing through `ICanDie`, shared by both frontends) |
+| `service` | `DifficultyService` (XMI-backed difficulty list), `DifficultyPresentationSupport`, `MortalityService` (kill-all and crushing through `ICanDie`), `EnemyVitals` (the single HP / death / respawn-protection implementation behind `ICanDie` for libGDX and JavaFX enemies), `MortalityRules` (per-type max HP, resurrection delay, respawn protection from the opponent model) |
 
 ## Dependency chain
 
@@ -49,6 +49,8 @@ JaCoCo 0.8.12 with a **60 % LINE** minimum. The profile is inherited from root
 ## Tests
 
 - [CompositionResolverImplTest](src/test/java/main/game/maze/config/service/CompositionResolverImplTest.java) — 8 tests: single ratio, override precedence, total=enemyCount invariant, idempotent, unknown-profile IAE, null/empty-profiles NPE/ISE, caps respected, requested-exceeds-cap-sum stops at cap total.
+- [EnemyVitalsTest](src/test/java/main/game/maze/service/EnemyVitalsTest.java) — damage and the killing blow (cause, one notification), capped healing that never revives, respawn with invulnerability window.
+- [MortalityRulesTest](src/test/java/main/game/maze/service/MortalityRulesTest.java) — max HP from model health, zombie resurrection (model time or default), other types stay dead.
 - [MortalityServiceTest](src/test/java/main/game/maze/service/MortalityServiceTest.java) — `killAll` kills only living `ICanDie`s with the cause, `crushAlong` crushes only those touching the wall, no body means no crush, `ICanDie` defaults.
 - [DifficultyServiceTest](src/test/java/main/game/maze/service/DifficultyServiceTest.java) — returns 3 difficulties, each non-null, getCurrent before set no-throw, setCurrent persists, list stable.
 - [PlayerConfigTest](src/test/java/main/game/maze/PlayerConfigTest.java) — health > 0, speed > 0, enabled = true, matches PlayerConstants, non-blank id/displayName, non-null image paths, toString/equality/hashCode.
