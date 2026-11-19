@@ -123,17 +123,22 @@ Then run from the repository root:
 # JDK 21 + Maven only
 pwsh -File ./install.ps1
 
-# JDK 21 + Maven + JavaFX SDK
+# JDK 21 + Maven + JavaFX SDK (recommended for JavaFX frontend)
 pwsh -File ./install.ps1 -JavaFX
+
+# Custom / headless: skip VS Code extensions or persistent environment variables
+pwsh -File ./install.ps1 -JavaFX -SkipVSCodeExtensions -SkipEnvSetup
 ```
+
+> **Note for Windows:** Run PowerShell as Administrator if your package manager (winget or Chocolatey) requires elevation. If script execution is restricted, run with bypass: `pwsh -ExecutionPolicy Bypass -File ./install.ps1 -JavaFX`.
 
 The PowerShell installer:
 1. Detects your OS (Windows / macOS / Linux) and CPU architecture
 2. Installs **JDK 21** via winget / Chocolatey / Homebrew / apt / dnf / pacman
 3. Installs **Apache Maven** via the same package manager
-4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools)
-5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** and sets `PATH_TO_FX`
-6. Sets `JAVA_HOME` as a persistent user-level environment variable
+4. Installs **VS Code extensions** via the `code` CLI (Extension Pack for Java, XML, YAML, Makefile Tools) unless `-SkipVSCodeExtensions` is passed
+5. *(With `-JavaFX`)* Downloads the **JavaFX 21 SDK** (21.0.9) and sets `PATH_TO_FX`
+6. Sets `JAVA_HOME` as a persistent user-level environment variable (unless `-SkipEnvSetup` is passed)
 7. Runs `make-javafx.ps1 -Target write-launch-env` to generate `.vscode/maze.launch.env`. If that fails, the installer prints an `[!!]` error and exits with code 1.
 
 > **libGDX** is a Maven dependency (`com.badlogicgames.gdx:gdx:1.12.1`) and is downloaded automatically during the first build — no separate installation is needed.
@@ -197,6 +202,12 @@ Check those terms before redistributing them.
 ---
 
 ## Prerequisites and setup
+
+> **Quick setup:** Automated installers are provided for all platforms — see the [Quick start](#quick-start) section above:
+> - **Ubuntu 24.04:** `sudo ./install-linux.sh`
+> - **Windows / macOS / Linux:** `pwsh -File ./install.ps1 -JavaFX`
+>
+> The instructions below are for manual configuration or reference.
 
 This project requires JDK 21 for full builds (Xtext generation + Tycho reactor).
 The supported JavaFX SDK version is 21.0.9, matching the Maven build.
