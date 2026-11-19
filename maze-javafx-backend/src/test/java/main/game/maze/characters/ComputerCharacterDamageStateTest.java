@@ -261,7 +261,7 @@ class ComputerCharacterDamageStateTest {
         character.registerImageForPath("/main/game/maze/zombie1-damaged-left.png", mockDamagedLeft);
 
         AtomicReference<DamageState> lastResolvedState = new AtomicReference<>();
-        character.setDamagePathResolver((anchor, basePath, state) -> {
+        character.setDamagePathResolver((basePath, state) -> {
             lastResolvedState.set(state);
             return switch (state) {
                 case DAMAGED -> basePath.replace("zombie1", "zombie1-damaged");
@@ -324,7 +324,7 @@ class ComputerCharacterDamageStateTest {
         character.registerImageForPath("/main/game/maze/zombie3-damaged-right.png", mockDamagedFrame2);
         character.registerImageForPath("/main/game/maze/zombie3-bleeding-right.png", mockBleedingFrame2);
 
-        character.setDamagePathResolver((anchor, basePath, state) -> {
+        character.setDamagePathResolver((basePath, state) -> {
             return switch (state) {
                 case DAMAGED -> basePath.replaceFirst("zombie(\\d+)", "zombie$1-damaged");
                 case BLEEDING -> basePath.replaceFirst("zombie(\\d+)", "zombie$1-bleeding");
@@ -369,7 +369,7 @@ class ComputerCharacterDamageStateTest {
 
         Image mockDamaged = new WritableImage(15, 15);
         zombie.registerImageForPath("/main/game/maze/zombie1-damaged-right.png", mockDamaged);
-        zombie.setDamagePathResolver((anchor, basePath, state) ->
+        zombie.setDamagePathResolver((basePath, state) ->
                 state == DamageState.DAMAGED ? basePath.replace("zombie1", "zombie1-damaged") : basePath);
 
         zombie.directionSubscriber.notifyCurrentDirection(VectorFacing.RIGHT);
@@ -392,7 +392,7 @@ class ComputerCharacterDamageStateTest {
 
         Image mockBleeding = new WritableImage(50, 50);
         bomber.registerImageForPath("/main/game/maze/pumpkinbomber-bleeding.png", mockBleeding);
-        bomber.setDamagePathResolver((anchor, basePath, state) ->
+        bomber.setDamagePathResolver((basePath, state) ->
                 state == DamageState.BLEEDING ? "/main/game/maze/pumpkinbomber-bleeding.png" : basePath);
 
         // 100 -> 35 (BLEEDING)
@@ -425,7 +425,7 @@ class ComputerCharacterDamageStateTest {
         ImageView view = new ImageView();
         PumpkinBomberCharacter bomber = track(new PumpkinBomberCharacter(view, 0, 0, createBomberModel(true)));
         // Simulate a missing damage asset: the resolver falls back to the healthy path.
-        bomber.setDamagePathResolver((anchor, basePath, state) -> basePath);
+        bomber.setDamagePathResolver((basePath, state) -> basePath);
 
         onFx(() -> {
             bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
@@ -442,6 +442,26 @@ class ComputerCharacterDamageStateTest {
 
             bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
             assertSame(mirrored, view.getImage(), "Missing damage asset must fall back to the generated LEFT mirror");
+        });
+    }
+
+    @Test
+    void pumpkinBomber_directionalAssets_damagedLeftUsesMirroredDamageSprite() {
+        PumpkinBomber model = createBomberModel(true);
+        model.setImageTurnLeft("/main/game/maze/pumpkinbomber-left.png");
+        model.setImageTurnUp("/main/game/maze/pumpkinbomber-up.png");
+        ImageView view = new ImageView();
+        PumpkinBomberCharacter bomber = track(new PumpkinBomberCharacter(view, 0, 0, model));
+        // Real classpath resolver; only the returned image is stubbed so the test can identify it.
+        Image damagedLeft = new WritableImage(7, 7);
+        bomber.registerImageForPath("/main/game/maze/pumpkinbomber-damaged-left.png", damagedLeft);
+
+        onFx(() -> {
+            bomber.directionSubscriber.notifyCurrentDirection(VectorFacing.LEFT);
+            assertSame(bomber.imageLeft, view.getImage(), "Healthy LEFT uses the pumpkinbomber-left.png asset");
+
+            bomber.subtractHitPoints(30); // 70 HP -> DAMAGED
+            assertSame(damagedLeft, view.getImage(), "Damaged LEFT uses pumpkinbomber-damaged-left.png");
         });
     }
 }

@@ -94,7 +94,9 @@ naming, e.g. `ghost_medium_walk1-left.png` (SR-219).
 
 | Asset | Status | Notes |
 |-------|--------|-------|
-| pumpkinbomber.png | ✅ | Single-frame (no animation) |
+| pumpkinbomber.png | ✅ | Single-frame (no animation); used for right and down |
+| pumpkinbomber-left.png | ✅ | Generated mirror (`PumpkinBomberDirectionalSpriteGenerator`) |
+| pumpkinbomber-up.png | ✅ | Generated brightened tint (same generator) |
 | pumpkinbomber-walk1-right.png | 🚧 | Future: full walk cycle |
 | pumpkinbomber-walk2-right.png | 🚧 | |
 | pumpkinbomber-walk3-right.png | 🚧 | |
@@ -105,10 +107,12 @@ naming, e.g. `ghost_medium_walk1-left.png` (SR-219).
 ## Enemy damage-state sprites (issue #80)
 
 Paths follow `DamageStateResolver.deriveStatePath` (`zombie1-right.png` →
-`zombie1-damaged-right.png`, `ghost2.png` → `ghost2-damaged.png`). All 78 files
-are **generated** from the healthy sprites by
+`zombie1-damaged-right.png`, `ghost2.png` → `ghost2-damaged.png`). All 84 files
+are **generated**: 78 from the healthy sprites by
 [tools/sprite-gen/DamageSpriteGenerator.java](../../tools/sprite-gen/DamageSpriteGenerator.java)
-(scratches → blood → desaturated slump). Replace any of them with hand-drawn art
+(scratches → blood → desaturated slump), and the 6 bomber left/up damage sprites by
+[tools/sprite-gen/PumpkinBomberDirectionalSpriteGenerator.java](../../tools/sprite-gen/PumpkinBomberDirectionalSpriteGenerator.java)
+(mirror / tint of the bomber damage sprites, so the marks match). Replace any of them with hand-drawn art
 under the same name at any time. `DamageStateSpriteAssetsTest` verifies all of them.
 
 | Variant | Damaged | Bleeding | Tired |
@@ -119,13 +123,15 @@ under the same name at any time. `DamageStateSpriteAssetsTest` verifies all of t
 | ghost1 | ✅ ghost1-damaged{,-left,-right}.png | ✅ ghost1-bleeding{,-left,-right}.png | ✅ ghost1-tired{,-left,-right}.png |
 | ghost2 | ✅ ghost2-damaged{,-left,-right,-up,-down}.png | ✅ ghost2-bleeding{,-left,-right,-up,-down}.png | ✅ ghost2-tired{,-left,-right,-up,-down}.png |
 | ghost3 | ✅ ghost3-damaged{,-left,-right,-up,-down}.png | ✅ ghost3-bleeding{,-left,-right,-up,-down}.png | ✅ ghost3-tired{,-left,-right,-up,-down}.png |
-| pumpkinbomber | ✅ pumpkinbomber-damaged.png | ✅ pumpkinbomber-bleeding.png | ✅ pumpkinbomber-tired.png |
+| pumpkinbomber | ✅ pumpkinbomber-damaged{,-left,-up}.png | ✅ pumpkinbomber-bleeding{,-left,-up}.png | ✅ pumpkinbomber-tired{,-left,-up}.png |
 | pumpkinbomber-elite | 🚧 optional | 🚧 optional | 🚧 optional |
 
-`pb_hard` uses `pumpkinbomber.png`, so the resolver derives the `pumpkinbomber-*`
+`pb_hard` uses the same bomber sprites, so the resolver derives the `pumpkinbomber-*`
 names for it; the `pumpkinbomber-elite-*` set is only needed if the elite gets its
-own base image. Sprites will only appear in game once `damageStatesEnabled` (#137)
-and the frontend wiring (#138, #139) land.
+own base image. Damage states are **enabled** (`damageStatesEnabled=true`) for every
+zombie, ghost and pumpkin bomber in `opponentModel.xmi`, in both frontends.
+`RuntimeVisualModelLoaderTest.shippedEnemiesHaveDamageStatesWithAssets` fails if an
+enabled enemy resolves to a missing damage sprite.
 
 ---
 

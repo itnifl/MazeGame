@@ -17,7 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.util.Duration;
 import main.game.maze.common.graphics.DamageState;
-import main.game.maze.common.graphics.DamageStateResolver;
+import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D.VectorFacing;
@@ -29,10 +29,9 @@ import main.game.maze.opponents.CharacterType;
 public class ComputerCharacter extends Character implements IMovingComputerCharacter {
     private static final double ANIMATION_FRAME_DURATION_MS = 250.0;
 
-    @FunctionalInterface
-    public interface DamagePathResolver {
-        String resolve(Class<?> anchor, String basePath, DamageState state);
-    }
+    /** Shared by all characters so each damage-sprite lookup happens once per game. */
+    private static final DamagePathResolver CLASSPATH_DAMAGE_PATHS =
+            DamagePathResolver.classpath(ComputerCharacter.class);
 
     private double speed;
     private final CharacterType characterModel;
@@ -54,7 +53,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
     protected int currentHp;
     protected int maxHp;
     protected DamageState currentDamageState = DamageState.HEALTHY;
-    private DamagePathResolver damagePathResolver = DamageStateResolver::resolveWithFallback;
+    private DamagePathResolver damagePathResolver = CLASSPATH_DAMAGE_PATHS;
 
     protected final Image imageLeft;
     protected final Image imageRight;
@@ -164,7 +163,7 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
                 if (animationFrames != null) {
                     framePath = SpriteAnimationUtil.deriveAnimationFramePath(dirPath, currentWalkFrame);
                 }
-                String resolvedPath = damagePathResolver.resolve(getClass(), framePath, currentDamageState);
+                String resolvedPath = damagePathResolver.resolve(framePath, currentDamageState);
                 if (resolvedPath != null && !resolvedPath.equals(framePath)) {
                     return getOrLoadImage(resolvedPath);
                 }
@@ -191,15 +190,13 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
         return imageCache.computeIfAbsent(path, p -> loadOrStub(getClass(), p));
     }
 
-    public void setDamagePathResolver(DamagePathResolver resolver) {
-        this.damagePathResolver = resolver != null ? resolver : DamageStateResolver::resolveWithFallback;
+    /** Test seam: replaces the damage-sprite lookup; {@code null} restores the classpath lookup. */
+    void setDamagePathResolver(DamagePathResolver resolver) {
+        this.damagePathResolver = resolver != null ? resolver : CLASSPATH_DAMAGE_PATHS;
     }
 
-    public DamagePathResolver getDamagePathResolver() {
-        return damagePathResolver;
-    }
-
-    public void registerImageForPath(String path, Image image) {
+    /** Test seam: pre-registers the image returned for {@code path}. */
+    void registerImageForPath(String path, Image image) {
         if (path != null && image != null) {
             imageCache.put(path, image);
         }

@@ -104,10 +104,15 @@ public final class DamageStateResolver {
         return resolveWithFallback(DamageStateResolver.class, basePath, state);
     }
 
-    private static boolean resourceExists(Class<?> clazz, String path) {
+    /**
+     * Whether {@code path} can be found on the classpath relative to {@code anchor}
+     * (absolute, with or without a leading slash).
+     */
+    public static boolean resourceExists(Class<?> anchor, String path) {
         if (path == null || path.isBlank()) {
             return false;
         }
+        Class<?> clazz = anchor != null ? anchor : DamageStateResolver.class;
 
         URL url = clazz.getResource(path);
         if (url != null) {

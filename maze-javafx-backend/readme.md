@@ -56,6 +56,7 @@ Viewport dimensions are read from `gameBoard.getScene().getWidth()/getHeight()` 
 ## Test suite documentation
 
 - `ZombieCharacterTest` — construction, `getDamage`, partial HP subtraction, audio-on-overlap, death-subscriber management, and `getModel`.
+- `ComputerCharacterDamageStateTest` — F80 damage-state sprites: HP changes swap to damaged/bleeding/tired sprites per direction and walk frame (only when `damageStatesEnabled`), missing sprites fall back silently, and the pumpkin bomber uses `pumpkinbomber-left/up.png` (or runtime mirror/tint when all its paths are the same file) including the matching damage sprites.
 - `PumpkinBomberCharacterTest` — construction, `getDamage`, partial HP subtraction, `setHitPoints`/`addHitPoints`, `doPositionEvaluation` no-throw, `getModel`, and F26 physics: `lobProjectile_arrivesAfterDistanceDividedBySpeed_seconds` (LOB arrives in exactly `distance/speed` seconds) and `lobProjectile_stillInFlightBeforeDistanceDividedBySpeed_seconds` (LOB still active before arrival).
 
 ### Wall renderer tests (wall registry classpath regression)

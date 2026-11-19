@@ -121,13 +121,13 @@ class GdxEnemyRuntimeAnimationTest {
         assertEquals("/main/game/maze/zombie1-up.png", healthyPath);
 
         // Drop HP to DAMAGED, BLEEDING, TIRED
-        runtime.setCurrentHitPoints(60);
+        dropHpTo(runtime, 60);
         assertEquals(healthyPath, runtime.currentFramePath(0f), "Image must remain healthy when damageStatesEnabled=false");
 
-        runtime.setCurrentHitPoints(30);
+        dropHpTo(runtime, 30);
         assertEquals(healthyPath, runtime.currentFramePath(0f), "Image must remain healthy when damageStatesEnabled=false");
 
-        runtime.setCurrentHitPoints(10);
+        dropHpTo(runtime, 10);
         assertEquals(healthyPath, runtime.currentFramePath(0f), "Image must remain healthy when damageStatesEnabled=false");
     }
 
@@ -162,7 +162,7 @@ class GdxEnemyRuntimeAnimationTest {
 
         try {
             // Drop HP to 50 (BLEEDING / DAMAGED tier)
-            runtime.setCurrentHitPoints(50);
+            dropHpTo(runtime, 50);
             String path = runtime.currentFramePath(0f);
             assertEquals(healthyPath, path, "Missing damage asset must fall back cleanly to healthy image");
             assertEquals(0, warningCount.get(), "Fallback on missing damage asset must not log WARNING");
@@ -183,24 +183,24 @@ class GdxEnemyRuntimeAnimationTest {
         GdxEnemyRuntime runtime = makeRuntime(spawn);
 
         // 100 HP -> HEALTHY
-        runtime.setCurrentHitPoints(100);
+        dropHpTo(runtime, 100);
         assertEquals("/main/game/maze/zombie1-up.png", runtime.currentFramePath(0f));
 
         // 70 HP -> DAMAGED
-        runtime.setCurrentHitPoints(70);
+        dropHpTo(runtime, 70);
         assertEquals("/main/game/maze/zombie1-damaged-up.png", runtime.currentFramePath(0f));
 
         // 40 HP -> BLEEDING
-        runtime.setCurrentHitPoints(40);
+        dropHpTo(runtime, 40);
         assertEquals("/main/game/maze/zombie1-bleeding-up.png", runtime.currentFramePath(0f));
 
         // 15 HP -> TIRED
-        runtime.setCurrentHitPoints(15);
+        dropHpTo(runtime, 15);
         assertEquals("/main/game/maze/zombie1-tired-up.png", runtime.currentFramePath(0f));
     }
 
     @Test
-    void damageStatesEnabled_mockHpSource_allFourDamageStates() {
+    void damageStatesEnabled_mockResolver_allFourDamageStates() {
         EnemySpawn spawn = spawnWithSpec(
                 "/main/game/maze/zombie1-right.png",
                 "/main/game/maze/zombie1-left.png",
@@ -216,24 +216,22 @@ class GdxEnemyRuntimeAnimationTest {
             return basePath.replace(".png", "-" + state.label() + ".png");
         });
 
-        AtomicInteger mockHp = new AtomicInteger(100);
-        runtime.setHpSupplier(mockHp::get);
 
         // 100 HP -> HEALTHY (resolver not called for HEALTHY)
         assertEquals("/main/game/maze/zombie1-up.png", runtime.currentFramePath(0f));
 
         // 70 HP -> DAMAGED
-        mockHp.set(70);
+        dropHpTo(runtime, 70);
         assertEquals("/main/game/maze/zombie1-up-damaged.png", runtime.currentFramePath(0f));
         assertEquals(DamageState.DAMAGED, resolvedState.get());
 
         // 40 HP -> BLEEDING
-        mockHp.set(40);
+        dropHpTo(runtime, 40);
         assertEquals("/main/game/maze/zombie1-up-bleeding.png", runtime.currentFramePath(0f));
         assertEquals(DamageState.BLEEDING, resolvedState.get());
 
         // 10 HP -> TIRED
-        mockHp.set(10);
+        dropHpTo(runtime, 10);
         assertEquals("/main/game/maze/zombie1-up-tired.png", runtime.currentFramePath(0f));
         assertEquals(DamageState.TIRED, resolvedState.get());
     }
@@ -249,7 +247,7 @@ class GdxEnemyRuntimeAnimationTest {
                 3, 1.0f, true);
         GdxEnemyRuntime runtime = makeRuntime(spawn);
 
-        runtime.setCurrentHitPoints(70); // DAMAGED tier
+        dropHpTo(runtime, 70); // DAMAGED tier
 
         // Frame 0 at t=0
         String t0 = runtime.currentFramePath(0f);
@@ -264,7 +262,7 @@ class GdxEnemyRuntimeAnimationTest {
         assertTrue(t2.contains("zombie3-damaged"), "frame 2 should reference zombie3-damaged, got: " + t2);
 
         // While at frame 2, HP drops to BLEEDING
-        runtime.setCurrentHitPoints(35);
+        dropHpTo(runtime, 35);
         String t2Bleeding = runtime.currentFramePath(0.50f);
         assertTrue(t2Bleeding.contains("zombie3-bleeding"), "frame 2 should re-resolve to bleeding variant on HP change, got: " + t2Bleeding);
     }
@@ -286,6 +284,12 @@ class GdxEnemyRuntimeAnimationTest {
             String base, String left, String right, String up, String down,
             int frameCount, float scale) {
         return spawnWithSpec(base, left, right, up, down, frameCount, scale, false);
+    }
+
+    /** Lowers HP through the real damage path (max HP is 100 in these spawns). */
+    private static void dropHpTo(GdxEnemyRuntime runtime, int hp) {
+        runtime.takeDamage(runtime.currentHitPoints() - hp);
+        assertEquals(hp, runtime.currentHitPoints());
     }
 
     private static GdxEnemyRuntime makeRuntime(EnemySpawn spawn) {

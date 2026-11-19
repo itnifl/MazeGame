@@ -25,6 +25,29 @@ carry a texture (ghost2's grid) so erased areas copy the texture instead of a fl
 Run it **before** `DamageSpriteGenerator`, which also derives damage states for these
 directional sprites.
 
+Full order: `GhostDirectionalSpriteGenerator` → `DamageSpriteGenerator` →
+`PumpkinBomberDirectionalSpriteGenerator`.
+
+## PumpkinBomberDirectionalSpriteGenerator
+
+Creates the pumpkin bomber's turning sprites as asset files, with the transforms the
+JavaFX frontend used to apply at runtime:
+
+| File | Look |
+|------|------|
+| `pumpkinbomber-left.png` | horizontal mirror of `pumpkinbomber.png` |
+| `pumpkinbomber-up.png` | brightened, more saturated tint (JavaFX `brighter().saturate()`) |
+| `pumpkinbomber-{damaged,bleeding,tired}-{left,up}.png` | the same transforms applied to each damage sprite, so the marks match the facing |
+
+Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGenerator`
+(it reads `pumpkinbomber-{damaged,bleeding,tired}.png`):
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/PumpkinBomberDirectionalSpriteGenerator.java
+```
+
+Output is deterministic and overwrites existing files.
+
 ## DamageSpriteGenerator
 
 Generates the enemy damage-state sprites from issue #80 out of the existing healthy
