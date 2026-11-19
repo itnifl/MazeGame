@@ -144,7 +144,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
      * called safely from the background movement thread without stale node reads.
      */
     public void tryShootAt(double targetX, double targetY, long nowMs) {
-        if (getCharacterGraphics() == null) {
+        // dead (e.g. crushed this frame) or detached bombers start no new attack
+        if (getCharacterGraphics() == null || !isAlive()) {
             return;
         }
         int cooldown = defaultIfNull(model.getAttackCooldownMs(), 1000);

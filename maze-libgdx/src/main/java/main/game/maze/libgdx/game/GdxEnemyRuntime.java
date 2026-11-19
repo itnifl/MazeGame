@@ -333,6 +333,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
             }
         }
 
+        // A dead enemy (e.g. crushed earlier this frame) starts no new attack; in-flight shots still land.
+        if (!isAlive()) {
+            return dealtDamage;
+        }
+
         if (spawn.attackRange() <= 0f || spawn.projectileSpeed() <= 0f || spawn.attackCooldownMs() <= 0) {
             return dealtDamage;
         }

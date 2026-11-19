@@ -86,6 +86,21 @@ class GdxEnemyRuntimeProjectileTest {
     }
 
     @Test
+    void deadEnemyStartsNoNewAttack() {
+        // e.g. crushed by a wall another enemy's shot brought down earlier in the same update loop
+        for (ProjectileType type : ProjectileType.values()) {
+            GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(rangedSpawn(type, 0f, 0f), 0, openWorld(), 60f, 8);
+            runtime.subtractHitPoints(runtime.getHitPoints(), main.game.maze.common.remains.DeathCause.CRUSHED);
+
+            int dealtDamage = runtime.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f);
+
+            assertEquals(0, dealtDamage, type + ": a dead enemy must not deal new damage");
+            assertTrue(runtime.beamVisuals().isEmpty(), type + ": a dead enemy must not fire a beam");
+            assertTrue(runtime.projectileVisuals().isEmpty(), type + ": a dead enemy must not launch a projectile");
+        }
+    }
+
+    @Test
     void lobWithHighArcDoesNotExpireOutOfBoundsBeforeArrival() {
         GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
                 rangedSpawn(ProjectileType.LOB, 80f, 1000f, 180f),

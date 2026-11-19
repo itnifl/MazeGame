@@ -209,6 +209,25 @@ class PumpkinBomberCharacterTest {
     }
 
     @Test
+    void tryShootAt_deadBomberStartsNoNewAttack() throws Exception {
+        PumpkinBomberCharacter alive = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        PumpkinBomberCharacter dead = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        dead.subtractHitPoints(dead.getHitPoints(), main.game.maze.common.remains.DeathCause.CRUSHED);
+
+        alive.tryShootAt(10.0, 0.0, Long.MAX_VALUE);
+        dead.tryShootAt(10.0, 0.0, Long.MAX_VALUE);
+
+        assertEquals(1, projectiles(alive).size(), "control: a living bomber fires");
+        assertTrue(projectiles(dead).isEmpty(), "a dead bomber (e.g. crushed this frame) must not fire");
+    }
+
+    private static List<?> projectiles(PumpkinBomberCharacter bomber) throws Exception {
+        Field field = PumpkinBomberCharacter.class.getDeclaredField("projectiles");
+        field.setAccessible(true);
+        return (List<?>) field.get(bomber);
+    }
+
+    @Test
     void tryShootAt_withInRangeTarget_createsProjectile_andUpdateProjectiles_removesIt() {
         Rectangle gfx = new Rectangle(16, 16); // character at layoutX=0
         PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(gfx, 0, 0, basicPumpkin());

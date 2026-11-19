@@ -256,7 +256,7 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-233** *(Gameplay, MDD)*: Sledgehammer pickup, found in the maze (not at start), crushes adjacent enemies (`DeathCause.CRUSHED`, remains already in place). Same DSL loot model as SR-232 (`weapon` kind `sledgehammer`, swing damage / reach); it could also let the player knock down breakable walls, which then fall and crush via SR-230.
 
-- **SR-234** *(MDD, DDD)*: Per-enemy death rules in `opponents.ecore`: which `DeathCause`s a character type can suffer (e.g. ghosts immune to crushing) and whether it leaves remains, next to `damageStatesEnabled`; needs EMF regeneration. Today every enemy can die by every cause and remains are chosen by sprite naming convention.
+- **SR-234** *(MDD, DDD)*: Per-enemy death rules in `opponents.ecore`: which `DeathCause`s a character type can suffer (e.g. ghosts immune to crushing) and whether it leaves remains, next to `damageStatesEnabled`; needs EMF regeneration. Today every enemy that implements `ICanDie` can die by every cause (all libGDX enemies; in JavaFX zombies and pumpkin bombers, but not ghosts, see SR-236) and remains are chosen by sprite naming convention.
 
 - **SR-235** *(MDD)*: Per-material collapse rules in `walls.ecore`: `crushesOnCollapse` (glass might shatter harmlessly) and the rubble palette, instead of the code-side `RubbleMaterial` mapping keyed by the material id prefix; needs regeneration of the walls model code.
 
