@@ -280,7 +280,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private void openHighScoresFromWin() {
         loadHighScores();
-        session.setHighScoresReturnToStartMenu(true);
+        // with a next level to play, Esc goes back to the win screen instead of the main menu
+        boolean backToWin = levelProgress.hasNext();
+        session.setHighScoresReturnToWin(backToWin);
+        session.setHighScoresReturnToStartMenu(!backToWin);
         session.setMode(GameMode.HIGH_SCORES);
     }
 

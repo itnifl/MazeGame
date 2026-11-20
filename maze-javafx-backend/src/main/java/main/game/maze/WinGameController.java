@@ -75,7 +75,15 @@ public class WinGameController extends ActionScreenController implements Initial
             return;
         }
         final javafx.scene.Scene scene = sceneRootPane.getScene();
+        final javafx.scene.Parent winScreenRoot = scene.getRoot();
+        final boolean nextLevelFollows = main.game.maze.App.levelProgress.hasNext();
         HighscoreAction action = new HighscoreAction(sceneRootPane, () -> {
+            if (nextLevelFollows) {
+                // back to the win screen, where Next level is still offered
+                scene.setRoot(winScreenRoot);
+                main.game.maze.App.applyStandardSize((javafx.stage.Stage) scene.getWindow());
+                return;
+            }
             var current = scene.getRoot();
             if (current instanceof AnchorPane anchor) {
                 new StartScreenAction(anchor).Load();
