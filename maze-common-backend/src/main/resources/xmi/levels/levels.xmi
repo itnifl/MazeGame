@@ -4,7 +4,7 @@
   Level 2 divides the maze into four concentric zones around the heart: the outer zone has the strongest
   walls (steel), the inner zone the weakest (dirt and glass); every wall is drawn with its material. All walls can be broken; a broken wall takes
   its touching neighbours with it up to two steps away, so a bomb opens the maze without bringing it all down. It has a larger threat capacity, and stationary zombie sergeants
-  guard the heart: one on easy, two on normal, six on hard.
+  guard the heart: one on easy, four on normal, six on hard.
   Material ids refer to walls.xmi (GLASS_BASIC 5 HP, DIRT_BASIC 10, WOOD_BASIC 20, STONE_BASIC 40, STEEL_BASIC 80).
 -->
 <levels:LevelModel
@@ -25,7 +25,7 @@
         fireSound="/main/game/maze/sounds/gatling-burst.wav"
         dropWeapon="GATLING_GUN" postDistanceFromHeart="110.0"/>
     <sergeantPosts difficulty="EASY" count="1"/>
-    <sergeantPosts difficulty="NORMAL" count="2"/>
+    <sergeantPosts difficulty="NORMAL" count="4"/>
     <sergeantPosts difficulty="HARD" count="6"/>
   </levels>
 </levels:LevelModel>

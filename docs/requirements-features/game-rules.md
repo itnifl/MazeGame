@@ -263,7 +263,7 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-51**: Zombie sergeants never move. A sergeant that sees the player
   (`SergeantGunner.canSee`: in sight range, no wall between) fires bursts of
   rounds with a rest between bursts; losing sight ends the burst. Six on hard,
-  two on normal, one on easy, standing near the heart.
+  four on normal, one on easy, standing near the heart.
 - **GR-52**: A killed sergeant drops its gatling gun where it fell
   (`PickupKind.GATLING_GUN`, never spawned randomly); picking it up adds
   bursts to the player's arsenal.

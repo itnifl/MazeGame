@@ -54,7 +54,7 @@ as there are elements, scaled to the board, with the heart in the middle.
     sprite="/main/game/maze/zombie-sergeant.png" fireSound="/main/game/maze/sounds/gatling-burst.wav"
     dropWeapon="GATLING_GUN" postDistanceFromHeart="110.0"/>
 <sergeantPosts difficulty="EASY" count="1"/>
-<sergeantPosts difficulty="NORMAL" count="2"/>
+<sergeantPosts difficulty="NORMAL" count="4"/>
 <sergeantPosts difficulty="HARD" count="4"/>
 ```
 

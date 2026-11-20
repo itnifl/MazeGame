@@ -69,7 +69,7 @@
 - SR-277: In level 2 the outer zone has the strongest walls and the inner zone (around the heart) the weakest: fewer breakable walls and tougher materials outside, more and weaker ones inside.
 - SR-278: Level 2 has a higher threat capacity than level 1: the difficulty's maximum threat x the level's `threatCapacityFactor` (1.5).
 - SR-279: New enemy, the zombie sergeant: it never moves, and fires a burst of gatling-gun rounds at the player whenever it sees them (within its sight range, no wall in between), rests, and fires again while the player stays in sight. Its numbers are in the levels model.
-- SR-280: Sergeants stand close to the heart: six on hard, two on normal (medium), one on easy.
+- SR-280: Sergeants stand close to the heart: six on hard, four on normal (medium), one on easy.
 - SR-281: A killed sergeant drops its gatling gun; the player picks it up and can use it like the other weapons (Tab to select, attack key to fire a burst along the facing). The gun never spawns as a normal item.
 - SR-282: The player inherits their weapons (stock and weapon in hand) from the previous level; retrying a level starts with the weapons it was entered with.
 - SR-290: The wall zones of a level are visible: a level can draw every wall with the sprite of its material (glass, dirt, wood, stone, steel; the model's `showWallMaterials`), in both frontends, so the player sees the strong outer zone and the weak inner zone.
