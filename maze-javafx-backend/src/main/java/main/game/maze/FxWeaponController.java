@@ -165,6 +165,9 @@ public final class FxWeaponController {
             host.arsenalChanged();
         }
         healFeedback.tick(dt);
+        if (arsenal.tickBombRegen(dt) > 0) {
+            host.arsenalChanged();
+        }
         double clock = nowNanos / 1e9;
         pickupLayer.showItems(pickupField.items(), pickupField.catalog(), clock);
         pickupLayer.showHeldWeapon(arsenal.selected(), arsenal.count(arsenal.selected()), pickupField.catalog(),

@@ -11,7 +11,13 @@ import java.util.Map;
 public final class PlayerArsenal {
 
     private final Map<Weapon, Integer> counts = new EnumMap<>(Weapon.class);
+    /** Seconds between the free bombs the player is given. */
+    public static final double BOMB_REGEN_SECONDS = 10.0;
+    /** Free bombs given when the player has none left; otherwise one. */
+    public static final int BOMB_REGEN_WHEN_EMPTY = 3;
+
     private Weapon selected = Weapon.BOMB;
+    private double regenTimer;
 
     /** @param bombs bombs the player starts with (from the player model) */
     public PlayerArsenal(int bombs) {
@@ -38,6 +44,26 @@ public final class PlayerArsenal {
         if (counts.get(selected) <= 0 && counts.get(weapon) > 0) {
             selected = weapon;
         }
+    }
+
+    /**
+     * Advances the free-bomb timer. Every {@link #BOMB_REGEN_SECONDS} the player gets one bomb, or
+     * {@link #BOMB_REGEN_WHEN_EMPTY} when out of bombs.
+     *
+     * @return the number of bombs granted by this call (0 most of the time)
+     */
+    public synchronized int tickBombRegen(double dt) {
+        if (dt <= 0) {
+            return 0;
+        }
+        regenTimer += dt;
+        if (regenTimer < BOMB_REGEN_SECONDS) {
+            return 0;
+        }
+        regenTimer = 0;
+        int amount = counts.get(Weapon.BOMB) > 0 ? 1 : BOMB_REGEN_WHEN_EMPTY;
+        add(Weapon.BOMB, amount);
+        return amount;
     }
 
     /** Tab: the next weapon in stock after the one in hand (stays put when nothing else is in stock). */

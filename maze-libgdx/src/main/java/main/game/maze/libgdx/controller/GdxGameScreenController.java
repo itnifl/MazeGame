@@ -480,6 +480,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
         tickPlayerBombs(dt);
+        worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         GdxWeaponSupport.tickEffects(worldModel, animatedEnemies, dt);
         // enemies die from bombs, lasers, sledgehammers and collapsing walls; credit each kill to its killer
