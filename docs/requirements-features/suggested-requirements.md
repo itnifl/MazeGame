@@ -382,3 +382,9 @@ These requirements have been implemented and verified.
 - **SR-288** *(Gameplay, UX)*: Sergeants fire through the player's shield bubble without any hit feedback beyond the tracer; add a distinct "shot absorbed" effect and a sound when the shield blocks a round.
 
 - **SR-289** *(Testing)*: Add an end-to-end smoke test that plays level 1 to the heart, takes the Next level action and asserts the level-2 world has zoned walls and sergeants, in both frontends (needs the headless JavaFX/libGDX harness of SR-18).
+
+- **SR-290a** *(Level design, UX)*: A level preview or editor (an Xtext DSL over `levels.ecore`, or a small in-game debug overlay listing the zones and their materials) so level designers see the result without playing up to the level; terminal command `/level <n>` to jump to a level for testing.
+
+- **SR-290b** *(Gameplay)*: Per-level backgrounds, music and enemy mixes (an optional `opponents` override per level) so levels can differ in more than walls; both belong in `levels.ecore` next to `threatCapacityFactor`.
+
+- **SR-290c** *(Accessibility)*: The wall sprites differ mostly by texture; add an optional high-contrast zone tint, since players with colour-vision differences may not tell stone from steel.

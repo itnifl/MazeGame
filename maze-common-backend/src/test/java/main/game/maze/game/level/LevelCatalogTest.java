@@ -53,8 +53,6 @@ class LevelCatalogTest {
             assertTrue(LevelSpec.strengthOf(second.zones().get(zone - 1)) > LevelSpec.strengthOf(second.zones().get(zone)),
                     "zone " + zone + " is weaker than the zone outside it");
         }
-        assertTrue(walls.get(0).breakableShare() < walls.get(3).breakableShare(),
-                "more of the inner walls can be broken");
     }
 
     @Test
@@ -103,10 +101,19 @@ class LevelCatalogTest {
     }
 
     @Test
-    @DisplayName("a level with zones needs exactly four of them")
-    void threeZonesRejected() {
-        IllegalStateException error = assertThrows(IllegalStateException.class, () -> test("three-zones.xmi"));
-        assertTrue(error.getMessage().contains("four zones"), error.getMessage());
+    @DisplayName("a level can have any number of zones")
+    void anyNumberOfZones() {
+        assertEquals(3, test("three-zones.xmi").level(2).zones().size());
+        assertEquals(3, test("three-zones.xmi").level(2).wallZones().size());
+        assertEquals(0, CATALOG.level(1).zones().size());
+    }
+
+    @Test
+    @DisplayName("level 2 shows its wall materials; level 1 keeps the classic look")
+    void wallMaterialsShown() {
+        assertTrue(CATALOG.level(2).showWallMaterials());
+        assertFalse(CATALOG.level(1).showWallMaterials());
+        assertTrue(CATALOG.level(2).inheritWeapons());
     }
 
     @Test
@@ -155,8 +162,7 @@ class LevelCatalogTest {
             double x = (wall.geometry.getStart().getX() + wall.geometry.getEnd().getX()) / 2;
             double y = (wall.geometry.getStart().getY() + wall.geometry.getEnd().getY()) / 2;
             if (main.game.maze.mazeworld.ZoneGeometry.forBoard(800, 600, 4).zoneOf(x, y) == 0) {
-                assertTrue(wall.material.id().equals("STEEL_BASIC") || wall.material.id().equals("STONE_BASIC"),
-                        "the outer zone is steel and stone: " + wall.material.id());
+                assertEquals("STEEL_BASIC", wall.material.id(), "the outer zone is steel");
             }
         }
     }

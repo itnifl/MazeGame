@@ -254,8 +254,10 @@ MUST be added to the shared core, not to a single frontend.
   and level progress from the shared `LevelProgress`; neither frontend keeps
   its own level state.
 - **GR-49**: Level 2 uses the same generated maze as level 1; only the wall
-  materials differ: four concentric zones around the heart, the outer zone the
-  strongest and the inner zone the weakest (`GameMazeWorld.assignZonedWalls`).
+  materials differ: concentric zones around the heart (four on level 2), the
+  outer zone the strongest and the inner zone the weakest
+  (`GameMazeWorld.assignZonedWalls`). A level with `showWallMaterials` draws each
+  wall with the sprite of its material in both frontends (`WallLook`).
 - **GR-50**: Level 2's threat capacity is the difficulty's maximum threat x the
   level's `threatCapacityFactor` (`LevelSpec.maxThreat`).
 - **GR-51**: Zombie sergeants never move. A sergeant that sees the player

@@ -90,4 +90,23 @@ class LevelProgressTest {
         assertEquals(5, progress.inheritedArsenal().count(Weapon.SLEDGEHAMMER));
         assertEquals(3, progress.inheritedArsenal().count(Weapon.BOMB));
     }
+
+    @Test
+    @DisplayName("a level can start from scratch, and levels beyond two work the same way")
+    void levelWithoutInheritedWeapons() {
+        LevelProgress custom = new LevelProgress(
+                LevelCatalogLoader.load(LevelCatalogLoader.DEFAULT_ECORE, "/xmi/levels/no-inherit.xmi"));
+        PlayerArsenal arsenal = new PlayerArsenal(3);
+        arsenal.add(Weapon.LASER_RIFLE, 4);
+
+        custom.advance(arsenal);
+        assertEquals(2, custom.number());
+        assertNull(custom.inheritedArsenal(), "level 2 asks for a fresh start");
+        assertTrue(custom.hasNext());
+
+        custom.advance(arsenal);
+        assertEquals(3, custom.number());
+        assertEquals(4, custom.inheritedArsenal().count(Weapon.LASER_RIFLE), "level 3 keeps the weapons");
+        assertFalse(custom.hasNext());
+    }
 }

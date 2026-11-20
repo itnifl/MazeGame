@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<levels:LevelModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:levels="http://main.game.maze/levels">
+  <levels number="1" name="One" threatCapacityFactor="1.0"/>
+  <levels number="2" name="Two" threatCapacityFactor="1.0" inheritWeapons="false"/>
+  <levels number="3" name="Three" threatCapacityFactor="2.0" showWallMaterials="true"/>
+</levels:LevelModel>

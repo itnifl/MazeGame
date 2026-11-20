@@ -2,7 +2,7 @@
 <!--
   The levels. Level 1 is the classic maze (random walls, the difficulty's threat capacity).
   Level 2 divides the maze into four concentric zones around the heart: the outer zone has the strongest
-  walls, the inner zone the weakest. It has a larger threat capacity, and stationary zombie sergeants
+  walls (steel), the inner zone the weakest (dirt and glass); every wall is drawn with its material. It has a larger threat capacity, and stationary zombie sergeants
   guard the heart: one on easy, two on normal, four on hard.
   Material ids refer to walls.xmi (GLASS_BASIC 5 HP, DIRT_BASIC 10, WOOD_BASIC 20, STONE_BASIC 40, STEEL_BASIC 80).
 -->
@@ -13,11 +13,11 @@
 
   <levels number="1" name="The Maze" threatCapacityFactor="1.0"/>
 
-  <levels number="2" name="The Sergeants' Keep" threatCapacityFactor="1.5">
-    <zones displayName="Outer wall" breakableShare="0.35" materialIds="STEEL_BASIC STONE_BASIC"/>
-    <zones displayName="Second ring" breakableShare="0.5" materialIds="STONE_BASIC WOOD_BASIC"/>
-    <zones displayName="Third ring" breakableShare="0.7" materialIds="WOOD_BASIC DIRT_BASIC"/>
-    <zones displayName="Inner ring" breakableShare="0.9" materialIds="DIRT_BASIC GLASS_BASIC"/>
+  <levels number="2" name="The Sergeants' Keep" threatCapacityFactor="1.5" showWallMaterials="true" inheritWeapons="true">
+    <zones displayName="Outer wall" materialIds="STEEL_BASIC"/>
+    <zones displayName="Second ring" materialIds="STONE_BASIC"/>
+    <zones displayName="Third ring" materialIds="WOOD_BASIC"/>
+    <zones displayName="Inner ring" materialIds="DIRT_BASIC GLASS_BASIC"/>
     <sergeant displayName="Zombie sergeant" health="200" sightRange="380.0"
         roundsPerBurst="5" roundDamage="3" roundIntervalSeconds="0.12" burstCooldownSeconds="1.2"
         sprite="/main/game/maze/zombie-sergeant.png"

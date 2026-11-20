@@ -132,6 +132,9 @@ public final class FxGameSessionBootstrapper {
                 config);
         player.setHitPoints(config.health());
 
+        // levels that show their wall materials draw each wall with its material's sprite
+        mazeCanvasRenderer.setWallMaterialLook(level.showWallMaterials() ? maze::wallMaterialIds : null);
+
         // Canvases — order matters for rendering (maze at index 0, overlays above)
         Canvas mazeCanvas = drawCanvasOrFallback(
                 () -> mazeCanvasRenderer.drawCanvas(maze.getMazeVectors()),

@@ -12,15 +12,16 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * One level of the game, as defined in {@code levels.xmi}.
  *
  * @param threatCapacityFactor multiplies the difficulty's maximum threat
- * @param zones                empty for the classic random walls, otherwise {@link #ZONE_COUNT} zones, outer first
+ * @param showWallMaterials    draw each wall with the sprite of its material
+ * @param inheritWeapons       start with the weapons of the previous level
+ * @param zones                empty for the classic random walls, otherwise one or more zones, outer first
  * @param sergeant             the guard of the heart, or null
  * @param sergeantPosts        sergeants per difficulty tier
  */
-public record LevelSpec(int number, String name, double threatCapacityFactor, List<ZoneSpec> zones,
+public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
+                        boolean inheritWeapons, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts) {
 
-    /** A level with zones is divided into this many concentric zones. */
-    public static final int ZONE_COUNT = 4;
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
     /** Same fixed seed as the classic walls ({@code GameMazeWorld}), so a layout is reproducible. */
@@ -62,7 +63,7 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, Li
      */
     public void applyWalls(GameMazeWorld world, int boardWidth, int boardHeight) {
         if (hasZones() && world != null) {
-            world.assignZonedWalls(WALL_SEED, ZoneGeometry.forBoard(boardWidth, boardHeight, ZONE_COUNT), wallZones());
+            world.assignZonedWalls(WALL_SEED, ZoneGeometry.forBoard(boardWidth, boardHeight, zones.size()), wallZones());
         }
     }
 

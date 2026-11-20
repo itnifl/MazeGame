@@ -6,11 +6,13 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import main.game.maze.App;
+import main.game.maze.common.graphics.WallLook;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.constants.StageConstants;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,18 @@ public final class FxMazeCanvasRenderer {
     private final Supplier<String> difficultyNameSupplier;
     private final Map<String, Image> wallImageCache = new HashMap<>();
     private final Map<String, Image> bgImageCache   = new HashMap<>();
+    private final Map<WallLook, Image> lookImageCache = new EnumMap<>(WallLook.class);
+    /** Material id of each wall, read on every drawing; null draws every wall the same (the classic look). */
+    private volatile Supplier<Map<Vector2D, String>> wallMaterialLook;
 
     public FxMazeCanvasRenderer(MazeVisualStyleConfig visualStyle, Supplier<String> difficultyNameSupplier) {
         this.visualStyle = visualStyle;
         this.difficultyNameSupplier = difficultyNameSupplier;
+    }
+
+    /** Draws each wall with the sprite of its material (levels that show their wall materials); null: all alike. */
+    public void setWallMaterialLook(Supplier<Map<Vector2D, String>> materialIds) {
+        this.wallMaterialLook = materialIds;
     }
 
     public Canvas drawCanvas(List<Vector2D> vectors) {
@@ -61,9 +71,19 @@ public final class FxMazeCanvasRenderer {
             wallType = WallRegistry.get(MazeVisualStyleConfig.DEFAULT.wallTypeIdForDifficultyName(difficultyNameSupplier.get()));
         }
 
-        Image wallImage = getOrLoadImage(wallType);
+        Image classicImage = getOrLoadImage(wallType);
+        var lookSupplier = wallMaterialLook;
+        Map<Vector2D, String> materialIds = lookSupplier != null ? lookSupplier.get() : Map.of();
 
         for (Vector2D vector : vectors) {
+            Image wallImage = classicImage;
+            WallLook look = WallLook.of(materialIds.get(vector));
+            if (look != null) {
+                Image materialImage = lookImage(look);
+                if (materialImage != null) {
+                    wallImage = materialImage;
+                }
+            }
             double startX = vector.getStart().getX();
             double startY = vector.getStart().getY();
             double endX   = vector.getEnd().getX();
@@ -90,6 +110,17 @@ public final class FxMazeCanvasRenderer {
                 gc.restore();
             }
         }
+    }
+
+    private Image lookImage(WallLook look) {
+        return lookImageCache.computeIfAbsent(look, key -> {
+            var url = FxMazeCanvasRenderer.class.getResource(key.imagePath());
+            if (url == null) {
+                LOGGER.warning("Could not find wall image: " + key.imagePath());
+                return null;
+            }
+            return new Image(url.toExternalForm());
+        });
     }
 
     private void drawBackground(GraphicsContext gc, double width, double height) {

@@ -36,8 +36,9 @@ public final class LevelProgress {
         if (!catalog.hasNext(number)) {
             throw new IllegalStateException("level " + number + " is the last level");
         }
-        inherited = arsenalAtTheEnd.snapshot();
         number++;
+        // a level can choose to start from scratch instead of keeping the weapons
+        inherited = current().inheritWeapons() ? arsenalAtTheEnd.snapshot() : null;
     }
 
     /** The weapons the current level starts with, or null on level 1 (the difficulty's starting bombs apply). */

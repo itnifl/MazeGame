@@ -260,6 +260,15 @@ public class GameMazeWorld {
         }
     }
 
+    /** The material id of every breakable wall, by wall (identity); solid walls are not in the map. */
+    public java.util.Map<Vector2D, String> wallMaterialIds() {
+        java.util.Map<Vector2D, String> ids = new java.util.IdentityHashMap<>();
+        for (BreakableWall wall : breakableWalls) {
+            ids.put(wall.geometry, wall.material.id());
+        }
+        return ids;
+    }
+
     public List<Vector2D> getMazeVectors() {
         return mazeVectors;
     }

@@ -23,10 +23,22 @@
         <details key="documentation" value="Multiplies the difficulty's maxThreat: the threat budget the level may fill with enemies."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="showWallMaterials" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Draw each wall with the sprite of its material (glass, dirt, wood, stone, steel) so the player can see what is strong and what is weak. Off: every wall looks the same."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritWeapons" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The player starts this level with the weapons they had at the end of the previous level. Off: they start with the difficulty's own bombs only."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="zones" upperBound="-1"
         eType="#//Zone" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Empty = the classic random walls. Otherwise exactly four concentric zones around the heart, outer zone first, each weaker than the one outside it."/>
+        <details key="documentation" value="Empty = the classic random walls. Otherwise one or more concentric zones around the heart, outer zone first, each weaker than the one outside it (any number)."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="sergeant" eType="#//Sergeant" containment="true"/>
@@ -41,9 +53,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="breakableShare" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1.0">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Share (0..1) of the zone's walls that can be broken; the rest are solid."/>
+        <details key="documentation" value="Share (0..1) of the zone's walls that can be broken (default all); the rest are solid and keep the classic wall look."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="materialIds" lowerBound="1" upperBound="-1"

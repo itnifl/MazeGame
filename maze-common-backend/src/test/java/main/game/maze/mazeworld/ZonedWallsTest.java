@@ -128,4 +128,31 @@ class ZonedWallsTest {
                 () -> new WallZoneSpec(1.5, List.of(new WallMaterialSpec("A", "A", 1))));
         assertThrows(IllegalArgumentException.class, () -> new WallZoneSpec(0.5, List.of()));
     }
+
+    @Test
+    @DisplayName("the world tells each breakable wall's material id; solid walls are left out")
+    void materialIdsPerWall() {
+        GameMazeWorld world = worldWithWallsAcrossTheBoard();
+        world.assignZonedWalls(7L, GEOMETRY, ZONES);
+        var ids = world.wallMaterialIds();
+        assertEquals(world.getBreakableWalls().size(), ids.size());
+        for (BreakableWall wall : world.getBreakableWalls()) {
+            assertEquals(wall.material.id(), ids.get(wall.geometry));
+        }
+    }
+
+    @Test
+    @DisplayName("a generated maze lists a material id for each wall segment, in drawing order, and follows a re-zoning")
+    void realMazeMaterialIdsAlignWithWalls() {
+        GameMazeWorld world = worldWithWallsAcrossTheBoard();
+        main.game.maze.mazeworld.generators.RealMaze maze =
+                new main.game.maze.mazeworld.generators.RealMaze(world, 800, 600);
+        assertEquals(maze.walls().size(), maze.wallMaterialIds().size());
+
+        world.assignZonedWalls(7L, GEOMETRY, ZONES);
+        maze.invalidateWalls();
+        assertEquals(maze.walls().size(), maze.wallMaterialIds().size());
+        long known = maze.wallMaterialIds().stream().filter(java.util.Objects::nonNull).count();
+        assertEquals(world.getBreakableWalls().size(), known, "every breakable wall has its material listed");
+    }
 }

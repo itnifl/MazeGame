@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
 import java.util.List;
+import java.util.Map;
+import main.game.maze.common.graphics.WallLook;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.mazeworld.Point2D;
@@ -23,6 +25,8 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
  * Renders the game world, including maze geometry, entities, and world-space overlays.
  */
 public final class GdxGameWorldView {
+
+    private Map<WallLook, Texture> wallLookTextures = Map.of();
 
     private final GdxExplosionRenderer explosionRenderer = new GdxExplosionRenderer();
 
@@ -118,20 +122,36 @@ public final class GdxGameWorldView {
                 context.activeGoalSize());
     }
 
+    /** Draws each wall with the sprite of its material (levels that show their wall materials); empty: all alike. */
+    public void setWallLookTextures(Map<WallLook, Texture> textures) {
+        this.wallLookTextures = textures == null ? Map.of() : Map.copyOf(textures);
+    }
+
     private void drawWallsTexture(RenderContext context, SpriteBatch batch, MazeArena maze) {
         if (context.wallTexture() == null) {
             return;
         }
         float thickness = context.wallThickness();
-        for (WallSegment wall : maze.walls()) {
+        List<WallSegment> walls = maze.walls();
+        List<String> materialIds = !wallLookTextures.isEmpty() && maze instanceof RealMaze realMaze
+                ? realMaze.wallMaterialIds() : List.of();
+        for (int i = 0; i < walls.size(); i++) {
+            WallSegment wall = walls.get(i);
+            Texture texture = context.wallTexture();
+            if (i < materialIds.size()) {
+                Texture materialTexture = wallLookTextures.get(WallLook.of(materialIds.get(i)));
+                if (materialTexture != null) {
+                    texture = materialTexture;
+                }
+            }
             if (wall.isHorizontal()) {
                 float x = Math.min(wall.x1, wall.x2);
                 float len = Math.abs(wall.x2 - wall.x1);
-                batch.draw(context.wallTexture(), x - thickness * 0.5f, wall.y1 - thickness * 0.5f, len + thickness, thickness);
+                batch.draw(texture, x - thickness * 0.5f, wall.y1 - thickness * 0.5f, len + thickness, thickness);
             } else {
                 float y = Math.min(wall.y1, wall.y2);
                 float len = Math.abs(wall.y2 - wall.y1);
-                batch.draw(context.wallTexture(), wall.x1 - thickness * 0.5f, y - thickness * 0.5f, thickness, len + thickness);
+                batch.draw(texture, wall.x1 - thickness * 0.5f, y - thickness * 0.5f, thickness, len + thickness);
             }
         }
     }

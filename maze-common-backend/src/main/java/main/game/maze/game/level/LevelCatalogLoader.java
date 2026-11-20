@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EObject;
 /**
  * Loads the level catalogue from the levels model with dynamic EMF: {@code levels.ecore} is read at
  * runtime and {@code levels.xmi} is validated against it. Rules the metamodel cannot state are checked
- * here and fail fast: level numbers run 1..n, a level has no zones or exactly four, each zone is weaker
+ * here and fail fast: level numbers run 1..n, each zone is weaker
  * than the one outside it, zone materials exist, and a level with a sergeant says how many per difficulty.
  */
 public final class LevelCatalogLoader {
@@ -75,9 +75,6 @@ public final class LevelCatalogLoader {
             }
             zones.add(new LevelSpec.ZoneSpec(DynamicModel.string(zone, "displayName"), share, materialIds));
         }
-        if (!zones.isEmpty() && zones.size() != LevelSpec.ZONE_COUNT) {
-            throw new IllegalStateException("level " + number + ": a level needs four zones or none, but has " + zones.size());
-        }
         for (int zone = 1; zone < zones.size(); zone++) {
             if (LevelSpec.strengthOf(zones.get(zone)) >= LevelSpec.strengthOf(zones.get(zone - 1))) {
                 throw new IllegalStateException("level " + number + ": zone " + (zone + 1)
@@ -105,7 +102,13 @@ public final class LevelCatalogLoader {
                 throw new IllegalStateException("level " + number + ": no sergeant count for " + missing);
             }
         }
-        return new LevelSpec(number, name, DynamicModel.decimal(level, "threatCapacityFactor"), zones, sergeant, posts);
+        double threatCapacityFactor = DynamicModel.decimal(level, "threatCapacityFactor");
+        if (!(threatCapacityFactor > 0)) {
+            throw new IllegalStateException("level " + number + ": threatCapacityFactor must be positive");
+        }
+        return new LevelSpec(number, name, threatCapacityFactor,
+                Boolean.TRUE.equals(DynamicModel.value(level, "showWallMaterials")),
+                !Boolean.FALSE.equals(DynamicModel.value(level, "inheritWeapons")), zones, sergeant, posts);
     }
 
     private static SergeantSpec sergeantOf(EObject sergeant) {

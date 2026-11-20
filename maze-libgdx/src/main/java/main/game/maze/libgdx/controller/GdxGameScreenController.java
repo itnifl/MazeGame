@@ -738,6 +738,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         // same generated maze; a level with zones only changes which walls are strong and which weak
         levelProgress.current().applyWalls(GdxWallDamageSupport.worldFrom(arena),
                 (int) arena.widthPx(), (int) arena.heightPx());
+        if (arena instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
+            realMaze.invalidateWalls();   // the walls have new materials
+        }
         return arena;
     }
 
@@ -806,6 +809,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         playerDeathTexture = textures.playerDeathTexture();
         goalTexture = textures.goalTexture();
         wallTexture = textures.wallTexture();
+        gameWorldView.setWallLookTextures(levelProgress.current().showWallMaterials() ? loadWallLookTextures() : null);
         backgroundTexture = textures.backgroundTexture();
     }
 
@@ -873,6 +877,19 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             assetService.dispose();
         }
         GdxGameLifecycleSupport.disposeGraphicsResources(batch, shapes, font);
+    }
+
+    /** The sprite of every wall material, for levels that draw each wall with its material. */
+    private java.util.Map<main.game.maze.common.graphics.WallLook, Texture> loadWallLookTextures() {
+        java.util.Map<main.game.maze.common.graphics.WallLook, Texture> textures =
+                new java.util.EnumMap<>(main.game.maze.common.graphics.WallLook.class);
+        for (var look : main.game.maze.common.graphics.WallLook.values()) {
+            Texture texture = loadTexture(look.imagePath());
+            if (texture != null) {
+                textures.put(look, texture);
+            }
+        }
+        return textures;
     }
 
     Texture loadTexture(String classpathPath) {
