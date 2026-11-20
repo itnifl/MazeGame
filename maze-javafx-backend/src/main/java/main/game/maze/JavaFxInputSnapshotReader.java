@@ -15,6 +15,12 @@ final class JavaFxInputSnapshotReader {
 
 
     InputFrame<KeyCode> read(Set<KeyCode> heldKeys, Set<KeyCode> edgeKeys, double mouseX, double mouseY, boolean leftMouseClicked) {
+        return read(heldKeys, edgeKeys, mouseX, mouseY, leftMouseClicked, false);
+    }
+
+    /** @param rightMouseClicked the secondary (right) button was clicked since the last frame */
+    InputFrame<KeyCode> read(Set<KeyCode> heldKeys, Set<KeyCode> edgeKeys, double mouseX, double mouseY,
+                             boolean leftMouseClicked, boolean rightMouseClicked) {
         // Compute edge keys using the shared EdgeKeyTracker for parity with libGDX
         Set<KeyCode> computedEdges = new LinkedHashSet<>();
         // We iterate over a union of previously known and currently held keys to ensure we catch all transitions
@@ -38,7 +44,8 @@ final class JavaFxInputSnapshotReader {
                 Set.copyOf(computedEdges),
                 mouseX,
                 mouseY,
-                leftMouseClicked);
+                leftMouseClicked,
+                rightMouseClicked);
         return frame;
     }
 

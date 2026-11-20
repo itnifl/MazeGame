@@ -44,6 +44,10 @@ runtime renderer is JavaFX, libGDX, or something else.
   the frontends apply to the struck enemy), `PickupSparkleEffect`, `HealFlashEffect` (the player flashing after a heart); `ShieldBubble` draws the power shield.
   `HealFeedback` times the heal flash and the green arrow (`pickups/heal-arrow.png`) rising over the player's head.
 - `input.command.SwitchWeaponCommand` / `GameAction.SWITCH_WEAPON`: Tab switches weapons in both frontends.
+- `input.MovementKeys<K>`: which keys move the player in which direction; each frontend builds one (Q/A left,
+  W up, E right, S/D down, arrows, numpad) and uses it for both the bindings and the movement.
+- `input.MouseButton` + `KeyBindingRegistry.bindMouse` + `InputFrame.secondaryMouseClicked()`: mouse buttons
+  bound to actions; a right click triggers `FLAME_ATTACK` (use the weapon in hand) in both frontends.
 - Resources: pickup sprites in `main/game/maze/pickups/` and weapon / pickup sounds in
   `main/game/maze/sounds/` (generated, see `tools/sprite-gen` and `tools/sound-gen`).
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and

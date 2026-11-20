@@ -26,10 +26,20 @@ public final class KeyBindingRegistry<K> {
 
     private final Map<GameAction, List<KeyBinding<K>>> bindings = new EnumMap<>(GameAction.class);
     private final Map<GameAction, GameCommand<K>> commands = new EnumMap<>(GameAction.class);
+    private final Map<GameAction, Set<MouseButton>> mouseBindings = new EnumMap<>(GameAction.class);
     private final List<GameAction> executionOrder = new ArrayList<>();
 
     public KeyBindingRegistry<K> bind(GameAction action, K key, BindingKind kind) {
         bindings.computeIfAbsent(action, ignored -> new ArrayList<>()).add(new KeyBinding<>(key, kind));
+        if (!executionOrder.contains(action)) {
+            executionOrder.add(action);
+        }
+        return this;
+    }
+
+    /** Triggers {@code action} when this mouse button is clicked (e.g. right click uses the weapon). */
+    public KeyBindingRegistry<K> bindMouse(GameAction action, MouseButton button) {
+        mouseBindings.computeIfAbsent(action, ignored -> java.util.EnumSet.noneOf(MouseButton.class)).add(button);
         if (!executionOrder.contains(action)) {
             executionOrder.add(action);
         }
@@ -67,6 +77,11 @@ public final class KeyBindingRegistry<K> {
     }
 
     public boolean isTriggered(GameAction action, InputFrame<K> frame) {
+        for (MouseButton button : mouseBindings.getOrDefault(action, Set.of())) {
+            if (frame.isMouseClicked(button)) {
+                return true;
+            }
+        }
         for (KeyBinding<K> binding : bindingsFor(action)) {
             boolean active = binding.kind() == BindingKind.EDGE
                     ? frame.isEdge(binding.key())

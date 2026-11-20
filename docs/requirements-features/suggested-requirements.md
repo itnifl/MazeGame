@@ -354,3 +354,15 @@ These requirements have been implemented and verified.
 - **SR-261** *(Observability)*: Log at `FINE` how many spawn points a level has after the wall clearance filter (`PickupField.spawnPointsOf`); a level with very few would spawn items in the same spots.
 
 - **SR-262** *(UX)*: Let the respawn delay show on the remains (e.g. the coal pile starts to smoke a few seconds before a zombie comes back), so the player can tell when an enemy is about to return.
+
+### Lives, weapons HUD and controls follow-ons (SR-263..SR-267)
+
+- **SR-268** *(MDD, Xtext)*: Add `startingLives` to the difficulty block of the Xtext DSL so generated `difficulties.xmi` files carry it; today it is set in the shipped XMI and defaults to 1.
+
+- **SR-269** *(Gameplay)*: Decide whether losing a life should cost score points (today only the HP damage penalty applies, and the death penalty only on game over) and whether pickups lying in the maze should be cleared on a respawn.
+
+- **SR-270** *(UX)*: Make the player blink during the respawn protection (both frontends), so it is clear why enemies do not hurt them for two seconds; today the shield bubble shows it.
+
+- **SR-271** *(12-Factor, UX)*: Let players rebind the movement and attack keys (a key map in the user's config, read at start), since D now moves down and some players expect WASD.
+
+- **SR-272** *(Observability)*: Count lives lost and extra lives picked up per level, next to the kill statistics (SR-252).

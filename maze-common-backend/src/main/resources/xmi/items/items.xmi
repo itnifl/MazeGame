@@ -18,27 +18,33 @@
   <items kind="BOMB" displayName="Bomb"
       sprite="/main/game/maze/pickups/bomb.png"
       pickupSound="/main/game/maze/sounds/pickup-bomb.wav"
-      spawnWeight="1" amount="1"/>
+      spawnWeight="3" amount="1"/>
 
   <items kind="LASER_RIFLE" displayName="Laser rifle"
       sprite="/main/game/maze/pickups/laser-rifle.png"
       pickupSound="/main/game/maze/sounds/pickup-laser.wav"
       useSound="/main/game/maze/sounds/laser-fire.wav"
-      spawnWeight="1" amount="5" damage="60" range="600.0"/>
+      spawnWeight="3" amount="5" damage="60" range="600.0"/>
 
   <items kind="SLEDGEHAMMER" displayName="Sledgehammer"
       sprite="/main/game/maze/pickups/sledgehammer.png"
       pickupSound="/main/game/maze/sounds/pickup-sledgehammer.wav"
       useSound="/main/game/maze/sounds/sledgehammer-swing.wav"
-      spawnWeight="1" amount="5" damage="120" range="58.0"/>
+      spawnWeight="3" amount="5" damage="120" range="58.0"/>
 
   <items kind="SHIELD" displayName="Power shield"
       sprite="/main/game/maze/pickups/shield.png"
       pickupSound="/main/game/maze/sounds/pickup-shield.wav"
-      spawnWeight="1" durationSeconds="5.0"/>
+      spawnWeight="3" durationSeconds="5.0"/>
 
   <items kind="HEART" displayName="Small heart"
       sprite="/main/game/maze/pickups/heart.png"
       pickupSound="/main/game/maze/sounds/pickup-heart.wav"
-      spawnWeight="1" amount="20"/>
+      spawnWeight="3" amount="20"/>
+
+  <!-- rare: one in sixteen items -->
+  <items kind="EXTRA_LIFE" displayName="Extra life"
+      sprite="/main/game/maze/pickups/extra-life.png"
+      pickupSound="/main/game/maze/sounds/pickup-extra-life.wav"
+      spawnWeight="1" amount="1"/>
 </items:PickupModel>

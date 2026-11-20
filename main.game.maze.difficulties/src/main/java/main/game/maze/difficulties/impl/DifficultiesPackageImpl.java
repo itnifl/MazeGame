@@ -254,6 +254,16 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 	 * @generated
 	 */
 	@Override
+	public EAttribute getDifficulty_StartingLives() {
+		return (EAttribute)difficultyEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getNormalDifficulty() {
 		return normalDifficultyEClass;
 	}
@@ -349,6 +359,7 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		createEAttribute(difficultyEClass, DIFFICULTY__MONSTERS_MOVEMENT_SPEED_MULTIPLIER);
 		createEAttribute(difficultyEClass, DIFFICULTY__MONSTERS_DAMAGE_MULTIPLIER);
 		createEAttribute(difficultyEClass, DIFFICULTY__MAX_THREAT);
+		createEAttribute(difficultyEClass, DIFFICULTY__STARTING_LIVES);
 
 		normalDifficultyEClass = createEClass(NORMAL_DIFFICULTY);
 
@@ -407,6 +418,7 @@ public class DifficultiesPackageImpl extends EPackageImpl implements Difficultie
 		initEAttribute(getDifficulty_MonstersMovementSpeedMultiplier(), ecorePackage.getEDouble(), "monstersMovementSpeedMultiplier", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDifficulty_MonstersDamageMultiplier(), ecorePackage.getEDouble(), "monstersDamageMultiplier", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDifficulty_MaxThreat(), ecorePackage.getEInt(), "maxThreat", null, 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDifficulty_StartingLives(), ecorePackage.getEInt(), "startingLives", "1", 0, 1, Difficulty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(normalDifficultyEClass, NormalDifficulty.class, "NormalDifficulty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

@@ -23,6 +23,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute difficulty-module.ecore#//Difficulty/monstersMovementSpeedMultiplier"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute difficulty-module.ecore#//Difficulty/monstersDamageMultiplier"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute difficulty-module.ecore#//Difficulty/maxThreat"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute difficulty-module.ecore#//Difficulty/startingLives"/>
     </genClasses>
     <genClasses ecoreClass="difficulty-module.ecore#//NormalDifficulty"/>
     <genClasses ecoreClass="difficulty-module.ecore#//HardDifficulty"/>

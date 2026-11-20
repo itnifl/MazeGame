@@ -5,6 +5,7 @@ import main.game.maze.libgdx.model.RemainsVisual;
 import main.game.maze.libgdx.model.ExplosionVisual;
 import main.game.maze.libgdx.helper.GdxWeaponSupport;
 import main.game.maze.game.items.ArsenalHud;
+import main.game.maze.game.items.WeaponHud;
 import main.game.maze.common.graphics.fire.ShieldBubble;
 import java.util.ArrayList;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -178,7 +179,8 @@ public final class GdxGameRenderCoordinator {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
-                ArsenalHud.text(worldModel.arsenal(), worldModel.shield()),
+                ArsenalHud.statusText(worldModel.shield()),   // weapons are in the weapons HUD
+                WeaponHud.model(worldModel.arsenal(), worldModel.pickupField().catalog(), worldModel.lives().remaining()),
                 input.scoreBreakdown(),
                 terminalController.isActive(),
                 terminalController.bufferText(),

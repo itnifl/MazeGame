@@ -59,6 +59,8 @@ public class PlayerCharacter extends Character
     private final Map<VectorFacing, Image> directionalImages = new EnumMap<>(VectorFacing.class);
     private Image deathImage;
     private volatile boolean deadVisualActive = false;
+    /** The sprite's draw order while alive, restored when the player respawns. */
+    private double aliveViewOrder = 0;
 
     public PlayerCharacter(Node characterGraphics, double x, double y, ProgressBar hpBar) {
         this(characterGraphics, x, y, hpBar, null);
@@ -172,10 +174,39 @@ public class PlayerCharacter extends Character
         // layoutBounds, so the death sprite already grows symmetrically in place.
         // No additional layoutX/Y translation is needed (and adding one shifts
         // the visual off the player's actual position).
+        if (graphics.getViewOrder() != DEAD_PLAYER_VIEW_ORDER) {
+            aliveViewOrder = graphics.getViewOrder();
+        }
         graphics.setScaleX(DEAD_PLAYER_SCALE);
         graphics.setScaleY(DEAD_PLAYER_SCALE);
 
         graphics.setViewOrder(DEAD_PLAYER_VIEW_ORDER);
+    }
+
+    /**
+     * Back to life after losing a life: full health at (x, y) (top-left), the normal sprite, size and
+     * draw order. Call on the JavaFX Application Thread.
+     */
+    public void revive(double x, double y) {
+        deadVisualActive = false;
+        hitPoints.set(getMaxHitPoints());
+        Node graphics = getCharacterGraphics();
+        if (graphics != null) {
+            graphics.setScaleX(1);
+            graphics.setScaleY(1);
+            graphics.setViewOrder(aliveViewOrder);
+            Image alive = directionalImages.getOrDefault(facing, directionalImages.get(VectorFacing.RIGHT));
+            if (alive != null && graphics instanceof ImageView) {
+                setCharacterImage(alive);
+            }
+        }
+        teleportTo(x, y);
+        UiScheduler.get().runLater(this::updateHpBarProgress);
+    }
+
+    /** Whether the death sprite is showing (dead, not yet respawned). */
+    public boolean isShowingDeath() {
+        return deadVisualActive;
     }
 
     private class HappyAction implements ICharacterAction {

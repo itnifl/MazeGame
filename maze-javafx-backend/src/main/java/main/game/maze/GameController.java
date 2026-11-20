@@ -8,6 +8,9 @@ import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.game.score.PlayerIds;
+import main.game.maze.game.session.PlayerLives;
+import main.game.maze.interfaces.IDeathSubscriber;
+import main.game.maze.javafx.render.FxWeaponHudView;
 import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
 import main.game.maze.javafx.render.FxExplosionView;
 import main.game.maze.javafx.render.FxRemainsLayer;
@@ -141,6 +144,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     private double mouseX;
     private double mouseY;
     private boolean leftMouseClicked;
+    /** Right click since the last frame: uses the weapon in hand. */
+    private boolean rightMouseClicked;
 
     private final JavaFxInputCommandContext.ActionSink actionSink = new JavaFxInputCommandContext.ActionSink() {
         @Override public void showHighScore()                       { GameController.this.showHighScore(); }
@@ -175,6 +180,29 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final FxResurrectionScheduler resurrections = new FxResurrectionScheduler();
 
     // --- pickups, weapons and kill credit (shared rules, same as libGDX) --------------------------
+    private final PlayerLives lives = new PlayerLives(1);
+    private final FxWeaponHudView weaponHud = new FxWeaponHudView(() -> root);
+    private final FxPlayerLifeController lifeController = new FxPlayerLifeController(lives, new FxPlayerLifeController.Host() {
+        @Override public PlayerCharacter player()          { return playerCharacter; }
+        @Override public void stopPlayerMovement()         { GameController.this.stopPlayerMovement(); }
+        @Override public void resumePlayerMovement() {
+            if (renderCoordinator != null && playerCharacter != null) {
+                renderCoordinator.updateCameraFollow(playerCharacter);   // the player is back at the start
+            }
+            movementLoopCoordinator.startMovementTimer();
+        }
+        @Override public void protect(double seconds)      { weapons.protect(seconds); }
+        @Override public void showMessage(String text)     { setHudMessage(text); }
+        @Override public void livesChanged()               { runOnFx(GameController.this::updateBombHud); }
+        @Override public IDeathSubscriber gameOver()       { return gameOverAction; }
+        @Override public void after(double seconds, Runnable action) {
+            runOnFx(() -> {
+                PauseTransition wait = new PauseTransition(Duration.seconds(seconds));
+                wait.setOnFinished(event -> action.run());
+                wait.play();
+            });
+        }
+    });
     private final FxWeaponController weapons = new FxWeaponController(new FxWeaponController.Host() {
         @Override public PlayerCharacter player()             { return playerCharacter; }
         @Override public Pane board()                         { return gameBoard; }
@@ -287,11 +315,16 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void recordKill(ICanDie victim, String victimTypeId, int points) {
         if (weapons.recordKill(victim, victimTypeId, points)) {
             // the live score otherwise only refreshes on a move: show the kill bonus at once
-            if (javafx.application.Platform.isFxApplicationThread()) {
-                refreshScoreHud();
-            } else {
-                javafx.application.Platform.runLater(this::refreshScoreHud);
-            }
+            runOnFx(this::refreshScoreHud);
+        }
+    }
+
+    /** Runs now on the JavaFX Application Thread, or posts it there from another thread. */
+    private static void runOnFx(Runnable action) {
+        if (javafx.application.Platform.isFxApplicationThread()) {
+            action.run();
+        } else {
+            javafx.application.Platform.runLater(action);
         }
     }
 
@@ -431,10 +464,11 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final double ARSENAL_HUD_FONT_PX = 14;
 
     private void updateBombHud() {
+        weaponHud.show(weapons.hudModel());
         if (bombsLabel == null) {
             return;
         }
-        String text = weapons.hudText();
+        String text = weapons.statusText();   // weapons and counts are in the weapons HUD
         bombsLabel.setText(text);
         // shrink the arsenal line to the score panel so no count is cut off
         javafx.scene.text.Text probe = new javafx.scene.text.Text(text);
@@ -570,7 +604,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         LOGGER.fine("Game has been clicked");
         mouseX = event.getX();
         mouseY = event.getY();
-        leftMouseClicked = true;
+        if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+            rightMouseClicked = true;
+        } else {
+            leftMouseClicked = true;
+        }
         mouseCoordsLabel.setText("X: " + event.getX() + ", Y: " + event.getY());
         // Reclaim keyboard focus whenever the player clicks the game area so that
         // key events keep reaching handleKeyPressed after any UI element was clicked.
@@ -612,10 +650,12 @@ public class GameController implements Initializable, EnemyRegistrar {
         winGameAction  = new WinGameAction(playerCharacter, model.playerMoveCount(), root, () -> {});
         gameOverAction.setBaseScore(baseScore);
         winGameAction.setBaseScore(baseScore);
-        playerCharacter.addDeathNotificationSubscriber(gameOverAction);
+        // deaths go through the lives: respawn at the start while lives are left, game over on the last
+        playerCharacter.addDeathNotificationSubscriber(lifeController);
+        lifeController.startGame(playerCharacter, PlayerLives.startingFor(startDifficulty));
 
         // new game: fresh arsenal, no items, shield or kills yet
-        weapons.startGame(playerCharacter, maze);
+        weapons.startGame(playerCharacter, maze, lives);
 
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);
@@ -673,8 +713,10 @@ public class GameController implements Initializable, EnemyRegistrar {
     private void handlePlayerMovementTick(long now) {
         if (playerCharacter == null || playerCharacter.getCharacterGraphics() == null) return;
         ensureGameBoardFocus();
-        currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
+        currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked,
+                rightMouseClicked);
         leftMouseClicked = false;
+        rightMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
         weapons.tick(now);
     }
@@ -767,6 +809,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void dispose() {
         clearActivePlayerBombs();
         weapons.dispose();
+        weaponHud.clear();
         resurrections.cancelAll();
         stopComputerCharacters();
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();

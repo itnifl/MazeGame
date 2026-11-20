@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.difficulties.Difficulty#getMonstersMovementSpeedMultiplier <em>Monsters Movement Speed Multiplier</em>}</li>
  *   <li>{@link main.game.maze.difficulties.Difficulty#getMonstersDamageMultiplier <em>Monsters Damage Multiplier</em>}</li>
  *   <li>{@link main.game.maze.difficulties.Difficulty#getMaxThreat <em>Max Threat</em>}</li>
+ *   <li>{@link main.game.maze.difficulties.Difficulty#getStartingLives <em>Starting Lives</em>}</li>
  * </ul>
  *
  * @see main.game.maze.difficulties.DifficultiesPackage#getDifficulty()
@@ -127,5 +128,27 @@ public interface Difficulty extends EObject {
 	 * @generated
 	 */
 	void setMaxThreat(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Starting Lives</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Starting Lives</em>' attribute.
+	 * @see #setStartingLives(int)
+	 * @see main.game.maze.difficulties.DifficultiesPackage#getDifficulty_StartingLives()
+	 * @model default="1"
+	 * @generated
+	 */
+	int getStartingLives();
+
+	/**
+	 * Sets the value of the '{@link main.game.maze.difficulties.Difficulty#getStartingLives <em>Starting Lives</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Starting Lives</em>' attribute.
+	 * @see #getStartingLives()
+	 * @generated
+	 */
+	void setStartingLives(int value);
 
 } // Difficulty

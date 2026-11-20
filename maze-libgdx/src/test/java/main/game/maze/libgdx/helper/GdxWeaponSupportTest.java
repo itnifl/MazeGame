@@ -192,6 +192,7 @@ class GdxWeaponSupportTest {
             case SLEDGEHAMMER -> assertEquals(5, world.arsenal().count(Weapon.SLEDGEHAMMER));
             case SHIELD -> assertTrue(world.shield().isActive());
             case HEART -> assertEquals(100, combat.currentHitPointsAsInt());
+            case EXTRA_LIFE -> assertEquals(2, world.lives().remaining(), "an extra life adds one");
         }
     }
 

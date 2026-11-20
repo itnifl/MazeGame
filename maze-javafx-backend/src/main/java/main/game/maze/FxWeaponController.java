@@ -24,6 +24,8 @@ import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.PlayerArsenal;
 import main.game.maze.game.items.PowerShield;
 import main.game.maze.game.items.Weapon;
+import main.game.maze.game.items.WeaponHud;
+import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.score.KillLedger;
 import main.game.maze.game.score.PlayerIds;
 import main.game.maze.javafx.render.FxExplosionView;
@@ -80,6 +82,7 @@ public final class FxWeaponController {
     private final FxPickupLayer pickupLayer;
     private final HealFeedback healFeedback = new HealFeedback();
     private PlayerArsenal arsenal = new PlayerArsenal(0);
+    private PlayerLives lives = new PlayerLives(1);
     private List<Point2D> spawnPoints = List.of();
     private long lastTickNanos = -1;
 
@@ -95,7 +98,8 @@ public final class FxWeaponController {
     }
 
     /** New game: the difficulty's bombs, no items, shield or kills yet; items spawn in this level's corridors. */
-    public void startGame(PlayerCharacter player, GameMazeWorld world) {
+    public void startGame(PlayerCharacter player, GameMazeWorld world, PlayerLives lives) {
+        this.lives = lives;
         arsenal = new PlayerArsenal(player.getStartingBombs());
         pickupField.clear();
         shield.reset();
@@ -151,7 +155,7 @@ public final class FxWeaponController {
         pickupField.tick(dt, host.boardWidth(), spawnPoints, center[0], center[1]);
         for (Pickup pickup : pickupField.collect(center[0], center[1], HALF_PLAYER)) {
             PickupSpec spec = pickupField.catalog().spec(pickup.kind());
-            PickupEffects.apply(spec, arsenal, shield, player::heal, player.getMaxHitPoints());
+            PickupEffects.apply(spec, arsenal, shield, player::heal, player.getMaxHitPoints(), lives);
             AudioEngine.get().play(spec.pickupSound());
             if (pickup.kind() == PickupKind.HEART) {
                 healFeedback.trigger();   // flash + arrow over the head
@@ -184,6 +188,21 @@ public final class FxWeaponController {
     /** Points the local player earned for kills this game. */
     public int localKillPoints() {
         return killLedger.pointsFor(PlayerIds.LOCAL_PLAYER);
+    }
+
+    /** The weapons HUD (top-left): weapon icons, the one in hand, and the lives. */
+    public WeaponHud.Model hudModel() {
+        return WeaponHud.model(arsenal, pickupField.catalog(), lives.remaining());
+    }
+
+    /** No damage for a while, e.g. right after a respawn. */
+    public void protect(double seconds) {
+        shield.activate(seconds);
+    }
+
+    /** The score panel line: the shield countdown only (weapons are in the weapons HUD). */
+    public String statusText() {
+        return ArsenalHud.statusText(shield);
     }
 
     /** The arsenal HUD line, e.g. {@code Bombs 3  [Laser 5]  Sledge 0  Shield 4s}. */

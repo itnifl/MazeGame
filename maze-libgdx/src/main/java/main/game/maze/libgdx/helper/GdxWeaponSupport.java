@@ -64,7 +64,7 @@ public final class GdxWeaponSupport {
         PickupCatalog catalog = model.pickupField().catalog();
         for (Pickup pickup : taken) {
             PickupSpec spec = catalog.spec(pickup.kind());
-            PickupEffects.apply(spec, model.arsenal(), model.shield(), combat::heal, combat.maxHitPoints());
+            PickupEffects.apply(spec, model.arsenal(), model.shield(), combat::heal, combat.maxHitPoints(), model.lives());
             AudioEngine.get().play(spec.pickupSound());
             if (pickup.kind() == PickupKind.HEART) {
                 model.healFeedback().trigger();   // flash + arrow over the head (healFlash, healArrow)

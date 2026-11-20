@@ -6,9 +6,11 @@ public enum PickupKind {
     LASER_RIFLE,
     SLEDGEHAMMER,
     SHIELD,
-    HEART;
+    HEART,
+    /** One more life (respawn at the start when the player dies). */
+    EXTRA_LIFE;
 
-    /** The weapon this pickup refills, or null for shield / heart. */
+    /** The weapon this pickup refills, or null for shield / heart / extra life. */
     public Weapon weapon() {
         return switch (this) {
             case BOMB -> Weapon.BOMB;

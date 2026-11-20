@@ -7,6 +7,7 @@ import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.graphics.fire.PuffEffect;
 import main.game.maze.common.remains.RemainsLedger;
 import main.game.maze.game.items.PickupCatalogLoader;
+import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.PickupField;
 import main.game.maze.game.items.PlayerArsenal;
 import main.game.maze.game.items.PowerShield;
@@ -64,6 +65,7 @@ public final class GameWorldModel {
     private final KillLedger killLedger = new KillLedger();
     private final List<ActiveEffect> effects = new ArrayList<>();
     private final HealFeedback healFeedback = new HealFeedback();
+    private final PlayerLives lives = new PlayerLives(1);
     private PlayerArsenal arsenal = new PlayerArsenal(0);
     private final List<Score> highScoreRows = new ArrayList<>();
 
@@ -287,6 +289,11 @@ public final class GameWorldModel {
 
     public PowerShield shield() {
         return shield;
+    }
+
+    /** The player's lives this game (respawn at the start while lives are left). */
+    public PlayerLives lives() {
+        return lives;
     }
 
     /** The arrow over the player's head and the flash after a heart is picked up. */

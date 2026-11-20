@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import main.game.maze.game.session.PlayerLives;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
@@ -276,9 +277,10 @@ class PickupsTest {
         PlayerArsenal arsenal = new PlayerArsenal(0);
         PowerShield shield = new PowerShield(() -> 0L);
         List<Integer> healed = new ArrayList<>();
+        PlayerLives lives = new PlayerLives(2);
 
         for (PickupKind kind : PickupKind.values()) {
-            PickupEffects.apply(CATALOG.spec(kind), arsenal, shield, healed::add, 150);
+            PickupEffects.apply(CATALOG.spec(kind), arsenal, shield, healed::add, 150, lives);
         }
 
         assertEquals(1, arsenal.count(Weapon.BOMB));
@@ -286,6 +288,51 @@ class PickupsTest {
         assertEquals(5, arsenal.count(Weapon.SLEDGEHAMMER));
         assertTrue(shield.isActive());
         assertEquals(List.of(30), healed, "a small heart restores 20 % of max health");
+        assertEquals(3, lives.remaining(), "an extra life adds one life");
+    }
+
+    @Test
+    @DisplayName("the extra life is in the model, rarer than the other items")
+    void extraLifeIsRare() {
+        PickupSpec extraLife = CATALOG.spec(PickupKind.EXTRA_LIFE);
+        assertEquals(1, extraLife.amount());
+        for (PickupKind kind : PickupKind.values()) {
+            if (kind != PickupKind.EXTRA_LIFE) {
+                assertTrue(CATALOG.spec(kind).spawnWeight() > extraLife.spawnWeight(), kind + " is more common");
+            }
+        }
+        assertEquals(null, PickupKind.EXTRA_LIFE.weapon());
+    }
+
+    @Test
+    @DisplayName("weapons HUD: the weapons in stock and the one in hand, with their icons; Tab moves the highlight")
+    void weaponHudSlots() {
+        PlayerArsenal arsenal = new PlayerArsenal(2);
+        List<WeaponHud.Slot> slots = WeaponHud.slots(arsenal, CATALOG);
+        assertEquals(1, slots.size(), "only bombs so far");
+        assertEquals(new WeaponHud.Slot(Weapon.BOMB, 2, true, CATALOG.spec(PickupKind.BOMB).sprite()), slots.get(0));
+
+        arsenal.add(Weapon.SLEDGEHAMMER, 5);
+        slots = WeaponHud.slots(arsenal, CATALOG);
+        assertEquals(List.of(Weapon.BOMB, Weapon.SLEDGEHAMMER), slots.stream().map(WeaponHud.Slot::weapon).toList());
+        assertTrue(slots.get(0).selected());
+        arsenal.cycle();
+        slots = WeaponHud.slots(arsenal, CATALOG);
+        assertFalse(slots.get(0).selected());
+        assertTrue(slots.get(1).selected(), "the highlight follows Tab");
+
+        PlayerArsenal empty = new PlayerArsenal(0);
+        assertEquals(List.of(new WeaponHud.Slot(Weapon.BOMB, 0, true, CATALOG.spec(PickupKind.BOMB).sprite())),
+                WeaponHud.slots(empty, CATALOG), "the empty weapon in hand still shows");
+        assertEquals(CATALOG.spec(PickupKind.EXTRA_LIFE).sprite(), WeaponHud.lifeIcon(CATALOG));
+
+        WeaponHud.Model model = WeaponHud.model(arsenal, CATALOG, 3);
+        assertEquals(3, model.lives());
+        assertEquals(2, model.slots().size());
+        assertTrue(WeaponHud.slotX(1) >= WeaponHud.slotX(0) + WeaponHud.ICON_SIZE, "icons do not overlap");
+        assertTrue(WeaponHud.livesX(2) >= WeaponHud.slotX(1) + WeaponHud.ICON_SIZE, "lives after the icons");
+        assertTrue(WeaponHud.panelWidth(2) >= WeaponHud.livesX(2) + WeaponHud.LIVES_CELL_WIDTH);
+        assertTrue(WeaponHud.panelWidth(3) > WeaponHud.panelWidth(1), "the panel grows with the weapons");
     }
 
     @Test
@@ -314,6 +361,10 @@ class PickupsTest {
         PlayerArsenal empty = new PlayerArsenal(0);
         assertEquals("[Bombs 0]", ArsenalHud.text(empty, null), "the weapon in hand shows even when empty");
 
+        assertEquals("Shield 4s", ArsenalHud.statusText(shield), "the score panel shows only the shield");
+        assertEquals("", ArsenalHud.statusText(new PowerShield(now::get)), "nothing without a shield");
+        assertTrue(ArsenalHud.statusText(shield).length() <= "Shield 99s".length(),
+                "short whatever the player carries, so it always fits the score panel");
         assertEquals(1f, ArsenalHud.fitScale(100, 150), "fits: unchanged");
         assertEquals(0.75f, ArsenalHud.fitScale(200, 150), 1e-6f, "too wide: shrunk to fit");
         assertEquals(ArsenalHud.MIN_FIT_SCALE, ArsenalHud.fitScale(1_000, 150), "never unreadably small");

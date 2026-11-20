@@ -102,6 +102,15 @@ class PlayerStateTest {
     }
 
     @Test
+    void teleportMovesWithoutCollisionChecksAndKeepsTheSize() {
+        PlayerState p = new PlayerState(24f, 24f, 16f);
+        p.teleportTo(200f, 120f);
+        assertEquals(200f, p.x());
+        assertEquals(120f, p.y());
+        assertEquals(8f, p.halfSize());
+    }
+
+    @Test
     void facingStartsRightAndFollowsTheDominantMoveAxis() {
         SampleMaze m = maze();
         PlayerState p = new PlayerState(m.startX(), m.startY(), 16f);

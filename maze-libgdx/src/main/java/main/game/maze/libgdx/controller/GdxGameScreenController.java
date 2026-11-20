@@ -2,6 +2,7 @@ package main.game.maze.libgdx.controller;
 
 import main.game.maze.libgdx.helper.GdxWeaponSupport;
 import main.game.maze.game.score.PlayerIds;
+import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.PickupKind;
 import main.game.maze.game.items.PickupCatalog;
@@ -149,6 +150,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     /** Corridor points of the current level where items may spawn (world space). */
     private List<Point2D> pickupSpawnPoints = List.of();
     private int playerBombDamage;
+    /** Where the player respawns after losing a life (the level start). */
+    private float playerStartX;
+    private float playerStartY;
     private final List<PendingPlayerBomb> pendingPlayerBombs = new ArrayList<>();
     private final List<ActivePlayerFireBlast> activePlayerFireBlasts = new ArrayList<>();
     private static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
@@ -584,8 +588,26 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 worldModel,
                 dt,
                 GdxGameScreenMetrics.DEATH_DISPLAY_DELAY_SECONDS,
+                this::respawnPlayer,
                 () -> session.setMode(GameMode.GAME_OVER),
                 gameAudioCoordinator::switchToGameOverMusic);
+    }
+
+    /**
+     * The player died: with lives left they come back at the start position with full health and a
+     * short spawn protection; returns false when that was the last life (game over).
+     */
+    boolean respawnPlayer() {
+        if (player == null || !worldModel.lives().loseLife()) {
+            return false;
+        }
+        player.teleportTo(playerStartX, playerStartY);
+        combatState.reset(combatState.maxHitPoints());
+        combatFrameDead = false;
+        worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);
+        int left = worldModel.lives().remaining();
+        flashStatus(left == 1 ? "Last life!" : "Life lost - " + left + " lives left", 2.5f);
+        return true;
     }
 
     boolean shouldTriggerWin() {
@@ -712,7 +734,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         maze = applied.maze();
         watchWallCollapses(GdxWallDamageSupport.worldFrom(maze));
         player = applied.player();
+        playerStartX = player.x();
+        playerStartY = player.y();
         viewport = applied.viewport();
+        worldModel.lives().reset(PlayerLives.startingFor(selected));
         worldModel.resetArsenal(Math.max(0, startFlow.startState().runtimeModel().playerBombCount()));
         worldModel.pickupField().clear();
         worldModel.shield().reset();

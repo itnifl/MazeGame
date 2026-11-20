@@ -238,3 +238,14 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-43**: A killed enemy that can come back (zombies) respawns 15 seconds
   after its death, in both frontends; enemies that cannot come back (ghosts,
   pumpkin bombers) stay dead.
+- **GR-44**: The player starts with the difficulty's lives (easy 3, normal 2,
+  hard 1). Dying with lives left costs one life: the dead player is shown for
+  3 seconds, then respawns at the level start with full health and 2 seconds
+  of protection; weapons, items, kills and score carry over. Losing the last
+  life ends the game as before.
+- **GR-45**: The extra-life item spawns with the other items (spawn weight 1
+  against 3 for each other item) and gives one more life.
+- **GR-46**: The weapons HUD (top-left) lists the weapons in stock and the one
+  in hand, highlighted, plus the lives left.
+- **GR-47**: Movement keys: arrows, numpad, Q/A left, W up, E right, S/D down.
+  Space or a right click uses the weapon in hand; Tab switches weapons.

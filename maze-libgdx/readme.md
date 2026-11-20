@@ -188,7 +188,11 @@ mvn test -pl maze-libgdx
   `GdxWeaponSupport.healFlash` / `healArrow` show the flash and the rising arrow over the player (`HealFeedback`).
 - `GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(..., KillLedger)` credits each kill to its killer;
   `EnemySpawn.killPoints` comes from `KillScoring` (the enemy's danger). The HUD shows the arsenal (`ArsenalHud`).
-- Tab is bound to `SwitchWeaponCommand`; Space uses the weapon in hand.
+- Tab is bound to `SwitchWeaponCommand`; Space or a right click uses the weapon in hand; movement keys come from
+  `GdxMovementKeys` (arrows, numpad, Q/A, W, E, S/D).
+- `GdxHudView` draws the weapons HUD (top-left) from the shared `WeaponHud` model.
+- Lives: `GameWorldModel.lives()`; the death sequence asks `GdxGameScreenController.respawnPlayer()` first, which
+  puts the player back at the start (`PlayerState.teleportTo`) with full health and spawn protection while lives are left.
 
 ## Test Suite Documentation
 

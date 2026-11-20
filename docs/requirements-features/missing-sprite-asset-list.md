@@ -165,6 +165,7 @@ into `main/game/maze/pickups/` (64x64, transparent; drawn as large as the player
 | Sledgehammer | ✅ `sledgehammer.png` | also drawn in the player's hands while selected |
 | Shield cube | ✅ `shield.png` | glowing blue cube |
 | Heart | ✅ `heart.png` | red heart filling its frame |
+| Extra life | ✅ `extra-life.png` | gold "+1" medallion; also the lives icon in the weapons HUD |
 | Heal arrow | ✅ `heal-arrow.png` | green arrow over the player's head after a heart (`HealFeedback.ARROW_SPRITE`) |
 
 The laser beam, sledgehammer swing, hit reactions, pickup sparkle and shield bubble are drawn

@@ -33,6 +33,7 @@ public final class InputSnapshotReader {
                 Set.copyOf(edge),
                 Gdx.input.getX(),
                 Gdx.input.getY(),
-                Gdx.input.isButtonJustPressed(Buttons.LEFT));
+                Gdx.input.isButtonJustPressed(Buttons.LEFT),
+                Gdx.input.isButtonJustPressed(Buttons.RIGHT));
     }
 }

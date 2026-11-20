@@ -32,6 +32,10 @@ Same shared rules as libGDX (`maze-common-backend` `game.items` / `game.score`):
 - `FxEnemyCoordinator.fireLaser` / `swingSledgehammer` apply laser and sledgehammer damage through `ICanDie`
   with the player's id; struck enemies play their `HitReactionEffect` (`ComputerCharacter.react`).
 - `PlayerCharacter.setShield` / `heal` / `getFacing`; Tab switches weapons (`SwitchWeaponCommand`).
+- `FxWeaponHudView` shows the weapons HUD (top-left) from the shared `WeaponHud` model.
+- `FxPlayerLifeController` receives the player's death: with lives left it respawns the player at the start
+  (`PlayerCharacter.revive`) after 3 s with 2 s of protection, otherwise it passes the death to the game-over action.
+- Movement keys come from `JavaFxMovementKeys` (arrows, numpad, Q/A, W, E, S/D); a right click uses the weapon.
 - A dying enemy reports itself to `GameController.recordKill` (`KillLedger`); the score includes the kill bonus and
   the live score label refreshes at once.
 

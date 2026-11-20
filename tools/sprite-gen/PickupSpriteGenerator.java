@@ -39,6 +39,7 @@ public final class PickupSpriteGenerator {
         write(dir, "shield.png", shield());
         write(dir, "heart.png", heart());
         write(dir, "heal-arrow.png", healArrow());
+        write(dir, "extra-life.png", extraLife());
     }
 
     static BufferedImage bomb() {
@@ -186,6 +187,31 @@ public final class PickupSpriteGenerator {
             g.setColor(new Color(0x9a, 0x10, 0x22));
             g.fillRect(18, 20, 4, 2);
             g.fillRect(22, 16, 2, 3);
+        });
+    }
+
+    /** Extra life: a gold medallion with a white "+1", also the lives icon in the weapons HUD. */
+    static BufferedImage extraLife() {
+        return draw(g -> {
+            g.setColor(OUTLINE);
+            g.fill(new Ellipse2D.Double(1, 1, 30, 30));
+            g.setColor(new Color(0xb8, 0x7a, 0x10));
+            g.fill(new Ellipse2D.Double(2, 2, 28, 28));
+            g.setColor(new Color(0xff, 0xc8, 0x2e));
+            g.fill(new Ellipse2D.Double(4, 4, 24, 24));
+            g.setColor(new Color(0xff, 0xec, 0x8a));
+            g.fillRect(8, 6, 4, 2);
+            g.fillRect(6, 8, 2, 4);
+            // "+1" in white with a dark outline
+            g.setColor(OUTLINE);
+            g.fillRect(5, 14, 11, 4);
+            g.fillRect(9, 10, 3, 12);
+            g.fillRect(17, 8, 7, 16);
+            g.setColor(Color.WHITE);
+            g.fillRect(6, 15, 9, 2);
+            g.fillRect(10, 11, 1, 10);
+            g.fillRect(19, 9, 3, 14);
+            g.fillRect(18, 10, 1, 2);
         });
     }
 

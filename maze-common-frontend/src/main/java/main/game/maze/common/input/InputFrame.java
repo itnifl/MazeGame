@@ -19,8 +19,16 @@ public final class InputFrame<K> {
     private final double mouseX;
     private final double mouseY;
     private final boolean leftMouseClicked;
+    private final boolean secondaryMouseClicked;
 
     public InputFrame(Set<K> heldKeys, Set<K> edgeKeys, double mouseX, double mouseY, boolean leftMouseClicked) {
+        this(heldKeys, edgeKeys, mouseX, mouseY, leftMouseClicked, false);
+    }
+
+    /** @param secondaryMouseClicked the secondary (usually right) button was clicked this frame */
+    public InputFrame(Set<K> heldKeys, Set<K> edgeKeys, double mouseX, double mouseY, boolean leftMouseClicked,
+                      boolean secondaryMouseClicked) {
+        this.secondaryMouseClicked = secondaryMouseClicked;
         this.heldKeys = Set.copyOf(heldKeys);
         this.edgeKeys = Set.copyOf(edgeKeys);
         this.mouseX = mouseX;
@@ -46,6 +54,15 @@ public final class InputFrame<K> {
 
     public boolean leftMouseClicked() {
         return leftMouseClicked;
+    }
+
+    public boolean secondaryMouseClicked() {
+        return secondaryMouseClicked;
+    }
+
+    /** Whether this mouse button was clicked this frame. */
+    public boolean isMouseClicked(MouseButton button) {
+        return button == MouseButton.PRIMARY ? leftMouseClicked : secondaryMouseClicked;
     }
 
     public boolean isHeld(K key) {

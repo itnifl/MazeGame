@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.items.WeaponHud;
 import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.libgdx.model.EnemyDeathAnimation;
 import main.game.maze.libgdx.model.SpriteVisual;
@@ -107,6 +108,7 @@ public final class GdxGameRenderStateAssembler {
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
                 input.arsenalHudText(),
+                input.weaponHud(),
                 input.scoreBreakdown(),
                 input.terminalActive(),
                 input.terminalBufferText(),
@@ -194,6 +196,7 @@ public final class GdxGameRenderStateAssembler {
             boolean showSpanningTreeInfo,
             int currentScore,
             String arsenalHudText,
+            WeaponHud.Model weaponHud,
             ScoreBreakdown scoreBreakdown,
             boolean terminalActive,
             String terminalBufferText,

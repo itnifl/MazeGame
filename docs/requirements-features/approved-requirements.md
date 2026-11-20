@@ -58,3 +58,8 @@
 - SR-257: Items never spawn inside or over a wall: only corridor points inside the maze that keep half an item plus half a wall away from every wall are used.
 - SR-258: Killed enemies that can come back wait 15 seconds before they respawn (both frontends; the opponent model's `resurrectionTime`).
 - SR-259: Picking up a heart flashes the player, shows a green arrow rising over the player's head and plays an 8-bit "extra life" jingle.
+- SR-263: A weapons HUD in the top-left corner shows every weapon the player has (with its stock) and the one in hand highlighted; Tab moves the highlight. The player's lives are shown next to it. Both frontends.
+- SR-264: The player has lives: 3 on easy, 2 on normal (medium) and 1 on hard, from the difficulties model (`startingLives`).
+- SR-265: An extra-life item spawns with the other items (rarer than them); picking it up gives one more life.
+- SR-266: When the player dies with lives left, they respawn at their start position with full health (after the death is shown, with a short spawn protection); the game is over only when the last life is lost.
+- SR-267: Besides the arrows, Space and Tab: Q moves left, W forward (up), E right, D down; a right click uses the weapon in hand (shoot, swing or drop a bomb). A keeps moving left and S down; D now moves down instead of right.

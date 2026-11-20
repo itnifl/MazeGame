@@ -35,6 +35,7 @@
     <eLiterals name="SLEDGEHAMMER" value="2"/>
     <eLiterals name="SHIELD" value="3"/>
     <eLiterals name="HEART" value="4"/>
+    <eLiterals name="EXTRA_LIFE" value="5"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PickupSpec">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//PickupKind"/>

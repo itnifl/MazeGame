@@ -16,6 +16,7 @@ import main.game.maze.game.items.PickupCatalogLoader;
 import main.game.maze.game.items.PickupField;
 import main.game.maze.game.items.PickupKind;
 import main.game.maze.game.items.PowerShield;
+import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.score.KillScoring;
 import main.game.maze.game.score.PlayerIds;
@@ -55,13 +56,15 @@ class FxWeaponControllerTest {
 
     private RecordingHost host;
     private FxWeaponController weapons;
+    private PlayerLives lives;
 
     @BeforeEach
     void setUp() {
         host = new RecordingHost();
         weapons = new FxWeaponController(host,
                 new PickupField(PickupCatalogLoader.loadDefault(), new Random(7)), new PowerShield());
-        weapons.startGame(host.player, new GameMazeWorld());
+        lives = new PlayerLives(1);
+        weapons.startGame(host.player, new GameMazeWorld(), lives);
     }
 
     @Test
@@ -125,7 +128,7 @@ class FxWeaponControllerTest {
 
         assertTrue(weapons.pickupField().items().isEmpty(), "picked up");
         assertTrue(host.arsenalChanges > changesBefore);
-        assertTrue(!weapons.hudText().equals(hudBefore) || host.player.getHitPoints() > 10,
+        assertTrue(!weapons.hudText().equals(hudBefore) || host.player.getHitPoints() > 10 || lives.remaining() > 1,
                 "the item had an effect: " + item.kind());
         assertEquals(item.kind() == PickupKind.HEART, weapons.healFeedback().active(),
                 "only a heart flashes the player and shows the arrow");
@@ -174,8 +177,21 @@ class FxWeaponControllerTest {
         assertEquals(KillScoring.pointsFor(model), weapons.localKillPoints());
         assertEquals(300, weapons.localKillPoints());
 
-        weapons.startGame(host.player, null);
+        weapons.startGame(host.player, null, new PlayerLives(1));
         assertEquals(0, weapons.localKillPoints(), "a new game starts with no kills");
+    }
+
+    @Test
+    @DisplayName("the weapons HUD model follows the arsenal and the lives")
+    void hudModel() {
+        weapons.arsenal().add(Weapon.LASER_RIFLE, 5);
+        lives.gain();
+        var model = weapons.hudModel();
+        assertEquals(2, model.lives());
+        assertTrue(model.slots().stream().anyMatch(slot -> slot.weapon() == Weapon.LASER_RIFLE && slot.count() == 5));
+        weapons.protect(2.0);
+        assertTrue(weapons.hudText().contains("Shield"), "respawn protection is the shield");
+        assertTrue(weapons.statusText().startsWith("Shield "), "the score panel shows the shield countdown");
     }
 
     @Test

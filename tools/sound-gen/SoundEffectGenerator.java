@@ -15,6 +15,7 @@ import java.util.Random;
  *   <li>{@code pickup-laser.wav}: rising electronic chirp</li>
  *   <li>{@code pickup-sledgehammer.wav}: metallic clank</li>
  *   <li>{@code pickup-shield.wav}: shimmering rising chord</li>
+ *   <li>{@code pickup-extra-life.wav}: bell fanfare ending on a shimmering chord</li>
  *   <li>{@code pickup-heart.wav}: 8-bit "extra life" jingle, a rising six-note square-wave arpeggio</li>
  * </ul>
  * plus {@code laser-fire.wav} ("pew"), {@code sledgehammer-swing.wav} (whoosh ending in a heavy
@@ -38,6 +39,7 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-sledgehammer.wav", pickupSledgehammer());
         write(dir, "pickup-shield.wav", pickupShield());
         write(dir, "pickup-heart.wav", pickupHeart());
+        write(dir, "pickup-extra-life.wav", pickupExtraLife());
         write(dir, "laser-fire.wav", laserFire());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
         write(dir, "weapon-switch.wav", weaponSwitch());
@@ -127,6 +129,42 @@ public final class SoundEffectGenerator {
             }
         }
         return out;
+    }
+
+    /**
+     * Extra-life pickup: a bright bell fanfare, a quick C-E-G-C climb in a triangle wave that ends on a
+     * shimmering major chord, clearly different from the heart's square-wave jingle.
+     */
+    static double[] pickupExtraLife() {
+        double[] climb = {523.3, 659.3, 784.0, 1046.5};
+        double step = 0.09;
+        double chordLength = 0.6;
+        double[] out = buffer(step * climb.length + chordLength);
+        for (int n = 0; n < climb.length; n++) {
+            int start = (int) Math.round(n * step * RATE);
+            for (int k = 0; start + k < out.length && k < step * RATE; k++) {
+                double t = k / (double) RATE;
+                out[start + k] += 0.4 * triangle(climb[n] * t) * envelope(t, 0.004, step);
+            }
+        }
+        int chordStart = (int) Math.round(step * climb.length * RATE);
+        double[] chord = {1046.5, 1318.5, 1568.0};
+        for (int k = 0; chordStart + k < out.length; k++) {
+            double t = k / (double) RATE;
+            double shimmer = 1 + 0.15 * Math.sin(2 * Math.PI * 9 * t);
+            double sum = 0;
+            for (double f : chord) {
+                sum += triangle(f * t);
+            }
+            out[chordStart + k] = 0.18 * sum * shimmer * envelope(t, 0.01, chordLength);
+        }
+        return out;
+    }
+
+    /** Triangle wave of the given phase in cycles (-1..1). */
+    private static double triangle(double cycles) {
+        double p = cycles - Math.floor(cycles);
+        return 4 * Math.abs(p - 0.5) - 1;
     }
 
     static double[] laserFire() {

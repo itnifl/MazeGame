@@ -27,7 +27,8 @@ public final class GdxGameScreenMetrics {
     public static final float HP_BAR_HEIGHT = 20f;
 
     /** Seconds the death sprite is shown before transitioning to game over. */
-    public static final float DEATH_DISPLAY_DELAY_SECONDS = 3f;
+    /** Death shown before respawning or the game-over screen; shared with JavaFX via {@link main.game.maze.game.session.PlayerLives}. */
+    public static final float DEATH_DISPLAY_DELAY_SECONDS = (float) main.game.maze.game.session.PlayerLives.RESPAWN_DELAY_SECONDS;
 
     private GdxGameScreenMetrics() {
     }

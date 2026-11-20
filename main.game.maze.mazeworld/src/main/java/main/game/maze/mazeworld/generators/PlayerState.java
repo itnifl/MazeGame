@@ -59,6 +59,12 @@ public final class PlayerState {
         return spawn;
     }
 
+    /** Puts the player at (x, y) without collision checks, e.g. back at the start after losing a life. */
+    public void teleportTo(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public void attemptMove(float dx, float dy, MazeArena maze) {
         if (dx != 0f || dy != 0f) {
             // dominant axis wins, so diagonal input still aims along a corridor

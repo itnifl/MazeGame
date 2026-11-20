@@ -35,6 +35,18 @@ public final class ArsenalHud {
     }
 
     /**
+     * The score panel line: only the shield countdown (e.g. {@code "Shield 4s"}), empty without a
+     * shield. The weapons and their counts are in the weapons HUD ({@link WeaponHud}), so this line
+     * stays short enough for the 170 px score panel in both frontends whatever the player carries.
+     */
+    public static String statusText(PowerShield shield) {
+        if (shield == null || !shield.isActive()) {
+            return "";
+        }
+        return "Shield " + (int) Math.ceil(shield.remainingSeconds()) + "s";
+    }
+
+    /**
      * Scale that makes a HUD line {@code textWidth} wide fit {@code availableWidth}: 1 when it
      * already fits, never below {@link #MIN_FIT_SCALE}. Both frontends shrink the line with it.
      */
@@ -61,6 +73,7 @@ public final class ArsenalHud {
             case SLEDGEHAMMER -> new float[] {0.8f, 0.82f, 0.9f};
             case SHIELD -> new float[] {0.35f, 0.85f, 1.0f};
             case HEART -> new float[] {1.0f, 0.4f, 0.55f};
+            case EXTRA_LIFE -> new float[] {1.0f, 0.85f, 0.2f};
         };
     }
 }

@@ -52,7 +52,7 @@ Output is deterministic and overwrites existing files.
 
 Creates the pickup sprites named in `xmi/items/items.xmi` in `main/game/maze/pickups/` (64x64,
 transparent, drawn on a 32x32 grid and scaled 2x): `bomb.png`, `laser-rifle.png`, `sledgehammer.png`,
-`shield.png`, `heart.png`, plus `heal-arrow.png` (shown over the player after a heart). The art fills each frame,
+`shield.png`, `heart.png`, plus `heal-arrow.png` (shown over the player after a heart) and `extra-life.png` (a gold "+1" medallion, also the lives icon in the weapons HUD). The art fills each frame,
 because items are drawn as large as the player. The rifle and sledgehammer are also drawn in the player's hands.
 
 ```sh
