@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import main.game.maze.mazeworld.constants.StageConstants;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
@@ -13,6 +14,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
@@ -60,6 +62,10 @@ public final class PickupCatalogLoader {
             throw new IllegalStateException("empty items model: " + modelPath);
         }
         EObject root = model.getContents().get(0);
+        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(root);
+        if (diagnostic.getSeverity() == Diagnostic.ERROR) {
+            throw new IllegalStateException("invalid items model " + modelPath + ": " + messages(diagnostic));
+        }
 
         List<PickupCatalog.Cap> caps = new ArrayList<>();
         for (EObject cap : list(root, "caps")) {
@@ -76,6 +82,16 @@ public final class PickupCatalogLoader {
         double itemSize = decimal(root, "itemSizeFactor") * StageConstants.PlayerCharacterXYSize;
         return new PickupCatalog(decimal(root, "spawnIntervalSeconds"), itemSize,
                 decimal(root, "minDistanceFromPlayer"), caps, specs);
+    }
+
+    private static String messages(Diagnostic diagnostic) {
+        StringBuilder text = new StringBuilder();
+        for (Diagnostic child : diagnostic.getChildren()) {
+            if (child.getSeverity() == Diagnostic.ERROR) {
+                text.append(text.isEmpty() ? "" : "; ").append(child.getMessage());
+            }
+        }
+        return text.isEmpty() ? diagnostic.getMessage() : text.toString();
     }
 
     private static URI uri(String classpathPath) {

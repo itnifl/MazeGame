@@ -6,6 +6,7 @@ import main.game.maze.common.graphics.fire.FireBlast;
 import main.game.maze.common.graphics.fire.RubbleMaterial;
 import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.DeathCause;
+import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.game.score.PlayerIds;
 import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
 import main.game.maze.javafx.render.FxExplosionView;
@@ -425,8 +426,23 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (mouseCoordsLabel != null)  mouseCoordsLabel.setTextFill(Color.WHITE);
     }
 
+    /** Width of the score panel's text area (170 px panel minus the label padding). */
+    private static final double ARSENAL_HUD_WIDTH = 150;
+    private static final double ARSENAL_HUD_FONT_PX = 14;
+
     private void updateBombHud() {
-        if (bombsLabel != null) bombsLabel.setText(weapons.hudText());
+        if (bombsLabel == null) {
+            return;
+        }
+        String text = weapons.hudText();
+        bombsLabel.setText(text);
+        // shrink the arsenal line to the score panel so no count is cut off
+        javafx.scene.text.Text probe = new javafx.scene.text.Text(text);
+        probe.setFont(javafx.scene.text.Font.font("Consolas", javafx.scene.text.FontWeight.BOLD, ARSENAL_HUD_FONT_PX));
+        double size = ARSENAL_HUD_FONT_PX * ArsenalHud.fitScale(probe.getLayoutBounds().getWidth(), ARSENAL_HUD_WIDTH);
+        // the label's inline style sets the font size (and wins over setFont), so adjust it there
+        bombsLabel.setStyle(bombsLabel.getStyle().replaceAll("-fx-font-size:\\s*[0-9.]+px",
+                String.format(java.util.Locale.ROOT, "-fx-font-size: %.1fpx", size)));
     }
 
     public int getDynamicScorePenalty() {

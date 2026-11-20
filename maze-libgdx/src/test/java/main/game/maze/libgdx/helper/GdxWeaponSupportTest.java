@@ -26,6 +26,7 @@ import main.game.maze.libgdx.model.ExplosionVisual;
 import main.game.maze.libgdx.model.SpriteVisual;
 import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.flame.LaserBeamEngine;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
 import main.game.maze.mazeworld.generators.WallSegment;
@@ -61,6 +62,31 @@ class GdxWeaponSupportTest {
         assertTrue(world.effects().stream().anyMatch(e -> e.visual().effect() instanceof HitReactionEffect r
                 && r.kind() == HitReactionEffect.Kind.SHOT));
         assertNotEquals(0f, inFront.reactionOffset()[0], "the shot enemy jolts");
+    }
+
+    @Test
+    @DisplayName("the laser stops at walls in an arena without a maze world (sample maze), too")
+    void laserBlockedByArenaWall() {
+        PlayerState player = new PlayerState(100, 200, 24);
+        MazeArena walled = arenaWith(new WallSegment(180, 100, 180, 300));   // vertical wall between them
+        player.attemptMove(1, 0, walled);                                     // face right
+        GdxEnemyRuntime behindWall = enemy(250, 200, 60);
+
+        LaserBeamEngine.Shot shot = GdxWeaponSupport.fireLaser(world, List.of(behindWall), walled, player,
+                catalog.spec(PickupKind.LASER_RIFLE), PlayerIds.LOCAL_PLAYER);
+
+        assertEquals(60, behindWall.getHitPoints(), "the wall shields the enemy");
+        assertEquals(LaserBeamEngine.Outcome.BLOCKED, shot.outcome());
+        assertEquals(180 - player.x(), shot.reach(), 1e-3, "the beam ends at the wall");
+    }
+
+    @Test
+    @DisplayName("enemies killed this frame (e.g. by a swing) deal no contact damage")
+    void deadEnemiesMakeNoContact() {
+        GdxEnemyRuntime alive = enemy(100, 100, 50);
+        GdxEnemyRuntime dead = enemy(110, 100, 50);
+        dead.subtractHitPoints(50, DeathCause.CRUSHED, PlayerIds.LOCAL_PLAYER);
+        assertEquals(1, GdxGameRuntimeSupport.currentEnemyContacts(List.of(alive, dead)).size());
     }
 
     @Test
@@ -199,6 +225,18 @@ class GdxWeaponSupportTest {
                 1.2f, 5, 0, "", BehaviorType.WANDER, 1f, 0d, EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
                 EnemySpawn.DEFAULT_PROJECTILE_TYPE, 0f, 0f, 0f, 0, 0f, 0, maxHp);
         return GdxEnemyRuntime.fromSpawn(spawn, 0, openWorld(), 30f, 8);
+    }
+
+    private static MazeArena arenaWith(WallSegment... walls) {
+        return new MazeArena() {
+            @Override public List<WallSegment> walls() { return List.of(walls); }
+            @Override public float widthPx() { return 400; }
+            @Override public float heightPx() { return HEIGHT; }
+            @Override public float startX() { return 8; }
+            @Override public float startY() { return 8; }
+            @Override public float goalX() { return 380; }
+            @Override public float goalY() { return 380; }
+        };
     }
 
     private static MazeArena openMaze() {

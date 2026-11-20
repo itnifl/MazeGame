@@ -3,15 +3,20 @@ package main.game.maze.libgdx.view;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import java.util.Locale;
+import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.libgdx.view.layout.HudLayout;
 
 /**
  * Renders the gameplay HUD and command overlays.
  */
 public final class GdxHudView {
+
+    /** Measures HUD text (needs no GL context). */
+    private final GlyphLayout glyphs = new GlyphLayout();
 
     public HudLayout render(RenderContext context) {
         SpriteBatch batch = context.batch();
@@ -112,7 +117,11 @@ public final class GdxHudView {
         font.getData().setScale(1.0f);
 
         font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
+        // shrink the arsenal line to the score panel so no count is cut off at the window edge
+        glyphs.setText(font, context.arsenalHudText());
+        font.getData().setScale(ArsenalHud.fitScale(glyphs.width, context.scorePanelWidth() - 28f));
         font.draw(batch, context.arsenalHudText(), scoreX + 14f, scoreY + 16f);
+        font.getData().setScale(1.0f);
 
         switch (context.messageMode()) {
             case WON -> {

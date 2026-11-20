@@ -138,9 +138,17 @@ public final class PickupField {
     }
 
     private Point2D freeSpot(List<Point2D> spawnPoints, double playerX, double playerY) {
-        // a few random tries keep spawning cheap on big boards
+        // a few random tries keep spawning cheap on big boards...
         for (int attempt = 0; attempt < 32; attempt++) {
             Point2D candidate = spawnPoints.get(random.nextInt(spawnPoints.size()));
+            if (isFree(candidate, playerX, playerY)) {
+                return candidate;
+            }
+        }
+        // ...then every point from a random start, so a free spot is never missed
+        int start = random.nextInt(spawnPoints.size());
+        for (int i = 0; i < spawnPoints.size(); i++) {
+            Point2D candidate = spawnPoints.get((start + i) % spawnPoints.size());
             if (isFree(candidate, playerX, playerY)) {
                 return candidate;
             }

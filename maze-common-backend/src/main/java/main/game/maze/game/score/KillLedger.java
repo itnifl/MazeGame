@@ -28,10 +28,14 @@ public final class KillLedger {
      * @return the recorded kill, or empty when nobody killed it
      */
     public Optional<Kill> record(ICanDie victim, String victimTypeId, int points) {
-        if (victim == null || victim.isAlive() || victim.killerId() == null) {
+        if (victim == null || victim.isAlive()) {
             return Optional.empty();
         }
-        Kill kill = new Kill(victim.killerId(), victimTypeId, victim.deathCause(), Math.max(0, points));
+        String killer = victim.killerId();   // read once: a respawn on another thread may clear it
+        if (killer == null) {
+            return Optional.empty();
+        }
+        Kill kill = new Kill(killer, victimTypeId, victim.deathCause(), Math.max(0, points));
         kills.add(kill);
         return Optional.of(kill);
     }

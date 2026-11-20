@@ -26,11 +26,13 @@ import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.model.SpriteVisual;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.mazeworld.flame.LaserBeamEngine;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
+import main.game.maze.mazeworld.generators.WallSegment;
 import main.game.maze.service.MortalityService;
 
 /**
@@ -118,7 +120,7 @@ public final class GdxWeaponSupport {
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = LaserBeamEngine.fire(targets, world,
-                world != null ? world.getMazeVectors() : List.of(), player.x(), height - player.y(),
+                world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),
                 dirX, dirY, laser.damage(), laser.range(), LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH));
 
         float endX = (float) (player.x() + player.facingX() * shot[0].reach());
@@ -163,6 +165,16 @@ public final class GdxWeaponSupport {
             AudioEngine.get().play(sledge.useSound());
         }
         return struck;
+    }
+
+    /** The arena walls in world space (y-down), for arenas without a maze world (e.g. the sample maze). */
+    static List<Vector2D> worldWalls(MazeArena maze) {
+        float height = maze.heightPx();
+        List<Vector2D> walls = new ArrayList<>(maze.walls().size());
+        for (WallSegment wall : maze.walls()) {
+            walls.add(new Vector2D(wall.x1, height - wall.y1, wall.x2, height - wall.y2));
+        }
+        return walls;
     }
 
     /** Enemy body on screen: {@code x()/y()} is the sprite centre. */

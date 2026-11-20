@@ -75,7 +75,9 @@ public final class GdxGameRuntimeSupport {
         }
         List<EnemySpawn> contacts = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
-            contacts.add(enemy.contactSnapshot());
+            if (enemy.isAlive()) {   // killed this frame (e.g. by a sledgehammer swing): no contact damage
+                contacts.add(enemy.contactSnapshot());
+            }
         }
         return contacts;
     }

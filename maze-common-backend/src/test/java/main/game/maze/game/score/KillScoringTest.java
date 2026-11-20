@@ -36,6 +36,26 @@ class KillScoringTest {
     }
 
     @Test
+    @DisplayName("a killer id that is cleared between reads (respawn on another thread) is never stored as null")
+    void killerClearedDuringRecord() {
+        java.util.concurrent.atomic.AtomicInteger reads = new java.util.concurrent.atomic.AtomicInteger();
+        ICanDie flaky = new ICanDie() {
+            @Override public void setHitPoints(int hp) { }
+            @Override public int getHitPoints() { return 0; }
+            @Override public void subtractHitPoints(int hp) { }
+            @Override public void addHitPoints(int hp) { }
+            @Override public void addDeathNotificationSubscriber(IDeathSubscriber s) { }
+            @Override public boolean isAlive() { return false; }
+            @Override public String killerId() { return reads.getAndIncrement() == 0 ? "player-1" : null; }
+        };
+        KillLedger ledger = new KillLedger();
+        java.util.Optional<KillLedger.Kill> kill = ledger.record(flaky, "zombie", 100);
+        kill.ifPresent(k -> assertEquals("player-1", k.killerId()));
+        assertEquals(kill.isPresent() ? 100 : 0, ledger.pointsFor("player-1"), "no null killer stored");
+        assertTrue(ledger.kills().stream().allMatch(k -> k.killerId() != null));
+    }
+
+    @Test
     @DisplayName("the player who lands the killing blow is the killer, not whoever hit first")
     void killingBlowDecidesTheKiller() {
         Enemy enemy = new Enemy();

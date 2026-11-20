@@ -60,6 +60,32 @@ class PickupsTest {
     }
 
     @Test
+    @DisplayName("an edited model that leaves out a required value is rejected when loading, naming the problem")
+    void invalidModelIsRejected() {
+        IllegalStateException error = org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class,
+                () -> PickupCatalogLoader.load(PickupCatalogLoader.DEFAULT_ECORE, "/xmi/items/items-missing-sprite.xmi"));
+        assertTrue(error.getMessage().contains("sprite"), error.getMessage());
+    }
+
+    @Test
+    @DisplayName("an item still spawns when only one corridor point is far enough from the player")
+    void spawnsOnTheOnlyFreePoint() {
+        List<Point2D> spots = new ArrayList<>();
+        for (int i = 0; i < 99; i++) {
+            spots.add(new Point2D(300 + (i % 10), 300 + (i / 10)));   // all next to the player
+        }
+        Point2D lonely = new Point2D(700, 500);
+        spots.add(lonely);
+        for (long seed = 0; seed < 20; seed++) {
+            PickupField field = new PickupField(CATALOG, new Random(seed));
+            assertNotNull(field.tick(3.0, StageConstants.BoardMaxX, spots, 300, 300), "seed " + seed);
+            assertEquals(lonely.getX(), field.items().get(0).x());
+        }
+        PickupField none = new PickupField(CATALOG, new Random(1));
+        assertNull(none.tick(3.0, StageConstants.BoardMaxX, spots.subList(0, 99), 300, 300), "nowhere free: no spawn");
+    }
+
+    @Test
     @DisplayName("caps: easy (small map) 5, normal (medium) 10, hard and large maps 15")
     void capsByBoardSize() {
         assertEquals(5, CATALOG.maxItemsForBoardWidth(StageConstants.BoardMaxX));
@@ -281,10 +307,16 @@ class PickupsTest {
         PlayerArsenal arsenal = new PlayerArsenal(3);
         arsenal.add(Weapon.LASER_RIFLE, 5);
         arsenal.cycle();
-        assertEquals("Bombs 3  [Laser 5]  Sledge 0", ArsenalHud.text(arsenal, shield));
+        assertEquals("Bombs 3 [Laser 5]", ArsenalHud.text(arsenal, shield), "weapons the player has none of are left out");
         shield.activate(5.0);
         now.addAndGet(1_500_000_000L);
-        assertEquals("Bombs 3  [Laser 5]  Sledge 0  Shield 4s", ArsenalHud.text(arsenal, shield));
+        assertEquals("Bombs 3 [Laser 5] Shield 4s", ArsenalHud.text(arsenal, shield));
+        PlayerArsenal empty = new PlayerArsenal(0);
+        assertEquals("[Bombs 0]", ArsenalHud.text(empty, null), "the weapon in hand shows even when empty");
+
+        assertEquals(1f, ArsenalHud.fitScale(100, 150), "fits: unchanged");
+        assertEquals(0.75f, ArsenalHud.fitScale(200, 150), 1e-6f, "too wide: shrunk to fit");
+        assertEquals(ArsenalHud.MIN_FIT_SCALE, ArsenalHud.fitScale(1_000, 150), "never unreadably small");
         for (PickupKind kind : PickupKind.values()) {
             assertEquals(3, ArsenalHud.sparkleColour(kind).length);
         }
