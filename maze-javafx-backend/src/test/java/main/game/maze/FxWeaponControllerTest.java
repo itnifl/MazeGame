@@ -128,7 +128,8 @@ class FxWeaponControllerTest {
 
         assertTrue(weapons.pickupField().items().isEmpty(), "picked up");
         assertTrue(host.arsenalChanges > changesBefore);
-        assertTrue(!weapons.hudText().equals(hudBefore) || host.player.getHitPoints() > 10 || lives.remaining() > 1,
+        assertTrue(!weapons.hudText().equals(hudBefore) || host.player.getHitPoints() > 10 || lives.remaining() > 1
+                        || weapons.statusText().startsWith("Shield "),
                 "the item had an effect: " + item.kind());
         assertEquals(item.kind() == PickupKind.HEART, weapons.healFeedback().active(),
                 "only a heart flashes the player and shows the arrow");

@@ -71,8 +71,8 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
     @Override
     public void AddDeathNotification(ICanDie mortalEntity) {
         synchronized (this) {
-            if (respawning) {
-                return;   // already dead and waiting to respawn (hits on the corpse)
+            if (disposed || respawning) {
+                return;   // torn down, or already dead and waiting to respawn (hits on the corpse)
             }
             if (lives.loseLife()) {
                 respawning = true;

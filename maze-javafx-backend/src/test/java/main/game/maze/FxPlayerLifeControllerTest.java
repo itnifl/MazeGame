@@ -112,4 +112,16 @@ class FxPlayerLifeControllerTest {
         assertEquals(3, lives.lives().remaining());
         assertTrue(host.livesChanges > 0, "the HUD follows the lives");
     }
+
+    @Test
+    @DisplayName("a death notification after dispose() is ignored (no game over for a torn-down game)")
+    void ignoresDeathsAfterDispose() {
+        kill();
+        host.runPending();
+        lives.dispose();
+        kill();
+
+        assertEquals(1, lives.lives().remaining(), "no life lost after dispose");
+        assertTrue(host.gameOvers.isEmpty(), "no game-over screen after dispose");
+    }
 }

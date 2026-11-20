@@ -21,4 +21,26 @@ class PlayerArsenalRegenTest {
         assertEquals(3, arsenal.count(Weapon.BOMB));
         assertEquals(Weapon.BOMB, arsenal.selected());
     }
+
+    @Test
+    void keepsTheRemainderBetweenTicks() {
+        PlayerArsenal arsenal = new PlayerArsenal(2);
+        assertEquals(1, arsenal.tickBombRegen(11));
+        assertEquals(1, arsenal.tickBombRegen(9));
+        assertEquals(4, arsenal.count(Weapon.BOMB));
+    }
+
+    @Test
+    void grantsEveryCompleteIntervalAfterALongTick() {
+        PlayerArsenal arsenal = new PlayerArsenal(2);
+        assertEquals(2, arsenal.tickBombRegen(20));
+        assertEquals(4, arsenal.count(Weapon.BOMB));
+    }
+
+    @Test
+    void longTickWithNoBombsGivesThreeThenOne() {
+        PlayerArsenal arsenal = new PlayerArsenal(0);
+        assertEquals(4, arsenal.tickBombRegen(20));
+        assertEquals(4, arsenal.count(Weapon.BOMB));
+    }
 }

@@ -57,13 +57,14 @@ public final class PlayerArsenal {
             return 0;
         }
         regenTimer += dt;
-        if (regenTimer < BOMB_REGEN_SECONDS) {
-            return 0;
+        int granted = 0;
+        while (regenTimer >= BOMB_REGEN_SECONDS) {
+            regenTimer -= BOMB_REGEN_SECONDS;   // keep the remainder so no elapsed time is lost
+            int amount = counts.get(Weapon.BOMB) > 0 ? 1 : BOMB_REGEN_WHEN_EMPTY;
+            add(Weapon.BOMB, amount);
+            granted += amount;
         }
-        regenTimer = 0;
-        int amount = counts.get(Weapon.BOMB) > 0 ? 1 : BOMB_REGEN_WHEN_EMPTY;
-        add(Weapon.BOMB, amount);
-        return amount;
+        return granted;
     }
 
     /** Tab: the next weapon in stock after the one in hand (stays put when nothing else is in stock). */
