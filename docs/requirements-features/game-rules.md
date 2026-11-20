@@ -238,8 +238,8 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-43**: A killed enemy that can come back (zombies) respawns 15 seconds
   after its death, in both frontends; enemies that cannot come back (ghosts,
   pumpkin bombers) stay dead.
-- **GR-44**: The player starts with the difficulty's lives (easy 3, normal 2,
-  hard 1). Dying with lives left costs one life: the dead player is shown for
+- **GR-44**: The player starts with the difficulty's lives (easy 6, normal 5,
+  hard 3). Dying with lives left costs one life: the dead player is shown for
   3 seconds, then respawns at the level start with full health and 2 seconds
   of protection; weapons, items, kills and score carry over. Losing the last
   life ends the game as before.

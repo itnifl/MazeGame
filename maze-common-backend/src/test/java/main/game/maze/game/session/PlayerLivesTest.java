@@ -42,9 +42,9 @@ class PlayerLivesTest {
     @DisplayName("starting lives come from the difficulty model: easy 3, normal 2, hard 1")
     void startingLivesFromDifficulty() {
         DifficultyService service = new DifficultyService();
-        assertEquals(3, PlayerLives.startingFor(find(service, "easy")));
-        assertEquals(2, PlayerLives.startingFor(find(service, "normal")));
-        assertEquals(1, PlayerLives.startingFor(find(service, "hard")));
+        assertEquals(6, PlayerLives.startingFor(find(service, "easy")));
+        assertEquals(5, PlayerLives.startingFor(find(service, "normal")));
+        assertEquals(3, PlayerLives.startingFor(find(service, "hard")));
         assertEquals(1, PlayerLives.startingFor(null), "no difficulty: one life, as before lives existed");
         Difficulty unset = DifficultiesFactory.eINSTANCE.createEasyDifficulty();
         assertEquals(1, PlayerLives.startingFor(unset), "the model default is one life");
