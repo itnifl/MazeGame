@@ -95,6 +95,35 @@ class MortalityServiceTest {
     }
 
     @Test
+    @DisplayName("a sledgehammer swing strikes every living, unprotected enemy within reach, not walls")
+    void strikeAround() {
+        Mortal close = new Mortal(200, 30, 0);       // 30 px away
+        Mortal edge = new Mortal(200, 0, 55);        // body edge within reach (55 - 10 <= 50)
+        Mortal far = new Mortal(200, 100, 0);
+        Mortal shielded = new Mortal(200, -20, 0);
+        shielded.invulnerable = true;
+
+        List<ICanDie> struck = MortalityService.strikeAround(List.of(close, edge, far, shielded),
+                MortalityServiceTest::bodyOf, 0, 0, 50, 120, DeathCause.CRUSHED, "player-1", (x, y) -> false);
+
+        assertEquals(List.of(close, edge), struck);
+        assertEquals(List.of(DeathCause.CRUSHED), close.hits);
+        assertEquals(80, close.getHitPoints());
+        assertTrue(far.hits.isEmpty());
+        assertTrue(shielded.hits.isEmpty());
+    }
+
+    @Test
+    @DisplayName("a wall between the player and an enemy blocks the swing")
+    void strikeBlockedByWall() {
+        Mortal behindWall = new Mortal(200, 30, 0);
+        List<ICanDie> struck = MortalityService.strikeAround(List.of(behindWall), MortalityServiceTest::bodyOf,
+                0, 0, 50, 120, DeathCause.CRUSHED, "player-1", (x, y) -> true);
+        assertTrue(struck.isEmpty());
+        assertTrue(behindWall.hits.isEmpty());
+    }
+
+    @Test
     @DisplayName("characters without a known body are not crushed")
     void noBodyNoCrush() {
         Mortal mortal = new Mortal(50, 50, 100);

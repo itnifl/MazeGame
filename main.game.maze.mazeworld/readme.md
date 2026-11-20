@@ -143,6 +143,16 @@ wall, with the destroyed wall first and every wall that fell with it (cascade), 
 the maze. Both frontends use it to play the rubble animation and crush enemies beside the wall. The
 world is recreated per level, so frontends re-register when they get a new world.
 
+## Laser Beam and Damage Attribution
+
+`flame.LaserBeamEngine.fire(...)` traces a beam from the player along an axis direction: it stops at
+the nearest enemy (damaging it), damages the first breakable wall in its way, or is blocked by an
+indestructible or steel wall (`WallMaterialSpec.isSteel()`; the laser never harms steel).
+
+`GameMazeWorld.attributeDamageTo(attackerId, action)` runs wall damage on behalf of a player, so the
+`WallCollapseListener.onWallsCollapsed(walls, attackerId)` callback can credit enemies crushed by the
+falling walls to that player. `PlayerState.facingX()/facingY()` give the last move direction for aimed weapons.
+
 ## Wall Collision Utilities
 
 The module provides `WallCollisionUtil`, a shared, backend-neutral utility class for wall-related geometry tests.

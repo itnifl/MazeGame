@@ -22,6 +22,7 @@ public final class PlayerCombatStateService {
     private static final float CONTACT_INTERVAL_SEC = 1f / 30f;
     private static final float FLASH_DURATION_SEC = 0.20f;
     private final DoubleSupplier randomSource;
+    private java.util.function.BooleanSupplier shielded = () -> false;
 
     /** The current maze; used to test whether a wall separates enemy from player. */
     private MazeArena maze;
@@ -86,6 +87,18 @@ public final class PlayerCombatStateService {
                 infectionTicksRemaining > 0);
     }
 
+    /** While {@code shield} says so, the player takes no damage (power shield pickup). */
+    public void setShield(java.util.function.BooleanSupplier shield) {
+        this.shielded = shield != null ? shield : () -> false;
+    }
+
+    /** Restores health (heart pickup), never above the maximum and never for a dead player. */
+    public void heal(int hitPoints) {
+        if (!dead) {
+            currentHitPoints = Math.min(maxHitPoints, currentHitPoints + Math.max(0, hitPoints));
+        }
+    }
+
     public boolean isDead() {
         return dead;
     }
@@ -99,7 +112,7 @@ public final class PlayerCombatStateService {
     }
 
     public void applyDirectDamage(int damage) {
-        if (dead) {
+        if (dead || shielded.getAsBoolean()) {
             return;
         }
         applyDamage(damage);
@@ -140,8 +153,8 @@ public final class PlayerCombatStateService {
     }
 
     private void processEnemyContact(float playerX, float playerY, float playerRadius, List<EnemySpawn> enemies) {
-        if (contactCooldownRemaining > 0f) {
-            return;
+        if (contactCooldownRemaining > 0f || shielded.getAsBoolean()) {
+            return;   // the power shield blocks contact damage and infection
         }
         for (EnemySpawn enemy : enemies) {
             boolean isPhasing = GhostNonTangibilityService.isPhasing(enemy.nonTangibilityEnergy());
@@ -202,6 +215,9 @@ public final class PlayerCombatStateService {
     }
 
     private void applyDamage(int damage) {
+        if (shielded.getAsBoolean()) {
+            return;   // e.g. infection ticks while the power shield is up
+        }
         currentHitPoints = Math.max(0f, currentHitPoints - Math.max(0, damage));
         if (currentHitPoints <= 0f) {
             dead = true;

@@ -39,6 +39,7 @@ public final class EnemyVitals {
     private int hitPoints;
     private double invulnerableSeconds;
     private DeathCause deathCause = DeathCause.OTHER;
+    private String killerId;
 
     /**
      * @param owner        the enemy, passed to death subscribers
@@ -67,6 +68,11 @@ public final class EnemyVitals {
         return deathCause;
     }
 
+    /** The attacker credited with the last death (null while alive or when nobody gets it). */
+    public synchronized String killerId() {
+        return killerId;
+    }
+
     public synchronized boolean isInvulnerable() {
         return invulnerableSeconds > 0;
     }
@@ -80,13 +86,22 @@ public final class EnemyVitals {
             died = wasAlive && hitPoints == 0;
             if (died) {
                 deathCause = DeathCause.OTHER;
+                killerId = null;
             }
         }
         changed(died, DeathCause.OTHER);
     }
 
-    /** Applies damage dealt by {@code cause}; ignored while dead or invulnerable. */
+    /** Applies damage dealt by {@code cause} with no attacker to credit. */
     public void subtractHitPoints(int hp, DeathCause cause) {
+        subtractHitPoints(hp, cause, null);
+    }
+
+    /**
+     * Applies damage dealt by {@code cause} from {@code attackerId}; ignored while dead or
+     * invulnerable. The attacker of the killing blow is credited with the kill.
+     */
+    public void subtractHitPoints(int hp, DeathCause cause, String attackerId) {
         DeathCause effective = cause != null ? cause : DeathCause.OTHER;
         boolean died;
         synchronized (this) {
@@ -97,6 +112,7 @@ public final class EnemyVitals {
             died = hitPoints == 0;
             if (died) {
                 deathCause = effective;
+                killerId = attackerId;
             }
         }
         changed(died, effective);
@@ -118,6 +134,7 @@ public final class EnemyVitals {
         synchronized (this) {
             hitPoints = maxHitPoints;
             deathCause = DeathCause.OTHER;
+            killerId = null;
             this.invulnerableSeconds = Math.max(0, invulnerableSeconds);
         }
         changed(false, DeathCause.OTHER);

@@ -100,4 +100,21 @@ class PlayerStateTest {
                 "spawn should be moved away from the touching border walls");
         assertFalse(spawned.collidesWith(maze), "spawned player must not start inside a wall");
     }
+
+    @Test
+    void facingStartsRightAndFollowsTheDominantMoveAxis() {
+        SampleMaze m = maze();
+        PlayerState p = new PlayerState(m.startX(), m.startY(), 16f);
+        assertEquals(1, p.facingX());
+        assertEquals(0, p.facingY());
+        p.attemptMove(-3f, 1f, m);
+        assertEquals(-1, p.facingX());
+        assertEquals(0, p.facingY());
+        p.attemptMove(1f, 4f, m);
+        assertEquals(0, p.facingX());
+        assertEquals(1, p.facingY());
+        p.attemptMove(0f, 0f, m);
+        assertEquals(0, p.facingX(), "standing still keeps the facing");
+        assertEquals(1, p.facingY());
+    }
 }

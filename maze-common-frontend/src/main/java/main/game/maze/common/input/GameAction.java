@@ -11,5 +11,6 @@ public enum GameAction {
     TOGGLE_SPANNING_TREE,
     APPLY_PATH_HINT,
     FLAME_ATTACK,
+    SWITCH_WEAPON,
     MOVE_PLAYER
 }

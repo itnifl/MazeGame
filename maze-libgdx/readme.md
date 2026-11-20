@@ -179,6 +179,16 @@ mvn test -pl maze-libgdx
 
 ---
 
+## Weapons, pickups and kill credit
+
+- `GdxWeaponSupport` — spawns and collects pickups (`PickupField`, spawn points from `PickupField.spawnPointsOf`), fires the laser (`LaserBeamEngine`), swings
+  the sledgehammer (`MortalityService.strikeAround`), ticks combat effects and the weapon drawn in the player's hands.
+- `GameWorldModel` owns the per-game `PickupField`, `PlayerArsenal`, `PowerShield`, `KillLedger` and active effects.
+- `PlayerCombatStateService.setShield(...)` blocks damage while the shield is up; `heal(...)` applies hearts.
+- `GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(..., KillLedger)` credits each kill to its killer;
+  `EnemySpawn.killPoints` comes from `KillScoring` (the enemy's danger). The HUD shows the arsenal (`ArsenalHud`).
+- Tab is bound to `SwitchWeaponCommand`; Space uses the weapon in hand.
+
 ## Test Suite Documentation
 
 Unit tests in `maze-libgdx` verify rendering logic, physics, entity lifecycles, and backend parity without requiring an active graphical display:

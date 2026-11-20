@@ -35,6 +35,8 @@ public final class GdxGameInputBindingsSupport {
                 .bind(GameAction.APPLY_PATH_HINT, Input.Keys.P, BindingKind.HELD)
                 .bind(GameAction.FLAME_ATTACK, Input.Keys.SPACE, BindingKind.EDGE)
                 .command(GameAction.FLAME_ATTACK, new main.game.maze.libgdx.input.command.TriggerFlameAttackCommand())
+                .bind(GameAction.SWITCH_WEAPON, Input.Keys.TAB, BindingKind.EDGE)
+                .command(GameAction.SWITCH_WEAPON, new main.game.maze.common.input.command.SwitchWeaponCommand<>())
                 .bind(GameAction.MOVE_PLAYER, Input.Keys.LEFT, BindingKind.HELD)
                 .bind(GameAction.MOVE_PLAYER, Input.Keys.A, BindingKind.HELD)
                 .bind(GameAction.MOVE_PLAYER, Input.Keys.RIGHT, BindingKind.HELD)

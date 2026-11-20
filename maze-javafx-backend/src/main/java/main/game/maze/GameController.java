@@ -1,12 +1,14 @@
 package main.game.maze;
 
+import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.UiScheduler;
 import main.game.maze.common.graphics.fire.FireBlast;
 import main.game.maze.common.graphics.fire.RubbleMaterial;
 import main.game.maze.common.graphics.fire.WallRubble;
 import main.game.maze.common.remains.DeathCause;
-import main.game.maze.javafx.render.FxExplosionView;
+import main.game.maze.game.score.PlayerIds;
 import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
+import main.game.maze.javafx.render.FxExplosionView;
 import main.game.maze.javafx.render.FxRemainsLayer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -153,6 +155,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
         @Override public void openTerminalPrompt()                  { GameController.this.openTerminalPrompt(); }
         @Override public void triggerPlayerFlameAttack()            { GameController.this.triggerPlayerFlameAttack(); }
+        @Override public void switchWeapon()                        { GameController.this.switchWeapon(); }
     };
 
     private final GameControllerTerminalSupport.TerminalCommandSink terminalCommandSink = new GameControllerTerminalSupport.TerminalCommandSink() {
@@ -169,6 +172,22 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final FxRemainsLayer remainsLayer = new FxRemainsLayer(() -> gameBoard);
     /** Pending enemy resurrections of the current level; cancelled on level teardown. */
     private final FxResurrectionScheduler resurrections = new FxResurrectionScheduler();
+
+    // --- pickups, weapons and kill credit (shared rules, same as libGDX) --------------------------
+    private final FxWeaponController weapons = new FxWeaponController(new FxWeaponController.Host() {
+        @Override public PlayerCharacter player()             { return playerCharacter; }
+        @Override public Pane board()                         { return gameBoard; }
+        @Override public FxEnemyCoordinator enemies()         { return enemyCoordinator; }
+        @Override public int boardWidth()                     { return App.getBoardMaxX(); }
+        @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
+        @Override public void showMessage(String text)        { setHudMessage(text); }
+        @Override public void arsenalChanged()                { updateBombHud(); }
+        @Override public void redrawMaze() {
+            if (mazeCanvas != null && maze != null) {
+                mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
+            }
+        }
+    });
     /** Collapsing breakable walls fall as rubble and crush enemies beside them. */
     private final GameMazeWorld.WallCollapseListener wallCollapseListener = this::onWallsCollapsed;
     private GameMazeWorld watchedWorld;
@@ -238,7 +257,10 @@ public class GameController implements Initializable, EnemyRegistrar {
                 });
                 // Prevent Tab key from moving focus away from the game board during play.
                 gameBoard.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, evt -> {
-                    if (evt.getCode() == KeyCode.TAB) evt.consume();
+                    if (evt.getCode() == KeyCode.TAB) {
+                        handleKeyPressed(evt);   // Tab switches weapons
+                        evt.consume();           // ...and must not move focus off the board
+                    }
                 });
             }
         });
@@ -250,14 +272,39 @@ public class GameController implements Initializable, EnemyRegistrar {
         installButtonPressEffect(terminalMenuButton, TERMINAL_BUTTON_STYLE, TERMINAL_BUTTON_PRESSED_STYLE);
     }
 
+    /** Attack key: use the weapon in hand (bomb, laser rifle or sledgehammer). */
     void triggerPlayerFlameAttack() {
-        if (playerCharacter == null || !playerCharacter.consumeFlameBomb()) {
+        weapons.useWeapon();
+    }
+
+    /** Tab: switch to the next weapon in stock. */
+    void switchWeapon() {
+        weapons.switchWeapon();
+    }
+
+    /** Credits a dead enemy to whoever killed it (called by the enemy as it dies). */
+    public void recordKill(ICanDie victim, String victimTypeId, int points) {
+        if (weapons.recordKill(victim, victimTypeId, points)) {
+            // the live score otherwise only refreshes on a move: show the kill bonus at once
+            if (javafx.application.Platform.isFxApplicationThread()) {
+                refreshScoreHud();
+            } else {
+                javafx.application.Platform.runLater(this::refreshScoreHud);
+            }
+        }
+    }
+
+    private void refreshScoreHud() {
+        if (gameOverAction == null || winGameAction == null) {
             return;
         }
-        updateBombHud();
-        double bombX = playerCharacter.getCharacterPosition().getX() + StageConstants.PlayerCharacterXYSize * 0.5d;
-        double bombY = playerCharacter.getCharacterPosition().getY() + StageConstants.PlayerCharacterXYSize * 0.5d;
-        plantPlayerBomb(bombX, bombY);
+        gameOverAction.updateScore();
+        updateScoreHud(winGameAction.updateScore());
+    }
+
+    /** Points the local player earned for kills this game. */
+    public int localKillPoints() {
+        return weapons.localKillPoints();
     }
 
     private void plantPlayerBomb(double centerX, double centerY) {
@@ -304,7 +351,8 @@ public class GameController implements Initializable, EnemyRegistrar {
                 walls,
                 playerCx,
                 playerCy,
-                dmg -> { if (playerCharacter != null) playerCharacter.subtractHitPoints(dmg); });
+                dmg -> { if (playerCharacter != null) playerCharacter.subtractHitPoints(dmg); },
+                PlayerIds.LOCAL_PLAYER);
         if (mazeCanvas != null && maze != null) {
             mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
         }
@@ -378,7 +426,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     private void updateBombHud() {
-        if (bombsLabel != null && playerCharacter != null) bombsLabel.setText("Bombs: " + playerCharacter.getFlameBombsRemaining());
+        if (bombsLabel != null) bombsLabel.setText(weapons.hudText());
     }
 
     public int getDynamicScorePenalty() {
@@ -421,7 +469,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     /** Runs on the FX thread: wall damage is always applied there. */
-    private void onWallsCollapsed(List<BreakableWall> collapsed) {
+    private void onWallsCollapsed(List<BreakableWall> collapsed, String attackerId) {
         for (BreakableWall wall : collapsed) {
             Vector2D g = wall.geometry;
             double ax = g.getStart().getX();
@@ -433,7 +481,7 @@ public class GameController implements Initializable, EnemyRegistrar {
                         RubbleMaterial.fromMaterialId(wall.material.id()), Double.doubleToLongBits(ax * 31 + by));
                 FxExplosionView.of(rubble).play(gameBoard, WallRubble.LIFETIME_SECONDS, RUBBLE_VIEW_ORDER);
             }
-            enemyCoordinator.crushAlong(ax, ay, bx, by);
+            enemyCoordinator.crushAlong(ax, ay, bx, by, attackerId);
         }
     }
 
@@ -550,6 +598,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         winGameAction.setBaseScore(baseScore);
         playerCharacter.addDeathNotificationSubscriber(gameOverAction);
 
+        // new game: fresh arsenal, no items, shield or kills yet
+        weapons.startGame(playerCharacter, maze);
+
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);
         winarea.AddWinGameAction(winGameAction);
@@ -609,6 +660,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         currentInputFrame = inputSnapshotReader.read(pressedKeys, edgeKeys, mouseX, mouseY, leftMouseClicked);
         leftMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
+        weapons.tick(now);
     }
 
     /**
@@ -698,6 +750,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void dispose() {
         clearActivePlayerBombs();
+        weapons.dispose();
         resurrections.cancelAll();
         stopComputerCharacters();
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();

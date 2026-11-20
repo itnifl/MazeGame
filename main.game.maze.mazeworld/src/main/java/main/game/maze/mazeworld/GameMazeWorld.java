@@ -45,8 +45,33 @@ public class GameMazeWorld {
     /** Notified after breakable walls collapse (already removed from the maze). */
     @FunctionalInterface
     public interface WallCollapseListener {
-        /** @param collapsed the destroyed wall first, then any walls that fell with it */
-        void onWallsCollapsed(List<BreakableWall> collapsed);
+        /**
+         * @param collapsed  the destroyed wall first, then any walls that fell with it
+         * @param attackerId who brought the wall down (a player id), or null (enemy fire, unknown);
+         *                   enemies the rubble crushes are credited to this attacker
+         */
+        void onWallsCollapsed(List<BreakableWall> collapsed, String attackerId);
+    }
+
+    /** Attacker of the wall damage being applied on this thread (see {@link #attributeDamageTo}). */
+    private static final ThreadLocal<String> CURRENT_ATTACKER = new ThreadLocal<>();
+
+    /**
+     * Runs {@code attack} with wall damage credited to {@code attackerId}, for shared engines that
+     * damage walls without knowing who attacks (the bomb flame). Restores the previous attacker.
+     */
+    public static void attributeDamageTo(String attackerId, Runnable attack) {
+        String previous = CURRENT_ATTACKER.get();
+        CURRENT_ATTACKER.set(attackerId);
+        try {
+            attack.run();
+        } finally {
+            if (previous == null) {
+                CURRENT_ATTACKER.remove();
+            } else {
+                CURRENT_ATTACKER.set(previous);
+            }
+        }
     }
 
     private final List<WallCollapseListener> collapseListeners = new CopyOnWriteArrayList<>();
@@ -255,6 +280,11 @@ public class GameMazeWorld {
     }
 
     public boolean applyWallDamage(BreakableWall bw, int damage) {
+        return applyWallDamage(bw, damage, CURRENT_ATTACKER.get());
+    }
+
+    /** As {@link #applyWallDamage(BreakableWall, int)}, crediting a collapse to {@code attackerId}. */
+    public boolean applyWallDamage(BreakableWall bw, int damage, String attackerId) {
         if (!breakableWalls.contains(bw)) return false;
         int remaining = bw.applyDamage(damage);
         if (remaining <= 0) {
@@ -268,7 +298,7 @@ public class GameMazeWorld {
             }
             List<BreakableWall> collapsed = List.copyOf(toCollapse);
             for (WallCollapseListener listener : collapseListeners) {
-                listener.onWallsCollapsed(collapsed);
+                listener.onWallsCollapsed(collapsed, attackerId);
             }
             return true;
         }

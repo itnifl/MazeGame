@@ -252,9 +252,9 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 
 - **SR-228** *(Observability)*: Count projectile detonations per bomber type (lob/straight, hit/miss) in the existing projectile telemetry, and show active explosion count in the debug overlay.
 
-- **SR-232** *(Gameplay, MDD)*: Gun pickup. The player does not start with it; it is found in the maze. Model it in the Xtext DSL, which already has `loot-table` / `item` with `type weapon` and `loot` references on opponents (nothing reads loot at runtime yet): add the weapon kind (`gun`), damage, ammo and the inflicted `DeathCause` (`shot`). Hits call `subtractHitPoints(dmg, DeathCause.SHOT)` (JavaFX) / the same `ICanDie.subtractHitPoints(dmg, DeathCause.SHOT)` on libGDX `GdxEnemyRuntime`; the shot remains (SR-229) already work.
+- **SR-232** *(Gameplay, MDD)*: ~~Gun pickup~~ — done as the laser rifle (SR-241), modelled in the `items` EMF model rather than the DSL (see SR-248). Original text: Gun pickup. The player does not start with it; it is found in the maze. Model it in the Xtext DSL, which already has `loot-table` / `item` with `type weapon` and `loot` references on opponents (nothing reads loot at runtime yet): add the weapon kind (`gun`), damage, ammo and the inflicted `DeathCause` (`shot`). Hits call `subtractHitPoints(dmg, DeathCause.SHOT)` (JavaFX) / the same `ICanDie.subtractHitPoints(dmg, DeathCause.SHOT)` on libGDX `GdxEnemyRuntime`; the shot remains (SR-229) already work.
 
-- **SR-233** *(Gameplay, MDD)*: Sledgehammer pickup, found in the maze (not at start), crushes adjacent enemies (`DeathCause.CRUSHED`, remains already in place). Same DSL loot model as SR-232 (`weapon` kind `sledgehammer`, swing damage / reach); it could also let the player knock down breakable walls, which then fall and crush via SR-230.
+- **SR-233** *(Gameplay, MDD)*: ~~Sledgehammer pickup~~ — done (SR-242); knocking down walls with it was left out on purpose (the request says it cannot harm walls). Original text: Sledgehammer pickup, found in the maze (not at start), crushes adjacent enemies (`DeathCause.CRUSHED`, remains already in place). Same DSL loot model as SR-232 (`weapon` kind `sledgehammer`, swing damage / reach); it could also let the player knock down breakable walls, which then fall and crush via SR-230.
 
 - **SR-234** *(MDD, DDD)*: Per-enemy death rules in `opponents.ecore`: which `DeathCause`s a character type can suffer (e.g. ghosts immune to crushing) and whether it leaves remains, next to `damageStatesEnabled`; needs EMF regeneration. Today every enemy can die by every cause in both frontends and remains are chosen by sprite naming convention.
 
@@ -263,6 +263,24 @@ These requirements bring the JavaFX frontend to structural parity (CRR-5) with t
 - **SR-236** *(Parity bug)*: ~~JavaFX ghosts cannot die~~ — done in PR #163: every JavaFX enemy (`ComputerCharacter`) implements `ICanDie` through the shared `EnemyVitals`, so ghosts die, leave remains and follow the same rules as libGDX (see SR-238).
 
 - **SR-237** *(Observability, 12-Factor)*: Count deaths per `DeathCause` per level in the run summary / debug overlay, and make the remains cap (`RemainsLedger.DEFAULT_CAPACITY`, 60) configurable.
+
+### Weapons, pickups and kill credit — follow-on suggestions (SR-239..SR-247)
+
+- **SR-248** *(MDD, Xtext)*: Add a `pickups` block to the Xtext DSL (spawn interval, caps per map size, and per kind amount / damage / reach / duration / sprite / sounds) that generates `items.xmi`, and connect the existing `loot-table` / `item` grammar to it so enemies can drop items. Today `items.ecore` is loaded with dynamic EMF (no generated code), which keeps the model editable without regeneration; the DSL would add validation and editor support.
+
+- **SR-249** *(Multiplayer, DDD)*: Replace the `String` attacker id with a `PlayerId` value object, keep one `PlayerArsenal` / `PowerShield` per player in a `PlayerLoadout` aggregate, and show per-player standings (kills by cause, points) from `KillLedger.killsBy` on the end screen.
+
+- **SR-250** *(Tech debt, DDD)*: Wall damage is attributed through an ambient `ThreadLocal` (`GameMazeWorld.attributeDamageTo`) so the existing `applyWallDamage` callers did not all change. Pass an explicit `DamageSource(attackerId, cause)` through `applyWallDamage` and the flame / laser engines instead, so attribution cannot leak across threads or be forgotten by a new caller.
+
+- **SR-251** *(12-Factor, Config III)*: Allow overriding the items model (e.g. `MAZE_ITEMS_MODEL=/path/items.xmi`) and the spawn interval (`MAZE_PICKUP_INTERVAL_SECONDS`) through the environment for balancing and tests, falling back to the bundled model.
+
+- **SR-252** *(Observability)*: Count items spawned / collected per kind, shots fired / hit, swings / enemies struck and kills per cause per player for each level; log them at `FINE` and show them in the debug overlay. `KillLedger` already holds the kill data.
+
+- **SR-253** *(Gameplay, DDD)*: Tie the item cap to the difficulty profile (an attribute in `difficulties`) instead of the board width bands in `items.xmi`, so a custom large easy map gets the cap its difficulty intends.
+
+- **SR-254** *(Gameplay)*: Let the laser aim with the mouse (both frontends already track the mouse position), and let a sledgehammer blow push the enemy back a little in the maze, not only visually.
+
+- **SR-255** *(Parity, bug note)*: Found while building this: the libGDX flame-damage and wall-crush adapters used the enemy sprite's bottom-left corner instead of its centre, so a blast or a falling wall could miss an enemy that visually stood in it. Fixed (`GdxWeaponSupport.bodyOf`, `GdxWeaponSupportTest.crushUsesEnemyCentre`); any new libGDX targeting code should use `bodyOf`.
 
 ## Ratified Requirements
 

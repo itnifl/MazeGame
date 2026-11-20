@@ -3,7 +3,13 @@ package main.game.maze.libgdx.model;
 import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.graphics.fire.PuffEffect;
 import main.game.maze.common.remains.RemainsLedger;
+import main.game.maze.game.items.PickupCatalogLoader;
+import main.game.maze.game.items.PickupField;
+import main.game.maze.game.items.PlayerArsenal;
+import main.game.maze.game.items.PowerShield;
+import main.game.maze.game.score.KillLedger;
 import main.game.maze.game.runtime.RetiredShooters;
 import main.game.maze.dto.Score;
 import main.game.maze.libgdx.model.DeadEnemy;
@@ -52,6 +58,11 @@ public final class GameWorldModel {
     private final List<ActiveWallRubble> wallRubble = new ArrayList<>();
     private final RemainsLedger<EnemySpawn, RemainsVisual> remains = new RemainsLedger<>(RemainsLedger.DEFAULT_CAPACITY);
     private final RetiredShooters<GdxEnemyRuntime> retiredShooters = new RetiredShooters<>(GdxEnemyRuntime::hasShotsInFlight);
+    private final PickupField pickupField = new PickupField(PickupCatalogLoader.loadDefault(), new java.util.Random());
+    private final PowerShield shield = new PowerShield();
+    private final KillLedger killLedger = new KillLedger();
+    private final List<ActiveEffect> effects = new ArrayList<>();
+    private PlayerArsenal arsenal = new PlayerArsenal(0);
     private final List<Score> highScoreRows = new ArrayList<>();
 
     public MazeArena maze() {
@@ -257,6 +268,35 @@ public final class GameWorldModel {
         return wallRubble;
     }
 
+    /** Items lying in the level (spawn every few seconds up to the board's cap). */
+    public PickupField pickupField() {
+        return pickupField;
+    }
+
+    /** The player's weapons and ammunition. */
+    public PlayerArsenal arsenal() {
+        return arsenal;
+    }
+
+    /** New game: a fresh arsenal with the starting bombs. */
+    public void resetArsenal(int startingBombs) {
+        arsenal = new PlayerArsenal(startingBombs);
+    }
+
+    public PowerShield shield() {
+        return shield;
+    }
+
+    /** Who killed what this game (kill points per player). */
+    public KillLedger killLedger() {
+        return killLedger;
+    }
+
+    /** Short combat effects playing now (laser beams, swings, hit reactions, pickup sparkles). */
+    public List<ActiveEffect> effects() {
+        return effects;
+    }
+
     /** Dead enemies whose shots are still in the air; updated until their projectiles land. */
     public RetiredShooters<GdxEnemyRuntime> retiredShooters() {
         return retiredShooters;
@@ -275,7 +315,32 @@ public final class GameWorldModel {
         }
         all.addAll(enemyBursts);
         all.addAll(fireBlasts);
+        for (ActiveEffect effect : effects) {
+            all.add(effect.visual());
+        }
         return all;
+    }
+
+    /** A playing combat effect and how long it has been running. */
+    public static final class ActiveEffect {
+        private final PuffEffect effect;
+        private float elapsedSeconds;
+
+        public ActiveEffect(PuffEffect effect) {
+            this.effect = effect;
+        }
+
+        public void tick(float dt) {
+            elapsedSeconds += Math.max(0f, dt);
+        }
+
+        public boolean finished() {
+            return elapsedSeconds >= effect.lifetimeSeconds();
+        }
+
+        public PuffEffectVisual visual() {
+            return new PuffEffectVisual(effect, (float) Math.min(1.0, elapsedSeconds / effect.lifetimeSeconds()));
+        }
     }
 
     /** A collapsing wall and how long it has been falling. */

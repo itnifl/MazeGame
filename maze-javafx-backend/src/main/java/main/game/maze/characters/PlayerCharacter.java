@@ -54,7 +54,8 @@ public class PlayerCharacter extends Character
     private final PlayerConfig playerConfig;
     private final int maxHitPoints;
     private final int flameAttackDamage;
-    private int flameBombsRemaining;
+    private java.util.function.BooleanSupplier shielded = () -> false;
+    private VectorFacing facing = VectorFacing.RIGHT;
     private final Map<VectorFacing, Image> directionalImages = new EnumMap<>(VectorFacing.class);
     private Image deathImage;
     private volatile boolean deadVisualActive = false;
@@ -79,7 +80,6 @@ public class PlayerCharacter extends Character
         this.statePresenter = statePresenter;
         this.playerConfig = playerConfig == null ? PlayerConfig.defaults() : playerConfig;
         this.maxHitPoints = Math.max(1, this.playerConfig.health());
-        this.flameBombsRemaining = Math.max(0, this.playerConfig.bombCount());
         this.flameAttackDamage = Math.max(1, this.playerConfig.bombDamage());
         this.hitPoints.set(this.maxHitPoints);
         configureDirectionalImages();
@@ -114,6 +114,9 @@ public class PlayerCharacter extends Character
             }
             if (deadVisualActive) {
                 return;
+            }
+            if (direction != VectorFacing.IDLE) {
+                facing = direction;
             }
             Image next = directionalImages.get(direction);
             if (next != null) {
@@ -203,16 +206,28 @@ public class PlayerCharacter extends Character
         return flameAttackDamage;
     }
 
-    public int getFlameBombsRemaining() {
-        return flameBombsRemaining;
+    /** Bombs the player starts a game with (from the player model); the arsenal holds the rest. */
+    public int getStartingBombs() {
+        return Math.max(0, playerConfig.bombCount());
     }
 
-    public boolean consumeFlameBomb() {
-        if (flameBombsRemaining <= 0) {
-            return false;
+    /** While {@code shield} says so, the player takes no damage (power shield pickup). */
+    public void setShield(java.util.function.BooleanSupplier shield) {
+        this.shielded = shield != null ? shield : () -> false;
+    }
+
+    /** Restores health (heart pickup), never above the maximum and never for a dead player. */
+    public void heal(int hp) {
+        if (hitPoints.get() <= 0) {
+            return;
         }
-        flameBombsRemaining--;
-        return true;
+        hitPoints.updateAndGet(current -> Math.min(maxHitPoints, current + Math.max(0, hp)));
+        UiScheduler.get().runLater(this::updateHpBarProgress);
+    }
+
+    /** The direction the player last moved in (aimed weapons such as the laser use it). */
+    public VectorFacing getFacing() {
+        return facing;
     }
 
     @Override
@@ -223,6 +238,9 @@ public class PlayerCharacter extends Character
 
     @Override
     public void subtractHitPoints(int hp) {
+        if (shielded.getAsBoolean()) {
+            return;   // the power shield blocks all damage
+        }
         hitPoints.addAndGet(-hp);
 
         UiScheduler.get().runLater(this::updateHpBarProgress);

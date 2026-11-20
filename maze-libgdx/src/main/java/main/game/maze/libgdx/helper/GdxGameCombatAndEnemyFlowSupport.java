@@ -9,6 +9,7 @@ import main.game.maze.common.remains.RemainsLedger;
 import main.game.maze.service.MortalityService;
 import main.game.maze.game.runtime.EnemyDirectorService;
 import main.game.maze.game.runtime.RetiredShooters;
+import main.game.maze.game.score.KillLedger;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.libgdx.controller.GdxWinOverlayController;
@@ -160,6 +161,24 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                                      float playerCenterX,
                                                      float playerCenterY,
                                                      IntConsumer playerCallback) {
+        return applyDirectionalFlameExplosion(animatedEnemies, maze, originX, originY, damagePerDirection,
+                maxRange, playerCenterX, playerCenterY, playerCallback, null);
+    }
+
+    /**
+     * As above for a bomb planted by {@code attackerId} (a player id): enemies it kills and walls
+     * it brings down (and whoever the rubble crushes) are credited to that player.
+     */
+    public static int applyDirectionalFlameExplosion(List<GdxEnemyRuntime> animatedEnemies,
+                                                     MazeArena maze,
+                                                     float originX,
+                                                     float originY,
+                                                     int damagePerDirection,
+                                                     float maxRange,
+                                                     float playerCenterX,
+                                                     float playerCenterY,
+                                                     IntConsumer playerCallback,
+                                                     String attackerId) {
         if (damagePerDirection <= 0 || maxRange <= 0f) {
             return 0;
         }
@@ -175,20 +194,23 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         // Use the world's actual Vector2D references so findBreakableWall(ref) succeeds.
         List<Vector2D> wallVectors = world != null ? world.getMazeVectors() : List.of();
 
-        int totalApplied = 0;
-        // Horizontal rays: dirY=0, no Y-axis flip needed.
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                -1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
-        // Vertical rays: screen dirY and world dirY are opposite (Y-axis is flipped).
-        // Screen (0,+1)="up in libGDX"  → world (0,-1)="decreasing world Y"
-        // Screen (0,-1)="down in libGDX" → world (0,+1)="increasing world Y"
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                0, -1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
-        totalApplied += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                0, 1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx);
-        return totalApplied;
+        int[] totalApplied = {0};
+        // walls the flame destroys (and anything their rubble crushes) are credited to the attacker
+        GameMazeWorld.attributeDamageTo(attackerId, () -> {
+            // Horizontal rays: dirY=0, no Y-axis flip needed.
+            totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                    1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+            totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                    -1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+            // Vertical rays: screen dirY and world dirY are opposite (Y-axis is flipped).
+            // Screen (0,+1)="up in libGDX"  -> world (0,-1)="decreasing world Y"
+            // Screen (0,-1)="down in libGDX" -> world (0,+1)="increasing world Y"
+            totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                    0, -1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+            totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
+                    0, 1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+        });
+        return totalApplied[0];
     }
 
     /**
@@ -208,7 +230,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                              float playerCenterX,
                                              float worldPlayerCY,
                                              IntConsumer playerCallback,
-                                             float heightPx) {
+                                             float heightPx,
+                                             String attackerId) {
         List<FlameTarget> candidates = new ArrayList<>();
 
         if (animatedEnemies != null) {
@@ -216,14 +239,14 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                 if (enemy == null || !enemy.isAlive() || enemy.isInvulnerable()) {
                     continue;
                 }
-                final float cx = enemy.x() + enemy.size() * 0.5f;
-                // Enemy positions are in libGDX screen space (Y-up); convert to world space (Y-down).
-                final float cy = heightPx - (enemy.y() + enemy.size() * 0.5f);
+                // enemy.x()/y() is the sprite centre in libGDX screen space (Y-up); convert to world (Y-down)
+                final float cx = enemy.x();
+                final float cy = heightPx - enemy.y();
                 candidates.add(new FlameTarget() {
                     @Override public double centerX()        { return cx; }
                     @Override public double centerY()        { return cy; }
                     @Override public int    hitPoints()      { return Math.max(0, enemy.getHitPoints()); }
-                    @Override public void   applyDamage(int amount) { enemy.subtractHitPoints(amount, DeathCause.FIRE); }
+                    @Override public void   applyDamage(int amount) { enemy.subtractHitPoints(amount, DeathCause.FIRE, attackerId); }
                     @Override public boolean isPassThrough() { return false; }
                 });
             }
@@ -315,6 +338,20 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             List<EnemyDeathAnimation> dyingEnemies,
             RemainsLedger<EnemySpawn, RemainsVisual> remains,
             RetiredShooters<GdxEnemyRuntime> retiredShooters) {
+        return processKilledEnemies(animatedEnemies, deadEnemies, dyingEnemies, remains, retiredShooters, null);
+    }
+
+    /**
+     * As above; each kill is credited in {@code kills} (may be null) to the player who landed the
+     * killing blow, worth the enemy's kill points.
+     */
+    public static int processKilledEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            List<DeadEnemy> deadEnemies,
+            List<EnemyDeathAnimation> dyingEnemies,
+            RemainsLedger<EnemySpawn, RemainsVisual> remains,
+            RetiredShooters<GdxEnemyRuntime> retiredShooters,
+            KillLedger kills) {
         int killed = 0;
         List<GdxEnemyRuntime> toRemove = new ArrayList<>();
         for (GdxEnemyRuntime enemy : animatedEnemies) {
@@ -322,6 +359,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                 continue;
             }
             retire(enemy, deadEnemies, dyingEnemies, remains);
+            if (kills != null) {
+                kills.record(enemy, enemy.originalSpawn().id(), enemy.originalSpawn().killPoints());
+            }
             if (retiredShooters != null) {
                 retiredShooters.retire(enemy);
             }

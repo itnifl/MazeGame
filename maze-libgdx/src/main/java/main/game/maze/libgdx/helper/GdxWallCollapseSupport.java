@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Supplier;
 import main.game.maze.common.graphics.fire.RubbleMaterial;
 import main.game.maze.common.graphics.fire.WallRubble;
-import main.game.maze.common.remains.CrushZone;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.mazeworld.BreakableWall;
@@ -34,11 +33,17 @@ public final class GdxWallCollapseSupport {
     public static GameMazeWorld.WallCollapseListener listener(GameWorldModel worldModel,
                                                               List<GdxEnemyRuntime> enemies,
                                                               Supplier<Float> heightPx) {
-        return collapsed -> onWallsCollapsed(worldModel, enemies, collapsed, heightPx.get());
+        return (collapsed, attackerId) -> onWallsCollapsed(worldModel, enemies, collapsed, heightPx.get(), attackerId);
     }
 
     static void onWallsCollapsed(GameWorldModel worldModel, List<GdxEnemyRuntime> enemies,
                                  List<BreakableWall> collapsed, float heightPx) {
+        onWallsCollapsed(worldModel, enemies, collapsed, heightPx, null);
+    }
+
+    /** As above; enemies the rubble crushes are credited to {@code attackerId} (who brought the wall down). */
+    static void onWallsCollapsed(GameWorldModel worldModel, List<GdxEnemyRuntime> enemies,
+                                 List<BreakableWall> collapsed, float heightPx, String attackerId) {
         for (BreakableWall wall : collapsed) {
             Vector2D g = wall.geometry;
             double ax = g.getStart().getX();
@@ -48,24 +53,14 @@ public final class GdxWallCollapseSupport {
             worldModel.wallRubble().add(new GameWorldModel.ActiveWallRubble(new WallRubble(ax, ay, bx, by,
                     RUBBLE_THICKNESS, RubbleMaterial.fromMaterialId(wall.material.id()),
                     Double.doubleToLongBits(ax * 31 + by))));
-            crush(enemies, ax, ay, bx, by);
+            crush(enemies, ax, ay, bx, by, attackerId);
         }
     }
 
-    static void crush(List<GdxEnemyRuntime> enemies, double ax, double ay, double bx, double by) {
+    static void crush(List<GdxEnemyRuntime> enemies, double ax, double ay, double bx, double by, String attackerId) {
         if (enemies != null) {
-            MortalityService.crushAlong(enemies, GdxWallCollapseSupport::bodyOf, ax, ay, bx, by);
+            MortalityService.crushAlong(enemies, GdxWeaponSupport::bodyOf, ax, ay, bx, by, attackerId);
         }
-    }
-
-    /** The enemy's body on screen: centre of its drawn sprite, radius from its size. */
-    static MortalityService.Body bodyOf(GdxEnemyRuntime enemy) {
-        if (enemy == null) {
-            return null;
-        }
-        float size = enemy.size() * enemy.spriteScale();
-        return new MortalityService.Body(enemy.x() + size * 0.5, enemy.y() + size * 0.5,
-                size * CrushZone.BODY_RADIUS_FACTOR);
     }
 
     /** Advances the rubble animations and drops finished ones. */

@@ -20,6 +20,21 @@ returns `[translateX, translateY]` for the canvas group transform:
 
 `App.clampBoardToScreen(boardW, boardH, screenW, screenH)` ensures the stage is never larger than the primary screen's visual bounds.
 
+## Weapons, pickups and kill credit
+
+Same shared rules as libGDX (`maze-common-backend` `game.items` / `game.score`):
+
+- `FxWeaponController` (the counterpart of libGDX `GdxWeaponSupport`) owns the per-game `PickupField`, `PlayerArsenal`,
+  `PowerShield` and `KillLedger`: `useWeapon`, `switchWeapon`, `tick` (spawn and collect items every frame) and
+  `recordKill`. It reaches the game screen only through its small `Host` interface, so `FxWeaponControllerTest`
+  runs without FXML. `FxPickupLayer` draws the items, the weapon in the player's hands (mirrored to the facing)
+  and the shield bubble.
+- `FxEnemyCoordinator.fireLaser` / `swingSledgehammer` apply laser and sledgehammer damage through `ICanDie`
+  with the player's id; struck enemies play their `HitReactionEffect` (`ComputerCharacter.react`).
+- `PlayerCharacter.setShield` / `heal` / `getFacing`; Tab switches weapons (`SwitchWeaponCommand`).
+- A dying enemy reports itself to `GameController.recordKill` (`KillLedger`); the score includes the kill bonus and
+  the live score label refreshes at once.
+
 ## Building & running
 
 ```bash

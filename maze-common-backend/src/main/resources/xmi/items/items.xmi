@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Pickups that spawn during play. Shared by the JavaFX and libGDX frontends (PickupCatalogLoader).
+  Caps follow the board size, which follows difficulty: Easy 800 px wide, Normal 1100, Hard 1400.
+-->
+<items:PickupModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:items="http://main.game.maze/items"
+    spawnIntervalSeconds="5.0"
+    pickupRadius="14.0"
+    minDistanceFromPlayer="80.0">
+
+  <caps minBoardWidth="0" maxItems="5"/>
+  <caps minBoardWidth="1100" maxItems="10"/>
+  <caps minBoardWidth="1400" maxItems="15"/>
+
+  <items kind="BOMB" displayName="Bomb"
+      sprite="/main/game/maze/pickups/bomb.png"
+      pickupSound="/main/game/maze/sounds/pickup-bomb.wav"
+      spawnWeight="1" amount="1"/>
+
+  <items kind="LASER_RIFLE" displayName="Laser rifle"
+      sprite="/main/game/maze/pickups/laser-rifle.png"
+      pickupSound="/main/game/maze/sounds/pickup-laser.wav"
+      useSound="/main/game/maze/sounds/laser-fire.wav"
+      spawnWeight="1" amount="5" damage="60" range="600.0"/>
+
+  <items kind="SLEDGEHAMMER" displayName="Sledgehammer"
+      sprite="/main/game/maze/pickups/sledgehammer.png"
+      pickupSound="/main/game/maze/sounds/pickup-sledgehammer.wav"
+      useSound="/main/game/maze/sounds/sledgehammer-swing.wav"
+      spawnWeight="1" amount="5" damage="120" range="58.0"/>
+
+  <items kind="SHIELD" displayName="Power shield"
+      sprite="/main/game/maze/pickups/shield.png"
+      pickupSound="/main/game/maze/sounds/pickup-shield.wav"
+      spawnWeight="1" durationSeconds="5.0"/>
+
+  <items kind="HEART" displayName="Small heart"
+      sprite="/main/game/maze/pickups/heart.png"
+      pickupSound="/main/game/maze/sounds/pickup-heart.wav"
+      spawnWeight="1" amount="20"/>
+</items:PickupModel>

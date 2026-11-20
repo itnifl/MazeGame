@@ -209,3 +209,25 @@ MUST be added to the shared core, not to a single frontend.
   if any part of its perpendicular span lies within `corridorHalfWidth` pixels of
   the blast origin on the perpendicular axis. Both the east/west and north/south
   directions must apply this rule symmetrically.
+
+## Weapons, pickups and kill credit
+
+- **GR-38**: While playing, an item spawns every 5 seconds (bomb, laser rifle,
+  sledgehammer, shield cube or small heart) at a corridor point away from the
+  player, up to 5 items on easy maps, 10 on medium and 15 on hard / large maps.
+  Picking an item up frees a slot, so spawning continues.
+- **GR-39**: The player starts with the difficulty's bombs only. A bomb pickup
+  adds 1 bomb, a laser rifle 5 shots, a sledgehammer 5 swings. Tab switches
+  between weapons in stock; Space uses the weapon in hand. An empty weapon
+  switches to the next one in stock, and when nothing is left in hand a
+  picked-up weapon goes straight into the hands.
+- **GR-40**: The laser hits the nearest enemy in line with the player's facing
+  and damages breakable walls in its way, but never steel walls. The
+  sledgehammer strikes every enemy within reach that no wall separates from the
+  player and never damages walls.
+- **GR-41**: A shield cube blocks all damage to the player for 5 seconds; a
+  heart heals 20 % of the maximum health (never above the maximum).
+- **GR-42**: Each kill adds points in proportion to the enemy's danger (its
+  effective threat x 100, at least 10) to the player who dealt the killing blow,
+  including kills by walls that player brought down. Kills by nobody (enemy
+  projectiles, terminal commands) score nothing.

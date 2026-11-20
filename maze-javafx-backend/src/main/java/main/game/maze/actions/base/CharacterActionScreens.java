@@ -35,7 +35,8 @@ public class CharacterActionScreens extends ActionScreens {
                 maxHp,
                 currentHp,
                 dynamicPenalty,
-                playerCharacter.isWinning);
+                playerCharacter.isWinning,
+                App.gameController != null ? App.gameController.localKillPoints() : 0);
         this.score = breakdown.total();
         return score;
     }

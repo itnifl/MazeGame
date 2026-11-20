@@ -1,5 +1,12 @@
 package main.game.maze.libgdx.controller;
 
+import main.game.maze.libgdx.helper.GdxWeaponSupport;
+import main.game.maze.game.score.PlayerIds;
+import main.game.maze.game.items.Weapon;
+import main.game.maze.game.items.PickupKind;
+import main.game.maze.game.items.PickupCatalog;
+import main.game.maze.game.items.PickupField;
+import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.graphics.fire.FireBlast;
 import main.game.maze.libgdx.model.BombFuseGlow;
@@ -44,7 +51,6 @@ import main.game.maze.libgdx.helper.GdxGameInputBindingsSupport;
 import main.game.maze.libgdx.helper.GdxGameCombatAndEnemyFlowSupport;
 import main.game.maze.libgdx.helper.GdxGameLayoutSupport;
 import main.game.maze.libgdx.helper.GdxGameLifecycleSupport;
-import main.game.maze.libgdx.helper.GdxGameMouseInteractionCoordinator;
 import main.game.maze.libgdx.helper.GdxGameRuntimeSupport;
 import main.game.maze.libgdx.helper.GdxGameStartFlowRequestFactory;
 import main.game.maze.libgdx.helper.GdxGameStartFlowApplySupport;
@@ -141,10 +147,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final GdxGameStartFlowRequestFactory startFlowRequestFactory;
     private boolean combatFrameDead;
     private float currentFrameDt;
-    private int playerBombsRemaining;
+    /** Corridor points of the current level where items may spawn (world space). */
+    private List<Point2D> pickupSpawnPoints = List.of();
     private int playerBombDamage;
     private final List<PendingPlayerBomb> pendingPlayerBombs = new ArrayList<>();
     private final List<ActivePlayerFireBlast> activePlayerFireBlasts = new ArrayList<>();
+    private static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
     private final GameSessionStartFlowCoordinator gameSessionStartFlowCoordinator = new GameSessionStartFlowCoordinator();
     final GameWorldModel worldModel = new GameWorldModel();
     private final GdxGameRenderCoordinator renderCoordinator;
@@ -417,13 +425,38 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 session::incrementMoveCount);
     }
 
+    /** Attack key: use the weapon in hand (bomb, laser rifle or sledgehammer). */
     void triggerPlayerFlameAttack() {
-        if (playerBombsRemaining <= 0 || player == null) {
+        if (player == null) {
             return;
         }
-        playerBombsRemaining--;
-        pendingPlayerBombs.add(new PendingPlayerBomb(player.x(), player.y(), PLAYER_BOMB_FUSE_SECONDS));
-        flashStatus("Bomb planted", 1.2f);
+        Weapon used = worldModel.arsenal().use();
+        if (used == null) {
+            AudioEngine.get().play(WEAPON_SWITCH_SOUND);
+            flashStatus("Out of ammo - pick up weapons in the maze", 1.2f);
+            return;
+        }
+        PickupCatalog catalog = worldModel.pickupField().catalog();
+        switch (used) {
+            case BOMB -> {
+                pendingPlayerBombs.add(new PendingPlayerBomb(player.x(), player.y(), PLAYER_BOMB_FUSE_SECONDS));
+                flashStatus("Bomb planted", 1.2f);
+            }
+            case LASER_RIFLE -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
+                    catalog.spec(PickupKind.LASER_RIFLE), PlayerIds.LOCAL_PLAYER);
+            case SLEDGEHAMMER -> GdxWeaponSupport.swingSledgehammer(worldModel, animatedEnemies, maze, player,
+                    catalog.spec(PickupKind.SLEDGEHAMMER), PlayerIds.LOCAL_PLAYER);
+        }
+    }
+
+    /** Tab: switch to the next weapon in stock. */
+    void switchWeapon() {
+        Weapon before = worldModel.arsenal().selected();
+        Weapon now = worldModel.arsenal().cycle();
+        if (now != before) {
+            AudioEngine.get().play(WEAPON_SWITCH_SOUND);
+        }
+        flashStatus("Weapon: " + ArsenalHud.text(worldModel.arsenal(), null), 1.0f);
     }
 
     void advanceEnemies(float dt) {
@@ -444,9 +477,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
         tickPlayerBombs(dt);
-        // enemies can die outside the bomb flow too (e.g. crushed by a wall a projectile brought down)
+        GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
+        GdxWeaponSupport.tickEffects(worldModel, animatedEnemies, dt);
+        // enemies die from bombs, lasers, sledgehammers and collapsing walls; credit each kill to its killer
         GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(),
+                worldModel.retiredShooters(), worldModel.killLedger());
         GdxWallCollapseSupport.tick(worldModel, dt);
         emitPlayerFlameVisuals();
     }
@@ -492,7 +528,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 PLAYER_FLAME_RANGE,
                 playerCx,
                 playerCy,
-                dmg -> combatState.applyDirectDamage(dmg));
+                dmg -> combatState.applyDirectDamage(dmg),
+                PlayerIds.LOCAL_PLAYER);
 
         // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
         GameMazeWorld survivingWorld = GdxWallDamageSupport.worldFrom(maze);
@@ -515,7 +552,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
 
         int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
-                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(), worldModel.retiredShooters());
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(),
+                worldModel.retiredShooters(), worldModel.killLedger());
 
         if (appliedDamage > 0 || flamedKilled > 0) {
             String msg = flamedKilled > 0
@@ -590,7 +628,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 pathHintRemainingSeconds(),
                 showSpanningTreeInfo,
                 currentScore(),
-                playerBombsRemaining,
                 currentBreakdown(),
                 hudLayout));
     }
@@ -677,7 +714,13 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         watchWallCollapses(GdxWallDamageSupport.worldFrom(maze));
         player = applied.player();
         viewport = applied.viewport();
-        playerBombsRemaining = Math.max(0, startFlow.startState().runtimeModel().playerBombCount());
+        worldModel.resetArsenal(Math.max(0, startFlow.startState().runtimeModel().playerBombCount()));
+        worldModel.pickupField().clear();
+        worldModel.shield().reset();
+        worldModel.killLedger().clear();
+        worldModel.effects().clear();
+        combatState.setShield(() -> worldModel.shield().isActive());
+        pickupSpawnPoints = PickupField.spawnPointsOf(GdxWallDamageSupport.worldFrom(maze));
         playerBombDamage = Math.max(1, startFlow.startState().runtimeModel().playerBombDamage());
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();

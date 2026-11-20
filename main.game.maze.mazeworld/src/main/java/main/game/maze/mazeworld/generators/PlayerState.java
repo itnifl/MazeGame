@@ -10,6 +10,9 @@ public final class PlayerState {
     private float x;
     private float y;
     private final float halfSize;
+    /** Last movement direction as an axis unit vector, in the caller's coordinates (starts facing right). */
+    private int facingX = 1;
+    private int facingY = 0;
 
     public PlayerState(float x, float y, float size) {
         if (size <= 0f) throw new IllegalArgumentException("size must be positive");
@@ -21,6 +24,10 @@ public final class PlayerState {
     public float x() { return x; }
     public float y() { return y; }
     public float halfSize() { return halfSize; }
+    /** Facing x: -1, 0 or 1 along the last movement (aimed weapons such as the laser use it). */
+    public int facingX() { return facingX; }
+    /** Facing y: -1, 0 or 1, in the same coordinates the moves are given in. */
+    public int facingY() { return facingY; }
 
     public static PlayerState spawnAwayFromWalls(float x, float y, float size, MazeArena maze) {
         PlayerState spawn = new PlayerState(x, y, size);
@@ -53,6 +60,16 @@ public final class PlayerState {
     }
 
     public void attemptMove(float dx, float dy, MazeArena maze) {
+        if (dx != 0f || dy != 0f) {
+            // dominant axis wins, so diagonal input still aims along a corridor
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                facingX = dx > 0 ? 1 : -1;
+                facingY = 0;
+            } else {
+                facingX = 0;
+                facingY = dy > 0 ? 1 : -1;
+            }
+        }
         if (dx != 0f) {
             float candidate = x + dx;
             if (!collides(candidate, y, maze)) x = candidate;

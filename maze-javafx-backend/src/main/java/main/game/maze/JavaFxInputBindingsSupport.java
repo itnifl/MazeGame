@@ -35,6 +35,8 @@ public final class JavaFxInputBindingsSupport {
                 // Flame attack (space bar)
                 .bind(GameAction.FLAME_ATTACK, KeyCode.SPACE, BindingKind.EDGE)
                 .command(GameAction.FLAME_ATTACK, new TriggerFlameAttackCommand())
+                .bind(GameAction.SWITCH_WEAPON, KeyCode.TAB, BindingKind.EDGE)
+                .command(GameAction.SWITCH_WEAPON, new main.game.maze.common.input.command.SwitchWeaponCommand<>())
                 // Spanning tree: each press toggles visibility on/off
                 .bind(GameAction.TOGGLE_SPANNING_TREE, KeyCode.O, BindingKind.EDGE)
                 .command(GameAction.TOGGLE_SPANNING_TREE, new ToggleSpanningTreeCommand())
