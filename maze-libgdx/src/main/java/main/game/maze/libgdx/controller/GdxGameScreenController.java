@@ -742,6 +742,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.resetArsenal(Math.max(0, startFlow.startState().runtimeModel().playerBombCount()));
         worldModel.pickupField().clear();
         worldModel.shield().reset();
+        worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);   // spawn shield, like the pickup
         worldModel.killLedger().clear();
         worldModel.effects().clear();
         worldModel.healFeedback().reset();

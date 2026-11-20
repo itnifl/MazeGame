@@ -103,6 +103,7 @@ public final class FxWeaponController {
         arsenal = new PlayerArsenal(player.getStartingBombs());
         pickupField.clear();
         shield.reset();
+        shield.activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);   // spawn shield, like the pickup
         killLedger.clear();
         pickupLayer.clear();
         healFeedback.reset();

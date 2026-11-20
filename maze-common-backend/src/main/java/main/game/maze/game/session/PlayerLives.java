@@ -11,7 +11,7 @@ import main.game.maze.difficulties.Difficulty;
 public final class PlayerLives {
 
     /** After a respawn the player cannot be hurt for this long, so they are not killed again at once. */
-    public static final double RESPAWN_PROTECTION_SECONDS = 2.0;
+    public static final double RESPAWN_PROTECTION_SECONDS = 5.0;
     /** How long the dead player is shown before respawning (the same as before the game-over screen). */
     public static final double RESPAWN_DELAY_SECONDS = 3.0;
 

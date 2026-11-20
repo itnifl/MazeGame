@@ -47,6 +47,8 @@ class PickupsTest {
         assertTrue(laser.useSound().endsWith("laser-fire.wav"));
         assertEquals(5, CATALOG.spec(PickupKind.SLEDGEHAMMER).amount(), "five swings");
         assertEquals(5.0, CATALOG.spec(PickupKind.SHIELD).durationSeconds(), "shield lasts five seconds");
+        assertEquals(CATALOG.spec(PickupKind.SHIELD).durationSeconds(),
+                main.game.maze.game.session.PlayerLives.RESPAWN_PROTECTION_SECONDS, "spawn shield = pickup shield");
         assertEquals(1, CATALOG.spec(PickupKind.BOMB).amount());
         for (PickupSpec spec : CATALOG.specs().values()) {
             assertNotNull(PickupsTest.class.getResource(spec.sprite()), "sprite missing: " + spec.sprite());

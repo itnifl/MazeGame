@@ -65,7 +65,7 @@ public final class GdxHudView {
         shapes.setColor(0.76f, 0.22f, 0.17f, 0.92f);
         shapes.rect(1f, context.hpBarBottomY(), (w - 2f) * context.currentHpRatio(), context.hpBarHeight());
 
-        shapes.setColor(0f, 0f, 0f, 0.45f);
+        shapes.setColor(0f, 0f, 0f, 0.18f);
         shapes.rect(scoreX, scoreY, context.scorePanelWidth(), context.scorePanelHeight());
         WeaponHud.Model weaponHud = context.weaponHud();
         float weaponX = 6f;
@@ -78,7 +78,7 @@ public final class GdxHudView {
                     shapes.setColor(1f, 0.82f, 0.25f, 0.55f);
                     shapes.rect(weaponX + (float) WeaponHud.slotX(i) - 2f, weaponY + (float) WeaponHud.PADDING - 2f,
                             (float) WeaponHud.ICON_SIZE + 4f, (float) WeaponHud.ICON_SIZE + 4f);
-                    shapes.setColor(0f, 0f, 0f, 0.45f);
+                    shapes.setColor(0f, 0f, 0f, 0.18f);
                 }
             }
         }
