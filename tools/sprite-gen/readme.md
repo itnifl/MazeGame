@@ -48,6 +48,17 @@ Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGen
 
 Output is deterministic and overwrites existing files.
 
+## GrassBackgroundGenerator
+
+Draws `gameBackGround2.png`, the background of the normal difficulty: a lush, seamless 1024 x 1024 meadow (layered
+noise, thousands of grass blades, shaded clumps, clover and tiny flowers) with seven patches of burning grass
+(scorched earth, charred blades, embers, flame tongues, smoke). The picture wraps at its edges, so it tiles without a seam.
+It is deterministic: change `SEED` or the `patches` list in the tool for a different arrangement.
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/GrassBackgroundGenerator.java
+```
+
 ## SergeantSpriteGenerator
 
 Draws `zombie-sergeant.png` (the zombie sprite with a cap, stripes and a gatling gun) from `zombie1-down.png`:

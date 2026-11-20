@@ -388,3 +388,7 @@ These requirements have been implemented and verified.
 - **SR-290b** *(Gameplay)*: Per-level backgrounds, music and enemy mixes (an optional `opponents` override per level) so levels can differ in more than walls; both belong in `levels.ecore` next to `threatCapacityFactor`.
 
 - **SR-290c** *(Accessibility)*: The wall sprites differ mostly by texture; add an optional high-contrast zone tint, since players with colour-vision differences may not tell stone from steel.
+
+- **SR-295a** *(UX, performance)*: The new normal background is a 1.8 MB PNG; convert it to JPEG or an indexed PNG if start-up or repository size matters, and consider animating the flames (a few frames the renderers cycle) so the patches flicker.
+
+- **SR-295b** *(Gameplay, readability)*: The bright flames can distract from enemies and pickups; offer a "calm background" option (a setting) that draws the meadow without the burning patches.

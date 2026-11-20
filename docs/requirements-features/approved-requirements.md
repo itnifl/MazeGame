@@ -77,3 +77,4 @@
 - SR-292: The gatling gun (the sergeants' and the one the player picks up) looks like a spray of separate bullets with glowing tracers and sparks where they land, not a laser beam, in both frontends; its sound is a gatling gun (spinning motor under a fast stream of shots).
 - SR-293: Breaking one wall never brings down a large part of a level: no single broken wall may take more than 10 % of the maze with it (the cascade rule, GR-36), so every zone of a level keeps solid walls.
 - SR-294: A level can limit how far a wall collapse spreads (`maxCascadeDepth` in the levels model; level 2: two steps), so walls cascade a little but a broken wall never brings down much of the maze, while every wall can still be broken by a bomb.
+- SR-295: The background of the normal difficulty is a lush meadow with patches of burning grass (scorched earth, flames, embers, smoke), in both frontends; it tiles without a seam. The easy and hard backgrounds are unchanged.
