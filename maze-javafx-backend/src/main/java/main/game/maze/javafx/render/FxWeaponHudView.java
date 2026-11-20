@@ -22,9 +22,9 @@ import main.game.maze.game.items.WeaponHud;
  */
 public final class FxWeaponHudView {
 
-    static final String SELECTED_STYLE = "-fx-border-color: #ffd23f; -fx-border-width: 2; -fx-background-color: rgba(255, 210, 63, 0.25);";
+    static final String SELECTED_STYLE = "-fx-border-color: #ffd23f; -fx-border-width: 2; -fx-background-color: rgba(255, 210, 63, 0.20);";
     static final String SLOT_STYLE = "-fx-border-color: transparent; -fx-border-width: 2;";
-    private static final String PANEL_STYLE = "-fx-background-color: rgba(0, 0, 0, 0.18); -fx-border-color: #8fffe0; "
+    private static final String PANEL_STYLE = "-fx-background-color: rgba(0, 0, 0, 0.15); -fx-border-color: #8fffe0; "
             + "-fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;";
     private static final String COUNT_STYLE = "-fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-font-size: 12px; "
             + "-fx-text-fill: white; -fx-effect: dropshadow(gaussian, black, 2, 1, 0, 0);";
