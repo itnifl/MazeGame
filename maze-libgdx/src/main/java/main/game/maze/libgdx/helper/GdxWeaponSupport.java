@@ -7,7 +7,6 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.graphics.fire.HealFlashEffect;
 import main.game.maze.common.graphics.fire.HitReactionEffect;
-import main.game.maze.common.graphics.fire.LaserBeamEffect;
 import main.game.maze.common.graphics.fire.PickupSparkleEffect;
 import main.game.maze.common.graphics.fire.SledgeSwingEffect;
 import main.game.maze.common.remains.CrushZone;
@@ -125,7 +124,8 @@ public final class GdxWeaponSupport {
 
         float endX = (float) (player.x() + player.facingX() * shot[0].reach());
         float endY = (float) (player.y() + player.facingY() * shot[0].reach());
-        model.effects().add(new GameWorldModel.ActiveEffect(new LaserBeamEffect(player.x(), player.y(), endX, endY)));
+        model.effects().add(new GameWorldModel.ActiveEffect(
+                main.game.maze.game.items.ShotEffects.forWeapon(laser.kind(), player.x(), player.y(), endX, endY)));
         if (hit[0] != null) {
             HitReactionEffect reaction = new HitReactionEffect(HitReactionEffect.Kind.SHOT, hit[0].x(), hit[0].y(),
                     player.facingX(), player.facingY(),

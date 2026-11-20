@@ -185,16 +185,31 @@ public final class SoundEffectGenerator {
         return out;
     }
 
-    /** Five rapid gunshots: noise cracks over a low thump. */
+    /**
+     * A gatling gun: a motor that spins up under a fast stream of sharp shots (20 a second), with a low thump
+     * on each and a short spin-down at the end.
+     */
     static double[] gatlingBurst() {
-        double[] out = buffer(0.62);
+        double fire = 0.55;
+        double[] out = buffer(fire + 0.25);
         Random noise = new Random(5);
-        for (int shot = 0; shot < 5; shot++) {
-            int start = (int) (shot * 0.12 * RATE);
-            for (int i = 0; i < (int) (0.1 * RATE) && start + i < out.length; i++) {
+        double motorPhase = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            // motor: spins up for 0.12 s, keeps its speed while firing, winds down afterwards
+            double speed = t < 0.12 ? t / 0.12 : t < fire ? 1.0 : Math.max(0, 1 - (t - fire) / 0.25);
+            motorPhase += 2 * Math.PI * (40 + 90 * speed) / RATE;
+            double motor = (Math.signum(Math.sin(motorPhase)) * 0.12 + Math.sin(motorPhase * 3) * 0.06) * Math.min(1, speed * 2)
+                    * (t < fire ? 1.0 : Math.max(0, 1 - (t - fire) / 0.25));
+            out[i] = motor;
+        }
+        // the shots: a sharp crack and a thump each, every 50 ms from the first spin-up
+        for (double at = 0.06; at < fire; at += 0.05) {
+            int start = (int) (at * RATE);
+            for (int i = 0; i < (int) (0.045 * RATE) && start + i < out.length; i++) {
                 double t = i / (double) RATE;
-                out[start + i] += (noise.nextDouble() * 2 - 1) * Math.exp(-t * 55) * 0.8
-                        + Math.sin(2 * Math.PI * (150 - 400 * t) * t) * Math.exp(-t * 30) * 0.6;
+                out[start + i] += (noise.nextDouble() * 2 - 1) * Math.exp(-t * 130) * 0.9
+                        + Math.sin(2 * Math.PI * (110 - 600 * t) * t) * Math.exp(-t * 70) * 0.6;
             }
         }
         return out;

@@ -4,7 +4,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import main.game.maze.common.graphics.AudioEngine;
-import main.game.maze.common.graphics.fire.LaserBeamEffect;
 import main.game.maze.game.level.SergeantGunner;
 import main.game.maze.game.level.SergeantSpec;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
@@ -53,7 +52,7 @@ public final class GdxSergeantSupport {
             int rounds = gunner.tick(dt, sees);
             for (int round = 0; round < rounds; round++) {
                 model.effects().add(new GameWorldModel.ActiveEffect(
-                        new LaserBeamEffect(enemy.x(), enemy.y(), player.x(), player.y())));
+                        main.game.maze.game.items.ShotEffects.enemyRound(enemy.x(), enemy.y(), player.x(), player.y())));
                 combat.applyDirectDamage(spec.roundDamage());
             }
             if (rounds > 0 && spec.fireSound() != null) {

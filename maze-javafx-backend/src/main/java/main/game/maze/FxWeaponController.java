@@ -9,7 +9,6 @@ import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.graphics.fire.HitReactionEffect;
-import main.game.maze.common.graphics.fire.LaserBeamEffect;
 import main.game.maze.common.graphics.fire.PickupSparkleEffect;
 import main.game.maze.common.graphics.fire.PuffEffect;
 import main.game.maze.common.graphics.fire.SledgeSwingEffect;
@@ -151,7 +150,7 @@ public final class FxWeaponController {
 
     /** One enemy round on its way: a short tracer line. */
     public void showTracer(double fromX, double fromY, double toX, double toY) {
-        playEffect(new LaserBeamEffect(fromX, fromY, toX, toY));
+        playEffect(main.game.maze.game.items.ShotEffects.enemyRound(fromX, fromY, toX, toY));
     }
 
     /** What the player holds now, to carry into the next level. */
@@ -264,7 +263,8 @@ public final class FxWeaponController {
         FxEnemyCoordinator.LaserHit hit = host.enemies().fireLaser(center[0], center[1], dir[0], dir[1], laser,
                 LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH, PlayerIds.LOCAL_PLAYER);
         double reach = hit.shot().reach();
-        playEffect(new LaserBeamEffect(center[0], center[1], center[0] + dir[0] * reach, center[1] + dir[1] * reach));
+        playEffect(main.game.maze.game.items.ShotEffects.forWeapon(laser.kind(), center[0], center[1],
+                center[0] + dir[0] * reach, center[1] + dir[1] * reach));
         if (hit.enemy() != null) {
             react(hit.enemy(), HitReactionEffect.Kind.SHOT, dir[0], dir[1], hit.damage());
         }

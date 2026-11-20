@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import main.game.maze.common.graphics.fire.LaserBeamEffect;
+import main.game.maze.common.graphics.fire.BulletSprayEffect;
 import main.game.maze.common.movement.WorldView;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.items.Pickup;
@@ -97,7 +97,7 @@ class GdxSergeantSupportTest {
 
         assertEquals(1, rounds, "the first round is fired at once");
         assertEquals(before - SPEC.roundDamage(), combat.currentHitPointsAsInt());
-        assertTrue(world.effects().stream().anyMatch(e -> e.visual().effect() instanceof LaserBeamEffect));
+        assertTrue(world.effects().stream().anyMatch(e -> e.visual().effect() instanceof BulletSprayEffect));
     }
 
     @Test

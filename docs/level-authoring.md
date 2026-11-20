@@ -37,6 +37,10 @@ as there are elements, scaled to the board, with the heart in the middle.
   `STONE_REINFORCED` look like their base material (`WallLook`).
 - `breakableShare` (0 to 1, default 1): the share of the ring's walls that can be broken. The rest are solid
   and keep the classic wall look.
+- **Keep solid walls in every ring.** Breakable walls that touch fall together (the cascade rule, GR-36), so a map where
+  every wall is breakable loses most of itself when one wall breaks. A `breakableShare` of about 0.3 to 0.5 keeps
+  the cascades small. `CascadeBoundTest` checks every shipped level: no single broken wall may bring down more than
+  10 % of the maze, over many generated mazes.
 - **Each ring must be weaker than the one outside it** (average hit points, solid walls counting as 200 HP). The
   loader rejects a level where an inner ring is as strong as, or stronger than, the ring around it.
 

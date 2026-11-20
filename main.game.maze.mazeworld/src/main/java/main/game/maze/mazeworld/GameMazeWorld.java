@@ -349,6 +349,11 @@ public class GameMazeWorld {
      * adjacency (BFS).  Always includes {@code destroyed} itself as the first
      * element.
      */
+    /** How many walls would fall if {@code wall} were destroyed now: itself and every connected breakable wall. */
+    public int cascadeSize(BreakableWall wall) {
+        return collectCascadeWalls(wall).size();
+    }
+
     private List<BreakableWall> collectCascadeWalls(BreakableWall destroyed) {
         List<BreakableWall> result = new ArrayList<>();
         // Track visited walls in a HashSet (BreakableWall uses identity equals/hashCode)
