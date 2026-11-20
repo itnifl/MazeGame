@@ -40,6 +40,7 @@ public final class PickupSpriteGenerator {
         write(dir, "heart.png", heart());
         write(dir, "heal-arrow.png", healArrow());
         write(dir, "extra-life.png", extraLife());
+        write(dir, "gatling-gun.png", gatlingGun());
     }
 
     static BufferedImage bomb() {
@@ -105,6 +106,44 @@ public final class PickupSpriteGenerator {
             g.fillRect(29, 13, 3, 4);
             g.setColor(new Color(0xff, 0xd0, 0xd0));
             g.fillRect(30, 14, 1, 2);
+        });
+    }
+
+    /** Rotary barrels, a drum magazine and a grip: the gun a zombie sergeant drops. */
+    static BufferedImage gatlingGun() {
+        return draw(g -> {
+            // grip and stock
+            g.setColor(OUTLINE);
+            g.fillRect(1, 15, 7, 8);
+            g.setColor(new Color(0x5a, 0x3c, 0x24));
+            g.fillRect(2, 16, 5, 6);
+            // body
+            g.setColor(OUTLINE);
+            g.fillRect(7, 11, 10, 10);
+            g.setColor(new Color(0x55, 0x5c, 0x48));
+            g.fillRect(8, 12, 8, 8);
+            g.setColor(new Color(0x80, 0x88, 0x6a));
+            g.fillRect(8, 12, 8, 2);
+            // drum magazine
+            g.setColor(OUTLINE);
+            g.fill(new Ellipse2D.Double(8, 4, 9, 9));
+            g.setColor(new Color(0xc8, 0x9a, 0x2e));
+            g.fill(new Ellipse2D.Double(9, 5, 7, 7));
+            g.setColor(new Color(0xf0, 0xd0, 0x70));
+            g.fillRect(10, 6, 2, 2);
+            // rotary barrels
+            g.setColor(OUTLINE);
+            g.fillRect(16, 11, 15, 10);
+            g.setColor(new Color(0x7a, 0x82, 0x90));
+            g.fillRect(17, 12, 13, 2);
+            g.fillRect(17, 15, 13, 2);
+            g.fillRect(17, 18, 13, 2);
+            g.setColor(new Color(0x3a, 0x3e, 0x48));
+            g.fillRect(17, 14, 13, 1);
+            g.fillRect(17, 17, 13, 1);
+            // muzzle ring
+            g.setColor(new Color(0xb0, 0xb6, 0xc2));
+            g.fillRect(28, 11, 3, 10);
         });
     }
 

@@ -40,7 +40,9 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-shield.wav", pickupShield());
         write(dir, "pickup-heart.wav", pickupHeart());
         write(dir, "pickup-extra-life.wav", pickupExtraLife());
+        write(dir, "pickup-gatling.wav", pickupGatling());
         write(dir, "laser-fire.wav", laserFire());
+        write(dir, "gatling-burst.wav", gatlingBurst());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
         write(dir, "weapon-switch.wav", weaponSwitch());
     }
@@ -165,6 +167,37 @@ public final class SoundEffectGenerator {
     private static double triangle(double cycles) {
         double p = cycles - Math.floor(cycles);
         return 4 * Math.abs(p - 0.5) - 1;
+    }
+
+    /** Two quick metallic clacks: a magazine slapped into the gun. */
+    static double[] pickupGatling() {
+        double[] out = buffer(0.3);
+        Random noise = new Random(11);
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double second = t - 0.12;
+            double clack = Math.exp(-t * 60) * (noise.nextDouble() * 2 - 1) * 0.6 + Math.sin(2 * Math.PI * 900 * t) * Math.exp(-t * 45) * 0.5;
+            double clack2 = second > 0
+                    ? Math.exp(-second * 50) * (noise.nextDouble() * 2 - 1) * 0.6 + Math.sin(2 * Math.PI * 1300 * second) * Math.exp(-second * 40) * 0.5
+                    : 0;
+            out[i] = clack + clack2;
+        }
+        return out;
+    }
+
+    /** Five rapid gunshots: noise cracks over a low thump. */
+    static double[] gatlingBurst() {
+        double[] out = buffer(0.62);
+        Random noise = new Random(5);
+        for (int shot = 0; shot < 5; shot++) {
+            int start = (int) (shot * 0.12 * RATE);
+            for (int i = 0; i < (int) (0.1 * RATE) && start + i < out.length; i++) {
+                double t = i / (double) RATE;
+                out[start + i] += (noise.nextDouble() * 2 - 1) * Math.exp(-t * 55) * 0.8
+                        + Math.sin(2 * Math.PI * (150 - 400 * t) * t) * Math.exp(-t * 30) * 0.6;
+            }
+        }
+        return out;
     }
 
     static double[] laserFire() {

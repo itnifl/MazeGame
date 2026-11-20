@@ -63,3 +63,12 @@
 - SR-265: An extra-life item spawns with the other items (rarer than them); picking it up gives one more life.
 - SR-266: When the player dies with lives left, they respawn at their start position with full health (after the death is shown, with a short spawn protection); the game is over only when the last life is lost.
 - SR-267: Besides the arrows, Space and Tab: Q moves left, W forward (up), E right, D down; a right click uses the weapon in hand (shoot, swing or drop a bomb). A keeps moving left and S down; D now moves down instead of right.
+- SR-274: After winning level 1 the player can go on to level 2 (a Next level choice on the win screen); both frontends. *(Status: shared level progress done; frontend win-screen flow pending.)*
+- SR-275: The levels are defined in the levels model (`xmi/levels/levels.ecore` + `levels.xmi`, dynamic EMF): wall zones, threat capacity and the sergeant with its numbers per difficulty. A level with zones has exactly four, each weaker than the one outside it; the loader fails fast otherwise.
+- SR-276: Level 2 is still a generated maze (the same generator and navigation graph); only the wall materials are assigned by zone. The maze is divided into four concentric zones around the heart.
+- SR-277: In level 2 the outer zone has the strongest walls and the inner zone (around the heart) the weakest: fewer breakable walls and tougher materials outside, more and weaker ones inside.
+- SR-278: Level 2 has a higher threat capacity than level 1: the difficulty's maximum threat x the level's `threatCapacityFactor` (1.5).
+- SR-279: New enemy, the zombie sergeant: it never moves, and fires a burst of gatling-gun rounds at the player whenever it sees them (within its sight range, no wall in between), rests, and fires again while the player stays in sight. Its numbers are in the levels model.
+- SR-280: Sergeants stand close to the heart: four on hard, two on normal (medium), one on easy.
+- SR-281: A killed sergeant drops its gatling gun; the player picks it up and can use it like the other weapons (Tab to select, attack key to fire a burst along the facing). The gun never spawns as a normal item.
+- SR-282: The player inherits their weapons (stock and weapon in hand) from the previous level; retrying a level starts with the weapons it was entered with.

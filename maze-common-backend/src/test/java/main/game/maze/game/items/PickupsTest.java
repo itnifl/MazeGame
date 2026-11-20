@@ -299,7 +299,7 @@ class PickupsTest {
         PickupSpec extraLife = CATALOG.spec(PickupKind.EXTRA_LIFE);
         assertEquals(1, extraLife.amount());
         for (PickupKind kind : PickupKind.values()) {
-            if (kind != PickupKind.EXTRA_LIFE) {
+            if (kind != PickupKind.EXTRA_LIFE && kind != PickupKind.GATLING_GUN) {
                 assertTrue(CATALOG.spec(kind).spawnWeight() > extraLife.spawnWeight(), kind + " is more common");
             }
         }
@@ -345,7 +345,21 @@ class PickupsTest {
         for (int i = 0; i < 200; i++) {
             seen.add(CATALOG.randomKind(random));
         }
-        assertEquals(EnumSet.allOf(PickupKind.class), seen);
+        EnumSet<PickupKind> expected = EnumSet.allOf(PickupKind.class);
+        expected.remove(PickupKind.GATLING_GUN);   // only ever dropped by a killed sergeant
+        assertEquals(expected, seen);
+    }
+
+    @Test
+    @DisplayName("the gatling gun never spawns on its own: it is only dropped by a sergeant")
+    void gatlingNeverSpawnsRandomly() {
+        assertEquals(0, CATALOG.spec(PickupKind.GATLING_GUN).spawnWeight());
+        assertEquals(Weapon.GATLING_GUN, PickupKind.GATLING_GUN.weapon());
+        assertEquals(PickupKind.GATLING_GUN, Weapon.GATLING_GUN.pickup());
+        Random random = new Random(1);
+        for (int i = 0; i < 2000; i++) {
+            assertTrue(CATALOG.randomKind(random) != PickupKind.GATLING_GUN);
+        }
     }
 
     @Test

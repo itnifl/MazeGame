@@ -230,6 +230,36 @@ public class GameMazeWorld {
         }
     }
 
+    /**
+     * Assigns breakable walls zone by zone: each wall takes the rules of the zone its midpoint lies in
+     * (see {@link ZoneGeometry}), so a level can have strong walls on the outside and weak walls around
+     * the heart. Deterministic for a given {@code seed}.
+     *
+     * @param zones one rule per zone, outer zone first; the count must equal {@code geometry.zoneCount()}
+     */
+    public void assignZonedWalls(long seed, ZoneGeometry geometry, List<WallZoneSpec> zones) {
+        if (geometry == null || zones == null) {
+            throw new IllegalArgumentException("geometry and zones must not be null");
+        }
+        if (zones.size() != geometry.zoneCount()) {
+            throw new IllegalArgumentException(
+                    "expected " + geometry.zoneCount() + " zone rules but got " + zones.size());
+        }
+        breakableWalls.clear();
+        Random rng = new Random(seed);
+        for (Vector2D wall : mazeVectors) {
+            double midX = (wall.getStart().getX() + wall.getEnd().getX()) / 2.0;
+            double midY = (wall.getStart().getY() + wall.getEnd().getY()) / 2.0;
+            WallZoneSpec zone = zones.get(geometry.zoneOf(midX, midY));
+            // always draw both numbers so a wall's outcome does not shift when another zone changes
+            double roll = rng.nextDouble();
+            WallMaterialSpec material = zone.materials().get(rng.nextInt(zone.materials().size()));
+            if (roll < zone.breakableShare()) {
+                breakableWalls.add(new BreakableWall(wall, material));
+            }
+        }
+    }
+
     public List<Vector2D> getMazeVectors() {
         return mazeVectors;
     }

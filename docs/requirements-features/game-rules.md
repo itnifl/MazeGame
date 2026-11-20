@@ -249,3 +249,21 @@ MUST be added to the shared core, not to a single frontend.
   in hand, highlighted, plus the lives left.
 - **GR-47**: Movement keys: arrows, numpad, Q/A left, W up, E right, S/D down.
   Space or a right click uses the weapon in hand; Tab switches weapons.
+- **GR-48**: Winning level 1 leads on to level 2. Level data (zones, threat
+  capacity, sergeants) comes from the levels model through `LevelCatalogLoader`
+  and level progress from the shared `LevelProgress`; neither frontend keeps
+  its own level state. *(Frontend win-screen flow: pending.)*
+- **GR-49**: Level 2 uses the same generated maze as level 1; only the wall
+  materials differ: four concentric zones around the heart, the outer zone the
+  strongest and the inner zone the weakest (`GameMazeWorld.assignZonedWalls`).
+- **GR-50**: Level 2's threat capacity is the difficulty's maximum threat x the
+  level's `threatCapacityFactor` (`LevelSpec.maxThreat`).
+- **GR-51**: Zombie sergeants never move. A sergeant that sees the player
+  (`SergeantGunner.canSee`: in sight range, no wall between) fires bursts of
+  rounds with a rest between bursts; losing sight ends the burst. Four on hard,
+  two on normal, one on easy, standing near the heart.
+- **GR-52**: A killed sergeant drops its gatling gun where it fell
+  (`PickupKind.GATLING_GUN`, never spawned randomly); picking it up adds
+  bursts to the player's arsenal.
+- **GR-53**: The player's arsenal is inherited by the next level
+  (`LevelProgress.advance` / `inheritedArsenal`).

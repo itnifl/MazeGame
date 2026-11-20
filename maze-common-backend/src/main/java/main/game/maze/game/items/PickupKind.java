@@ -8,7 +8,9 @@ public enum PickupKind {
     SHIELD,
     HEART,
     /** One more life (respawn at the start when the player dies). */
-    EXTRA_LIFE;
+    EXTRA_LIFE,
+    /** Never spawns on its own: the gun a killed zombie sergeant drops. */
+    GATLING_GUN;
 
     /** The weapon this pickup refills, or null for shield / heart / extra life. */
     public Weapon weapon() {
@@ -16,6 +18,7 @@ public enum PickupKind {
             case BOMB -> Weapon.BOMB;
             case LASER_RIFLE -> Weapon.LASER_RIFLE;
             case SLEDGEHAMMER -> Weapon.SLEDGEHAMMER;
+            case GATLING_GUN -> Weapon.GATLING_GUN;
             default -> null;
         };
     }

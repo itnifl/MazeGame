@@ -4,7 +4,9 @@ package main.game.maze.game.items;
 public enum Weapon {
     BOMB,
     LASER_RIFLE,
-    SLEDGEHAMMER;
+    SLEDGEHAMMER,
+    /** Taken from a fallen zombie sergeant: a burst of rounds along a line, like the laser rifle. */
+    GATLING_GUN;
 
     /** The pickup that refills this weapon. */
     public PickupKind pickup() {
@@ -12,6 +14,7 @@ public enum Weapon {
             case BOMB -> PickupKind.BOMB;
             case LASER_RIFLE -> PickupKind.LASER_RIFLE;
             case SLEDGEHAMMER -> PickupKind.SLEDGEHAMMER;
+            case GATLING_GUN -> PickupKind.GATLING_GUN;
         };
     }
 }
