@@ -366,3 +366,5 @@ These requirements have been implemented and verified.
 - **SR-271** *(12-Factor, UX)*: Let players rebind the movement and attack keys (a key map in the user's config, read at start), since D now moves down and some players expect WASD.
 
 - **SR-272** *(Observability)*: Count lives lost and extra lives picked up per level, next to the kill statistics (SR-252).
+
+- **SR-273** *(Portability, CRR-9; bug fixed)*: ~~The game could not be built or run outside the full reactor build after shared-module changes~~ — fixed: the `quick`/full targets of both make scripts now `install` (the local Maven repository used by single-module builds and the IDE was left stale by `verify`), and libGDX `prepare-run` rebuilds when any runtime module has newer sources (`Test-LaunchClassesStale`, also used for the shared modules in JavaFX `prepare-run`; Pester `Test-LaunchClassesStale` cases). Follow-up: run a `prepare-run` smoke step in CI so a stale-launch regression is caught automatically.

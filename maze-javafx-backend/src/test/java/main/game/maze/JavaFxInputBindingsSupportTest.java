@@ -103,17 +103,17 @@ class JavaFxInputBindingsSupportTest {
     }
 
     @Test
-    void qweAndDMoveTheSameAsTheArrowsAndRightClickUsesTheWeapon() {
+    void awdsMoveTheSameAsTheArrowsAndRightClickUsesTheWeapon() {
         KeyBindingRegistry<KeyCode> registry = new KeyBindingRegistry<>();
         JavaFxInputBindingsSupport.configureDefaultBindings(registry);
-        for (KeyCode key : List.of(KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.D)) {
+        for (KeyCode key : List.of(KeyCode.A, KeyCode.W, KeyCode.D, KeyCode.S)) {
             assertTrue(registry.isTriggered(GameAction.MOVE_PLAYER, new InputFrame<>(Set.of(key), Set.of(), 0, 0, false)),
                     key + " moves the player");
         }
-        assertTrue(JavaFxMovementKeys.KEYS.isLeft(held(KeyCode.Q)), "Q left");
+        assertTrue(JavaFxMovementKeys.KEYS.isLeft(held(KeyCode.A)), "A left");
         assertTrue(JavaFxMovementKeys.KEYS.isUp(held(KeyCode.W)), "W forward (up)");
-        assertTrue(JavaFxMovementKeys.KEYS.isRight(held(KeyCode.E)), "E right");
-        assertTrue(JavaFxMovementKeys.KEYS.isDown(held(KeyCode.D)), "D down");
+        assertTrue(JavaFxMovementKeys.KEYS.isRight(held(KeyCode.D)), "D right");
+        assertTrue(JavaFxMovementKeys.KEYS.isDown(held(KeyCode.S)), "S down");
         assertTrue(JavaFxMovementKeys.KEYS.isLeft(held(KeyCode.A)) && JavaFxMovementKeys.KEYS.isDown(held(KeyCode.S)));
         assertTrue(registry.isTriggered(GameAction.FLAME_ATTACK, new InputFrame<>(Set.of(), Set.of(), 0, 0, false, true)),
                 "right click uses the weapon in hand");

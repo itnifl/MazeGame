@@ -10,6 +10,9 @@ Set-Location $scriptRoot
 # Config
 $Mvn               = 'mvn'
 $LibgdxModules     = 'maze-common-frontend,maze-libgdx'
+# Modules whose sources end up in the libGDX runtime (checked for staleness before launching).
+$LibgdxRuntimeModuleDirs = @('main.game.maze.walls', 'main.game.maze.mazeworld', 'main.game.maze.difficulties',
+    'main.game.maze.opponents', 'main.game.maze.behaviour', 'maze-common-frontend', 'maze-common-backend', 'maze-libgdx')
 $GeneratedSourceDir = Join-Path 'maze-module-generator' 'src-gen/main/game/maze/generated'
 $XtextGeneratedDir = Join-Path 'main.game.maze.dsl' 'src/main/xtext-gen'
 
@@ -108,9 +111,9 @@ function Ensure-GeneratedSources {
 
 function Invoke-LibgdxFullBuild {
     Ensure-GeneratedSources
-    $cmd = "$Mvn -pl $LibgdxModules -am -U -DskipTests=false clean verify"
+    $cmd = "$Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install"
     Write-Host "=== Running libGDX full build: $cmd ===" -ForegroundColor Cyan
-    & $Mvn -pl $LibgdxModules -am -U -DskipTests=false clean verify
+    & $Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX full build failed with exit code $exit."
@@ -123,7 +126,8 @@ function Invoke-LibgdxQuickBuild {
     Ensure-GeneratedSources
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
     Write-Host "=== Running libGDX quick build (skipTests=$skipValue) ===" -ForegroundColor Cyan
-    & $Mvn -pl $LibgdxModules -am "-DskipTests=$skipValue" verify
+    # install, so the local Maven repository (single-module builds, the IDE) matches the sources
+    & $Mvn -pl $LibgdxModules -am "-DskipTests=$skipValue" install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX quick build failed with exit code $exit."
@@ -136,16 +140,22 @@ function Ensure-LibgdxLaunchClasses {
     $launcherClass = Join-Path 'maze-libgdx' 'target/classes/main/game/maze/libgdx/GdxAppLauncher.class'
     $libsDir       = Join-Path 'maze-libgdx' 'target/libs'
 
-    $needsBuild = (-not (Test-Path $launcherClass)) -or (-not (Test-Path $libsDir)) -or
-                  (-not (Get-ChildItem -Path $libsDir -Filter 'gdx-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1))
+    $missing = (-not (Test-Path $libsDir)) -or
+               (-not (Get-ChildItem -Path $libsDir -Filter 'gdx-*.jar' -ErrorAction SilentlyContinue | Select-Object -First 1))
+    # every module the libGDX game runs with: an edit in any of them must rebuild before launching
+    $runtimeModules = $LibgdxRuntimeModuleDirs | ForEach-Object { Join-Path $scriptRoot $_ }
+    $staleCheck = Test-LaunchClassesStale $launcherClass $runtimeModules
 
-    if (-not $needsBuild) {
-        Write-Host 'libGDX launch artifacts already present.' -ForegroundColor Green
+    if (-not $missing -and -not $staleCheck.Stale) {
+        Write-Host 'libGDX launch artifacts are up to date with the sources.' -ForegroundColor Green
         return
     }
+    if ($staleCheck.Stale) {
+        Write-Host "libGDX launch artifacts are stale: $($staleCheck.Reason)" -ForegroundColor Yellow
+    }
 
-    Write-Host 'Building libGDX runtime jar + copying dependencies...' -ForegroundColor Yellow
-    & $Mvn -pl $LibgdxModules -am -DskipTests=true package
+    Write-Host 'Building and installing the libGDX runtime (jars + dependencies)...' -ForegroundColor Yellow
+    & $Mvn -pl $LibgdxModules -am -DskipTests=true install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX prepare-run build failed with exit code $exit."

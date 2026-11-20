@@ -107,18 +107,18 @@ class GdxGameInputBindingsSupportTest {
     }
 
     @Test
-    void qweAndDMoveTheSameAsTheArrowsAndRightClickUsesTheWeapon() {
+    void awdsMoveTheSameAsTheArrowsAndRightClickUsesTheWeapon() {
         KeyBindingRegistry<Integer> registry = new KeyBindingRegistry<>();
         GdxGameInputBindingsSupport.configureDefaultBindings(registry);
-        for (int key : new int[] {Input.Keys.Q, Input.Keys.W, Input.Keys.E, Input.Keys.D}) {
+        for (int key : new int[] {Input.Keys.A, Input.Keys.W, Input.Keys.D, Input.Keys.S}) {
             assertTrue(registry.isTriggered(GameAction.MOVE_PLAYER,
                     new InputFrame<>(java.util.Set.of(key), java.util.Set.of(), 0, 0, false)), key + " moves the player");
         }
         var keys = main.game.maze.libgdx.input.GdxMovementKeys.KEYS;
-        assertTrue(keys.isLeft(held(Input.Keys.Q)), "Q left");
+        assertTrue(keys.isLeft(held(Input.Keys.A)), "A left");
         assertTrue(keys.isUp(held(Input.Keys.W)), "W forward (up)");
-        assertTrue(keys.isRight(held(Input.Keys.E)), "E right");
-        assertTrue(keys.isDown(held(Input.Keys.D)), "D down");
+        assertTrue(keys.isRight(held(Input.Keys.D)), "D right");
+        assertTrue(keys.isDown(held(Input.Keys.S)), "S down");
         assertTrue(registry.isTriggered(GameAction.FLAME_ATTACK,
                 new InputFrame<>(java.util.Set.of(), java.util.Set.of(), 0, 0, false, true)), "right click uses the weapon");
         org.junit.jupiter.api.Assertions.assertFalse(registry.isTriggered(GameAction.FLAME_ATTACK,

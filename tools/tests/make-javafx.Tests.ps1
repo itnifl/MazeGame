@@ -12,6 +12,50 @@ BeforeAll {
     $sep = [IO.Path]::PathSeparator
 }
 
+Describe 'Test-LaunchClassesStale' {
+    BeforeAll {
+        $launcher = Join-Path $TestDrive 'Launcher.class'
+        $moduleA = Join-Path $TestDrive 'moduleA'
+        $moduleB = Join-Path $TestDrive 'moduleB'
+        foreach ($m in @($moduleA, $moduleB)) {
+            New-Item -ItemType Directory -Force -Path (Join-Path $m 'src/main/java') | Out-Null
+        }
+    }
+
+    It 'is stale when the launcher class is missing' {
+        $result = Test-LaunchClassesStale (Join-Path $TestDrive 'missing.class') @($moduleA)
+        $result.Stale | Should -BeTrue
+    }
+
+    It 'is fresh when every module source is older than the launcher class' {
+        $src = Join-Path $moduleA 'src/main/java/A.java'
+        Set-Content -Path $src -Value 'class A {}'
+        (Get-Item $src).LastWriteTimeUtc = [DateTime]::UtcNow.AddMinutes(-10)
+        Set-Content -Path $launcher -Value 'x'
+        (Get-Item $launcher).LastWriteTimeUtc = [DateTime]::UtcNow.AddMinutes(-5)
+        (Test-LaunchClassesStale $launcher @($moduleA, $moduleB)).Stale | Should -BeFalse
+    }
+
+    It 'is stale when a dependency module (not the app module) has a newer source' {
+        $src = Join-Path $moduleB 'src/main/java/B.java'
+        Set-Content -Path $src -Value 'class B {}'
+        (Get-Item $src).LastWriteTimeUtc = [DateTime]::UtcNow
+        $result = Test-LaunchClassesStale $launcher @($moduleA, $moduleB)
+        $result.Stale | Should -BeTrue
+        $result.Reason | Should -Match 'moduleB'
+    }
+
+    It 'counts new sprites and sounds as sources' {
+        Remove-Item (Join-Path $moduleB 'src/main/java/B.java')
+        $res = Join-Path $moduleB 'src/main/resources'
+        New-Item -ItemType Directory -Force -Path $res | Out-Null
+        $png = Join-Path $res 'sprite.png'
+        Set-Content -Path $png -Value 'png'
+        (Get-Item $png).LastWriteTimeUtc = [DateTime]::UtcNow
+        (Test-LaunchClassesStale $launcher @($moduleB)).Stale | Should -BeTrue
+    }
+}
+
 Describe 'Get-PathWithEntryFirst' {
     It 'prepends the entry when it is not on PATH' {
         $result = Get-PathWithEntryFirst -PathValue "a${sep}b" -Entry 'jdk21'
