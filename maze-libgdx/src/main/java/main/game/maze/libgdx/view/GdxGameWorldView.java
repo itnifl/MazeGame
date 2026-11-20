@@ -137,13 +137,9 @@ public final class GdxGameWorldView {
                 ? realMaze.wallMaterialIds() : List.of();
         for (int i = 0; i < walls.size(); i++) {
             WallSegment wall = walls.get(i);
-            Texture texture = context.wallTexture();
-            if (i < materialIds.size()) {
-                Texture materialTexture = wallLookTextures.get(WallLook.of(materialIds.get(i)));
-                if (materialTexture != null) {
-                    texture = materialTexture;
-                }
-            }
+            Texture texture = i < materialIds.size()
+                    ? WallLook.spriteFor(wallLookTextures, materialIds.get(i), context.wallTexture())
+                    : context.wallTexture();
             if (wall.isHorizontal()) {
                 float x = Math.min(wall.x1, wall.x2);
                 float len = Math.abs(wall.x2 - wall.x1);

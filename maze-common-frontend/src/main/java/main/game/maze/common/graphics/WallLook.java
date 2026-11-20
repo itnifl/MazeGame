@@ -25,6 +25,16 @@ public enum WallLook {
         return imagePath;
     }
 
+    /**
+     * The sprite for a wall: the one of its material in {@code sprites}, or {@code classic} for a solid wall
+     * (no material id), an unknown material or a material without a sprite.
+     */
+    public static <T> T spriteFor(java.util.Map<WallLook, T> sprites, String materialId, T classic) {
+        WallLook look = of(materialId);
+        T sprite = look == null ? null : sprites.get(look);
+        return sprite != null ? sprite : classic;
+    }
+
     /** The look of a material id, or null when its base material is not known (the classic wall is used then). */
     public static WallLook of(String materialId) {
         if (materialId == null || materialId.isBlank()) {

@@ -36,4 +36,14 @@ class WallLookTest {
             assertNotNull(WallLookTest.class.getResource(look.imagePath()), "missing " + look.imagePath());
         }
     }
+
+    @Test
+    @DisplayName("a solid wall (no material id) gets the classic sprite instead of failing on an immutable map")
+    void solidWallUsesTheClassicSprite() {
+        java.util.Map<WallLook, String> sprites = java.util.Map.copyOf(java.util.Map.of(WallLook.STONE, "stone"));
+        assertEquals("classic", WallLook.spriteFor(sprites, null, "classic"));
+        assertEquals("classic", WallLook.spriteFor(sprites, "UNOBTAINIUM_BASIC", "classic"));
+        assertEquals("classic", WallLook.spriteFor(sprites, "GLASS_BASIC", "classic"), "no sprite loaded for glass");
+        assertEquals("stone", WallLook.spriteFor(sprites, "STONE_BASIC", "classic"));
+    }
 }
