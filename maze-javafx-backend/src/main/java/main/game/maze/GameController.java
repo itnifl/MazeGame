@@ -810,6 +810,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         clearActivePlayerBombs();
         weapons.dispose();
         weaponHud.clear();
+        lifeController.dispose();
         resurrections.cancelAll();
         stopComputerCharacters();
         if (pathHintCoordinator != null) pathHintCoordinator.dispose();

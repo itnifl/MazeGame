@@ -50,8 +50,8 @@ class KillScoringTest {
         };
         KillLedger ledger = new KillLedger();
         java.util.Optional<KillLedger.Kill> kill = ledger.record(flaky, "zombie", 100);
-        kill.ifPresent(k -> assertEquals("player-1", k.killerId()));
-        assertEquals(kill.isPresent() ? 100 : 0, ledger.pointsFor("player-1"), "no null killer stored");
+        assertEquals("player-1", kill.orElseThrow().killerId());
+        assertEquals(100, ledger.pointsFor("player-1"), "the attributed kill is recorded, no null killer stored");
         assertTrue(ledger.kills().stream().allMatch(k -> k.killerId() != null));
     }
 

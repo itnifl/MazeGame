@@ -41,6 +41,7 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
     private double startX;
     private double startY;
     private boolean respawning;
+    private boolean disposed;
 
     public FxPlayerLifeController(PlayerLives lives, Host host) {
         this.lives = lives;
@@ -53,7 +54,14 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
         startX = player.getCharacterPosition().getX();
         startY = player.getCharacterPosition().getY();
         respawning = false;
+        disposed = false;
         host.livesChanged();
+    }
+
+    /** Game torn down: a respawn that is still pending must not touch the disposed game. */
+    public synchronized void dispose() {
+        disposed = true;
+        respawning = false;
     }
 
     public PlayerLives lives() {
@@ -80,6 +88,11 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
     }
 
     private void respawn() {
+        synchronized (this) {
+            if (disposed) {
+                return;
+            }
+        }
         PlayerCharacter player = host.player();
         if (player != null) {
             player.revive(startX, startY);
