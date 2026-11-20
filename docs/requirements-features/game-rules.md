@@ -209,3 +209,43 @@ MUST be added to the shared core, not to a single frontend.
   if any part of its perpendicular span lies within `corridorHalfWidth` pixels of
   the blast origin on the perpendicular axis. Both the east/west and north/south
   directions must apply this rule symmetrically.
+
+## Weapons, pickups and kill credit
+
+- **GR-38**: While playing, an item spawns every 3 seconds until the cap is
+  reached (bomb, laser rifle, sledgehammer, shield cube or small heart) at a
+  corridor point away from the player and never in or over a wall (its centre
+  keeps half an item plus half a wall from every wall), drawn as large as the
+  player, up to 5 items on easy maps, 10 on medium and 15 on hard / large maps.
+  Picking an item up frees a slot, so spawning continues.
+- **GR-39**: The player starts with the difficulty's bombs only. A bomb pickup
+  adds 1 bomb, a laser rifle 5 shots, a sledgehammer 5 swings. Tab switches
+  between weapons in stock; Space uses the weapon in hand. An empty weapon
+  switches to the next one in stock, and when nothing is left in hand a
+  picked-up weapon goes straight into the hands.
+- **GR-40**: The laser hits the nearest enemy in line with the player's facing
+  and damages breakable walls in its way, but never steel walls. The
+  sledgehammer strikes every enemy within reach that no wall separates from the
+  player and never damages walls.
+- **GR-41**: A shield cube blocks all damage to the player for 5 seconds; a
+  heart heals 20 % of the maximum health (never above the maximum), flashes the
+  player three times, shows a green arrow rising over the player's head for one
+  second and plays the "extra life" jingle.
+- **GR-42**: Each kill adds points in proportion to the enemy's danger (its
+  effective threat x 100, at least 10) to the player who dealt the killing blow,
+  including kills by walls that player brought down. Kills by nobody (enemy
+  projectiles, terminal commands) score nothing.
+- **GR-43**: A killed enemy that can come back (zombies) respawns 15 seconds
+  after its death, in both frontends; enemies that cannot come back (ghosts,
+  pumpkin bombers) stay dead.
+- **GR-44**: The player starts with the difficulty's lives (easy 6, normal 5,
+  hard 3). Dying with lives left costs one life: the dead player is shown for
+  3 seconds, then respawns at the level start with full health and 2 seconds
+  of protection; weapons, items, kills and score carry over. Losing the last
+  life ends the game as before.
+- **GR-45**: The extra-life item spawns with the other items (spawn weight 1
+  against 3 for each other item) and gives one more life.
+- **GR-46**: The weapons HUD (top-left) lists the weapons in stock and the one
+  in hand, highlighted, plus the lives left.
+- **GR-47**: Movement keys: arrows, numpad, Q/A left, W up, E right, S/D down.
+  Space or a right click uses the weapon in hand; Tab switches weapons.

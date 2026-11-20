@@ -1,5 +1,8 @@
 package main.game.maze;
 
+import main.game.maze.mazeworld.flame.LaserBeamEngine;
+import main.game.maze.game.items.PickupSpec;
+import main.game.maze.characters.interfaces.ICanDie;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -278,7 +281,74 @@ public final class FxEnemyCoordinator {
      * @return the number of enemies crushed
      */
     public int crushAlong(double ax, double ay, double bx, double by) {
-        return MortalityService.crushAlong(allComputerCharacters, FxEnemyCoordinator::bodyOf, ax, ay, bx, by);
+        return crushAlong(ax, ay, bx, by, null);
+    }
+
+    /** As above, crediting crushed enemies to {@code attackerId} (who brought the wall down). */
+    public int crushAlong(double ax, double ay, double bx, double by, String attackerId) {
+        return MortalityService.crushAlong(allComputerCharacters, FxEnemyCoordinator::bodyOf, ax, ay, bx, by, attackerId);
+    }
+
+    /** What a laser shot did: the engine result, and the enemy it hit (null if none) with the damage. */
+    public record LaserHit(LaserBeamEngine.Shot shot, ComputerCharacter enemy, int damage) {
+    }
+
+    /**
+     * Fires one laser shot from (originX, originY) along (dirX, dirY) with the shared
+     * {@link LaserBeamEngine}: stops at the first enemy or wall and cannot harm steel. Damage and
+     * wall collapses are credited to {@code attackerId}.
+     */
+    public LaserHit fireLaser(double originX, double originY, int dirX, int dirY, PickupSpec laser,
+                              double halfWidth, String attackerId) {
+        GameMazeWorld world = mazeSupplier.get();
+        ComputerCharacter[] hit = new ComputerCharacter[1];
+        int[] dealt = new int[1];
+        List<FlameTarget> targets = new ArrayList<>();
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof ComputerCharacter cc) || !cc.isAlive() || cc.isInvulnerable()) {
+                continue;
+            }
+            double size = approximateSize(cc);
+            double cx = cc.getCharacterPosition().getX() + size * 0.5d;
+            double cy = cc.getCharacterPosition().getY() + size * 0.5d;
+            targets.add(new FlameTarget() {
+                @Override public double centerX() { return cx; }
+                @Override public double centerY() { return cy; }
+                @Override public int hitPoints() { return cc.getHitPoints(); }
+                @Override public void applyDamage(int amount) {
+                    cc.subtractHitPoints(amount, DeathCause.SHOT, attackerId);
+                    hit[0] = cc;
+                    dealt[0] = amount;
+                }
+                @Override public boolean isPassThrough() { return false; }
+            });
+        }
+        LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
+        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = LaserBeamEngine.fire(targets, world,
+                world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
+                laser.damage(), laser.range(), halfWidth));
+        return new LaserHit(shot[0], hit[0], dealt[0]);
+    }
+
+    /**
+     * Swings the sledgehammer at (cx, cy): every enemy within reach and not behind a wall takes a
+     * crushing blow credited to {@code attackerId}. Walls are never harmed.
+     *
+     * @return the enemies struck, nearest first
+     */
+    public List<ICanDie> swingSledgehammer(double cx, double cy, PickupSpec sledge, String attackerId) {
+        GameMazeWorld world = mazeSupplier.get();
+        List<Vector2D> walls = world != null ? world.getMazeVectors() : List.of();
+        return MortalityService.strikeAround(allComputerCharacters, FxEnemyCoordinator::bodyOf, cx, cy,
+                sledge.range(), sledge.damage(), DeathCause.CRUSHED, attackerId,
+                (x, y) -> !walls.isEmpty() && WallCollisionUtil.wallBetweenVectors(cx, cy, x, y, walls));
+    }
+
+    /** Centre of an enemy sprite on the board (its position is the top-left corner). */
+    public static double[] centerOf(ComputerCharacter character) {
+        double size = approximateSize(character);
+        return new double[] {character.getCharacterPosition().getX() + size * 0.5d,
+                character.getCharacterPosition().getY() + size * 0.5d};
     }
 
     /** An enemy's body on the board for crushing; null for non-enemies. */
@@ -346,22 +416,41 @@ public final class FxEnemyCoordinator {
                                          double playerCenterX,
                                          double playerCenterY,
                                          IntConsumer playerCallback) {
+        return applyPlayerFlameExplosion(originX, originY, damagePerDirection, maxRange, walls,
+                playerCenterX, playerCenterY, playerCallback, null);
+    }
+
+    /**
+     * As above for a bomb planted by {@code attackerId}: enemies it kills and walls it brings down
+     * (and whoever the rubble crushes) are credited to that player.
+     */
+    public int applyPlayerFlameExplosion(double originX,
+                                         double originY,
+                                         int damagePerDirection,
+                                         double maxRange,
+                                         List<Vector2D> walls,
+                                         double playerCenterX,
+                                         double playerCenterY,
+                                         IntConsumer playerCallback,
+                                         String attackerId) {
         int safeDamage = Math.max(0, damagePerDirection);
         double safeRange = Math.max(0d, maxRange);
         if (safeDamage <= 0 || safeRange <= 0d) {
             return 0;
         }
 
-        int totalApplied = 0;
-        totalApplied += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls,
-                playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls,
-                playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls,
-                playerCenterX, playerCenterY, playerCallback);
-        totalApplied += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls,
-                playerCenterX, playerCenterY, playerCallback);
-        return totalApplied;
+        int[] totalApplied = {0};
+        GameMazeWorld.attributeDamageTo(attackerId, () -> {
+            totalApplied[0] += applyDirectionalFlame(originX, originY, 1, 0, safeDamage, safeRange, walls,
+                    playerCenterX, playerCenterY, playerCallback, attackerId);
+            totalApplied[0] += applyDirectionalFlame(originX, originY, -1, 0, safeDamage, safeRange, walls,
+                    playerCenterX, playerCenterY, playerCallback, attackerId);
+            totalApplied[0] += applyDirectionalFlame(originX, originY, 0, 1, safeDamage, safeRange, walls,
+                    playerCenterX, playerCenterY, playerCallback, attackerId);
+            totalApplied[0] += applyDirectionalFlame(originX, originY, 0, -1, safeDamage, safeRange, walls,
+                    playerCenterX, playerCenterY, playerCallback, attackerId);
+        });
+        return totalApplied[0];
     }
 
     private int applyDirectionalFlame(double originX,
@@ -373,7 +462,8 @@ public final class FxEnemyCoordinator {
                                       List<Vector2D> walls,
                                       double playerCenterX,
                                       double playerCenterY,
-                                      IntConsumer playerCallback) {
+                                      IntConsumer playerCallback,
+                                      String attackerId) {
         GameMazeWorld maze = mazeSupplier.get();
         List<FlameTarget> candidates = new ArrayList<>();
 
@@ -394,7 +484,7 @@ public final class FxEnemyCoordinator {
                 @Override public double centerX()        { return centerX; }
                 @Override public double centerY()        { return centerY; }
                 @Override public int    hitPoints()      { return Math.max(0, canDie.getHitPoints()); }
-                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount, DeathCause.FIRE); }
+                @Override public void   applyDamage(int amount) { canDie.subtractHitPoints(amount, DeathCause.FIRE, attackerId); }
                 @Override public boolean isPassThrough() { return false; }
             });
         }

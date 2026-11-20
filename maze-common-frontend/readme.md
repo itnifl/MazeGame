@@ -37,6 +37,19 @@ runtime renderer is JavaFX, libGDX, or something else.
 - `WallRubble`, `WallRubbleModel`, `RubbleMaterial` (`common.graphics.fire`): a collapsing wall as
   layered puffs: blocks and gravel tumble out to both sides under a dust cloud and settle; colours
   follow the walls-model material id (`STONE_BASIC` -> stone); steel throws sparks.
+- `PuffEffect` (`common.graphics.fire`): a timed effect drawn as puffs, so both frontends draw every
+  combat effect with the same code. Implemented by `LaserBeamEffect` (beam flash), `SledgeSwingEffect`
+  (a giant swing arc with a dust burst), `HitReactionEffect` (SHOT: a jolt back along the beam with
+  sparks; BLOW: a harder knock-back with dust; both scaled by damage / max HP, and a `spriteOffset`
+  the frontends apply to the struck enemy), `PickupSparkleEffect`, `HealFlashEffect` (the player flashing after a heart); `ShieldBubble` draws the power shield.
+  `HealFeedback` times the heal flash and the green arrow (`pickups/heal-arrow.png`) rising over the player's head.
+- `input.command.SwitchWeaponCommand` / `GameAction.SWITCH_WEAPON`: Tab switches weapons in both frontends.
+- `input.MovementKeys<K>`: which keys move the player in which direction; each frontend builds one (Q/A left,
+  W up, E right, S/D down, arrows, numpad) and uses it for both the bindings and the movement.
+- `input.MouseButton` + `KeyBindingRegistry.bindMouse` + `InputFrame.secondaryMouseClicked()`: mouse buttons
+  bound to actions; a right click triggers `FLAME_ATTACK` (use the weapon in hand) in both frontends.
+- Resources: pickup sprites in `main/game/maze/pickups/` and weapon / pickup sounds in
+  `main/game/maze/sounds/` (generated, see `tools/sprite-gen` and `tools/sound-gen`).
 - `MazeVisualStyleConfig` plus `XmiMazeVisualStyleLoader` and
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including

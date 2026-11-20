@@ -51,6 +51,7 @@ public final class GdxGameWorldView {
         drawWallsTexture(context, batch, maze);
         drawEnemies(context, batch, font);
         drawPlayerTexture(context, batch, player);
+        drawOverlays(context, batch);
 
         batch.end();
 
@@ -156,6 +157,19 @@ public final class GdxGameWorldView {
                 font.setColor(new Color(0.95f, 0.97f, 1f, 1f));
                 font.draw(batch, enemy.label(), enemy.x() - enemy.size() * 0.5f, enemy.y() + enemy.size() * 0.75f);
             }
+        }
+    }
+
+    /** Sprites over the player, e.g. the laser rifle or sledgehammer in hand. */
+    private void drawOverlays(RenderContext context, SpriteBatch batch) {
+        for (OverlaySprite sprite : context.overlays()) {
+            if (sprite.texture() == null) {
+                continue;
+            }
+            float half = sprite.size() * 0.5f;
+            batch.draw(sprite.texture(), sprite.x() - half, sprite.y() - half, half, half, sprite.size(), sprite.size(),
+                    1f, 1f, sprite.rotationDegrees(), 0, 0, sprite.texture().getWidth(), sprite.texture().getHeight(),
+                    sprite.flipX(), false);
         }
     }
 
@@ -430,6 +444,7 @@ public final class GdxGameWorldView {
             float enemyAnimationClock,
             int infectionEdgeLayers,
             List<EnemyViewModel> enemies,
+            List<OverlaySprite> overlays,
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
@@ -439,6 +454,10 @@ public final class GdxGameWorldView {
             float shakeOffsetY,
             float showEnemyPathSeconds,
             boolean showSpanningTreeInfo) {
+    }
+
+    /** A textured sprite drawn over the player (centre, size, rotation in degrees, mirrored). */
+    public record OverlaySprite(Texture texture, float x, float y, float size, float rotationDegrees, boolean flipX) {
     }
 
     public record EnemyViewModel(

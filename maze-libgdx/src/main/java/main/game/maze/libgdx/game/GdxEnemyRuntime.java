@@ -10,6 +10,7 @@ import main.game.maze.common.graphics.DamageState;
 import main.game.maze.common.graphics.DamagePathResolver;
 import main.game.maze.common.graphics.SpriteAnimationUtil;
 import main.game.maze.common.graphics.fire.FireBlast;
+import main.game.maze.common.graphics.fire.HitReactionEffect;
 import main.game.maze.common.graphics.fire.PumpkinBurst;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.common.movement.AdaptiveAggressiveMovementService;
@@ -70,6 +71,8 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
     private int lifetimeHits  = 0;
     /** HP, death and respawn protection: the same implementation the JavaFX enemies use. */
     private final EnemyVitals vitals;
+    private HitReactionEffect reaction;
+    private float reactionElapsed;
     private static final java.util.concurrent.atomic.AtomicInteger RUNTIME_SEQUENCE =
             new java.util.concurrent.atomic.AtomicInteger(0);
     private final List<ActiveProjectile> activeProjectiles = new ArrayList<>();
@@ -190,6 +193,44 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
     @Override
     public void subtractHitPoints(int hp, DeathCause cause) {
         vitals.subtractHitPoints(hp, cause);
+    }
+
+    @Override
+    public void subtractHitPoints(int hp, DeathCause cause, String attackerId) {
+        vitals.subtractHitPoints(hp, cause, attackerId);
+    }
+
+    @Override
+    public String killerId() {
+        return vitals.killerId();
+    }
+
+    public int getMaxHitPoints() {
+        return vitals.getMaxHitPoints();
+    }
+
+    /** Starts a hit reaction (shot jolt / sledgehammer stagger) shown on the sprite. */
+    public void react(HitReactionEffect reaction) {
+        this.reaction = reaction;
+        this.reactionElapsed = 0f;
+    }
+
+    public void tickReaction(float dt) {
+        if (reaction != null) {
+            reactionElapsed += Math.max(0f, dt);
+            if (reactionElapsed >= reaction.lifetimeSeconds()) {
+                reaction = null;
+            }
+        }
+    }
+
+    /** Sprite offset {dx, dy} of the current hit reaction ({0, 0} when none). */
+    public float[] reactionOffset() {
+        if (reaction == null) {
+            return new float[] {0f, 0f};
+        }
+        double[] offset = reaction.spriteOffset(reactionElapsed / reaction.lifetimeSeconds());
+        return new float[] {(float) offset[0], (float) offset[1]};
     }
 
     @Override

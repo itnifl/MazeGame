@@ -287,11 +287,11 @@ function Show-ToolchainInfo {
 
 function Show-Usage {
     Write-Host "=== MazeGame make-javafx.ps1 targets ===" -ForegroundColor Cyan
-    Write-Host "all             : Full path. Mirror check/rebuild, clear Tycho cache, clean verify with tests."
+    Write-Host "all             : Full path. Mirror check/rebuild, clear Tycho cache, clean install with tests."
     Write-Host "build           : Same as all."
-    Write-Host "build-with-cache: Mirror check/rebuild, keep Tycho cache, clean verify with tests."
-    Write-Host "quick           : Fast path. Skip mirror step, keep cache, verify with tests."
-    Write-Host "quick-no-tests  : Fastest path. Skip mirror step, keep cache, verify with skipTests=true."
+    Write-Host "build-with-cache: Mirror check/rebuild, keep Tycho cache, clean install with tests."
+    Write-Host "quick           : Fast path. Skip mirror step, keep cache, install with tests."
+    Write-Host "quick-no-tests  : Fastest path. Skip mirror step, keep cache, install with skipTests=true."
     Write-Host "mirror          : Mirror only, rebuild only if inputs changed."
     Write-Host "force-mirror    : Always rebuild mirror."
     Write-Host "clear-cache     : Remove Tycho cache only."
@@ -462,7 +462,7 @@ function Get-NewestSourceWriteTime([string]$moduleDir) {
         (Join-Path $moduleDir 'src-gen'),
         (Join-Path $moduleDir 'model')
     )
-    $candidatePatterns = @('*.java', '*.xtend', '*.ecore', '*.genmodel', '*.fxml', '*.properties', '*.xmi')
+    $candidatePatterns = @('*.java', '*.xtend', '*.ecore', '*.genmodel', '*.fxml', '*.properties', '*.xmi', '*.png', '*.wav')
 
     $newest = [DateTime]::MinValue
     foreach ($dir in $candidateDirs) {
@@ -486,6 +486,30 @@ function Get-NewestSourceWriteTime([string]$moduleDir) {
     }
 
     return $newest
+}
+
+<#
+.SYNOPSIS
+    Whether a launcher class is older than the sources of any module it runs with.
+.DESCRIPTION
+    Used by both make scripts before launching: a launcher compiled before the latest edit in any
+    runtime module (including the shared maze-common-* modules) means the game would run stale code.
+.OUTPUTS
+    Hashtable with Stale (bool) and Reason (string).
+#>
+function Test-LaunchClassesStale([string]$launcherClass, [string[]]$moduleDirs) {
+    if (-not (Test-Path $launcherClass)) {
+        return @{ Stale = $true; Reason = "$launcherClass missing" }
+    }
+    $classTime = (Get-Item $launcherClass).LastWriteTimeUtc
+    foreach ($moduleDir in $moduleDirs) {
+        if (-not (Test-Path $moduleDir)) { continue }
+        $sourceTime = Get-NewestSourceWriteTime $moduleDir
+        if ($sourceTime -gt $classTime) {
+            return @{ Stale = $true; Reason = ("{0} has sources newer than {1} ({2} > {3})" -f (Split-Path -Leaf $moduleDir), (Split-Path -Leaf $launcherClass), $sourceTime, $classTime) }
+        }
+    }
+    return @{ Stale = $false; Reason = '' }
 }
 
 function Test-PluginModuleStale([string]$moduleDir) {
@@ -557,6 +581,12 @@ function Ensure-RuntimeModulesCompiled {
     # Launcher is in maze-javafx-backend.
     $mazeBackendDir = Join-Path $scriptRoot 'maze-javafx-backend'
     $mazeCheck = Test-MazeAppModuleStale $mazeBackendDir
+    if (-not $mazeCheck.Stale) {
+        # shared modules compiled into the same runtime: an edit there must rebuild the app as well
+        $launcherClass = Join-Path $mazeBackendDir 'target/classes/main/game/maze/Launcher.class'
+        $sharedDirs = @('maze-common-frontend', 'maze-common-backend') | ForEach-Object { Join-Path $scriptRoot $_ }
+        $mazeCheck = Test-LaunchClassesStale $launcherClass $sharedDirs
+    }
     $mazeStale = $mazeCheck.Stale
     if ($mazeStale) {
         Write-Host ("Module 'maze-javafx-backend' needs rebuild: {0}" -f $mazeCheck.Reason) -ForegroundColor Yellow
@@ -773,16 +803,16 @@ function Clear-TychoCache {
 
 <#
 .SYNOPSIS
-    Runs the full clean verify of the reactor with tests, excluding releng/mirror.
+    Runs the full clean install of the reactor with tests, excluding releng/mirror.
 .DESCRIPTION
     Expects Invoke-Mirror to have populated releng/local-p2 first. Throws if Maven fails.
 #>
 function Invoke-Build {
     # The mirror is managed by Invoke-Mirror; do not execute its Maven module again.
     $reactorWithoutMirror = '!releng/mirror'
-    $cmd = "$Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify"
+    $cmd = "$Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean install"
     Write-Host "=== Running full build: $cmd ==="
-    & $Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean verify
+    & $Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Build failed with exit code $exit."
@@ -792,7 +822,9 @@ function Invoke-Build {
 
 <#
 .SYNOPSIS
-    Runs an incremental verify (no clean, no mirror rebuild), excluding releng/mirror.
+    Runs an incremental install (no clean, no mirror rebuild), excluding releng/mirror. Installing keeps
+    the local Maven repository in step with the sources, so single-module builds and the IDE see the
+    same classes as the reactor build.
 .PARAMETER SkipTests
     Skip test execution.
 #>
@@ -802,9 +834,9 @@ function Invoke-QuickBuild {
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
     # Quick builds reuse the existing mirror and exclude its Maven module.
     $reactorWithoutMirror = '!releng/mirror'
-    $cmd = "$Mvn -pl $reactorWithoutMirror -DskipTests=$skipValue verify"
+    $cmd = "$Mvn -pl $reactorWithoutMirror -DskipTests=$skipValue install"
     Write-Host "=== Running quick build without mirror rebuild: $cmd ==="
-    & $Mvn -pl $reactorWithoutMirror "-DskipTests=$skipValue" verify
+    & $Mvn -pl $reactorWithoutMirror "-DskipTests=$skipValue" install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Quick build failed with exit code $exit."

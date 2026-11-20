@@ -24,6 +24,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="monstersDamageMultiplier"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxThreat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startingLives" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="NormalDifficulty" eSuperTypes="#//Difficulty"/>
   <eClassifiers xsi:type="ecore:EClass" name="HardDifficulty" eSuperTypes="#//Difficulty"/>

@@ -35,25 +35,20 @@ public final class JavaFxInputBindingsSupport {
                 // Flame attack (space bar)
                 .bind(GameAction.FLAME_ATTACK, KeyCode.SPACE, BindingKind.EDGE)
                 .command(GameAction.FLAME_ATTACK, new TriggerFlameAttackCommand())
+                .bind(GameAction.SWITCH_WEAPON, KeyCode.TAB, BindingKind.EDGE)
+                .command(GameAction.SWITCH_WEAPON, new main.game.maze.common.input.command.SwitchWeaponCommand<>())
                 // Spanning tree: each press toggles visibility on/off
                 .bind(GameAction.TOGGLE_SPANNING_TREE, KeyCode.O, BindingKind.EDGE)
                 .command(GameAction.TOGGLE_SPANNING_TREE, new ToggleSpanningTreeCommand())
-                // Player movement (HELD so it's continuously checked)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.UP, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.DOWN, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.LEFT, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.RIGHT, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.W, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.A, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.S, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.D, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.NUMPAD8, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.NUMPAD5, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.NUMPAD4, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, KeyCode.NUMPAD6, BindingKind.HELD)
+                // right click uses the weapon in hand, like Space
+                .bindMouse(GameAction.FLAME_ATTACK, main.game.maze.common.input.MouseButton.SECONDARY)
+                // Player movement (HELD so it's continuously checked): see JavaFxMovementKeys
                 .command(GameAction.MOVE_PLAYER, new MovePlayerCommand())
                 // Terminal (currently integrated via ESC dialogue in GameController)
                 .bind(GameAction.TOGGLE_TERMINAL, KeyCode.T, BindingKind.EDGE)
                 .command(GameAction.TOGGLE_TERMINAL, new ToggleTerminalCommand());
+        for (KeyCode key : JavaFxMovementKeys.KEYS.all()) {
+            keyBindingRegistry.bind(GameAction.MOVE_PLAYER, key, BindingKind.HELD);
+        }
     }
 }

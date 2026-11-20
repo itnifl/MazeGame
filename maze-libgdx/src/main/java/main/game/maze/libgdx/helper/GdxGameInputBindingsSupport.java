@@ -1,6 +1,8 @@
 package main.game.maze.libgdx.helper;
 
 import com.badlogic.gdx.Input;
+import main.game.maze.common.input.MouseButton;
+import main.game.maze.libgdx.input.GdxMovementKeys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import java.util.function.BooleanSupplier;
@@ -35,15 +37,14 @@ public final class GdxGameInputBindingsSupport {
                 .bind(GameAction.APPLY_PATH_HINT, Input.Keys.P, BindingKind.HELD)
                 .bind(GameAction.FLAME_ATTACK, Input.Keys.SPACE, BindingKind.EDGE)
                 .command(GameAction.FLAME_ATTACK, new main.game.maze.libgdx.input.command.TriggerFlameAttackCommand())
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.LEFT, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.A, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.RIGHT, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.D, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.DOWN, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.S, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.UP, BindingKind.HELD)
-                .bind(GameAction.MOVE_PLAYER, Input.Keys.W, BindingKind.HELD)
+                .bind(GameAction.SWITCH_WEAPON, Input.Keys.TAB, BindingKind.EDGE)
+                .command(GameAction.SWITCH_WEAPON, new main.game.maze.common.input.command.SwitchWeaponCommand<>())
+                // right click uses the weapon in hand, like Space
+                .bindMouse(GameAction.FLAME_ATTACK, MouseButton.SECONDARY)
                 .command(GameAction.MOVE_PLAYER, new MovePlayerCommand());
+        for (Integer key : GdxMovementKeys.KEYS.all()) {
+            keyBindingRegistry.bind(GameAction.MOVE_PLAYER, key, BindingKind.HELD);
+        }
     }
 
     /**

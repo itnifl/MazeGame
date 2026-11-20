@@ -30,6 +30,7 @@ class MortalityRulesTest {
         Zombie zombie = OpponentsFactory.eINSTANCE.createZombie();
         zombie.setResurrectionTime(0);
         assertEquals(MortalityRules.DEFAULT_ZOMBIE_RESURRECTION_MS, MortalityRules.resurrectionTimeMs(zombie));
+        assertEquals(15_000, MortalityRules.DEFAULT_ZOMBIE_RESURRECTION_MS, "enemies wait 15 s before they come back");
         zombie.setResurrectionTime(3);
         assertEquals(3_000, MortalityRules.resurrectionTimeMs(zombie));
 

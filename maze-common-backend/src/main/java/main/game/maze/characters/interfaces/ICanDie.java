@@ -23,6 +23,21 @@ public interface ICanDie {
         subtractHitPoints(hp);
     }
 
+    /**
+     * Applies damage of {@code cause} dealt by {@code attackerId} (a player id, see
+     * {@code PlayerIds}; null for enemies, traps and debug commands). The attacker of the killing
+     * blow is credited with the kill ({@link #killerId()}). Implementations that do not track
+     * attackers just apply the damage.
+     */
+    default void subtractHitPoints(int hp, DeathCause cause, String attackerId) {
+        subtractHitPoints(hp, cause);
+    }
+
+    /** Who landed the killing blow; null while alive or when nobody gets the credit. */
+    default String killerId() {
+        return null;
+    }
+
     public void addHitPoints(int hp);
     public void addDeathNotificationSubscriber(IDeathSubscriber subscriber);
 

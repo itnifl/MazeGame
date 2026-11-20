@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 
+import main.game.maze.game.score.KillScoring;
 import main.game.maze.service.MortalityRules;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.common.graphics.config.PropertiesMazeVisualStyleLoader;
@@ -229,7 +230,8 @@ public final class RuntimeVisualModelLoader {
                             projectileSpeedFor(picked),
                             resurrectionTimeMsFor(picked),
                             maxHitPointsFor(picked),
-                            animationSpecFor(picked, baseImage));
+                            animationSpecFor(picked, baseImage),
+                            KillScoring.pointsFor(picked));
                     break;
                 }
                 if (accepted != null) {

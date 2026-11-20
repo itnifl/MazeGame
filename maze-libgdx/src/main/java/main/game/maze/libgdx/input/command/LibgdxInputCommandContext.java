@@ -17,6 +17,7 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
     private final BiConsumer<Boolean, Float> applyPathHintHeld;
     private final Runnable triggerPlayerFlameAttack;
     private final Runnable applyMovementFromFrame;
+    private final Runnable switchWeapon;
 
     private float dt;
     private boolean stopRequested;
@@ -30,6 +31,21 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
             BiConsumer<Boolean, Float> applyPathHintHeld,
             Runnable triggerPlayerFlameAttack,
             Runnable applyMovementFromFrame) {
+        this(terminalActive, requestReturnToMenu, openTerminalPrompt, openHighScores, toggleSpanningTree,
+                applyPathHintHeld, triggerPlayerFlameAttack, applyMovementFromFrame, () -> { });
+    }
+
+    public LibgdxInputCommandContext(
+            BooleanSupplier terminalActive,
+            Runnable requestReturnToMenu,
+            Runnable openTerminalPrompt,
+            Runnable openHighScores,
+            Runnable toggleSpanningTree,
+            BiConsumer<Boolean, Float> applyPathHintHeld,
+            Runnable triggerPlayerFlameAttack,
+            Runnable applyMovementFromFrame,
+            Runnable switchWeapon) {
+        this.switchWeapon = switchWeapon;
         this.terminalActive = terminalActive;
         this.requestReturnToMenu = requestReturnToMenu;
         this.openTerminalPrompt = openTerminalPrompt;
@@ -48,6 +64,11 @@ public final class LibgdxInputCommandContext implements GameCommandContext {
     @Override
     public boolean terminalActive() {
         return terminalActive.getAsBoolean();
+    }
+
+    @Override
+    public void switchWeapon() {
+        switchWeapon.run();
     }
 
     @Override

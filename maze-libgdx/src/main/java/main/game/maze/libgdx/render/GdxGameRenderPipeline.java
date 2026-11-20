@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.function.Function;
 import main.game.maze.common.movement.ActivePathPoint;
 import main.game.maze.dto.Score;
+import main.game.maze.game.items.WeaponHud;
 import main.game.maze.game.score.ScoringEngine.ScoreBreakdown;
 import main.game.maze.libgdx.model.EnemyDeathAnimation;
-import main.game.maze.libgdx.model.RemainsVisual;
+import main.game.maze.libgdx.model.SpriteVisual;
 import main.game.maze.game.session.GameMode;
 import main.game.maze.game.session.GameSession;
 import main.game.maze.game.status.StatusMessageBus;
@@ -64,14 +65,14 @@ public final class GdxGameRenderPipeline {
         }
 
         List<GdxGameWorldView.EnemyViewModel> enemyViewModels = new ArrayList<>(
-                state.remains().size() + state.animatedEnemies().size() + state.dyingEnemies().size());
-        // remains first: they lie on the floor under living and dying enemies
-        for (RemainsVisual remains : state.remains()) {
+                state.floorSprites().size() + state.animatedEnemies().size() + state.dyingEnemies().size());
+        // floor sprites first (remains, pickups): they lie under living and dying enemies
+        for (SpriteVisual floor : state.floorSprites()) {
             enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
-                    state.enemyTextureLoader().apply(remains.spritePath()),
-                    remains.x(),
-                    remains.y(),
-                    remains.size(),
+                    state.enemyTextureLoader().apply(floor.spritePath()),
+                    floor.x(),
+                    floor.y(),
+                    floor.size(),
                     1.0f,
                     false,
                     0f,
@@ -82,10 +83,11 @@ public final class GdxGameRenderPipeline {
         for (GdxEnemyRuntime enemy : state.animatedEnemies()) {
             Texture enemyTexture = state.enemyTextureLoader().apply(enemy.currentFramePath(state.enemyAnimationClock()));
             String label = enemy.debugLabel(state.debugOverlayState().showBehaviourType(), state.debugOverlayState().showMovementType());
+            float[] reaction = enemy.reactionOffset();   // jolt when shot, stagger when hit by the sledgehammer
             enemyViewModels.add(new GdxGameWorldView.EnemyViewModel(
                     enemyTexture,
-                    enemy.x(),
-                    enemy.y(),
+                    enemy.x() + reaction[0],
+                    enemy.y() + reaction[1],
                     enemy.size() * enemy.spriteScale(),
                     enemy.renderOpacity(),
                     enemy.infectious(),
@@ -136,6 +138,7 @@ public final class GdxGameRenderPipeline {
                 state.enemyAnimationClock(),
                 state.infectionEdgeLayers(),
                 enemyViewModels,
+                overlays(state),
                 state.activePathPoints(),
                 state.enemyProjectiles(),
                 state.enemyBeams(),
@@ -186,12 +189,24 @@ public final class GdxGameRenderPipeline {
                 state.pathHintRemainingSeconds(),
                 state.showSpanningTreeInfo(),
                 state.currentScore(),
-                state.playerBombsRemaining(),
+                state.arsenalHudText(),
+                state.weaponHud(),
+                state.enemyTextureLoader(),
                 messageMode,
                 statusMessage,
                 state.terminalActive(),
                 state.terminalBufferText(),
                 state.commandsOverlayVisible()));
+    }
+
+    /** Sprites drawn over the player (the weapon in hand). */
+    private static List<GdxGameWorldView.OverlaySprite> overlays(RenderState state) {
+        List<GdxGameWorldView.OverlaySprite> overlays = new ArrayList<>(state.overlaySprites().size());
+        for (SpriteVisual sprite : state.overlaySprites()) {
+            overlays.add(new GdxGameWorldView.OverlaySprite(state.enemyTextureLoader().apply(sprite.spritePath()),
+                    sprite.x(), sprite.y(), sprite.size(), sprite.rotationDegrees(), sprite.flipX()));
+        }
+        return overlays;
     }
 
     private void drawHighScoresOverlayIfNeeded(RenderState state) {
@@ -319,7 +334,8 @@ public final class GdxGameRenderPipeline {
             String infectionWarningText,
             List<GdxEnemyRuntime> animatedEnemies,
             List<EnemyDeathAnimation> dyingEnemies,
-            List<RemainsVisual> remains,
+            List<SpriteVisual> floorSprites,
+            List<SpriteVisual> overlaySprites,
             List<Point2D> activePathPoints,
             List<GdxEnemyRuntime.ProjectileVisual> enemyProjectiles,
             List<GdxEnemyRuntime.BeamVisual> enemyBeams,
@@ -348,7 +364,8 @@ public final class GdxGameRenderPipeline {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
-            int playerBombsRemaining,
+            String arsenalHudText,
+            WeaponHud.Model weaponHud,
             ScoreBreakdown scoreBreakdown,
             boolean terminalActive,
             String terminalBufferText,

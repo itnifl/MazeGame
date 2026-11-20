@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.helper;
 
+import main.game.maze.libgdx.input.GdxMovementKeys;
 import main.game.maze.libgdx.controller.GdxPlayerInputController;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.libgdx.model.GameWorldModel;
@@ -23,10 +24,10 @@ public final class GdxGameUpdateFlowSupport {
             float currentFrameDt,
             Runnable onMoved) {
         GdxPlayerInputController.MovementIntent movementIntent = playerInputController.resolveMovement(
-                currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.LEFT) || currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.A),
-                currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.RIGHT) || currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.D),
-                currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.DOWN) || currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.S),
-                currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.UP) || currentInputFrame.isHeld(com.badlogic.gdx.Input.Keys.W));
+                GdxMovementKeys.KEYS.isLeft(currentInputFrame),
+                GdxMovementKeys.KEYS.isRight(currentInputFrame),
+                GdxMovementKeys.KEYS.isDown(currentInputFrame),
+                GdxMovementKeys.KEYS.isUp(currentInputFrame));
 
         if (!movementIntent.hasMovement() || player == null || maze == null) {
             return;
@@ -44,6 +45,7 @@ public final class GdxGameUpdateFlowSupport {
             GameWorldModel worldModel,
             float dt,
             float deathDisplayDelaySeconds,
+            java.util.function.BooleanSupplier respawn,
             Runnable enterGameOverMode,
             Runnable switchToGameOverMusic) {
         if (!combatFrameDead) {
@@ -60,6 +62,12 @@ public final class GdxGameUpdateFlowSupport {
             return;
         }
 
+        // lives left: the player comes back at the start instead of the game ending
+        if (respawn.getAsBoolean()) {
+            worldModel.setDeathSequenceStarted(false);
+            worldModel.setDeathDisplayRemainingSeconds(0f);
+            return;
+        }
         enterGameOverMode.run();
         if (!worldModel.playedGameOverSound()) {
             worldModel.setPlayedGameOverSound(true);

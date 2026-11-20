@@ -18,7 +18,12 @@ public interface GameCommandContext {
 
     void applyPathHintHeld(boolean held);
 
+    /** Attack key: use the weapon in hand (plant a bomb, fire the laser, swing the sledgehammer). */
     void triggerPlayerFlameAttack();
+
+    /** Tab: switch to the next weapon in stock. */
+    default void switchWeapon() {
+    }
 
     void applyMovementFromFrame();
 

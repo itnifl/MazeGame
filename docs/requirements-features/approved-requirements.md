@@ -45,3 +45,21 @@
 - SR-134: The bomb flame corridor shall span the full width of one maze cell (approximately 30 px half-width on each side of the direction axis) so that targets in an adjacent corridor are not hit and so that the blast visually fills the corridor. Both frontends must use `StageConstants.NaviGraphStepSize` (= 30) as the corridor half-width.
 - SR-135: Both frontends shall display the bomb inventory counter and the score counter in the same screen corner (top-right) and the two labels must not overlap. In JavaFX the `scoreHudContainer` already holds both stacked vertically. In libGDX the `GdxHudView` score panel height is extended to 54 px to fit two text rows, and the bombs label is drawn inside the score panel box instead of the top-left corner.
 - SR-136: `GameMazeWorld.assignBreakableWalls` shall accept an empty material list as a valid call meaning "no breakable walls; all walls are solid". Callers must be able to transition a world to fully-solid state without being required to hold at least one dummy material entry.
+- SR-239: Items spawn every 3 s (until the cap is reached) at random corridor points away from the player, capped at 5 (easy), 10 (medium) or 15 (hard / large maps); spawning resumes when the player picks items up. Item kinds and numbers are defined in the `items` model (`items.ecore` / `items.xmi`). Both frontends.
+- SR-240: A bomb pickup gives one more bomb.
+- SR-241: A laser rifle pickup gives 5 shots. Tab switches to the rifle, which the player holds in the hands; it fires along the facing and cannot harm steel walls.
+- SR-242: A sledgehammer pickup gives 5 swings that strike nearby enemies; it cannot harm walls. A swing looks like a giant swing.
+- SR-243: A shield power cube blocks all damage to the player for 5 seconds.
+- SR-244: Small hearts restore part of the player's health.
+- SR-245: Enemies hit by the laser or the sledgehammer react according to the damage taken; a shot reacts differently from a blow.
+- SR-246: Picking up each kind of item makes a distinct sound.
+- SR-247: Killing an enemy raises the killing player's score in proportion to the enemy's danger; who killed what is recorded per player for future multiplayer.
+- SR-256: Items are drawn as large as the player (the items model's `itemSizeFactor`, 1.0 x the player size), with sprite art that fills its frame.
+- SR-257: Items never spawn inside or over a wall: only corridor points inside the maze that keep half an item plus half a wall away from every wall are used.
+- SR-258: Killed enemies that can come back wait 15 seconds before they respawn (both frontends; the opponent model's `resurrectionTime`).
+- SR-259: Picking up a heart flashes the player, shows a green arrow rising over the player's head and plays an 8-bit "extra life" jingle.
+- SR-263: A weapons HUD in the top-left corner shows every weapon the player has (with its stock) and the one in hand highlighted; Tab moves the highlight. The player's lives are shown next to it. Both frontends.
+- SR-264: The player has lives: 6 on easy, 5 on normal (medium) and 3 on hard, from the difficulties model (`startingLives`).
+- SR-265: An extra-life item spawns with the other items (rarer than them); picking it up gives one more life.
+- SR-266: When the player dies with lives left, they respawn at their start position with full health (after the death is shown, with a short spawn protection); the game is over only when the last life is lost.
+- SR-267: Besides the arrows, Space and Tab: Q moves left, W forward (up), E right, D down; a right click uses the weapon in hand (shoot, swing or drop a bomb). A keeps moving left and S down; D now moves down instead of right.

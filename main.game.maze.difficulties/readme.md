@@ -35,6 +35,7 @@ classDiagram
         +EDouble monstersMovementSpeedMultiplier
         +EDouble monstersDamageMultiplier
         +EInt maxThreat
+        +EInt startingLives = 1
     }
     class EasyDifficulty
     class NormalDifficulty
@@ -89,6 +90,7 @@ classDiagram
     +monstersMovementSpeedMultiplier : double
     +monstersDamageMultiplier : double
     +maxThreat : int
+    +startingLives : int
   }
 
   class EasyDifficulty
@@ -150,6 +152,13 @@ Typical values include
 - caps on how many opponents of each type may be active at once  
 
 Generator and opponent spawning code use these numbers to decide when to stop adding enemies and how to mix opponent types so that the total threat remains within the difficulty budget.
+
+### Player lives
+
+`startingLives` (default 1) is how many lives the player starts with: 3 on easy, 2 on normal and 1 on
+hard in the shipped `difficulties.xmi`. Both frontends read it through `PlayerLives.startingFor(difficulty)`
+in `maze-common-backend`. The generated EMF code (`Difficulty`, `DifficultyImpl`, `DifficultiesPackage`,
+`DifficultiesPackageImpl`) was updated the way the EMF generator emits it.
 
 ### Opponent scaling
 

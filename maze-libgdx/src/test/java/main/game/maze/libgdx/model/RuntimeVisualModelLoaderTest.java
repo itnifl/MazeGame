@@ -186,6 +186,19 @@ class RuntimeVisualModelLoaderTest {
 
     @Test
     @DisplayName("shipped enemies have damage states enabled and every damage sprite they resolve to exists")
+    void shippedEnemiesWaitFifteenSecondsToRespawn() {
+        RuntimeVisualModel model = new RuntimeVisualModelLoader().load(800f, 600f);
+        boolean anyRespawns = false;
+        for (EnemySpawn spawn : model.enemies()) {
+            if (spawn.resurrectionTimeMs() > 0) {
+                anyRespawns = true;
+                assertEquals(15_000, spawn.resurrectionTimeMs(), spawn.id() + " must wait 15 s before it respawns");
+            }
+        }
+        assertTrue(anyRespawns, "the shipped zombies respawn");
+    }
+
+    @Test
     void shippedEnemiesHaveDamageStatesWithAssets() {
         RuntimeVisualModel model = new RuntimeVisualModelLoader().load(800f, 600f);
         assertNotNull(model);

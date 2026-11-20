@@ -1,5 +1,6 @@
 package main.game.maze.libgdx.model;
 
+import main.game.maze.game.score.KillScoring;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
 
@@ -51,7 +52,8 @@ public record EnemySpawn(
         float projectileSpeed,
         int resurrectionTimeMs,
         int maxHitPoints,
-        EnemyAnimationSpec animationSpec) {
+        EnemyAnimationSpec animationSpec,
+        int killPoints) {
 
     /** Fully-visible value used for non-ghost enemies and as the EMF model default. */
     public static final int DEFAULT_VISIBILITY_LEVEL = 100;
@@ -65,6 +67,39 @@ public record EnemySpawn(
     public static final int DEFAULT_RESURRECTION_TIME_MS = 0;
     /** Default enemy hit-point pool (matches CharacterType health default). */
     public static final int DEFAULT_MAX_HIT_POINTS = 100;
+
+    /**
+     * Spawn without explicit kill points: they follow the threat ({@link KillScoring}).
+     * The model loader passes the model value instead.
+     */
+    public EnemySpawn(
+            String id,
+            String imagePath,
+            float x,
+            float y,
+            float size,
+            float effectiveThreat,
+            int attackDamage,
+            int infectionLevel,
+            String touchSoundPath,
+            BehaviorType behavior,
+            float speed,
+            double nonTangibilityEnergy,
+            int visibilityLevel,
+            ProjectileType projectileType,
+            float splashRadius,
+            float arcHeight,
+            float attackRange,
+            int attackCooldownMs,
+            float projectileSpeed,
+            int resurrectionTimeMs,
+            int maxHitPoints,
+            EnemyAnimationSpec animationSpec) {
+        this(id, imagePath, x, y, size, effectiveThreat, attackDamage, infectionLevel, touchSoundPath, behavior,
+                speed, nonTangibilityEnergy, visibilityLevel, projectileType, splashRadius, arcHeight, attackRange,
+                attackCooldownMs, projectileSpeed, resurrectionTimeMs, maxHitPoints, animationSpec,
+                KillScoring.pointsForThreat(effectiveThreat));
+    }
 
     /**
      * 21-arg convenience constructor — full spawn data, no animation spec.

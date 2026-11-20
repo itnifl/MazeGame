@@ -16,4 +16,9 @@ public record WallMaterialSpec(String id, String displayName, int hitPoints) {
         if (id == null || id.isBlank()) throw new IllegalArgumentException("id must not be blank");
         if (hitPoints <= 0) throw new IllegalArgumentException("hitPoints must be positive");
     }
+
+    /** Whether this is a steel wall (model ids {@code STEEL_*}); lasers cannot harm steel. */
+    public boolean isSteel() {
+        return id.toUpperCase(java.util.Locale.ROOT).startsWith("STEEL");
+    }
 }

@@ -345,7 +345,7 @@ class GameMazeWorldBreakableTest {
     void collapseListenerReceivesCascade() {
         BreakableWall target = world.getBreakableWalls().get(0);
         List<List<BreakableWall>> notifications = new ArrayList<>();
-        world.addWallCollapseListener(notifications::add);
+        world.addWallCollapseListener((collapsed, attacker) -> notifications.add(collapsed));
 
         assertFalse(world.applyWallDamage(target, 0), "no damage, no collapse");
         assertTrue(notifications.isEmpty(), "listeners only hear about collapses");
@@ -363,10 +363,25 @@ class GameMazeWorldBreakableTest {
     @DisplayName("a removed collapse listener is no longer notified")
     void removedListenerNotNotified() {
         List<List<BreakableWall>> notifications = new ArrayList<>();
-        GameMazeWorld.WallCollapseListener listener = notifications::add;
+        GameMazeWorld.WallCollapseListener listener = (collapsed, attacker) -> notifications.add(collapsed);
         world.addWallCollapseListener(listener);
         world.removeWallCollapseListener(listener);
         world.applyWallDamage(world.getBreakableWalls().get(0), Integer.MAX_VALUE / 2);
         assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    @DisplayName("a collapse is credited to whoever brought the wall down (explicitly or by attribution scope)")
+    void collapseIsAttributed() {
+        List<String> attackers = new ArrayList<>();
+        world.addWallCollapseListener((collapsed, attacker) -> attackers.add(attacker));
+
+        world.applyWallDamage(world.getBreakableWalls().get(0), Integer.MAX_VALUE / 2, "player-1");
+        GameMazeWorld.attributeDamageTo("player-2",
+                () -> world.applyWallDamage(world.getBreakableWalls().get(0), Integer.MAX_VALUE / 2));
+        world.applyWallDamage(world.getBreakableWalls().get(0), Integer.MAX_VALUE / 2);
+
+        assertEquals(java.util.Arrays.asList("player-1", "player-2", null), attackers,
+                "the scope ends after the attack; unattributed damage credits nobody");
     }
 }

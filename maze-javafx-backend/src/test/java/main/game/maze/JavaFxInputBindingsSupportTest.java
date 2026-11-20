@@ -1,6 +1,7 @@
 package main.game.maze;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javafx.scene.input.KeyCode;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import main.game.maze.common.input.GameAction;
 import main.game.maze.common.input.InputFrame;
 import main.game.maze.common.input.KeyBindingRegistry;
-import main.game.maze.common.input.KeyBindingRegistry.BindingKind;
 
 /**
  * Verifies that JavaFxInputBindingsSupport correctly configures the key binding registry
@@ -100,5 +100,28 @@ class JavaFxInputBindingsSupportTest {
         InputFrame<KeyCode> numpad8Held = new InputFrame<>(Set.of(KeyCode.NUMPAD8), Set.of(), 0, 0, false);
         assertTrue(registry.isTriggered(GameAction.MOVE_PLAYER, numpad8Held),
                 "NUMPAD8 held should trigger MOVE_PLAYER");
+    }
+
+    @Test
+    void awdsMoveTheSameAsTheArrowsAndRightClickUsesTheWeapon() {
+        KeyBindingRegistry<KeyCode> registry = new KeyBindingRegistry<>();
+        JavaFxInputBindingsSupport.configureDefaultBindings(registry);
+        for (KeyCode key : List.of(KeyCode.A, KeyCode.W, KeyCode.D, KeyCode.S)) {
+            assertTrue(registry.isTriggered(GameAction.MOVE_PLAYER, new InputFrame<>(Set.of(key), Set.of(), 0, 0, false)),
+                    key + " moves the player");
+        }
+        assertTrue(JavaFxMovementKeys.KEYS.isLeft(held(KeyCode.A)), "A left");
+        assertTrue(JavaFxMovementKeys.KEYS.isUp(held(KeyCode.W)), "W forward (up)");
+        assertTrue(JavaFxMovementKeys.KEYS.isRight(held(KeyCode.D)), "D right");
+        assertTrue(JavaFxMovementKeys.KEYS.isDown(held(KeyCode.S)), "S down");
+        assertTrue(JavaFxMovementKeys.KEYS.isLeft(held(KeyCode.A)) && JavaFxMovementKeys.KEYS.isDown(held(KeyCode.S)));
+        assertTrue(registry.isTriggered(GameAction.FLAME_ATTACK, new InputFrame<>(Set.of(), Set.of(), 0, 0, false, true)),
+                "right click uses the weapon in hand");
+        assertFalse(registry.isTriggered(GameAction.FLAME_ATTACK, new InputFrame<>(Set.of(), Set.of(), 0, 0, true, false)),
+                "left click does not");
+    }
+
+    private static InputFrame<KeyCode> held(KeyCode key) {
+        return new InputFrame<>(Set.of(key), Set.of(), 0, 0, false);
     }
 }

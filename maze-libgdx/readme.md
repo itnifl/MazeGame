@@ -179,6 +179,21 @@ mvn test -pl maze-libgdx
 
 ---
 
+## Weapons, pickups and kill credit
+
+- `GdxWeaponSupport` — spawns and collects pickups (`PickupField`, spawn points clear of walls from `PickupField.spawnPointsOf`), fires the laser (`LaserBeamEngine`), swings
+  the sledgehammer (`MortalityService.strikeAround`), ticks combat effects and the weapon drawn in the player's hands.
+- `GameWorldModel` owns the per-game `PickupField`, `PlayerArsenal`, `PowerShield`, `KillLedger` and active effects.
+- `PlayerCombatStateService.setShield(...)` blocks damage while the shield is up; `heal(...)` applies hearts, and
+  `GdxWeaponSupport.healFlash` / `healArrow` show the flash and the rising arrow over the player (`HealFeedback`).
+- `GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(..., KillLedger)` credits each kill to its killer;
+  `EnemySpawn.killPoints` comes from `KillScoring` (the enemy's danger). The HUD shows the arsenal (`ArsenalHud`).
+- Tab is bound to `SwitchWeaponCommand`; Space or a right click uses the weapon in hand; movement keys come from
+  `GdxMovementKeys` (arrows, numpad, Q/A, W, E, S/D).
+- `GdxHudView` draws the weapons HUD (top-left) from the shared `WeaponHud` model.
+- Lives: `GameWorldModel.lives()`; the death sequence asks `GdxGameScreenController.respawnPlayer()` first, which
+  puts the player back at the start (`PlayerState.teleportTo`) with full health and spawn protection while lives are left.
+
 ## Test Suite Documentation
 
 Unit tests in `maze-libgdx` verify rendering logic, physics, entity lifecycles, and backend parity without requiring an active graphical display:

@@ -15,12 +15,13 @@ both the JavaFX and libGDX frontends. No rendering or input code lives here.
 | `dto` | `HighScoreFile`, `Score` |
 | `game.audio` | `GameAudioDirector` — channel-routed audio transitions (menu, in-game, win, game-over) |
 | `game.runtime` | `EnemyDirectorService`, `EnemyRuntime`, `RetiredShooters` (dead ranged enemies kept only until their shots in the air land; both frontends) |
-| `game.score` | `FileHighScoreRepository`, `HighScoreRepository`, `PathHintBudget`, `ScoringEngine` |
-| `game.session` | `GameMode` enum, `GameSession` |
+| `game.items` | Weapons and pickups shared by both frontends: `PickupCatalogLoader` (reads the `xmi/items/items.ecore` metamodel and `items.xmi` with dynamic EMF), `PickupCatalog` / `PickupSpec` / `PickupKind` / `Weapon`, `PickupField` (spawns an item every interval up to the cap for the map size, only on corridor points clear of every wall (`spawnPointsOf`), collects items the player walks over), `PlayerArsenal` (bombs, laser shots, sledgehammer swings, selected weapon), `PowerShield`, `PickupEffects` (also the extra life), `ArsenalHud`, `WeaponHud` (the top-left weapons HUD model: icons, the one in hand, lives) |
+| `game.score` | `FileHighScoreRepository`, `HighScoreRepository`, `PathHintBudget`, `ScoringEngine` (includes the kill bonus), `KillLedger` (who killed what, per player), `KillScoring` (points by the enemy's danger), `PlayerIds` |
+| `game.session` | `GameMode` enum, `GameSession`, `PlayerLives` (lives per difficulty, extra lives, respawn or game over, respawn delay and protection) |
 | `game.status` | `StatusMessageBus` — publish/subscribe for transient HUD status messages |
 | `interfaces` | `IDeathSubscriber`, `INotifyMovement` |
 | `runtime` | `OclBootstrap` — OCL/EMF delegate factory initialisation |
-| `service` | `DifficultyService` (XMI-backed difficulty list), `DifficultyPresentationSupport`, `MortalityService` (kill-all and crushing through `ICanDie`), `EnemyVitals` (the single HP / death / respawn-protection implementation behind `ICanDie` for libGDX and JavaFX enemies), `MortalityRules` (per-type max HP, resurrection delay, respawn protection from the opponent model) |
+| `service` | `DifficultyService` (XMI-backed difficulty list), `DifficultyPresentationSupport`, `MortalityService` (kill-all, crushing and sledgehammer strikes through `ICanDie`, all with an attacker id), `EnemyVitals` (the single HP / death / respawn-protection implementation behind `ICanDie` for libGDX and JavaFX enemies), `MortalityRules` (per-type max HP, resurrection delay, respawn protection from the opponent model) |
 
 ## Dependency chain
 

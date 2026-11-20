@@ -1,17 +1,25 @@
 package main.game.maze.libgdx.view;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import java.util.Locale;
+import main.game.maze.game.items.ArsenalHud;
+import main.game.maze.game.items.WeaponHud;
 import main.game.maze.libgdx.view.layout.HudLayout;
 
 /**
  * Renders the gameplay HUD and command overlays.
  */
 public final class GdxHudView {
+
+    /** Measures HUD text (needs no GL context). */
+    private final GlyphLayout glyphs = new GlyphLayout();
 
     public HudLayout render(RenderContext context) {
         SpriteBatch batch = context.batch();
@@ -53,14 +61,34 @@ public final class GdxHudView {
                 terminalButtonW,
                 terminalButtonH);
 
+        if (Gdx.gl != null) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        }
+
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(1f, 1f, 1f, 0.96f);
         shapes.rect(1f, context.hpBarBottomY(), w - 2f, context.hpBarHeight());
         shapes.setColor(0.76f, 0.22f, 0.17f, 0.92f);
         shapes.rect(1f, context.hpBarBottomY(), (w - 2f) * context.currentHpRatio(), context.hpBarHeight());
 
-        shapes.setColor(0f, 0f, 0f, 0.45f);
+        shapes.setColor(0f, 0f, 0f, 0.15f);
         shapes.rect(scoreX, scoreY, context.scorePanelWidth(), context.scorePanelHeight());
+        WeaponHud.Model weaponHud = context.weaponHud();
+        float weaponX = 6f;
+        float weaponY = h - context.topMargin() - (float) WeaponHud.panelHeight();
+        if (weaponHud != null) {
+            shapes.rect(weaponX, weaponY, (float) WeaponHud.panelWidth(weaponHud.slots().size()),
+                    (float) WeaponHud.panelHeight());
+            for (int i = 0; i < weaponHud.slots().size(); i++) {
+                if (weaponHud.slots().get(i).selected()) {   // the weapon in hand: gold backing
+                    shapes.setColor(1f, 0.82f, 0.25f, 0.40f);
+                    shapes.rect(weaponX + (float) WeaponHud.slotX(i) - 2f, weaponY + (float) WeaponHud.PADDING - 2f,
+                            (float) WeaponHud.ICON_SIZE + 4f, (float) WeaponHud.ICON_SIZE + 4f);
+                    shapes.setColor(0f, 0f, 0f, 0.15f);
+                }
+            }
+        }
         shapes.setColor(0f, 0f, 0f, 0.12f);
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
 
@@ -83,11 +111,19 @@ public final class GdxHudView {
         shapes.setColor(0.56f, 1.0f, 0.88f, 0.85f);
         shapes.rect(1f, context.hpBarBottomY(), w - 2f, context.hpBarHeight());
         shapes.rect(scoreX, scoreY, context.scorePanelWidth(), context.scorePanelHeight());
+        if (weaponHud != null) {
+            shapes.rect(weaponX, weaponY, (float) WeaponHud.panelWidth(weaponHud.slots().size()),
+                    (float) WeaponHud.panelHeight());
+        }
         shapes.rect(rowPanelX, rowPanelY, rowPanelW, rowPanelH);
         shapes.rect(0f, context.bottomBarHeight(), w, h - context.bottomBarHeight() - context.hpBarHeight());
         shapes.rect(buttonX, commandYDraw, buttonW, buttonH);
         shapes.rect(terminalButtonX, terminalYDraw, terminalButtonW, terminalButtonH);
         shapes.end();
+
+        if (Gdx.gl != null) {
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
 
         batch.begin();
         font.setColor(new Color(0.07f, 0.22f, 0.19f, 1f));
@@ -111,8 +147,16 @@ public final class GdxHudView {
         font.draw(batch, "Score: " + context.score(), scoreX + 14f, scoreY + context.scorePanelHeight() - 8f);
         font.getData().setScale(1.0f);
 
+        if (weaponHud != null) {
+            drawWeaponHud(batch, font, context, weaponHud, weaponX, weaponY);
+        }
+
         font.setColor(new Color(1f, 0.95f, 0.72f, 1f));
-        font.draw(batch, "Bombs: " + context.playerBombsRemaining(), scoreX + 14f, scoreY + 16f);
+        // shrink the arsenal line to the score panel so no count is cut off at the window edge
+        glyphs.setText(font, context.arsenalHudText());
+        font.getData().setScale(ArsenalHud.fitScale(glyphs.width, context.scorePanelWidth() - 28f));
+        font.draw(batch, context.arsenalHudText(), scoreX + 14f, scoreY + 16f);
+        font.getData().setScale(1.0f);
 
         switch (context.messageMode()) {
             case WON -> {
@@ -170,6 +214,11 @@ public final class GdxHudView {
         SpriteBatch batch = context.batch();
         BitmapFont font = context.font();
 
+        if (Gdx.gl != null) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        }
+
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0f, 0f, 0f, 0.38f);
         shapes.rect(0f, 0f, w, h);
@@ -181,6 +230,10 @@ public final class GdxHudView {
         shapes.setColor(0.56f, 1.0f, 0.88f, 0.95f);
         shapes.rect(20f, 60f, w - 40f, h - 140f);
         shapes.end();
+
+        if (Gdx.gl != null) {
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+        }
 
         batch.begin();
         font.setColor(new Color(1f, 0.90f, 0.43f, 1f));
@@ -203,6 +256,32 @@ public final class GdxHudView {
         WON,
         GAME_OVER,
         STATUS
+    }
+
+    /** Weapons HUD (top-left): weapon icons with their stock, the one in hand highlighted, then the lives. */
+    private static void drawWeaponHud(SpriteBatch batch, BitmapFont font, RenderContext context, WeaponHud.Model hud,
+                                      float panelX, float panelY) {
+        float icon = (float) WeaponHud.ICON_SIZE;
+        float iconY = panelY + (float) WeaponHud.PADDING;
+        for (int i = 0; i < hud.slots().size(); i++) {
+            WeaponHud.Slot slot = hud.slots().get(i);
+            float x = panelX + (float) WeaponHud.slotX(i);
+            com.badlogic.gdx.graphics.Texture texture = context.iconLoader() != null ? context.iconLoader().apply(slot.sprite()) : null;
+            batch.setColor(1f, 1f, 1f, slot.count() > 0 ? 1f : 0.4f);
+            if (texture != null) {
+                batch.draw(texture, x, iconY, icon, icon);
+            }
+            batch.setColor(Color.WHITE);
+            font.setColor(slot.selected() ? Color.GOLD : Color.WHITE);
+            font.draw(batch, String.valueOf(slot.count()), x + icon - 10f, iconY + 12f);
+        }
+        float livesX = panelX + (float) WeaponHud.livesX(hud.slots().size());
+        com.badlogic.gdx.graphics.Texture life = context.iconLoader() != null ? context.iconLoader().apply(hud.lifeIcon()) : null;
+        if (life != null) {
+            batch.draw(life, livesX, iconY, icon, icon);
+        }
+        font.setColor(new Color(1f, 0.92f, 0.5f, 1f));
+        font.draw(batch, "x" + hud.lives(), livesX + icon + 4f, iconY + icon * 0.65f);
     }
 
     public record RenderContext(
@@ -228,7 +307,9 @@ public final class GdxHudView {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int score,
-            int playerBombsRemaining,
+            String arsenalHudText,
+            WeaponHud.Model weaponHud,
+            java.util.function.Function<String, com.badlogic.gdx.graphics.Texture> iconLoader,
             HudMessageMode messageMode,
             String statusMessage,
             boolean terminalActive,

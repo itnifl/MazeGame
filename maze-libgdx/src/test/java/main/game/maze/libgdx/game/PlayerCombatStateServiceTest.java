@@ -212,4 +212,35 @@ class PlayerCombatStateServiceTest {
         assertTrue(frame.hpRatio() < 1f,
                 "Phasing ghost must deal damage even when a wall separates it from the player");
     }
+
+    @Test
+    void powerShieldBlocksContactAndDirectDamage() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(100);
+        boolean[] shieldUp = {true};
+        service.setShield(() -> shieldUp[0]);
+        EnemySpawn enemy = new EnemySpawn("z1", "/main/game/maze/zombie1-down.png", 10f, 10f, 40f, 1f, 5, 0, "", 1f);
+
+        service.update(0.1f, 10f, 10f, 20f, java.util.List.of(enemy));
+        service.applyDirectDamage(30);
+        assertEquals(100, service.currentHitPointsAsInt(), "no damage while the shield is up");
+
+        shieldUp[0] = false;
+        service.applyDirectDamage(30);
+        assertEquals(70, service.currentHitPointsAsInt(), "damage resumes when the shield is gone");
+    }
+
+    @Test
+    void healIsCappedAndDoesNotRevive() {
+        PlayerCombatStateService service = new PlayerCombatStateService();
+        service.reset(100);
+        service.applyDirectDamage(50);
+        service.heal(20);
+        assertEquals(70, service.currentHitPointsAsInt());
+        service.heal(500);
+        assertEquals(100, service.currentHitPointsAsInt(), "never above max");
+        service.applyDirectDamage(1_000);
+        service.heal(50);
+        assertEquals(0, service.currentHitPointsAsInt(), "a dead player is not healed back");
+    }
 }

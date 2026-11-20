@@ -1,4 +1,6 @@
 package main.game.maze.characters;
+import main.game.maze.game.score.KillScoring;
+import main.game.maze.common.graphics.fire.HitReactionEffect;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -249,13 +251,53 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
 
     @Override
     public void subtractHitPoints(int hp) {
-        vitals.subtractHitPoints(hp, DeathCause.OTHER);
+        subtractHitPoints(hp, DeathCause.OTHER, null);
     }
 
     /** Damage dealt by {@code cause} (bomb fire, a shot, a crushing wall); a killing blow decides the remains. */
     @Override
     public void subtractHitPoints(int hp, DeathCause cause) {
-        vitals.subtractHitPoints(hp, cause);
+        subtractHitPoints(hp, cause, null);
+    }
+
+    /** As above, by {@code attackerId}: the attacker of the killing blow is credited with the kill. */
+    @Override
+    public void subtractHitPoints(int hp, DeathCause cause, String attackerId) {
+        vitals.subtractHitPoints(hp, cause, attackerId);
+    }
+
+    @Override
+    public String killerId() {
+        return vitals.killerId();
+    }
+
+    /**
+     * Shows a hit reaction on the sprite: a short jolt when shot, a heavy stagger when struck by
+     * the sledgehammer (the matching particles are played by the caller).
+     */
+    public void react(HitReactionEffect reaction) {
+        Node graphics = getCharacterGraphics();
+        if (graphics == null || reaction == null) {
+            return;
+        }
+        long[] start = {-1};
+        new javafx.animation.AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (start[0] < 0) {
+                    start[0] = now;
+                }
+                double progress = (now - start[0]) / 1e9 / reaction.lifetimeSeconds();
+                double[] offset = reaction.spriteOffset(progress);
+                graphics.setTranslateX(offset[0]);
+                graphics.setTranslateY(offset[1]);
+                if (progress >= 1) {
+                    graphics.setTranslateX(0);
+                    graphics.setTranslateY(0);
+                    stop();
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -286,6 +328,11 @@ public class ComputerCharacter extends Character implements IMovingComputerChara
      */
     protected void handleDeath(DeathCause cause) {
         leaveRemains(cause);
+        if (App.gameController != null) {
+            // kill points in proportion to how dangerous this enemy is, for whoever killed it
+            App.gameController.recordKill(this, characterModel != null ? characterModel.getId() : null,
+                    KillScoring.pointsFor(characterModel));
+        }
         if (this instanceof ICharacterAnimations animations) {
             animations.PlayDieAnimation();
         }

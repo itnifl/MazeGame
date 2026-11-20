@@ -48,6 +48,19 @@ Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGen
 
 Output is deterministic and overwrites existing files.
 
+## PickupSpriteGenerator
+
+Creates the pickup sprites named in `xmi/items/items.xmi` in `main/game/maze/pickups/` (64x64,
+transparent, drawn on a 32x32 grid and scaled 2x): `bomb.png`, `laser-rifle.png`, `sledgehammer.png`,
+`shield.png`, `heart.png`, plus `heal-arrow.png` (shown over the player after a heart) and `extra-life.png` (a gold "+1" medallion, also the lives icon in the weapons HUD). The art fills each frame,
+because items are drawn as large as the player. The rifle and sledgehammer are also drawn in the player's hands.
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/PickupSpriteGenerator.java
+```
+
+Output is deterministic and overwrites existing files.
+
 ## RemainsSpriteGenerator
 
 Creates the enemy death remains in `main/game/maze/remains/` (all 256x256, transparent):

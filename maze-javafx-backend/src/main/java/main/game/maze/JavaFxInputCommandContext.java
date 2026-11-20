@@ -41,6 +41,10 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
     /** Full sink interface used by {@link main.game.maze.GameController}. Composes all three. */
     interface ActionSink extends NavigationSink, OverlaySink, HudSink {
         void triggerPlayerFlameAttack();
+
+        /** Tab: switch to the next weapon in stock. */
+        default void switchWeapon() {
+        }
     }
 
     private final ActionSink sink;
@@ -93,6 +97,11 @@ public final class JavaFxInputCommandContext implements GameCommandContext {
     @Override
     public void triggerPlayerFlameAttack() {
         sink.triggerPlayerFlameAttack();
+    }
+
+    @Override
+    public void switchWeapon() {
+        sink.switchWeapon();
     }
 
     @Override

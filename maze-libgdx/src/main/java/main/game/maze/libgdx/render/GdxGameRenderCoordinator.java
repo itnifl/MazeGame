@@ -1,5 +1,13 @@
 package main.game.maze.libgdx.render;
 
+import main.game.maze.libgdx.model.SpriteVisual;
+import main.game.maze.libgdx.model.RemainsVisual;
+import main.game.maze.libgdx.model.ExplosionVisual;
+import main.game.maze.libgdx.helper.GdxWeaponSupport;
+import main.game.maze.game.items.ArsenalHud;
+import main.game.maze.game.items.WeaponHud;
+import main.game.maze.common.graphics.fire.ShieldBubble;
+import java.util.ArrayList;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -141,12 +149,13 @@ public final class GdxGameRenderCoordinator {
                 constants.infectionWarningText(),
                 animatedEnemies,
                 worldModel.dyingEnemies(),
-                worldModel.remains().values(),
+                floorSprites(input),
+                overlaySprites(input),
                 activePathPoints,
                 worldModel.enemyProjectiles(),
                 worldModel.enemyBeams(),
                 worldModel.bombFuseGlows(),
-                worldModel.explosions(),
+                explosions(input),
                 shakeOffsetX(input.enemyAnimationClock()),
                 shakeOffsetY(input.enemyAnimationClock()),
                 session,
@@ -170,7 +179,8 @@ public final class GdxGameRenderCoordinator {
                 input.pathHintRemainingSeconds(),
                 input.showSpanningTreeInfo(),
                 input.currentScore(),
-                input.playerBombsRemaining(),
+                ArsenalHud.statusText(worldModel.shield()),   // weapons are in the weapons HUD
+                WeaponHud.model(worldModel.arsenal(), worldModel.pickupField().catalog(), worldModel.lives().remaining()),
                 input.scoreBreakdown(),
                 terminalController.isActive(),
                 terminalController.bufferText(),
@@ -188,6 +198,45 @@ public final class GdxGameRenderCoordinator {
                 enemyTextureLoader,
                 enemyPathProvider,
                 input.hudLayout())));
+    }
+
+    /** Remains of dead enemies, then the items lying in the maze. */
+    private List<SpriteVisual> floorSprites(FrameInput input) {
+        List<SpriteVisual> floor = new ArrayList<>();
+        for (RemainsVisual remains : worldModel.remains().values()) {
+            floor.add(new SpriteVisual(remains.x(), remains.y(), remains.size(), 0f, false, remains.spritePath()));
+        }
+        floor.addAll(GdxWeaponSupport.pickupSprites(worldModel, input.maze(), input.enemyAnimationClock()));
+        return floor;
+    }
+
+    /** The weapon in the player hands and, after a heart, the arrow over the head; drawn over the player. */
+    private List<SpriteVisual> overlaySprites(FrameInput input) {
+        List<SpriteVisual> overlays = new ArrayList<>(2);
+        SpriteVisual held = GdxWeaponSupport.heldWeapon(worldModel, input.player());
+        if (held != null) {
+            overlays.add(held);
+        }
+        SpriteVisual arrow = GdxWeaponSupport.healArrow(worldModel, input.player());
+        if (arrow != null) {
+            overlays.add(arrow);
+        }
+        return overlays;
+    }
+
+    /** Explosions and effects, plus the power shield bubble around the player while it is up. */
+    private List<ExplosionVisual> explosions(FrameInput input) {
+        List<ExplosionVisual> all = new ArrayList<>(worldModel.explosions());
+        PlayerState player = input.player();
+        double shieldLeft = worldModel.shield().remainingSeconds();
+        if (player != null && shieldLeft > 0) {
+            all.add(clock -> ShieldBubble.puffs(player.x(), player.y(), player.halfSize() * 1.7f, shieldLeft, clock));
+        }
+        ExplosionVisual healFlash = GdxWeaponSupport.healFlash(worldModel, player);
+        if (healFlash != null) {
+            all.add(healFlash);
+        }
+        return all;
     }
 
         private float shakeOffsetX(float animationClock) {
@@ -236,7 +285,6 @@ public final class GdxGameRenderCoordinator {
             float pathHintRemainingSeconds,
             boolean showSpanningTreeInfo,
             int currentScore,
-            int playerBombsRemaining,
             ScoreBreakdown scoreBreakdown,
             HudLayout hudLayout) {
     }

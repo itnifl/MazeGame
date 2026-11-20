@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.difficulties.impl.DifficultyImpl#getMonstersMovementSpeedMultiplier <em>Monsters Movement Speed Multiplier</em>}</li>
  *   <li>{@link main.game.maze.difficulties.impl.DifficultyImpl#getMonstersDamageMultiplier <em>Monsters Damage Multiplier</em>}</li>
  *   <li>{@link main.game.maze.difficulties.impl.DifficultyImpl#getMaxThreat <em>Max Threat</em>}</li>
+ *   <li>{@link main.game.maze.difficulties.impl.DifficultyImpl#getStartingLives <em>Starting Lives</em>}</li>
  * </ul>
  *
  * @generated
@@ -129,6 +130,26 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 	 * @ordered
 	 */
 	protected int maxThreat = MAX_THREAT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getStartingLives() <em>Starting Lives</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStartingLives()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int STARTING_LIVES_EDEFAULT = 1;
+
+	/**
+	 * The cached value of the '{@link #getStartingLives() <em>Starting Lives</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStartingLives()
+	 * @generated
+	 * @ordered
+	 */
+	protected int startingLives = STARTING_LIVES_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -260,6 +281,29 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 	 * @generated
 	 */
 	@Override
+	public int getStartingLives() {
+		return startingLives;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStartingLives(int newStartingLives) {
+		int oldStartingLives = startingLives;
+		startingLives = newStartingLives;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, DifficultiesPackage.DIFFICULTY__STARTING_LIVES, oldStartingLives, startingLives));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case DifficultiesPackage.DIFFICULTY__ENEMY_MAX_COUNT:
@@ -286,6 +330,8 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 				return getMonstersDamageMultiplier();
 			case DifficultiesPackage.DIFFICULTY__MAX_THREAT:
 				return getMaxThreat();
+			case DifficultiesPackage.DIFFICULTY__STARTING_LIVES:
+				return getStartingLives();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -315,6 +361,9 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 			case DifficultiesPackage.DIFFICULTY__MAX_THREAT:
 				setMaxThreat((Integer)newValue);
 				return;
+			case DifficultiesPackage.DIFFICULTY__STARTING_LIVES:
+				setStartingLives((Integer)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -342,6 +391,9 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 			case DifficultiesPackage.DIFFICULTY__MAX_THREAT:
 				setMaxThreat(MAX_THREAT_EDEFAULT);
 				return;
+			case DifficultiesPackage.DIFFICULTY__STARTING_LIVES:
+				setStartingLives(STARTING_LIVES_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -364,6 +416,8 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 				return monstersDamageMultiplier != MONSTERS_DAMAGE_MULTIPLIER_EDEFAULT;
 			case DifficultiesPackage.DIFFICULTY__MAX_THREAT:
 				return maxThreat != MAX_THREAT_EDEFAULT;
+			case DifficultiesPackage.DIFFICULTY__STARTING_LIVES:
+				return startingLives != STARTING_LIVES_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -386,6 +440,8 @@ public abstract class DifficultyImpl extends MinimalEObjectImpl.Container implem
 		result.append(monstersDamageMultiplier);
 		result.append(", maxThreat: ");
 		result.append(maxThreat);
+		result.append(", startingLives: ");
+		result.append(startingLives);
 		result.append(')');
 		return result.toString();
 	}

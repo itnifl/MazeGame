@@ -3,6 +3,7 @@ package main.game.maze.javafx.controller.state;
 import javafx.scene.input.KeyCode;
 import main.game.maze.FxGameWorldModel;
 import main.game.maze.JavaFxInputCommandContext;
+import main.game.maze.JavaFxMovementKeys;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.common.controller.state.GameModeRouter;
 import main.game.maze.common.input.InputFrame;
@@ -60,19 +61,19 @@ public final class FxPlayingModeController implements GameModeRouter.ModeHandler
         lastMoveTime = now;
         
         boolean moved = false;
-        if (frame.isHeld(KeyCode.UP) || frame.isHeld(KeyCode.NUMPAD8) || frame.isHeld(KeyCode.W)) {
+        if (JavaFxMovementKeys.KEYS.isUp(frame)) {
             stepPlayer(speed -> playerCharacter.moveUp(speed, false));
             moved = true;
         }
-        if (frame.isHeld(KeyCode.DOWN) || frame.isHeld(KeyCode.NUMPAD5) || frame.isHeld(KeyCode.S)) {
+        if (JavaFxMovementKeys.KEYS.isDown(frame)) {
             stepPlayer(speed -> playerCharacter.moveDown(speed, false));
             moved = true;
         }
-        if (frame.isHeld(KeyCode.LEFT) || frame.isHeld(KeyCode.NUMPAD4) || frame.isHeld(KeyCode.A)) {
+        if (JavaFxMovementKeys.KEYS.isLeft(frame)) {
             stepPlayer(speed -> playerCharacter.moveLeft(speed, false));
             moved = true;
         }
-        if (frame.isHeld(KeyCode.RIGHT) || frame.isHeld(KeyCode.NUMPAD6) || frame.isHeld(KeyCode.D)) {
+        if (JavaFxMovementKeys.KEYS.isRight(frame)) {
             stepPlayer(speed -> playerCharacter.moveRight(speed, false));
             moved = true;
         }

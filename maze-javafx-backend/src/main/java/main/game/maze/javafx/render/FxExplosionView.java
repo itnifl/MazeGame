@@ -1,5 +1,6 @@
 package main.game.maze.javafx.render;
 
+import main.game.maze.common.graphics.fire.PuffEffect;
 import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
@@ -64,6 +65,12 @@ public final class FxExplosionView {
                 burst.centerX() + extent, burst.centerY() + extent);
     }
 
+    /** View for any shared combat effect (laser beam, sledgehammer swing, hit reaction, pickup sparkle). */
+    public static FxExplosionView of(PuffEffect effect) {
+        double[] b = effect.bounds();
+        return new FxExplosionView(effect::puffs, b[0], b[1], b[2], b[3]);
+    }
+
     /** View for a breakable wall collapsing into rubble. */
     public static FxExplosionView of(WallRubble rubble) {
         double extent = rubble.maxExtent();
@@ -121,12 +128,14 @@ public final class FxExplosionView {
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
     }
 
-    private static void paint(GraphicsContext gc, List<FirePuff> puffs, double originX, double originY) {
+    /** Paints puffs onto a canvas whose top-left is at board position (originX, originY). */
+    public static void paint(GraphicsContext gc, List<FirePuff> puffs, double originX, double originY) {
         for (FirePuff puff : puffs) {
             gc.setGlobalBlendMode(puff.layer().additive() ? BlendMode.ADD : BlendMode.SRC_OVER);
             gc.setFill(Color.color(puff.red(), puff.green(), puff.blue(), puff.alpha()));
             double r = puff.radius();
             gc.fillOval(puff.x() - originX - r, puff.y() - originY - r, 2 * r, 2 * r);
         }
+        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
     }
 }

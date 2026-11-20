@@ -75,13 +75,15 @@ public final class GdxGameRuntimeSupport {
         }
         List<EnemySpawn> contacts = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
-            contacts.add(enemy.contactSnapshot());
+            if (enemy.isAlive()) {   // killed this frame (e.g. by a sledgehammer swing): no contact damage
+                contacts.add(enemy.contactSnapshot());
+            }
         }
         return contacts;
     }
 
     public static int currentScore(ScoringEngine scoringEngine, GameSession session, GameWorldModel worldModel) {
-        return GdxScoreSupport.currentScore(scoringEngine, session, worldModel.pathPenaltyPoints());
+        return GdxScoreSupport.currentScore(scoringEngine, session, worldModel.pathPenaltyPoints(), killPoints(worldModel));
     }
 
     /**
@@ -99,7 +101,7 @@ public final class GdxGameRuntimeSupport {
             int currentHp,
             boolean won) {
         return GdxScoreSupport.endScreenBreakdown(
-                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won);
+                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won, killPoints(worldModel));
     }
 
     public static int endScreenScore(
@@ -110,6 +112,11 @@ public final class GdxGameRuntimeSupport {
             int currentHp,
             boolean won) {
         return GdxScoreSupport.endScreenScore(
-                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won);
+                scoringEngine, session, worldModel.pathPenaltyPoints(), maxHp, currentHp, won, killPoints(worldModel));
+    }
+
+    /** Points the local player earned for kills this game (see {@code KillLedger}). */
+    static int killPoints(GameWorldModel worldModel) {
+        return worldModel.killLedger().pointsFor(main.game.maze.game.score.PlayerIds.LOCAL_PLAYER);
     }
 }

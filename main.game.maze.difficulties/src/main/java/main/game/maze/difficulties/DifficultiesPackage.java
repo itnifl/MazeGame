@@ -159,13 +159,22 @@ public interface DifficultiesPackage extends EPackage {
 	int DIFFICULTY__MAX_THREAT = 4;
 
 	/**
+	 * The feature id for the '<em><b>Starting Lives</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIFFICULTY__STARTING_LIVES = 5;
+
+	/**
 	 * The number of structural features of the '<em>Difficulty</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIFFICULTY_FEATURE_COUNT = 5;
+	int DIFFICULTY_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Difficulty</em>' class.
@@ -230,6 +239,15 @@ public interface DifficultiesPackage extends EPackage {
 	 * @ordered
 	 */
 	int EASY_DIFFICULTY__MAX_THREAT = DIFFICULTY__MAX_THREAT;
+
+	/**
+	 * The feature id for the '<em><b>Starting Lives</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASY_DIFFICULTY__STARTING_LIVES = DIFFICULTY__STARTING_LIVES;
 
 	/**
 	 * The number of structural features of the '<em>Easy Difficulty</em>' class.
@@ -305,6 +323,15 @@ public interface DifficultiesPackage extends EPackage {
 	int NORMAL_DIFFICULTY__MAX_THREAT = DIFFICULTY__MAX_THREAT;
 
 	/**
+	 * The feature id for the '<em><b>Starting Lives</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NORMAL_DIFFICULTY__STARTING_LIVES = DIFFICULTY__STARTING_LIVES;
+
+	/**
 	 * The number of structural features of the '<em>Normal Difficulty</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -376,6 +403,15 @@ public interface DifficultiesPackage extends EPackage {
 	 * @ordered
 	 */
 	int HARD_DIFFICULTY__MAX_THREAT = DIFFICULTY__MAX_THREAT;
+
+	/**
+	 * The feature id for the '<em><b>Starting Lives</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HARD_DIFFICULTY__STARTING_LIVES = DIFFICULTY__STARTING_LIVES;
 
 	/**
 	 * The number of structural features of the '<em>Hard Difficulty</em>' class.
@@ -560,6 +596,17 @@ public interface DifficultiesPackage extends EPackage {
 	EAttribute getDifficulty_MaxThreat();
 
 	/**
+	 * Returns the meta object for the attribute '{@link main.game.maze.difficulties.Difficulty#getStartingLives <em>Starting Lives</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Starting Lives</em>'.
+	 * @see main.game.maze.difficulties.Difficulty#getStartingLives()
+	 * @see #getDifficulty()
+	 * @generated
+	 */
+	EAttribute getDifficulty_StartingLives();
+
+	/**
 	 * Returns the meta object for class '{@link main.game.maze.difficulties.NormalDifficulty <em>Normal Difficulty</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -729,6 +776,14 @@ public interface DifficultiesPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute DIFFICULTY__MAX_THREAT = eINSTANCE.getDifficulty_MaxThreat();
+
+		/**
+		 * The meta object literal for the '<em><b>Starting Lives</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute DIFFICULTY__STARTING_LIVES = eINSTANCE.getDifficulty_StartingLives();
 
 		/**
 		 * The meta object literal for the '{@link main.game.maze.difficulties.impl.NormalDifficultyImpl <em>Normal Difficulty</em>}' class.
