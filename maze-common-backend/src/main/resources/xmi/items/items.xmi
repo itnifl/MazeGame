@@ -47,4 +47,11 @@
       sprite="/main/game/maze/pickups/extra-life.png"
       pickupSound="/main/game/maze/sounds/pickup-extra-life.wav"
       spawnWeight="1" amount="1"/>
+
+  <!-- never spawns on its own (spawnWeight 0): dropped where a zombie sergeant is killed -->
+  <items kind="GATLING_GUN" displayName="Gatling gun"
+      sprite="/main/game/maze/pickups/gatling-gun.png"
+      pickupSound="/main/game/maze/sounds/pickup-gatling.wav"
+      useSound="/main/game/maze/sounds/gatling-burst.wav"
+      spawnWeight="0" amount="5" damage="45" range="450.0"/>
 </items:PickupModel>

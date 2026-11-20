@@ -287,6 +287,11 @@ public final class GameWorldModel {
         arsenal = new PlayerArsenal(startingBombs);
     }
 
+    /** New level: the weapons handed on from the previous level instead of a fresh arsenal. */
+    public void inheritArsenal(PlayerArsenal inherited) {
+        arsenal = inherited;
+    }
+
     public PowerShield shield() {
         return shield;
     }

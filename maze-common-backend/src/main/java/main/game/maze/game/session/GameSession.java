@@ -10,6 +10,7 @@ public final class GameSession {
     private boolean loadingPending;
     private boolean highScoresReturnToStartMenu;
     private boolean winScoreSaved;
+    private boolean highScoresReturnToWin;
     private int baseScore;
     private int moveCount;
 
@@ -43,6 +44,15 @@ public final class GameSession {
 
     public void setHighScoresReturnToStartMenu(boolean highScoresReturnToStartMenu) {
         this.highScoresReturnToStartMenu = highScoresReturnToStartMenu;
+    }
+
+    /** True when the high scores were opened from the win screen of a level that has a next level. */
+    public boolean highScoresReturnToWin() {
+        return highScoresReturnToWin;
+    }
+
+    public void setHighScoresReturnToWin(boolean highScoresReturnToWin) {
+        this.highScoresReturnToWin = highScoresReturnToWin;
     }
 
     public boolean winScoreSaved() {

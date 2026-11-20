@@ -164,4 +164,50 @@ class FxMazeCanvasRendererTest {
         assertDoesNotThrow(() -> runOnFxThread(renderer),
                 "drawCanvas must not throw when background image resource is missing");
     }
+
+    @Test
+    @DisplayName("with a material look each wall is drawn with the sprite of its material; without, all walls alike")
+    void wallsDrawnPerMaterial() throws Exception {
+        var glass = new main.game.maze.mazeworld.Vector2D(100, 100, 100, 120);
+        var stone = new main.game.maze.mazeworld.Vector2D(300, 100, 300, 120);
+        var walls = java.util.List.of(glass, stone);
+        FxMazeCanvasRenderer renderer = new FxMazeCanvasRenderer(MazeVisualStyleConfig.DEFAULT, () -> "NormalDifficulty");
+
+        int[] plain = pixels(renderer, walls, glass, stone);
+        assertEquals(plain[0], plain[1], "classic look: both walls are the same");
+
+        var ids = new java.util.IdentityHashMap<main.game.maze.mazeworld.Vector2D, String>();
+        ids.put(glass, "GLASS_BASIC");
+        ids.put(stone, "STONE_BASIC");
+        renderer.setWallMaterialLook(() -> ids);
+        int[] byMaterial = pixels(renderer, walls, glass, stone);
+        assertNotEquals(byMaterial[0], byMaterial[1], "glass and stone walls look different");
+    }
+
+    /** Draws the walls and reads the pixel in the middle of each of the two. */
+    private static int[] pixels(FxMazeCanvasRenderer renderer, java.util.List<main.game.maze.mazeworld.Vector2D> walls,
+                                main.game.maze.mazeworld.Vector2D a, main.game.maze.mazeworld.Vector2D b) throws Exception {
+        AtomicReference<int[]> result = new AtomicReference<>();
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        CountDownLatch done = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                Canvas canvas = renderer.drawCanvas(walls);
+                var image = canvas.snapshot(new javafx.scene.SnapshotParameters(), null);
+                var reader = image.getPixelReader();
+                result.set(new int[] {
+                        reader.getArgb((int) a.getStart().getX(), (int) a.getStart().getY() + 10),
+                        reader.getArgb((int) b.getStart().getX(), (int) b.getStart().getY() + 10)});
+            } catch (Throwable t) {
+                error.set(t);
+            } finally {
+                done.countDown();
+            }
+        });
+        assertTrue(done.await(10, TimeUnit.SECONDS));
+        if (error.get() != null) {
+            throw new RuntimeException(error.get());
+        }
+        return result.get();
+    }
 }

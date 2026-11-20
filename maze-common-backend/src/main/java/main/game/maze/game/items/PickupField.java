@@ -113,6 +113,13 @@ public final class PickupField {
         return pickup;
     }
 
+    /** Puts an item on the ground where it was dropped (a killed sergeant's gun); ignores the item cap. */
+    public Pickup dropAt(PickupKind kind, double x, double y) {
+        Pickup pickup = new Pickup(nextId++, kind, x, y);
+        items.add(pickup);
+        return pickup;
+    }
+
     /** Removes and returns the items the player at (x, y) with body radius {@code playerRadius} touches. */
     public List<Pickup> collect(double playerX, double playerY, double playerRadius) {
         List<Pickup> taken = new ArrayList<>();

@@ -25,8 +25,23 @@ public final class GdxWinOverlayController {
     private float winBackButtonY;
     private float winBackButtonW;
     private float winBackButtonH;
+    private float winNextButtonX;
+    private float winNextButtonY;
+    private float winNextButtonW;
+    private float winNextButtonH;
+    private boolean nextLevelAvailable;
+
+    /** Whether the win overlay offers the next level (set when the level is won). */
+    public void setNextLevelAvailable(boolean available) {
+        this.nextLevelAvailable = available;
+    }
+
+    public boolean nextLevelAvailable() {
+        return nextLevelAvailable;
+    }
 
     public void reset(GameSession session) {
+        nextLevelAvailable = false;
         winNameInput.setLength(0);
         session.setWinScoreSaved(false);
         winScoreStatus = "";
@@ -56,6 +71,10 @@ public final class GdxWinOverlayController {
         winBackButtonY = buttons.backY();
         winBackButtonW = buttons.backW();
         winBackButtonH = buttons.backH();
+        winNextButtonX = buttons.nextX();
+        winNextButtonY = buttons.nextY();
+        winNextButtonW = buttons.nextW();
+        winNextButtonH = buttons.nextH();
     }
 
     public boolean update(
@@ -66,6 +85,19 @@ public final class GdxWinOverlayController {
             int score,
             Runnable returnToMenuAction,
             Runnable openHighScoresAction) {
+        return update(session, modeInputController, hudCamera, highScoreRepository, score,
+                returnToMenuAction, openHighScoresAction, null);
+    }
+
+    public boolean update(
+            GameSession session,
+            GdxModeInputController modeInputController,
+            OrthographicCamera hudCamera,
+            HighScoreRepository highScoreRepository,
+            int score,
+            Runnable returnToMenuAction,
+            Runnable openHighScoresAction,
+            Runnable nextLevelAction) {
         if (session.mode() != GameMode.WON) {
             return false;
         }
@@ -74,7 +106,8 @@ public final class GdxWinOverlayController {
             handleWinScoreEntryInput(highScoreRepository, score, session, openHighScoresAction);
         }
 
-        handleWonMouseInput(session, hudCamera, highScoreRepository, score, returnToMenuAction, openHighScoresAction);
+        handleWonMouseInput(session, hudCamera, highScoreRepository, score, returnToMenuAction, openHighScoresAction,
+                nextLevelAction);
 
         if (modeInputController.consumeEsc(Gdx.input.isKeyPressed(Input.Keys.ESCAPE))) {
             returnToMenuAction.run();
@@ -103,7 +136,8 @@ public final class GdxWinOverlayController {
             HighScoreRepository highScoreRepository,
             int score,
             Runnable returnToMenuAction,
-            Runnable openHighScoresAction) {
+            Runnable openHighScoresAction,
+            Runnable nextLevelAction) {
         if (!Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
             return;
         }
@@ -111,6 +145,11 @@ public final class GdxWinOverlayController {
         float my = hudCamera.viewportHeight - Gdx.input.getY();
         if (!session.winScoreSaved() && contains(mx, my, winSaveButtonX, winSaveButtonY, winSaveButtonW, winSaveButtonH)) {
             submitWinScore("Type a name first.", highScoreRepository, score, session, openHighScoresAction);
+            return;
+        }
+        if (nextLevelAvailable && nextLevelAction != null
+                && contains(mx, my, winNextButtonX, winNextButtonY, winNextButtonW, winNextButtonH)) {
+            nextLevelAction.run();
             return;
         }
         if (contains(mx, my, winBackButtonX, winBackButtonY, winBackButtonW, winBackButtonH)) {

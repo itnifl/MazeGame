@@ -60,12 +60,24 @@ public final class OpponentRuntimeFactory {
         instantiateFromModelInternal(registrar, override);
     }
 
+    /** As above, filling the threat capacity of {@code level} (the difficulty's maximum x the level's factor). */
+    public static void instantiateFromModel(EnemyRegistrar registrar, Difficulty override,
+            main.game.maze.game.level.LevelSpec level) {
+        instantiateFromModelInternal(registrar, override, level);
+    }
+
     /**
      * Instantiate characters from an XMI model and register them with the provided {@link EnemyRegistrar}.
      *
      * @param registrar the registrar responsible for placing spawned characters into the scene
      */
     public static void instantiateFromModelInternal(EnemyRegistrar registrar, Difficulty setOverrideDifficulty) {
+        instantiateFromModelInternal(registrar, setOverrideDifficulty, null);
+    }
+
+    /** @param level the level whose threat capacity applies, or null for the difficulty's own maximum */
+    public static void instantiateFromModelInternal(EnemyRegistrar registrar, Difficulty setOverrideDifficulty,
+            main.game.maze.game.level.LevelSpec level) {
 
         /** REFACTOR START Extract into XmiRulesLoader  line 73-161 **/
         String resourcePath = OpponentConstants.ZombieModelPath;
@@ -132,7 +144,8 @@ public final class OpponentRuntimeFactory {
         
         Map<EnemyTypes, Integer> target = resolver.resolve(key);
 
-        final int maxThreatByDifficulty = diff != null ? diff.getMaxThreat() : Integer.MAX_VALUE;
+        final int maxThreatByDifficulty = diff == null ? Integer.MAX_VALUE
+                : level != null ? level.maxThreat(diff.getMaxThreat()) : diff.getMaxThreat();
         final double speedMultiplierByDifficulty = diff != null ? diff.getMonstersMovementSpeedMultiplier() : 1d;
         final double dmgMultiplierByDifficulty = diff != null ? diff.getMonstersDamageMultiplier() : 1d;
         final boolean instantDeath = diff != null && diff.isInstantDeath();
@@ -407,7 +420,7 @@ private static double spawnByTarget(
      * @param model the model describing the character
      * @return a JavaFX Node representing the character sprite
      */
-    private static Node createCharacterGraphics(CharacterType model, int characterXySize) {
+    static Node createCharacterGraphics(CharacterType model, int characterXySize) {
         String imagePath = model.getImageBase(); 
         InputStream imageStream = OpponentRuntimeFactory.class.getResourceAsStream(imagePath);
 

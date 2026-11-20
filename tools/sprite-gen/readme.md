@@ -48,6 +48,31 @@ Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGen
 
 Output is deterministic and overwrites existing files.
 
+## BackgroundGenerator
+
+Draws the backgrounds of the difficulties as seamless 1024 x 1024 tiles (everything wraps at the edges):
+
+- `gameBackGround1.png` (easy): friendly light woods, a bright forest floor with dappled sunlight, soft moss, ferns,
+  fallen leaves, twigs, pebbles, tiny red mushrooms and flowers.
+- `gameBackGround2.png` (normal): a lush meadow with seven patches of burning grass (scorched earth, charred blades,
+  embers, flame tongues, smoke).
+
+Deterministic: change `WOODS_SEED`, `SEED` or the `patches` list in the tool for a different arrangement.
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/BackgroundGenerator.java
+```
+
+## SergeantSpriteGenerator
+
+Draws `zombie-sergeant.png` (the zombie sprite with a cap, stripes and a gatling gun) from `zombie1-down.png`:
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/SergeantSpriteGenerator.java
+```
+
+The gatling gun pickup sprite (`pickups/gatling-gun.png`) comes from `PickupSpriteGenerator` below.
+
 ## PickupSpriteGenerator
 
 Creates the pickup sprites named in `xmi/items/items.xmi` in `main/game/maze/pickups/` (64x64,

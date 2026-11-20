@@ -19,8 +19,17 @@ import main.game.maze.common.graphics.AudioEngine;
 public class RestartGameAction extends ActionScreens {
     private AnchorPane root;
 
+    private final boolean nextLevel;
+
+    /** A new game from level 1. */
     public RestartGameAction(AnchorPane root) {
+        this(root, false);
+    }
+
+    /** @param nextLevel true after a win: moves on to the next level, carrying the weapons over */
+    public RestartGameAction(AnchorPane root, boolean nextLevel) {
         this.root = root;
+        this.nextLevel = nextLevel;
     }
 
     public void Load() {
@@ -58,6 +67,12 @@ public class RestartGameAction extends ActionScreens {
             this.replaceRoot(root, newRoot);
             App.applySizeForCurrentDifficulty(stage);
                         
+            if (nextLevel && App.arsenalAtWin != null && App.levelProgress.hasNext()) {
+                App.levelProgress.advance(main.game.maze.game.items.PlayerArsenal.restore(App.arsenalAtWin));
+            } else {
+                App.levelProgress.restart();
+            }
+            App.arsenalAtWin = null;
             GameMazeWorld.RegenerateWorld(App.getBoardMaxX(), App.getBoardMaxY());
 
             controller.setupGame();

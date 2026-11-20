@@ -207,4 +207,36 @@ class FxWeaponControllerTest {
     private static List<Integer> asList(int[] values) {
         return List.of(values[0], values[1]);
     }
+
+    @Test
+    @DisplayName("a new level starts with the weapons handed on from the previous one")
+    void inheritedArsenal() {
+        main.game.maze.game.items.PlayerArsenal carried = new main.game.maze.game.items.PlayerArsenal(7);
+        carried.add(Weapon.LASER_RIFLE, 4);
+        carried.add(Weapon.GATLING_GUN, 2);
+
+        weapons.startGame(host.player, new GameMazeWorld(), lives,
+                main.game.maze.game.items.PlayerArsenal.restore(carried.snapshot()));
+
+        assertEquals(7, weapons.arsenal().count(Weapon.BOMB));
+        assertEquals(4, weapons.arsenal().count(Weapon.LASER_RIFLE));
+        assertEquals(2, weapons.arsenal().count(Weapon.GATLING_GUN));
+        assertEquals(7, weapons.arsenalSnapshot().counts().get(Weapon.BOMB));
+    }
+
+    @Test
+    @DisplayName("a gun dropped where a sergeant fell is picked up by walking over it")
+    void droppedGunCanBePickedUp() {
+        host.player.teleportTo(-10_000, -10_000);
+        weapons.tick(0);
+        weapons.dropPickup(PickupKind.GATLING_GUN, 300, 300);
+        assertTrue(weapons.pickupField().items().stream().anyMatch(item -> item.kind() == PickupKind.GATLING_GUN));
+
+        host.player.teleportTo(300 - HALF, 300 - HALF);
+        weapons.tick(1_000_000L);
+
+        assertTrue(weapons.pickupField().items().stream().noneMatch(item -> item.kind() == PickupKind.GATLING_GUN));
+        assertEquals(weapons.pickupField().catalog().spec(PickupKind.GATLING_GUN).amount(),
+                weapons.arsenal().count(Weapon.GATLING_GUN));
+    }
 }

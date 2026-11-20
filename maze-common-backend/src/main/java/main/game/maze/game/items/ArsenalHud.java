@@ -62,6 +62,7 @@ public final class ArsenalHud {
             case BOMB -> "Bombs";
             case LASER_RIFLE -> "Laser";
             case SLEDGEHAMMER -> "Sledge";
+            case GATLING_GUN -> "Gatling";
         };
     }
 
@@ -74,6 +75,7 @@ public final class ArsenalHud {
             case SHIELD -> new float[] {0.35f, 0.85f, 1.0f};
             case HEART -> new float[] {1.0f, 0.4f, 0.55f};
             case EXTRA_LIFE -> new float[] {1.0f, 0.85f, 0.2f};
+            case GATLING_GUN -> new float[] {0.95f, 0.8f, 0.3f};
         };
     }
 }

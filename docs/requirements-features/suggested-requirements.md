@@ -368,3 +368,27 @@ These requirements have been implemented and verified.
 - **SR-272** *(Observability)*: Count lives lost and extra lives picked up per level, next to the kill statistics (SR-252).
 
 - **SR-273** *(Portability, CRR-9; bug fixed)*: ~~The game could not be built or run outside the full reactor build after shared-module changes~~ — fixed: the `quick`/full targets of both make scripts now `install` (the local Maven repository used by single-module builds and the IDE was left stale by `verify`), and libGDX `prepare-run` rebuilds when any runtime module has newer sources (`Test-LaunchClassesStale`, also used for the shared modules in JavaFX `prepare-run`; Pester `Test-LaunchClassesStale` cases). Follow-up: run a `prepare-run` smoke step in CI so a stale-launch regression is caught automatically.
+
+- **SR-283** *(DDD)*: `LevelSpec`, `SergeantSpec` and `LevelProgress` form a "levels" bounded context; give it its own package-level API (`game.level`) and keep the frontends to the `LevelProgress` aggregate only (today the JavaFX `SergeantSpawner` and libGDX `RuntimeVisualModelLoader` both also pick posts and build spawns, which could move behind one shared "level setup" service).
+
+- **SR-284** *(12-Factor, Config)*: Level data (zone shares, threat factor, sergeant numbers) is in `levels.xmi`; allow overriding the file from the user's config directory so level designers and modders can try levels without rebuilding.
+
+- **SR-285** *(Observability)*: Log (and count per level) sergeants placed vs requested, rounds fired, rounds that hit, and gatling guns dropped / picked up, next to the kill statistics (SR-252).
+
+- **SR-286** *(Gameplay)*: Decide whether losing on level 2 and retrying should restart on level 2 with the weapons it was entered with (`LevelProgress` supports it; both frontends currently start a new game on level 1) and whether a third level should follow; the levels model already allows more levels.
+
+- **SR-287** *(Model-driven, MDD)*: Move the sergeant into `opponents.ecore` as a generated `ZombieSergeant` type (and `SERGEANT` in the difficulties `EnemyTypes`) once the EMF code can be regenerated headlessly in the build; today it lives in the dynamic-EMF `levels.ecore` because the generated opponent classes are committed and hand-editing them is error-prone.
+
+- **SR-288** *(Gameplay, UX)*: Sergeants fire through the player's shield bubble without any hit feedback beyond the tracer; add a distinct "shot absorbed" effect and a sound when the shield blocks a round.
+
+- **SR-289** *(Testing)*: Add an end-to-end smoke test that plays level 1 to the heart, takes the Next level action and asserts the level-2 world has zoned walls and sergeants, in both frontends (needs the headless JavaFX/libGDX harness of SR-18).
+
+- **SR-290a** *(Level design, UX)*: A level preview or editor (an Xtext DSL over `levels.ecore`, or a small in-game debug overlay listing the zones and their materials) so level designers see the result without playing up to the level; terminal command `/level <n>` to jump to a level for testing.
+
+- **SR-290b** *(Gameplay)*: Per-level backgrounds, music and enemy mixes (an optional `opponents` override per level) so levels can differ in more than walls; both belong in `levels.ecore` next to `threatCapacityFactor`.
+
+- **SR-290c** *(Accessibility)*: The wall sprites differ mostly by texture; add an optional high-contrast zone tint, since players with colour-vision differences may not tell stone from steel.
+
+- **SR-295a** *(UX, performance)*: The new normal background is a 1.8 MB PNG; convert it to JPEG or an indexed PNG if start-up or repository size matters, and consider animating the flames (a few frames the renderers cycle) so the patches flicker.
+
+- **SR-295b** *(Gameplay, readability)*: The bright flames can distract from enemies and pickups; offer a "calm background" option (a setting) that draws the meadow without the burning patches.

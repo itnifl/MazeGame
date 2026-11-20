@@ -18,7 +18,11 @@ public final class GdxHighScoresOverlayController {
             return false;
         }
         if (modeInputController.consumeEsc(escPressed)) {
-            if (session.highScoresReturnToStartMenu()) {
+            if (session.highScoresReturnToWin()) {
+                // saved the score of a won level: back to the win screen, where Next Level is still offered
+                session.setHighScoresReturnToWin(false);
+                session.setMode(GameMode.WON);
+            } else if (session.highScoresReturnToStartMenu()) {
                 session.setHighScoresReturnToStartMenu(false);
                 returnToMenuAction.run();
             } else {

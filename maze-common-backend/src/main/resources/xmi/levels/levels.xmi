@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The levels. Level 1 is the classic maze (random walls, the difficulty's threat capacity).
+  Level 2 divides the maze into four concentric zones around the heart: the outer zone has the strongest
+  walls (steel), the inner zone the weakest (dirt and glass); every wall is drawn with its material. All walls can be broken; a broken wall takes
+  its touching neighbours with it up to two steps away, so a bomb opens the maze without bringing it all down. It has a larger threat capacity, and stationary zombie sergeants
+  guard the heart: one on easy, four on normal, six on hard.
+  Material ids refer to walls.xmi (GLASS_BASIC 5 HP, DIRT_BASIC 10, WOOD_BASIC 20, STONE_BASIC 40, STEEL_BASIC 80).
+-->
+<levels:LevelModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:levels="http://main.game.maze/levels">
+
+  <levels number="1" name="The Maze" threatCapacityFactor="1.0"/>
+
+  <levels number="2" name="The Sergeants' Keep" threatCapacityFactor="1.5" showWallMaterials="true" inheritWeapons="true" maxCascadeDepth="2">
+    <zones displayName="Outer wall" materialIds="STEEL_BASIC"/>
+    <zones displayName="Second ring" materialIds="STONE_BASIC"/>
+    <zones displayName="Third ring" materialIds="WOOD_BASIC"/>
+    <zones displayName="Inner ring" materialIds="DIRT_BASIC GLASS_BASIC"/>
+    <sergeant displayName="Zombie sergeant" health="200" sightRange="380.0"
+        roundsPerBurst="5" roundDamage="3" roundIntervalSeconds="0.12" burstCooldownSeconds="1.2"
+        sprite="/main/game/maze/zombie-sergeant.png"
+        fireSound="/main/game/maze/sounds/gatling-burst.wav"
+        dropWeapon="GATLING_GUN" postDistanceFromHeart="110.0"/>
+    <sergeantPosts difficulty="EASY" count="1"/>
+    <sergeantPosts difficulty="NORMAL" count="4"/>
+    <sergeantPosts difficulty="HARD" count="6"/>
+  </levels>
+</levels:LevelModel>

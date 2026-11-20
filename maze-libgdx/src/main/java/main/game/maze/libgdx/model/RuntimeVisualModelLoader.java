@@ -26,6 +26,15 @@ import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.WallSegment;
+import main.game.maze.game.items.PickupCatalogLoader;
+import main.game.maze.game.items.PickupField;
+import main.game.maze.game.level.DifficultyTier;
+import main.game.maze.game.level.LevelSpec;
+import main.game.maze.game.level.SergeantPosts;
+import main.game.maze.game.level.SergeantSpec;
+import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.generators.RealMaze;
+import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.CharacterType;
 import main.game.maze.opponents.Ghost;
 import main.game.maze.opponents.OpponentModel;
@@ -59,6 +68,8 @@ public final class RuntimeVisualModelLoader {
     private static final String GENERATED_ENEMY_ID_SEPARATOR = "_";
     private static final double MIN_PLAYER_SPEED = 1.0d;
     private static final float CENTER_RATIO = 0.5f;
+    /** Danger of a sergeant, for the kill points. */
+    private static final float SERGEANT_THREAT = 5f;
     private static final long ENEMY_SPAWN_RANDOM_SEED = 1337L;
     private static final float MIN_THREAT_BUDGET = 1f;
     // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
@@ -75,6 +86,13 @@ public final class RuntimeVisualModelLoader {
     private static final int SPAWN_MARGIN = 30;
     private static final int MAX_SPAWN_ATTEMPTS_PER_ENEMY = 120;
     private final MazeVisualStyleConfig style = loadStyle();
+    /** The level being started: its threat capacity and sergeants apply to the next {@code load}. */
+    private volatile LevelSpec level;
+
+    /** Sets the level whose threat capacity and sergeants the next {@code load} uses (null: the classic level 1). */
+    public void useLevel(LevelSpec level) {
+        this.level = level;
+    }
 
     public RuntimeVisualModel load(float widthPx, float heightPx) {
         return load(null, widthPx, heightPx, null);
@@ -157,7 +175,10 @@ public final class RuntimeVisualModelLoader {
 
         List<EnemySpawn> out = new ArrayList<>();
         Random random = new Random(ENEMY_SPAWN_RANDOM_SEED);
-        float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, difficulty.getMaxThreat()) : Float.MAX_VALUE;
+        LevelSpec activeLevel = level;
+        int maxThreat = difficulty == null ? 0
+                : activeLevel != null ? activeLevel.maxThreat(difficulty.getMaxThreat()) : difficulty.getMaxThreat();
+        float threatBudget = difficulty != null ? Math.max(MIN_THREAT_BUDGET, maxThreat) : Float.MAX_VALUE;
         double damageMultiplier = difficulty != null ? Math.max(0d, difficulty.getMonstersDamageMultiplier()) : 1d;
         double speedMultiplier = difficulty != null ? difficulty.getMonstersMovementSpeedMultiplier() : 1d;
         boolean instantDeath = difficulty != null && difficulty.isInstantDeath();
@@ -240,7 +261,38 @@ public final class RuntimeVisualModelLoader {
             }
         }
 
+        out.addAll(sergeantSpawns(activeLevel, arena, difficulty, widthPx, heightPx));
         return List.copyOf(out);
+    }
+
+    /**
+     * The level's zombie sergeants: as many as the difficulty says, on free corridor points near the heart
+     * (only in a generated maze, which has the world to find them in). Screen space is y-up.
+     */
+    private static List<EnemySpawn> sergeantSpawns(LevelSpec level, MazeArena arena, Difficulty difficulty,
+                                                   float widthPx, float heightPx) {
+        if (level == null || !level.hasSergeants() || !(arena instanceof RealMaze realMaze)) {
+            return List.of();
+        }
+        SergeantSpec spec = level.sergeant();
+        DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
+        List<Point2D> corridor = new PickupField(PickupCatalogLoader.loadDefault(), new Random())
+                .spawnPointsOf(realMaze.sourceWorld());
+        List<Point2D> posts = SergeantPosts.choose(corridor, widthPx * CENTER_RATIO, heightPx * CENTER_RATIO,
+                spec.postDistanceFromHeart(), level.sergeantCount(tier), StageConstants.ZombieCharacterXYSize * 2.0);
+        List<EnemySpawn> spawns = new ArrayList<>();
+        for (int index = 0; index < posts.size(); index++) {
+            Point2D post = posts.get(index);
+            spawns.add(new EnemySpawn(SergeantSpec.SPAWN_ID_PREFIX + GENERATED_ENEMY_ID_SEPARATOR + index,
+                    spec.sprite(), (float) post.getX(), heightPx - (float) post.getY(),
+                    StageConstants.ZombieCharacterXYSize, SERGEANT_THREAT, 0, 0, EMPTY_TEXT,
+                    BehaviorType.PASSIVE, 1f, 0d, EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                    EnemySpawn.DEFAULT_PROJECTILE_TYPE, EnemySpawn.DEFAULT_SPLASH_RADIUS, EnemySpawn.DEFAULT_ARC_HEIGHT,
+                    EnemySpawn.DEFAULT_ATTACK_RANGE, EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS,
+                    EnemySpawn.DEFAULT_PROJECTILE_SPEED, 0, spec.health(), EnemyAnimationSpec.defaults(),
+                    KillScoring.pointsForThreat(SERGEANT_THREAT)));
+        }
+        return spawns;
     }
 
     private static float randomInRange(Random random, float min, float max) {

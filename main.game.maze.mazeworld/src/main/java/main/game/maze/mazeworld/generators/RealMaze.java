@@ -23,6 +23,7 @@ public final class RealMaze implements MazeArena {
     private final float goalX;
     private final float goalY;
     private List<WallSegment> walls;
+    private List<String> wallMaterialIds = List.of();
     private int wallsSourceSize = -1;
 
     public RealMaze(GameMazeWorld world, int widthPx, int heightPx) {
@@ -53,6 +54,20 @@ public final class RealMaze implements MazeArena {
     @Override public float goalX()                { return goalX; }
     @Override public float goalY()                { return goalY; }
     public GameMazeWorld sourceWorld()            { return world; }
+
+    /**
+     * The material id of each wall of {@link #walls()}, in the same order (null for a solid wall).
+     * Call after {@code walls()}: both are rebuilt together.
+     */
+    public List<String> wallMaterialIds() {
+        liveWalls();
+        return wallMaterialIds;
+    }
+
+    /** The world's walls changed in place (new materials): rebuild the cached walls on the next read. */
+    public void invalidateWalls() {
+        walls = null;
+    }
     public MazeNavigationGraph navigationGraph()  { return navigationGraph; }
 
     /**
@@ -69,6 +84,12 @@ public final class RealMaze implements MazeArena {
         List<Vector2D> live = world.getMazeVectors();
         if (walls == null || wallsSourceSize != live.size()) {
             walls = Collections.unmodifiableList(flipWalls(live, (int) heightPx));
+            var ids = world.wallMaterialIds();
+            List<String> materials = new ArrayList<>(live.size());
+            for (Vector2D wall : live) {
+                materials.add(ids.get(wall));
+            }
+            wallMaterialIds = Collections.unmodifiableList(materials);
             wallsSourceSize = live.size();
         }
         return walls;

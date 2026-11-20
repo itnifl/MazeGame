@@ -50,8 +50,12 @@ public final class GdxWinOverlayView {
         float backBtnH = 36f;
         float btnGap   = 16f;
         float btnRowY  = panelY + 24f;
-        float saveBtnX = panelX + (panelW - saveBtnW - backBtnW - btnGap) * 0.5f;
-        float backBtnX = saveBtnX + saveBtnW + btnGap;
+        float nextBtnW = context.nextLevelAvailable() ? 160f : 0f;
+        float nextBtnH = 36f;
+        float gaps = context.nextLevelAvailable() ? 2 * btnGap : btnGap;
+        float saveBtnX = panelX + (panelW - saveBtnW - nextBtnW - backBtnW - gaps) * 0.5f;
+        float nextBtnX = saveBtnX + saveBtnW + btnGap;
+        float backBtnX = context.nextLevelAvailable() ? nextBtnX + nextBtnW + btnGap : saveBtnX + saveBtnW + btnGap;
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0f, 0f, 0f, 0.88f);
@@ -64,6 +68,10 @@ public final class GdxWinOverlayView {
         shapes.rect(saveBtnX, btnRowY, saveBtnW, saveBtnH);
         shapes.setColor(1f, 0.90f, 0.43f, 1f);
         shapes.rect(backBtnX, btnRowY, backBtnW, backBtnH);
+        if (context.nextLevelAvailable()) {
+            shapes.setColor(0.29f, 0.87f, 0.50f, 1f);
+            shapes.rect(nextBtnX, btnRowY, nextBtnW, nextBtnH);
+        }
         shapes.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Line);
@@ -126,12 +134,18 @@ public final class GdxWinOverlayView {
         font.setColor(new Color(0.06f, 0.21f, 0.18f, 1f));
         gl.setText(font, "Save Score");
         font.draw(batch, "Save Score", saveBtnX + (saveBtnW - gl.width) * 0.5f, btnRowY + 24f);
+        if (context.nextLevelAvailable()) {
+            font.setColor(new Color(0.02f, 0.19f, 0.06f, 1f));
+            gl.setText(font, "Next Level");
+            font.draw(batch, "Next Level", nextBtnX + (nextBtnW - gl.width) * 0.5f, btnRowY + 24f);
+        }
         font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
         gl.setText(font, "Back to Menu");
         font.draw(batch, "Back to Menu", backBtnX + (backBtnW - gl.width) * 0.5f, btnRowY + 24f);
         batch.end();
 
-        return new WinButtons(saveBtnX, btnRowY, saveBtnW, saveBtnH, backBtnX, btnRowY, backBtnW, backBtnH);
+        return new WinButtons(saveBtnX, btnRowY, saveBtnW, saveBtnH, backBtnX, btnRowY, backBtnW, backBtnH,
+                nextBtnX, btnRowY, nextBtnW, nextBtnH);
     }
 
     private static int countBreakdownLines(ScoreBreakdown bd) {
@@ -183,7 +197,8 @@ public final class GdxWinOverlayView {
             String winScoreStatus,
             String winNameInput,
             int score,
-            ScoreBreakdown scoreBreakdown) {
+            ScoreBreakdown scoreBreakdown,
+            boolean nextLevelAvailable) {
     }
 
     public record WinButtons(
@@ -194,6 +209,10 @@ public final class GdxWinOverlayView {
             float backX,
             float backY,
             float backW,
-            float backH) {
+            float backH,
+            float nextX,
+            float nextY,
+            float nextW,
+            float nextH) {
     }
 }

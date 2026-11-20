@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<levels:LevelModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:levels="http://main.game.maze/levels">
+  <levels number="1" name="One" threatCapacityFactor="1.0"/>
+  <levels number="2" name="Two" threatCapacityFactor="2.0">
+    <zones displayName="a" breakableShare="0.2" materialIds="STEEL_BASIC"/>
+    <zones displayName="b" breakableShare="0.4" materialIds="STONE_BASIC"/>
+    <zones displayName="c" breakableShare="0.6" materialIds="WOOD_BASIC"/>
+    <zones displayName="d" breakableShare="0.8" materialIds="GLASS_BASIC"/>
+    <sergeant displayName="S" sprite="/s.png" dropWeapon="GATLING_GUN"/>
+    <sergeantPosts difficulty="EASY" count="1"/>
+    <sergeantPosts difficulty="NORMAL" count="2"/>
+  </levels>
+</levels:LevelModel>

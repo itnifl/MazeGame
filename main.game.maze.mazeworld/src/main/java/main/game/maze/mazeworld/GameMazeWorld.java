@@ -36,6 +36,8 @@ public class GameMazeWorld {
     );
 
     private static GameMazeWorld world;
+    /** How many steps a collapse spreads from the destroyed wall; unlimited unless a level sets it. */
+    private int maxCascadeDepth = Integer.MAX_VALUE;
     private final IMazeGenerator mazeGenerator;
     /** Thread-safe: read on background AI thread, written on UI thread. */
     private final List<Vector2D> mazeVectors = new CopyOnWriteArrayList<>();
@@ -230,6 +232,45 @@ public class GameMazeWorld {
         }
     }
 
+    /**
+     * Assigns breakable walls zone by zone: each wall takes the rules of the zone its midpoint lies in
+     * (see {@link ZoneGeometry}), so a level can have strong walls on the outside and weak walls around
+     * the heart. Deterministic for a given {@code seed}.
+     *
+     * @param zones one rule per zone, outer zone first; the count must equal {@code geometry.zoneCount()}
+     */
+    public void assignZonedWalls(long seed, ZoneGeometry geometry, List<WallZoneSpec> zones) {
+        if (geometry == null || zones == null) {
+            throw new IllegalArgumentException("geometry and zones must not be null");
+        }
+        if (zones.size() != geometry.zoneCount()) {
+            throw new IllegalArgumentException(
+                    "expected " + geometry.zoneCount() + " zone rules but got " + zones.size());
+        }
+        breakableWalls.clear();
+        Random rng = new Random(seed);
+        for (Vector2D wall : mazeVectors) {
+            double midX = (wall.getStart().getX() + wall.getEnd().getX()) / 2.0;
+            double midY = (wall.getStart().getY() + wall.getEnd().getY()) / 2.0;
+            WallZoneSpec zone = zones.get(geometry.zoneOf(midX, midY));
+            // always draw both numbers so a wall's outcome does not shift when another zone changes
+            double roll = rng.nextDouble();
+            WallMaterialSpec material = zone.materials().get(rng.nextInt(zone.materials().size()));
+            if (roll < zone.breakableShare()) {
+                breakableWalls.add(new BreakableWall(wall, material));
+            }
+        }
+    }
+
+    /** The material id of every breakable wall, by wall (identity); solid walls are not in the map. */
+    public java.util.Map<Vector2D, String> wallMaterialIds() {
+        java.util.Map<Vector2D, String> ids = new java.util.IdentityHashMap<>();
+        for (BreakableWall wall : breakableWalls) {
+            ids.put(wall.geometry, wall.material.id());
+        }
+        return ids;
+    }
+
     public List<Vector2D> getMazeVectors() {
         return mazeVectors;
     }
@@ -310,8 +351,24 @@ public class GameMazeWorld {
      * adjacency (BFS).  Always includes {@code destroyed} itself as the first
      * element.
      */
+    /** How many walls would fall if {@code wall} were destroyed now: itself and every connected breakable wall. */
+    public int cascadeSize(BreakableWall wall) {
+        return collectCascadeWalls(wall).size();
+    }
+
+    /**
+     * Limits how far a collapse spreads: walls up to this many steps away from the destroyed wall (through walls
+     * that share an endpoint) fall with it. 0 = only the destroyed wall; the default is no limit.
+     */
+    public void setMaxCascadeDepth(int depth) {
+        this.maxCascadeDepth = depth < 0 ? Integer.MAX_VALUE : depth;
+    }
+
     private List<BreakableWall> collectCascadeWalls(BreakableWall destroyed) {
         List<BreakableWall> result = new ArrayList<>();
+        // distance (in steps) of each wall in result from the destroyed wall
+        List<Integer> depths = new ArrayList<>();
+        depths.add(0);
         // Track visited walls in a HashSet (BreakableWall uses identity equals/hashCode)
         // for O(1) membership checks instead of O(n) List.contains scans.
         Set<BreakableWall> visited = new HashSet<>();
@@ -319,11 +376,16 @@ public class GameMazeWorld {
         visited.add(destroyed);
         int i = 0;
         while (i < result.size()) {
+            int depth = depths.get(i);
             BreakableWall current = result.get(i++);
+            if (depth >= maxCascadeDepth) {
+                continue;
+            }
             for (BreakableWall candidate : breakableWalls) {
                 if (!visited.contains(candidate)
                         && areAdjacent(current.geometry, candidate.geometry)) {
                     result.add(candidate);
+                    depths.add(depth + 1);
                     visited.add(candidate);
                 }
             }

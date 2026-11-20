@@ -1,22 +1,12 @@
 package main.game.maze.game.items;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import main.game.maze.mazeworld.constants.StageConstants;
-import org.eclipse.emf.common.util.Diagnostic;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EEnumLiteral;
+import main.game.maze.runtime.DynamicModel;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.Diagnostician;
-import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 /**
  * Loads the pickup catalogue from the items model with dynamic EMF: the metamodel
@@ -49,88 +39,23 @@ public final class PickupCatalogLoader {
 
     /** Loads a catalogue from classpath metamodel and model paths. */
     public static PickupCatalog load(String ecorePath, String modelPath) {
-        ResourceSet resources = new ResourceSetImpl();
-        resources.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
-        resources.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-
-        Resource ecore = resources.getResource(uri(ecorePath), true);
-        EPackage itemsPackage = (EPackage) ecore.getContents().get(0);
-        resources.getPackageRegistry().put(itemsPackage.getNsURI(), itemsPackage);
-
-        Resource model = resources.getResource(uri(modelPath), true);
-        if (model.getContents().isEmpty()) {
-            throw new IllegalStateException("empty items model: " + modelPath);
-        }
-        EObject root = model.getContents().get(0);
-        Diagnostic diagnostic = Diagnostician.INSTANCE.validate(root);
-        if (diagnostic.getSeverity() == Diagnostic.ERROR) {
-            throw new IllegalStateException("invalid items model " + modelPath + ": " + messages(diagnostic));
-        }
+        EObject root = DynamicModel.load(PickupCatalogLoader.class, ecorePath, modelPath, "items");
 
         List<PickupCatalog.Cap> caps = new ArrayList<>();
-        for (EObject cap : list(root, "caps")) {
-            caps.add(new PickupCatalog.Cap(integer(cap, "minBoardWidth"), integer(cap, "maxItems")));
+        for (EObject cap : DynamicModel.list(root, "caps")) {
+            caps.add(new PickupCatalog.Cap(DynamicModel.integer(cap, "minBoardWidth"), DynamicModel.integer(cap, "maxItems")));
         }
         Map<PickupKind, PickupSpec> specs = new EnumMap<>(PickupKind.class);
-        for (EObject item : list(root, "items")) {
-            PickupKind kind = PickupKind.valueOf(((EEnumLiteral) literal(item, "kind")).getName());
-            specs.put(kind, new PickupSpec(kind, string(item, "displayName"), string(item, "sprite"),
-                    string(item, "pickupSound"), string(item, "useSound"), integer(item, "spawnWeight"),
-                    integer(item, "amount"), decimal(item, "durationSeconds"), integer(item, "damage"),
-                    decimal(item, "range")));
+        for (EObject item : DynamicModel.list(root, "items")) {
+            PickupKind kind = PickupKind.valueOf(DynamicModel.literalName(item, "kind"));
+            specs.put(kind, new PickupSpec(kind, DynamicModel.string(item, "displayName"), DynamicModel.string(item, "sprite"),
+                    DynamicModel.string(item, "pickupSound"), DynamicModel.string(item, "useSound"),
+                    DynamicModel.integer(item, "spawnWeight"), DynamicModel.integer(item, "amount"),
+                    DynamicModel.decimal(item, "durationSeconds"), DynamicModel.integer(item, "damage"),
+                    DynamicModel.decimal(item, "range")));
         }
-        double itemSize = decimal(root, "itemSizeFactor") * StageConstants.PlayerCharacterXYSize;
-        return new PickupCatalog(decimal(root, "spawnIntervalSeconds"), itemSize,
-                decimal(root, "minDistanceFromPlayer"), caps, specs);
-    }
-
-    private static String messages(Diagnostic diagnostic) {
-        StringBuilder text = new StringBuilder();
-        for (Diagnostic child : diagnostic.getChildren()) {
-            if (child.getSeverity() == Diagnostic.ERROR) {
-                text.append(text.isEmpty() ? "" : "; ").append(child.getMessage());
-            }
-        }
-        return text.isEmpty() ? diagnostic.getMessage() : text.toString();
-    }
-
-    private static URI uri(String classpathPath) {
-        URL url = PickupCatalogLoader.class.getResource(classpathPath);
-        if (url == null) {
-            throw new IllegalStateException("items model resource not found: " + classpathPath);
-        }
-        return URI.createURI(url.toString());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static List<EObject> list(EObject owner, String feature) {
-        return (List<EObject>) owner.eGet(owner.eClass().getEStructuralFeature(feature));
-    }
-
-    private static Object value(EObject owner, String feature) {
-        return owner.eGet(owner.eClass().getEStructuralFeature(feature));
-    }
-
-    private static Object literal(EObject owner, String feature) {
-        Object value = value(owner, feature);
-        if (value instanceof EEnumLiteral) {
-            return value;
-        }
-        throw new IllegalStateException("not an enum literal: " + feature + " = " + value);
-    }
-
-    private static String string(EObject owner, String feature) {
-        Object value = value(owner, feature);
-        return value instanceof String text && !text.isBlank() ? text : null;
-    }
-
-    private static int integer(EObject owner, String feature) {
-        Object value = value(owner, feature);
-        return value instanceof Number number ? number.intValue() : 0;
-    }
-
-    private static double decimal(EObject owner, String feature) {
-        Object value = value(owner, feature);
-        return value instanceof Number number ? number.doubleValue() : 0.0;
+        double itemSize = DynamicModel.decimal(root, "itemSizeFactor") * StageConstants.PlayerCharacterXYSize;
+        return new PickupCatalog(DynamicModel.decimal(root, "spawnIntervalSeconds"), itemSize,
+                DynamicModel.decimal(root, "minDistanceFromPlayer"), caps, specs);
     }
 }

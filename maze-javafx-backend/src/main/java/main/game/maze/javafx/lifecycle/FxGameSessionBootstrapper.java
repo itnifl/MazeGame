@@ -17,10 +17,12 @@ import main.game.maze.config.model.PlayerConfig;
 import main.game.maze.config.service.XmiRulesLoader;
 import main.game.maze.constants.PlayerConstants;
 import main.game.maze.difficulties.Difficulty;
+import main.game.maze.game.level.LevelSpec;
 import main.game.maze.javafx.render.FxMazeCanvasRenderer;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
+import main.game.maze.runtime.opponents.SergeantSpawner;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -64,7 +66,8 @@ public final class FxGameSessionBootstrapper {
 
     private static final BiConsumer<EnemyRegistrar, Difficulty> DEFAULT_SPAWNER =
             (registrar, difficulty) -> {
-                if (difficulty != null) OpponentRuntimeFactory.instantiateFromModel(registrar, difficulty);
+                LevelSpec level = App.levelProgress.current();
+                if (difficulty != null) OpponentRuntimeFactory.instantiateFromModel(registrar, difficulty, level);
                 else                    OpponentRuntimeFactory.instantiateFromModel(registrar);
             };
 
@@ -114,6 +117,9 @@ public final class FxGameSessionBootstrapper {
         updateBoardBackground(gameBoard, startDifficulty);
 
         GameMazeWorld maze      = GameMazeWorld.GetWorld(App.getBoardMaxX(), App.getBoardMaxY());
+        // same generated maze; a level with zones only changes which walls are strong and which weak
+        LevelSpec     level     = App.levelProgress.current();
+        level.applyWalls(maze, App.getBoardMaxX(), App.getBoardMaxY());
         PlayerConfig  config    = loadPlayerConfig();
 
         setPlayerBaseImage(playerImageView, config.imageBase());
@@ -125,6 +131,9 @@ public final class FxGameSessionBootstrapper {
                 hpBar,
                 config);
         player.setHitPoints(config.health());
+
+        // levels that show their wall materials draw each wall with its material's sprite
+        mazeCanvasRenderer.setWallMaterialLook(level.showWallMaterials() ? maze::wallMaterialIds : null);
 
         // Canvases — order matters for rendering (maze at index 0, overlays above)
         Canvas mazeCanvas = drawCanvasOrFallback(
@@ -141,6 +150,7 @@ public final class FxGameSessionBootstrapper {
         gameBoard.getChildren().add(treeCanvas);
 
         opponentSpawner.accept(enemyRegistrar, startDifficulty);
+        SergeantSpawner.spawn(enemyRegistrar, level, startDifficulty, maze);
 
         return new SessionResult(player, maze, mazeCanvas, pathCanvas, treeCanvas, config);
     }

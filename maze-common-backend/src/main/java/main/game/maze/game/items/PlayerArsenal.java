@@ -27,6 +27,21 @@ public final class PlayerArsenal {
         counts.put(Weapon.BOMB, Math.max(0, bombs));
     }
 
+    /** What the player holds now, to carry into the next level. */
+    public synchronized ArsenalSnapshot snapshot() {
+        return new ArsenalSnapshot(counts, selected);
+    }
+
+    /** An arsenal holding what the snapshot held, in its own right (the original is not affected). */
+    public static PlayerArsenal restore(ArsenalSnapshot snapshot) {
+        PlayerArsenal arsenal = new PlayerArsenal(0);
+        for (Weapon weapon : Weapon.values()) {
+            arsenal.counts.put(weapon, Math.max(0, snapshot.counts().getOrDefault(weapon, 0)));
+        }
+        arsenal.selected = snapshot.selected();
+        return arsenal;
+    }
+
     public synchronized Weapon selected() {
         return selected;
     }

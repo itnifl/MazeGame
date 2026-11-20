@@ -49,6 +49,12 @@ public final class GdxOverlayModeCoordinator {
     }
 
     public boolean updateWon(OrthographicCamera hudCamera, IntSupplier scoreSupplier, Runnable returnToMenuAction, Runnable openHighScoresAction) {
+        return updateWon(hudCamera, scoreSupplier, returnToMenuAction, openHighScoresAction, null);
+    }
+
+    /** As above, with the action of the Next level button (null: no next level). */
+    public boolean updateWon(OrthographicCamera hudCamera, IntSupplier scoreSupplier, Runnable returnToMenuAction,
+                             Runnable openHighScoresAction, Runnable nextLevelAction) {
         return winOverlayController.update(
                 session,
                 modeInputController,
@@ -56,7 +62,8 @@ public final class GdxOverlayModeCoordinator {
                 highScoreRepository,
                 scoreSupplier.getAsInt(),
                 returnToMenuAction,
-                openHighScoresAction);
+                openHighScoresAction,
+                nextLevelAction);
     }
 
     public boolean updateGameOver(OrthographicCamera hudCamera, Runnable restartAction, Runnable returnToMenuAction) {

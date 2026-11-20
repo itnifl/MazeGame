@@ -580,6 +580,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         return phase;
     }
 
+    /** Sergeants stand where they are put and only shoot. */
+    public boolean isStationary() {
+        return main.game.maze.game.level.SergeantSpec.isSergeantId(spawn != null ? spawn.id() : null);
+    }
+
     /**
      * Advance this enemy one frame through the shared movement service.
      */
@@ -589,6 +594,9 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
                  AdaptiveAggressiveMovementService adaptiveService,
                  GhostPhasingMovementService phasingService,
                  float dt) {
+        if (isStationary()) {
+            return;
+        }
         if (nonTangibilityEnergy > 0) {
             nonTangibilityEnergy = GhostNonTangibilityService.drainEnergy(nonTangibilityEnergy, dt);
         }

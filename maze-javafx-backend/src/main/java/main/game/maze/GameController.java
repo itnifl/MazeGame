@@ -245,6 +245,7 @@ public class GameController implements Initializable, EnemyRegistrar {
                 () -> maze,
                 () -> playerCharacter,
                 () -> pathHintCoordinator.refreshPathCanvas());
+        enemyCoordinator.setTracerSink(weapons::showTracer);
         // Label resolved lazily — FXML field is null until initialize() runs.
         pathHintCoordinator = new FxPathHintCoordinator(
                 () -> pathHintTimerLabel,
@@ -622,6 +623,23 @@ public class GameController implements Initializable, EnemyRegistrar {
         action.Load();
     }
 
+    /** On level 2 and later: the level's name in the HUD. */
+    private void announceLevel() {
+        if (App.levelProgress.number() > 1) {
+            setHudMessage("Level " + App.levelProgress.number() + ": " + App.levelProgress.current().name());
+        }
+    }
+
+    /** An item dropped on the board, e.g. the gun of a killed sergeant. */
+    public void dropWeapon(main.game.maze.game.items.PickupKind kind, double x, double y) {
+        weapons.dropPickup(kind, x, y);
+    }
+
+    /** What the player holds now; the win screen hands it on to the next level. */
+    public main.game.maze.game.items.ArsenalSnapshot arsenalSnapshot() {
+        return weapons.arsenalSnapshot();
+    }
+
     public void setupGame() {
         clearActivePlayerBombs();
         resurrections.cancelAll();
@@ -655,7 +673,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         lifeController.startGame(playerCharacter, PlayerLives.startingFor(startDifficulty));
 
         // new game: fresh arsenal, no items, shield or kills yet
-        weapons.startGame(playerCharacter, maze, lives);
+        // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
+        weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
+        announceLevel();
 
         winarea = new WinArea(heart);
         winarea.addPositionSubscriber(playerCharacter);

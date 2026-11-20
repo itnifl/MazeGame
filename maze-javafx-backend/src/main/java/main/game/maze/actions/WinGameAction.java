@@ -38,6 +38,8 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
         // Stop movement loop immediately to prevent race conditions
         if (App.gameController != null) {
             App.gameController.stopComputerCharacters();
+            // the weapons carry over if the player goes on to the next level
+            App.arsenalAtWin = App.gameController.arsenalSnapshot();
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.WinGameScreen));

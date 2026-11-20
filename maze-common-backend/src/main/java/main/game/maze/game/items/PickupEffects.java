@@ -17,7 +17,7 @@ public final class PickupEffects {
     public static void apply(PickupSpec spec, PlayerArsenal arsenal, PowerShield shield,
                              IntConsumer heal, int maxHitPoints, PlayerLives lives) {
         switch (spec.kind()) {
-            case BOMB, LASER_RIFLE, SLEDGEHAMMER -> arsenal.add(spec.kind().weapon(), spec.amount());
+            case BOMB, LASER_RIFLE, SLEDGEHAMMER, GATLING_GUN -> arsenal.add(spec.kind().weapon(), spec.amount());
             case SHIELD -> shield.activate(spec.durationSeconds());
             case HEART -> heal.accept(Math.max(1, Math.round(maxHitPoints * spec.amount() / 100f)));
             case EXTRA_LIFE -> {
