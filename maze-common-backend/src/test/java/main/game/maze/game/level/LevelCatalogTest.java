@@ -78,7 +78,6 @@ class LevelCatalogTest {
         assertTrue(sergeant.roundsPerBurst() > 1, "a burst is several rounds");
         assertTrue(sergeant.burstCooldownSeconds() > sergeant.roundIntervalSeconds());
         assertEquals(DropWeapon.GATLING_GUN, sergeant.dropWeapon());
-        assertTrue(sergeant.dropAmount() > 0);
     }
 
     @Test
@@ -129,5 +128,36 @@ class LevelCatalogTest {
     void missingTierRejected() {
         IllegalStateException error = assertThrows(IllegalStateException.class, () -> test("missing-tier.xmi"));
         assertTrue(error.getMessage().contains("HARD"), error.getMessage());
+    }
+
+    @Test
+    @DisplayName("applyWalls zones the walls of the level-2 maze and leaves level 1 alone")
+    void applyWalls() {
+        java.util.function.Supplier<main.game.maze.mazeworld.GameMazeWorld> world = () ->
+                new main.game.maze.mazeworld.GameMazeWorld(() -> {
+                    java.util.List<main.game.maze.mazeworld.Vector2D> walls = new java.util.ArrayList<>();
+                    for (int x = 10; x < 800; x += 20) {
+                        for (int y = 10; y < 600; y += 20) {
+                            walls.add(new main.game.maze.mazeworld.Vector2D(x, y, x + 10, y));
+                        }
+                    }
+                    return walls;
+                });
+        main.game.maze.mazeworld.GameMazeWorld classic = world.get();
+        int before = classic.getBreakableWalls().size();
+        CATALOG.level(1).applyWalls(classic, 800, 600);
+        assertEquals(before, classic.getBreakableWalls().size(), "level 1 keeps the classic walls");
+
+        main.game.maze.mazeworld.GameMazeWorld zoned = world.get();
+        CATALOG.level(2).applyWalls(zoned, 800, 600);
+        assertTrue(zoned.getBreakableWalls().size() != before, "level 2 assigns the walls by zone");
+        for (main.game.maze.mazeworld.BreakableWall wall : zoned.getBreakableWalls()) {
+            double x = (wall.geometry.getStart().getX() + wall.geometry.getEnd().getX()) / 2;
+            double y = (wall.geometry.getStart().getY() + wall.geometry.getEnd().getY()) / 2;
+            if (main.game.maze.mazeworld.ZoneGeometry.forBoard(800, 600, 4).zoneOf(x, y) == 0) {
+                assertTrue(wall.material.id().equals("STEEL_BASIC") || wall.material.id().equals("STONE_BASIC"),
+                        "the outer zone is steel and stone: " + wall.material.id());
+            }
+        }
     }
 }

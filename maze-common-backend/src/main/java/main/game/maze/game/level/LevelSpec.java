@@ -6,6 +6,7 @@ import java.util.Map;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.WallMaterialSpec;
 import main.game.maze.mazeworld.WallZoneSpec;
+import main.game.maze.mazeworld.ZoneGeometry;
 
 /**
  * One level of the game, as defined in {@code levels.xmi}.
@@ -22,6 +23,8 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, Li
     public static final int ZONE_COUNT = 4;
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
+    /** Same fixed seed as the classic walls ({@code GameMazeWorld}), so a layout is reproducible. */
+    private static final long WALL_SEED = 42L;
 
     /** One concentric zone: how many of its walls can be broken, and from which materials. */
     public record ZoneSpec(String displayName, double breakableShare, List<String> materialIds) {
@@ -51,6 +54,16 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, Li
     /** The threat the level may fill with enemies: the difficulty's maximum x this level's factor, rounded. */
     public int maxThreat(int difficultyMaxThreat) {
         return (int) Math.round(difficultyMaxThreat * threatCapacityFactor);
+    }
+
+    /**
+     * Gives the walls of a freshly generated maze this level's materials: a level with zones assigns them by
+     * zone (the maze itself is untouched); a level without keeps the classic random walls.
+     */
+    public void applyWalls(GameMazeWorld world, int boardWidth, int boardHeight) {
+        if (hasZones() && world != null) {
+            world.assignZonedWalls(WALL_SEED, ZoneGeometry.forBoard(boardWidth, boardHeight, ZONE_COUNT), wallZones());
+        }
     }
 
     /** The wall rules of the zones, outer zone first, for {@link GameMazeWorld#assignZonedWalls}. */

@@ -115,6 +115,6 @@ public final class LevelCatalogLoader {
                 DynamicModel.decimal(sergeant, "burstCooldownSeconds"), DynamicModel.string(sergeant, "sprite"),
                 DynamicModel.string(sergeant, "fireSound"),
                 DropWeapon.valueOf(DynamicModel.literalName(sergeant, "dropWeapon")),
-                DynamicModel.integer(sergeant, "dropAmount"), DynamicModel.decimal(sergeant, "postDistanceFromHeart"));
+                DynamicModel.decimal(sergeant, "postDistanceFromHeart"));
     }
 }

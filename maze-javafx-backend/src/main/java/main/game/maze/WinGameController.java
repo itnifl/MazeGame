@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import main.game.maze.actions.HighscoreAction;
@@ -20,14 +21,29 @@ public class WinGameController extends ActionScreenController implements Initial
     @FXML
     private Label winBonusNoticeLabel;
 
+    @FXML
+    private Button nextLevelButton;
+
     public void showWinBonusLabel(int amount) {
         winBonusNoticeLabel.setText("+ Win bonus: +" + amount);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // the next level is offered only while there is one
+        boolean moreLevels = main.game.maze.App.levelProgress.hasNext();
+        if (nextLevelButton != null) {
+            nextLevelButton.setVisible(moreLevels);
+            nextLevelButton.setManaged(moreLevels);
+        }
         AudioEngine.get().playLoop(AudioResourceConstants.WinGameSound, AudioChannelConstants.WIN_MUSIC);
         AudioEngine.get().play(AudioResourceConstants.WinGameSoundComment);
+    }
+
+    /** Goes on to the next level with the weapons the player has now. */
+    @FXML
+    protected void nextLevel() {
+        new main.game.maze.actions.RestartGameAction(screenRoot, true).Load();
     }
 
     @FXML

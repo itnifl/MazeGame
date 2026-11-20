@@ -69,7 +69,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Sergeant">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Zombie sergeant: never moves, fires its gatling gun in bursts whenever it sees the player, and drops the gun when killed."/>
+      <details key="documentation" value="Zombie sergeant: never moves, fires its gatling gun in bursts whenever it sees the player, and drops the gun when killed; the gun then holds the gatling-gun pickup amount from items.xmi."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayName" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -94,12 +94,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fireSound"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dropWeapon" lowerBound="1" eType="#//DropWeapon"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dropAmount" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="5">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Bursts the dropped gatling gun holds."/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="postDistanceFromHeart" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="110.0">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

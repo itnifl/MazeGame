@@ -99,8 +99,16 @@ public final class FxWeaponController {
 
     /** New game: the difficulty's bombs, no items, shield or kills yet; items spawn in this level's corridors. */
     public void startGame(PlayerCharacter player, GameMazeWorld world, PlayerLives lives) {
+        startGame(player, world, lives, null);
+    }
+
+    /**
+     * New level: as {@link #startGame(PlayerCharacter, GameMazeWorld, PlayerLives)}, but with the weapons
+     * handed on from the previous level when {@code inherited} is not null.
+     */
+    public void startGame(PlayerCharacter player, GameMazeWorld world, PlayerLives lives, PlayerArsenal inherited) {
         this.lives = lives;
-        arsenal = new PlayerArsenal(player.getStartingBombs());
+        arsenal = inherited != null ? inherited : new PlayerArsenal(player.getStartingBombs());
         pickupField.clear();
         shield.reset();
         shield.activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);   // spawn shield, like the pickup
@@ -132,7 +140,23 @@ public final class FxWeaponController {
             case BOMB -> host.plantBomb(center[0], center[1]);
             case LASER_RIFLE -> fireLaser(player, center, catalog.spec(PickupKind.LASER_RIFLE));
             case SLEDGEHAMMER -> swingSledgehammer(player, center, catalog.spec(PickupKind.SLEDGEHAMMER));
+            case GATLING_GUN -> fireLaser(player, center, catalog.spec(PickupKind.GATLING_GUN));
         }
+    }
+
+    /** An item lying where it was dropped, e.g. the gun of a killed sergeant. */
+    public void dropPickup(PickupKind kind, double x, double y) {
+        pickupField.dropAt(kind, x, y);
+    }
+
+    /** One enemy round on its way: a short tracer line. */
+    public void showTracer(double fromX, double fromY, double toX, double toY) {
+        playEffect(new LaserBeamEffect(fromX, fromY, toX, toY));
+    }
+
+    /** What the player holds now, to carry into the next level. */
+    public main.game.maze.game.items.ArsenalSnapshot arsenalSnapshot() {
+        return arsenal.snapshot();
     }
 
     /** Tab: switch to the next weapon in stock. */

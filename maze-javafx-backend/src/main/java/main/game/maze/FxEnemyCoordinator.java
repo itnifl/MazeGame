@@ -30,6 +30,7 @@ import main.game.maze.characters.ComputerCharacter;
 import main.game.maze.characters.GhostCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.PumpkinBomberCharacter;
+import main.game.maze.characters.SergeantCharacter;
 import main.game.maze.characters.ZombieCharacter;
 import main.game.maze.characters.interfaces.ICanSubscribeAndNotifyPosition;
 import main.game.maze.characters.interfaces.IMovingComputerCharacter;
@@ -111,6 +112,37 @@ public final class FxEnemyCoordinator {
 
     private final List<IMovingComputerCharacter> allComputerCharacters  = new CopyOnWriteArrayList<>();
     /** Dead bombers whose pumpkins are still in the air (shared rule with libGDX). */
+    /** Draws the tracer of one sergeant round; set by the game screen, which owns the effect layer. */
+    @FunctionalInterface
+    public interface TracerSink {
+        void tracer(double fromX, double fromY, double toX, double toY);
+    }
+
+    private volatile TracerSink tracerSink = (fromX, fromY, toX, toY) -> { };
+
+    /** What a sergeant needs of the world to fire: walls, the player to hit, and the tracer effect. */
+    private final SergeantCharacter.Range sergeantRange = new SergeantCharacter.Range() {
+        @Override public boolean wallBetween(double fromX, double fromY, double toX, double toY) {
+            GameMazeWorld world = mazeSupplier.get();
+            return world != null && WallCollisionUtil.wallBetweenVectors(fromX, fromY, toX, toY, world.getMazeVectors());
+        }
+
+        @Override public void hitPlayer(int damage) {
+            PlayerCharacter player = playerSupplier.get();
+            if (player != null) {
+                player.subtractHitPoints(damage);
+            }
+        }
+
+        @Override public void tracer(double fromX, double fromY, double toX, double toY) {
+            Platform.runLater(() -> tracerSink.tracer(fromX, fromY, toX, toY));
+        }
+    };
+
+    public void setTracerSink(TracerSink sink) {
+        this.tracerSink = sink != null ? sink : (fromX, fromY, toX, toY) -> { };
+    }
+
     private final RetiredShooters<PumpkinBomberCharacter> retiredShooters =
             new RetiredShooters<>(PumpkinBomberCharacter::hasShotsInFlight);
     private final Map<Node, Timeline>            infectiousMists        = new ConcurrentHashMap<>();
@@ -218,6 +250,15 @@ public final class FxEnemyCoordinator {
         long nowMs = System.currentTimeMillis();
         for (var computerCharacter : allComputerCharacters) {
             try {
+                if (computerCharacter instanceof SergeantCharacter sergeant) {
+                    // sergeants never move: they only look for the player and fire
+                    if (playerCharacter != null) {
+                        double half = StageConstants.PlayerCharacterXYSize / 2.0;
+                        sergeant.tickGun(worldView.playerX() + half, worldView.playerY() + half,
+                                System.nanoTime(), sergeantRange);
+                    }
+                    continue;
+                }
                 if (computerCharacter instanceof ComputerCharacter cc) {
                     movementDispatch
                             .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)

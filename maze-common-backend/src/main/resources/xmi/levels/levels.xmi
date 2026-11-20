@@ -22,7 +22,7 @@
         roundsPerBurst="5" roundDamage="3" roundIntervalSeconds="0.12" burstCooldownSeconds="1.2"
         sprite="/main/game/maze/zombie-sergeant.png"
         fireSound="/main/game/maze/sounds/gatling-burst.wav"
-        dropWeapon="GATLING_GUN" dropAmount="5" postDistanceFromHeart="110.0"/>
+        dropWeapon="GATLING_GUN" postDistanceFromHeart="110.0"/>
     <sergeantPosts difficulty="EASY" count="1"/>
     <sergeantPosts difficulty="NORMAL" count="2"/>
     <sergeantPosts difficulty="HARD" count="4"/>

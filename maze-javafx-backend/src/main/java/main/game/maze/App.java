@@ -38,6 +38,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class App extends Application {
     public static GameController gameController;
     public static Difficulty lastChosenDifficulty;
+    /** Which level is being played; shared with the win screen, which moves on to the next one. */
+    public static final main.game.maze.game.level.LevelProgress levelProgress =
+            new main.game.maze.game.level.LevelProgress(main.game.maze.game.level.LevelCatalogLoader.loadDefault());
+    /** The weapons the player held when they won, handed to the next level. */
+    public static main.game.maze.game.items.ArsenalSnapshot arsenalAtWin;
     private static final MazeVisualStyleConfig VISUAL_STYLE = loadVisualStyle();
     private final AtomicBoolean shutdownInvoked = new AtomicBoolean(false);
 

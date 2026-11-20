@@ -9,17 +9,16 @@ package main.game.maze.game.level;
  * @param roundDamage           damage of each round that hits the player
  * @param roundIntervalSeconds  time between the rounds of a burst
  * @param burstCooldownSeconds  pause between bursts, measured from the start of a burst
- * @param dropAmount            bursts the dropped gatling gun holds
  * @param postDistanceFromHeart pixels from the heart that sergeants stand guard
  */
 public record SergeantSpec(String displayName, int health, double sightRange, int roundsPerBurst,
                            int roundDamage, double roundIntervalSeconds, double burstCooldownSeconds,
-                           String sprite, String fireSound, DropWeapon dropWeapon, int dropAmount,
+                           String sprite, String fireSound, DropWeapon dropWeapon,
                            double postDistanceFromHeart) {
 
     public SergeantSpec {
         if (health <= 0 || sightRange <= 0 || roundsPerBurst <= 0 || roundDamage < 0
-                || roundIntervalSeconds <= 0 || burstCooldownSeconds <= 0 || dropAmount <= 0) {
+                || roundIntervalSeconds <= 0 || burstCooldownSeconds <= 0) {
             throw new IllegalArgumentException("sergeant values must be positive: " + displayName);
         }
     }

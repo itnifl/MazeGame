@@ -388,4 +388,21 @@ class PickupsTest {
             assertEquals(3, ArsenalHud.sparkleColour(kind).length);
         }
     }
+
+    @Test
+    @DisplayName("a dropped item lies where it was dropped, even when the board is full, and can be picked up")
+    void dropAt() {
+        PickupField field = new PickupField(CATALOG, new Random(1));
+        List<Point2D> points = grid();
+        for (int i = 0; i < 30; i++) {
+            field.tick(CATALOG.spawnIntervalSeconds(), 800, points, -1000, -1000);
+        }
+        int full = field.items().size();
+        Pickup dropped = field.dropAt(PickupKind.GATLING_GUN, 123, 234);
+        assertEquals(full + 1, field.items().size(), "dropping ignores the cap");
+        assertEquals(PickupKind.GATLING_GUN, dropped.kind());
+        assertEquals(123, dropped.x(), 1e-9);
+        assertEquals(234, dropped.y(), 1e-9);
+        assertTrue(field.collect(123, 234, 10).contains(dropped));
+    }
 }
