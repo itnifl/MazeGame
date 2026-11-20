@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.constants.StageConstants;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,9 @@ class PickupsTest {
     @Test
     @DisplayName("the catalogue comes from the shipped items model")
     void catalogueFromModel() {
-        assertEquals(5.0, CATALOG.spawnIntervalSeconds());
+        assertEquals(3.0, CATALOG.spawnIntervalSeconds(), "a new item every 3 seconds until the cap");
+        assertEquals(StageConstants.PlayerCharacterXYSize, CATALOG.itemSize(), 1e-9, "items are drawn as big as the player");
+        assertEquals(CATALOG.itemSize() / 2, CATALOG.pickupRadius(), 1e-9);
         assertEquals(EnumSet.allOf(PickupKind.class), CATALOG.specs().keySet());
         PickupSpec laser = CATALOG.spec(PickupKind.LASER_RIFLE);
         assertEquals(5, laser.amount(), "a laser rifle gives five shots");
@@ -66,17 +69,17 @@ class PickupsTest {
     }
 
     @Test
-    @DisplayName("one item every 5 s up to the cap; picking items up lets spawning continue")
+    @DisplayName("one item every 3 s up to the cap; picking items up lets spawning continue")
     void spawnsEveryIntervalUpToCap() {
         PickupField field = new PickupField(CATALOG, new Random(1));
         for (int i = 0; i < 4; i++) {
-            field.tick(4.99, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
+            field.tick(2.99, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
             assertEquals(i, field.items().size(), "nothing before the interval is up");
             field.tick(0.02, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
             assertEquals(i + 1, field.items().size());
         }
         for (int i = 0; i < 10; i++) {
-            field.tick(5.0, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
+            field.tick(3.0, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
         }
         assertEquals(5, field.items().size(), "easy map holds at most 5");
 
@@ -84,7 +87,7 @@ class PickupsTest {
         List<Pickup> taken = field.collect(first.x(), first.y(), 12);
         assertEquals(List.of(first), taken);
         assertEquals(4, field.items().size());
-        field.tick(5.0, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
+        field.tick(3.0, StageConstants.BoardMaxX, grid(), -1_000, -1_000);
         assertEquals(5, field.items().size(), "spawning continues after a pickup");
     }
 
@@ -93,7 +96,7 @@ class PickupsTest {
     void spawnPlacement() {
         PickupField field = new PickupField(CATALOG, new Random(7));
         for (int i = 0; i < 15; i++) {
-            field.tick(5.0, StageConstants.BoardMaxXLarge, grid(), 300, 300);
+            field.tick(3.0, StageConstants.BoardMaxXLarge, grid(), 300, 300);
         }
         List<Pickup> items = field.items();
         assertEquals(15, items.size());
@@ -101,7 +104,7 @@ class PickupsTest {
             assertTrue(Math.hypot(a.x() - 300, a.y() - 300) >= CATALOG.minDistanceFromPlayer());
             for (Pickup b : items) {
                 if (a != b) {
-                    assertTrue(Math.hypot(a.x() - b.x(), a.y() - b.y()) >= CATALOG.pickupRadius() * 2);
+                    assertTrue(Math.hypot(a.x() - b.x(), a.y() - b.y()) >= CATALOG.itemSize());
                 }
             }
         }
@@ -110,10 +113,11 @@ class PickupsTest {
     }
 
     @Test
-    @DisplayName("spawn points are the level's corridor (navigation graph) points; none without a level")
+    @DisplayName("spawn points are corridor points inside the maze, clear of every wall by half an item and half a wall")
     void spawnPointsOfLevel() {
         GameMazeWorld world = new GameMazeWorld();
-        List<Point2D> points = PickupField.spawnPointsOf(world);
+        PickupField field = new PickupField(CATALOG, new Random(3));
+        List<Point2D> points = field.spawnPointsOf(world);
         assertFalse(points.isEmpty());
         int nodes = 0;
         for (var column : world.getNavigationGraph().getGrid()) {
@@ -123,8 +127,61 @@ class PickupsTest {
                 }
             }
         }
-        assertEquals(nodes, points.size());
-        assertTrue(PickupField.spawnPointsOf(null).isEmpty());
+        assertTrue(points.size() < nodes, "grid nodes on or near walls and outside the maze are left out");
+        double[] box = wallBounds(world.getMazeVectors());
+        for (Point2D point : points) {
+            assertTrue(point.getX() > box[0] && point.getX() < box[2] && point.getY() > box[1] && point.getY() < box[3],
+                    "inside the maze: " + point);
+            for (Vector2D wall : world.getMazeVectors()) {
+                assertTrue(PickupField.distanceToSegment(point.getX(), point.getY(), wall) >= CATALOG.spawnClearance(),
+                        point + " too close to " + wall);
+            }
+        }
+        assertTrue(CATALOG.spawnClearance() >= CATALOG.itemSize() / 2 + StageConstants.WallThicknessPx / 2.0);
+        assertTrue(field.spawnPointsOf(null).isEmpty());
+    }
+
+    @Test
+    @DisplayName("no spawned item ever overlaps a wall on the shipped maze")
+    void itemsNeverSpawnInsideWalls() {
+        GameMazeWorld world = new GameMazeWorld();
+        PickupField field = new PickupField(CATALOG, new Random(11));
+        List<Point2D> spots = field.spawnPointsOf(world);
+        for (int i = 0; i < 60; i++) {
+            field.tick(3.0, 5_000, spots, -10_000, -10_000);
+            for (Pickup item : field.items()) {
+                for (Vector2D wall : world.getMazeVectors()) {
+                    assertTrue(PickupField.distanceToSegment(item.x(), item.y(), wall)
+                            >= CATALOG.itemSize() / 2 + StageConstants.WallThicknessPx / 2.0, item + " in " + wall);
+                }
+            }
+            if (field.items().size() >= 15) {
+                field.collect(field.items().get(0).x(), field.items().get(0).y(), 1);
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("distance to a wall segment: perpendicular inside the span, to the nearest end outside it")
+    void distanceToSegment() {
+        Vector2D wall = new Vector2D(0, 0, 100, 0);
+        assertEquals(10, PickupField.distanceToSegment(50, 10, wall), 1e-9);
+        assertEquals(5, PickupField.distanceToSegment(-3, 4, wall), 1e-9);
+        assertEquals(0, PickupField.distanceToSegment(100, 0, wall), 1e-9);
+        assertEquals(7, PickupField.distanceToSegment(3, 7, new Vector2D(3, 0, 3, 0)), 1e-9, "zero-length wall");
+    }
+
+    private static double[] wallBounds(List<Vector2D> walls) {
+        double[] box = {Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE};
+        for (Vector2D w : walls) {
+            for (Point2D p : List.of(w.getStart(), w.getEnd())) {
+                box[0] = Math.min(box[0], p.getX());
+                box[1] = Math.min(box[1], p.getY());
+                box[2] = Math.max(box[2], p.getX());
+                box[3] = Math.max(box[3], p.getY());
+            }
+        }
+        return box;
     }
 
     @Test

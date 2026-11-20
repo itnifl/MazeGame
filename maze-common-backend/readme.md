@@ -15,7 +15,7 @@ both the JavaFX and libGDX frontends. No rendering or input code lives here.
 | `dto` | `HighScoreFile`, `Score` |
 | `game.audio` | `GameAudioDirector` — channel-routed audio transitions (menu, in-game, win, game-over) |
 | `game.runtime` | `EnemyDirectorService`, `EnemyRuntime`, `RetiredShooters` (dead ranged enemies kept only until their shots in the air land; both frontends) |
-| `game.items` | Weapons and pickups shared by both frontends: `PickupCatalogLoader` (reads the `xmi/items/items.ecore` metamodel and `items.xmi` with dynamic EMF), `PickupCatalog` / `PickupSpec` / `PickupKind` / `Weapon`, `PickupField` (spawns an item every interval up to the cap for the map size, collects items the player walks over), `PlayerArsenal` (bombs, laser shots, sledgehammer swings, selected weapon), `PowerShield`, `PickupEffects`, `ArsenalHud` |
+| `game.items` | Weapons and pickups shared by both frontends: `PickupCatalogLoader` (reads the `xmi/items/items.ecore` metamodel and `items.xmi` with dynamic EMF), `PickupCatalog` / `PickupSpec` / `PickupKind` / `Weapon`, `PickupField` (spawns an item every interval up to the cap for the map size, only on corridor points clear of every wall (`spawnPointsOf`), collects items the player walks over), `PlayerArsenal` (bombs, laser shots, sledgehammer swings, selected weapon), `PowerShield`, `PickupEffects`, `ArsenalHud` |
 | `game.score` | `FileHighScoreRepository`, `HighScoreRepository`, `PathHintBudget`, `ScoringEngine` (includes the kill bonus), `KillLedger` (who killed what, per player), `KillScoring` (points by the enemy's danger), `PlayerIds` |
 | `game.session` | `GameMode` enum, `GameSession` |
 | `game.status` | `StatusMessageBus` — publish/subscribe for transient HUD status messages |

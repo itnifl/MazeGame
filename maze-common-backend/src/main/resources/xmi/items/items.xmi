@@ -7,8 +7,8 @@
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:items="http://main.game.maze/items"
-    spawnIntervalSeconds="5.0"
-    pickupRadius="14.0"
+    spawnIntervalSeconds="3.0"
+    itemSizeFactor="1.0"
     minDistanceFromPlayer="80.0">
 
   <caps minBoardWidth="0" maxItems="5"/>

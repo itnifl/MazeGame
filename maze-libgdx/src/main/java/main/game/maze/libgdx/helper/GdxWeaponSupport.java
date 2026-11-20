@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.fire.HealFeedback;
+import main.game.maze.common.graphics.fire.HealFlashEffect;
 import main.game.maze.common.graphics.fire.HitReactionEffect;
 import main.game.maze.common.graphics.fire.LaserBeamEffect;
 import main.game.maze.common.graphics.fire.PickupSparkleEffect;
@@ -19,6 +21,7 @@ import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
+import main.game.maze.libgdx.model.ExplosionVisual;
 import main.game.maze.libgdx.model.GameWorldModel;
 import main.game.maze.libgdx.model.SpriteVisual;
 import main.game.maze.mazeworld.GameMazeWorld;
@@ -37,9 +40,6 @@ import main.game.maze.service.MortalityService;
  * the shared visual effects and sounds.
  */
 public final class GdxWeaponSupport {
-
-    /** Pickup sprite size on the floor. */
-    static final float PICKUP_SIZE = 24f;
 
     private GdxWeaponSupport() {
     }
@@ -64,6 +64,9 @@ public final class GdxWeaponSupport {
             PickupSpec spec = catalog.spec(pickup.kind());
             PickupEffects.apply(spec, model.arsenal(), model.shield(), combat::heal, combat.maxHitPoints());
             AudioEngine.get().play(spec.pickupSound());
+            if (pickup.kind() == PickupKind.HEART) {
+                model.healFeedback().trigger();   // flash + arrow over the head (healFlash, healArrow)
+            }
             float[] colour = ArsenalHud.sparkleColour(pickup.kind());
             model.effects().add(new GameWorldModel.ActiveEffect(new PickupSparkleEffect(
                     pickup.x(), height - pickup.y(), colour[0], colour[1], colour[2])));
@@ -77,6 +80,7 @@ public final class GdxWeaponSupport {
             effect.tick(dt);
         }
         model.effects().removeIf(GameWorldModel.ActiveEffect::finished);
+        model.healFeedback().tick(dt);
         for (GdxEnemyRuntime enemy : enemies) {
             enemy.tickReaction(dt);
         }
@@ -177,9 +181,31 @@ public final class GdxWeaponSupport {
         for (Pickup pickup : model.pickupField().items()) {
             float bob = (float) Math.sin(clock * 4 + pickup.id()) * 2f;
             sprites.add(new SpriteVisual((float) pickup.x(), (float) (maze.heightPx() - pickup.y()) + bob,
-                    PICKUP_SIZE, 0f, false, catalog.spec(pickup.kind()).sprite()));
+                    (float) catalog.itemSize(), 0f, false, catalog.spec(pickup.kind()).sprite()));
         }
         return sprites;
+    }
+
+    /** After a heart: the green arrow over the player's head, rising (screen y-up); null otherwise. */
+    public static SpriteVisual healArrow(GameWorldModel model, PlayerState player) {
+        HealFeedback feedback = model.healFeedback();
+        if (player == null || !feedback.active()) {
+            return null;
+        }
+        float size = player.halfSize() * 2f;
+        return new SpriteVisual(player.x(), player.y() + (float) feedback.arrowLift(size),
+                size * (float) HealFeedback.ARROW_SIZE_FACTOR, 0f, false, HealFeedback.ARROW_SPRITE);
+    }
+
+    /** After a heart: the flash over the player, following them; null otherwise. */
+    public static ExplosionVisual healFlash(GameWorldModel model, PlayerState player) {
+        HealFeedback feedback = model.healFeedback();
+        if (player == null || !feedback.active()) {
+            return null;
+        }
+        HealFlashEffect flash = new HealFlashEffect(player.x(), player.y(), player.halfSize() * 2f);
+        double progress = feedback.progress();
+        return clock -> flash.puffs(progress, clock);
     }
 
     /** The weapon in the player's hands, held towards the facing; null for bombs (planted, not held). */

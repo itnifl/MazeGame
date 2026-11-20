@@ -15,7 +15,7 @@ import java.util.Random;
  *   <li>{@code pickup-laser.wav}: rising electronic chirp</li>
  *   <li>{@code pickup-sledgehammer.wav}: metallic clank</li>
  *   <li>{@code pickup-shield.wav}: shimmering rising chord</li>
- *   <li>{@code pickup-heart.wav}: soft two-note chime</li>
+ *   <li>{@code pickup-heart.wav}: 8-bit "extra life" jingle, a rising six-note square-wave arpeggio</li>
  * </ul>
  * plus {@code laser-fire.wav} ("pew"), {@code sledgehammer-swing.wav} (whoosh ending in a heavy
  * thud) and {@code weapon-switch.wav} (short click). Deterministic (seeded noise).
@@ -100,14 +100,31 @@ public final class SoundEffectGenerator {
         return out;
     }
 
+    /** Notes of the extra-life jingle: a rising G major arpeggio over two octaves (original, not a copy of any game's). */
+    static final double[] EXTRA_LIFE_NOTES = {784.0, 987.8, 1174.7, 1568.0, 1975.5, 2349.3};
+    static final double EXTRA_LIFE_NOTE_SECONDS = 0.075;
+
+    /**
+     * Heart pickup: an 8-bit style "extra life" jingle, six quick square-wave notes rising over two
+     * octaves, the last one ringing out with a little vibrato.
+     */
     static double[] pickupHeart() {
-        double[] out = buffer(0.42);
-        for (int i = 0; i < out.length; i++) {
-            double t = i / (double) RATE;
-            double first = t < 0.16 ? Math.sin(2 * Math.PI * 1046.5 * t) * envelope(t, 0.01, 0.16) : 0;
-            double t2 = t - 0.12;
-            double second = t2 > 0 ? Math.sin(2 * Math.PI * 1568.0 * t2) * envelope(t2, 0.01, 0.3) : 0;
-            out[i] = 0.6 * first + 0.6 * second;
+        double step = EXTRA_LIFE_NOTE_SECONDS;
+        double lastLength = 0.28;
+        double[] out = buffer(step * (EXTRA_LIFE_NOTES.length - 1) + lastLength);
+        for (int n = 0; n < EXTRA_LIFE_NOTES.length; n++) {
+            boolean last = n == EXTRA_LIFE_NOTES.length - 1;
+            double length = last ? lastLength : step;
+            int start = (int) Math.round(n * step * RATE);
+            double phase = 0;
+            for (int k = 0; start + k < out.length && k < length * RATE; k++) {
+                double t = k / (double) RATE;
+                double freq = EXTRA_LIFE_NOTES[n] * (last ? 1 + 0.012 * Math.sin(2 * Math.PI * 7 * t) : 1);
+                phase += freq / RATE;
+                double pulse = (phase % 1.0) < 0.25 ? 1 : -1;            // 25 % duty square, the chiptune timbre
+                double gate = last ? envelope(t, 0.003, length) : (t < length * 0.85 ? 1 : 0);
+                out[start + k] = 0.32 * pulse * gate;
+            }
         }
         return out;
     }

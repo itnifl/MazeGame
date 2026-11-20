@@ -5,18 +5,20 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import main.game.maze.mazeworld.constants.StageConstants;
 
 /**
  * The pickup rules and items of the game, loaded from the items model
  * ({@link PickupCatalogLoader}). Shared by both frontends.
  *
  * @param spawnIntervalSeconds  a new item spawns this often while below the cap
- * @param pickupRadius          item radius for touching and spacing
+ * @param itemSize              drawn item size in px (the model's {@code itemSizeFactor} x the player size);
+ *                              also the touch and spacing size
  * @param minDistanceFromPlayer items never spawn closer than this to the player
  * @param caps                  item caps by board width, from the model
  * @param specs                 every item kind with its values
  */
-public record PickupCatalog(double spawnIntervalSeconds, double pickupRadius, double minDistanceFromPlayer,
+public record PickupCatalog(double spawnIntervalSeconds, double itemSize, double minDistanceFromPlayer,
                             List<Cap> caps, Map<PickupKind, PickupSpec> specs) {
 
     /** At most {@code maxItems} on boards at least {@code minBoardWidth} wide. */
@@ -26,6 +28,16 @@ public record PickupCatalog(double spawnIntervalSeconds, double pickupRadius, do
     public PickupCatalog {
         caps = List.copyOf(caps);
         specs = Collections.unmodifiableMap(new EnumMap<>(specs));
+    }
+
+    /** Item radius for touching and spacing: half the item size. */
+    public double pickupRadius() {
+        return itemSize / 2;
+    }
+
+    /** How far an item's centre keeps from every wall's centre line: half an item plus half a wall, plus 1 px. */
+    public double spawnClearance() {
+        return itemSize / 2 + StageConstants.WallThicknessPx / 2.0 + 1;
     }
 
     public PickupSpec spec(PickupKind kind) {

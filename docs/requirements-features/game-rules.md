@@ -212,8 +212,10 @@ MUST be added to the shared core, not to a single frontend.
 
 ## Weapons, pickups and kill credit
 
-- **GR-38**: While playing, an item spawns every 5 seconds (bomb, laser rifle,
-  sledgehammer, shield cube or small heart) at a corridor point away from the
+- **GR-38**: While playing, an item spawns every 3 seconds until the cap is
+  reached (bomb, laser rifle, sledgehammer, shield cube or small heart) at a
+  corridor point away from the player and never in or over a wall (its centre
+  keeps half an item plus half a wall from every wall), drawn as large as the
   player, up to 5 items on easy maps, 10 on medium and 15 on hard / large maps.
   Picking an item up frees a slot, so spawning continues.
 - **GR-39**: The player starts with the difficulty's bombs only. A bomb pickup
@@ -226,8 +228,13 @@ MUST be added to the shared core, not to a single frontend.
   sledgehammer strikes every enemy within reach that no wall separates from the
   player and never damages walls.
 - **GR-41**: A shield cube blocks all damage to the player for 5 seconds; a
-  heart heals 20 % of the maximum health (never above the maximum).
+  heart heals 20 % of the maximum health (never above the maximum), flashes the
+  player three times, shows a green arrow rising over the player's head for one
+  second and plays the "extra life" jingle.
 - **GR-42**: Each kill adds points in proportion to the enemy's danger (its
   effective threat x 100, at least 10) to the player who dealt the killing blow,
   including kills by walls that player brought down. Kills by nobody (enemy
   projectiles, terminal commands) score nothing.
+- **GR-43**: A killed enemy that can come back (zombies) respawns 15 seconds
+  after its death, in both frontends; enemies that cannot come back (ghosts,
+  pumpkin bombers) stay dead.

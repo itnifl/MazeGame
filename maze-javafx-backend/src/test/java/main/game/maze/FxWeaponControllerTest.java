@@ -14,6 +14,7 @@ import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.items.Pickup;
 import main.game.maze.game.items.PickupCatalogLoader;
 import main.game.maze.game.items.PickupField;
+import main.game.maze.game.items.PickupKind;
 import main.game.maze.game.items.PowerShield;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.score.KillScoring;
@@ -126,6 +127,32 @@ class FxWeaponControllerTest {
         assertTrue(host.arsenalChanges > changesBefore);
         assertTrue(!weapons.hudText().equals(hudBefore) || host.player.getHitPoints() > 10,
                 "the item had an effect: " + item.kind());
+        assertEquals(item.kind() == PickupKind.HEART, weapons.healFeedback().active(),
+                "only a heart flashes the player and shows the arrow");
+    }
+
+    @Test
+    @DisplayName("a heart flashes the player and shows the arrow until the feedback is over")
+    void heartFeedback() {
+        host.player.setHitPoints(10);
+        boolean healed = false;
+        long now = 0;
+        for (int i = 0; i < 100 && !healed; i++) {
+            host.player.teleportTo(-10_000, -10_000);
+            weapons.tick(now);
+            now += 3_100_000_000L;
+            weapons.tick(now);
+            Pickup item = weapons.pickupField().items().get(weapons.pickupField().items().size() - 1);
+            host.player.teleportTo(item.x() - HALF, item.y() - HALF);
+            now += 10_000_000L;
+            weapons.tick(now);
+            healed = item.kind() == PickupKind.HEART;
+        }
+        assertTrue(healed, "a heart spawned within 100 items");
+        assertTrue(weapons.healFeedback().active());
+        assertTrue(host.player.getHitPoints() > 10, "healed");
+        weapons.tick(now + 1_100_000_000L);
+        assertFalse(weapons.healFeedback().active(), "over after a second");
     }
 
     @Test

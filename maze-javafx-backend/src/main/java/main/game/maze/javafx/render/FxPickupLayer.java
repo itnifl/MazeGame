@@ -12,6 +12,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import main.game.maze.common.graphics.fire.FirePuff;
+import main.game.maze.common.graphics.fire.HealFeedback;
+import main.game.maze.common.graphics.fire.HealFlashEffect;
 import main.game.maze.common.graphics.fire.ShieldBubble;
 import main.game.maze.game.items.Pickup;
 import main.game.maze.game.items.PickupCatalog;
@@ -25,18 +28,22 @@ import main.game.maze.mazeworld.Vector2D.VectorFacing;
  */
 public final class FxPickupLayer {
 
-    static final double PICKUP_SIZE = 24;
     /** Just above the maze canvas, like the remains; characters are drawn over items. */
     private static final int FLOOR_INDEX = 1;
     /** In front of the player sprite. */
     private static final double HELD_VIEW_ORDER = -5;
     private static final double SHIELD_VIEW_ORDER = -6;
+    /** The heal flash glows over the player sprite; the arrow is on top of everything near the player. */
+    private static final double HEAL_FLASH_VIEW_ORDER = -7;
+    private static final double HEAL_ARROW_VIEW_ORDER = -8;
 
     private final Supplier<Pane> board;
     private final Map<Long, ImageView> itemViews = new HashMap<>();
     private final Map<String, Image> images = new HashMap<>();
     private ImageView heldView;
     private Canvas shieldCanvas;
+    private Canvas healCanvas;
+    private ImageView healArrowView;
 
     public FxPickupLayer(Supplier<Pane> board) {
         this.board = board;
@@ -48,21 +55,22 @@ public final class FxPickupLayer {
         if (pane == null) {
             return;
         }
+        double size = catalog.itemSize();
         Set<Long> present = new HashSet<>();
         for (Pickup pickup : items) {
             present.add(pickup.id());
             ImageView view = itemViews.computeIfAbsent(pickup.id(), id -> {
                 ImageView created = new ImageView(image(catalog.spec(pickup.kind()).sprite()));
-                created.setFitWidth(PICKUP_SIZE);
-                created.setFitHeight(PICKUP_SIZE);
+                created.setFitWidth(size);
+                created.setFitHeight(size);
                 created.setPreserveRatio(true);
                 created.setMouseTransparent(true);
                 pane.getChildren().add(Math.min(FLOOR_INDEX, pane.getChildren().size()), created);
                 return created;
             });
             double bob = Math.sin(clockSeconds * 4 + pickup.id()) * 2;
-            view.setLayoutX(pickup.x() - PICKUP_SIZE / 2);
-            view.setLayoutY(pickup.y() - PICKUP_SIZE / 2 + bob);
+            view.setLayoutX(pickup.x() - size / 2);
+            view.setLayoutY(pickup.y() - size / 2 + bob);
         }
         itemViews.entrySet().removeIf(entry -> {
             if (!present.contains(entry.getKey())) {
@@ -119,23 +127,63 @@ public final class FxPickupLayer {
             hide(shieldCanvas);
             return;
         }
-        double extent = radius * ShieldBubble.EXTENT_FACTOR;
-        if (shieldCanvas == null || shieldCanvas.getWidth() < extent * 2) {
-            hide(shieldCanvas);
-            shieldCanvas = new Canvas(extent * 2, extent * 2);
-            shieldCanvas.setMouseTransparent(true);
-            shieldCanvas.setViewOrder(SHIELD_VIEW_ORDER);
+        shieldCanvas = paintAround(pane, shieldCanvas, SHIELD_VIEW_ORDER, centerX, centerY,
+                radius * ShieldBubble.EXTENT_FACTOR, ShieldBubble.puffs(centerX, centerY, radius, remainingSeconds, clock));
+    }
+
+    /**
+     * After a heart: the player flashes ({@link HealFlashEffect}) and a green arrow rises over the head
+     * ({@link HealFeedback}), both following the player; hidden when the feedback is over.
+     */
+    public void showHeal(HealFeedback feedback, double centerX, double centerY, double playerSize, double clock) {
+        Pane pane = board.get();
+        if (pane == null) {
+            return;
         }
-        if (shieldCanvas.getParent() == null) {
-            pane.getChildren().add(shieldCanvas);
+        if (!feedback.active()) {
+            hide(healCanvas);
+            hide(healArrowView);
+            return;
         }
-        double half = shieldCanvas.getWidth() / 2;
-        shieldCanvas.setLayoutX(centerX - half);
-        shieldCanvas.setLayoutY(centerY - half);
-        shieldCanvas.getGraphicsContext2D().clearRect(0, 0, shieldCanvas.getWidth(), shieldCanvas.getHeight());
-        FxExplosionView.paint(shieldCanvas.getGraphicsContext2D(),
-                ShieldBubble.puffs(centerX, centerY, radius, remainingSeconds, clock),
-                shieldCanvas.getLayoutX(), shieldCanvas.getLayoutY());
+        HealFlashEffect flash = new HealFlashEffect(centerX, centerY, playerSize);
+        double[] bounds = flash.bounds();
+        healCanvas = paintAround(pane, healCanvas, HEAL_FLASH_VIEW_ORDER, centerX, centerY,
+                (bounds[2] - bounds[0]) / 2, flash.puffs(feedback.progress(), clock));
+        if (healArrowView == null) {
+            healArrowView = new ImageView(image(HealFeedback.ARROW_SPRITE));
+            healArrowView.setMouseTransparent(true);
+            healArrowView.setPreserveRatio(true);
+            healArrowView.setViewOrder(HEAL_ARROW_VIEW_ORDER);
+        }
+        if (healArrowView.getParent() == null) {
+            pane.getChildren().add(healArrowView);
+        }
+        double size = playerSize * HealFeedback.ARROW_SIZE_FACTOR;
+        healArrowView.setFitWidth(size);
+        healArrowView.setFitHeight(size);
+        healArrowView.setLayoutX(centerX - size / 2);
+        healArrowView.setLayoutY(centerY - feedback.arrowLift(playerSize) - size / 2);   // y-down: up is minus
+    }
+
+    /** Paints puffs on a canvas centred on (x, y) reaching {@code extent} each way (re-created when too small). */
+    private Canvas paintAround(Pane pane, Canvas canvas, double viewOrder, double x, double y, double extent,
+                               List<FirePuff> puffs) {
+        Canvas target = canvas;
+        if (target == null || target.getWidth() < extent * 2) {
+            hide(target);
+            target = new Canvas(extent * 2, extent * 2);
+            target.setMouseTransparent(true);
+            target.setViewOrder(viewOrder);
+        }
+        if (target.getParent() == null) {
+            pane.getChildren().add(target);
+        }
+        double half = target.getWidth() / 2;
+        target.setLayoutX(x - half);
+        target.setLayoutY(y - half);
+        target.getGraphicsContext2D().clearRect(0, 0, target.getWidth(), target.getHeight());
+        FxExplosionView.paint(target.getGraphicsContext2D(), puffs, target.getLayoutX(), target.getLayoutY());
+        return target;
     }
 
     /** New level: remove everything. */
@@ -147,6 +195,8 @@ public final class FxPickupLayer {
         itemViews.clear();
         hide(heldView);
         hide(shieldCanvas);
+        hide(healCanvas);
+        hide(healArrowView);
     }
 
     int itemCount() {
@@ -155,6 +205,14 @@ public final class FxPickupLayer {
 
     ImageView heldView() {
         return heldView;
+    }
+
+    ImageView healArrowView() {
+        return healArrowView;
+    }
+
+    Canvas healCanvas() {
+        return healCanvas;
     }
 
     private void hide(Node node) {

@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 /**
  * Generates the pickup sprites listed in {@code xmi/items/items.xmi} into
  * {@code main/game/maze/pickups/}: bomb, laser rifle, sledgehammer, power shield cube and a small
- * heart. Each is drawn on a 32x32 pixel grid and scaled up 2x (64x64, transparent) to match the
+ * heart, plus the green arrow shown over the player after a heal. Each is drawn on a 32x32 pixel grid and scaled up 2x (64x64, transparent) to match the
  * chunky pixel-art enemies. The rifle and sledgehammer sprites are also drawn in the player's
  * hands. Deterministic.
  *
@@ -38,6 +38,7 @@ public final class PickupSpriteGenerator {
         write(dir, "sledgehammer.png", sledgehammer());
         write(dir, "shield.png", shield());
         write(dir, "heart.png", heart());
+        write(dir, "heal-arrow.png", healArrow());
     }
 
     static BufferedImage bomb() {
@@ -165,13 +166,13 @@ public final class PickupSpriteGenerator {
 
     static BufferedImage heart() {
         return draw(g -> {
-            // a small heart: well under the frame size, centred
+            // fills the frame like the other items, so it reads at the same size in the maze
             Polygon heart = new Polygon();
             for (int i = 0; i < 64; i++) {
                 double t = Math.PI * 2 * i / 64;
                 double x = 16 * Math.pow(Math.sin(t), 3);
                 double y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-                heart.addPoint((int) Math.round(16 + x * 0.45), (int) Math.round(16 - y * 0.45));
+                heart.addPoint((int) Math.round(16 + x * 0.88), (int) Math.round(15 - y * 0.88));
             }
             g.setColor(OUTLINE);
             g.setStroke(new BasicStroke(2f));
@@ -179,11 +180,29 @@ public final class PickupSpriteGenerator {
             g.setColor(new Color(0xe0, 0x22, 0x3a));
             g.fillPolygon(heart);
             g.setColor(new Color(0xff, 0x8a, 0x9a));
-            g.fillRect(11, 12, 2, 2);
+            g.fillRect(7, 6, 4, 4);
             g.setColor(new Color(0xff, 0xff, 0xff));
-            g.fillRect(11, 12, 1, 1);
+            g.fillRect(7, 6, 2, 2);
             g.setColor(new Color(0x9a, 0x10, 0x22));
-            g.fillRect(17, 19, 2, 1);
+            g.fillRect(18, 20, 4, 2);
+            g.fillRect(22, 16, 2, 3);
+        });
+    }
+
+    /** Green arrow shown over the player's head after a heart is picked up (HealFeedback.ARROW_SPRITE). */
+    static BufferedImage healArrow() {
+        return draw(g -> {
+            Polygon arrow = new Polygon(new int[] {16, 29, 21, 21, 11, 11, 3}, new int[] {1, 15, 15, 30, 30, 15, 15}, 7);
+            g.setColor(OUTLINE);
+            g.setStroke(new BasicStroke(2f));
+            g.drawPolygon(arrow);
+            g.setColor(new Color(0x2e, 0xc8, 0x4a));
+            g.fillPolygon(arrow);
+            g.setColor(new Color(0xa8, 0xff, 0x9a));
+            g.fillRect(13, 8, 3, 3);
+            g.fillRect(13, 15, 2, 12);
+            g.setColor(new Color(0x16, 0x7a, 0x2c));
+            g.fillRect(19, 16, 2, 13);
         });
     }
 

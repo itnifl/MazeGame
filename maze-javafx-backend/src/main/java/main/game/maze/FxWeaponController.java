@@ -7,6 +7,7 @@ import main.game.maze.characters.ComputerCharacter;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.characters.interfaces.ICanDie;
 import main.game.maze.common.graphics.AudioEngine;
+import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.graphics.fire.HitReactionEffect;
 import main.game.maze.common.graphics.fire.LaserBeamEffect;
 import main.game.maze.common.graphics.fire.PickupSparkleEffect;
@@ -77,6 +78,7 @@ public final class FxWeaponController {
     private final PowerShield shield;
     private final KillLedger killLedger = new KillLedger();
     private final FxPickupLayer pickupLayer;
+    private final HealFeedback healFeedback = new HealFeedback();
     private PlayerArsenal arsenal = new PlayerArsenal(0);
     private List<Point2D> spawnPoints = List.of();
     private long lastTickNanos = -1;
@@ -99,9 +101,10 @@ public final class FxWeaponController {
         shield.reset();
         killLedger.clear();
         pickupLayer.clear();
+        healFeedback.reset();
         lastTickNanos = -1;
         player.setShield(shield::isActive);
-        spawnPoints = PickupField.spawnPointsOf(world);
+        spawnPoints = pickupField.spawnPointsOf(world);
         host.arsenalChanged();
     }
 
@@ -150,15 +153,20 @@ public final class FxWeaponController {
             PickupSpec spec = pickupField.catalog().spec(pickup.kind());
             PickupEffects.apply(spec, arsenal, shield, player::heal, player.getMaxHitPoints());
             AudioEngine.get().play(spec.pickupSound());
+            if (pickup.kind() == PickupKind.HEART) {
+                healFeedback.trigger();   // flash + arrow over the head
+            }
             float[] colour = ArsenalHud.sparkleColour(pickup.kind());
             playEffect(new PickupSparkleEffect(pickup.x(), pickup.y(), colour[0], colour[1], colour[2]));
             host.arsenalChanged();
         }
+        healFeedback.tick(dt);
         double clock = nowNanos / 1e9;
         pickupLayer.showItems(pickupField.items(), pickupField.catalog(), clock);
         pickupLayer.showHeldWeapon(arsenal.selected(), arsenal.count(arsenal.selected()), pickupField.catalog(),
                 center[0], center[1], HALF_PLAYER, player.getFacing());
         pickupLayer.showShield(center[0], center[1], HALF_PLAYER * 1.7, shield.remainingSeconds(), clock);
+        pickupLayer.showHeal(healFeedback, center[0], center[1], HALF_PLAYER * 2, clock);
         if (shield.isActive()) {
             host.arsenalChanged();   // shield countdown
         }
@@ -189,6 +197,10 @@ public final class FxWeaponController {
 
     PickupField pickupField() {
         return pickupField;
+    }
+
+    HealFeedback healFeedback() {
+        return healFeedback;
     }
 
     KillLedger killLedger() {

@@ -346,3 +346,11 @@ These requirements have been implemented and verified.
 - **SR-207** *(DDD, Observability)*: Add a debug-mode assertion (or `FINE` log with thread name) in `GameMazeWorld.applyWallDamage` when invoked off the registered UI thread, so a future regression of the #132 threading contract is detectable at runtime instead of only via a nav-graph `ConcurrentModificationException`.
 
 - **SR-208** *(12-Factor, Observability)*: Builds behind a TLS-intercepting proxy fail Tycho p2 resolution with `PKIX path building failed`. Document (and optionally honour in `make-*.ps1` / `make-*` via an environment variable) `MAVEN_OPTS=-Djavax.net.ssl.trustStoreType=Windows-ROOT` on Windows so the build uses the OS trust store without modifying the JDK.
+
+### Pickup tuning follow-ons (SR-256..SR-259)
+
+- **SR-260** *(Gameplay, MDD)*: Move the heal feedback timing (1 s, three pulses) and the arrow size into the items model next to the heart, so the effect can be tuned like the other item values.
+
+- **SR-261** *(Observability)*: Log at `FINE` how many spawn points a level has after the wall clearance filter (`PickupField.spawnPointsOf`); a level with very few would spawn items in the same spots.
+
+- **SR-262** *(UX)*: Let the respawn delay show on the remains (e.g. the coal pile starts to smoke a few seconds before a zombie comes back), so the player can tell when an enemy is about to return.

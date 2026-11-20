@@ -3,6 +3,7 @@ package main.game.maze.javafx.render;
 import java.util.List;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.game.items.Pickup;
 import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.Weapon;
@@ -28,6 +29,18 @@ public final class FxPickupLayerProbe {
 
     public void showShield(double x, double y, double radius, double remaining, double clock) {
         layer.showShield(x, y, radius, remaining, clock);
+    }
+
+    public void showHeal(HealFeedback feedback, double x, double y, double playerSize, double clock) {
+        layer.showHeal(feedback, x, y, playerSize, clock);
+    }
+
+    public ImageView healArrowView() {
+        return layer.healArrowView();
+    }
+
+    public javafx.scene.canvas.Canvas healCanvas() {
+        return layer.healCanvas();
     }
 
     public void clear() {

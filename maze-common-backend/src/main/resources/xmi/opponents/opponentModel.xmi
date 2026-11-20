@@ -77,6 +77,7 @@
       <ImageTurnRight>/main/game/maze/zombie1-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie1-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie1-down.png</ImageTurnDown>
+      <resurrectionTime>15</resurrectionTime>
       <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
@@ -94,6 +95,7 @@
       <ImageTurnRight>/main/game/maze/zombie2-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie2-down.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie2-down.png</ImageTurnDown>
+      <resurrectionTime>15</resurrectionTime>
       <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 
@@ -111,6 +113,7 @@
       <ImageTurnRight>/main/game/maze/zombie3-right.png</ImageTurnRight>
       <ImageTurnUp>/main/game/maze/zombie3-up.png</ImageTurnUp>
       <ImageTurnDown>/main/game/maze/zombie3-down.png</ImageTurnDown>
+      <resurrectionTime>15</resurrectionTime>
       <damageStatesEnabled>true</damageStatesEnabled>
     </characterTypes>
 

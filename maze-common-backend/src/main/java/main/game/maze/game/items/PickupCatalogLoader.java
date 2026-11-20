@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import main.game.maze.mazeworld.constants.StageConstants;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
@@ -72,7 +73,8 @@ public final class PickupCatalogLoader {
                     integer(item, "amount"), decimal(item, "durationSeconds"), integer(item, "damage"),
                     decimal(item, "range")));
         }
-        return new PickupCatalog(decimal(root, "spawnIntervalSeconds"), decimal(root, "pickupRadius"),
+        double itemSize = decimal(root, "itemSizeFactor") * StageConstants.PlayerCharacterXYSize;
+        return new PickupCatalog(decimal(root, "spawnIntervalSeconds"), itemSize,
                 decimal(root, "minDistanceFromPlayer"), caps, specs);
     }
 

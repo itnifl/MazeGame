@@ -22,7 +22,9 @@ import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.EnemySpawn;
 import main.game.maze.libgdx.model.GameWorldModel;
+import main.game.maze.libgdx.model.ExplosionVisual;
 import main.game.maze.libgdx.model.SpriteVisual;
+import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.PlayerState;
@@ -111,6 +113,7 @@ class GdxWeaponSupportTest {
         SpriteVisual sprite = GdxWeaponSupport.pickupSprites(world, maze, 0f).get(0);
         assertEquals(300f, sprite.x());
         assertEquals(HEIGHT - 300f, sprite.y(), 2.01f, "drawn in screen space (bobbing up to 2 px)");
+        assertEquals((float) catalog.itemSize(), sprite.size(), "items are drawn the model size (as big as the player)");
 
         PickupKind kind = world.pickupField().items().get(0).kind();
         PlayerState onTop = new PlayerState(300, HEIGHT - 300, 24);
@@ -119,6 +122,41 @@ class GdxWeaponSupportTest {
         assertTrue(world.pickupField().items().isEmpty());
         assertPicked(kind, combat);
         assertFalse(world.effects().isEmpty(), "a sparkle shows the pickup");
+    }
+
+    @Test
+    @DisplayName("a heart flashes the player and shows a rising arrow over the head; other items do not")
+    void heartFlashAndArrow() {
+        MazeArena maze = openMaze();
+        PlayerCombatStateService combat = new PlayerCombatStateService();
+        combat.reset(100);
+        List<Point2D> spots = List.of(new Point2D(300, 300));
+        PlayerState away = new PlayerState(30, HEIGHT - 30, 24);
+        PlayerState onTop = new PlayerState(300, HEIGHT - 300, 24);
+        boolean healed = false;
+        for (int i = 0; i < 100 && !healed; i++) {
+            GdxWeaponSupport.updatePickups(world, maze, away, combat, spots, (float) catalog.spawnIntervalSeconds());
+            PickupKind kind = world.pickupField().items().get(0).kind();
+            GdxWeaponSupport.updatePickups(world, maze, onTop, combat, spots, 0.01f);
+            healed = kind == PickupKind.HEART;
+            assertEquals(healed, world.healFeedback().active(), "only a heart triggers the heal feedback: " + kind);
+        }
+        assertTrue(healed, "a heart spawned within 100 items");
+
+        SpriteVisual arrow = GdxWeaponSupport.healArrow(world, onTop);
+        assertNotNull(arrow);
+        assertEquals(HealFeedback.ARROW_SPRITE, arrow.spritePath());
+        assertEquals(onTop.x(), arrow.x());
+        assertTrue(arrow.y() - arrow.size() / 2 > onTop.y() + onTop.halfSize() - 0.01f, "over the head (screen y-up)");
+        ExplosionVisual flash = GdxWeaponSupport.healFlash(world, onTop);
+        assertNotNull(flash);
+
+        GdxWeaponSupport.tickEffects(world, List.of(), (float) (HealFeedback.LIFETIME_SECONDS / 2));
+        assertFalse(GdxWeaponSupport.healFlash(world, onTop).puffs(0f).isEmpty(), "the flash glows mid-way");
+        assertTrue(GdxWeaponSupport.healArrow(world, onTop).y() > arrow.y(), "the arrow rises");
+        GdxWeaponSupport.tickEffects(world, List.of(), (float) HealFeedback.LIFETIME_SECONDS);
+        assertNull(GdxWeaponSupport.healArrow(world, onTop), "gone when over");
+        assertNull(GdxWeaponSupport.healFlash(world, onTop));
     }
 
     private void assertPicked(PickupKind kind, PlayerCombatStateService combat) {

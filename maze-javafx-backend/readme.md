@@ -27,8 +27,8 @@ Same shared rules as libGDX (`maze-common-backend` `game.items` / `game.score`):
 - `FxWeaponController` (the counterpart of libGDX `GdxWeaponSupport`) owns the per-game `PickupField`, `PlayerArsenal`,
   `PowerShield` and `KillLedger`: `useWeapon`, `switchWeapon`, `tick` (spawn and collect items every frame) and
   `recordKill`. It reaches the game screen only through its small `Host` interface, so `FxWeaponControllerTest`
-  runs without FXML. `FxPickupLayer` draws the items, the weapon in the player's hands (mirrored to the facing)
-  and the shield bubble.
+  runs without FXML. `FxPickupLayer` draws the items, the weapon in the player's hands (mirrored to the facing),
+  the shield bubble and, after a heart, the flash and the arrow rising over the player (`showHeal`).
 - `FxEnemyCoordinator.fireLaser` / `swingSledgehammer` apply laser and sledgehammer damage through `ICanDie`
   with the player's id; struck enemies play their `HitReactionEffect` (`ComputerCharacter.react`).
 - `PlayerCharacter.setShield` / `heal` / `getFacing`; Tab switches weapons (`SwitchWeaponCommand`).

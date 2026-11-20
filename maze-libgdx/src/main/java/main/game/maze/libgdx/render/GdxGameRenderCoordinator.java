@@ -208,10 +208,18 @@ public final class GdxGameRenderCoordinator {
         return floor;
     }
 
-    /** The weapon in the player hands, drawn over the player. */
+    /** The weapon in the player hands and, after a heart, the arrow over the head; drawn over the player. */
     private List<SpriteVisual> overlaySprites(FrameInput input) {
+        List<SpriteVisual> overlays = new ArrayList<>(2);
         SpriteVisual held = GdxWeaponSupport.heldWeapon(worldModel, input.player());
-        return held == null ? List.of() : List.of(held);
+        if (held != null) {
+            overlays.add(held);
+        }
+        SpriteVisual arrow = GdxWeaponSupport.healArrow(worldModel, input.player());
+        if (arrow != null) {
+            overlays.add(arrow);
+        }
+        return overlays;
     }
 
     /** Explosions and effects, plus the power shield bubble around the player while it is up. */
@@ -221,6 +229,10 @@ public final class GdxGameRenderCoordinator {
         double shieldLeft = worldModel.shield().remainingSeconds();
         if (player != null && shieldLeft > 0) {
             all.add(clock -> ShieldBubble.puffs(player.x(), player.y(), player.halfSize() * 1.7f, shieldLeft, clock));
+        }
+        ExplosionVisual healFlash = GdxWeaponSupport.healFlash(worldModel, player);
+        if (healFlash != null) {
+            all.add(healFlash);
         }
         return all;
     }

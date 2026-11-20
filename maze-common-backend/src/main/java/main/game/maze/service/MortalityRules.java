@@ -12,7 +12,7 @@ public final class MortalityRules {
     /** Health when no model is available. */
     public static final int DEFAULT_MAX_HIT_POINTS = 100;
     /** Zombie resurrection delay when the model leaves {@code resurrectionTime} at 0. */
-    public static final int DEFAULT_ZOMBIE_RESURRECTION_MS = 5_000;
+    public static final int DEFAULT_ZOMBIE_RESURRECTION_MS = 15_000;
     /** Invulnerability right after a respawn, so the enemy is not killed again instantly. */
     public static final double RESPAWN_INVULNERABILITY_SECONDS = 2.0;
 

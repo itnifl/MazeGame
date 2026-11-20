@@ -3,6 +3,7 @@ package main.game.maze.libgdx.model;
 import java.util.ArrayList;
 import java.util.List;
 import main.game.maze.common.graphics.fire.WallRubble;
+import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.graphics.fire.PuffEffect;
 import main.game.maze.common.remains.RemainsLedger;
 import main.game.maze.game.items.PickupCatalogLoader;
@@ -62,6 +63,7 @@ public final class GameWorldModel {
     private final PowerShield shield = new PowerShield();
     private final KillLedger killLedger = new KillLedger();
     private final List<ActiveEffect> effects = new ArrayList<>();
+    private final HealFeedback healFeedback = new HealFeedback();
     private PlayerArsenal arsenal = new PlayerArsenal(0);
     private final List<Score> highScoreRows = new ArrayList<>();
 
@@ -285,6 +287,11 @@ public final class GameWorldModel {
 
     public PowerShield shield() {
         return shield;
+    }
+
+    /** The arrow over the player's head and the flash after a heart is picked up. */
+    public HealFeedback healFeedback() {
+        return healFeedback;
     }
 
     /** Who killed what this game (kill points per player). */

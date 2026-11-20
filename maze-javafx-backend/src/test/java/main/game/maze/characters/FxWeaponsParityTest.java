@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import main.game.maze.FxEnemyCoordinator;
 import main.game.maze.FxGameWorldModel;
 import main.game.maze.characters.interfaces.ICanDie;
+import main.game.maze.common.graphics.fire.HealFeedback;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.items.Pickup;
 import main.game.maze.game.items.PickupCatalog;
@@ -193,6 +194,10 @@ class FxWeaponsParityTest {
             Pickup rifle = new Pickup(2, PickupKind.LASER_RIFLE, 150, 60);
             layer.showItems(List.of(heart, rifle), CATALOG, 0);
             assertEquals(2, layer.itemCount());
+            for (javafx.scene.Node node : board.getChildren()) {
+                assertEquals(CATALOG.itemSize(), ((javafx.scene.image.ImageView) node).getFitWidth(), 1e-9,
+                        "items are drawn the model size (as big as the player)");
+            }
             layer.showItems(List.of(rifle), CATALOG, 0);
             assertEquals(1, layer.itemCount(), "picked-up items disappear");
 
@@ -204,6 +209,21 @@ class FxWeaponsParityTest {
             assertTrue(layer.heldView().getLayoutX() + layer.heldView().getFitWidth() / 2 < 100, "held towards the facing");
 
             layer.showShield(100, 100, 20, 3.0, 0);
+
+            HealFeedback heal = new HealFeedback();
+            layer.showHeal(heal, 100, 100, 30, 0);
+            assertNull(layer.healArrowView(), "no arrow without a heal");
+            heal.trigger();
+            heal.tick(HealFeedback.LIFETIME_SECONDS / 2);
+            layer.showHeal(heal, 100, 100, 30, 0);
+            assertNotNull(layer.healArrowView().getParent());
+            assertNotNull(layer.healCanvas().getParent(), "the flash is painted over the player");
+            assertTrue(layer.healArrowView().getLayoutY() + layer.healArrowView().getFitHeight() <= 100 - 15 + 0.01,
+                    "the arrow is over the head (y-down)");
+            heal.tick(HealFeedback.LIFETIME_SECONDS);
+            layer.showHeal(heal, 100, 100, 30, 0);
+            assertNull(layer.healArrowView().getParent(), "gone when over");
+
             layer.clear();
             assertEquals(0, layer.itemCount());
             assertTrue(board.getChildren().isEmpty());

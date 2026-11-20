@@ -2,6 +2,7 @@ package main.game.maze.common.graphics.fire;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -108,4 +109,49 @@ class CombatEffectsTest {
         assertTrue(bubble.stream().allMatch(p -> Math.hypot(p.x(), p.y()) + p.radius() <= 30 * ShieldBubble.EXTENT_FACTOR));
         assertTrue(ShieldBubble.puffs(0, 0, 30, 0.0, 0.5).isEmpty(), "no bubble when the shield is off");
     }
+
+    @Test
+    @DisplayName("heal flash: bright pulses over the player that fade out, inside its bounds")
+    void healFlash() {
+        HealFlashEffect flash = new HealFlashEffect(100, 100, 30);
+        assertInsideBounds(flash);
+        assertEquals(HealFeedback.LIFETIME_SECONDS, flash.lifetimeSeconds(), 1e-9);
+        int pulses = 0;
+        double previous = 0;
+        boolean rising = false;
+        for (double p = 0; p < 1; p += 0.01) {
+            double strength = HealFlashEffect.strength(p);
+            assertTrue(strength >= 0 && strength <= 1);
+            if (strength < previous && rising) {
+                pulses++;
+            }
+            rising = strength > previous;
+            previous = strength;
+        }
+        assertEquals(3, pulses, "the player flashes three times");
+        assertTrue(HealFlashEffect.strength(0.9) < HealFlashEffect.strength(1.0 / 6), "the flash fades out");
+        assertTrue(flash.puffs(1.0 / 6, 0).stream().allMatch(puff -> puff.layer().additive()), "light, not paint");
+    }
+
+    @Test
+    @DisplayName("heal arrow: shown over the head after a heal, rising, then gone")
+    void healArrow() {
+        HealFeedback feedback = new HealFeedback();
+        assertFalse(feedback.active());
+        feedback.trigger();
+        assertTrue(feedback.active());
+        double startLift = feedback.arrowLift(30);
+        assertTrue(startLift >= 30 * 0.5, "starts above the head (half the player above the centre)");
+        feedback.tick(HealFeedback.LIFETIME_SECONDS / 2);
+        assertTrue(feedback.arrowLift(30) > startLift, "rises");
+        feedback.tick(HealFeedback.LIFETIME_SECONDS);
+        assertFalse(feedback.active(), "gone when over");
+        feedback.trigger();
+        feedback.tick(HealFeedback.LIFETIME_SECONDS / 2);
+        feedback.trigger();
+        assertEquals(startLift, feedback.arrowLift(30), 1e-9, "a new heart restarts it");
+        assertEquals(HealFeedback.ARROW_SPRITE, "/main/game/maze/pickups/heal-arrow.png");
+        assertNotNull(CombatEffectsTest.class.getResource(HealFeedback.ARROW_SPRITE), "arrow sprite shipped");
+    }
 }
+

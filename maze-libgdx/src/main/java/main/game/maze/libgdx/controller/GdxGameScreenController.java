@@ -5,7 +5,6 @@ import main.game.maze.game.score.PlayerIds;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.PickupKind;
 import main.game.maze.game.items.PickupCatalog;
-import main.game.maze.game.items.PickupField;
 import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.graphics.fire.FireBlast;
@@ -719,8 +718,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.shield().reset();
         worldModel.killLedger().clear();
         worldModel.effects().clear();
+        worldModel.healFeedback().reset();
         combatState.setShield(() -> worldModel.shield().isActive());
-        pickupSpawnPoints = PickupField.spawnPointsOf(GdxWallDamageSupport.worldFrom(maze));
+        pickupSpawnPoints = worldModel.pickupField().spawnPointsOf(GdxWallDamageSupport.worldFrom(maze));
         playerBombDamage = Math.max(1, startFlow.startState().runtimeModel().playerBombDamage());
         pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();

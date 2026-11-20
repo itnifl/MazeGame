@@ -41,7 +41,8 @@ runtime renderer is JavaFX, libGDX, or something else.
   combat effect with the same code. Implemented by `LaserBeamEffect` (beam flash), `SledgeSwingEffect`
   (a giant swing arc with a dust burst), `HitReactionEffect` (SHOT: a jolt back along the beam with
   sparks; BLOW: a harder knock-back with dust; both scaled by damage / max HP, and a `spriteOffset`
-  the frontends apply to the struck enemy), `PickupSparkleEffect`; `ShieldBubble` draws the power shield.
+  the frontends apply to the struck enemy), `PickupSparkleEffect`, `HealFlashEffect` (the player flashing after a heart); `ShieldBubble` draws the power shield.
+  `HealFeedback` times the heal flash and the green arrow (`pickups/heal-arrow.png`) rising over the player's head.
 - `input.command.SwitchWeaponCommand` / `GameAction.SWITCH_WEAPON`: Tab switches weapons in both frontends.
 - Resources: pickup sprites in `main/game/maze/pickups/` and weapon / pickup sounds in
   `main/game/maze/sounds/` (generated, see `tools/sprite-gen` and `tools/sound-gen`).

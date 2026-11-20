@@ -11,7 +11,7 @@ No external tools or samples; output is deterministic (seeded noise) and overwri
 | `pickup-laser.wav` | rising electronic chirp |
 | `pickup-sledgehammer.wav` | metallic clank |
 | `pickup-shield.wav` | shimmering rising chord |
-| `pickup-heart.wav` | soft two-note chime |
+| `pickup-heart.wav` | 8-bit "extra life" jingle: six quick square-wave notes rising over two octaves (G-B-D), the last one ringing with vibrato. Written for this game, not a copy of any other game's sound |
 | `laser-fire.wav` | laser "pew" |
 | `sledgehammer-swing.wav` | whoosh ending in a heavy thud |
 | `weapon-switch.wav` | short click (also played when out of ammo) |
