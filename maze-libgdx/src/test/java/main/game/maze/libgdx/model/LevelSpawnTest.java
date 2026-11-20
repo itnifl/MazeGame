@@ -56,9 +56,9 @@ class LevelSpawnTest {
     }
 
     @Test
-    @DisplayName("level 2: four sergeants on hard, two on normal, one on easy")
+    @DisplayName("level 2: six sergeants on hard, two on normal, one on easy")
     void sergeantsPerDifficulty() {
-        assertEquals(4, sergeants(load(2, hard())).size());
+        assertEquals(6, sergeants(load(2, hard())).size());
         assertEquals(2, sergeants(load(2, normal())).size());
         assertEquals(1, sergeants(load(2, easy())).size());
     }

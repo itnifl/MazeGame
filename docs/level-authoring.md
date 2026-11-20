@@ -15,6 +15,7 @@ Both frontends play the same levels: after a win, the win screen offers *Next le
 | `name` | shown in the HUD when the level starts (levels after the first) | required |
 | `threatCapacityFactor` | multiplies the difficulty's maximum threat: how many / how dangerous enemies may be | `1.0` |
 | `showWallMaterials` | draw every wall with the sprite of its material (glass, dirt, wood, stone, steel) | `false` |
+| `maxCascadeDepth` | how far a collapse spreads: breakable walls that touch a broken wall fall with it, up to this many steps away. `0` = only the wall hit; `-1` = no limit (the classic rule) | `-1` |
 | `inheritWeapons` | start with the weapons the player had at the end of the previous level | `true` |
 | `<zones>` | concentric zones around the heart, outer zone first, **any number**; see below | none = the classic random walls |
 | `<sergeant>` + `<sergeantPosts>` | stationary zombie sergeants guarding the heart, and how many per difficulty | none |
@@ -37,10 +38,11 @@ as there are elements, scaled to the board, with the heart in the middle.
   `STONE_REINFORCED` look like their base material (`WallLook`).
 - `breakableShare` (0 to 1, default 1): the share of the ring's walls that can be broken. The rest are solid
   and keep the classic wall look.
-- **Keep solid walls in every ring.** Breakable walls that touch fall together (the cascade rule, GR-36), so a map where
-  every wall is breakable loses most of itself when one wall breaks. A `breakableShare` of about 0.3 to 0.5 keeps
-  the cascades small. `CascadeBoundTest` checks every shipped level: no single broken wall may bring down more than
-  10 % of the maze, over many generated mazes.
+- **Bound the cascade.** Breakable walls that touch fall together (GR-36), so with every wall breakable one break
+  can bring down a whole connected part of the maze. Set the level's `maxCascadeDepth` (level 2 uses 2: the wall hit
+  and its neighbours up to two steps away) rather than making walls solid, which stops bombs from breaking anything.
+  `CascadeBoundTest` checks every shipped level: no single broken wall may bring down more than 10 % of the maze,
+  and `CascadeDepthTest` checks that a bomb on level 2 still breaks walls.
 - **Each ring must be weaker than the one outside it** (average hit points, solid walls counting as 200 HP). The
   loader rejects a level where an inner ring is as strong as, or stronger than, the ring around it.
 

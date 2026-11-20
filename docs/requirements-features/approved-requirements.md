@@ -69,10 +69,11 @@
 - SR-277: In level 2 the outer zone has the strongest walls and the inner zone (around the heart) the weakest: fewer breakable walls and tougher materials outside, more and weaker ones inside.
 - SR-278: Level 2 has a higher threat capacity than level 1: the difficulty's maximum threat x the level's `threatCapacityFactor` (1.5).
 - SR-279: New enemy, the zombie sergeant: it never moves, and fires a burst of gatling-gun rounds at the player whenever it sees them (within its sight range, no wall in between), rests, and fires again while the player stays in sight. Its numbers are in the levels model.
-- SR-280: Sergeants stand close to the heart: four on hard, two on normal (medium), one on easy.
+- SR-280: Sergeants stand close to the heart: six on hard, two on normal (medium), one on easy.
 - SR-281: A killed sergeant drops its gatling gun; the player picks it up and can use it like the other weapons (Tab to select, attack key to fire a burst along the facing). The gun never spawns as a normal item.
 - SR-282: The player inherits their weapons (stock and weapon in hand) from the previous level; retrying a level starts with the weapons it was entered with.
 - SR-290: The wall zones of a level are visible: a level can draw every wall with the sprite of its material (glass, dirt, wood, stone, steel; the model's `showWallMaterials`), in both frontends, so the player sees the strong outer zone and the weak inner zone.
 - SR-291: Levels are reusable data: a level is one element of `levels.xmi` with any number of zones, its own threat capacity, wall look, weapon inheritance and optional sergeants; the player can play any number of levels in order, and `docs/level-authoring.md` describes how to make one without Java.
 - SR-292: The gatling gun (the sergeants' and the one the player picks up) looks like a spray of separate bullets with glowing tracers and sparks where they land, not a laser beam, in both frontends; its sound is a gatling gun (spinning motor under a fast stream of shots).
 - SR-293: Breaking one wall never brings down a large part of a level: no single broken wall may take more than 10 % of the maze with it (the cascade rule, GR-36), so every zone of a level keeps solid walls.
+- SR-294: A level can limit how far a wall collapse spreads (`maxCascadeDepth` in the levels model; level 2: two steps), so walls cascade a little but a broken wall never brings down much of the maze, while every wall can still be broken by a bomb.

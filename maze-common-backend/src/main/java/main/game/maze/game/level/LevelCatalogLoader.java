@@ -108,7 +108,8 @@ public final class LevelCatalogLoader {
         }
         return new LevelSpec(number, name, threatCapacityFactor,
                 Boolean.TRUE.equals(DynamicModel.value(level, "showWallMaterials")),
-                !Boolean.FALSE.equals(DynamicModel.value(level, "inheritWeapons")), zones, sergeant, posts);
+                !Boolean.FALSE.equals(DynamicModel.value(level, "inheritWeapons")),
+                DynamicModel.integer(level, "maxCascadeDepth"), zones, sergeant, posts);
     }
 
     private static SergeantSpec sergeantOf(EObject sergeant) {

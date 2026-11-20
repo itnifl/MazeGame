@@ -56,13 +56,13 @@ class LevelCatalogTest {
     }
 
     @Test
-    @DisplayName("zombie sergeants: one on easy, two on normal, four on hard")
+    @DisplayName("zombie sergeants: one on easy, two on normal, six on hard")
     void sergeantsPerDifficulty() {
         LevelSpec second = CATALOG.level(2);
         assertTrue(second.hasSergeants());
         assertEquals(1, second.sergeantCount(DifficultyTier.EASY));
         assertEquals(2, second.sergeantCount(DifficultyTier.NORMAL));
-        assertEquals(4, second.sergeantCount(DifficultyTier.HARD));
+        assertEquals(6, second.sergeantCount(DifficultyTier.HARD));
         assertEquals(0, CATALOG.level(1).sergeantCount(DifficultyTier.HARD));
     }
 

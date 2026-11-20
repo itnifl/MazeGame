@@ -27,7 +27,7 @@ class SergeantPostsTest {
     @Test
     @DisplayName("picks the requested number of posts near the post distance from the heart")
     void picksCount() {
-        for (int count : new int[] {1, 2, 4}) {
+        for (int count : new int[] {1, 2, 4, 6}) {
             List<Point2D> posts = SergeantPosts.choose(grid(), 400, 330, SPEC.postDistanceFromHeart(), count, 60);
             assertEquals(count, posts.size());
             for (Point2D post : posts) {

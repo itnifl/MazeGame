@@ -13,13 +13,14 @@ import main.game.maze.mazeworld.ZoneGeometry;
  *
  * @param threatCapacityFactor multiplies the difficulty's maximum threat
  * @param showWallMaterials    draw each wall with the sprite of its material
+ * @param maxCascadeDepth      how many steps a collapse spreads from a destroyed wall; negative = no limit
  * @param inheritWeapons       start with the weapons of the previous level
  * @param zones                empty for the classic random walls, otherwise one or more zones, outer first
  * @param sergeant             the guard of the heart, or null
  * @param sergeantPosts        sergeants per difficulty tier
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
-                        boolean inheritWeapons, List<ZoneSpec> zones,
+                        boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
@@ -58,11 +59,15 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
     }
 
     /**
-     * Gives the walls of a freshly generated maze this level's materials: a level with zones assigns them by
-     * zone (the maze itself is untouched); a level without keeps the classic random walls.
+     * Gives a freshly generated maze this level's walls: a level with zones assigns the materials by zone (the
+     * maze itself is untouched), a level without keeps the classic random walls; and the level's cascade limit.
      */
     public void applyWalls(GameMazeWorld world, int boardWidth, int boardHeight) {
-        if (hasZones() && world != null) {
+        if (world == null) {
+            return;
+        }
+        world.setMaxCascadeDepth(maxCascadeDepth);
+        if (hasZones()) {
             world.assignZonedWalls(WALL_SEED, ZoneGeometry.forBoard(boardWidth, boardHeight, zones.size()), wallZones());
         }
     }

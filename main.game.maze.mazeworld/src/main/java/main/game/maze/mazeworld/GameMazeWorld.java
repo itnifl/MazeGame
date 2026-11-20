@@ -36,6 +36,8 @@ public class GameMazeWorld {
     );
 
     private static GameMazeWorld world;
+    /** How many steps a collapse spreads from the destroyed wall; unlimited unless a level sets it. */
+    private int maxCascadeDepth = Integer.MAX_VALUE;
     private final IMazeGenerator mazeGenerator;
     /** Thread-safe: read on background AI thread, written on UI thread. */
     private final List<Vector2D> mazeVectors = new CopyOnWriteArrayList<>();
@@ -354,8 +356,19 @@ public class GameMazeWorld {
         return collectCascadeWalls(wall).size();
     }
 
+    /**
+     * Limits how far a collapse spreads: walls up to this many steps away from the destroyed wall (through walls
+     * that share an endpoint) fall with it. 0 = only the destroyed wall; the default is no limit.
+     */
+    public void setMaxCascadeDepth(int depth) {
+        this.maxCascadeDepth = depth < 0 ? Integer.MAX_VALUE : depth;
+    }
+
     private List<BreakableWall> collectCascadeWalls(BreakableWall destroyed) {
         List<BreakableWall> result = new ArrayList<>();
+        // distance (in steps) of each wall in result from the destroyed wall
+        List<Integer> depths = new ArrayList<>();
+        depths.add(0);
         // Track visited walls in a HashSet (BreakableWall uses identity equals/hashCode)
         // for O(1) membership checks instead of O(n) List.contains scans.
         Set<BreakableWall> visited = new HashSet<>();
@@ -363,11 +376,16 @@ public class GameMazeWorld {
         visited.add(destroyed);
         int i = 0;
         while (i < result.size()) {
+            int depth = depths.get(i);
             BreakableWall current = result.get(i++);
+            if (depth >= maxCascadeDepth) {
+                continue;
+            }
             for (BreakableWall candidate : breakableWalls) {
                 if (!visited.contains(candidate)
                         && areAdjacent(current.geometry, candidate.geometry)) {
                     result.add(candidate);
+                    depths.add(depth + 1);
                     visited.add(candidate);
                 }
             }
