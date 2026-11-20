@@ -234,7 +234,8 @@ public final class GdxGameRenderPipeline {
                         state.winOverlayController().winScoreStatusText(),
                         state.winOverlayController().winNameInputText(),
                         state.currentScore(),
-                        state.scoreBreakdown()));
+                        state.scoreBreakdown(),
+                        state.winOverlayController().nextLevelAvailable()));
         state.winOverlayController().onOverlayRendered(winButtons);
     }
 

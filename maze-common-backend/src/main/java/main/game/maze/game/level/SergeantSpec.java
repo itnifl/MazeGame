@@ -16,6 +16,13 @@ public record SergeantSpec(String displayName, int health, double sightRange, in
                            String sprite, String fireSound, DropWeapon dropWeapon,
                            double postDistanceFromHeart) {
 
+    /** Spawn ids of sergeants start with this, so a frontend can tell them from the other enemies. */
+    public static final String SPAWN_ID_PREFIX = "sergeant";
+
+    public static boolean isSergeantId(String spawnId) {
+        return spawnId != null && spawnId.startsWith(SPAWN_ID_PREFIX);
+    }
+
     public SergeantSpec {
         if (health <= 0 || sightRange <= 0 || roundsPerBurst <= 0 || roundDamage < 0
                 || roundIntervalSeconds <= 0 || burstCooldownSeconds <= 0) {

@@ -63,7 +63,7 @@
 - SR-265: An extra-life item spawns with the other items (rarer than them); picking it up gives one more life.
 - SR-266: When the player dies with lives left, they respawn at their start position with full health (after the death is shown, with a short spawn protection); the game is over only when the last life is lost.
 - SR-267: Besides the arrows, Space and Tab: Q moves left, W forward (up), E right, D down; a right click uses the weapon in hand (shoot, swing or drop a bomb). A keeps moving left and S down; D now moves down instead of right.
-- SR-274: After winning level 1 the player can go on to level 2 (a Next level choice on the win screen); both frontends. *(Status: shared level progress done; frontend win-screen flow pending.)*
+- SR-274: After winning level 1 the player can go on to level 2 (a Next level choice on the win screen); both frontends. JavaFX: a Next level button on the win screen; libGDX: a Next Level button on the win overlay. A new game (menu or after game over) starts on level 1 again.
 - SR-275: The levels are defined in the levels model (`xmi/levels/levels.ecore` + `levels.xmi`, dynamic EMF): wall zones, threat capacity and the sergeant with its numbers per difficulty. A level with zones has exactly four, each weaker than the one outside it; the loader fails fast otherwise.
 - SR-276: Level 2 is still a generated maze (the same generator and navigation graph); only the wall materials are assigned by zone. The maze is divided into four concentric zones around the heart.
 - SR-277: In level 2 the outer zone has the strongest walls and the inner zone (around the heart) the weakest: fewer breakable walls and tougher materials outside, more and weaker ones inside.

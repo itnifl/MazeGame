@@ -48,6 +48,16 @@ Right and down keep using `pumpkinbomber.png`. Run it **after** `DamageSpriteGen
 
 Output is deterministic and overwrites existing files.
 
+## SergeantSpriteGenerator
+
+Draws `zombie-sergeant.png` (the zombie sprite with a cap, stripes and a gatling gun) from `zombie1-down.png`:
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/SergeantSpriteGenerator.java
+```
+
+The gatling gun pickup sprite (`pickups/gatling-gun.png`) comes from `PickupSpriteGenerator` below.
+
 ## PickupSpriteGenerator
 
 Creates the pickup sprites named in `xmi/items/items.xmi` in `main/game/maze/pickups/` (64x64,

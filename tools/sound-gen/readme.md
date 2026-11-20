@@ -11,6 +11,8 @@ No external tools or samples; output is deterministic (seeded noise) and overwri
 | `pickup-laser.wav` | rising electronic chirp |
 | `pickup-sledgehammer.wav` | metallic clank |
 | `pickup-shield.wav` | shimmering rising chord |
+| `pickup-gatling.wav` | two metallic clacks (a magazine slapped in) |
+| `gatling-burst.wav` | five quick gunshots; used by the sergeants' guns and the dropped gatling gun |
 | `pickup-heart.wav` | 8-bit "extra life" jingle: six quick square-wave notes rising over two octaves (G-B-D), the last one ringing with vibrato. Written for this game, not a copy of any other game's sound |
 | `pickup-extra-life.wav` | bell fanfare: a quick C-E-G-C climb in a triangle wave ending on a shimmering major chord |
 | `laser-fire.wav` | laser "pew" |

@@ -2,6 +2,7 @@ package main.game.maze.characters;
 
 import javafx.scene.Node;
 import main.game.maze.App;
+import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.level.SergeantGunner;
 import main.game.maze.game.level.SergeantSpec;
@@ -25,6 +26,8 @@ public class SergeantCharacter extends ZombieCharacter {
         /** Draws the tracer of one round (on the JavaFX thread). */
         void tracer(double fromX, double fromY, double toX, double toY);
     }
+
+    private static final long FIRE_SOUND_COOLDOWN_MS = 500L;
 
     private final SergeantSpec spec;
     private final SergeantGunner gunner;
@@ -64,6 +67,10 @@ public class SergeantCharacter extends ZombieCharacter {
         for (int round = 0; round < rounds; round++) {
             range.tracer(at[0], at[1], playerX, playerY);
             range.hitPlayer(spec.roundDamage());
+        }
+        if (rounds > 0 && spec.fireSound() != null) {
+            AudioEngine.get().playRateLimited(spec.fireSound(), "sergeant.fire." + System.identityHashCode(this),
+                    FIRE_SOUND_COOLDOWN_MS);
         }
         return rounds;
     }

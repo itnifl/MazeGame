@@ -60,6 +60,9 @@ import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
 import main.game.maze.libgdx.helper.GdxWallCollapseSupport;
 import main.game.maze.libgdx.helper.GdxWallDamageSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
+import main.game.maze.game.level.LevelCatalogLoader;
+import main.game.maze.game.level.LevelProgress;
+import main.game.maze.libgdx.helper.GdxSergeantSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.common.controller.state.GameModeRouter;
@@ -170,6 +173,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     OrthographicCamera hudCamera;
     Viewport viewport;
     final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
+    /** Which level is being played; the win overlay moves on to the next one. */
+    private final LevelProgress levelProgress = new LevelProgress(LevelCatalogLoader.loadDefault());
+    private final GdxSergeantSupport sergeantSupport = new GdxSergeantSupport();
     private final ScoringEngine scoringEngine = new ScoringEngine();
     final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();    private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
     private final GdxGameAudioCoordinator gameAudioCoordinator = new GdxGameAudioCoordinator(gameAudioDirector, visualStyle);
@@ -264,7 +270,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 hudCamera,
                 this::currentScore,
                 () -> requestReturnToMenu(false),
-                this::openHighScoresFromWin))
+                this::openHighScoresFromWin,
+                this::startNextLevel))
             .register(() -> overlayModeCoordinator.updateGameOver(
                 hudCamera,
                 this::startGameFromSelection,
@@ -449,6 +456,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     catalog.spec(PickupKind.LASER_RIFLE), PlayerIds.LOCAL_PLAYER);
             case SLEDGEHAMMER -> GdxWeaponSupport.swingSledgehammer(worldModel, animatedEnemies, maze, player,
                     catalog.spec(PickupKind.SLEDGEHAMMER), PlayerIds.LOCAL_PLAYER);
+            case GATLING_GUN -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
+                    catalog.spec(PickupKind.GATLING_GUN), PlayerIds.LOCAL_PLAYER);
         }
     }
 
@@ -482,6 +491,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         tickPlayerBombs(dt);
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
+        sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
         GdxWeaponSupport.tickEffects(worldModel, animatedEnemies, dt);
         // enemies die from bombs, lasers, sledgehammers and collapsing walls; credit each kill to its killer
         GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
@@ -621,6 +631,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 winOverlayController,
                 worldModel,
                 gameAudioCoordinator::switchToWinMusic);
+        winOverlayController.setNextLevelAvailable(levelProgress.hasNext());
     }
 
     private void draw() {
@@ -685,8 +696,24 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         highScoreRows.addAll(GdxScoreSupport.loadHighScores(highScoreRepository));
     }
 
+    /** A new game: level 1 with the difficulty's own weapons. */
     private void startGameFromSelection() {
+        levelProgress.restart();
+        startCurrentLevel();
+    }
+
+    /** After a win: the next level, with the weapons the player holds now. */
+    private void startNextLevel() {
+        if (!levelProgress.hasNext()) {
+            return;
+        }
+        levelProgress.advance(worldModel.arsenal());
+        startCurrentLevel();
+    }
+
+    private void startCurrentLevel() {
         Difficulty selected = selectedDifficulty();
+        runtimeModelLoader.useLevel(levelProgress.current());
         var startFlow = gameSessionStartFlowCoordinator.start(buildStartFlowRequest(selected));
         applyStartFlow(startFlow, selected);
     }
@@ -700,11 +727,15 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     MazeArena buildArenaForSelectedDifficulty(Difficulty selectedDifficulty) {
-        return GdxGameLayoutSupport.buildArenaForDifficulty(
+        MazeArena arena = GdxGameLayoutSupport.buildArenaForDifficulty(
                 selectedDifficulty,
                 useRealMaze,
                 cellSize,
                 SEED);
+        // same generated maze; a level with zones only changes which walls are strong and which weak
+        levelProgress.current().applyWalls(GdxWallDamageSupport.worldFrom(arena),
+                (int) arena.widthPx(), (int) arena.heightPx());
+        return arena;
     }
 
     int baseScoreForDifficulty(Difficulty difficulty) {
@@ -740,6 +771,15 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         viewport = applied.viewport();
         worldModel.lives().reset(PlayerLives.startingFor(selected));
         worldModel.resetArsenal(Math.max(0, startFlow.startState().runtimeModel().playerBombCount()));
+        // the weapons of the previous level carry over (nothing on level 1)
+        var inherited = levelProgress.inheritedArsenal();
+        if (inherited != null) {
+            worldModel.inheritArsenal(inherited);
+        }
+        sergeantSupport.reset();
+        if (levelProgress.number() > 1) {
+            flashStatus("Level " + levelProgress.number() + ": " + levelProgress.current().name(), 2.5f);
+        }
         worldModel.pickupField().clear();
         worldModel.shield().reset();
         worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);   // spawn shield, like the pickup
