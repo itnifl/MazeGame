@@ -5,6 +5,7 @@ import main.game.maze.game.score.PlayerIds;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.PickupKind;
+import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.common.remains.DeathCause;
@@ -496,6 +497,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         if (player == null) {
             return;
         }
+        if (worldModel.arsenal().selected() == Weapon.PULSE_CANNON && worldModel.arsenal().count(Weapon.PULSE_CANNON) > 0) {
+            startPulseCharge();   // it takes two seconds to energy up before the beam leaves; nothing is spent yet
+            return;
+        }
         Weapon used = worldModel.arsenal().use();
         if (used == null) {
             AudioEngine.get().play(WEAPON_SWITCH_SOUND);
@@ -514,11 +519,61 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     catalog.spec(PickupKind.SLEDGEHAMMER), PlayerIds.LOCAL_PLAYER);
             case GATLING_GUN -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
                     catalog.spec(PickupKind.GATLING_GUN), PlayerIds.LOCAL_PLAYER);
+            case PULSE_CANNON -> firePulseBeam();
+        }
+    }
+
+    private final main.game.maze.game.items.PulseCharge pulseCharge = new main.game.maze.game.items.PulseCharge();
+
+    private void startPulseCharge() {
+        if (pulseCharge.charging()) {
+            return;
+        }
+        PickupSpec spec = worldModel.pickupField().catalog().spec(PickupKind.PULSE_CANNON);
+        pulseCharge.start(spec.chargeSeconds());
+        if (spec.chargeSound() != null) {
+            AudioEngine.get().play(spec.chargeSound());
+        }
+        flashStatus("Pulse cannon charging...", 2.0f);
+    }
+
+    /** Per frame while the pulse beam cannon charges: the ball of light on the player, and the shot when the charge is full. */
+    private void tickPulseCharge(float dt) {
+        if (!pulseCharge.charging()) {
+            return;
+        }
+        if (player == null || combatState.isDead() || worldModel.arsenal().selected() != Weapon.PULSE_CANNON
+                || worldModel.arsenal().count(Weapon.PULSE_CANNON) <= 0) {
+            pulseCharge.cancel();   // another weapon was chosen, or the player died: nothing is spent
+            return;
+        }
+        worldModel.effects().add(new GameWorldModel.ActiveEffect(new main.game.maze.common.graphics.fire.PulseChargeEffect(
+                player.x(), player.y(), pulseCharge.progress())));
+        if (pulseCharge.tick(dt) && worldModel.arsenal().use() == Weapon.PULSE_CANNON) {
+            firePulseBeam();
+        }
+    }
+
+    private void firePulseBeam() {
+        PickupSpec cannon = worldModel.pickupField().catalog().spec(PickupKind.PULSE_CANNON);
+        // the beam: far stronger than the laser, it blows up a tower in one shot
+        GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player, cannon, PlayerIds.LOCAL_PLAYER);
+        worldModel.setExplosionShakeRemainingSeconds((float) BombImpact.SHAKE_SECONDS * 0.6f);
+        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), (float) BombImpact.SHAKE_STRENGTH * 0.7f));
+    }
+
+    /** Level 6 and every level after it: the pulse beam cannon is given when the player starts their last life. */
+    private void giveLastLifeGift() {
+        var gift = levelProgress.current().lastLifeGift();
+        if (gift != null) {
+            gift.give(worldModel.arsenal());
+            flashStatus("Last life! " + ArsenalHud.text(worldModel.arsenal(), null), 2.5f);
         }
     }
 
     /** Tab: switch to the next weapon in stock. */
     void switchWeapon() {
+        pulseCharge.cancel();
         Weapon before = worldModel.arsenal().selected();
         Weapon now = worldModel.arsenal().cycle();
         if (now != before) {
@@ -549,6 +604,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
         tickLava();   // first: lava kills before a hole or anything else can move the player
+        tickPulseCharge(dt);
         tickHazards(dt);
         if (player != null) {
             guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
@@ -745,6 +801,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);
         int left = worldModel.lives().remaining();
         flashStatus(left == 1 ? "Last life!" : "Life lost - " + left + " lives left", 2.5f);
+        pulseCharge.cancel();
+        if (left == 1) {
+            giveLastLifeGift();
+        }
         return true;
     }
 
@@ -922,6 +982,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             worldModel.inheritArsenal(inherited);
         }
         sergeantSupport.reset();
+        pulseCharge.cancel();
+        if (worldModel.lives().remaining() == 1) {
+            giveLastLifeGift();   // a level that is started on the last life gives the gift at once
+        }
         guardTowerSupport.reset(levelProgress.current().guardTower());
         var builderWorld = GdxWallDamageSupport.worldFrom(maze);
         wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx(),

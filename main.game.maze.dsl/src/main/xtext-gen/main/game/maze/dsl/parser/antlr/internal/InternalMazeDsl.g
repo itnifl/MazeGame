@@ -2238,9 +2238,28 @@ ruleLevelConfig returns [EObject current=null]
 				}
 			)
 		)?
-		otherlv_26='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0());
+				}
+				lv_lastLifeGift_26_0=ruleLastLifeGiftConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"lastLifeGift",
+						lv_lastLifeGift_26_0,
+						"main.game.maze.dsl.MazeDsl.LastLifeGiftConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_27='}'
 		{
-			newLeafNode(otherlv_26, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_21());
+			newLeafNode(otherlv_27, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_22());
 		}
 	)
 ;
@@ -4211,6 +4230,70 @@ ruleLavaConfig returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleLastLifeGiftConfig
+entryRuleLastLifeGiftConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLastLifeGiftConfigRule()); }
+	iv_ruleLastLifeGiftConfig=ruleLastLifeGiftConfig
+	{ $current=$iv_ruleLastLifeGiftConfig.current; }
+	EOF;
+
+// Rule LastLifeGiftConfig
+ruleLastLifeGiftConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='lastLifeWeapon'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getLastLifeGiftConfigAccess().getLastLifeWeaponKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLastLifeGiftConfigAccess().getWeaponValidIDParserRuleCall_1_0());
+				}
+				lv_weapon_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLastLifeGiftConfigRule());
+					}
+					set(
+						$current,
+						"weapon",
+						lv_weapon_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_2='shots'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getLastLifeGiftConfigAccess().getShotsKeyword_2());
+		}
+		(
+			(
+				lv_shots_3_0=RULE_INT
+				{
+					newLeafNode(lv_shots_3_0, grammarAccess.getLastLifeGiftConfigAccess().getShotsINTTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLastLifeGiftConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"shots",
+						lv_shots_3_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+	)
+;
+
 // Entry rule entryRuleTeleportRulesConfig
 entryRuleTeleportRulesConfig returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getTeleportRulesConfigRule()); }
@@ -4974,76 +5057,88 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getStartRadiusKeyword_62());
 		}
 		    |
+		kw='lastLifeWeapon'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getLastLifeWeaponKeyword_63());
+		}
+		    |
+		kw='shots'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getShotsKeyword_64());
+		}
+		    |
 		kw='lava'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getLavaKeyword_63());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getLavaKeyword_65());
 		}
 		    |
 		kw='streams'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getStreamsKeyword_64());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getStreamsKeyword_66());
 		}
 		    |
 		kw='width'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getWidthKeyword_65());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWidthKeyword_67());
 		}
 		    |
 		kw='bridges'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgesKeyword_66());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgesKeyword_68());
 		}
 		    |
 		kw='bridgeLength'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgeLengthKeyword_67());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgeLengthKeyword_69());
 		}
 		    |
 		kw='meander'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getMeanderKeyword_68());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getMeanderKeyword_70());
 		}
 		    |
 		kw='wavelength'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getWavelengthKeyword_69());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWavelengthKeyword_71());
 		}
 		    |
 		kw='flowSpeed'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getFlowSpeedKeyword_70());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFlowSpeedKeyword_72());
 		}
 		    |
 		kw='glow'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getGlowKeyword_71());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGlowKeyword_73());
 		}
 		    |
 		kw='crust'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getCrustKeyword_72());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getCrustKeyword_74());
 		}
 		    |
 		kw='deathSound'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getDeathSoundKeyword_73());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDeathSoundKeyword_75());
 		}
 		    |
 		kw='buildSound'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_74());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_76());
 		}
 	)
 ;

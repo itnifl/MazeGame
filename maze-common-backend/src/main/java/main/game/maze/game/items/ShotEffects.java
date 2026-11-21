@@ -15,6 +15,9 @@ public final class ShotEffects {
 
     /** The effect of one use of a player weapon along (x1, y1) -> (x2, y2). */
     public static PuffEffect forWeapon(PickupKind weapon, double x1, double y1, double x2, double y2) {
+        if (weapon == PickupKind.PULSE_CANNON) {
+            return new main.game.maze.common.graphics.fire.PulseBeamEffect(x1, y1, x2, y2);
+        }
         return weapon == PickupKind.GATLING_GUN
                 ? new BulletSprayEffect(x1, y1, x2, y2)
                 : new LaserBeamEffect(x1, y1, x2, y2);

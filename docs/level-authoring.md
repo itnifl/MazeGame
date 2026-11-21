@@ -92,6 +92,19 @@ A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
 
+## The gift of the last life
+
+```xml
+<lastLifeGift weapon="PULSE_CANNON" shots="6"/>
+```
+
+In the DSL: `lastLifeWeapon PULSE_CANNON shots 6`. When the player starts their last life (respawns with one life left, or starts the
+level with one life) the weapon and its shots are put in their hands; it stays the weapon in hand until the player chooses another
+(Tab) and the shots stay in stock. `weapon` is a name of the `Weapon` enum. Level 6 has it, and because every level after it is
+built on the one before (`baseLevel`), so does every later level. The pulse beam cannon is an item of `items.xmi` (kind
+`PULSE_CANNON`, never spawning): `chargeSeconds="2.0"` is the time it takes to energy up after the fire key, `damage="6000"` and
+`range="1200.0"` make the beam strong enough to blow up a tower in a single shot, `chargeSound` and `useSound` are its sounds.
+
 ## Lava
 
 ```xml

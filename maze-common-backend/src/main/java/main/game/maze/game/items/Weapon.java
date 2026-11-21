@@ -6,7 +6,9 @@ public enum Weapon {
     LASER_RIFLE,
     SLEDGEHAMMER,
     /** Taken from a fallen zombie sergeant: a burst of rounds along a line, like the laser rifle. */
-    GATLING_GUN;
+    GATLING_GUN,
+    /** The gift of the last life: charges for two seconds, then one beam that blows up a tower. */
+    PULSE_CANNON;
 
     /** The pickup that refills this weapon. */
     public PickupKind pickup() {
@@ -15,6 +17,7 @@ public enum Weapon {
             case LASER_RIFLE -> PickupKind.LASER_RIFLE;
             case SLEDGEHAMMER -> PickupKind.SLEDGEHAMMER;
             case GATLING_GUN -> PickupKind.GATLING_GUN;
+            case PULSE_CANNON -> PickupKind.PULSE_CANNON;
         };
     }
 }

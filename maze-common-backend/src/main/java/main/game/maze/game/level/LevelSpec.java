@@ -28,6 +28,7 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param wallBuilder          the wall builders round the heart, or null
  * @param builderCounts        wall builders per difficulty tier
  * @param lava                 the streams of lava under the walls, or null
+ * @param lastLifeGift         the weapon given when the player starts their last life, or null
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
@@ -35,7 +36,7 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
                         MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
                         TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts,
                         WallBuilderSpec wallBuilder, Map<DifficultyTier, Integer> builderCounts,
-                        LavaSpec lava) {
+                        LavaSpec lava, LastLifeGiftSpec lastLifeGift) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
@@ -78,6 +79,10 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
         Point2D heart = new Point2D(boardWidth / 2.0, boardHeight / 2.0);
         world.setLava(main.game.maze.game.lava.LavaGenerator.generate(lava, world, boardWidth, boardHeight, start, heart,
                 new java.util.Random()));
+    }
+
+    public boolean hasLastLifeGift() {
+        return lastLifeGift != null;
     }
 
     public boolean hasLava() {

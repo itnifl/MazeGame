@@ -36,5 +36,6 @@
   </levels>
   <levels number="6" name="The Lava Streams" baseLevel="5">
     <lava streamCount="2" width="46.0" bridgesPerStream="2" bridgeLength="56.0" meander="95.0" wavelength="340.0" flowSpeed="34.0" glow="0.65" crust="0.45" deathSound="/main/game/maze/sounds/lava-death.wav"/>
+    <lastLifeGift weapon="PULSE_CANNON" shots="6"/>
   </levels>
 </levels:LevelModel>

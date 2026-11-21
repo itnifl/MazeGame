@@ -34,6 +34,10 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
 
         /** Receives the final death (game over). */
         IDeathSubscriber gameOver();
+
+        /** The player starts their last life (after a respawn with one life left). */
+        default void lastLifeStarted() {
+        }
     }
 
     private final PlayerLives lives;
@@ -104,5 +108,8 @@ public final class FxPlayerLifeController implements IDeathSubscriber {
         host.resumePlayerMovement();
         int left = lives.remaining();
         host.showMessage(left == 1 ? "Last life!" : "Life lost - " + left + " lives left");
+        if (left == 1) {
+            host.lastLifeStarted();
+        }
     }
 }

@@ -440,3 +440,9 @@ These requirements have been implemented and verified.
 - **SR-355** *(UX)*: The FINAL LEVEL title shows over a game that is already running (the spawn shield protects the player for its 3 seconds). Freeze the enemies and the clock while the title is on, and offer to skip it; add a replay of the voice line and subtitles.
 
 - **SR-356** *(Accessibility)*: Both dark voices are English only and recorded with a Windows voice (like SR-311); provide text-only mode and re-record per language.
+
+- **SR-362** *(Gameplay)*: The pulse beam stops at the first enemy or wall like the laser. Let it pierce everything in a line, or at least a tower and what stands behind it, and let a charged shot be held and released with the key; an enemy hit while charging could break the charge.
+
+- **SR-363** *(Balance, observability)*: The gift is six shots whenever the last life starts, even on every restart of a level. Count how often it is given and used per level and difficulty (SR-252) and decide whether it should be given once per level; a HUD charge bar would also help.
+
+- **SR-364** *(Model-driven)*: Which weapon, and how many shots, is in the level model, but when it is given (the last life) is in code; add a trigger to `LastLifeGift` (last life, level start, boss defeated) so authors can place gifts.

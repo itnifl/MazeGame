@@ -112,6 +112,9 @@ public final class LevelCatalogLoader {
         LavaSpec lava = DynamicModel.value(level, "lava") instanceof EObject own ? lavaOf(own, number)
                 : base != null ? base.lava() : null;
 
+        LastLifeGiftSpec gift = DynamicModel.value(level, "lastLifeGift") instanceof EObject own ? giftOf(own, number)
+                : base != null ? base.lastLifeGift() : null;
+
         TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
                 : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
 
@@ -127,7 +130,7 @@ public final class LevelCatalogLoader {
         int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
                 DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
         return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
-                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts, builder, builderCounts, lava);
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts, builder, builderCounts, lava, gift);
     }
 
     /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
@@ -200,6 +203,14 @@ public final class LevelCatalogLoader {
     private static TeleportGhostSpec ghostOf(EObject ghost) {
         return new TeleportGhostSpec(DynamicModel.string(ghost, "displayName"), DynamicModel.integer(ghost, "health"),
                 DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"));
+    }
+
+    private static LastLifeGiftSpec giftOf(EObject gift, int number) {
+        try {
+            return LastLifeGiftSpec.of(DynamicModel.string(gift, "weapon"), DynamicModel.integer(gift, "shots"));
+        } catch (IllegalArgumentException invalid) {
+            throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
+        }
     }
 
     private static LavaSpec lavaOf(EObject lava, int number) {

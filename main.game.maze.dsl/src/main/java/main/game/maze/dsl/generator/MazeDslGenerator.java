@@ -553,6 +553,10 @@ public class MazeDslGenerator extends AbstractGenerator {
                 optionalText(x, "deathSound", lv.getDeathSound());
                 x.append("/>\n");
             }
+            LastLifeGiftConfig gift = level.getLastLifeGift();
+            if (gift != null) {
+                x.append("    <lastLifeGift weapon=\"").append(xml(gift.getWeapon())).append("\" shots=\"").append(gift.getShots()).append("\"/>\n");
+            }
             x.append("  </levels>\n");
         }
         x.append("</levels:LevelModel>\n");

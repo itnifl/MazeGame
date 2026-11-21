@@ -13,6 +13,7 @@ import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
 import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LastLifeGiftConfig;
 import main.game.maze.dsl.mazeDsl.LavaConfig;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LevelZone;
@@ -80,6 +81,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case MazeDslPackage.IMPORT:
 				sequence_Import(context, (Import) semanticObject); 
+				return; 
+			case MazeDslPackage.LAST_LIFE_GIFT_CONFIG:
+				sequence_LastLifeGiftConfig(context, (LastLifeGiftConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.LAVA_CONFIG:
 				sequence_LavaConfig(context, (LavaConfig) semanticObject); 
@@ -324,6 +328,29 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     LastLifeGiftConfig returns LastLifeGiftConfig
+	 *
+	 * Constraint:
+	 *     (weapon=ValidID shots=INT)
+	 * </pre>
+	 */
+	protected void sequence_LastLifeGiftConfig(ISerializationContext context, LastLifeGiftConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__WEAPON) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__WEAPON));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__SHOTS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__SHOTS));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getLastLifeGiftConfigAccess().getWeaponValidIDParserRuleCall_1_0(), semanticObject.getWeapon());
+		feeder.accept(grammarAccess.getLastLifeGiftConfigAccess().getShotsINTTerminalRuleCall_3_0(), semanticObject.getShots());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     LavaConfig returns LavaConfig
 	 *
 	 * Constraint:
@@ -371,7 +398,8 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         towerCounts+=TowerCountConfig* 
 	 *         wallBuilder=WallBuilderConfig? 
 	 *         builderCounts+=BuilderCountConfig* 
-	 *         lava=LavaConfig?
+	 *         lava=LavaConfig? 
+	 *         lastLifeGift=LastLifeGiftConfig?
 	 *     )
 	 * </pre>
 	 */

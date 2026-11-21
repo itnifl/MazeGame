@@ -330,3 +330,6 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-73**: The last level starts with the title FINAL LEVEL (about 2.8 s,
   slam, shake, fade) and a dark voice. Winning it shows GAME WON and a dark
   voice says "Ultimate victory".
+- **GR-74**: From level 6 on, starting the last life gives the pulse beam cannon
+  (6 shots) in the hands. Fire charges for 2 s, then one beam of 6000 damage
+  over 1200 px that blows up a tower in one shot; another weapon cancels it.

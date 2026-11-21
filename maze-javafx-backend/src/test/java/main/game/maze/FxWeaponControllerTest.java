@@ -239,4 +239,40 @@ class FxWeaponControllerTest {
         assertEquals(weapons.pickupField().catalog().spec(PickupKind.GATLING_GUN).amount(),
                 weapons.arsenal().count(Weapon.GATLING_GUN));
     }
+
+    @Test
+    @DisplayName("the last-life gift: the pulse cannon with six shots in the hands; fire starts a two second charge and spends nothing yet")
+    void pulseCannonChargesFirst() {
+        weapons.grantLastLifeGift(main.game.maze.game.level.LevelCatalogLoader.loadDefault().level(6).lastLifeGift());
+        assertEquals(Weapon.PULSE_CANNON, weapons.arsenal().selected());
+        assertEquals(6, weapons.arsenal().count(Weapon.PULSE_CANNON));
+        assertTrue(host.messages.stream().anyMatch(m -> m.contains("Last life")));
+
+        weapons.useWeapon();
+        assertTrue(weapons.pulseCharging(), "charging up");
+        assertEquals(6, weapons.arsenal().count(Weapon.PULSE_CANNON), "no shot is spent until the beam leaves");
+        weapons.tick(0);
+        weapons.tick(1_500_000_000L);                 // 1.5 s later: still charging
+        assertTrue(weapons.pulseCharging());
+        assertEquals(6, weapons.arsenal().count(Weapon.PULSE_CANNON));
+    }
+
+    @Test
+    @DisplayName("choosing another weapon cancels the charge and spends nothing; the cannon stays in stock")
+    void switchingCancelsTheCharge() {
+        weapons.grantLastLifeGift(main.game.maze.game.level.LevelCatalogLoader.loadDefault().level(6).lastLifeGift());
+        weapons.useWeapon();
+        weapons.switchWeapon();
+        assertFalse(weapons.pulseCharging());
+        assertTrue(weapons.arsenal().selected() != Weapon.PULSE_CANNON);
+        assertEquals(6, weapons.arsenal().count(Weapon.PULSE_CANNON));
+    }
+
+    @Test
+    @DisplayName("a level without the gift gives nothing")
+    void noGift() {
+        int before = weapons.arsenal().count(Weapon.PULSE_CANNON);
+        weapons.grantLastLifeGift(null);
+        assertEquals(before, weapons.arsenal().count(Weapon.PULSE_CANNON));
+    }
 }

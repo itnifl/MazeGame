@@ -54,4 +54,13 @@
       pickupSound="/main/game/maze/sounds/pickup-gatling.wav"
       useSound="/main/game/maze/sounds/gatling-burst.wav"
       spawnWeight="0" amount="5" damage="45" range="450.0"/>
+
+  <!-- never spawns: the gift of the last life (levels.xmi lastLifeGift). Charges for 2 seconds, then one beam strong enough to
+       blow up a guard tower (1500 hit points) in a single shot; six shots. -->
+  <items kind="PULSE_CANNON" displayName="Pulse beam cannon"
+      sprite="/main/game/maze/pickups/pulse-cannon.png"
+      pickupSound="/main/game/maze/sounds/pickup-pulse.wav"
+      useSound="/main/game/maze/sounds/pulse-fire.wav"
+      chargeSound="/main/game/maze/sounds/pulse-charge.wav"
+      spawnWeight="0" amount="6" damage="6000" range="1200.0" chargeSeconds="2.0"/>
 </items:PickupModel>

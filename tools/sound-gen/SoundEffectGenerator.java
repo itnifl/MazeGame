@@ -44,6 +44,9 @@ public final class SoundEffectGenerator {
         write(dir, "bomb-explosion.wav", bombExplosion());
         write(dir, "teleport.wav", teleport());
         write(dir, "wall-build.wav", wallBuild());
+        write(dir, "pickup-pulse.wav", pickupPulse());
+        write(dir, "pulse-charge.wav", pulseCharge());
+        write(dir, "pulse-fire.wav", pulseFire());
         write(dir, "lava-death.wav", lavaDeath());
         write(dir, "rpg-launch.wav", rpgLaunch());
         write(dir, "rpg-explosion.wav", rpgExplosion());
@@ -272,6 +275,80 @@ public final class SoundEffectGenerator {
                 double t = i / (double) RATE;
                 out[start + i] += Math.sin(2 * Math.PI * (130 - 400 * t) * t) * Math.exp(-t * 35) * 0.8;
             }
+        }
+        return out;
+    }
+
+    /** Taking the pulse beam cannon in hand: a heavy power-up, a rising electric sweep ending in a ringing blue chord. */
+    static double[] pickupPulse() {
+        double[] out = buffer(0.6);
+        double phase = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double freq = t < 0.35 ? 120 + 1500 * (t / 0.35) * (t / 0.35) : 1620;
+            phase += 2 * Math.PI * freq / RATE;
+            double sweep = (Math.signum(Math.sin(phase)) * 0.25 + Math.sin(phase) * 0.35) * Math.min(1, t / 0.02) * (t < 0.35 ? 1 : Math.exp(-(t - 0.35) * 6));
+            double chord = t < 0.3 ? 0 : (Math.sin(2 * Math.PI * 523.3 * t) + Math.sin(2 * Math.PI * 784.0 * t) * 0.7
+                    + Math.sin(2 * Math.PI * 1046.5 * t) * 0.5) * 0.22 * Math.exp(-(t - 0.3) * 6);
+            out[i] = sweep + chord;
+        }
+        return out;
+    }
+
+    /**
+     * The pulse beam cannon charging up for two seconds: a deep hum that climbs and speeds up into a rising electric whine,
+     * with a growing crackle of static and a throb that quickens until it is nearly a tone.
+     */
+    static double[] pulseCharge() {
+        double seconds = 2.0;
+        double[] out = buffer(seconds);
+        Random noise = new Random(71);
+        double phase = 0;
+        double whine = 0;
+        double crackle = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double u = t / seconds;
+            double freq = 55 + 900 * u * u + 60 * u;
+            phase += 2 * Math.PI * freq / RATE;
+            double hum = Math.sin(phase) * 0.55 + Math.sin(phase * 2.01) * 0.2 * u;
+            whine += 2 * Math.PI * (700 + 3200 * u * u) / RATE;
+            double thin = Math.sin(whine) * 0.22 * u * u;
+            double throb = 0.7 + 0.3 * Math.sin(2 * Math.PI * (3 + 28 * u * u) * t);
+            double white = noise.nextDouble() * 2 - 1;
+            crackle += 0.5 * (white - crackle);
+            double static_ = (white - crackle) * (noise.nextDouble() < 0.12 + 0.3 * u ? 0.5 : 0.0) * u;
+            double swell = Math.min(1.0, t / 0.15) * (0.55 + 0.45 * u);
+            out[i] = (hum * throb + thin + static_) * swell;
+        }
+        return out;
+    }
+
+    /**
+     * The pulse beam leaving the cannon: a huge crack and a blinding rising zap, a deep sub-bass boom that falls away, a
+     * ringing electric tail and a rumble. Much bigger than the laser, near the bomb in weight.
+     */
+    static double[] pulseFire() {
+        double[] out = buffer(1.8);
+        Random noise = new Random(73);
+        double zapPhase = 0;
+        double boomPhase = 0;
+        double rumble = 0;
+        double ring = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double white = noise.nextDouble() * 2 - 1;
+            double crack = white * Math.exp(-t * 38) * 0.9;
+            double zapFreq = t < 0.12 ? 400 + 7000 * (t / 0.12) : 7400 * Math.exp(-(t - 0.12) * 7) + 300;
+            zapPhase += 2 * Math.PI * zapFreq / RATE;
+            double zap = Math.signum(Math.sin(zapPhase)) * 0.3 * Math.exp(-t * 4.2) + Math.sin(zapPhase) * 0.35 * Math.exp(-t * 3.0);
+            boomPhase += 2 * Math.PI * (28 + 70 * Math.exp(-t * 4.0)) / RATE;
+            double boom = (Math.sin(boomPhase) + 0.4 * Math.sin(boomPhase * 2)) * Math.exp(-t * 1.9);
+            rumble += 0.05 * (white - rumble);
+            double rumbleLevel = rumble * 7.0 * Math.exp(-t * 2.2);
+            ring += 2 * Math.PI * (1250 + 80 * Math.sin(t * 9)) / RATE;
+            double tail = Math.sin(ring) * 0.18 * Math.exp(-t * 3.2) * Math.min(1, t / 0.05);
+            out[i] = crack + zap + boom + rumbleLevel + tail;
         }
         return out;
     }

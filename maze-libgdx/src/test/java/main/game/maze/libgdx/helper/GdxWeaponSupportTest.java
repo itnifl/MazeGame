@@ -263,4 +263,23 @@ class GdxWeaponSupportTest {
             @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
         };
     }
+
+    @Test
+    @DisplayName("the pulse beam blows up a guard tower (1500 hit points) in a single shot, the laser does not; the beam is drawn as a pulse beam")
+    void pulseBeamBlowsUpATowerInOneShot() {
+        int towerHealth = main.game.maze.game.level.LevelCatalogLoader.loadDefault().level(4).guardTower().health();
+        PlayerState player = new PlayerState(100, 200, 24);
+        player.attemptMove(1, 0, openMaze());                  // face right
+        GdxEnemyRuntime laserTarget = enemy(250, 200, towerHealth);
+        GdxWeaponSupport.fireLaser(world, List.of(laserTarget), openMaze(), player,
+                catalog.spec(PickupKind.LASER_RIFLE), PlayerIds.LOCAL_PLAYER);
+        assertTrue(laserTarget.isAlive(), "a laser shot does not kill a tower");
+
+        GdxEnemyRuntime tower = enemy(250, 200, towerHealth);
+        GdxWeaponSupport.fireLaser(world, List.of(tower), openMaze(), player,
+                catalog.spec(PickupKind.PULSE_CANNON), PlayerIds.LOCAL_PLAYER);
+        assertFalse(tower.isAlive(), "one pulse beam does");
+        assertEquals(DeathCause.SHOT, tower.deathCause());
+        assertTrue(world.effects().stream().anyMatch(e -> e.visual().effect() instanceof main.game.maze.common.graphics.fire.PulseBeamEffect));
+    }
 }

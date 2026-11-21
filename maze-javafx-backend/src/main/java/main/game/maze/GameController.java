@@ -197,6 +197,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void showMessage(String text)     { setHudMessage(text); }
         @Override public void livesChanged()               { runOnFx(GameController.this::updateBombHud); }
         @Override public IDeathSubscriber gameOver()       { return gameOverAction; }
+        @Override public void lastLifeStarted()            { giveLastLifeGift(); }
         @Override public void after(double seconds, Runnable action) {
             runOnFx(() -> {
                 PauseTransition wait = new PauseTransition(Duration.seconds(seconds));
@@ -213,6 +214,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
+        @Override public void impactShake() {
+            if (gameBoard != null) main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent());
+        }
         @Override public void redrawMaze() {
             if (mazeCanvas != null && maze != null) {
                 mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
@@ -787,6 +791,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
+        if (lives.remaining() == 1) {
+            giveLastLifeGift();   // a level that is started on the last life gives the gift at once
+        }
         // mines round the sergeants (level 3 and on), and the free ground the teleports come out on
         // lava under the maze: flowing streams with bridges (levels that have them)
         if (lavaLayer != null) lavaLayer.detach();
@@ -873,6 +880,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (lavaLayer != null) lavaLayer.render(now / 1e9);
         guardTowers.tick(now);
         wallBuilders.tick(now);
+    }
+
+    /** Level 6 and every level after it: the pulse beam cannon is given when the player starts their last life. */
+    private void giveLastLifeGift() {
+        weapons.grantLastLifeGift(App.levelProgress.current().lastLifeGift());
     }
 
     private final FxBannerView banner = new FxBannerView(() -> root);

@@ -41,6 +41,7 @@ public final class PickupSpriteGenerator {
         write(dir, "heal-arrow.png", healArrow());
         write(dir, "extra-life.png", extraLife());
         write(dir, "gatling-gun.png", gatlingGun());
+        write(dir, "pulse-cannon.png", pulseCannon());
     }
 
     static BufferedImage bomb() {
@@ -172,6 +173,45 @@ public final class PickupSpriteGenerator {
             g.fillPolygon(rect(cx + ux * 1.5, cy + uy * 1.5, px, py, ux, uy, 6.0, 1.0));
             g.setColor(new Color(0x45, 0x4a, 0x52));
             g.fillPolygon(rect(cx - ux * 2, cy - uy * 2, px, py, ux, uy, 6.0, 0.8));
+        });
+    }
+
+    /** The pulse beam cannon: a fat dark-steel barrel with glowing blue coils and a charged blue-white muzzle. */
+    static BufferedImage pulseCannon() {
+        return draw(g -> {
+            // blue glow behind
+            g.setColor(new Color(0x40, 0xa8, 0xff, 60));
+            g.fill(new Ellipse2D.Double(1, 6, 30, 22));
+            // the body and the barrel
+            g.setColor(OUTLINE);
+            g.fillRect(2, 11, 24, 11);
+            g.setColor(new Color(0x3a, 0x40, 0x50));
+            g.fillRect(3, 12, 22, 9);
+            g.setColor(new Color(0x5c, 0x64, 0x78));
+            g.fillRect(3, 12, 22, 2);
+            // grip and stock
+            g.setColor(OUTLINE);
+            g.fillRect(6, 21, 5, 7);
+            g.setColor(new Color(0x2a, 0x2e, 0x3a));
+            g.fillRect(7, 21, 3, 6);
+            // glowing coils round the barrel
+            for (int x = 8; x <= 20; x += 4) {
+                g.setColor(new Color(0x10, 0x30, 0x60));
+                g.fillRect(x, 10, 2, 13);
+                g.setColor(new Color(0x60, 0xd8, 0xff));
+                g.fillRect(x, 11, 2, 11);
+                g.setColor(new Color(0xd8, 0xfa, 0xff));
+                g.fillRect(x, 13, 1, 7);
+            }
+            // the muzzle, charged
+            g.setColor(OUTLINE);
+            g.fillRect(25, 9, 5, 15);
+            g.setColor(new Color(0x2a, 0x60, 0xc8));
+            g.fillRect(26, 10, 3, 13);
+            g.setColor(new Color(0xff, 0xff, 0xff));
+            g.fillRect(27, 14, 3, 5);
+            g.setColor(new Color(0xb8, 0xf0, 0xff, 180));
+            g.fill(new Ellipse2D.Double(26, 12, 6, 9));
         });
     }
 

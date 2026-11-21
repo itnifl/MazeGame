@@ -1028,13 +1028,22 @@ public interface MazeDslPackage extends EPackage
   int LEVEL_CONFIG__LAVA = 18;
 
   /**
+   * The feature id for the '<em><b>Last Life Gift</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__LAST_LIFE_GIFT = 19;
+
+  /**
    * The number of structural features of the '<em>Level Config</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG_FEATURE_COUNT = 19;
+  int LEVEL_CONFIG_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
@@ -1912,6 +1921,43 @@ public interface MazeDslPackage extends EPackage
   int LAVA_CONFIG_FEATURE_COUNT = 10;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
+   * @generated
+   */
+  int LAST_LIFE_GIFT_CONFIG = 26;
+
+  /**
+   * The feature id for the '<em><b>Weapon</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAST_LIFE_GIFT_CONFIG__WEAPON = 0;
+
+  /**
+   * The feature id for the '<em><b>Shots</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAST_LIFE_GIFT_CONFIG__SHOTS = 1;
+
+  /**
+   * The number of structural features of the '<em>Last Life Gift Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAST_LIFE_GIFT_CONFIG_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1919,7 +1965,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 26;
+  int TELEPORT_RULES_CONFIG = 27;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -1983,7 +2029,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 27;
+  int DIFFICULTY_LEVEL = 28;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -1993,7 +2039,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 28;
+  int ENEMY_TYPE = 29;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -2003,7 +2049,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 29;
+  int CHARACTER_TYPE_ENUM = 30;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -2013,7 +2059,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 30;
+  int BEHAVIOR_TYPE_ENUM = 31;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -2023,7 +2069,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 31;
+  int PROJECTILE_TYPE_ENUM = 32;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -2033,7 +2079,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 32;
+  int LOOT_ITEM_TYPE_ENUM = 33;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -2043,7 +2089,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 33;
+  int DROP_WEAPON_ENUM = 34;
 
 
   /**
@@ -3011,6 +3057,17 @@ public interface MazeDslPackage extends EPackage
   EReference getLevelConfig_Lava();
 
   /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift <em>Last Life Gift</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Last Life Gift</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_LastLifeGift();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3935,6 +3992,38 @@ public interface MazeDslPackage extends EPackage
   EAttribute getLavaConfig_DeathSound();
 
   /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LastLifeGiftConfig <em>Last Life Gift Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Last Life Gift Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LastLifeGiftConfig
+   * @generated
+   */
+  EClass getLastLifeGiftConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LastLifeGiftConfig#getWeapon <em>Weapon</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Weapon</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LastLifeGiftConfig#getWeapon()
+   * @see #getLastLifeGiftConfig()
+   * @generated
+   */
+  EAttribute getLastLifeGiftConfig_Weapon();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LastLifeGiftConfig#getShots <em>Shots</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Shots</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LastLifeGiftConfig#getShots()
+   * @see #getLastLifeGiftConfig()
+   * @generated
+   */
+  EAttribute getLastLifeGiftConfig_Shots();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4835,6 +4924,14 @@ public interface MazeDslPackage extends EPackage
     EReference LEVEL_CONFIG__LAVA = eINSTANCE.getLevelConfig_Lava();
 
     /**
+     * The meta object literal for the '<em><b>Last Life Gift</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__LAST_LIFE_GIFT = eINSTANCE.getLevelConfig_LastLifeGift();
+
+    /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5535,6 +5632,32 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute LAVA_CONFIG__DEATH_SOUND = eINSTANCE.getLavaConfig_DeathSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
+     * @generated
+     */
+    EClass LAST_LIFE_GIFT_CONFIG = eINSTANCE.getLastLifeGiftConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Weapon</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAST_LIFE_GIFT_CONFIG__WEAPON = eINSTANCE.getLastLifeGiftConfig_Weapon();
+
+    /**
+     * The meta object literal for the '<em><b>Shots</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAST_LIFE_GIFT_CONFIG__SHOTS = eINSTANCE.getLastLifeGiftConfig_Shots();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.

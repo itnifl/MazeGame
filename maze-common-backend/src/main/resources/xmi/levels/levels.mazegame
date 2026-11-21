@@ -133,5 +133,6 @@ game MazeGameLevels {
             crust 0.45
             deathSound "/main/game/maze/sounds/lava-death.wav"
         }
+        lastLifeWeapon PULSE_CANNON shots 6
     }
 }

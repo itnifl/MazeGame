@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts <em>Builder Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLava <em>Lava</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift <em>Last Life Gift</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig()
@@ -410,5 +411,27 @@ public interface LevelConfig extends EObject
    * @generated
    */
   void setLava(LavaConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Last Life Gift</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Last Life Gift</em>' containment reference.
+   * @see #setLastLifeGift(LastLifeGiftConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_LastLifeGift()
+   * @model containment="true"
+   * @generated
+   */
+  LastLifeGiftConfig getLastLifeGift();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift <em>Last Life Gift</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Last Life Gift</em>' containment reference.
+   * @see #getLastLifeGift()
+   * @generated
+   */
+  void setLastLifeGift(LastLifeGiftConfig value);
 
 } // LevelConfig

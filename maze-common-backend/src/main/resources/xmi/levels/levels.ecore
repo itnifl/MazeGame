@@ -62,6 +62,11 @@
         <details key="documentation" value="Streams of lava under the walls, with bridges over them."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lastLifeGift" eType="#//LastLifeGift" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A weapon the player is given when they start their last life. A level built on another (baseLevel) has it too, so every later level does."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="teleport" eType="#//TeleportRules" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="What happens when the player is teleported on this level."/>
@@ -367,6 +372,15 @@
         <details key="documentation" value="Played when the player falls into the lava."/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LastLifeGift">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The gift of the last life: a weapon (a name of the Weapon enum, for example PULSE_CANNON) and how many shots of it, put in the player's hands when they start their last life; it stays the weapon in hand until the player chooses another."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weapon" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="PULSE_CANNON"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shots" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="6"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TeleportRules">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

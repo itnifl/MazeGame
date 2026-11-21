@@ -17,6 +17,7 @@ import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
 import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LastLifeGiftConfig;
 import main.game.maze.dsl.mazeDsl.LavaConfig;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LevelZone;
@@ -237,6 +238,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass lavaConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass lastLifeGiftConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1341,6 +1349,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EReference getLevelConfig_LastLifeGift()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLevelZone()
   {
     return levelZoneEClass;
@@ -2276,6 +2295,39 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getLastLifeGiftConfig()
+  {
+    return lastLifeGiftConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLastLifeGiftConfig_Weapon()
+  {
+    return (EAttribute)lastLifeGiftConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLastLifeGiftConfig_Shots()
+  {
+    return (EAttribute)lastLifeGiftConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getTeleportRulesConfig()
   {
     return teleportRulesConfigEClass;
@@ -2547,6 +2599,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(levelConfigEClass, LEVEL_CONFIG__WALL_BUILDER);
     createEReference(levelConfigEClass, LEVEL_CONFIG__BUILDER_COUNTS);
     createEReference(levelConfigEClass, LEVEL_CONFIG__LAVA);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__LAST_LIFE_GIFT);
 
     levelZoneEClass = createEClass(LEVEL_ZONE);
     createEAttribute(levelZoneEClass, LEVEL_ZONE__DISPLAY_NAME);
@@ -2643,6 +2696,10 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__GLOW);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__CRUST);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
+
+    lastLifeGiftConfigEClass = createEClass(LAST_LIFE_GIFT_CONFIG);
+    createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__WEAPON);
+    createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__SHOTS);
 
     teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
     createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS);
@@ -2798,6 +2855,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getLevelConfig_WallBuilder(), this.getWallBuilderConfig(), null, "wallBuilder", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_BuilderCounts(), this.getBuilderCountConfig(), null, "builderCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_Lava(), this.getLavaConfig(), null, "lava", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_LastLifeGift(), this.getLastLifeGiftConfig(), null, "lastLifeGift", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLevelZone_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2894,6 +2952,10 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLavaConfig_Glow(), ecorePackage.getEDoubleObject(), "glow", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_Crust(), ecorePackage.getEDoubleObject(), "crust", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(lastLifeGiftConfigEClass, LastLifeGiftConfig.class, "LastLifeGiftConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLastLifeGiftConfig_Weapon(), ecorePackage.getEString(), "weapon", null, 0, 1, LastLifeGiftConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLastLifeGiftConfig_Shots(), ecorePackage.getEInt(), "shots", null, 0, 1, LastLifeGiftConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTeleportRulesConfig_CooldownSeconds(), ecorePackage.getEDouble(), "cooldownSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
