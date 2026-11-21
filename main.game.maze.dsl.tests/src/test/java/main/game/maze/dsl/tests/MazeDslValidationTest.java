@@ -224,4 +224,29 @@ public class MazeDslValidationTest {
             MazeDslPackage.Literals.PATROL_CONFIG,
             MazeDslValidator.WAYPOINT_OUTSIDE_ZONE);
     }
+
+    private static String levelWithSecondRing(String secondRing) {
+        return "game G { level 3 \"Three\" { mines { count 3 ringRadius 62.0 " + secondRing
+            + " triggerRadius 22.0 pulse 0.9 blastRadius 150.0 blastDamage 15 playerDamage 20 holeRadius 30.0 } } }";
+    }
+
+    @Test
+    public void testNegativeSecondRingIsAnError() throws Exception {
+        GameConfiguration result = parseHelper.parse(levelWithSecondRing("secondRing -1.0"));
+        validationHelper.assertError(result, MazeDslPackage.Literals.MINE_RING_CONFIG,
+            MazeDslValidator.INVALID_SECOND_RING);
+    }
+
+    @Test
+    public void testSecondRingInsideTheFirstIsAnError() throws Exception {
+        GameConfiguration result = parseHelper.parse(levelWithSecondRing("secondRing 40.0"));
+        validationHelper.assertError(result, MazeDslPackage.Literals.MINE_RING_CONFIG,
+            MazeDslValidator.INVALID_SECOND_RING);
+    }
+
+    @Test
+    public void testSecondRingOutsideTheFirstIsValid() throws Exception {
+        validationHelper.assertNoIssues(parseHelper.parse(levelWithSecondRing("secondRing 118.0")));
+        validationHelper.assertNoIssues(parseHelper.parse(levelWithSecondRing("")));
+    }
 }

@@ -187,7 +187,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countSegments(fromX, fromY, toX, toY, maze.walls());
         }
         @Override public void blast(float x, float y, int damage, float range, String sound, boolean shake) {
-            detonateBlast(x, y, damage, range, false, "Tower", sound, shake);
+            detonateBlast(x, y, damage, range, false, "Tower", sound, shake, null);   // nobody gets the kills
         }
         @Override public void hurtPlayer(int damage) {
             combatState.applyDirectDamage(damage);
@@ -302,7 +302,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::startNextLevel))
             .register(() -> overlayModeCoordinator.updateGameOver(
                 hudCamera,
-                this::startGameFromSelection,
+                this::startCurrentLevel,   // the level that was lost, not level 1
                 () -> requestReturnToMenu(false)));
     }
 
@@ -600,12 +600,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
      * boom and the screen shake. Only the player's own bomb hurts the player.
      */
     private void detonateBlast(float x, float y, int damage, float range, boolean hurtsPlayer, String label) {
-        detonateBlast(x, y, damage, range, hurtsPlayer, label, BombImpact.SOUND, true);
+        detonateBlast(x, y, damage, range, hurtsPlayer, label, BombImpact.SOUND, true, PlayerIds.LOCAL_PLAYER);
     }
 
     /** As above, with the sound of this blast (null: silent, the caller plays its own) and whether it shakes the screen. */
     private void detonateBlast(float x, float y, int damage, float range, boolean hurtsPlayer, String label,
-                               String sound, boolean shake) {
+                               String sound, boolean shake, String attackerId) {
         // player.x()/y() are already centre coordinates (see PlayerState.collides);
         // do NOT add halfSize() here.
         float playerCx = hurtsPlayer ? player.x() : Float.NaN;
@@ -620,7 +620,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 playerCx,
                 playerCy,
                 hurtsPlayer ? dmg -> combatState.applyDirectDamage(dmg) : null,
-                PlayerIds.LOCAL_PLAYER);
+                attackerId);
 
         // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
         GameMazeWorld survivingWorld = GdxWallDamageSupport.worldFrom(maze);

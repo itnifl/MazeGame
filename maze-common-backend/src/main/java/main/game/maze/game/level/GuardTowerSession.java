@@ -54,6 +54,12 @@ public final class GuardTowerSession {
         }
     }
 
+    /**
+     * The longest stretch one tick may advance: after a pause (a dialog over the game, a stalled frame) the towers
+     * carry on from where they were instead of firing everything they missed at once.
+     */
+    public static final double MAX_TICK_SECONDS = 0.25;
+
     private final GuardTowerSpec spec;
     private final Map<String, GuardTowerGun> guns = new HashMap<>();
     private final Map<String, Integer> lastHealth = new HashMap<>();
@@ -83,10 +89,19 @@ public final class GuardTowerSession {
      * @param walls    counts the walls between a tower and the player
      */
     public Result tick(double dt, List<Tower> towers, double playerX, double playerY, WallCounter walls) {
+        dt = Math.min(Math.max(0, dt), MAX_TICK_SECONDS);
         List<Round> rounds = new ArrayList<>();
         List<Rocket> launches = new ArrayList<>();
         List<TowerEvent> events = new ArrayList<>();
         int damage = 0;
+        // rockets already in the air fly first, so one launched in this tick does not fly for time before its launch
+        List<Impact> impacts = fly(dt);
+        for (Impact impact : impacts) {
+            boolean shielded = walls.between(impact.x(), impact.y(), playerX, playerY) > 0;
+            if (!shielded && Math.hypot(playerX - impact.x(), playerY - impact.y()) <= spec.rpgBlastRadius()) {
+                damage += spec.rpgPlayerDamage();
+            }
+        }
         for (Tower tower : towers) {
             events.addAll(healthEvents(tower));
             GuardTowerGun gun = guns.computeIfAbsent(tower.id(), id -> new GuardTowerGun(spec));
@@ -100,12 +115,6 @@ public final class GuardTowerSession {
             }
             for (int i = 0; i < shots.rpgs(); i++) {
                 launches.add(launch(tower, playerX, playerY));
-            }
-        }
-        List<Impact> impacts = fly(dt);
-        for (Impact impact : impacts) {
-            if (Math.hypot(playerX - impact.x(), playerY - impact.y()) <= spec.rpgBlastRadius()) {
-                damage += spec.rpgPlayerDamage();
             }
         }
         if (rounds.isEmpty() && launches.isEmpty() && impacts.isEmpty() && events.isEmpty() && damage == 0) {
@@ -138,7 +147,7 @@ public final class GuardTowerSession {
         for (int i = flying.size() - 1; i >= 0; i--) {
             Rocket rocket = flying.get(i);
             double left = remaining.get(rocket.id()) - Math.max(0, dt);
-            if (left <= 0 && dt > 0) {
+            if (left <= 0) {
                 flying.remove(i);
                 remaining.remove(rocket.id());
                 landed.add(0, new Impact(rocket.toX(), rocket.toY()));

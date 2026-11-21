@@ -40,10 +40,16 @@ class RocketEffectTest {
     @Test
     @DisplayName("every puff lies inside the effect's bounds")
     void withinBounds() {
-        RocketEffect rocket = new RocketEffect(50, 80, 0.7);
-        double[] b = rocket.bounds();
-        for (FirePuff puff : rocket.puffs(0, 1.3)) {
-            assertTrue(puff.x() >= b[0] && puff.x() <= b[2] && puff.y() >= b[1] && puff.y() <= b[3]);
+        for (double angle : new double[] {0, Math.PI / 2, Math.PI, -Math.PI / 2, 0.7}) {
+            RocketEffect rocket = new RocketEffect(50, 80, angle);
+            double[] b = rocket.bounds();
+            for (double clock : new double[] {0, 0.3, 1.3, 2.9}) {
+                for (FirePuff puff : rocket.puffs(0, clock)) {
+                    assertTrue(puff.x() - puff.radius() >= b[0] && puff.x() + puff.radius() <= b[2]
+                            && puff.y() - puff.radius() >= b[1] && puff.y() + puff.radius() <= b[3],
+                            "puff " + puff.layer() + " (radius included) inside the bounds at angle " + angle);
+                }
+            }
         }
     }
 

@@ -265,7 +265,7 @@ public class GameController implements Initializable, EnemyRegistrar {
             return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countVectors(fromX, fromY, toX, toY, maze.getMazeVectors());
         }
         @Override public void blast(double x, double y, int damage, double range, String sound, boolean shake) {
-            blastAt(x, y, damage, range, false, "Tower", sound, shake);
+            blastAt(x, y, damage, range, false, "Tower", sound, shake, null);   // nobody gets the kills
         }
         @Override public void hurtPlayer(int damage) {
             if (playerCharacter != null) playerCharacter.subtractHitPoints(damage);
@@ -436,12 +436,13 @@ public class GameController implements Initializable, EnemyRegistrar {
      * screen shake. Only the player's own bomb hurts the player.
      */
     private void blastAt(double x, double y, int damage, double range, boolean hurtsPlayer, String label) {
-        blastAt(x, y, damage, range, hurtsPlayer, label, main.game.maze.common.graphics.fire.BombImpact.SOUND, true);
+        blastAt(x, y, damage, range, hurtsPlayer, label, main.game.maze.common.graphics.fire.BombImpact.SOUND, true,
+                PlayerIds.LOCAL_PLAYER);
     }
 
     /** As above, with the sound of this blast (null: silent, the caller plays its own) and whether it shakes the screen. */
     private void blastAt(double x, double y, int damage, double range, boolean hurtsPlayer, String label,
-                         String sound, boolean shake) {
+                         String sound, boolean shake, String attackerId) {
         List<Vector2D> walls = maze != null ? maze.getMazeVectors() : List.of();
 
         double playerCx = hurtsPlayer && playerCharacter != null
@@ -460,7 +461,7 @@ public class GameController implements Initializable, EnemyRegistrar {
                 playerCx,
                 playerCy,
                 dmg -> { if (hurtsPlayer && playerCharacter != null) playerCharacter.subtractHitPoints(dmg); },
-                PlayerIds.LOCAL_PLAYER);
+                attackerId);
         if (mazeCanvas != null && maze != null) {
             mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
         }

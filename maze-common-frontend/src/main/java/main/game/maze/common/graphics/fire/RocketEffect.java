@@ -18,6 +18,7 @@ public record RocketEffect(double x, double y, double angleRadians) implements P
     private static final double TRAIL_REACH = 46.0;
     private static final int BODY_PUFFS = 6;
     private static final int TRAIL_PUFFS = 9;
+    private static final double SMOKE_WOBBLE = 1.4;
 
     @Override
     public double lifetimeSeconds() {
@@ -36,7 +37,7 @@ public record RocketEffect(double x, double y, double angleRadians) implements P
         for (int i = 0; i < TRAIL_PUFFS; i++) {
             double back = LENGTH * 0.5 + TRAIL_REACH * (i + 1) / TRAIL_PUFFS;
             double fade = 1.0 - (i + 1.0) / (TRAIL_PUFFS + 1);
-            double wobble = Math.sin(clock * 9 + i * 1.7) * 1.4;
+            double wobble = Math.sin(clock * 9 + i * 1.7) * SMOKE_WOBBLE;
             frame.add(FirePuff.Layer.SMOKE, x - dx * back - dy * wobble, y - dy * back + dx * wobble,
                     3.0 + (i + 1) * 0.55, 0.55f, 0.55f, 0.55f, 0.32 * fade);
         }
@@ -62,7 +63,9 @@ public record RocketEffect(double x, double y, double angleRadians) implements P
 
     @Override
     public double[] bounds() {
-        double pad = TRAIL_REACH + 12;
+        // the farthest smoke puff: half the body and the trail behind it, its wobble and its own radius
+        double smokeRadius = 3.0 + TRAIL_PUFFS * 0.55;
+        double pad = LENGTH * 0.5 + TRAIL_REACH + SMOKE_WOBBLE + smokeRadius + 2;
         return new double[] {x - pad, y - pad, x + pad, y + pad};
     }
 }

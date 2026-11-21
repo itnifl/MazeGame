@@ -44,6 +44,20 @@ class GuardTowerSessionTest {
         assertEquals(18, totals[1], "gatling bursts at 1.5, 4.5 and 7.5 seconds");
     }
 
+    /** Ticks for {@code seconds} in small steps (a tick never advances more than MAX_TICK_SECONDS) and collects the impacts. */
+    private List<GuardTowerSession.Impact> fly(double seconds, double playerX, GuardTowerSession.WallCounter walls) {
+        List<GuardTowerSession.Impact> impacts = new java.util.ArrayList<>();
+        List<Tower> towers = List.of(new Tower("tower_1", 0, 0, 1));
+        for (int i = 0; i < Math.round(seconds / 0.05); i++) {
+            Result r = session.tick(0.05, towers, playerX, 0, walls);
+            impacts.addAll(r.impacts());
+            damageSeen += r.playerDamage();
+        }
+        return impacts;
+    }
+
+    private int damageSeen;
+
     @Test
     @DisplayName("rockets take 300 px / 300 px/s to fly, then explode where the player was")
     void rocketsFlyThenExplode() {
@@ -51,23 +65,55 @@ class GuardTowerSessionTest {
         assertEquals(1, first.launches().size());
         assertEquals(1, session.rockets().size());
         assertEquals(0, first.impacts().size());
-        Result midway = session.tick(0.5, List.of(tower(SPEC.health())), 300, 0, (a, b, c, d) -> 0);
-        assertEquals(0, midway.impacts().size());
-        assertEquals(150, session.rockets().get(0).x(), 15, "about halfway");
-        Result landed = session.tick(0.6, List.of(tower(SPEC.health())), 300, 0, (a, b, c, d) -> 0);
-        assertEquals(1, landed.impacts().size());
-        assertEquals(300, landed.impacts().get(0).x(), 1e-6);
+        // the player stands in the blast on arrival; the tower's own cycle fires nothing more in 1.3 s but its gatling
+        List<Tower> towers = List.of(tower(SPEC.health()));
+        for (int i = 0; i < 10; i++) {
+            session.tick(0.05, towers, 300, 0, (a, b, c, d) -> 0);
+        }
+        assertEquals(150, session.rockets().get(0).x(), 20, "about halfway after half a second");
+        List<GuardTowerSession.Impact> landed = new java.util.ArrayList<>();
+        int rocketDamage = 0;
+        for (int i = 0; i < 12; i++) {
+            Result r = session.tick(0.05, towers, 300, 0, (a, b, c, d) -> 0);
+            landed.addAll(r.impacts());
+            rocketDamage += r.impacts().isEmpty() ? 0 : r.playerDamage();
+        }
+        assertEquals(1, landed.size());
+        assertEquals(300, landed.get(0).x(), 1e-6);
         assertTrue(session.rockets().isEmpty());
-        assertEquals(SPEC.rpgPlayerDamage(), landed.playerDamage(), "the player stood in the blast");
+        assertTrue(rocketDamage >= SPEC.rpgPlayerDamage(), "the player stood in the blast");
     }
 
     @Test
     @DisplayName("a rocket that lands out of reach does no damage to the player")
     void dodgedRocket() {
         session.tick(0.0, List.of(tower(SPEC.health())), 300, 0, (a, b, c, d) -> 0);
-        Result landed = session.tick(1.2, List.of(tower(SPEC.health())), 300 + SPEC.rpgBlastRadius() + 20, 0, (a, b, c, d) -> 0);
-        assertEquals(1, landed.impacts().size());
-        assertEquals(0, landed.playerDamage());
+        damageSeen = 0;
+        // the tower itself is silent after the launch (4 walls from it); the impact-to-player line is open
+        GuardTowerSession.WallCounter quietTower = (fx, fy, tx, ty) -> fx == 0 ? 4 : 0;
+        List<GuardTowerSession.Impact> landed = fly(1.2, 300 + SPEC.rpgBlastRadius() + 20, quietTower);
+        assertEquals(1, landed.size());
+        assertEquals(0, damageSeen);
+    }
+
+    @Test
+    @DisplayName("a wall between the impact and the player shields them from the splash")
+    void wallsShieldFromSplash() {
+        session.tick(0.0, List.of(tower(SPEC.health())), 300, 0, (a, b, c, d) -> 0);
+        damageSeen = 0;
+        // gun silent (4 walls from the tower), only the impact-to-player line is "open" or "walled"
+        GuardTowerSession.WallCounter walled = (fx, fy, tx, ty) -> fx == 0 ? 4 : 1;
+        List<GuardTowerSession.Impact> landed = fly(1.3, 300, walled);
+        assertEquals(1, landed.size());
+        assertEquals(0, damageSeen, "the wall took the blast");
+    }
+
+    @Test
+    @DisplayName("after a long pause the towers carry on from where they were instead of firing it all at once")
+    void aPauseDoesNotBurstFire() {
+        Result paused = session.tick(30.0, List.of(tower(SPEC.health())), 150, 0, (a, b, c, d) -> 0);
+        assertTrue(paused.launches().size() <= 1, "at most the shot of one capped tick: " + paused.launches().size());
+        assertTrue(paused.impacts().isEmpty());
     }
 
     @Test

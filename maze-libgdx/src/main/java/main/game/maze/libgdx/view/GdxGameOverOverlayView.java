@@ -84,8 +84,8 @@ public final class GdxGameOverOverlayView {
         drawBreakdown(batch, font, glyphLayout, context.scoreBreakdown(), panelX, panelW, panelY + panelH - 110f);
 
         font.setColor(new Color(0.06f, 0.21f, 0.18f, 1f));
-        glyphLayout.setText(font, "Restart");
-        font.draw(batch, "Restart", restartBtnX + (restartBtnW - glyphLayout.width) * 0.5f, btnRowY + 24f);
+        glyphLayout.setText(font, "Restart Level");
+        font.draw(batch, "Restart Level", restartBtnX + (restartBtnW - glyphLayout.width) * 0.5f, btnRowY + 24f);
         font.setColor(new Color(0.18f, 0.11f, 0f, 1f));
         glyphLayout.setText(font, "Back to Menu");
         font.draw(batch, "Back to Menu", backBtnX + (backBtnW - glyphLayout.width) * 0.5f, btnRowY + 24f);

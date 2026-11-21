@@ -20,6 +20,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
 
     public static final String INVALID_THREAT_LEVEL = "invalidThreatLevel";
     public static final String INVALID_HEALTH = "invalidHealth";
+    public static final String INVALID_SECOND_RING = "invalidSecondRing";
     public static final String INVALID_SPEED = "invalidSpeed";
     public static final String INSUFFICIENT_WAYPOINTS = "insufficientWaypoints";
     public static final String INVALID_MAX_COUNT = "invalidMaxCount";
@@ -50,6 +51,20 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     /**
      * Validates that health is positive (0 means use default).
      */
+    /** 0 (or leaving it out) is the only way to say "no second ring"; a negative radius is a mistake, not a silent 0. */
+    @Check
+    public void checkSecondRing(MineRingConfig mines) {
+        if (mines.getSecondRingRadius() < 0) {
+            error("The second ring radius cannot be negative (leave it out for no second ring)",
+                  MazeDslPackage.Literals.MINE_RING_CONFIG__SECOND_RING_RADIUS,
+                  INVALID_SECOND_RING);
+        } else if (mines.getSecondRingRadius() > 0 && mines.getSecondRingRadius() <= mines.getRingRadius()) {
+            error("The second ring must lie outside the first ring (ringRadius " + mines.getRingRadius() + ")",
+                  MazeDslPackage.Literals.MINE_RING_CONFIG__SECOND_RING_RADIUS,
+                  INVALID_SECOND_RING);
+        }
+    }
+
     @Check
     public void checkHealth(OpponentConfig opponent) {
         if (opponent.getHealth() < 0) {
