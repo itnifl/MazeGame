@@ -964,7 +964,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         // the lava of the level, drawn under the walls (the screen is y-up: the picture is flipped over the height)
         var lavaWorld = GdxWallDamageSupport.worldFrom(maze);
         gameWorldView.setLava(lavaWorld == null ? null : main.game.maze.game.lava.LavaEffects.of(lavaWorld.getLava(),
-                maze.widthPx(), maze.heightPx(), maze.heightPx()));
+                levelProgress.current().lava(), maze.widthPx(), maze.heightPx(), maze.heightPx()));
         backgroundTexture = textures.backgroundTexture();
     }
 

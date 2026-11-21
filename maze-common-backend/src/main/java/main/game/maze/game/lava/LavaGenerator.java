@@ -52,7 +52,7 @@ public final class LavaGenerator {
         for (int i = 0; i < spec.streamCount(); i++) {
             Stream stream = null;
             for (int attempt = 0; attempt < ATTEMPTS && stream == null; attempt++) {
-                List<Point2D> path = snake(boardWidth, boardHeight, spec.width(), random, i);
+                List<Point2D> path = snake(boardWidth, boardHeight, spec, random);
                 if (attempt >= SHORTEN_AFTER) {
                     // a maze whose way to the heart winds a lot crosses a stream that spans the board too often for
                     // two bridges: try shorter streams (a river that starts and ends inside the map) instead
@@ -89,16 +89,17 @@ public final class LavaGenerator {
     // ---------------------------------------------------------------- streams
 
     /** A stream that snakes from one side of the board to the other, flowing along its points. */
-    static List<Point2D> snake(int width, int height, double streamWidth, Random random, int index) {
+    static List<Point2D> snake(int width, int height, LavaSpec spec, Random random) {
+        double streamWidth = spec.width();
         boolean horizontal = random.nextBoolean();
         double length = horizontal ? width : height;
         double across = horizontal ? height : width;
         double margin = streamWidth + 20;
         double base = across * (0.2 + 0.6 * random.nextDouble());
-        double amplitude = 60 + 70 * random.nextDouble();
-        double wavelength = 260 + 170 * random.nextDouble();
+        double amplitude = spec.meander() * (0.65 + 0.7 * random.nextDouble());
+        double wavelength = spec.wavelength() * (0.78 + 0.45 * random.nextDouble());
         double phase = random.nextDouble() * 2 * Math.PI;
-        double amplitude2 = 15 + 25 * random.nextDouble();
+        double amplitude2 = spec.meander() * (0.15 + 0.25 * random.nextDouble());
         double wavelength2 = wavelength / (1.8 + random.nextDouble());
         double phase2 = random.nextDouble() * 2 * Math.PI;
         boolean reverse = random.nextBoolean();

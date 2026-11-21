@@ -545,6 +545,11 @@ public class MazeDslGenerator extends AbstractGenerator {
             if (lv != null) {
                 x.append("    <lava streamCount=\"").append(lv.getStreamCount()).append("\" width=\"").append(lv.getWidth())
                  .append("\" bridgesPerStream=\"").append(lv.getBridgesPerStream()).append("\" bridgeLength=\"").append(lv.getBridgeLength()).append('"');
+                attribute(x, "meander", lv.getMeander());
+                attribute(x, "wavelength", lv.getWavelength());
+                attribute(x, "flowSpeed", lv.getFlowSpeed());
+                attribute(x, "glow", lv.getGlow());
+                attribute(x, "crust", lv.getCrust());
                 optionalText(x, "deathSound", lv.getDeathSound());
                 x.append("/>\n");
             }

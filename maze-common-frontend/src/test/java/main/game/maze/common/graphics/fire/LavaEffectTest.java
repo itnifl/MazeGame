@@ -18,7 +18,7 @@ class LavaEffectTest {
             path.add(new LavaEffect.Point(x, 200 + 40 * Math.sin(x / 60.0)));
         }
         return new LavaEffect(List.of(new LavaEffect.Stream(path, List.of(new LavaEffect.Bridge(200, 200, 0.2, 56)))),
-                46, 10, 800, 400, flip);
+                46, 10, LavaEffect.Look.DEFAULT, 800, 400, flip);
     }
 
     @Test
@@ -80,6 +80,49 @@ class LavaEffectTest {
     @Test
     @DisplayName("without streams there is nothing to draw")
     void empty() {
-        assertTrue(new LavaEffect(List.of(), 46, 10, 800, 400, 0).puffs(0, 1).isEmpty());
+        assertTrue(new LavaEffect(List.of(), 46, 10, LavaEffect.Look.DEFAULT, 800, 400, 0).puffs(0, 1).isEmpty());
+    }
+
+    private static LavaEffect looking(LavaEffect.Look look) {
+        List<LavaEffect.Point> path = new ArrayList<>();
+        for (int x = 0; x <= 400; x += 12) {
+            path.add(new LavaEffect.Point(x, 200 + 40 * Math.sin(x / 60.0)));
+        }
+        return new LavaEffect(List.of(new LavaEffect.Stream(path, List.of())), 46, 10, look, 800, 400, 0);
+    }
+
+    @Test
+    @DisplayName("the look comes from the model: more crust means more dark plates, no glow means no light on the floor")
+    void lookFollowsTheModel() {
+        long dark = looking(new LavaEffect.Look(34, 0.5, 1.0)).puffs(0, 2.0).stream().filter(p -> p.layer() == FirePuff.Layer.SMOKE).count();
+        long bare = looking(new LavaEffect.Look(34, 0.5, 0.0)).puffs(0, 2.0).stream().filter(p -> p.layer() == FirePuff.Layer.SMOKE).count();
+        assertTrue(dark > bare, "crust adds plates: " + dark + " vs " + bare);
+        long lit = looking(new LavaEffect.Look(34, 1.0, 0.5)).puffs(0, 2.0).stream().filter(p -> p.layer() == FirePuff.Layer.BODY).count();
+        long unlit = looking(new LavaEffect.Look(34, 0.0, 0.5)).puffs(0, 2.0).stream().filter(p -> p.layer() == FirePuff.Layer.BODY).count();
+        assertTrue(lit > unlit, "glow lights the floor");
+    }
+
+    @Test
+    @DisplayName("the flow speed decides how fast the pattern travels")
+    void flowSpeed() {
+        double slow = looking(new LavaEffect.Look(5, 0.5, 0.6)).puffs(0, 3.0).stream()
+                .filter(p -> p.layer() == FirePuff.Layer.SMOKE).mapToDouble(FirePuff::x).sum();
+        double slowLater = looking(new LavaEffect.Look(5, 0.5, 0.6)).puffs(0, 3.1).stream()
+                .filter(p -> p.layer() == FirePuff.Layer.SMOKE).mapToDouble(FirePuff::x).sum();
+        double fast = looking(new LavaEffect.Look(80, 0.5, 0.6)).puffs(0, 3.0).stream()
+                .filter(p -> p.layer() == FirePuff.Layer.SMOKE).mapToDouble(FirePuff::x).sum();
+        double fastLater = looking(new LavaEffect.Look(80, 0.5, 0.6)).puffs(0, 3.1).stream()
+                .filter(p -> p.layer() == FirePuff.Layer.SMOKE).mapToDouble(FirePuff::x).sum();
+        assertTrue(Math.abs(fastLater - fast) > Math.abs(slowLater - slow), "faster lava moves further in the same time");
+    }
+
+    @Test
+    @DisplayName("the surface lives: bubbles, sparks and smoke come and go with the clock")
+    void alive() {
+        long a = lava(0).puffs(0, 0.4).stream().filter(p -> p.layer() == FirePuff.Layer.EMBER || p.layer() == FirePuff.Layer.RIM).count();
+        assertTrue(a > 0, "sparks and bubbles");
+        double b = lava(0).puffs(0, 0.4).stream().filter(p -> p.layer() == FirePuff.Layer.EMBER).mapToDouble(FirePuff::y).sum();
+        double c = lava(0).puffs(0, 1.3).stream().filter(p -> p.layer() == FirePuff.Layer.EMBER).mapToDouble(FirePuff::y).sum();
+        assertTrue(b != c);
     }
 }

@@ -126,6 +126,11 @@ game MazeGameLevels {
             width 46.0
             bridges 2
             bridgeLength 56.0
+            meander 95.0
+            wavelength 340.0
+            flowSpeed 34.0
+            glow 0.65
+            crust 0.45
             deathSound "/main/game/maze/sounds/lava-death.wav"
         }
     }

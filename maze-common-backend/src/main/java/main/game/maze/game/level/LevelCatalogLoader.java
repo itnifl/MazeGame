@@ -206,6 +206,8 @@ public final class LevelCatalogLoader {
         try {
             return new LavaSpec(DynamicModel.integer(lava, "streamCount"), DynamicModel.decimal(lava, "width"),
                     DynamicModel.integer(lava, "bridgesPerStream"), DynamicModel.decimal(lava, "bridgeLength"),
+                    DynamicModel.decimal(lava, "meander"), DynamicModel.decimal(lava, "wavelength"),
+                    DynamicModel.decimal(lava, "flowSpeed"), DynamicModel.decimal(lava, "glow"), DynamicModel.decimal(lava, "crust"),
                     DynamicModel.string(lava, "deathSound"));
         } catch (IllegalArgumentException invalid) {
             throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);

@@ -96,16 +96,17 @@ killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `
 
 ```xml
 <lava streamCount="2" width="46.0" bridgesPerStream="2" bridgeLength="56.0"
+    meander="95.0" wavelength="340.0" flowSpeed="34.0" glow="0.65" crust="0.45"
     deathSound="/main/game/maze/sounds/lava-death.wav"/>
 ```
 
-In the DSL: `lava { streams 2 width 46.0 bridges 2 bridgeLength 56.0 deathSound "..." }`. Level 6 is level 5 plus this (`baseLevel="5"`).
+In the DSL: `lava { streams 2 width 46.0 bridges 2 bridgeLength 56.0 meander 95.0 wavelength 340.0 flowSpeed 34.0 glow 0.65 crust 0.45 deathSound "..." }` (the five values after `bridgeLength` are optional: leave them out for the defaults). Level 6 is level 5 plus this (`baseLevel="5"`).
 
 The streams are made when the level starts, so every game has different ones: `streamCount` random snaking rivers of lava, `width` pixels
 wide, flowing under the walls (drawn beneath the maze). The player dies at once in lava (the power shield does not help) and can
 cross a stream only on its `bridgesPerStream` bridges, each `bridgeLength` pixels long along the stream. The generator tries streams
 until the way from the start to the heart crosses each one only where a bridge can be put, so the maze can always be solved; the
-remaining bridges are put at random open places. Enemies, the wall builders, spawns, pickups and mines keep out of lava.
+remaining bridges are put at random open places. `meander` (how far a stream swings from side to side, in pixels; 0 = straight) and `wavelength` (how long one swing is) shape the streams; `flowSpeed` (pixels per second), `glow` (0 to 1: the light it throws on the floor) and `crust` (0 to 1: how much of the surface has cooled to dark plates over glowing cracks) shape how the lava looks and moves. Enemies, the wall builders, spawns, pickups and mines keep out of lava.
 
 ## Wall builders
 

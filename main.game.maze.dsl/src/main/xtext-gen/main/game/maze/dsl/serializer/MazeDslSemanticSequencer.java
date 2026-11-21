@@ -327,7 +327,18 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     LavaConfig returns LavaConfig
 	 *
 	 * Constraint:
-	 *     (streamCount=INT width=DOUBLE bridgesPerStream=INT bridgeLength=DOUBLE deathSound=STRING?)
+	 *     (
+	 *         streamCount=INT 
+	 *         width=DOUBLE 
+	 *         bridgesPerStream=INT 
+	 *         bridgeLength=DOUBLE 
+	 *         meander=DOUBLE_OBJECT? 
+	 *         wavelength=DOUBLE_OBJECT? 
+	 *         flowSpeed=DOUBLE_OBJECT? 
+	 *         glow=DOUBLE_OBJECT? 
+	 *         crust=DOUBLE_OBJECT? 
+	 *         deathSound=STRING?
+	 *     )
 	 * </pre>
 	 */
 	protected void sequence_LavaConfig(ISerializationContext context, LavaConfig semanticObject) {

@@ -175,10 +175,10 @@ class LavaGeneratorTest {
     @Test
     @DisplayName("a lava spec refuses NaN and non-positive values")
     void specValidation() {
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, Double.NaN, 2, 56, null));
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, 46, 2, Double.NaN, null));
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(0, 46, 2, 56, null));
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, 46, 0, 56, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> LavaSpec.basic(2, Double.NaN, 2, 56, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> LavaSpec.basic(2, 46, 2, Double.NaN, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> LavaSpec.basic(0, 46, 2, 56, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> LavaSpec.basic(2, 46, 0, 56, null));
     }
 
     @Test
@@ -197,5 +197,45 @@ class LavaGeneratorTest {
                 }
             }
         }
+    }
+
+    @Test
+    @DisplayName("the look and the shape of the lava come from the level model (Ecore, written in the Xtext DSL)")
+    void modelDrivesTheLava() {
+        LavaSpec spec = LevelCatalogLoader.loadDefault().level(6).lava();
+        assertEquals(95.0, spec.meander(), 1e-9);
+        assertEquals(340.0, spec.wavelength(), 1e-9);
+        assertEquals(34.0, spec.flowSpeed(), 1e-9);
+        assertEquals(0.65, spec.glow(), 1e-9);
+        assertEquals(0.45, spec.crust(), 1e-9);
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new LavaSpec(2, 46, 2, 56, 95, 340, 34, 1.5, 0.5, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
+                () -> new LavaSpec(2, 46, 2, 56, 95, 0, 34, 0.5, 0.5, null));
+    }
+
+    @Test
+    @DisplayName("a calm river (meander 0) runs straight; a wild one swings wide")
+    void meanderShapesTheStream() {
+        double calmRange = 0;
+        double wildRange = 0;
+        for (int i = 0; i < 20; i++) {
+            calmRange = Math.max(calmRange, acrossRange(LavaGenerator.snake(W, H, new LavaSpec(2, 46, 2, 56, 0, 340, 34, 0.5, 0.5, null), new Random(i))));
+            wildRange = Math.max(wildRange, acrossRange(LavaGenerator.snake(W, H, new LavaSpec(2, 46, 2, 56, 200, 340, 34, 0.5, 0.5, null), new Random(i))));
+        }
+        assertTrue(calmRange < 1.0, "a calm river does not swing: " + calmRange);
+        assertTrue(wildRange > 150, "a wild river does: " + wildRange);
+    }
+
+    private static double acrossRange(List<Point2D> path) {
+        boolean horizontal = Math.abs(path.get(0).getX() - path.get(path.size() - 1).getX()) > 300;
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (Point2D p : path) {
+            double across = horizontal ? p.getY() : p.getX();
+            min = Math.min(min, across);
+            max = Math.max(max, across);
+        }
+        return max - min;
     }
 }

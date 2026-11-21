@@ -2210,9 +2210,64 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getLavaConfig_DeathSound()
+  public EAttribute getLavaConfig_Meander()
   {
     return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_Wavelength()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_FlowSpeed()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_Glow()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_Crust()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_DeathSound()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2582,6 +2637,11 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__WIDTH);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__BRIDGES_PER_STREAM);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__BRIDGE_LENGTH);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__MEANDER);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__WAVELENGTH);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__FLOW_SPEED);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__GLOW);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__CRUST);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
 
     teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
@@ -2828,6 +2888,11 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLavaConfig_Width(), ecorePackage.getEDouble(), "width", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_BridgesPerStream(), ecorePackage.getEInt(), "bridgesPerStream", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_BridgeLength(), ecorePackage.getEDouble(), "bridgeLength", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_Meander(), ecorePackage.getEDoubleObject(), "meander", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_Wavelength(), ecorePackage.getEDoubleObject(), "wavelength", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_FlowSpeed(), ecorePackage.getEDoubleObject(), "flowSpeed", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_Glow(), ecorePackage.getEDoubleObject(), "glow", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_Crust(), ecorePackage.getEDoubleObject(), "crust", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

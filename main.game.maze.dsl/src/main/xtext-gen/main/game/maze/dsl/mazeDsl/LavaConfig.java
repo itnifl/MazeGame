@@ -18,6 +18,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getWidth <em>Width</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getBridgesPerStream <em>Bridges Per Stream</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getBridgeLength <em>Bridge Length</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getMeander <em>Meander</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getWavelength <em>Wavelength</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getFlowSpeed <em>Flow Speed</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getGlow <em>Glow</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getCrust <em>Crust</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LavaConfig#getDeathSound <em>Death Sound</em>}</li>
  * </ul>
  *
@@ -114,6 +119,116 @@ public interface LavaConfig extends EObject
    * @generated
    */
   void setBridgeLength(double value);
+
+  /**
+   * Returns the value of the '<em><b>Meander</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Meander</em>' attribute.
+   * @see #setMeander(Double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLavaConfig_Meander()
+   * @model
+   * @generated
+   */
+  Double getMeander();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getMeander <em>Meander</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Meander</em>' attribute.
+   * @see #getMeander()
+   * @generated
+   */
+  void setMeander(Double value);
+
+  /**
+   * Returns the value of the '<em><b>Wavelength</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Wavelength</em>' attribute.
+   * @see #setWavelength(Double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLavaConfig_Wavelength()
+   * @model
+   * @generated
+   */
+  Double getWavelength();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getWavelength <em>Wavelength</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Wavelength</em>' attribute.
+   * @see #getWavelength()
+   * @generated
+   */
+  void setWavelength(Double value);
+
+  /**
+   * Returns the value of the '<em><b>Flow Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Flow Speed</em>' attribute.
+   * @see #setFlowSpeed(Double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLavaConfig_FlowSpeed()
+   * @model
+   * @generated
+   */
+  Double getFlowSpeed();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getFlowSpeed <em>Flow Speed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Flow Speed</em>' attribute.
+   * @see #getFlowSpeed()
+   * @generated
+   */
+  void setFlowSpeed(Double value);
+
+  /**
+   * Returns the value of the '<em><b>Glow</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Glow</em>' attribute.
+   * @see #setGlow(Double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLavaConfig_Glow()
+   * @model
+   * @generated
+   */
+  Double getGlow();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getGlow <em>Glow</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Glow</em>' attribute.
+   * @see #getGlow()
+   * @generated
+   */
+  void setGlow(Double value);
+
+  /**
+   * Returns the value of the '<em><b>Crust</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Crust</em>' attribute.
+   * @see #setCrust(Double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLavaConfig_Crust()
+   * @model
+   * @generated
+   */
+  Double getCrust();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getCrust <em>Crust</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Crust</em>' attribute.
+   * @see #getCrust()
+   * @generated
+   */
+  void setCrust(Double value);
 
   /**
    * Returns the value of the '<em><b>Death Sound</b></em>' attribute.

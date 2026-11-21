@@ -435,7 +435,7 @@ These requirements have been implemented and verified.
 
 - **SR-350** *(Observability)*: Log how many tries the lava generator needed and how long it took (it is a search), and count lava deaths per level next to the other statistics (SR-252).
 
-- **SR-351** *(Model-driven)*: The stream shape (amplitude, wavelength, margins) is fixed in `LavaGenerator`; move it into the `LavaStreams` element so level authors can make wider, calmer or wilder rivers.
+- **SR-351** *(Model-driven)*: Done in SR-358 (meander, wavelength, flow speed, glow, crust are in the model). Still in code: the margins, the bridge clearance and spacing and the colours of the lava; move them into `LavaStreams` too so an author can make a green acid river or a frozen one.
 
 - **SR-355** *(UX)*: The FINAL LEVEL title shows over a game that is already running (the spawn shield protects the player for its 3 seconds). Freeze the enemies and the clock while the title is on, and offer to skip it; add a replay of the voice line and subtitles.
 

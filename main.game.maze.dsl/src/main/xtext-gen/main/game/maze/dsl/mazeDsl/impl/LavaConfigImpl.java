@@ -25,6 +25,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getWidth <em>Width</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getBridgesPerStream <em>Bridges Per Stream</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getBridgeLength <em>Bridge Length</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getMeander <em>Meander</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getWavelength <em>Wavelength</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getFlowSpeed <em>Flow Speed</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getGlow <em>Glow</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getCrust <em>Crust</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl#getDeathSound <em>Death Sound</em>}</li>
  * </ul>
  *
@@ -111,6 +116,106 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
    * @ordered
    */
   protected double bridgeLength = BRIDGE_LENGTH_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getMeander() <em>Meander</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMeander()
+   * @generated
+   * @ordered
+   */
+  protected static final Double MEANDER_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getMeander() <em>Meander</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMeander()
+   * @generated
+   * @ordered
+   */
+  protected Double meander = MEANDER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getWavelength() <em>Wavelength</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getWavelength()
+   * @generated
+   * @ordered
+   */
+  protected static final Double WAVELENGTH_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getWavelength() <em>Wavelength</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getWavelength()
+   * @generated
+   * @ordered
+   */
+  protected Double wavelength = WAVELENGTH_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getFlowSpeed() <em>Flow Speed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFlowSpeed()
+   * @generated
+   * @ordered
+   */
+  protected static final Double FLOW_SPEED_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getFlowSpeed() <em>Flow Speed</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFlowSpeed()
+   * @generated
+   * @ordered
+   */
+  protected Double flowSpeed = FLOW_SPEED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getGlow() <em>Glow</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGlow()
+   * @generated
+   * @ordered
+   */
+  protected static final Double GLOW_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getGlow() <em>Glow</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getGlow()
+   * @generated
+   * @ordered
+   */
+  protected Double glow = GLOW_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getCrust() <em>Crust</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCrust()
+   * @generated
+   * @ordered
+   */
+  protected static final Double CRUST_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCrust() <em>Crust</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCrust()
+   * @generated
+   * @ordered
+   */
+  protected Double crust = CRUST_EDEFAULT;
 
   /**
    * The default value of the '{@link #getDeathSound() <em>Death Sound</em>}' attribute.
@@ -259,6 +364,131 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
    * @generated
    */
   @Override
+  public Double getMeander()
+  {
+    return meander;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMeander(Double newMeander)
+  {
+    Double oldMeander = meander;
+    meander = newMeander;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LAVA_CONFIG__MEANDER, oldMeander, meander));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Double getWavelength()
+  {
+    return wavelength;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setWavelength(Double newWavelength)
+  {
+    Double oldWavelength = wavelength;
+    wavelength = newWavelength;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LAVA_CONFIG__WAVELENGTH, oldWavelength, wavelength));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Double getFlowSpeed()
+  {
+    return flowSpeed;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setFlowSpeed(Double newFlowSpeed)
+  {
+    Double oldFlowSpeed = flowSpeed;
+    flowSpeed = newFlowSpeed;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LAVA_CONFIG__FLOW_SPEED, oldFlowSpeed, flowSpeed));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Double getGlow()
+  {
+    return glow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGlow(Double newGlow)
+  {
+    Double oldGlow = glow;
+    glow = newGlow;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LAVA_CONFIG__GLOW, oldGlow, glow));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Double getCrust()
+  {
+    return crust;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCrust(Double newCrust)
+  {
+    Double oldCrust = crust;
+    crust = newCrust;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LAVA_CONFIG__CRUST, oldCrust, crust));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getDeathSound()
   {
     return deathSound;
@@ -296,6 +526,16 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
         return getBridgesPerStream();
       case MazeDslPackage.LAVA_CONFIG__BRIDGE_LENGTH:
         return getBridgeLength();
+      case MazeDslPackage.LAVA_CONFIG__MEANDER:
+        return getMeander();
+      case MazeDslPackage.LAVA_CONFIG__WAVELENGTH:
+        return getWavelength();
+      case MazeDslPackage.LAVA_CONFIG__FLOW_SPEED:
+        return getFlowSpeed();
+      case MazeDslPackage.LAVA_CONFIG__GLOW:
+        return getGlow();
+      case MazeDslPackage.LAVA_CONFIG__CRUST:
+        return getCrust();
       case MazeDslPackage.LAVA_CONFIG__DEATH_SOUND:
         return getDeathSound();
     }
@@ -323,6 +563,21 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
         return;
       case MazeDslPackage.LAVA_CONFIG__BRIDGE_LENGTH:
         setBridgeLength((Double)newValue);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__MEANDER:
+        setMeander((Double)newValue);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__WAVELENGTH:
+        setWavelength((Double)newValue);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__FLOW_SPEED:
+        setFlowSpeed((Double)newValue);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__GLOW:
+        setGlow((Double)newValue);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__CRUST:
+        setCrust((Double)newValue);
         return;
       case MazeDslPackage.LAVA_CONFIG__DEATH_SOUND:
         setDeathSound((String)newValue);
@@ -353,6 +608,21 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
       case MazeDslPackage.LAVA_CONFIG__BRIDGE_LENGTH:
         setBridgeLength(BRIDGE_LENGTH_EDEFAULT);
         return;
+      case MazeDslPackage.LAVA_CONFIG__MEANDER:
+        setMeander(MEANDER_EDEFAULT);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__WAVELENGTH:
+        setWavelength(WAVELENGTH_EDEFAULT);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__FLOW_SPEED:
+        setFlowSpeed(FLOW_SPEED_EDEFAULT);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__GLOW:
+        setGlow(GLOW_EDEFAULT);
+        return;
+      case MazeDslPackage.LAVA_CONFIG__CRUST:
+        setCrust(CRUST_EDEFAULT);
+        return;
       case MazeDslPackage.LAVA_CONFIG__DEATH_SOUND:
         setDeathSound(DEATH_SOUND_EDEFAULT);
         return;
@@ -378,6 +648,16 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
         return bridgesPerStream != BRIDGES_PER_STREAM_EDEFAULT;
       case MazeDslPackage.LAVA_CONFIG__BRIDGE_LENGTH:
         return bridgeLength != BRIDGE_LENGTH_EDEFAULT;
+      case MazeDslPackage.LAVA_CONFIG__MEANDER:
+        return MEANDER_EDEFAULT == null ? meander != null : !MEANDER_EDEFAULT.equals(meander);
+      case MazeDslPackage.LAVA_CONFIG__WAVELENGTH:
+        return WAVELENGTH_EDEFAULT == null ? wavelength != null : !WAVELENGTH_EDEFAULT.equals(wavelength);
+      case MazeDslPackage.LAVA_CONFIG__FLOW_SPEED:
+        return FLOW_SPEED_EDEFAULT == null ? flowSpeed != null : !FLOW_SPEED_EDEFAULT.equals(flowSpeed);
+      case MazeDslPackage.LAVA_CONFIG__GLOW:
+        return GLOW_EDEFAULT == null ? glow != null : !GLOW_EDEFAULT.equals(glow);
+      case MazeDslPackage.LAVA_CONFIG__CRUST:
+        return CRUST_EDEFAULT == null ? crust != null : !CRUST_EDEFAULT.equals(crust);
       case MazeDslPackage.LAVA_CONFIG__DEATH_SOUND:
         return DEATH_SOUND_EDEFAULT == null ? deathSound != null : !DEATH_SOUND_EDEFAULT.equals(deathSound);
     }
@@ -403,6 +683,16 @@ public class LavaConfigImpl extends MinimalEObjectImpl.Container implements Lava
     result.append(bridgesPerStream);
     result.append(", bridgeLength: ");
     result.append(bridgeLength);
+    result.append(", meander: ");
+    result.append(meander);
+    result.append(", wavelength: ");
+    result.append(wavelength);
+    result.append(", flowSpeed: ");
+    result.append(flowSpeed);
+    result.append(", glow: ");
+    result.append(glow);
+    result.append(", crust: ");
+    result.append(crust);
     result.append(", deathSound: ");
     result.append(deathSound);
     result.append(')');

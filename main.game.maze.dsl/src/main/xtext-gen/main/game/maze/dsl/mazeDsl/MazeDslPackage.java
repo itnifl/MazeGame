@@ -1849,13 +1849,58 @@ public interface MazeDslPackage extends EPackage
   int LAVA_CONFIG__BRIDGE_LENGTH = 3;
 
   /**
+   * The feature id for the '<em><b>Meander</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__MEANDER = 4;
+
+  /**
+   * The feature id for the '<em><b>Wavelength</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__WAVELENGTH = 5;
+
+  /**
+   * The feature id for the '<em><b>Flow Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__FLOW_SPEED = 6;
+
+  /**
+   * The feature id for the '<em><b>Glow</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__GLOW = 7;
+
+  /**
+   * The feature id for the '<em><b>Crust</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__CRUST = 8;
+
+  /**
    * The feature id for the '<em><b>Death Sound</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LAVA_CONFIG__DEATH_SOUND = 4;
+  int LAVA_CONFIG__DEATH_SOUND = 9;
 
   /**
    * The number of structural features of the '<em>Lava Config</em>' class.
@@ -1864,7 +1909,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int LAVA_CONFIG_FEATURE_COUNT = 5;
+  int LAVA_CONFIG_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
@@ -3824,6 +3869,61 @@ public interface MazeDslPackage extends EPackage
   EAttribute getLavaConfig_BridgeLength();
 
   /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getMeander <em>Meander</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Meander</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getMeander()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_Meander();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getWavelength <em>Wavelength</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Wavelength</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getWavelength()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_Wavelength();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getFlowSpeed <em>Flow Speed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Flow Speed</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getFlowSpeed()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_FlowSpeed();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getGlow <em>Glow</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Glow</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getGlow()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_Glow();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getCrust <em>Crust</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Crust</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getCrust()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_Crust();
+
+  /**
    * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getDeathSound <em>Death Sound</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5387,6 +5487,46 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute LAVA_CONFIG__BRIDGE_LENGTH = eINSTANCE.getLavaConfig_BridgeLength();
+
+    /**
+     * The meta object literal for the '<em><b>Meander</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__MEANDER = eINSTANCE.getLavaConfig_Meander();
+
+    /**
+     * The meta object literal for the '<em><b>Wavelength</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__WAVELENGTH = eINSTANCE.getLavaConfig_Wavelength();
+
+    /**
+     * The meta object literal for the '<em><b>Flow Speed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__FLOW_SPEED = eINSTANCE.getLavaConfig_FlowSpeed();
+
+    /**
+     * The meta object literal for the '<em><b>Glow</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__GLOW = eINSTANCE.getLavaConfig_Glow();
+
+    /**
+     * The meta object literal for the '<em><b>Crust</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__CRUST = eINSTANCE.getLavaConfig_Crust();
 
     /**
      * The meta object literal for the '<em><b>Death Sound</b></em>' attribute feature.

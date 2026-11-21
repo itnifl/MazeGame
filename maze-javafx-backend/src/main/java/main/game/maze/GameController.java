@@ -791,7 +791,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         // lava under the maze: flowing streams with bridges (levels that have them)
         if (lavaLayer != null) lavaLayer.detach();
         lavaLayer = new main.game.maze.javafx.render.FxLavaLayer(gameBoard);
-        lavaLayer.attach(main.game.maze.game.lava.LavaEffects.of(maze.getLava(), App.getBoardMaxX(), App.getBoardMaxY(), 0),
+        lavaLayer.attach(main.game.maze.game.lava.LavaEffects.of(maze.getLava(), App.levelProgress.current().lava(), App.getBoardMaxX(), App.getBoardMaxY(), 0),
                 (gc, canvas) -> mazeCanvasRenderer.paintBackground(gc, canvas.getWidth(), canvas.getHeight()));
         if (hazardLayer != null) hazardLayer.detach();
         hazardLayer = new FxHazardLayer(gameBoard);

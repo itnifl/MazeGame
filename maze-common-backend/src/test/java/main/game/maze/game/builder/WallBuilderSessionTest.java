@@ -381,7 +381,7 @@ class WallBuilderSessionTest {
     @DisplayName("builders keep out of lava: they never stand in deadly lava, and walk over the bridges")
     void buildersAvoidLava() {
         main.game.maze.mazeworld.LavaField lava = main.game.maze.game.lava.LavaGenerator.generate(
-                new main.game.maze.game.level.LavaSpec(2, 46.0, 2, 56.0, null), world, W, H,
+                main.game.maze.game.level.LavaSpec.basic(2, 46.0, 2, 56.0, null), world, W, H,
                 new Point2D(30, 90), new Point2D(HEART_X, HEART_Y), new java.util.Random());
         session.setLava(lava);
         List<Builder> crew = crew("b", 4);

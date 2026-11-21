@@ -120,7 +120,7 @@ class GdxWallBuilderSupportTest {
     @DisplayName("the support gives the level's lava to the builders: they never stand in deadly lava (screen y is flipped)")
     void buildersKeepOutOfLava() {
         main.game.maze.mazeworld.LavaField lava = main.game.maze.game.lava.LavaGenerator.generate(
-                new main.game.maze.game.level.LavaSpec(2, 46.0, 2, 56.0, null), world, (int) W, (int) H,
+                main.game.maze.game.level.LavaSpec.basic(2, 46.0, 2, 56.0, null), world, (int) W, (int) H,
                 new main.game.maze.mazeworld.Point2D(30, 90), new main.game.maze.mazeworld.Point2D(W / 2.0, H / 2.0),
                 new java.util.Random());
         support.reset(SPEC, W, H, lava);
