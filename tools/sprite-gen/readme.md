@@ -166,3 +166,12 @@ smoking).
 ```
 "$JAVA_HOME/bin/java" tools/sprite-gen/GuardTowerSpriteGenerator.java
 ```
+
+## WallBuilderSpriteGenerator
+
+Draws `zombie-builder.png`, the construction worker zombie of level 5, from `zombie1-down.png`: a yellow hard hat, an orange hi-vis
+vest with reflective stripes and a hammer.
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/WallBuilderSpriteGenerator.java
+```

@@ -416,3 +416,13 @@ These requirements have been implemented and verified.
 - **SR-324** *(Model-driven)*: A level that changes one mine value has to restate the whole `mines` block (level 4 repeats level 3's values to add `secondRing`); let `mines` merge with the base level's value attribute by attribute, as the unsettable scalars of a level already do.
 
 - **SR-325** *(Balance)*: The tower values (1500 hit points, 3 s cycle, 650 px range, rocket 300 px/s) were chosen to be playable, not tested with players: collect completion rate and time per level and difficulty (SR-252) and tune them in `levels.mazegame`.
+
+- **SR-334** *(UX)*: Offer *Continue* on the start menu when a savepoint exists (`LevelProgress.resumeFromSavePoint` is ready for it); today the savepoint is kept on disk but only the restart buttons use it.
+
+- **SR-335** *(Gameplay)*: The savepoint holds only the level and the weapons. Decide whether lives, the score so far and kills should be part of it, and whether a restarted level should keep or reset the score.
+
+- **SR-336** *(Gameplay, AI)*: Builders seal one fixed block round the heart and stand still when it is closed. Let them build second and third rings, avoid walling themselves in, flee from the player, or carry on rebuilding while the player is breaking in; `blockRadiusCells` is already in the model.
+
+- **SR-337** *(Observability)*: Count walls built, walls broken again and builders killed per level and log them at `FINE` next to the kill statistics (SR-252); an overlay showing each builder's chosen corridor would help balance.
+
+- **SR-338** *(Robustness)*: A builder walks straight lines between corridor middles ignoring enemies and the player; a builder boxed in by other builders or by a closed corridor just waits. Add a nudge or a re-plan after a few seconds without progress.

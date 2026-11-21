@@ -101,6 +101,14 @@ public final class LevelCatalogLoader {
         }
         requireAllTiers(tower != null, towerCounts, number, "guard tower");
 
+        WallBuilderSpec builder = DynamicModel.value(level, "wallBuilder") instanceof EObject own ? builderOf(own, number)
+                : base != null ? base.wallBuilder() : null;
+        Map<DifficultyTier, Integer> builderCounts = countsOf(level, "builderCounts", number, "wall builder");
+        if (builderCounts.isEmpty() && base != null) {
+            builderCounts = base.builderCounts();
+        }
+        requireAllTiers(builder != null, builderCounts, number, "wall builder");
+
         TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
                 : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
 
@@ -116,7 +124,7 @@ public final class LevelCatalogLoader {
         int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
                 DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
         return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
-                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts);
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts, builder, builderCounts);
     }
 
     /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
@@ -189,6 +197,18 @@ public final class LevelCatalogLoader {
     private static TeleportGhostSpec ghostOf(EObject ghost) {
         return new TeleportGhostSpec(DynamicModel.string(ghost, "displayName"), DynamicModel.integer(ghost, "health"),
                 DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"));
+    }
+
+    private static WallBuilderSpec builderOf(EObject builder, int number) {
+        try {
+            return new WallBuilderSpec(DynamicModel.string(builder, "displayName"), DynamicModel.integer(builder, "health"),
+                    DynamicModel.decimal(builder, "speed"), DynamicModel.string(builder, "sprite"),
+                    DynamicModel.decimal(builder, "buildSecondsPerCorridor"), DynamicModel.integer(builder, "blockRadiusCells"),
+                    DynamicModel.decimal(builder, "spawnRadius"), DynamicModel.string(builder, "wallMaterial"),
+                    DynamicModel.string(builder, "buildSound"));
+        } catch (IllegalArgumentException invalid) {
+            throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
+        }
     }
 
     private static GuardTowerSpec towerOf(EObject tower, int number) {

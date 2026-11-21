@@ -183,6 +183,23 @@ public final class MazeNavigationGraphService {
         }
     }
 
+    /** A wall was put up: every navigation edge that crosses it is closed. */
+    public static void removeEdgesCrossing(MazeNavigationGraph graph, Vector2D wall) {
+        if (graph == null || wall == null) return;
+        Node[][] grid = graph.getGrid();
+        for (int c = 0; c < graph.getCols(); c++) {
+            for (int r = 0; r < graph.getRows(); r++) {
+                Node n = grid[c][r];
+                if (n == null) continue;
+                for (Node neighbor : new ArrayList<>(n.getNeighbors())) {
+                    if (new Vector2D(n.toPoint2D(), neighbor.toPoint2D()).doIntersect(wall, 0)) {
+                        n.getNeighbors().remove(neighbor);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Bygger spanning-tree med root på nærmeste node til gitt verdensposisjon.
      * Brukes for å starte treet fra spillerens posisjon.

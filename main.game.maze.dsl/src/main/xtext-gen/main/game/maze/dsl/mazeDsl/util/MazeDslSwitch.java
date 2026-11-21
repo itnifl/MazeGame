@@ -237,6 +237,20 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.WALL_BUILDER_CONFIG:
+      {
+        WallBuilderConfig wallBuilderConfig = (WallBuilderConfig)theEObject;
+        T result = caseWallBuilderConfig(wallBuilderConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.BUILDER_COUNT_CONFIG:
+      {
+        BuilderCountConfig builderCountConfig = (BuilderCountConfig)theEObject;
+        T result = caseBuilderCountConfig(builderCountConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.TELEPORT_RULES_CONFIG:
       {
         TeleportRulesConfig teleportRulesConfig = (TeleportRulesConfig)theEObject;
@@ -612,6 +626,38 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseTowerCountConfig(TowerCountConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Wall Builder Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Wall Builder Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseWallBuilderConfig(WallBuilderConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Builder Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Builder Count Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseBuilderCountConfig(BuilderCountConfig object)
   {
     return null;
   }

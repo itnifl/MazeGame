@@ -31,6 +31,7 @@ import main.game.maze.game.level.LevelSpec;
 import main.game.maze.game.level.LevelPlacement;
 import main.game.maze.game.level.GuardTowerSpec;
 import main.game.maze.game.level.SergeantSpec;
+import main.game.maze.game.level.WallBuilderSpec;
 import main.game.maze.game.level.TeleportGhostSpec;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.RealMaze;
@@ -70,6 +71,8 @@ public final class RuntimeVisualModelLoader {
     private static final float CENTER_RATIO = 0.5f;
     /** Danger of a sergeant, for the kill points. */
     private static final float SERGEANT_THREAT = 5f;
+    /** Danger of a wall builder, for the kill points: it cannot hurt anyone. */
+    private static final float WALL_BUILDER_THREAT = 1f;
     /** Danger of a guard tower, for the kill points. */
     private static final float GUARD_TOWER_THREAT = 12f;
     /** Side of a guard tower sprite on the board, in pixels: bigger than any walking enemy. */
@@ -270,6 +273,7 @@ public final class RuntimeVisualModelLoader {
         out.addAll(sergeantSpawns(activeLevel, arena, difficulty, widthPx, heightPx));
         out.addAll(portalGhostSpawns(activeLevel, arena, difficulty, widthPx, heightPx, startX, startY));
         out.addAll(guardTowerSpawns(activeLevel, arena, difficulty, heightPx, startX, startY));
+        out.addAll(wallBuilderSpawns(activeLevel, arena, difficulty, widthPx, heightPx));
         return List.copyOf(out);
     }
 
@@ -353,6 +357,35 @@ public final class RuntimeVisualModelLoader {
                     EnemySpawn.DEFAULT_ATTACK_RANGE, EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS,
                     EnemySpawn.DEFAULT_PROJECTILE_SPEED, 0, tower.health(), looks,
                     KillScoring.pointsForThreat(GUARD_TOWER_THREAT)));
+        }
+        return spawns;
+    }
+
+    /**
+     * The level's wall builders: as many as the difficulty says, on free corridor points in the area round the heart
+     * (only in a generated maze). Screen space is y-up.
+     */
+    private static List<EnemySpawn> wallBuilderSpawns(LevelSpec level, MazeArena arena, Difficulty difficulty,
+                                                      float widthPx, float heightPx) {
+        if (level == null || !level.hasBuilders() || !(arena instanceof RealMaze realMaze)) {
+            return List.of();
+        }
+        WallBuilderSpec builder = level.wallBuilder();
+        DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
+        List<Point2D> spots = LevelPlacement.builderSpots(level, tier, realMaze.sourceWorld(),
+                widthPx * CENTER_RATIO, heightPx * CENTER_RATIO);
+        List<EnemySpawn> spawns = new ArrayList<>();
+        for (int index = 0; index < spots.size(); index++) {
+            Point2D spot = spots.get(index);
+            // no attack damage, no resurrection: a builder cannot harm the player and stays dead when killed
+            spawns.add(new EnemySpawn(WallBuilderSpec.SPAWN_ID_PREFIX + GENERATED_ENEMY_ID_SEPARATOR + index,
+                    builder.sprite(), (float) spot.getX(), heightPx - (float) spot.getY(),
+                    StageConstants.ZombieCharacterXYSize, WALL_BUILDER_THREAT, 0, 0, EMPTY_TEXT,
+                    BehaviorType.PASSIVE, 1f, 0d, EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                    EnemySpawn.DEFAULT_PROJECTILE_TYPE, EnemySpawn.DEFAULT_SPLASH_RADIUS, EnemySpawn.DEFAULT_ARC_HEIGHT,
+                    EnemySpawn.DEFAULT_ATTACK_RANGE, EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS,
+                    EnemySpawn.DEFAULT_PROJECTILE_SPEED, 0, builder.health(), EnemyAnimationSpec.defaults(),
+                    KillScoring.pointsForThreat(WALL_BUILDER_THREAT)));
         }
         return spawns;
     }

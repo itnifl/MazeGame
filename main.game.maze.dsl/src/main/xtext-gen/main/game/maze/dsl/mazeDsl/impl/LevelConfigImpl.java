@@ -5,6 +5,7 @@ package main.game.maze.dsl.mazeDsl.impl;
 
 import java.util.Collection;
 
+import main.game.maze.dsl.mazeDsl.BuilderCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
@@ -16,6 +17,7 @@ import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -55,6 +57,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getTeleport <em>Teleport</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getGuardTower <em>Guard Tower</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getTowerCounts <em>Tower Counts</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getWallBuilder <em>Wall Builder</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getBuilderCounts <em>Builder Counts</em>}</li>
  * </ul>
  *
  * @generated
@@ -290,6 +294,26 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @ordered
    */
   protected EList<TowerCountConfig> towerCounts;
+
+  /**
+   * The cached value of the '{@link #getWallBuilder() <em>Wall Builder</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getWallBuilder()
+   * @generated
+   * @ordered
+   */
+  protected WallBuilderConfig wallBuilder;
+
+  /**
+   * The cached value of the '{@link #getBuilderCounts() <em>Builder Counts</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBuilderCounts()
+   * @generated
+   * @ordered
+   */
+  protected EList<BuilderCountConfig> builderCounts;
 
   /**
    * <!-- begin-user-doc -->
@@ -803,6 +827,71 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @generated
    */
   @Override
+  public WallBuilderConfig getWallBuilder()
+  {
+    return wallBuilder;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetWallBuilder(WallBuilderConfig newWallBuilder, NotificationChain msgs)
+  {
+    WallBuilderConfig oldWallBuilder = wallBuilder;
+    wallBuilder = newWallBuilder;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER, oldWallBuilder, newWallBuilder);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setWallBuilder(WallBuilderConfig newWallBuilder)
+  {
+    if (newWallBuilder != wallBuilder)
+    {
+      NotificationChain msgs = null;
+      if (wallBuilder != null)
+        msgs = ((InternalEObject)wallBuilder).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER, null, msgs);
+      if (newWallBuilder != null)
+        msgs = ((InternalEObject)newWallBuilder).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER, null, msgs);
+      msgs = basicSetWallBuilder(newWallBuilder, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER, newWallBuilder, newWallBuilder));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<BuilderCountConfig> getBuilderCounts()
+  {
+    if (builderCounts == null)
+    {
+      builderCounts = new EObjectContainmentEList<BuilderCountConfig>(BuilderCountConfig.class, this, MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS);
+    }
+    return builderCounts;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -825,6 +914,10 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return basicSetGuardTower(null, msgs);
       case MazeDslPackage.LEVEL_CONFIG__TOWER_COUNTS:
         return ((InternalEList<?>)getTowerCounts()).basicRemove(otherEnd, msgs);
+      case MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER:
+        return basicSetWallBuilder(null, msgs);
+      case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
+        return ((InternalEList<?>)getBuilderCounts()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -871,6 +964,10 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return getGuardTower();
       case MazeDslPackage.LEVEL_CONFIG__TOWER_COUNTS:
         return getTowerCounts();
+      case MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER:
+        return getWallBuilder();
+      case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
+        return getBuilderCounts();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -938,6 +1035,13 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         getTowerCounts().clear();
         getTowerCounts().addAll((Collection<? extends TowerCountConfig>)newValue);
         return;
+      case MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER:
+        setWallBuilder((WallBuilderConfig)newValue);
+        return;
+      case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
+        getBuilderCounts().clear();
+        getBuilderCounts().addAll((Collection<? extends BuilderCountConfig>)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -1000,6 +1104,12 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
       case MazeDslPackage.LEVEL_CONFIG__TOWER_COUNTS:
         getTowerCounts().clear();
         return;
+      case MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER:
+        setWallBuilder((WallBuilderConfig)null);
+        return;
+      case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
+        getBuilderCounts().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -1046,6 +1156,10 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return guardTower != null;
       case MazeDslPackage.LEVEL_CONFIG__TOWER_COUNTS:
         return towerCounts != null && !towerCounts.isEmpty();
+      case MazeDslPackage.LEVEL_CONFIG__WALL_BUILDER:
+        return wallBuilder != null;
+      case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
+        return builderCounts != null && !builderCounts.isEmpty();
     }
     return super.eIsSet(featureID);
   }

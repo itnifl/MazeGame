@@ -40,6 +40,8 @@ public class WinGameAction extends CharacterActionScreens implements ICanLetYouW
             App.gameController.stopComputerCharacters();
             // the weapons carry over if the player goes on to the next level
             App.arsenalAtWin = App.gameController.arsenalSnapshot();
+            // the level is completed: the savepoint for the next one is made now
+            App.levelProgress.completeLevel(main.game.maze.game.items.PlayerArsenal.restore(App.arsenalAtWin));
         }
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(ScreenNameFXMLConstants.WinGameScreen));

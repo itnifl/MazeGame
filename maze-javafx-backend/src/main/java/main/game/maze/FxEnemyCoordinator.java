@@ -250,8 +250,9 @@ public final class FxEnemyCoordinator {
         long nowMs = System.currentTimeMillis();
         for (var computerCharacter : allComputerCharacters) {
             try {
-                if (computerCharacter instanceof main.game.maze.characters.GuardTowerCharacter) {
-                    // towers never move; the guard tower controller makes them shoot
+                if (computerCharacter instanceof main.game.maze.characters.GuardTowerCharacter
+                        || computerCharacter instanceof main.game.maze.characters.WallBuilderCharacter) {
+                    // towers and wall builders do not use the enemy AI: their controllers drive them
                     continue;
                 }
                 if (computerCharacter instanceof SergeantCharacter sergeant) {

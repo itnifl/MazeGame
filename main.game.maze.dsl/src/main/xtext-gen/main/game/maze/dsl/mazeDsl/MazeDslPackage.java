@@ -1001,13 +1001,31 @@ public interface MazeDslPackage extends EPackage
   int LEVEL_CONFIG__TOWER_COUNTS = 15;
 
   /**
+   * The feature id for the '<em><b>Wall Builder</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__WALL_BUILDER = 16;
+
+  /**
+   * The feature id for the '<em><b>Builder Counts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__BUILDER_COUNTS = 17;
+
+  /**
    * The number of structural features of the '<em>Level Config</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG_FEATURE_COUNT = 16;
+  int LEVEL_CONFIG_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
@@ -1630,6 +1648,143 @@ public interface MazeDslPackage extends EPackage
   int TOWER_COUNT_CONFIG_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl <em>Wall Builder Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getWallBuilderConfig()
+   * @generated
+   */
+  int WALL_BUILDER_CONFIG = 23;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__DISPLAY_NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Health</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__HEALTH = 1;
+
+  /**
+   * The feature id for the '<em><b>Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__SPEED = 2;
+
+  /**
+   * The feature id for the '<em><b>Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__SPRITE = 3;
+
+  /**
+   * The feature id for the '<em><b>Build Seconds Per Corridor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR = 4;
+
+  /**
+   * The feature id for the '<em><b>Block Radius Cells</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS = 5;
+
+  /**
+   * The feature id for the '<em><b>Spawn Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__SPAWN_RADIUS = 6;
+
+  /**
+   * The feature id for the '<em><b>Wall Material</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__WALL_MATERIAL = 7;
+
+  /**
+   * The feature id for the '<em><b>Build Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__BUILD_SOUND = 8;
+
+  /**
+   * The number of structural features of the '<em>Wall Builder Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG_FEATURE_COUNT = 9;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.BuilderCountConfigImpl <em>Builder Count Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.BuilderCountConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBuilderCountConfig()
+   * @generated
+   */
+  int BUILDER_COUNT_CONFIG = 24;
+
+  /**
+   * The feature id for the '<em><b>Difficulty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BUILDER_COUNT_CONFIG__DIFFICULTY = 0;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BUILDER_COUNT_CONFIG__COUNT = 1;
+
+  /**
+   * The number of structural features of the '<em>Builder Count Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BUILDER_COUNT_CONFIG_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1637,7 +1792,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 23;
+  int TELEPORT_RULES_CONFIG = 25;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -1701,7 +1856,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 24;
+  int DIFFICULTY_LEVEL = 26;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -1711,7 +1866,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 25;
+  int ENEMY_TYPE = 27;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -1721,7 +1876,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 26;
+  int CHARACTER_TYPE_ENUM = 28;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -1731,7 +1886,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 27;
+  int BEHAVIOR_TYPE_ENUM = 29;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -1741,7 +1896,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 28;
+  int PROJECTILE_TYPE_ENUM = 30;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -1751,7 +1906,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 29;
+  int LOOT_ITEM_TYPE_ENUM = 31;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -1761,7 +1916,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 30;
+  int DROP_WEAPON_ENUM = 32;
 
 
   /**
@@ -2696,6 +2851,28 @@ public interface MazeDslPackage extends EPackage
   EReference getLevelConfig_TowerCounts();
 
   /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Wall Builder</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_WallBuilder();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts <em>Builder Counts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Builder Counts</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_BuilderCounts();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3346,6 +3523,147 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EAttribute getTowerCountConfig_Count();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig <em>Wall Builder Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Wall Builder Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig
+   * @generated
+   */
+  EClass getWallBuilderConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getDisplayName()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getHealth <em>Health</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Health</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getHealth()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_Health();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpeed <em>Speed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Speed</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpeed()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_Speed();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSprite <em>Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSprite()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_Sprite();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBuildSecondsPerCorridor <em>Build Seconds Per Corridor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Build Seconds Per Corridor</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBuildSecondsPerCorridor()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_BuildSecondsPerCorridor();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBlockRadiusCells <em>Block Radius Cells</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Block Radius Cells</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBlockRadiusCells()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_BlockRadiusCells();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpawnRadius <em>Spawn Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Spawn Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpawnRadius()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_SpawnRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getWallMaterial <em>Wall Material</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Wall Material</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getWallMaterial()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_WallMaterial();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBuildSound <em>Build Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Build Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBuildSound()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_BuildSound();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.BuilderCountConfig <em>Builder Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Builder Count Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.BuilderCountConfig
+   * @generated
+   */
+  EClass getBuilderCountConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.BuilderCountConfig#getDifficulty <em>Difficulty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Difficulty</em>'.
+   * @see main.game.maze.dsl.mazeDsl.BuilderCountConfig#getDifficulty()
+   * @see #getBuilderCountConfig()
+   * @generated
+   */
+  EAttribute getBuilderCountConfig_Difficulty();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.BuilderCountConfig#getCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.BuilderCountConfig#getCount()
+   * @see #getBuilderCountConfig()
+   * @generated
+   */
+  EAttribute getBuilderCountConfig_Count();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
@@ -4224,6 +4542,22 @@ public interface MazeDslPackage extends EPackage
     EReference LEVEL_CONFIG__TOWER_COUNTS = eINSTANCE.getLevelConfig_TowerCounts();
 
     /**
+     * The meta object literal for the '<em><b>Wall Builder</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__WALL_BUILDER = eINSTANCE.getLevelConfig_WallBuilder();
+
+    /**
+     * The meta object literal for the '<em><b>Builder Counts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__BUILDER_COUNTS = eINSTANCE.getLevelConfig_BuilderCounts();
+
+    /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4718,6 +5052,114 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute TOWER_COUNT_CONFIG__COUNT = eINSTANCE.getTowerCountConfig_Count();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl <em>Wall Builder Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getWallBuilderConfig()
+     * @generated
+     */
+    EClass WALL_BUILDER_CONFIG = eINSTANCE.getWallBuilderConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__DISPLAY_NAME = eINSTANCE.getWallBuilderConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Health</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__HEALTH = eINSTANCE.getWallBuilderConfig_Health();
+
+    /**
+     * The meta object literal for the '<em><b>Speed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__SPEED = eINSTANCE.getWallBuilderConfig_Speed();
+
+    /**
+     * The meta object literal for the '<em><b>Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__SPRITE = eINSTANCE.getWallBuilderConfig_Sprite();
+
+    /**
+     * The meta object literal for the '<em><b>Build Seconds Per Corridor</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR = eINSTANCE.getWallBuilderConfig_BuildSecondsPerCorridor();
+
+    /**
+     * The meta object literal for the '<em><b>Block Radius Cells</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS = eINSTANCE.getWallBuilderConfig_BlockRadiusCells();
+
+    /**
+     * The meta object literal for the '<em><b>Spawn Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__SPAWN_RADIUS = eINSTANCE.getWallBuilderConfig_SpawnRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Wall Material</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__WALL_MATERIAL = eINSTANCE.getWallBuilderConfig_WallMaterial();
+
+    /**
+     * The meta object literal for the '<em><b>Build Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__BUILD_SOUND = eINSTANCE.getWallBuilderConfig_BuildSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.BuilderCountConfigImpl <em>Builder Count Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.BuilderCountConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBuilderCountConfig()
+     * @generated
+     */
+    EClass BUILDER_COUNT_CONFIG = eINSTANCE.getBuilderCountConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Difficulty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute BUILDER_COUNT_CONFIG__DIFFICULTY = eINSTANCE.getBuilderCountConfig_Difficulty();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute BUILDER_COUNT_CONFIG__COUNT = eINSTANCE.getBuilderCountConfig_Count();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.

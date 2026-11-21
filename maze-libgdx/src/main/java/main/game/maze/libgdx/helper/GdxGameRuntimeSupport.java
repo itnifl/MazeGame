@@ -76,7 +76,7 @@ public final class GdxGameRuntimeSupport {
         List<EnemySpawn> contacts = new ArrayList<>(animatedEnemies.size());
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             // killed this frame (e.g. by a sledgehammer swing): no contact damage; portal ghosts teleport, not hurt
-            if (enemy.isAlive() && !enemy.isPortalGhost()) {
+            if (enemy.isAlive() && !enemy.isHarmless()) {
                 contacts.add(enemy.contactSnapshot());
             }
         }

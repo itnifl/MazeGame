@@ -5,6 +5,7 @@ package main.game.maze.dsl.serializer;
 
 import com.google.inject.Inject;
 import java.util.Set;
+import main.game.maze.dsl.mazeDsl.BuilderCountConfig;
 import main.game.maze.dsl.mazeDsl.DifficultyConfig;
 import main.game.maze.dsl.mazeDsl.EnemyLimit;
 import main.game.maze.dsl.mazeDsl.GameConfiguration;
@@ -27,6 +28,7 @@ import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
 import main.game.maze.dsl.services.MazeDslGrammarAccess;
@@ -54,6 +56,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
 		if (epackage == MazeDslPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
+			case MazeDslPackage.BUILDER_COUNT_CONFIG:
+				sequence_BuilderCountConfig(context, (BuilderCountConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.DIFFICULTY_CONFIG:
 				sequence_DifficultyConfig(context, (DifficultyConfig) semanticObject); 
 				return; 
@@ -117,6 +122,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case MazeDslPackage.TOWER_COUNT_CONFIG:
 				sequence_TowerCountConfig(context, (TowerCountConfig) semanticObject); 
 				return; 
+			case MazeDslPackage.WALL_BUILDER_CONFIG:
+				sequence_WallBuilderConfig(context, (WallBuilderConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.WAYPOINT:
 				sequence_Waypoint(context, (Waypoint) semanticObject); 
 				return; 
@@ -127,6 +135,29 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 		if (errorAcceptor != null)
 			errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
 	}
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     BuilderCountConfig returns BuilderCountConfig
+	 *
+	 * Constraint:
+	 *     (difficulty=DifficultyLevel count=INT)
+	 * </pre>
+	 */
+	protected void sequence_BuilderCountConfig(ISerializationContext context, BuilderCountConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.BUILDER_COUNT_CONFIG__DIFFICULTY) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.BUILDER_COUNT_CONFIG__DIFFICULTY));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.BUILDER_COUNT_CONFIG__COUNT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.BUILDER_COUNT_CONFIG__COUNT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getBuilderCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0(), semanticObject.getDifficulty());
+		feeder.accept(grammarAccess.getBuilderCountConfigAccess().getCountINTTerminalRuleCall_2_0(), semanticObject.getCount());
+		feeder.finish();
+	}
+	
 	
 	/**
 	 * <pre>
@@ -308,7 +339,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         ghostCounts+=GhostCountConfig* 
 	 *         teleport=TeleportRulesConfig? 
 	 *         guardTower=GuardTowerConfig? 
-	 *         towerCounts+=TowerCountConfig*
+	 *         towerCounts+=TowerCountConfig* 
+	 *         wallBuilder=WallBuilderConfig? 
+	 *         builderCounts+=BuilderCountConfig*
 	 *     )
 	 * </pre>
 	 */
@@ -586,6 +619,30 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 		feeder.accept(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0(), semanticObject.getDifficulty());
 		feeder.accept(grammarAccess.getTowerCountConfigAccess().getCountINTTerminalRuleCall_2_0(), semanticObject.getCount());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     WallBuilderConfig returns WallBuilderConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         displayName=STRING 
+	 *         health=INT 
+	 *         speed=DOUBLE 
+	 *         sprite=STRING 
+	 *         buildSecondsPerCorridor=DOUBLE 
+	 *         blockRadiusCells=INT 
+	 *         spawnRadius=DOUBLE 
+	 *         wallMaterial=ID 
+	 *         buildSound=STRING?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_WallBuilderConfig(ISerializationContext context, WallBuilderConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

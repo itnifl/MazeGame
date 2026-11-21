@@ -4,6 +4,7 @@
 package main.game.maze.dsl.mazeDsl.impl;
 
 import main.game.maze.dsl.mazeDsl.BehaviorTypeEnum;
+import main.game.maze.dsl.mazeDsl.BuilderCountConfig;
 import main.game.maze.dsl.mazeDsl.CharacterSpecifics;
 import main.game.maze.dsl.mazeDsl.CharacterTypeEnum;
 import main.game.maze.dsl.mazeDsl.DifficultyConfig;
@@ -34,6 +35,7 @@ import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
 
@@ -213,6 +215,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass towerCountConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass wallBuilderConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass builderCountConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1284,6 +1300,28 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EReference getLevelConfig_WallBuilder()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_BuilderCounts()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLevelZone()
   {
     return levelZoneEClass;
@@ -1944,6 +1982,149 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getWallBuilderConfig()
+  {
+    return wallBuilderConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_DisplayName()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_Health()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_Speed()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_Sprite()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_BuildSecondsPerCorridor()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_BlockRadiusCells()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_SpawnRadius()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_WallMaterial()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_BuildSound()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getBuilderCountConfig()
+  {
+    return builderCountConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getBuilderCountConfig_Difficulty()
+  {
+    return (EAttribute)builderCountConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getBuilderCountConfig_Count()
+  {
+    return (EAttribute)builderCountConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getTeleportRulesConfig()
   {
     return teleportRulesConfigEClass;
@@ -2212,6 +2393,8 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(levelConfigEClass, LEVEL_CONFIG__TELEPORT);
     createEReference(levelConfigEClass, LEVEL_CONFIG__GUARD_TOWER);
     createEReference(levelConfigEClass, LEVEL_CONFIG__TOWER_COUNTS);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__WALL_BUILDER);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__BUILDER_COUNTS);
 
     levelZoneEClass = createEClass(LEVEL_ZONE);
     createEAttribute(levelZoneEClass, LEVEL_ZONE__DISPLAY_NAME);
@@ -2280,6 +2463,21 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     towerCountConfigEClass = createEClass(TOWER_COUNT_CONFIG);
     createEAttribute(towerCountConfigEClass, TOWER_COUNT_CONFIG__DIFFICULTY);
     createEAttribute(towerCountConfigEClass, TOWER_COUNT_CONFIG__COUNT);
+
+    wallBuilderConfigEClass = createEClass(WALL_BUILDER_CONFIG);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__DISPLAY_NAME);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__HEALTH);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPEED);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPRITE);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPAWN_RADIUS);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__WALL_MATERIAL);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__BUILD_SOUND);
+
+    builderCountConfigEClass = createEClass(BUILDER_COUNT_CONFIG);
+    createEAttribute(builderCountConfigEClass, BUILDER_COUNT_CONFIG__DIFFICULTY);
+    createEAttribute(builderCountConfigEClass, BUILDER_COUNT_CONFIG__COUNT);
 
     teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
     createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS);
@@ -2432,6 +2630,8 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getLevelConfig_Teleport(), this.getTeleportRulesConfig(), null, "teleport", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_GuardTower(), this.getGuardTowerConfig(), null, "guardTower", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_TowerCounts(), this.getTowerCountConfig(), null, "towerCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_WallBuilder(), this.getWallBuilderConfig(), null, "wallBuilder", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_BuilderCounts(), this.getBuilderCountConfig(), null, "builderCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLevelZone_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2500,6 +2700,21 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEClass(towerCountConfigEClass, TowerCountConfig.class, "TowerCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTowerCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, TowerCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTowerCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, TowerCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(wallBuilderConfigEClass, WallBuilderConfig.class, "WallBuilderConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getWallBuilderConfig_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_Health(), ecorePackage.getEInt(), "health", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_Speed(), ecorePackage.getEDouble(), "speed", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_Sprite(), ecorePackage.getEString(), "sprite", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_BuildSecondsPerCorridor(), ecorePackage.getEDouble(), "buildSecondsPerCorridor", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_BlockRadiusCells(), ecorePackage.getEInt(), "blockRadiusCells", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_SpawnRadius(), ecorePackage.getEDouble(), "spawnRadius", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_WallMaterial(), ecorePackage.getEString(), "wallMaterial", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_BuildSound(), ecorePackage.getEString(), "buildSound", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(builderCountConfigEClass, BuilderCountConfig.class, "BuilderCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getBuilderCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, BuilderCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getBuilderCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, BuilderCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTeleportRulesConfig_CooldownSeconds(), ecorePackage.getEDouble(), "cooldownSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

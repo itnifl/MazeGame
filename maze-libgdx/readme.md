@@ -10,6 +10,7 @@ libGDX frontend module for MazeGame. Provides a high-performance, hardware-accel
 - **GdxGameLayoutSupport** — Dynamic window sizing, camera tracking, arena layout, and goal placement.
 - **GdxEnemyRuntime** — High-level runtime opponent tracking, walk-cycle frame advancement, F80 damage-state sprite resolution, and projectile simulation.
 - **GdxGuardTowerSupport** — Level 4 guard towers: feeds the shared `GuardTowerSession` (rpg every 3 s, gatling in between, shoots over up to 3 walls) the tower enemies and the player, then draws the rockets and gatling rounds, plays the sounds and starts the blasts. Towers are `GdxEnemyRuntime` enemies (`isGuardTower`) spawned by `RuntimeVisualModelLoader.guardTowerSpawns`; they leave no corpse (`GdxGameCombatAndEnemyFlowSupport.retire`).
+- **GdxWallBuilderSupport** — Level 5 wall builders: feeds the shared `WallBuilderSession` the builder enemies, the live walls and the player, moves the builders where it says (converting screen y-up to world y-down) and adds the wooden walls to the world. Builders are `GdxEnemyRuntime` enemies (`isWallBuilder`, `isHarmless`: no contact damage) spawned by `RuntimeVisualModelLoader.wallBuilderSpawns`.
 - **GdxUiScheduler** — Thread-safe UI task execution bridging background worker threads and the OpenGL render loop.
 
 ---

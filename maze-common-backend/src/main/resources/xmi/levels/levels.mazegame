@@ -100,4 +100,21 @@ game MazeGameLevels {
         towers normal 3
         towers hard 4
     }
+
+    level 5 "The Builders" {
+        basedOn 4
+        wallBuilder "Wall builder" {
+            health 80
+            speed 55.0
+            sprite "/main/game/maze/zombie-builder.png"
+            buildSeconds 3.0
+            blockRadius 2
+            spawnRadius 170.0
+            material WOOD_BASIC
+            buildSound "/main/game/maze/sounds/wall-build.wav"
+        }
+        builders easy 2
+        builders normal 5
+        builders hard 10
+    }
 }

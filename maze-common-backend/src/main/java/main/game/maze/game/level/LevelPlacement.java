@@ -25,6 +25,7 @@ public final class LevelPlacement {
     public static final double TOWER_MIN_START_DISTANCE = 250.0;
     private static final long PORTAL_GHOST_SEED = 4242L;
     private static final long TOWER_SEED = 777L;
+    private static final long BUILDER_SEED = 5150L;
 
     private LevelPlacement() {
     }
@@ -84,6 +85,22 @@ public final class LevelPlacement {
             chosen.add(best);
         }
         return List.copyOf(chosen);
+    }
+
+    /**
+     * The spots of the wall builders: as many as the level says for this difficulty, free corridor points in the
+     * area round the heart (within the builder's spawn radius), the same ones every time for a given maze. Fewer come
+     * back when the area has no room for all of them.
+     */
+    public static List<Point2D> builderSpots(LevelSpec level, DifficultyTier tier, GameMazeWorld world,
+                                             double heartX, double heartY) {
+        if (level == null || !level.hasBuilders() || world == null) {
+            return List.of();
+        }
+        List<Point2D> near = new ArrayList<>(MazeHazards.freePoints(world));
+        near.removeIf(point -> Math.hypot(point.getX() - heartX, point.getY() - heartY) > level.wallBuilder().spawnRadius());
+        Collections.shuffle(near, new Random(BUILDER_SEED));
+        return List.copyOf(near.subList(0, Math.min(level.builderCount(tier), near.size())));
     }
 
     /**

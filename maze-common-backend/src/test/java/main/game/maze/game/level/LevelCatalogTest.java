@@ -22,7 +22,7 @@ class LevelCatalogTest {
     @Test
     @DisplayName("the shipped model has the classic first level and a second level")
     void shippedLevels() {
-        assertEquals(4, CATALOG.count());
+        assertEquals(5, CATALOG.count());
         LevelSpec first = CATALOG.level(1);
         assertFalse(first.hasZones(), "level 1 keeps the classic random walls");
         assertFalse(first.hasSergeants());
@@ -30,7 +30,8 @@ class LevelCatalogTest {
         assertTrue(CATALOG.hasNext(1));
         assertTrue(CATALOG.hasNext(2));
         assertTrue(CATALOG.hasNext(3));
-        assertFalse(CATALOG.hasNext(4), "level 4 is the last one for now");
+        assertTrue(CATALOG.hasNext(4));
+        assertFalse(CATALOG.hasNext(5), "level 5 is the last one for now");
     }
 
     @Test
@@ -93,7 +94,7 @@ class LevelCatalogTest {
     @DisplayName("an unknown level number is rejected")
     void unknownLevel() {
         assertThrows(IllegalArgumentException.class, () -> CATALOG.level(0));
-        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(5));
+        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(6));
     }
 
     @Test
@@ -247,6 +248,36 @@ class LevelCatalogTest {
         assertEquals(1.5, tower.gatlingStartSeconds(), 1e-9, "the gatling fires in between");
         assertTrue(tower.health() >= 5 * CATALOG.level(2).sergeant().health(), "takes a whole lot of damage");
         assertTrue(GuardTowerSpec.isTowerId(GuardTowerSpec.SPAWN_ID_PREFIX + "_1"));
+    }
+
+    @Test
+    @DisplayName("level 5 is exactly level 4 plus wall builders: 10 on hard, 5 on normal, 2 on easy")
+    void levelFiveAddsWallBuilders() {
+        LevelSpec four = CATALOG.level(4);
+        LevelSpec five = CATALOG.level(5);
+        for (int number = 1; number <= 4; number++) {
+            assertFalse(CATALOG.level(number).hasBuilders());
+        }
+        assertTrue(five.hasBuilders());
+        assertEquals(10, five.builderCount(DifficultyTier.HARD));
+        assertEquals(5, five.builderCount(DifficultyTier.NORMAL));
+        assertEquals(2, five.builderCount(DifficultyTier.EASY));
+        // everything else is level 4's
+        assertEquals(four.mines(), five.mines());
+        assertEquals(four.guardTower(), five.guardTower());
+        assertEquals(four.zones(), five.zones());
+        assertEquals(four.sergeant(), five.sergeant());
+        assertEquals(four.teleportGhost(), five.teleportGhost());
+        for (DifficultyTier tier : DifficultyTier.values()) {
+            assertEquals(four.towerCount(tier), five.towerCount(tier));
+            assertEquals(four.ghostCount(tier), five.ghostCount(tier));
+            assertEquals(four.sergeantCount(tier), five.sergeantCount(tier));
+        }
+        WallBuilderSpec builder = five.wallBuilder();
+        assertEquals(3.0, builder.buildSecondsPerCorridor(), 1e-9, "a corridor width every 3 seconds");
+        assertEquals("WOOD_BASIC", builder.wallMaterial(), "wooden walls");
+        assertTrue(WallBuilderSpec.isBuilderId(WallBuilderSpec.SPAWN_ID_PREFIX + "_3"));
+        assertEquals("WOOD_BASIC", LevelSpec.wallMaterial(builder.wallMaterial()).id());
     }
 
     @Test

@@ -32,6 +32,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTeleport <em>Teleport</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGuardTower <em>Guard Tower</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTowerCounts <em>Tower Counts</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts <em>Builder Counts</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig()
@@ -351,5 +353,39 @@ public interface LevelConfig extends EObject
    * @generated
    */
   EList<TowerCountConfig> getTowerCounts();
+
+  /**
+   * Returns the value of the '<em><b>Wall Builder</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Wall Builder</em>' containment reference.
+   * @see #setWallBuilder(WallBuilderConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_WallBuilder()
+   * @model containment="true"
+   * @generated
+   */
+  WallBuilderConfig getWallBuilder();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Wall Builder</em>' containment reference.
+   * @see #getWallBuilder()
+   * @generated
+   */
+  void setWallBuilder(WallBuilderConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Builder Counts</b></em>' containment reference list.
+   * The list contents are of type {@link main.game.maze.dsl.mazeDsl.BuilderCountConfig}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Builder Counts</em>' containment reference list.
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_BuilderCounts()
+   * @model containment="true"
+   * @generated
+   */
+  EList<BuilderCountConfig> getBuilderCounts();
 
 } // LevelConfig

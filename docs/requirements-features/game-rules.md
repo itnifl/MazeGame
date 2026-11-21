@@ -303,3 +303,13 @@ MUST be added to the shared core, not to a single frontend.
   start of the cycle, a burst of six gatling rounds (3 damage each) halfway
   through. A rocket flies 300 px/s to where the player was and explodes there
   (blast 60 px: 25 damage to the player, 40 to walls and enemies).
+- **GR-65**: Level 5 is level 4 plus wall builders: 10 on hard, 5 on normal, 2
+  on easy, standing within 170 px of the heart when the level starts.
+- **GR-66**: A wall builder has 80 hit points, does no damage to the player and
+  does not resurrect. It walks 55 px/s through the corridor middles to an open
+  corridor into the 5 by 5 block of cells round the heart and builds a wooden
+  wall across it, one 20 px piece per second (a 60 px corridor width per 3 s).
+- **GR-67**: The savepoint of a level is made when the level before it is
+  completed (the level number and the weapons carried in). Restarting a level
+  restores it; restarting level 1 is a new game. A new game removes the
+  savepoint.
