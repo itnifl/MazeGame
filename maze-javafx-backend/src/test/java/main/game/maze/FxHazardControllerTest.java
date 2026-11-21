@@ -34,11 +34,13 @@ class FxHazardControllerTest {
         final PlayerCharacter player = new PlayerCharacter(null, 0, 0, null);
         final List<double[]> blasts = new ArrayList<>();
         final List<double[]> teleports = new ArrayList<>();
+        final List<Integer> playerHurts = new ArrayList<>();
         final List<FxHazardController.Cause> causes = new ArrayList<>();
         int draws;
 
         @Override public PlayerCharacter player() { return player; }
         @Override public void blast(double x, double y, int damage, double range) { blasts.add(new double[] {x, y, damage, range}); }
+        @Override public void hurtPlayer(int damage) { playerHurts.add(damage); }
         @Override public void teleportPlayer(double x, double y, FxHazardController.Cause cause) {
             teleports.add(new double[] {x, y});
             causes.add(cause);
@@ -89,7 +91,7 @@ class FxHazardControllerTest {
     }
 
     @Test
-    @DisplayName("walking onto a mine: a great blast (more than a bomb), and the player falls through the hole to the opposite edge")
+    @DisplayName("walking onto a mine: a small blast, the player hurt a little, and the player falls through the hole to the opposite edge")
     void touchingAMine() {
         MineField.Mine mine = hazards.field().mines().get(0);
         host.player.teleportTo(mine.x() - HALF, mine.y() - HALF);
@@ -100,8 +102,10 @@ class FxHazardControllerTest {
         double[] blast = host.blasts.get(0);
         assertEquals(mine.x(), blast[0], 1e-9);
         assertEquals(mine.y(), blast[1], 1e-9);
-        assertTrue(blast[2] > 100, "more damage than a bomb: " + blast[2]);
-        assertTrue(blast[3] > 220, "wider than a bomb: " + blast[3]);
+        assertEquals(LEVEL_3.mines().blastDamage(), blast[2], 1e-9, "walls and enemies take a little");
+        assertEquals(LEVEL_3.mines().blastRadius(), blast[3], 1e-9);
+        assertEquals(List.of(LEVEL_3.mines().playerDamage()), host.playerHurts, "the player takes a little more");
+        assertTrue(LEVEL_3.mines().blastDamage() < LEVEL_3.mines().playerDamage(), "a little less to whatever else it blows up against");
         assertEquals(1, host.teleports.size());
         assertEquals(FxHazardController.Cause.HOLE, host.causes.get(0));
         double[] exit = host.teleports.get(0);

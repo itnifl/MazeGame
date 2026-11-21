@@ -102,10 +102,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MineRing">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Pulsating mines in a circle round each sergeant. A player who touches one sets it off: a great blast that breaks walls and hurts enemies (not the player) and leaves a hole in the ground; a player who falls into the hole comes out at the opposite edge of the map."/>
+      <details key="documentation" value="Pulsating mines in a circle round each sergeant. A player who touches one sets it off: a small blast that hurts the player a little and walls and enemies a little less, and leaves a hole in the ground; a player who falls into the hole comes out at the opposite edge of the map."/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="count" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="8"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="3"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="ringRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="62.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerRadius" lowerBound="1"
@@ -113,9 +113,19 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="pulseSeconds" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.9"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastRadius" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="300.0"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="150.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastDamage" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="250"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="15">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Damage of the blast to walls and enemies: a little, a little less than the player takes."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="playerDamage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="20">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Damage the player takes when they set a mine off: a little."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="holeRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="30.0"/>
   </eClassifiers>

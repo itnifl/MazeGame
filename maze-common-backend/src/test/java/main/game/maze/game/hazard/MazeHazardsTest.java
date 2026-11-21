@@ -54,7 +54,7 @@ class MazeHazardsTest {
                 assertTrue(seen, "no wall between a mine and its sergeant");
             }
         }
-        assertTrue(totalMines > 8 * 4, "the mazes do get mines: " + totalMines);
+        assertTrue(totalMines >= 16, "the mazes do get mines: " + totalMines);
     }
 
     @Test

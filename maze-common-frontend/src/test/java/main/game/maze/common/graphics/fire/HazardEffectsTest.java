@@ -35,7 +35,7 @@ class HazardEffectsTest {
             min = Math.min(min, glow);
             max = Math.max(max, glow);
         }
-        assertTrue(max > min + 0.25, "the glow changes: " + min + ".." + max);
+        assertTrue(max > min + 0.1, "the pulse changes: " + min + ".." + max);
         assertEquals(glowAt(mine, 0.31), glowAt(mine, 0.31 + 0.9), 1e-6, "periodic");
     }
 
@@ -44,15 +44,23 @@ class HazardEffectsTest {
     void phases() {
         double a = glowAt(new MinePulseEffect(0, 0, 0.0, 0.9), 0.2);
         double b = glowAt(new MinePulseEffect(0, 0, 0.5, 0.9), 0.2);
-        assertTrue(Math.abs(a - b) > 0.1, a + " vs " + b);
+        assertTrue(Math.abs(a - b) > 0.05, a + " vs " + b);
     }
 
     @Test
-    @DisplayName("a mine is a dark body with a red glow, drawn where it lies")
+    @DisplayName("a mine is an olive-drab anti-personnel mine with a faint light-blue pulse, drawn where it lies")
     void mineLooks() {
         List<FirePuff> puffs = new MinePulseEffect(100, 100, 0.2, 0.9).puffs(0, 0.4);
         assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.SMOKE && p.alpha() >= 0.99f), "a solid body");
-        assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.BODY && p.red() > p.blue() + 0.4), "a red glow");
+        assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.SMOKE && p.alpha() >= 0.99f
+                && p.green() > p.red() && p.red() > p.blue() + 0.1f), "olive drab, like an army mine");
+        List<FirePuff> pulse = puffs.stream().filter(p -> p.layer() == FirePuff.Layer.BODY).toList();
+        assertFalse(pulse.isEmpty(), "a pulse round the mine");
+        for (FirePuff p : pulse) {
+            assertTrue(p.blue() > p.red() + 0.3f && p.green() > p.red(), "light blue: " + p);
+            assertTrue(p.alpha() <= 0.45f, "faint: " + p.alpha());
+        }
+        assertTrue(puffs.stream().noneMatch(p -> p.layer() == FirePuff.Layer.CORE), "no bright star in the middle");
         for (FirePuff p : puffs) {
             assertTrue(Math.hypot(p.x() - 100, p.y() - 100) < 30, "stays on the mine");
         }

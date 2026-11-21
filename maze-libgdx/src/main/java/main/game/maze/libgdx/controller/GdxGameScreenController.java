@@ -63,6 +63,7 @@ import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.common.graphics.fire.BombImpact;
 import main.game.maze.game.level.LevelCatalogLoader;
 import main.game.maze.game.level.LevelProgress;
+import main.game.maze.game.hazard.TeleportFeedback;
 import main.game.maze.libgdx.helper.GdxHazardSupport;
 import main.game.maze.libgdx.helper.GdxSergeantSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
@@ -106,7 +107,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
     private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
     private static final float PLAYER_FLAME_RANGE = 220.0f;
-    private static final String TELEPORT_SOUND = "/main/game/maze/sounds/teleport.wav";
     private static final float PLAYER_FLAME_VISUAL_SECONDS = (float) FireBlast.DEFAULT_LIFETIME_SECONDS;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
@@ -540,18 +540,20 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         var result = hazardSupport.tick(worldModel, player, animatedEnemies, dt, System.nanoTime() / 1e9);
         var mines = hazardSupport.mineSpec();
         for (var detonation : result.detonations()) {
-            // a great blast at the mine; it never hurts the player, who is sent away through the hole instead
+            // a small blast at the mine: a little less than the player takes for walls and enemies
             detonateBlast((float) detonation.mine().x(), maze.heightPx() - (float) detonation.mine().y(),
                     mines.blastDamage(), (float) mines.blastRadius(), false, "Mine");
+            // the player, who set it off, takes a little damage (the shield still blocks it)
+            combatState.applyDirectDamage(mines.playerDamage());
         }
         if (result.teleport() != null) {
             player.teleportTo(result.teleport().x(), result.teleport().y());
-            AudioEngine.get().play(TELEPORT_SOUND);
-            worldModel.effects().add(new GameWorldModel.ActiveEffect(new main.game.maze.common.graphics.fire.PickupSparkleEffect(
-                    result.teleport().x(), result.teleport().y(), 0.55f, 0.85f, 1.0f)));
-            flashStatus(result.teleport().cause() == GdxHazardSupport.Cause.HOLE
-                    ? "You fell through the hole - out at the other edge of the map"
-                    : "A portal ghost sent you to the edge of the map", 2.0f);
+            // the player flashes in, the screen says Teleported and a deep voice says it too
+            worldModel.effects().add(new GameWorldModel.ActiveEffect(
+                    TeleportFeedback.flashAt(result.teleport().x(), result.teleport().y(), true)));
+            AudioEngine.get().play(TeleportFeedback.ZAP_SOUND);
+            AudioEngine.get().play(TeleportFeedback.VOICE_SOUND);
+            statusMessageBus.showBanner(TeleportFeedback.BANNER_TEXT, TeleportFeedback.BANNER_SECONDS);
         }
     }
 

@@ -13,6 +13,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.javafx.render.FxWeaponHudView;
 import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
 import main.game.maze.javafx.render.FxExplosionView;
+import main.game.maze.javafx.hud.FxBannerView;
 import main.game.maze.javafx.render.FxHazardLayer;
 import main.game.maze.javafx.render.FxRemainsLayer;
 import java.net.URL;
@@ -241,8 +242,12 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final FxHazardController hazards = new FxHazardController(new FxHazardController.Host() {
         @Override public PlayerCharacter player()                  { return playerCharacter; }
         @Override public void blast(double x, double y, int damage, double range) {
-            // a great blast at the mine; it never hurts the player, who is sent away through the hole instead
+            // a small blast at the mine: a little less than the player takes for walls and enemies
             blastAt(x, y, damage, range, false, "Mine");
+        }
+        @Override public void hurtPlayer(int damage) {
+            // the player, who set it off, takes a little damage (the shield still blocks it)
+            if (playerCharacter != null) playerCharacter.subtractHitPoints(damage);
         }
         @Override public void teleportPlayer(double x, double y, FxHazardController.Cause cause) {
             teleportPlayerTo(x, y, cause);
@@ -778,7 +783,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         hazards.tick(now);
     }
 
-    private static final String TELEPORT_SOUND = "/main/game/maze/sounds/teleport.wav";
+    private final FxBannerView banner = new FxBannerView(() -> root);
 
     /** The player is sent to a new place (centre at x, y): move, camera, sound, sparkle and a message. */
     private void teleportPlayerTo(double x, double y, FxHazardController.Cause cause) {
@@ -786,11 +791,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         double half = StageConstants.PlayerCharacterXYSize * 0.5d;
         playerCharacter.teleportTo(x - half, y - half);
         renderCoordinator.updateCameraFollow(playerCharacter);
-        main.game.maze.common.graphics.AudioEngine.get().play(TELEPORT_SOUND);
-        weapons.showEffect(new main.game.maze.common.graphics.fire.PickupSparkleEffect(x, y, 0.55f, 0.85f, 1.0f));
-        setHudMessage(cause == FxHazardController.Cause.HOLE
-                ? "You fell through the hole - out at the other edge of the map"
-                : "A portal ghost sent you to the edge of the map", Duration.seconds(2.0));
+        // the player flashes in, the screen says Teleported and a deep voice says it too
+        weapons.showEffect(main.game.maze.game.hazard.TeleportFeedback.flashAt(x, y, false));
+        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.hazard.TeleportFeedback.ZAP_SOUND);
+        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.hazard.TeleportFeedback.VOICE_SOUND);
+        banner.show(main.game.maze.game.hazard.TeleportFeedback.BANNER_TEXT, main.game.maze.game.hazard.TeleportFeedback.BANNER_SECONDS);
     }
 
     /** A portal ghost touched the player (called by the ghost). */
@@ -886,6 +891,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void dispose() {
         clearActivePlayerBombs();
         hazards.dispose();
+        banner.hide();
         if (hazardLayer != null) { hazardLayer.detach(); hazardLayer = null; }
         weapons.dispose();
         weaponHud.clear();

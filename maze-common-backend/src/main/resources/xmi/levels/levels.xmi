@@ -30,14 +30,15 @@
   </levels>
 
   <!--
-    Level 3 is level 2 plus: pulsating mines in a circle round every sergeant (a mine that is touched blasts
-    a great hole in the ground; a player who falls in comes out at the opposite edge of the map), and a new
+    Level 3 is level 2 plus: three anti-personnel mines in a circle round every sergeant (a mine that is touched hurts
+    the player a little, hurts walls and enemies a little less and leaves a hole in the ground; a player who
+    falls in comes out at the opposite edge of the map), and a new
     teleporting ghost that sends the player to a random spot at the edge of the map: 3 on easy, 6 on normal,
     10 on hard. Everything else is taken from level 2 (baseLevel).
   -->
   <levels number="3" name="The Minefield" baseLevel="2">
-    <mines count="8" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
-        blastRadius="300.0" blastDamage="250" holeRadius="30.0"/>
+    <mines count="3" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
+        blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
     <teleportGhost displayName="Portal ghost" health="60" speed="1.6"
         sprite="/main/game/maze/ghost-portal.png"
         teleportSound="/main/game/maze/sounds/teleport.wav" cooldownSeconds="2.5"/>

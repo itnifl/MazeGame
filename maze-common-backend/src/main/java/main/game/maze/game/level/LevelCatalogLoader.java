@@ -167,6 +167,7 @@ public final class LevelCatalogLoader {
             return new MineSpec(DynamicModel.integer(mines, "count"), DynamicModel.decimal(mines, "ringRadius"),
                     DynamicModel.decimal(mines, "triggerRadius"), DynamicModel.decimal(mines, "pulseSeconds"),
                     DynamicModel.decimal(mines, "blastRadius"), DynamicModel.integer(mines, "blastDamage"),
+                    DynamicModel.integer(mines, "playerDamage"),
                     DynamicModel.decimal(mines, "holeRadius"));
         } catch (IllegalArgumentException invalid) {
             throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);

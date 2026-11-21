@@ -29,8 +29,11 @@ public final class FxHazardController {
     public interface Host {
         PlayerCharacter player();
 
-        /** A mine went off at (x, y): the great blast (walls, enemies; never the player). */
+        /** A mine went off at (x, y): the blast (walls and enemies; the player's share is {@link #hurtPlayer}). */
         void blast(double x, double y, int damage, double range);
+
+        /** The player set a mine off and takes a little damage. */
+        void hurtPlayer(int damage);
 
         /** Sends the player so that their centre is at (x, y). */
         void teleportPlayer(double x, double y, Cause cause);
@@ -94,6 +97,7 @@ public final class FxHazardController {
         MineSpec spec = field.spec();
         for (MineField.Detonation detonation : update.detonations()) {
             host.blast(detonation.mine().x(), detonation.mine().y(), spec.blastDamage(), spec.blastRadius());
+            host.hurtPlayer(spec.playerDamage());
         }
         if (update.fellInto() != null && gate.tryUse(nowNanos / 1e9)) {
             Point2D exit = EdgeTeleport.oppositeEdge(cx, cy, freePoints);

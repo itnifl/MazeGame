@@ -190,9 +190,10 @@ class LevelCatalogTest {
         LevelSpec three = CATALOG.level(3);
         assertTrue(three.hasMines());
         MineSpec mines = three.mines();
-        assertTrue(mines.count() >= 6, "a circle of mines");
-        assertTrue(mines.blastDamage() > 100, "a great blast: more than a bomb");
-        assertTrue(mines.blastRadius() > 120, "a great blast: wider than a bomb");
+        assertEquals(3, mines.count(), "three mines per sergeant");
+        assertTrue(mines.playerDamage() > 0 && mines.playerDamage() <= 30, "a little damage to the player");
+        assertTrue(mines.blastDamage() > 0 && mines.blastDamage() < mines.playerDamage(),
+                "a little less to whatever else it blows up against");
         assertTrue(mines.triggerRadius() < mines.ringRadius(), "the ring is wider than the trigger");
     }
 
