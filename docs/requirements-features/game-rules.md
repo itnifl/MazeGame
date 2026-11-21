@@ -307,9 +307,16 @@ MUST be added to the shared core, not to a single frontend.
   on easy, standing within 170 px of the heart when the level starts.
 - **GR-66**: A wall builder has 80 hit points, does no damage to the player and
   does not resurrect. It walks 55 px/s through the corridor middles to an open
-  corridor into the 5 by 5 block of cells round the heart and builds a wooden
-  wall across it, one 20 px piece per second (a 60 px corridor width per 3 s).
+  corridor into the block of cells round the heart (ring by ring, outermost
+  first) and builds a wooden wall across it, one 20 px piece per second (a 60 px corridor width per 3 s).
 - **GR-67**: The savepoint of a level is made when the level before it is
   completed (the level number and the weapons carried in). Restarting a level
   restores it; restarting level 1 is a new game. A new game removes the
   savepoint.
+- **GR-68**: The player starts on the free corridor point nearest to the
+  original start that the HUD does not cover (the top bar, the weapon panel
+  under it, the score panel and the bottom row).
+- **GR-69**: The wall builders start at least 60 px (one corridor) apart,
+  wander outwards until they are 4 cells from the heart, build there, and when
+  that ring is closed move in one cell at a time (4, 3, 2, 1), standing on the
+  heart side of each corridor they wall up.

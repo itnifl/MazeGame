@@ -634,6 +634,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         speed=DOUBLE 
 	 *         sprite=STRING 
 	 *         buildSecondsPerCorridor=DOUBLE 
+	 *         startRadiusCells=INT 
 	 *         blockRadiusCells=INT 
 	 *         spawnRadius=DOUBLE 
 	 *         wallMaterial=ID 

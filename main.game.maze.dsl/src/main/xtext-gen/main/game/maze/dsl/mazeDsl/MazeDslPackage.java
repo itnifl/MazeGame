@@ -1703,13 +1703,22 @@ public interface MazeDslPackage extends EPackage
   int WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR = 4;
 
   /**
+   * The feature id for the '<em><b>Start Radius Cells</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int WALL_BUILDER_CONFIG__START_RADIUS_CELLS = 5;
+
+  /**
    * The feature id for the '<em><b>Block Radius Cells</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS = 5;
+  int WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS = 6;
 
   /**
    * The feature id for the '<em><b>Spawn Radius</b></em>' attribute.
@@ -1718,7 +1727,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int WALL_BUILDER_CONFIG__SPAWN_RADIUS = 6;
+  int WALL_BUILDER_CONFIG__SPAWN_RADIUS = 7;
 
   /**
    * The feature id for the '<em><b>Wall Material</b></em>' attribute.
@@ -1727,7 +1736,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int WALL_BUILDER_CONFIG__WALL_MATERIAL = 7;
+  int WALL_BUILDER_CONFIG__WALL_MATERIAL = 8;
 
   /**
    * The feature id for the '<em><b>Build Sound</b></em>' attribute.
@@ -1736,7 +1745,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int WALL_BUILDER_CONFIG__BUILD_SOUND = 8;
+  int WALL_BUILDER_CONFIG__BUILD_SOUND = 9;
 
   /**
    * The number of structural features of the '<em>Wall Builder Config</em>' class.
@@ -1745,7 +1754,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int WALL_BUILDER_CONFIG_FEATURE_COUNT = 9;
+  int WALL_BUILDER_CONFIG_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.BuilderCountConfigImpl <em>Builder Count Config</em>}' class.
@@ -3590,6 +3599,17 @@ public interface MazeDslPackage extends EPackage
   EAttribute getWallBuilderConfig_BuildSecondsPerCorridor();
 
   /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getStartRadiusCells <em>Start Radius Cells</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Start Radius Cells</em>'.
+   * @see main.game.maze.dsl.mazeDsl.WallBuilderConfig#getStartRadiusCells()
+   * @see #getWallBuilderConfig()
+   * @generated
+   */
+  EAttribute getWallBuilderConfig_StartRadiusCells();
+
+  /**
    * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBlockRadiusCells <em>Block Radius Cells</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5102,6 +5122,14 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR = eINSTANCE.getWallBuilderConfig_BuildSecondsPerCorridor();
+
+    /**
+     * The meta object literal for the '<em><b>Start Radius Cells</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute WALL_BUILDER_CONFIG__START_RADIUS_CELLS = eINSTANCE.getWallBuilderConfig_StartRadiusCells();
 
     /**
      * The meta object literal for the '<em><b>Block Radius Cells</b></em>' attribute feature.

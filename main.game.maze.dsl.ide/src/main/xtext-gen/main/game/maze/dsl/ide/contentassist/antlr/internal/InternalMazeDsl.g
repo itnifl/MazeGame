@@ -1433,9 +1433,15 @@ rule__ValidID__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getBuildSoundKeyword_62()); }
+		{ before(grammarAccess.getValidIDAccess().getStartRadiusKeyword_62()); }
+		'startRadius'
+		{ after(grammarAccess.getValidIDAccess().getStartRadiusKeyword_62()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBuildSoundKeyword_63()); }
 		'buildSound'
-		{ after(grammarAccess.getValidIDAccess().getBuildSoundKeyword_62()); }
+		{ after(grammarAccess.getValidIDAccess().getBuildSoundKeyword_63()); }
 	)
 ;
 finally {
@@ -10605,9 +10611,9 @@ rule__WallBuilderConfig__Group__11__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_11()); }
-	'blockRadius'
-	{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_11()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getStartRadiusKeyword_11()); }
+	'startRadius'
+	{ after(grammarAccess.getWallBuilderConfigAccess().getStartRadiusKeyword_11()); }
 )
 ;
 finally {
@@ -10632,9 +10638,9 @@ rule__WallBuilderConfig__Group__12__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_12()); }
-	(rule__WallBuilderConfig__BlockRadiusCellsAssignment_12)
-	{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_12()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsAssignment_12()); }
+	(rule__WallBuilderConfig__StartRadiusCellsAssignment_12)
+	{ after(grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsAssignment_12()); }
 )
 ;
 finally {
@@ -10659,9 +10665,9 @@ rule__WallBuilderConfig__Group__13__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_13()); }
-	'spawnRadius'
-	{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_13()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_13()); }
+	'blockRadius'
+	{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_13()); }
 )
 ;
 finally {
@@ -10686,9 +10692,9 @@ rule__WallBuilderConfig__Group__14__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_14()); }
-	(rule__WallBuilderConfig__SpawnRadiusAssignment_14)
-	{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_14()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_14()); }
+	(rule__WallBuilderConfig__BlockRadiusCellsAssignment_14)
+	{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_14()); }
 )
 ;
 finally {
@@ -10713,9 +10719,9 @@ rule__WallBuilderConfig__Group__15__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_15()); }
-	'material'
-	{ after(grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_15()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_15()); }
+	'spawnRadius'
+	{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_15()); }
 )
 ;
 finally {
@@ -10740,9 +10746,9 @@ rule__WallBuilderConfig__Group__16__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_16()); }
-	(rule__WallBuilderConfig__WallMaterialAssignment_16)
-	{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_16()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_16()); }
+	(rule__WallBuilderConfig__SpawnRadiusAssignment_16)
+	{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_16()); }
 )
 ;
 finally {
@@ -10767,9 +10773,9 @@ rule__WallBuilderConfig__Group__17__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getGroup_17()); }
-	(rule__WallBuilderConfig__Group_17__0)?
-	{ after(grammarAccess.getWallBuilderConfigAccess().getGroup_17()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_17()); }
+	'material'
+	{ after(grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_17()); }
 )
 ;
 finally {
@@ -10782,6 +10788,7 @@ rule__WallBuilderConfig__Group__18
 	}
 :
 	rule__WallBuilderConfig__Group__18__Impl
+	rule__WallBuilderConfig__Group__19
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -10793,9 +10800,62 @@ rule__WallBuilderConfig__Group__18__Impl
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_18()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_18()); }
+	(rule__WallBuilderConfig__WallMaterialAssignment_18)
+	{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_18()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__WallBuilderConfig__Group__19
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__WallBuilderConfig__Group__19__Impl
+	rule__WallBuilderConfig__Group__20
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__WallBuilderConfig__Group__19__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getWallBuilderConfigAccess().getGroup_19()); }
+	(rule__WallBuilderConfig__Group_19__0)?
+	{ after(grammarAccess.getWallBuilderConfigAccess().getGroup_19()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__WallBuilderConfig__Group__20
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__WallBuilderConfig__Group__20__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__WallBuilderConfig__Group__20__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_20()); }
 	'}'
-	{ after(grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_18()); }
+	{ after(grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_20()); }
 )
 ;
 finally {
@@ -10803,53 +10863,53 @@ finally {
 }
 
 
-rule__WallBuilderConfig__Group_17__0
+rule__WallBuilderConfig__Group_19__0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__WallBuilderConfig__Group_17__0__Impl
-	rule__WallBuilderConfig__Group_17__1
+	rule__WallBuilderConfig__Group_19__0__Impl
+	rule__WallBuilderConfig__Group_19__1
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__Group_17__0__Impl
+rule__WallBuilderConfig__Group_19__0__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_17_0()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_19_0()); }
 	'buildSound'
-	{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_17_0()); }
+	{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_19_0()); }
 )
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__Group_17__1
+rule__WallBuilderConfig__Group_19__1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__WallBuilderConfig__Group_17__1__Impl
+	rule__WallBuilderConfig__Group_19__1__Impl
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__Group_17__1__Impl
+rule__WallBuilderConfig__Group_19__1__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_17_1()); }
-	(rule__WallBuilderConfig__BuildSoundAssignment_17_1)
-	{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_17_1()); }
+	{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_19_1()); }
+	(rule__WallBuilderConfig__BuildSoundAssignment_19_1)
+	{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_19_1()); }
 )
 ;
 finally {
@@ -13743,60 +13803,75 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__BlockRadiusCellsAssignment_12
+rule__WallBuilderConfig__StartRadiusCellsAssignment_12
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_12_0()); }
+		{ before(grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsINTTerminalRuleCall_12_0()); }
 		RULE_INT
-		{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_12_0()); }
+		{ after(grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsINTTerminalRuleCall_12_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__SpawnRadiusAssignment_14
+rule__WallBuilderConfig__BlockRadiusCellsAssignment_14
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_14_0()); }
+		{ before(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_14_0()); }
+		RULE_INT
+		{ after(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_14_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__WallBuilderConfig__SpawnRadiusAssignment_16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_16_0()); }
 		ruleDOUBLE
-		{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_14_0()); }
+		{ after(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_16_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__WallMaterialAssignment_16
+rule__WallBuilderConfig__WallMaterialAssignment_18
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_16_0()); }
+		{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); }
 		RULE_ID
-		{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_16_0()); }
+		{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__WallBuilderConfig__BuildSoundAssignment_17_1
+rule__WallBuilderConfig__BuildSoundAssignment_19_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_17_1_0()); }
+		{ before(grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_19_1_0()); }
 		RULE_STRING
-		{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_17_1_0()); }
+		{ after(grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_19_1_0()); }
 	)
 ;
 finally {

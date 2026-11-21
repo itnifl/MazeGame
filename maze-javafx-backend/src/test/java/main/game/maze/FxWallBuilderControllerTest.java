@@ -81,7 +81,7 @@ class FxWallBuilderControllerTest {
         builders.register("builder_1", b);
         int wallsBefore = world.getMazeVectors().size();
         double startX = a.x;
-        run(60);
+        run(400);
         assertFalse(host.builtBy.isEmpty(), "walls went up");
         assertEquals(wallsBefore + host.builtBy.size(), world.getMazeVectors().size());
         assertTrue(a.x != startX || a.y != H / 2.0, "the builder walked");

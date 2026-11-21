@@ -107,7 +107,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getGuardTowerConfigAccess().getGroup_33(), "rule__GuardTowerConfig__Group_33__0");
 			builder.put(grammarAccess.getTowerCountConfigAccess().getGroup(), "rule__TowerCountConfig__Group__0");
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getGroup(), "rule__WallBuilderConfig__Group__0");
-			builder.put(grammarAccess.getWallBuilderConfigAccess().getGroup_17(), "rule__WallBuilderConfig__Group_17__0");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getGroup_19(), "rule__WallBuilderConfig__Group_19__0");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getGroup(), "rule__BuilderCountConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup(), "rule__TeleportRulesConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup_8(), "rule__TeleportRulesConfig__Group_8__0");
@@ -252,10 +252,11 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getSpeedAssignment_6(), "rule__WallBuilderConfig__SpeedAssignment_6");
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getSpriteAssignment_8(), "rule__WallBuilderConfig__SpriteAssignment_8");
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getBuildSecondsPerCorridorAssignment_10(), "rule__WallBuilderConfig__BuildSecondsPerCorridorAssignment_10");
-			builder.put(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_12(), "rule__WallBuilderConfig__BlockRadiusCellsAssignment_12");
-			builder.put(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_14(), "rule__WallBuilderConfig__SpawnRadiusAssignment_14");
-			builder.put(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_16(), "rule__WallBuilderConfig__WallMaterialAssignment_16");
-			builder.put(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_17_1(), "rule__WallBuilderConfig__BuildSoundAssignment_17_1");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsAssignment_12(), "rule__WallBuilderConfig__StartRadiusCellsAssignment_12");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsAssignment_14(), "rule__WallBuilderConfig__BlockRadiusCellsAssignment_14");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusAssignment_16(), "rule__WallBuilderConfig__SpawnRadiusAssignment_16");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getWallMaterialAssignment_18(), "rule__WallBuilderConfig__WallMaterialAssignment_18");
+			builder.put(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_19_1(), "rule__WallBuilderConfig__BuildSoundAssignment_19_1");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getDifficultyAssignment_1(), "rule__BuilderCountConfig__DifficultyAssignment_1");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getCountAssignment_2(), "rule__BuilderCountConfig__CountAssignment_2");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsAssignment_3(), "rule__TeleportRulesConfig__CooldownSecondsAssignment_3");

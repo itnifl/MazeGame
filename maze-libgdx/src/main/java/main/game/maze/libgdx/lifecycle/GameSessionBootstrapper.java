@@ -32,11 +32,17 @@ public final class GameSessionBootstrapper {
         float activePlayerSpeed = Math.max(1f, request.toJavaFxLikeSpeed().apply(baseSpeed));
         float activeGoalSize = runtimeModel.goalSize() > 0f ? runtimeModel.goalSize() : request.defaultGoalSize();
 
-        PlayerState player = PlayerState.spawnAwayFromWalls(
-                maze.startX(),
-                maze.startY(),
-                runtimeModel.playerSize() > 0f ? runtimeModel.playerSize() : request.fallbackPlayerSize(),
-                maze);
+        float playerSize = runtimeModel.playerSize() > 0f ? runtimeModel.playerSize() : request.fallbackPlayerSize();
+        float startX = maze.startX();
+        float startY = maze.startY();
+        if (maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
+            // start close to the original start, on free ground and not under the HUD (the shared rule works y-down)
+            main.game.maze.mazeworld.Point2D spawn = main.game.maze.game.spawn.PlayerSpawn.find(realMaze.sourceWorld(),
+                    startX, maze.heightPx() - startY, playerSize, maze.widthPx(), maze.heightPx());
+            startX = (float) spawn.getX();
+            startY = maze.heightPx() - (float) spawn.getY();
+        }
+        PlayerState player = PlayerState.spawnAwayFromWalls(startX, startY, playerSize, maze);
 
         request.session().setBaseScore(request.baseScoreForDifficulty().apply(selected));
         request.session().resetMoveCount();

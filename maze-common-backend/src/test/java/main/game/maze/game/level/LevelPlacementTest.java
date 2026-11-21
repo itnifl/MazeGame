@@ -109,6 +109,13 @@ class LevelPlacementTest {
         }
         assertEquals(LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332),
                 LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332), "the same every time");
+        List<Point2D> hard = LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332);
+        for (int a = 0; a < hard.size(); a++) {
+            for (int b = a + 1; b < hard.size(); b++) {
+                assertTrue(Math.hypot(hard.get(a).getX() - hard.get(b).getX(), hard.get(a).getY() - hard.get(b).getY())
+                        >= LevelPlacement.BUILDER_SPACING, "builders start one corridor width apart");
+            }
+        }
         assertTrue(LevelPlacement.builderSpots(LEVELS.level(4), DifficultyTier.HARD, world, 400, 332).isEmpty());
     }
 

@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getSprite <em>Sprite</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getBuildSecondsPerCorridor <em>Build Seconds Per Corridor</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getStartRadiusCells <em>Start Radius Cells</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getBlockRadiusCells <em>Block Radius Cells</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getSpawnRadius <em>Spawn Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.WallBuilderConfigImpl#getWallMaterial <em>Wall Material</em>}</li>
@@ -135,6 +136,26 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected double buildSecondsPerCorridor = BUILD_SECONDS_PER_CORRIDOR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getStartRadiusCells() <em>Start Radius Cells</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStartRadiusCells()
+   * @generated
+   * @ordered
+   */
+  protected static final int START_RADIUS_CELLS_EDEFAULT = 0;
+
+  /**
+   * The cached value of the '{@link #getStartRadiusCells() <em>Start Radius Cells</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStartRadiusCells()
+   * @generated
+   * @ordered
+   */
+  protected int startRadiusCells = START_RADIUS_CELLS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getBlockRadiusCells() <em>Block Radius Cells</em>}' attribute.
@@ -368,6 +389,31 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
    * @generated
    */
   @Override
+  public int getStartRadiusCells()
+  {
+    return startRadiusCells;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setStartRadiusCells(int newStartRadiusCells)
+  {
+    int oldStartRadiusCells = startRadiusCells;
+    startRadiusCells = newStartRadiusCells;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.WALL_BUILDER_CONFIG__START_RADIUS_CELLS, oldStartRadiusCells, startRadiusCells));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public int getBlockRadiusCells()
   {
     return blockRadiusCells;
@@ -482,6 +528,8 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
         return getSprite();
       case MazeDslPackage.WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR:
         return getBuildSecondsPerCorridor();
+      case MazeDslPackage.WALL_BUILDER_CONFIG__START_RADIUS_CELLS:
+        return getStartRadiusCells();
       case MazeDslPackage.WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS:
         return getBlockRadiusCells();
       case MazeDslPackage.WALL_BUILDER_CONFIG__SPAWN_RADIUS:
@@ -518,6 +566,9 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
         return;
       case MazeDslPackage.WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR:
         setBuildSecondsPerCorridor((Double)newValue);
+        return;
+      case MazeDslPackage.WALL_BUILDER_CONFIG__START_RADIUS_CELLS:
+        setStartRadiusCells((Integer)newValue);
         return;
       case MazeDslPackage.WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS:
         setBlockRadiusCells((Integer)newValue);
@@ -560,6 +611,9 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
       case MazeDslPackage.WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR:
         setBuildSecondsPerCorridor(BUILD_SECONDS_PER_CORRIDOR_EDEFAULT);
         return;
+      case MazeDslPackage.WALL_BUILDER_CONFIG__START_RADIUS_CELLS:
+        setStartRadiusCells(START_RADIUS_CELLS_EDEFAULT);
+        return;
       case MazeDslPackage.WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS:
         setBlockRadiusCells(BLOCK_RADIUS_CELLS_EDEFAULT);
         return;
@@ -596,6 +650,8 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
         return SPRITE_EDEFAULT == null ? sprite != null : !SPRITE_EDEFAULT.equals(sprite);
       case MazeDslPackage.WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR:
         return buildSecondsPerCorridor != BUILD_SECONDS_PER_CORRIDOR_EDEFAULT;
+      case MazeDslPackage.WALL_BUILDER_CONFIG__START_RADIUS_CELLS:
+        return startRadiusCells != START_RADIUS_CELLS_EDEFAULT;
       case MazeDslPackage.WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS:
         return blockRadiusCells != BLOCK_RADIUS_CELLS_EDEFAULT;
       case MazeDslPackage.WALL_BUILDER_CONFIG__SPAWN_RADIUS:
@@ -629,6 +685,8 @@ public class WallBuilderConfigImpl extends MinimalEObjectImpl.Container implemen
     result.append(sprite);
     result.append(", buildSecondsPerCorridor: ");
     result.append(buildSecondsPerCorridor);
+    result.append(", startRadiusCells: ");
+    result.append(startRadiusCells);
     result.append(", blockRadiusCells: ");
     result.append(blockRadiusCells);
     result.append(", spawnRadius: ");

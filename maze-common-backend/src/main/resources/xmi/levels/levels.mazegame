@@ -108,8 +108,9 @@ game MazeGameLevels {
             speed 55.0
             sprite "/main/game/maze/zombie-builder.png"
             buildSeconds 3.0
-            blockRadius 2
-            spawnRadius 170.0
+            startRadius 4
+            blockRadius 1
+            spawnRadius 200.0
             material WOOD_BASIC
             buildSound "/main/game/maze/sounds/wall-build.wav"
         }

@@ -84,7 +84,7 @@ class GdxWallBuilderSupportTest {
         List<GdxEnemyRuntime> crew = new ArrayList<>(List.of(builder(0, W / 2, H / 2), builder(1, W / 2 + 10, H / 2 + 10)));
         float startX = crew.get(0).x();
         int before = world.getMazeVectors().size();
-        run(60, crew);
+        run(400, crew);
         assertFalse(built.isEmpty(), "walls went up");
         assertEquals(before + built.size(), world.getMazeVectors().size());
         assertTrue(crew.get(0).x() != startX || crew.get(0).y() != H / 2, "the builder walked");

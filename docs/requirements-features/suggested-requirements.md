@@ -426,3 +426,5 @@ These requirements have been implemented and verified.
 - **SR-337** *(Observability)*: Count walls built, walls broken again and builders killed per level and log them at `FINE` next to the kill statistics (SR-252); an overlay showing each builder's chosen corridor would help balance.
 
 - **SR-338** *(Robustness)*: A builder walks straight lines between corridor middles ignoring enemies and the player; a builder boxed in by other builders or by a closed corridor just waits. Add a nudge or a re-plan after a few seconds without progress.
+
+- **SR-342** *(UX)*: The HUD rectangles in `HudZones` are copied from the layout of the two frontends (JavaFX FXML, libGDX render constants). Derive both layouts from one shared description so they cannot drift, and let the camera start where the player is so the HUD never covers the start.

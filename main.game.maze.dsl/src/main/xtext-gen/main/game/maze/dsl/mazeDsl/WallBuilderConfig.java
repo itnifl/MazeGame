@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpeed <em>Speed</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSprite <em>Sprite</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBuildSecondsPerCorridor <em>Build Seconds Per Corridor</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getStartRadiusCells <em>Start Radius Cells</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getBlockRadiusCells <em>Block Radius Cells</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getSpawnRadius <em>Spawn Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getWallMaterial <em>Wall Material</em>}</li>
@@ -140,6 +141,28 @@ public interface WallBuilderConfig extends EObject
    * @generated
    */
   void setBuildSecondsPerCorridor(double value);
+
+  /**
+   * Returns the value of the '<em><b>Start Radius Cells</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Start Radius Cells</em>' attribute.
+   * @see #setStartRadiusCells(int)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getWallBuilderConfig_StartRadiusCells()
+   * @model
+   * @generated
+   */
+  int getStartRadiusCells();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.WallBuilderConfig#getStartRadiusCells <em>Start Radius Cells</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Start Radius Cells</em>' attribute.
+   * @see #getStartRadiusCells()
+   * @generated
+   */
+  void setStartRadiusCells(int value);
 
   /**
    * Returns the value of the '<em><b>Block Radius Cells</b></em>' attribute.

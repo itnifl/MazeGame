@@ -531,6 +531,7 @@ public class MazeDslGenerator extends AbstractGenerator {
                 x.append("    <wallBuilder displayName=\"").append(xml(b.getDisplayName())).append("\" health=\"").append(b.getHealth())
                  .append("\" speed=\"").append(b.getSpeed()).append("\" sprite=\"").append(xml(b.getSprite()))
                  .append("\" buildSecondsPerCorridor=\"").append(b.getBuildSecondsPerCorridor())
+                 .append("\" startRadiusCells=\"").append(b.getStartRadiusCells())
                  .append("\" blockRadiusCells=\"").append(b.getBlockRadiusCells())
                  .append("\" spawnRadius=\"").append(b.getSpawnRadius())
                  .append("\" wallMaterial=\"").append(xml(b.getWallMaterial())).append('"');

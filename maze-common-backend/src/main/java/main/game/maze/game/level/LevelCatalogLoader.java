@@ -203,7 +203,8 @@ public final class LevelCatalogLoader {
         try {
             return new WallBuilderSpec(DynamicModel.string(builder, "displayName"), DynamicModel.integer(builder, "health"),
                     DynamicModel.decimal(builder, "speed"), DynamicModel.string(builder, "sprite"),
-                    DynamicModel.decimal(builder, "buildSecondsPerCorridor"), DynamicModel.integer(builder, "blockRadiusCells"),
+                    DynamicModel.decimal(builder, "buildSecondsPerCorridor"), DynamicModel.integer(builder, "startRadiusCells"),
+                    DynamicModel.integer(builder, "blockRadiusCells"),
                     DynamicModel.decimal(builder, "spawnRadius"), DynamicModel.string(builder, "wallMaterial"),
                     DynamicModel.string(builder, "buildSound"));
         } catch (IllegalArgumentException invalid) {

@@ -3739,15 +3739,37 @@ ruleWallBuilderConfig returns [EObject current=null]
 				}
 			)
 		)
-		otherlv_11='blockRadius'
+		otherlv_11='startRadius'
 		{
-			newLeafNode(otherlv_11, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_11());
+			newLeafNode(otherlv_11, grammarAccess.getWallBuilderConfigAccess().getStartRadiusKeyword_11());
 		}
 		(
 			(
-				lv_blockRadiusCells_12_0=RULE_INT
+				lv_startRadiusCells_12_0=RULE_INT
 				{
-					newLeafNode(lv_blockRadiusCells_12_0, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_12_0());
+					newLeafNode(lv_startRadiusCells_12_0, grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsINTTerminalRuleCall_12_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getWallBuilderConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"startRadiusCells",
+						lv_startRadiusCells_12_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_13='blockRadius'
+		{
+			newLeafNode(otherlv_13, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_13());
+		}
+		(
+			(
+				lv_blockRadiusCells_14_0=RULE_INT
+				{
+					newLeafNode(lv_blockRadiusCells_14_0, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_14_0());
 				}
 				{
 					if ($current==null) {
@@ -3756,21 +3778,21 @@ ruleWallBuilderConfig returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"blockRadiusCells",
-						lv_blockRadiusCells_12_0,
+						lv_blockRadiusCells_14_0,
 						"org.eclipse.xtext.common.Terminals.INT");
 				}
 			)
 		)
-		otherlv_13='spawnRadius'
+		otherlv_15='spawnRadius'
 		{
-			newLeafNode(otherlv_13, grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_13());
+			newLeafNode(otherlv_15, grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_15());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_14_0());
+					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_16_0());
 				}
-				lv_spawnRadius_14_0=ruleDOUBLE
+				lv_spawnRadius_16_0=ruleDOUBLE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getWallBuilderConfigRule());
@@ -3778,21 +3800,21 @@ ruleWallBuilderConfig returns [EObject current=null]
 					set(
 						$current,
 						"spawnRadius",
-						lv_spawnRadius_14_0,
+						lv_spawnRadius_16_0,
 						"main.game.maze.dsl.MazeDsl.DOUBLE");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_15='material'
+		otherlv_17='material'
 		{
-			newLeafNode(otherlv_15, grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_15());
+			newLeafNode(otherlv_17, grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_17());
 		}
 		(
 			(
-				lv_wallMaterial_16_0=RULE_ID
+				lv_wallMaterial_18_0=RULE_ID
 				{
-					newLeafNode(lv_wallMaterial_16_0, grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_16_0());
+					newLeafNode(lv_wallMaterial_18_0, grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0());
 				}
 				{
 					if ($current==null) {
@@ -3801,21 +3823,21 @@ ruleWallBuilderConfig returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"wallMaterial",
-						lv_wallMaterial_16_0,
+						lv_wallMaterial_18_0,
 						"org.eclipse.xtext.common.Terminals.ID");
 				}
 			)
 		)
 		(
-			otherlv_17='buildSound'
+			otherlv_19='buildSound'
 			{
-				newLeafNode(otherlv_17, grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_17_0());
+				newLeafNode(otherlv_19, grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_19_0());
 			}
 			(
 				(
-					lv_buildSound_18_0=RULE_STRING
+					lv_buildSound_20_0=RULE_STRING
 					{
-						newLeafNode(lv_buildSound_18_0, grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_17_1_0());
+						newLeafNode(lv_buildSound_20_0, grammarAccess.getWallBuilderConfigAccess().getBuildSoundSTRINGTerminalRuleCall_19_1_0());
 					}
 					{
 						if ($current==null) {
@@ -3824,15 +3846,15 @@ ruleWallBuilderConfig returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"buildSound",
-							lv_buildSound_18_0,
+							lv_buildSound_20_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 		)?
-		otherlv_19='}'
+		otherlv_21='}'
 		{
-			newLeafNode(otherlv_19, grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_18());
+			newLeafNode(otherlv_21, grammarAccess.getWallBuilderConfigAccess().getRightCurlyBracketKeyword_20());
 		}
 	)
 ;
@@ -4654,10 +4676,16 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getMaterialKeyword_61());
 		}
 		    |
+		kw='startRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getStartRadiusKeyword_62());
+		}
+		    |
 		kw='buildSound'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_62());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_63());
 		}
 	)
 ;

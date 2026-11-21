@@ -11,6 +11,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import main.game.maze.App;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.config.model.PlayerConfig;
@@ -126,6 +127,13 @@ public final class FxGameSessionBootstrapper {
         PlayerConfig  config    = loadPlayerConfig();
 
         setPlayerBaseImage(playerImageView, config.imageBase());
+        // start close to the original start, on free ground and not under the HUD
+        double half = StageConstants.PlayerCharacterXYSize / 2.0;
+        main.game.maze.mazeworld.Point2D spawn = main.game.maze.game.spawn.PlayerSpawn.find(maze,
+                playerImageView.getLayoutX() + half, playerImageView.getLayoutY() + half,
+                StageConstants.PlayerCharacterXYSize, App.getBoardMaxX(), App.getBoardMaxY());
+        playerImageView.setLayoutX(spawn.getX() - half);
+        playerImageView.setLayoutY(spawn.getY() - half);
 
         PlayerCharacter player = new PlayerCharacter(
                 playerImageView,

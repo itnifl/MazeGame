@@ -110,7 +110,7 @@ class WallBuilderSessionTest {
     void sealsTheHeart() {
         assertFalse(session.openingsLeft(world.getMazeVectors()).isEmpty(), "the maze starts with the heart open to the outside");
         assertTrue(heartReachableFromOutside());
-        run(150, crew("b", 5), 0, 0);
+        run(500, crew("b", 5), 0, 0);
         assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty(), "no entrance left open");
         assertFalse(heartReachableFromOutside(), "access to the heart is blocked");
     }
@@ -155,7 +155,7 @@ class WallBuilderSessionTest {
     @Test
     @DisplayName("walls are built in whole corridors of pieces one piece long, and each piece only once")
     void piecesAreWholeAndUnique() {
-        List<WallBuilderSession.Piece> built = run(60, crew("b", 4), 0, 0);
+        List<WallBuilderSession.Piece> built = run(120, crew("b", 4), 0, 0);
         assertFalse(built.isEmpty());
         Set<String> distinct = new HashSet<>();
         for (WallBuilderSession.Piece piece : built) {
@@ -168,7 +168,7 @@ class WallBuilderSessionTest {
     @Test
     @DisplayName("a wall the player breaks is built again")
     void rebuildsBrokenWalls() {
-        run(150, crew("b", 5), 0, 0);
+        run(500, crew("b", 5), 0, 0);
         assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty());
         CellGrid grid = new CellGrid(world.getMazeVectors(), W, H);
         Cell heart = grid.cellOf(HEART_X, HEART_Y);
@@ -199,7 +199,7 @@ class WallBuilderSessionTest {
                         }
                     }
                     if (session.openingsLeft(world.getMazeVectors()).size() == 1) {
-                        run(80, crew("b", 5), 0, 0);
+                        run(250, crew("b", 5), 0, 0);
                         assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty(), "built again");
                         tried = true;
                         break;
@@ -215,7 +215,7 @@ class WallBuilderSessionTest {
     @DisplayName("a killed builder is forgotten and another finishes its half-built wall")
     void deadBuildersLeaveTheirWorkToOthers() {
         List<Builder> two = crew("old", 2);
-        List<WallBuilderSession.Piece> some = run(10, two, 0, 0);
+        List<WallBuilderSession.Piece> some = run(60, two, 0, 0);
         assertFalse(some.isEmpty());
         List<Builder> dead = new ArrayList<>();
         for (Builder b : two) {
@@ -223,7 +223,7 @@ class WallBuilderSessionTest {
         }
         session.tick(0.05, dead, world.getMazeVectors(), 0, 0);
         assertTrue(session.siteOf("old0").isEmpty() && session.siteOf("old1").isEmpty(), "their sites are free again");
-        run(200, crew("new", 1), 0, 0);
+        run(500, crew("new", 1), 0, 0);
         assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty(), "the new builder finished the job");
     }
 
@@ -263,5 +263,61 @@ class WallBuilderSessionTest {
         double moved = Math.hypot(r.moves().get(0).x() - one.get(0).x(), r.moves().get(0).y() - one.get(0).y());
         assertTrue(moved <= SPEC.speed() * WallBuilderSession.MAX_TICK_SECONDS + 1e-6, "moved " + moved);
         assertTrue(r.pieces().isEmpty());
+    }
+
+    private static int ringOf(Cell cell, Cell heart) {
+        return Math.max(Math.abs(cell.row() - heart.row()), Math.abs(cell.col() - heart.col()));
+    }
+
+    @Test
+    @DisplayName("the builders wander outwards from the heart until the first ring, and build their first wall there")
+    void wanderOutwardsThenBuildAtTheFirstRing() {
+        CellGrid grid = new CellGrid(world.getMazeVectors(), W, H);
+        Cell heart = grid.cellOf(HEART_X, HEART_Y);
+        List<Builder> crew = crew("b", 3);
+        double reached = 0;
+        Edge firstSite = null;
+        for (int i = 0; i < 6000 && firstSite == null; i++) {
+            Result r = session.tick(0.05, crew, world.getMazeVectors(), -1000, -1000);
+            crew = follow(crew, r);
+            for (Builder b : crew) {
+                reached = Math.max(reached, ringOf(grid.cellOf(b.x(), b.y()), heart));
+                if (firstSite == null && session.siteOf(b.id()).isPresent()) {
+                    firstSite = session.siteOf(b.id()).get();
+                }
+            }
+        }
+        assertTrue(firstSite != null, "a builder found a corridor to wall up");
+        assertEquals(SPEC.startRadiusCells(), ringOf(firstSite.a(), heart), "the first wall is at the first ring");
+        assertTrue(reached >= SPEC.startRadiusCells(), "they walked out to the ring first: " + reached);
+        assertEquals(SPEC.startRadiusCells(), session.ringInProgress(world.getMazeVectors()));
+    }
+
+    @Test
+    @DisplayName("when a ring is closed the builders move one corridor width closer: rings are worked outermost first, one by one")
+    void movesOneRingCloserAtATime() {
+        List<Integer> rings = new ArrayList<>();
+        List<Builder> crew = crew("b", 5);
+        for (int i = 0; i < 12000; i++) {
+            Result r = session.tick(0.05, crew, world.getMazeVectors(), -1000, -1000);
+            for (WallBuilderSession.Piece piece : r.pieces()) {
+                put(piece.wall());
+            }
+            crew = follow(crew, r);
+            int ring = session.ringInProgress(world.getMazeVectors());
+            if (ring >= 0 && (rings.isEmpty() || rings.get(rings.size() - 1) != ring)) {
+                rings.add(ring);
+            }
+            if (ring < 0) {
+                break;
+            }
+        }
+        assertFalse(rings.isEmpty());
+        assertEquals(SPEC.startRadiusCells(), rings.get(0), "starts at the outermost ring");
+        for (int i = 1; i < rings.size(); i++) {
+            assertEquals(rings.get(i - 1) - 1, rings.get(i), "one corridor width closer each time: " + rings);
+        }
+        assertEquals(SPEC.blockRadiusCells(), rings.get(rings.size() - 1), "down to the innermost ring");
+        assertEquals(-1, session.ringInProgress(world.getMazeVectors()), "all rings closed in the end");
     }
 }

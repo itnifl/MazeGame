@@ -2048,7 +2048,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getWallBuilderConfig_BlockRadiusCells()
+  public EAttribute getWallBuilderConfig_StartRadiusCells()
   {
     return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(5);
   }
@@ -2059,7 +2059,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getWallBuilderConfig_SpawnRadius()
+  public EAttribute getWallBuilderConfig_BlockRadiusCells()
   {
     return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(6);
   }
@@ -2070,7 +2070,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getWallBuilderConfig_WallMaterial()
+  public EAttribute getWallBuilderConfig_SpawnRadius()
   {
     return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(7);
   }
@@ -2081,9 +2081,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getWallBuilderConfig_BuildSound()
+  public EAttribute getWallBuilderConfig_WallMaterial()
   {
     return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getWallBuilderConfig_BuildSound()
+  {
+    return (EAttribute)wallBuilderConfigEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2470,6 +2481,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPEED);
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPRITE);
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__BUILD_SECONDS_PER_CORRIDOR);
+    createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__START_RADIUS_CELLS);
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__BLOCK_RADIUS_CELLS);
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__SPAWN_RADIUS);
     createEAttribute(wallBuilderConfigEClass, WALL_BUILDER_CONFIG__WALL_MATERIAL);
@@ -2707,6 +2719,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getWallBuilderConfig_Speed(), ecorePackage.getEDouble(), "speed", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getWallBuilderConfig_Sprite(), ecorePackage.getEString(), "sprite", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getWallBuilderConfig_BuildSecondsPerCorridor(), ecorePackage.getEDouble(), "buildSecondsPerCorridor", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getWallBuilderConfig_StartRadiusCells(), ecorePackage.getEInt(), "startRadiusCells", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getWallBuilderConfig_BlockRadiusCells(), ecorePackage.getEInt(), "blockRadiusCells", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getWallBuilderConfig_SpawnRadius(), ecorePackage.getEDouble(), "spawnRadius", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getWallBuilderConfig_WallMaterial(), ecorePackage.getEString(), "wallMaterial", null, 0, 1, WallBuilderConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
