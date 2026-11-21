@@ -46,6 +46,12 @@ public class WinGameController extends ActionScreenController implements Initial
         new main.game.maze.actions.RestartGameAction(screenRoot, true).Load();
     }
 
+    /** Plays the level just won again from its start, with the weapons it started with. */
+    @FXML
+    protected void restartLevel() {
+        main.game.maze.actions.RestartGameAction.retryLevel(screenRoot).Load();
+    }
+
     @FXML
     protected void saveScore() {
         TextInputDialog dialog = new TextInputDialog();

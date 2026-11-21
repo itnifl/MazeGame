@@ -112,4 +112,16 @@ class LevelProgressTest {
         assertEquals(4, custom.inheritedArsenal().count(Weapon.LASER_RIFLE), "level 3 keeps the weapons");
         assertFalse(custom.hasNext());
     }
+
+    @Test
+    @DisplayName("replaying a completed level keeps the level and the weapons it was entered with")
+    void retryingALevelKeepsItsStartingWeapons() {
+        PlayerArsenal arsenal = new PlayerArsenal(3);
+        progress.advance(arsenal);
+        arsenal.add(main.game.maze.game.items.Weapon.BOMB, 5);   // played level 2 and used/collected things
+        int before = progress.inheritedArsenal().count(main.game.maze.game.items.Weapon.BOMB);
+        // a retry changes nothing in the progress: same level, same starting weapons
+        assertEquals(2, progress.number());
+        assertEquals(before, progress.inheritedArsenal().count(main.game.maze.game.items.Weapon.BOMB));
+    }
 }

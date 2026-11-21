@@ -20,6 +20,8 @@ public class RestartGameAction extends ActionScreens {
     private AnchorPane root;
 
     private final boolean nextLevel;
+    /** true: play the current level again, with the weapons it was entered with */
+    private final boolean retryLevel;
 
     /** A new game from level 1. */
     public RestartGameAction(AnchorPane root) {
@@ -28,8 +30,18 @@ public class RestartGameAction extends ActionScreens {
 
     /** @param nextLevel true after a win: moves on to the next level, carrying the weapons over */
     public RestartGameAction(AnchorPane root, boolean nextLevel) {
+        this(root, nextLevel, false);
+    }
+
+    private RestartGameAction(AnchorPane root, boolean nextLevel, boolean retryLevel) {
         this.root = root;
         this.nextLevel = nextLevel;
+        this.retryLevel = retryLevel;
+    }
+
+    /** Plays the level just completed (or lost) again from its start, not from level 1. */
+    public static RestartGameAction retryLevel(AnchorPane root) {
+        return new RestartGameAction(root, false, true);
     }
 
     public void Load() {
@@ -67,7 +79,9 @@ public class RestartGameAction extends ActionScreens {
             this.replaceRoot(root, newRoot);
             App.applySizeForCurrentDifficulty(stage);
                         
-            if (nextLevel && App.arsenalAtWin != null && App.levelProgress.hasNext()) {
+            if (retryLevel) {
+                // same level, same starting weapons (LevelProgress keeps what it was entered with)
+            } else if (nextLevel && App.arsenalAtWin != null && App.levelProgress.hasNext()) {
                 App.levelProgress.advance(main.game.maze.game.items.PlayerArsenal.restore(App.arsenalAtWin));
             } else {
                 App.levelProgress.restart();

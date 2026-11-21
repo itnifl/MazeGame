@@ -291,6 +291,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void configureModeRouting() {
+        winOverlayController.setRestartLevelAction(this::startCurrentLevel);
         modeRouter
             .register(() -> overlayModeCoordinator.updateHighScores(() -> requestReturnToMenu(false)))
             .register(() -> overlayModeCoordinator.updateWon(
