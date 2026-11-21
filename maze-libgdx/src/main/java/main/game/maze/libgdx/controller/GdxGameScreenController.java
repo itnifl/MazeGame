@@ -824,7 +824,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
         }
         // the level is completed: the savepoint for the next one is made now
-        levelProgress.completeLevel(worldModel.arsenal());
+        levelProgress.completeLevel(worldModel.arsenal(), currentScore());
     }
 
     private void draw() {
@@ -944,7 +944,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     int baseScoreForDifficulty(Difficulty difficulty) {
-        return GameScoringConstants.baseScoreFor(difficulty);
+        // the difficulty's starting score, plus the score the levels before this one ended with
+        return GameScoringConstants.baseScoreFor(difficulty) + levelProgress.carriedScore();
     }
 
     /** Collapsing walls fall as rubble and crush enemies next to them; follows the current level's world. */

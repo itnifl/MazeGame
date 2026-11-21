@@ -349,7 +349,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     int getBaseScoreForCurrentDifficulty() {
-        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty);
+        // the difficulty's starting score, plus the score the levels before this one ended with
+        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty) + App.levelProgress.carriedScore();
     }
 
     @Override

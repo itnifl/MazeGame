@@ -88,4 +88,15 @@ class FileSavePointStoreTest {
         assertEquals(3, store.load().orElseThrow().level());
         assertFalse(Files.exists(dir.resolve("s.properties.tmp")));
     }
+
+    @Test
+    @DisplayName("the carried score is saved in the file, and a file from before it was saved reads as 0")
+    void scoreInTheFile() throws Exception {
+        Path file = dir.resolve("s.properties");
+        FileSavePointStore store = new FileSavePointStore(file);
+        store.save(new SavePoint(3, null, 58_000));
+        assertEquals(58_000, new FileSavePointStore(file).load().orElseThrow().score());
+        Files.writeString(file, "level=2" + System.lineSeparator());
+        assertEquals(0, store.load().orElseThrow().score());
+    }
 }

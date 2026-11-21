@@ -77,3 +77,5 @@ JaCoCo 0.8.12 with a **60 % LINE** minimum. The profile is inherited from root
 `game.lava` makes the lava of level 6 (`LavaGenerator`: random snaking streams, bridges over every crossing of the way to the heart and a few at random places, so the maze can always be solved; `LavaEffects` turns the lava into the picture both frontends draw). The geometry itself (`LavaField`: deadly lava, bridges) lives in the maze world (`GameMazeWorld.getLava`).
 
 `game.items.PulseCharge` is the two second charge of the pulse beam cannon (the gift of the last life from level 6, `LastLifeGiftSpec` in `game.level`): the attack key starts it, the shot leaves when it is full, changing weapon cancels it.
+
+`LevelProgress` also carries the score forward (`carriedScore`): the score a level ends with is added to the next level's starting score, and it is part of the savepoint.

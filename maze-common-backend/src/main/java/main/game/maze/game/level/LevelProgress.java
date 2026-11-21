@@ -13,6 +13,11 @@ import main.game.maze.game.items.PlayerArsenal;
  * current level exactly as it was entered the first time; level 1 has no savepoint to restore from, so restarting it
  * starts a new game. Every call to {@link #inheritedArsenal()} gives a fresh copy, so playing a level (or retrying
  * it after losing) never changes what it was entered with.
+ *
+ * <p>The score is carried forward, not reset: the score a level ends with ({@link #completeLevel(PlayerArsenal, int)}) is
+ * added to the starting score of the next one ({@link #carriedScore()}). A game that ends level 1 on 28 000 starts level 2
+ * on 28 000 plus the level's own starting score (30 000 on hard: 58 000), and so on. A restarted level goes back to the
+ * score it was entered with.
  */
 public final class LevelProgress {
 
@@ -20,6 +25,8 @@ public final class LevelProgress {
     private final SavePointStore store;
     private int number = 1;
     private ArsenalSnapshot inherited;
+    /** The score the current level was entered with (what the levels before it ended with). */
+    private int carriedScore;
     /** Saved when the current level was completed; becomes the entry state of the next level. */
     private SavePoint pending;
 
@@ -49,12 +56,21 @@ public final class LevelProgress {
      * Does nothing on the last level.
      */
     public synchronized void completeLevel(PlayerArsenal arsenalAtTheEnd) {
+        completeLevel(arsenalAtTheEnd, carriedScore);
+    }
+
+    /**
+     * As {@link #completeLevel(PlayerArsenal)}, also carrying the score the level ended with into the next one.
+     *
+     * @param scoreAtTheEnd the final score of the level, with everything carried into it included
+     */
+    public synchronized void completeLevel(PlayerArsenal arsenalAtTheEnd, int scoreAtTheEnd) {
         if (!catalog.hasNext(number)) {
             return;
         }
         int next = number + 1;
         ArsenalSnapshot carried = catalog.level(next).inheritWeapons() ? arsenalAtTheEnd.snapshot() : null;
-        pending = new SavePoint(next, carried);
+        pending = new SavePoint(next, carried, Math.max(0, scoreAtTheEnd));
         store.save(pending);
     }
 
@@ -72,7 +88,13 @@ public final class LevelProgress {
         number = pending.level();
         // a level can choose to start from scratch instead of keeping the weapons
         inherited = pending.arsenal();
+        carriedScore = pending.score();
         pending = null;
+    }
+
+    /** The score the current level is entered with: what the levels before it ended with (0 on level 1). */
+    public synchronized int carriedScore() {
+        return carriedScore;
     }
 
     /** The weapons the current level starts with, or null on level 1 (the difficulty's starting bombs apply). */
@@ -84,6 +106,7 @@ public final class LevelProgress {
     public synchronized void restart() {
         number = 1;
         inherited = null;
+        carriedScore = 0;
         pending = null;
         store.clear();
     }
@@ -116,6 +139,7 @@ public final class LevelProgress {
         }
         number = saved.get().level();
         inherited = saved.get().arsenal();
+        carriedScore = saved.get().score();
         pending = null;
         return true;
     }

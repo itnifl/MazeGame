@@ -446,3 +446,5 @@ These requirements have been implemented and verified.
 - **SR-363** *(Balance, observability)*: The gift is six shots whenever the last life starts, even on every restart of a level. Count how often it is given and used per level and difficulty (SR-252) and decide whether it should be given once per level; a HUD charge bar would also help.
 
 - **SR-364** *(Model-driven)*: Which weapon, and how many shots, is in the level model, but when it is given (the last life) is in code; add a trigger to `LastLifeGift` (last life, level start, boss defeated) so authors can place gifts.
+
+- **SR-366** *(UX)*: The score of a level and the score of the whole game are not told apart on the win screen or in the high scores. Show "this level" and "total" and keep a high score per game, not per level; also decide whether the damage and move penalties of later levels should be scaled, since the carried score makes them smaller in proportion.

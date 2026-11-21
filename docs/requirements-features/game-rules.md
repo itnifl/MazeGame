@@ -333,3 +333,5 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-74**: From level 6 on, starting the last life gives the pulse beam cannon
   (6 shots) in the hands. Fire charges for 2 s, then one beam of 6000 damage
   over 1200 px that blows up a tower in one shot; another weapon cancels it.
+- **GR-75**: The starting score of a level is the difficulty's starting score (5 000 easy, 10 000 normal, 30 000 hard) plus the score the previous level ended with.
+  Restarting a level restores the score it was entered with; level 1 and a new game carry nothing.
