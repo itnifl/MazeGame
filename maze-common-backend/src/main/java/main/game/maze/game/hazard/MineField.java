@@ -79,16 +79,25 @@ public final class MineField {
     public void place(List<Point2D> posts, Predicate<Point2D> free, BiPredicate<Point2D, Point2D> clearLine) {
         for (int p = 0; p < posts.size(); p++) {
             Point2D post = posts.get(p);
-            for (int k = 0; k < spec.count(); k++) {
-                double angle = 2 * Math.PI * k / spec.count();
-                for (double share : RADIUS_TRIES) {
-                    double r = spec.ringRadius() * share;
-                    Point2D spot = new Point2D(post.getX() + Math.cos(angle) * r, post.getY() + Math.sin(angle) * r);
-                    if (free.test(spot) && clearLine.test(post, spot) && !crowded(spot)) {
-                        double phase = (k * 0.37 + p * 0.13) % 1.0;
-                        mines.add(new Mine(nextId++, spot.getX(), spot.getY(), phase));
-                        break;
-                    }
+            placeCircle(post, p, spec.ringRadius(), 0.0, free, clearLine);
+            if (spec.secondRingRadius() > 0) {
+                // the second circle sits half a step round from the first, so its mines are not behind the first ones
+                placeCircle(post, p, spec.secondRingRadius(), 0.5, free, clearLine);
+            }
+        }
+    }
+
+    private void placeCircle(Point2D post, int postIndex, double radius, double stagger,
+                             Predicate<Point2D> free, BiPredicate<Point2D, Point2D> clearLine) {
+        for (int k = 0; k < spec.count(); k++) {
+            double angle = 2 * Math.PI * (k + stagger) / spec.count();
+            for (double share : RADIUS_TRIES) {
+                double r = radius * share;
+                Point2D spot = new Point2D(post.getX() + Math.cos(angle) * r, post.getY() + Math.sin(angle) * r);
+                if (free.test(spot) && clearLine.test(post, spot) && !crowded(spot)) {
+                    double phase = ((k + stagger) * 0.37 + postIndex * 0.13) % 1.0;
+                    mines.add(new Mine(nextId++, spot.getX(), spot.getY(), phase));
+                    break;
                 }
             }
         }

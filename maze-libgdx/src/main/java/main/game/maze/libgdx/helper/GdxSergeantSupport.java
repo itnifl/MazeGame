@@ -43,7 +43,7 @@ public final class GdxSergeantSupport {
         dropGunsOfTheKilled(model, enemies, maze);
         int fired = 0;
         for (GdxEnemyRuntime enemy : enemies) {
-            if (!enemy.isStationary() || !enemy.isAlive()) {
+            if (!enemy.isSergeant() || !enemy.isAlive()) {
                 continue;
             }
             SergeantGunner gunner = gunners.computeIfAbsent(enemy, ignored -> new SergeantGunner(spec));

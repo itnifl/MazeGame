@@ -585,9 +585,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         return main.game.maze.game.level.TeleportGhostSpec.isPortalGhostId(spawn != null ? spawn.id() : null);
     }
 
-    /** Sergeants stand where they are put and only shoot. */
-    public boolean isStationary() {
+    /** A zombie sergeant: stands where it is put and fires its gatling gun. */
+    public boolean isSergeant() {
         return main.game.maze.game.level.SergeantSpec.isSergeantId(spawn != null ? spawn.id() : null);
+    }
+
+    /** A guard tower: stands where it is put, very tough, shoots rpgs and a gatling gun. */
+    public boolean isGuardTower() {
+        return main.game.maze.game.level.GuardTowerSpec.isTowerId(spawn != null ? spawn.id() : null);
+    }
+
+    /** Sergeants and guard towers stand where they are put and only shoot. */
+    public boolean isStationary() {
+        return isSergeant() || isGuardTower();
     }
 
     /**

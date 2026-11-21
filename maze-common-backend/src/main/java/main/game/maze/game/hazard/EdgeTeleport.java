@@ -82,6 +82,24 @@ public final class EdgeTeleport {
         return pool.get(random.nextInt(pool.size()));
     }
 
+    /** The free points in the outer band of the map (all of them when none lie there). */
+    public static List<Point2D> outerBand(List<Point2D> free) {
+        if (free == null || free.isEmpty()) {
+            return List.of();
+        }
+        Bounds bounds = Bounds.of(free);
+        List<Point2D> outer = new ArrayList<>();
+        for (Point2D point : free) {
+            for (Edge edge : Edge.values()) {
+                if (bounds.inBand(point, edge)) {
+                    outer.add(point);
+                    break;
+                }
+            }
+        }
+        return outer.isEmpty() ? List.copyOf(free) : outer;
+    }
+
     private static Point2D nearestTo(List<Point2D> points, double x, double y) {
         Point2D best = null;
         double bestDistance = Double.MAX_VALUE;

@@ -87,6 +87,8 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.MINE_RING_CONFIG: return createMineRingConfig();
       case MazeDslPackage.PORTAL_GHOST_CONFIG: return createPortalGhostConfig();
       case MazeDslPackage.GHOST_COUNT_CONFIG: return createGhostCountConfig();
+      case MazeDslPackage.GUARD_TOWER_CONFIG: return createGuardTowerConfig();
+      case MazeDslPackage.TOWER_COUNT_CONFIG: return createTowerCountConfig();
       case MazeDslPackage.TELEPORT_RULES_CONFIG: return createTeleportRulesConfig();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -401,6 +403,30 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
   {
     GhostCountConfigImpl ghostCountConfig = new GhostCountConfigImpl();
     return ghostCountConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public GuardTowerConfig createGuardTowerConfig()
+  {
+    GuardTowerConfigImpl guardTowerConfig = new GuardTowerConfigImpl();
+    return guardTowerConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public TowerCountConfig createTowerCountConfig()
+  {
+    TowerCountConfigImpl towerCountConfig = new TowerCountConfigImpl();
+    return towerCountConfig;
   }
 
   /**

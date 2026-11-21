@@ -29,7 +29,17 @@ public final class GdxWinOverlayController {
     private float winNextButtonY;
     private float winNextButtonW;
     private float winNextButtonH;
+    private float winRestartButtonX;
+    private float winRestartButtonY;
+    private float winRestartButtonW;
+    private float winRestartButtonH;
     private boolean nextLevelAvailable;
+    private Runnable restartLevelAction;
+
+    /** What the Restart Level button does: plays the level that was just won again, from its start. */
+    public void setRestartLevelAction(Runnable action) {
+        this.restartLevelAction = action;
+    }
 
     /** Whether the win overlay offers the next level (set when the level is won). */
     public void setNextLevelAvailable(boolean available) {
@@ -75,6 +85,10 @@ public final class GdxWinOverlayController {
         winNextButtonY = buttons.nextY();
         winNextButtonW = buttons.nextW();
         winNextButtonH = buttons.nextH();
+        winRestartButtonX = buttons.restartX();
+        winRestartButtonY = buttons.restartY();
+        winRestartButtonW = buttons.restartW();
+        winRestartButtonH = buttons.restartH();
     }
 
     public boolean update(
@@ -150,6 +164,11 @@ public final class GdxWinOverlayController {
         if (nextLevelAvailable && nextLevelAction != null
                 && contains(mx, my, winNextButtonX, winNextButtonY, winNextButtonW, winNextButtonH)) {
             nextLevelAction.run();
+            return;
+        }
+        if (restartLevelAction != null
+                && contains(mx, my, winRestartButtonX, winRestartButtonY, winRestartButtonW, winRestartButtonH)) {
+            restartLevelAction.run();
             return;
         }
         if (contains(mx, my, winBackButtonX, winBackButtonY, winBackButtonW, winBackButtonH)) {

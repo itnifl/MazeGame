@@ -93,6 +93,14 @@ public final class LevelCatalogLoader {
         }
         requireAllTiers(ghost != null, ghostCounts, number, "teleporting ghost");
 
+        GuardTowerSpec tower = DynamicModel.value(level, "guardTower") instanceof EObject own ? towerOf(own, number)
+                : base != null ? base.guardTower() : null;
+        Map<DifficultyTier, Integer> towerCounts = countsOf(level, "towerCounts", number, "guard tower");
+        if (towerCounts.isEmpty() && base != null) {
+            towerCounts = base.towerCounts();
+        }
+        requireAllTiers(tower != null, towerCounts, number, "guard tower");
+
         TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
                 : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
 
@@ -108,7 +116,7 @@ public final class LevelCatalogLoader {
         int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
                 DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
         return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
-                zones, sergeant, posts, mines, ghost, ghostCounts, teleport);
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts);
     }
 
     /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
@@ -168,6 +176,7 @@ public final class LevelCatalogLoader {
     private static MineSpec minesOf(EObject mines, int number) {
         try {
             return new MineSpec(DynamicModel.integer(mines, "count"), DynamicModel.decimal(mines, "ringRadius"),
+                    DynamicModel.decimal(mines, "secondRingRadius"),
                     DynamicModel.decimal(mines, "triggerRadius"), DynamicModel.decimal(mines, "pulseSeconds"),
                     DynamicModel.decimal(mines, "blastRadius"), DynamicModel.integer(mines, "blastDamage"),
                     DynamicModel.integer(mines, "playerDamage"),
@@ -180,6 +189,23 @@ public final class LevelCatalogLoader {
     private static TeleportGhostSpec ghostOf(EObject ghost) {
         return new TeleportGhostSpec(DynamicModel.string(ghost, "displayName"), DynamicModel.integer(ghost, "health"),
                 DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"));
+    }
+
+    private static GuardTowerSpec towerOf(EObject tower, int number) {
+        try {
+            return new GuardTowerSpec(DynamicModel.string(tower, "displayName"), DynamicModel.integer(tower, "health"),
+                    DynamicModel.decimal(tower, "sightRange"), DynamicModel.integer(tower, "maxWallsOver"),
+                    DynamicModel.decimal(tower, "rpgIntervalSeconds"), DynamicModel.decimal(tower, "rpgSpeed"),
+                    DynamicModel.decimal(tower, "rpgBlastRadius"), DynamicModel.integer(tower, "rpgPlayerDamage"),
+                    DynamicModel.integer(tower, "rpgWallDamage"), DynamicModel.integer(tower, "gatlingRounds"),
+                    DynamicModel.decimal(tower, "gatlingRoundIntervalSeconds"), DynamicModel.integer(tower, "gatlingDamage"),
+                    DynamicModel.integer(tower, "deathBlastDamage"), DynamicModel.string(tower, "sprite"),
+                    DynamicModel.string(tower, "rpgLaunchSound"), DynamicModel.string(tower, "rpgExplosionSound"),
+                    DynamicModel.string(tower, "gatlingSound"), DynamicModel.string(tower, "hitSound"),
+                    DynamicModel.string(tower, "destroyedSound"));
+        } catch (IllegalArgumentException invalid) {
+            throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
+        }
     }
 
     private static TeleportRulesSpec teleportOf(EObject rules) {

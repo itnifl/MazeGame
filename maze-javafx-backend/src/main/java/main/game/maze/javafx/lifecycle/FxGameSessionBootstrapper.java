@@ -23,6 +23,7 @@ import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.runtime.opponents.PortalGhostSpawner;
+import main.game.maze.runtime.opponents.GuardTowerSpawner;
 import main.game.maze.runtime.opponents.SergeantSpawner;
 
 import java.util.function.BiConsumer;
@@ -153,6 +154,8 @@ public final class FxGameSessionBootstrapper {
         opponentSpawner.accept(enemyRegistrar, startDifficulty);
         SergeantSpawner.spawn(enemyRegistrar, level, startDifficulty, maze);
         PortalGhostSpawner.spawn(enemyRegistrar, level, startDifficulty, maze,
+                playerImageView.getLayoutX(), playerImageView.getLayoutY());
+        GuardTowerSpawner.spawn(enemyRegistrar, level, startDifficulty, maze,
                 playerImageView.getLayoutX(), playerImageView.getLayoutY());
 
         return new SessionResult(player, maze, mazeCanvas, pathCanvas, treeCanvas, config);

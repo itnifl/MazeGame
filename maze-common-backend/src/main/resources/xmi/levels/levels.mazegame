@@ -62,4 +62,42 @@ game MazeGameLevels {
             voiceSound "/main/game/maze/sounds/teleported.wav"
         }
     }
+
+    level 4 "The Guard Towers" {
+        basedOn 3
+        mines {
+            count 3
+            ringRadius 62.0
+            secondRing 118.0
+            triggerRadius 22.0
+            pulse 0.9
+            blastRadius 150.0
+            blastDamage 15
+            playerDamage 20
+            holeRadius 30.0
+        }
+        guardTower "Guard tower" {
+            health 1500
+            sightRange 650.0
+            wallsOver 3
+            rpgInterval 3.0
+            rpgSpeed 300.0
+            rpgBlastRadius 60.0
+            rpgPlayerDamage 25
+            rpgWallDamage 40
+            gatlingRounds 6
+            gatlingInterval 0.1
+            gatlingDamage 3
+            deathBlast 60
+            sprite "/main/game/maze/guard-tower.png"
+            rpgLaunchSound "/main/game/maze/sounds/rpg-launch.wav"
+            rpgExplosionSound "/main/game/maze/sounds/rpg-explosion.wav"
+            gatlingSound "/main/game/maze/sounds/gatling-burst.wav"
+            hitSound "/main/game/maze/sounds/tower-hit.wav"
+            destroyedSound "/main/game/maze/sounds/tower-destroyed.wav"
+        }
+        towers easy 2
+        towers normal 3
+        towers hard 4
+    }
 }

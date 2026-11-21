@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getCount <em>Count</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getRingRadius <em>Ring Radius</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getSecondRingRadius <em>Second Ring Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getTriggerRadius <em>Trigger Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getPulseSeconds <em>Pulse Seconds</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getBlastRadius <em>Blast Radius</em>}</li>
@@ -73,6 +74,28 @@ public interface MineRingConfig extends EObject
    * @generated
    */
   void setRingRadius(double value);
+
+  /**
+   * Returns the value of the '<em><b>Second Ring Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Second Ring Radius</em>' attribute.
+   * @see #setSecondRingRadius(double)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getMineRingConfig_SecondRingRadius()
+   * @model
+   * @generated
+   */
+  double getSecondRingRadius();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getSecondRingRadius <em>Second Ring Radius</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Second Ring Radius</em>' attribute.
+   * @see #getSecondRingRadius()
+   * @generated
+   */
+  void setSecondRingRadius(double value);
 
   /**
    * Returns the value of the '<em><b>Trigger Radius</b></em>' attribute.

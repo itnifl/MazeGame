@@ -181,6 +181,16 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createGhostCountConfigAdapter();
       }
       @Override
+      public Adapter caseGuardTowerConfig(GuardTowerConfig object)
+      {
+        return createGuardTowerConfigAdapter();
+      }
+      @Override
+      public Adapter caseTowerCountConfig(TowerCountConfig object)
+      {
+        return createTowerCountConfigAdapter();
+      }
+      @Override
       public Adapter caseTeleportRulesConfig(TeleportRulesConfig object)
       {
         return createTeleportRulesConfigAdapter();
@@ -518,6 +528,36 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createGhostCountConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig <em>Guard Tower Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig
+   * @generated
+   */
+  public Adapter createGuardTowerConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.TowerCountConfig <em>Tower Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.TowerCountConfig
+   * @generated
+   */
+  public Adapter createTowerCountConfigAdapter()
   {
     return null;
   }

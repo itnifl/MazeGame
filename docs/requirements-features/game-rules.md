@@ -289,3 +289,17 @@ MUST be added to the shared core, not to a single frontend.
   the level's banner word ("Teleported") briefly and a deep voice says it. The
   word, its time, the cooldown and the sounds come from the level's
   `TeleportRules`.
+- **GR-61**: Level 4 is level 3 plus a second circle of mines round every sergeant
+  (the same number of mines as the first circle, staggered, further out: twice
+  the mines) and guard towers.
+- **GR-62**: Guard towers: 4 on hard, 3 on normal, 2 on easy, on free ground in
+  the outer band of the map, apart from each other and from the player's start.
+  They never move, have 1500 hit points and look more damaged as they lose them.
+  A destroyed tower explodes (damage 60 to its surroundings, deep boom, screen
+  shake) and leaves no corpse.
+- **GR-63**: A tower shoots when the player is within 650 px and no more than 3
+  walls lie between them (it shoots over walls, not over a fourth).
+- **GR-64**: A tower's weapons run on a steady 3 second cycle: an rpg at the
+  start of the cycle, a burst of six gatling rounds (3 damage each) halfway
+  through. A rocket flies 300 px/s to where the player was and explodes there
+  (blast 60 px: 25 damage to the player, 40 to walls and enemies).

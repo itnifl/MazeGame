@@ -22,12 +22,14 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param teleportGhost        the ghost that teleports the player, or null
  * @param ghostCounts          teleporting ghosts per difficulty tier
  * @param teleport             what a teleport does (cooldown, word, sounds); never null
+ * @param guardTower           the guard towers on the outer parts of the map, or null
+ * @param towerCounts          guard towers per difficulty tier
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts,
                         MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
-                        TeleportRulesSpec teleport) {
+                        TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
@@ -46,6 +48,7 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
         sergeantPosts = Map.copyOf(sergeantPosts);
         ghostCounts = Map.copyOf(ghostCounts);
         teleport = teleport == null ? TeleportRulesSpec.DEFAULT : teleport;
+        towerCounts = Map.copyOf(towerCounts);
     }
 
     public boolean hasMines() {
@@ -54,6 +57,15 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
 
     public boolean hasTeleportGhosts() {
         return teleportGhost != null;
+    }
+
+    public boolean hasTowers() {
+        return guardTower != null;
+    }
+
+    /** Guard towers on this difficulty (0 without towers). */
+    public int towerCount(DifficultyTier tier) {
+        return guardTower == null ? 0 : towerCounts.getOrDefault(tier, 0);
     }
 
     /** Teleporting ghosts on this difficulty (0 without that ghost). */

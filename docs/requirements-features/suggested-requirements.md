@@ -406,3 +406,13 @@ These requirements have been implemented and verified.
 - **SR-310** *(MDD, Xtext)*: Run the levels generation as part of the build (today `levels.xmi` is regenerated on demand with `MAZE_LEVELS_REGENERATE=true` and a test fails when it is out of step), validate levels in the DSL validator (a zone weaker than the one outside it, an unknown material, a missing difficulty count, a base level that is not earlier) so authors get errors in the editor, and add DSL support for the remaining models (walls, pickups, opponents) so every game data file has one textual source.
 
 - **SR-311** *(Accessibility)*: The spoken "Teleported" is English only and recorded with a Windows voice; offer text-only banner and a volume or mute option for voices, and re-record per language.
+
+- **SR-321** *(Gameplay)*: A destroyed tower could leave rubble (an animated collapse like the crushing wall) and drop a pickup; today it blows up and vanishes. Rockets could also be shot down or stopped by a shield-bearing player, and fly over walls only (today they ignore walls entirely, which is what "shoot over walls" means, but a rocket could explode on the first wall when the player has dodged behind one).
+
+- **SR-322** *(Observability)*: Count rockets fired, rockets that hit the player, gatling rounds fired and towers destroyed per level, and log them at `FINE` next to the kill statistics (SR-252); a debug overlay that draws each tower's sight range and the walls it counts to the player would help balance `maxWallsOver`.
+
+- **SR-323** *(Accessibility)*: A rocket gives no warning but its sound and a short flight; add a faint red target ring where it will land for the whole flight (colour-blind-safe, also with a shape cue) and an option to show it.
+
+- **SR-324** *(Model-driven)*: A level that changes one mine value has to restate the whole `mines` block (level 4 repeats level 3's values to add `secondRing`); let `mines` merge with the base level's value attribute by attribute, as the unsettable scalars of a level already do.
+
+- **SR-325** *(Balance)*: The tower values (1500 hit points, 3 s cycle, 650 px range, rocket 300 px/s) were chosen to be playable, not tested with players: collect completion rate and time per level and difficulty (SR-252) and tune them in `levels.mazegame`.

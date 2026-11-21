@@ -983,13 +983,31 @@ public interface MazeDslPackage extends EPackage
   int LEVEL_CONFIG__TELEPORT = 13;
 
   /**
+   * The feature id for the '<em><b>Guard Tower</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__GUARD_TOWER = 14;
+
+  /**
+   * The feature id for the '<em><b>Tower Counts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__TOWER_COUNTS = 15;
+
+  /**
    * The number of structural features of the '<em>Level Config</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG_FEATURE_COUNT = 14;
+  int LEVEL_CONFIG_FEATURE_COUNT = 16;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
@@ -1221,13 +1239,22 @@ public interface MazeDslPackage extends EPackage
   int MINE_RING_CONFIG__RING_RADIUS = 1;
 
   /**
+   * The feature id for the '<em><b>Second Ring Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__SECOND_RING_RADIUS = 2;
+
+  /**
    * The feature id for the '<em><b>Trigger Radius</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__TRIGGER_RADIUS = 2;
+  int MINE_RING_CONFIG__TRIGGER_RADIUS = 3;
 
   /**
    * The feature id for the '<em><b>Pulse Seconds</b></em>' attribute.
@@ -1236,7 +1263,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__PULSE_SECONDS = 3;
+  int MINE_RING_CONFIG__PULSE_SECONDS = 4;
 
   /**
    * The feature id for the '<em><b>Blast Radius</b></em>' attribute.
@@ -1245,7 +1272,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__BLAST_RADIUS = 4;
+  int MINE_RING_CONFIG__BLAST_RADIUS = 5;
 
   /**
    * The feature id for the '<em><b>Blast Damage</b></em>' attribute.
@@ -1254,7 +1281,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__BLAST_DAMAGE = 5;
+  int MINE_RING_CONFIG__BLAST_DAMAGE = 6;
 
   /**
    * The feature id for the '<em><b>Player Damage</b></em>' attribute.
@@ -1263,7 +1290,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__PLAYER_DAMAGE = 6;
+  int MINE_RING_CONFIG__PLAYER_DAMAGE = 7;
 
   /**
    * The feature id for the '<em><b>Hole Radius</b></em>' attribute.
@@ -1272,7 +1299,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG__HOLE_RADIUS = 7;
+  int MINE_RING_CONFIG__HOLE_RADIUS = 8;
 
   /**
    * The number of structural features of the '<em>Mine Ring Config</em>' class.
@@ -1281,7 +1308,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MINE_RING_CONFIG_FEATURE_COUNT = 8;
+  int MINE_RING_CONFIG_FEATURE_COUNT = 9;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.PortalGhostConfigImpl <em>Portal Ghost Config</em>}' class.
@@ -1376,6 +1403,233 @@ public interface MazeDslPackage extends EPackage
   int GHOST_COUNT_CONFIG_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.GuardTowerConfigImpl <em>Guard Tower Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.GuardTowerConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getGuardTowerConfig()
+   * @generated
+   */
+  int GUARD_TOWER_CONFIG = 21;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__DISPLAY_NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Health</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__HEALTH = 1;
+
+  /**
+   * The feature id for the '<em><b>Sight Range</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__SIGHT_RANGE = 2;
+
+  /**
+   * The feature id for the '<em><b>Max Walls Over</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__MAX_WALLS_OVER = 3;
+
+  /**
+   * The feature id for the '<em><b>Rpg Interval Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_INTERVAL_SECONDS = 4;
+
+  /**
+   * The feature id for the '<em><b>Rpg Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_SPEED = 5;
+
+  /**
+   * The feature id for the '<em><b>Rpg Blast Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_BLAST_RADIUS = 6;
+
+  /**
+   * The feature id for the '<em><b>Rpg Player Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_PLAYER_DAMAGE = 7;
+
+  /**
+   * The feature id for the '<em><b>Rpg Wall Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_WALL_DAMAGE = 8;
+
+  /**
+   * The feature id for the '<em><b>Gatling Rounds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__GATLING_ROUNDS = 9;
+
+  /**
+   * The feature id for the '<em><b>Gatling Round Interval Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__GATLING_ROUND_INTERVAL_SECONDS = 10;
+
+  /**
+   * The feature id for the '<em><b>Gatling Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__GATLING_DAMAGE = 11;
+
+  /**
+   * The feature id for the '<em><b>Death Blast Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__DEATH_BLAST_DAMAGE = 12;
+
+  /**
+   * The feature id for the '<em><b>Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__SPRITE = 13;
+
+  /**
+   * The feature id for the '<em><b>Rpg Launch Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_LAUNCH_SOUND = 14;
+
+  /**
+   * The feature id for the '<em><b>Rpg Explosion Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__RPG_EXPLOSION_SOUND = 15;
+
+  /**
+   * The feature id for the '<em><b>Gatling Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__GATLING_SOUND = 16;
+
+  /**
+   * The feature id for the '<em><b>Hit Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__HIT_SOUND = 17;
+
+  /**
+   * The feature id for the '<em><b>Destroyed Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG__DESTROYED_SOUND = 18;
+
+  /**
+   * The number of structural features of the '<em>Guard Tower Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GUARD_TOWER_CONFIG_FEATURE_COUNT = 19;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TowerCountConfigImpl <em>Tower Count Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.TowerCountConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTowerCountConfig()
+   * @generated
+   */
+  int TOWER_COUNT_CONFIG = 22;
+
+  /**
+   * The feature id for the '<em><b>Difficulty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TOWER_COUNT_CONFIG__DIFFICULTY = 0;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TOWER_COUNT_CONFIG__COUNT = 1;
+
+  /**
+   * The number of structural features of the '<em>Tower Count Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TOWER_COUNT_CONFIG_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1383,7 +1637,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 21;
+  int TELEPORT_RULES_CONFIG = 23;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -1447,7 +1701,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 22;
+  int DIFFICULTY_LEVEL = 24;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -1457,7 +1711,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 23;
+  int ENEMY_TYPE = 25;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -1467,7 +1721,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 24;
+  int CHARACTER_TYPE_ENUM = 26;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -1477,7 +1731,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 25;
+  int BEHAVIOR_TYPE_ENUM = 27;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -1487,7 +1741,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 26;
+  int PROJECTILE_TYPE_ENUM = 28;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -1497,7 +1751,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 27;
+  int LOOT_ITEM_TYPE_ENUM = 29;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -1507,7 +1761,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 28;
+  int DROP_WEAPON_ENUM = 30;
 
 
   /**
@@ -2420,6 +2674,28 @@ public interface MazeDslPackage extends EPackage
   EReference getLevelConfig_Teleport();
 
   /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGuardTower <em>Guard Tower</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Guard Tower</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getGuardTower()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_GuardTower();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTowerCounts <em>Tower Counts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Tower Counts</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getTowerCounts()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_TowerCounts();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2658,6 +2934,17 @@ public interface MazeDslPackage extends EPackage
   EAttribute getMineRingConfig_RingRadius();
 
   /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getSecondRingRadius <em>Second Ring Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Second Ring Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getSecondRingRadius()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_SecondRingRadius();
+
+  /**
    * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getTriggerRadius <em>Trigger Radius</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2808,6 +3095,257 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EAttribute getGhostCountConfig_Count();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig <em>Guard Tower Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Guard Tower Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig
+   * @generated
+   */
+  EClass getGuardTowerConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDisplayName()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getHealth <em>Health</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Health</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getHealth()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_Health();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getSightRange <em>Sight Range</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sight Range</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getSightRange()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_SightRange();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getMaxWallsOver <em>Max Walls Over</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Max Walls Over</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getMaxWallsOver()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_MaxWallsOver();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgIntervalSeconds <em>Rpg Interval Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Interval Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgIntervalSeconds()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgIntervalSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgSpeed <em>Rpg Speed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Speed</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgSpeed()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgSpeed();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgBlastRadius <em>Rpg Blast Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Blast Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgBlastRadius()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgBlastRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgPlayerDamage <em>Rpg Player Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Player Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgPlayerDamage()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgPlayerDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgWallDamage <em>Rpg Wall Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Wall Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgWallDamage()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgWallDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingRounds <em>Gatling Rounds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Gatling Rounds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingRounds()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_GatlingRounds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingRoundIntervalSeconds <em>Gatling Round Interval Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Gatling Round Interval Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingRoundIntervalSeconds()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_GatlingRoundIntervalSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingDamage <em>Gatling Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Gatling Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingDamage()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_GatlingDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDeathBlastDamage <em>Death Blast Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Death Blast Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDeathBlastDamage()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_DeathBlastDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getSprite <em>Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getSprite()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_Sprite();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgLaunchSound <em>Rpg Launch Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Launch Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgLaunchSound()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgLaunchSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgExplosionSound <em>Rpg Explosion Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rpg Explosion Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getRpgExplosionSound()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_RpgExplosionSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingSound <em>Gatling Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Gatling Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getGatlingSound()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_GatlingSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getHitSound <em>Hit Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Hit Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getHitSound()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_HitSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDestroyedSound <em>Destroyed Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Destroyed Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GuardTowerConfig#getDestroyedSound()
+   * @see #getGuardTowerConfig()
+   * @generated
+   */
+  EAttribute getGuardTowerConfig_DestroyedSound();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TowerCountConfig <em>Tower Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Tower Count Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TowerCountConfig
+   * @generated
+   */
+  EClass getTowerCountConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TowerCountConfig#getDifficulty <em>Difficulty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Difficulty</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TowerCountConfig#getDifficulty()
+   * @see #getTowerCountConfig()
+   * @generated
+   */
+  EAttribute getTowerCountConfig_Difficulty();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TowerCountConfig#getCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TowerCountConfig#getCount()
+   * @see #getTowerCountConfig()
+   * @generated
+   */
+  EAttribute getTowerCountConfig_Count();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
@@ -3670,6 +4208,22 @@ public interface MazeDslPackage extends EPackage
     EReference LEVEL_CONFIG__TELEPORT = eINSTANCE.getLevelConfig_Teleport();
 
     /**
+     * The meta object literal for the '<em><b>Guard Tower</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__GUARD_TOWER = eINSTANCE.getLevelConfig_GuardTower();
+
+    /**
+     * The meta object literal for the '<em><b>Tower Counts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__TOWER_COUNTS = eINSTANCE.getLevelConfig_TowerCounts();
+
+    /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3854,6 +4408,14 @@ public interface MazeDslPackage extends EPackage
     EAttribute MINE_RING_CONFIG__RING_RADIUS = eINSTANCE.getMineRingConfig_RingRadius();
 
     /**
+     * The meta object literal for the '<em><b>Second Ring Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__SECOND_RING_RADIUS = eINSTANCE.getMineRingConfig_SecondRingRadius();
+
+    /**
      * The meta object literal for the '<em><b>Trigger Radius</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3968,6 +4530,194 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute GHOST_COUNT_CONFIG__COUNT = eINSTANCE.getGhostCountConfig_Count();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.GuardTowerConfigImpl <em>Guard Tower Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.GuardTowerConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getGuardTowerConfig()
+     * @generated
+     */
+    EClass GUARD_TOWER_CONFIG = eINSTANCE.getGuardTowerConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__DISPLAY_NAME = eINSTANCE.getGuardTowerConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Health</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__HEALTH = eINSTANCE.getGuardTowerConfig_Health();
+
+    /**
+     * The meta object literal for the '<em><b>Sight Range</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__SIGHT_RANGE = eINSTANCE.getGuardTowerConfig_SightRange();
+
+    /**
+     * The meta object literal for the '<em><b>Max Walls Over</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__MAX_WALLS_OVER = eINSTANCE.getGuardTowerConfig_MaxWallsOver();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Interval Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_INTERVAL_SECONDS = eINSTANCE.getGuardTowerConfig_RpgIntervalSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Speed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_SPEED = eINSTANCE.getGuardTowerConfig_RpgSpeed();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Blast Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_BLAST_RADIUS = eINSTANCE.getGuardTowerConfig_RpgBlastRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Player Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_PLAYER_DAMAGE = eINSTANCE.getGuardTowerConfig_RpgPlayerDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Wall Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_WALL_DAMAGE = eINSTANCE.getGuardTowerConfig_RpgWallDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Gatling Rounds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__GATLING_ROUNDS = eINSTANCE.getGuardTowerConfig_GatlingRounds();
+
+    /**
+     * The meta object literal for the '<em><b>Gatling Round Interval Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__GATLING_ROUND_INTERVAL_SECONDS = eINSTANCE.getGuardTowerConfig_GatlingRoundIntervalSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Gatling Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__GATLING_DAMAGE = eINSTANCE.getGuardTowerConfig_GatlingDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Death Blast Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__DEATH_BLAST_DAMAGE = eINSTANCE.getGuardTowerConfig_DeathBlastDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__SPRITE = eINSTANCE.getGuardTowerConfig_Sprite();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Launch Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_LAUNCH_SOUND = eINSTANCE.getGuardTowerConfig_RpgLaunchSound();
+
+    /**
+     * The meta object literal for the '<em><b>Rpg Explosion Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__RPG_EXPLOSION_SOUND = eINSTANCE.getGuardTowerConfig_RpgExplosionSound();
+
+    /**
+     * The meta object literal for the '<em><b>Gatling Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__GATLING_SOUND = eINSTANCE.getGuardTowerConfig_GatlingSound();
+
+    /**
+     * The meta object literal for the '<em><b>Hit Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__HIT_SOUND = eINSTANCE.getGuardTowerConfig_HitSound();
+
+    /**
+     * The meta object literal for the '<em><b>Destroyed Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GUARD_TOWER_CONFIG__DESTROYED_SOUND = eINSTANCE.getGuardTowerConfig_DestroyedSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TowerCountConfigImpl <em>Tower Count Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.TowerCountConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTowerCountConfig()
+     * @generated
+     */
+    EClass TOWER_COUNT_CONFIG = eINSTANCE.getTowerCountConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Difficulty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TOWER_COUNT_CONFIG__DIFFICULTY = eINSTANCE.getTowerCountConfig_Difficulty();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TOWER_COUNT_CONFIG__COUNT = eINSTANCE.getTowerCountConfig_Count();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.

@@ -14,6 +14,7 @@ import main.game.maze.dsl.mazeDsl.EnemyType;
 import main.game.maze.dsl.mazeDsl.GameConfiguration;
 import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
+import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
 import main.game.maze.dsl.mazeDsl.Import;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LevelZone;
@@ -32,6 +33,7 @@ import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
+import main.game.maze.dsl.mazeDsl.TowerCountConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
 
@@ -197,6 +199,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass ghostCountConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass guardTowerConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass towerCountConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1246,6 +1262,28 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EReference getLevelConfig_GuardTower()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_TowerCounts()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLevelZone()
   {
     return levelZoneEClass;
@@ -1488,7 +1526,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_TriggerRadius()
+  public EAttribute getMineRingConfig_SecondRingRadius()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(2);
   }
@@ -1499,7 +1537,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_PulseSeconds()
+  public EAttribute getMineRingConfig_TriggerRadius()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(3);
   }
@@ -1510,7 +1548,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_BlastRadius()
+  public EAttribute getMineRingConfig_PulseSeconds()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(4);
   }
@@ -1521,7 +1559,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_BlastDamage()
+  public EAttribute getMineRingConfig_BlastRadius()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(5);
   }
@@ -1532,7 +1570,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_PlayerDamage()
+  public EAttribute getMineRingConfig_BlastDamage()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(6);
   }
@@ -1543,9 +1581,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EAttribute getMineRingConfig_HoleRadius()
+  public EAttribute getMineRingConfig_PlayerDamage()
   {
     return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_HoleRadius()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1634,6 +1683,259 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
   public EAttribute getGhostCountConfig_Count()
   {
     return (EAttribute)ghostCountConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getGuardTowerConfig()
+  {
+    return guardTowerConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_DisplayName()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_Health()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_SightRange()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_MaxWallsOver()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgIntervalSeconds()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgSpeed()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgBlastRadius()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgPlayerDamage()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgWallDamage()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_GatlingRounds()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_GatlingRoundIntervalSeconds()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_GatlingDamage()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_DeathBlastDamage()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_Sprite()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgLaunchSound()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_RpgExplosionSound()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_GatlingSound()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_HitSound()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGuardTowerConfig_DestroyedSound()
+  {
+    return (EAttribute)guardTowerConfigEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getTowerCountConfig()
+  {
+    return towerCountConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTowerCountConfig_Difficulty()
+  {
+    return (EAttribute)towerCountConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTowerCountConfig_Count()
+  {
+    return (EAttribute)towerCountConfigEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1908,6 +2210,8 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(levelConfigEClass, LEVEL_CONFIG__PORTAL_GHOST);
     createEReference(levelConfigEClass, LEVEL_CONFIG__GHOST_COUNTS);
     createEReference(levelConfigEClass, LEVEL_CONFIG__TELEPORT);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__GUARD_TOWER);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__TOWER_COUNTS);
 
     levelZoneEClass = createEClass(LEVEL_ZONE);
     createEAttribute(levelZoneEClass, LEVEL_ZONE__DISPLAY_NAME);
@@ -1934,6 +2238,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     mineRingConfigEClass = createEClass(MINE_RING_CONFIG);
     createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__COUNT);
     createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__RING_RADIUS);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__SECOND_RING_RADIUS);
     createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__TRIGGER_RADIUS);
     createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__PULSE_SECONDS);
     createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__BLAST_RADIUS);
@@ -1950,6 +2255,31 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     ghostCountConfigEClass = createEClass(GHOST_COUNT_CONFIG);
     createEAttribute(ghostCountConfigEClass, GHOST_COUNT_CONFIG__DIFFICULTY);
     createEAttribute(ghostCountConfigEClass, GHOST_COUNT_CONFIG__COUNT);
+
+    guardTowerConfigEClass = createEClass(GUARD_TOWER_CONFIG);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__DISPLAY_NAME);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__HEALTH);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__SIGHT_RANGE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__MAX_WALLS_OVER);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_INTERVAL_SECONDS);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_SPEED);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_BLAST_RADIUS);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_PLAYER_DAMAGE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_WALL_DAMAGE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__GATLING_ROUNDS);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__GATLING_ROUND_INTERVAL_SECONDS);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__GATLING_DAMAGE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__DEATH_BLAST_DAMAGE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__SPRITE);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_LAUNCH_SOUND);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__RPG_EXPLOSION_SOUND);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__GATLING_SOUND);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__HIT_SOUND);
+    createEAttribute(guardTowerConfigEClass, GUARD_TOWER_CONFIG__DESTROYED_SOUND);
+
+    towerCountConfigEClass = createEClass(TOWER_COUNT_CONFIG);
+    createEAttribute(towerCountConfigEClass, TOWER_COUNT_CONFIG__DIFFICULTY);
+    createEAttribute(towerCountConfigEClass, TOWER_COUNT_CONFIG__COUNT);
 
     teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
     createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS);
@@ -2100,6 +2430,8 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getLevelConfig_PortalGhost(), this.getPortalGhostConfig(), null, "portalGhost", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_GhostCounts(), this.getGhostCountConfig(), null, "ghostCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_Teleport(), this.getTeleportRulesConfig(), null, "teleport", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_GuardTower(), this.getGuardTowerConfig(), null, "guardTower", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_TowerCounts(), this.getTowerCountConfig(), null, "towerCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLevelZone_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2126,6 +2458,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEClass(mineRingConfigEClass, MineRingConfig.class, "MineRingConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMineRingConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMineRingConfig_RingRadius(), ecorePackage.getEDouble(), "ringRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_SecondRingRadius(), ecorePackage.getEDouble(), "secondRingRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMineRingConfig_TriggerRadius(), ecorePackage.getEDouble(), "triggerRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMineRingConfig_PulseSeconds(), ecorePackage.getEDouble(), "pulseSeconds", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMineRingConfig_BlastRadius(), ecorePackage.getEDouble(), "blastRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2142,6 +2475,31 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEClass(ghostCountConfigEClass, GhostCountConfig.class, "GhostCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getGhostCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, GhostCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getGhostCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, GhostCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(guardTowerConfigEClass, GuardTowerConfig.class, "GuardTowerConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getGuardTowerConfig_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_Health(), ecorePackage.getEInt(), "health", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_SightRange(), ecorePackage.getEDouble(), "sightRange", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_MaxWallsOver(), ecorePackage.getEInt(), "maxWallsOver", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgIntervalSeconds(), ecorePackage.getEDouble(), "rpgIntervalSeconds", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgSpeed(), ecorePackage.getEDouble(), "rpgSpeed", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgBlastRadius(), ecorePackage.getEDouble(), "rpgBlastRadius", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgPlayerDamage(), ecorePackage.getEInt(), "rpgPlayerDamage", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgWallDamage(), ecorePackage.getEInt(), "rpgWallDamage", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_GatlingRounds(), ecorePackage.getEInt(), "gatlingRounds", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_GatlingRoundIntervalSeconds(), ecorePackage.getEDouble(), "gatlingRoundIntervalSeconds", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_GatlingDamage(), ecorePackage.getEInt(), "gatlingDamage", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_DeathBlastDamage(), ecorePackage.getEInt(), "deathBlastDamage", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_Sprite(), ecorePackage.getEString(), "sprite", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgLaunchSound(), ecorePackage.getEString(), "rpgLaunchSound", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_RpgExplosionSound(), ecorePackage.getEString(), "rpgExplosionSound", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_GatlingSound(), ecorePackage.getEString(), "gatlingSound", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_HitSound(), ecorePackage.getEString(), "hitSound", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGuardTowerConfig_DestroyedSound(), ecorePackage.getEString(), "destroyedSound", null, 0, 1, GuardTowerConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(towerCountConfigEClass, TowerCountConfig.class, "TowerCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTowerCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, TowerCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTowerCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, TowerCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTeleportRulesConfig_CooldownSeconds(), ecorePackage.getEDouble(), "cooldownSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

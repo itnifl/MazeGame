@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getPortalGhost <em>Portal Ghost</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGhostCounts <em>Ghost Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTeleport <em>Teleport</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGuardTower <em>Guard Tower</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTowerCounts <em>Tower Counts</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig()
@@ -315,5 +317,39 @@ public interface LevelConfig extends EObject
    * @generated
    */
   void setTeleport(TeleportRulesConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Guard Tower</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Guard Tower</em>' containment reference.
+   * @see #setGuardTower(GuardTowerConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_GuardTower()
+   * @model containment="true"
+   * @generated
+   */
+  GuardTowerConfig getGuardTower();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGuardTower <em>Guard Tower</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Guard Tower</em>' containment reference.
+   * @see #getGuardTower()
+   * @generated
+   */
+  void setGuardTower(GuardTowerConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Tower Counts</b></em>' containment reference list.
+   * The list contents are of type {@link main.game.maze.dsl.mazeDsl.TowerCountConfig}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Tower Counts</em>' containment reference list.
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_TowerCounts()
+   * @model containment="true"
+   * @generated
+   */
+  EList<TowerCountConfig> getTowerCounts();
 
 } // LevelConfig

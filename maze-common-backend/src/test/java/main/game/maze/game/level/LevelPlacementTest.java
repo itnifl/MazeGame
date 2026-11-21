@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import main.game.maze.game.hazard.EdgeTeleport;
 import main.game.maze.game.hazard.MazeHazards;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
@@ -70,6 +71,40 @@ class LevelPlacementTest {
             assertTrue(free.contains(spot));
             assertTrue(Math.hypot(spot.getX() - 40, spot.getY() - 600) >= LevelPlacement.PORTAL_GHOST_MIN_START_DISTANCE);
         }
+    }
+
+    @Test
+    @DisplayName("guard towers: 2 / 3 / 4 on easy / normal / hard, on free ground in the outer band, spread apart")
+    void towerPosts() {
+        GameMazeWorld world = freshMaze();
+        List<Point2D> free = MazeHazards.freePoints(world);
+        List<Point2D> outer = EdgeTeleport.outerBand(free);
+        LevelSpec level = LEVELS.level(4);
+        for (DifficultyTier tier : DifficultyTier.values()) {
+            List<Point2D> posts = LevelPlacement.towerPosts(level, tier, world, 400, 332);
+            assertEquals(level.towerCount(tier), posts.size(), tier.name());
+            for (Point2D post : posts) {
+                assertTrue(free.contains(post), "free ground");
+                assertTrue(outer.contains(post), "outer part of the map");
+                assertTrue(Math.hypot(post.getX() - 400, post.getY() - 332) >= LevelPlacement.TOWER_MIN_START_DISTANCE);
+            }
+            assertEquals(posts, LevelPlacement.towerPosts(level, tier, world, 400, 332), "the same every time");
+        }
+        assertTrue(LevelPlacement.towerPosts(LEVELS.level(3), DifficultyTier.HARD, world, 400, 332).isEmpty());
+        assertTrue(LevelPlacement.towerPosts(level, DifficultyTier.HARD, null, 400, 332).isEmpty());
+    }
+
+    @Test
+    @DisplayName("spreading picks the points as far apart as it can")
+    void spreadOut() {
+        List<Point2D> corners = List.of(new Point2D(0, 0), new Point2D(10, 0), new Point2D(0, 10), new Point2D(10, 10),
+                new Point2D(5, 5));
+        List<Point2D> chosen = LevelPlacement.spreadOut(corners, 2);
+        assertEquals(2, chosen.size());
+        assertTrue(Math.hypot(chosen.get(0).getX() - chosen.get(1).getX(), chosen.get(0).getY() - chosen.get(1).getY()) >= 10,
+                "never two next to each other when there is room");
+        assertTrue(LevelPlacement.spreadOut(List.of(), 3).isEmpty());
+        assertEquals(1, LevelPlacement.spreadOut(List.of(new Point2D(1, 1)), 3).size());
     }
 
     @Test

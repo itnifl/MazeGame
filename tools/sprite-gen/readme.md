@@ -155,3 +155,14 @@ sprite from `baseSprites()` or commit only the files you want.
 `DamageStateSpriteAssetsTest` in `maze-common-frontend` checks that every
 generated sprite resolves through `DamageStateResolver` and has the same
 dimensions as its healthy sprite.
+
+## GuardTowerSpriteGenerator
+
+Draws the guard tower seen from above (`guard-tower.png`: a round stone tower with battlements, sandbags, a gatling gun
+and an rpg launcher) and its three damaged looks the game picks by the tower's health: `guard-tower-damaged.png` (cracks and
+soot), `guard-tower-bleeding.png` (chunks blown out, fires) and `guard-tower-tired.png` (half collapsed, charred,
+smoking).
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/GuardTowerSpriteGenerator.java
+```

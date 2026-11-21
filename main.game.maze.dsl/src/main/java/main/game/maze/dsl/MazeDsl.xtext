@@ -194,6 +194,8 @@ LevelConfig:
         (portalGhost=PortalGhostConfig)?
         (ghostCounts+=GhostCountConfig)*
         (teleport=TeleportRulesConfig)?
+        (guardTower=GuardTowerConfig)?
+        (towerCounts+=TowerCountConfig)*
     '}'
 ;
 
@@ -230,6 +232,7 @@ MineRingConfig:
     'mines' '{'
         'count' count=INT
         'ringRadius' ringRadius=DOUBLE
+        ('secondRing' secondRingRadius=DOUBLE)?
         'triggerRadius' triggerRadius=DOUBLE
         'pulse' pulseSeconds=DOUBLE
         'blastRadius' blastRadius=DOUBLE
@@ -249,6 +252,33 @@ PortalGhostConfig:
 
 GhostCountConfig:
     'portalGhosts' difficulty=DifficultyLevel count=INT
+;
+
+GuardTowerConfig:
+    'guardTower' displayName=STRING '{'
+        'health' health=INT
+        'sightRange' sightRange=DOUBLE
+        'wallsOver' maxWallsOver=INT
+        'rpgInterval' rpgIntervalSeconds=DOUBLE
+        'rpgSpeed' rpgSpeed=DOUBLE
+        'rpgBlastRadius' rpgBlastRadius=DOUBLE
+        'rpgPlayerDamage' rpgPlayerDamage=INT
+        'rpgWallDamage' rpgWallDamage=INT
+        'gatlingRounds' gatlingRounds=INT
+        'gatlingInterval' gatlingRoundIntervalSeconds=DOUBLE
+        'gatlingDamage' gatlingDamage=INT
+        'deathBlast' deathBlastDamage=INT
+        'sprite' sprite=STRING
+        ('rpgLaunchSound' rpgLaunchSound=STRING)?
+        ('rpgExplosionSound' rpgExplosionSound=STRING)?
+        ('gatlingSound' gatlingSound=STRING)?
+        ('hitSound' hitSound=STRING)?
+        ('destroyedSound' destroyedSound=STRING)?
+    '}'
+;
+
+TowerCountConfig:
+    'towers' difficulty=DifficultyLevel count=INT
 ;
 
 TeleportRulesConfig:
@@ -299,5 +329,5 @@ BOOLEAN_OBJECT returns ecore::EBooleanObject:
  * allowed as names and references, so existing files that used them as identifiers keep parsing.
  */
 ValidID returns ecore::EString:
-    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
 ;

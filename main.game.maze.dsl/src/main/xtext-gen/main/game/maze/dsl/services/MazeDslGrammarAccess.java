@@ -1311,7 +1311,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cGhostCountsGhostCountConfigParserRuleCall_14_0 = (RuleCall)cGhostCountsAssignment_14.eContents().get(0);
 		private final Assignment cTeleportAssignment_15 = (Assignment)cGroup.eContents().get(15);
 		private final RuleCall cTeleportTeleportRulesConfigParserRuleCall_15_0 = (RuleCall)cTeleportAssignment_15.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_16 = (Keyword)cGroup.eContents().get(16);
+		private final Assignment cGuardTowerAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cGuardTowerGuardTowerConfigParserRuleCall_16_0 = (RuleCall)cGuardTowerAssignment_16.eContents().get(0);
+		private final Assignment cTowerCountsAssignment_17 = (Assignment)cGroup.eContents().get(17);
+		private final RuleCall cTowerCountsTowerCountConfigParserRuleCall_17_0 = (RuleCall)cTowerCountsAssignment_17.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_18 = (Keyword)cGroup.eContents().get(18);
 		
 		///*
 		// * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
@@ -1332,6 +1336,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (portalGhost=PortalGhostConfig)?
 		//        (ghostCounts+=GhostCountConfig)*
 		//        (teleport=TeleportRulesConfig)?
+		//        (guardTower=GuardTowerConfig)?
+		//        (towerCounts+=TowerCountConfig)*
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -1349,6 +1355,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    (portalGhost=PortalGhostConfig)?
 		//    (ghostCounts+=GhostCountConfig)*
 		//    (teleport=TeleportRulesConfig)?
+		//    (guardTower=GuardTowerConfig)?
+		//    (towerCounts+=TowerCountConfig)*
 		//'}'
 		public Group getGroup() { return cGroup; }
 		
@@ -1472,8 +1480,20 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//TeleportRulesConfig
 		public RuleCall getTeleportTeleportRulesConfigParserRuleCall_15_0() { return cTeleportTeleportRulesConfigParserRuleCall_15_0; }
 		
+		//(guardTower=GuardTowerConfig)?
+		public Assignment getGuardTowerAssignment_16() { return cGuardTowerAssignment_16; }
+		
+		//GuardTowerConfig
+		public RuleCall getGuardTowerGuardTowerConfigParserRuleCall_16_0() { return cGuardTowerGuardTowerConfigParserRuleCall_16_0; }
+		
+		//(towerCounts+=TowerCountConfig)*
+		public Assignment getTowerCountsAssignment_17() { return cTowerCountsAssignment_17; }
+		
+		//TowerCountConfig
+		public RuleCall getTowerCountsTowerCountConfigParserRuleCall_17_0() { return cTowerCountsTowerCountConfigParserRuleCall_17_0; }
+		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_16() { return cRightCurlyBracketKeyword_16; }
+		public Keyword getRightCurlyBracketKeyword_18() { return cRightCurlyBracketKeyword_18; }
 	}
 	public class LevelZoneElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LevelZone");
@@ -1767,30 +1787,35 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cRingRadiusKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		private final Assignment cRingRadiusAssignment_5 = (Assignment)cGroup.eContents().get(5);
 		private final RuleCall cRingRadiusDOUBLEParserRuleCall_5_0 = (RuleCall)cRingRadiusAssignment_5.eContents().get(0);
-		private final Keyword cTriggerRadiusKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Assignment cTriggerRadiusAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cTriggerRadiusDOUBLEParserRuleCall_7_0 = (RuleCall)cTriggerRadiusAssignment_7.eContents().get(0);
-		private final Keyword cPulseKeyword_8 = (Keyword)cGroup.eContents().get(8);
-		private final Assignment cPulseSecondsAssignment_9 = (Assignment)cGroup.eContents().get(9);
-		private final RuleCall cPulseSecondsDOUBLEParserRuleCall_9_0 = (RuleCall)cPulseSecondsAssignment_9.eContents().get(0);
-		private final Keyword cBlastRadiusKeyword_10 = (Keyword)cGroup.eContents().get(10);
-		private final Assignment cBlastRadiusAssignment_11 = (Assignment)cGroup.eContents().get(11);
-		private final RuleCall cBlastRadiusDOUBLEParserRuleCall_11_0 = (RuleCall)cBlastRadiusAssignment_11.eContents().get(0);
-		private final Keyword cBlastDamageKeyword_12 = (Keyword)cGroup.eContents().get(12);
-		private final Assignment cBlastDamageAssignment_13 = (Assignment)cGroup.eContents().get(13);
-		private final RuleCall cBlastDamageINTTerminalRuleCall_13_0 = (RuleCall)cBlastDamageAssignment_13.eContents().get(0);
-		private final Keyword cPlayerDamageKeyword_14 = (Keyword)cGroup.eContents().get(14);
-		private final Assignment cPlayerDamageAssignment_15 = (Assignment)cGroup.eContents().get(15);
-		private final RuleCall cPlayerDamageINTTerminalRuleCall_15_0 = (RuleCall)cPlayerDamageAssignment_15.eContents().get(0);
-		private final Keyword cHoleRadiusKeyword_16 = (Keyword)cGroup.eContents().get(16);
-		private final Assignment cHoleRadiusAssignment_17 = (Assignment)cGroup.eContents().get(17);
-		private final RuleCall cHoleRadiusDOUBLEParserRuleCall_17_0 = (RuleCall)cHoleRadiusAssignment_17.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_18 = (Keyword)cGroup.eContents().get(18);
+		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
+		private final Keyword cSecondRingKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
+		private final Assignment cSecondRingRadiusAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
+		private final RuleCall cSecondRingRadiusDOUBLEParserRuleCall_6_1_0 = (RuleCall)cSecondRingRadiusAssignment_6_1.eContents().get(0);
+		private final Keyword cTriggerRadiusKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cTriggerRadiusAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cTriggerRadiusDOUBLEParserRuleCall_8_0 = (RuleCall)cTriggerRadiusAssignment_8.eContents().get(0);
+		private final Keyword cPulseKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cPulseSecondsAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cPulseSecondsDOUBLEParserRuleCall_10_0 = (RuleCall)cPulseSecondsAssignment_10.eContents().get(0);
+		private final Keyword cBlastRadiusKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cBlastRadiusAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cBlastRadiusDOUBLEParserRuleCall_12_0 = (RuleCall)cBlastRadiusAssignment_12.eContents().get(0);
+		private final Keyword cBlastDamageKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cBlastDamageAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cBlastDamageINTTerminalRuleCall_14_0 = (RuleCall)cBlastDamageAssignment_14.eContents().get(0);
+		private final Keyword cPlayerDamageKeyword_15 = (Keyword)cGroup.eContents().get(15);
+		private final Assignment cPlayerDamageAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cPlayerDamageINTTerminalRuleCall_16_0 = (RuleCall)cPlayerDamageAssignment_16.eContents().get(0);
+		private final Keyword cHoleRadiusKeyword_17 = (Keyword)cGroup.eContents().get(17);
+		private final Assignment cHoleRadiusAssignment_18 = (Assignment)cGroup.eContents().get(18);
+		private final RuleCall cHoleRadiusDOUBLEParserRuleCall_18_0 = (RuleCall)cHoleRadiusAssignment_18.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_19 = (Keyword)cGroup.eContents().get(19);
 		
 		//MineRingConfig:
 		//    'mines' '{'
 		//        'count' count=INT
 		//        'ringRadius' ringRadius=DOUBLE
+		//        ('secondRing' secondRingRadius=DOUBLE)?
 		//        'triggerRadius' triggerRadius=DOUBLE
 		//        'pulse' pulseSeconds=DOUBLE
 		//        'blastRadius' blastRadius=DOUBLE
@@ -1804,6 +1829,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'mines' '{'
 		//    'count' count=INT
 		//    'ringRadius' ringRadius=DOUBLE
+		//    ('secondRing' secondRingRadius=DOUBLE)?
 		//    'triggerRadius' triggerRadius=DOUBLE
 		//    'pulse' pulseSeconds=DOUBLE
 		//    'blastRadius' blastRadius=DOUBLE
@@ -1837,62 +1863,74 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//DOUBLE
 		public RuleCall getRingRadiusDOUBLEParserRuleCall_5_0() { return cRingRadiusDOUBLEParserRuleCall_5_0; }
 		
+		//('secondRing' secondRingRadius=DOUBLE)?
+		public Group getGroup_6() { return cGroup_6; }
+		
+		//'secondRing'
+		public Keyword getSecondRingKeyword_6_0() { return cSecondRingKeyword_6_0; }
+		
+		//secondRingRadius=DOUBLE
+		public Assignment getSecondRingRadiusAssignment_6_1() { return cSecondRingRadiusAssignment_6_1; }
+		
+		//DOUBLE
+		public RuleCall getSecondRingRadiusDOUBLEParserRuleCall_6_1_0() { return cSecondRingRadiusDOUBLEParserRuleCall_6_1_0; }
+		
 		//'triggerRadius'
-		public Keyword getTriggerRadiusKeyword_6() { return cTriggerRadiusKeyword_6; }
+		public Keyword getTriggerRadiusKeyword_7() { return cTriggerRadiusKeyword_7; }
 		
 		//triggerRadius=DOUBLE
-		public Assignment getTriggerRadiusAssignment_7() { return cTriggerRadiusAssignment_7; }
+		public Assignment getTriggerRadiusAssignment_8() { return cTriggerRadiusAssignment_8; }
 		
 		//DOUBLE
-		public RuleCall getTriggerRadiusDOUBLEParserRuleCall_7_0() { return cTriggerRadiusDOUBLEParserRuleCall_7_0; }
+		public RuleCall getTriggerRadiusDOUBLEParserRuleCall_8_0() { return cTriggerRadiusDOUBLEParserRuleCall_8_0; }
 		
 		//'pulse'
-		public Keyword getPulseKeyword_8() { return cPulseKeyword_8; }
+		public Keyword getPulseKeyword_9() { return cPulseKeyword_9; }
 		
 		//pulseSeconds=DOUBLE
-		public Assignment getPulseSecondsAssignment_9() { return cPulseSecondsAssignment_9; }
+		public Assignment getPulseSecondsAssignment_10() { return cPulseSecondsAssignment_10; }
 		
 		//DOUBLE
-		public RuleCall getPulseSecondsDOUBLEParserRuleCall_9_0() { return cPulseSecondsDOUBLEParserRuleCall_9_0; }
+		public RuleCall getPulseSecondsDOUBLEParserRuleCall_10_0() { return cPulseSecondsDOUBLEParserRuleCall_10_0; }
 		
 		//'blastRadius'
-		public Keyword getBlastRadiusKeyword_10() { return cBlastRadiusKeyword_10; }
+		public Keyword getBlastRadiusKeyword_11() { return cBlastRadiusKeyword_11; }
 		
 		//blastRadius=DOUBLE
-		public Assignment getBlastRadiusAssignment_11() { return cBlastRadiusAssignment_11; }
+		public Assignment getBlastRadiusAssignment_12() { return cBlastRadiusAssignment_12; }
 		
 		//DOUBLE
-		public RuleCall getBlastRadiusDOUBLEParserRuleCall_11_0() { return cBlastRadiusDOUBLEParserRuleCall_11_0; }
+		public RuleCall getBlastRadiusDOUBLEParserRuleCall_12_0() { return cBlastRadiusDOUBLEParserRuleCall_12_0; }
 		
 		//'blastDamage'
-		public Keyword getBlastDamageKeyword_12() { return cBlastDamageKeyword_12; }
+		public Keyword getBlastDamageKeyword_13() { return cBlastDamageKeyword_13; }
 		
 		//blastDamage=INT
-		public Assignment getBlastDamageAssignment_13() { return cBlastDamageAssignment_13; }
+		public Assignment getBlastDamageAssignment_14() { return cBlastDamageAssignment_14; }
 		
 		//INT
-		public RuleCall getBlastDamageINTTerminalRuleCall_13_0() { return cBlastDamageINTTerminalRuleCall_13_0; }
+		public RuleCall getBlastDamageINTTerminalRuleCall_14_0() { return cBlastDamageINTTerminalRuleCall_14_0; }
 		
 		//'playerDamage'
-		public Keyword getPlayerDamageKeyword_14() { return cPlayerDamageKeyword_14; }
+		public Keyword getPlayerDamageKeyword_15() { return cPlayerDamageKeyword_15; }
 		
 		//playerDamage=INT
-		public Assignment getPlayerDamageAssignment_15() { return cPlayerDamageAssignment_15; }
+		public Assignment getPlayerDamageAssignment_16() { return cPlayerDamageAssignment_16; }
 		
 		//INT
-		public RuleCall getPlayerDamageINTTerminalRuleCall_15_0() { return cPlayerDamageINTTerminalRuleCall_15_0; }
+		public RuleCall getPlayerDamageINTTerminalRuleCall_16_0() { return cPlayerDamageINTTerminalRuleCall_16_0; }
 		
 		//'holeRadius'
-		public Keyword getHoleRadiusKeyword_16() { return cHoleRadiusKeyword_16; }
+		public Keyword getHoleRadiusKeyword_17() { return cHoleRadiusKeyword_17; }
 		
 		//holeRadius=DOUBLE
-		public Assignment getHoleRadiusAssignment_17() { return cHoleRadiusAssignment_17; }
+		public Assignment getHoleRadiusAssignment_18() { return cHoleRadiusAssignment_18; }
 		
 		//DOUBLE
-		public RuleCall getHoleRadiusDOUBLEParserRuleCall_17_0() { return cHoleRadiusDOUBLEParserRuleCall_17_0; }
+		public RuleCall getHoleRadiusDOUBLEParserRuleCall_18_0() { return cHoleRadiusDOUBLEParserRuleCall_18_0; }
 		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_18() { return cRightCurlyBracketKeyword_18; }
+		public Keyword getRightCurlyBracketKeyword_19() { return cRightCurlyBracketKeyword_19; }
 	}
 	public class PortalGhostConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.PortalGhostConfig");
@@ -1989,6 +2027,344 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'portalGhosts'
 		public Keyword getPortalGhostsKeyword_0() { return cPortalGhostsKeyword_0; }
+		
+		//difficulty=DifficultyLevel
+		public Assignment getDifficultyAssignment_1() { return cDifficultyAssignment_1; }
+		
+		//DifficultyLevel
+		public RuleCall getDifficultyDifficultyLevelEnumRuleCall_1_0() { return cDifficultyDifficultyLevelEnumRuleCall_1_0; }
+		
+		//count=INT
+		public Assignment getCountAssignment_2() { return cCountAssignment_2; }
+		
+		//INT
+		public RuleCall getCountINTTerminalRuleCall_2_0() { return cCountINTTerminalRuleCall_2_0; }
+	}
+	public class GuardTowerConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.GuardTowerConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cGuardTowerKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cDisplayNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cHealthKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cHealthAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cHealthINTTerminalRuleCall_4_0 = (RuleCall)cHealthAssignment_4.eContents().get(0);
+		private final Keyword cSightRangeKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cSightRangeAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cSightRangeDOUBLEParserRuleCall_6_0 = (RuleCall)cSightRangeAssignment_6.eContents().get(0);
+		private final Keyword cWallsOverKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cMaxWallsOverAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cMaxWallsOverINTTerminalRuleCall_8_0 = (RuleCall)cMaxWallsOverAssignment_8.eContents().get(0);
+		private final Keyword cRpgIntervalKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cRpgIntervalSecondsAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cRpgIntervalSecondsDOUBLEParserRuleCall_10_0 = (RuleCall)cRpgIntervalSecondsAssignment_10.eContents().get(0);
+		private final Keyword cRpgSpeedKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cRpgSpeedAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cRpgSpeedDOUBLEParserRuleCall_12_0 = (RuleCall)cRpgSpeedAssignment_12.eContents().get(0);
+		private final Keyword cRpgBlastRadiusKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cRpgBlastRadiusAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cRpgBlastRadiusDOUBLEParserRuleCall_14_0 = (RuleCall)cRpgBlastRadiusAssignment_14.eContents().get(0);
+		private final Keyword cRpgPlayerDamageKeyword_15 = (Keyword)cGroup.eContents().get(15);
+		private final Assignment cRpgPlayerDamageAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cRpgPlayerDamageINTTerminalRuleCall_16_0 = (RuleCall)cRpgPlayerDamageAssignment_16.eContents().get(0);
+		private final Keyword cRpgWallDamageKeyword_17 = (Keyword)cGroup.eContents().get(17);
+		private final Assignment cRpgWallDamageAssignment_18 = (Assignment)cGroup.eContents().get(18);
+		private final RuleCall cRpgWallDamageINTTerminalRuleCall_18_0 = (RuleCall)cRpgWallDamageAssignment_18.eContents().get(0);
+		private final Keyword cGatlingRoundsKeyword_19 = (Keyword)cGroup.eContents().get(19);
+		private final Assignment cGatlingRoundsAssignment_20 = (Assignment)cGroup.eContents().get(20);
+		private final RuleCall cGatlingRoundsINTTerminalRuleCall_20_0 = (RuleCall)cGatlingRoundsAssignment_20.eContents().get(0);
+		private final Keyword cGatlingIntervalKeyword_21 = (Keyword)cGroup.eContents().get(21);
+		private final Assignment cGatlingRoundIntervalSecondsAssignment_22 = (Assignment)cGroup.eContents().get(22);
+		private final RuleCall cGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0 = (RuleCall)cGatlingRoundIntervalSecondsAssignment_22.eContents().get(0);
+		private final Keyword cGatlingDamageKeyword_23 = (Keyword)cGroup.eContents().get(23);
+		private final Assignment cGatlingDamageAssignment_24 = (Assignment)cGroup.eContents().get(24);
+		private final RuleCall cGatlingDamageINTTerminalRuleCall_24_0 = (RuleCall)cGatlingDamageAssignment_24.eContents().get(0);
+		private final Keyword cDeathBlastKeyword_25 = (Keyword)cGroup.eContents().get(25);
+		private final Assignment cDeathBlastDamageAssignment_26 = (Assignment)cGroup.eContents().get(26);
+		private final RuleCall cDeathBlastDamageINTTerminalRuleCall_26_0 = (RuleCall)cDeathBlastDamageAssignment_26.eContents().get(0);
+		private final Keyword cSpriteKeyword_27 = (Keyword)cGroup.eContents().get(27);
+		private final Assignment cSpriteAssignment_28 = (Assignment)cGroup.eContents().get(28);
+		private final RuleCall cSpriteSTRINGTerminalRuleCall_28_0 = (RuleCall)cSpriteAssignment_28.eContents().get(0);
+		private final Group cGroup_29 = (Group)cGroup.eContents().get(29);
+		private final Keyword cRpgLaunchSoundKeyword_29_0 = (Keyword)cGroup_29.eContents().get(0);
+		private final Assignment cRpgLaunchSoundAssignment_29_1 = (Assignment)cGroup_29.eContents().get(1);
+		private final RuleCall cRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0 = (RuleCall)cRpgLaunchSoundAssignment_29_1.eContents().get(0);
+		private final Group cGroup_30 = (Group)cGroup.eContents().get(30);
+		private final Keyword cRpgExplosionSoundKeyword_30_0 = (Keyword)cGroup_30.eContents().get(0);
+		private final Assignment cRpgExplosionSoundAssignment_30_1 = (Assignment)cGroup_30.eContents().get(1);
+		private final RuleCall cRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0 = (RuleCall)cRpgExplosionSoundAssignment_30_1.eContents().get(0);
+		private final Group cGroup_31 = (Group)cGroup.eContents().get(31);
+		private final Keyword cGatlingSoundKeyword_31_0 = (Keyword)cGroup_31.eContents().get(0);
+		private final Assignment cGatlingSoundAssignment_31_1 = (Assignment)cGroup_31.eContents().get(1);
+		private final RuleCall cGatlingSoundSTRINGTerminalRuleCall_31_1_0 = (RuleCall)cGatlingSoundAssignment_31_1.eContents().get(0);
+		private final Group cGroup_32 = (Group)cGroup.eContents().get(32);
+		private final Keyword cHitSoundKeyword_32_0 = (Keyword)cGroup_32.eContents().get(0);
+		private final Assignment cHitSoundAssignment_32_1 = (Assignment)cGroup_32.eContents().get(1);
+		private final RuleCall cHitSoundSTRINGTerminalRuleCall_32_1_0 = (RuleCall)cHitSoundAssignment_32_1.eContents().get(0);
+		private final Group cGroup_33 = (Group)cGroup.eContents().get(33);
+		private final Keyword cDestroyedSoundKeyword_33_0 = (Keyword)cGroup_33.eContents().get(0);
+		private final Assignment cDestroyedSoundAssignment_33_1 = (Assignment)cGroup_33.eContents().get(1);
+		private final RuleCall cDestroyedSoundSTRINGTerminalRuleCall_33_1_0 = (RuleCall)cDestroyedSoundAssignment_33_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_34 = (Keyword)cGroup.eContents().get(34);
+		
+		//GuardTowerConfig:
+		//    'guardTower' displayName=STRING '{'
+		//        'health' health=INT
+		//        'sightRange' sightRange=DOUBLE
+		//        'wallsOver' maxWallsOver=INT
+		//        'rpgInterval' rpgIntervalSeconds=DOUBLE
+		//        'rpgSpeed' rpgSpeed=DOUBLE
+		//        'rpgBlastRadius' rpgBlastRadius=DOUBLE
+		//        'rpgPlayerDamage' rpgPlayerDamage=INT
+		//        'rpgWallDamage' rpgWallDamage=INT
+		//        'gatlingRounds' gatlingRounds=INT
+		//        'gatlingInterval' gatlingRoundIntervalSeconds=DOUBLE
+		//        'gatlingDamage' gatlingDamage=INT
+		//        'deathBlast' deathBlastDamage=INT
+		//        'sprite' sprite=STRING
+		//        ('rpgLaunchSound' rpgLaunchSound=STRING)?
+		//        ('rpgExplosionSound' rpgExplosionSound=STRING)?
+		//        ('gatlingSound' gatlingSound=STRING)?
+		//        ('hitSound' hitSound=STRING)?
+		//        ('destroyedSound' destroyedSound=STRING)?
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'guardTower' displayName=STRING '{'
+		//    'health' health=INT
+		//    'sightRange' sightRange=DOUBLE
+		//    'wallsOver' maxWallsOver=INT
+		//    'rpgInterval' rpgIntervalSeconds=DOUBLE
+		//    'rpgSpeed' rpgSpeed=DOUBLE
+		//    'rpgBlastRadius' rpgBlastRadius=DOUBLE
+		//    'rpgPlayerDamage' rpgPlayerDamage=INT
+		//    'rpgWallDamage' rpgWallDamage=INT
+		//    'gatlingRounds' gatlingRounds=INT
+		//    'gatlingInterval' gatlingRoundIntervalSeconds=DOUBLE
+		//    'gatlingDamage' gatlingDamage=INT
+		//    'deathBlast' deathBlastDamage=INT
+		//    'sprite' sprite=STRING
+		//    ('rpgLaunchSound' rpgLaunchSound=STRING)?
+		//    ('rpgExplosionSound' rpgExplosionSound=STRING)?
+		//    ('gatlingSound' gatlingSound=STRING)?
+		//    ('hitSound' hitSound=STRING)?
+		//    ('destroyedSound' destroyedSound=STRING)?
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'guardTower'
+		public Keyword getGuardTowerKeyword_0() { return cGuardTowerKeyword_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_1() { return cDisplayNameAssignment_1; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_1_0() { return cDisplayNameSTRINGTerminalRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'health'
+		public Keyword getHealthKeyword_3() { return cHealthKeyword_3; }
+		
+		//health=INT
+		public Assignment getHealthAssignment_4() { return cHealthAssignment_4; }
+		
+		//INT
+		public RuleCall getHealthINTTerminalRuleCall_4_0() { return cHealthINTTerminalRuleCall_4_0; }
+		
+		//'sightRange'
+		public Keyword getSightRangeKeyword_5() { return cSightRangeKeyword_5; }
+		
+		//sightRange=DOUBLE
+		public Assignment getSightRangeAssignment_6() { return cSightRangeAssignment_6; }
+		
+		//DOUBLE
+		public RuleCall getSightRangeDOUBLEParserRuleCall_6_0() { return cSightRangeDOUBLEParserRuleCall_6_0; }
+		
+		//'wallsOver'
+		public Keyword getWallsOverKeyword_7() { return cWallsOverKeyword_7; }
+		
+		//maxWallsOver=INT
+		public Assignment getMaxWallsOverAssignment_8() { return cMaxWallsOverAssignment_8; }
+		
+		//INT
+		public RuleCall getMaxWallsOverINTTerminalRuleCall_8_0() { return cMaxWallsOverINTTerminalRuleCall_8_0; }
+		
+		//'rpgInterval'
+		public Keyword getRpgIntervalKeyword_9() { return cRpgIntervalKeyword_9; }
+		
+		//rpgIntervalSeconds=DOUBLE
+		public Assignment getRpgIntervalSecondsAssignment_10() { return cRpgIntervalSecondsAssignment_10; }
+		
+		//DOUBLE
+		public RuleCall getRpgIntervalSecondsDOUBLEParserRuleCall_10_0() { return cRpgIntervalSecondsDOUBLEParserRuleCall_10_0; }
+		
+		//'rpgSpeed'
+		public Keyword getRpgSpeedKeyword_11() { return cRpgSpeedKeyword_11; }
+		
+		//rpgSpeed=DOUBLE
+		public Assignment getRpgSpeedAssignment_12() { return cRpgSpeedAssignment_12; }
+		
+		//DOUBLE
+		public RuleCall getRpgSpeedDOUBLEParserRuleCall_12_0() { return cRpgSpeedDOUBLEParserRuleCall_12_0; }
+		
+		//'rpgBlastRadius'
+		public Keyword getRpgBlastRadiusKeyword_13() { return cRpgBlastRadiusKeyword_13; }
+		
+		//rpgBlastRadius=DOUBLE
+		public Assignment getRpgBlastRadiusAssignment_14() { return cRpgBlastRadiusAssignment_14; }
+		
+		//DOUBLE
+		public RuleCall getRpgBlastRadiusDOUBLEParserRuleCall_14_0() { return cRpgBlastRadiusDOUBLEParserRuleCall_14_0; }
+		
+		//'rpgPlayerDamage'
+		public Keyword getRpgPlayerDamageKeyword_15() { return cRpgPlayerDamageKeyword_15; }
+		
+		//rpgPlayerDamage=INT
+		public Assignment getRpgPlayerDamageAssignment_16() { return cRpgPlayerDamageAssignment_16; }
+		
+		//INT
+		public RuleCall getRpgPlayerDamageINTTerminalRuleCall_16_0() { return cRpgPlayerDamageINTTerminalRuleCall_16_0; }
+		
+		//'rpgWallDamage'
+		public Keyword getRpgWallDamageKeyword_17() { return cRpgWallDamageKeyword_17; }
+		
+		//rpgWallDamage=INT
+		public Assignment getRpgWallDamageAssignment_18() { return cRpgWallDamageAssignment_18; }
+		
+		//INT
+		public RuleCall getRpgWallDamageINTTerminalRuleCall_18_0() { return cRpgWallDamageINTTerminalRuleCall_18_0; }
+		
+		//'gatlingRounds'
+		public Keyword getGatlingRoundsKeyword_19() { return cGatlingRoundsKeyword_19; }
+		
+		//gatlingRounds=INT
+		public Assignment getGatlingRoundsAssignment_20() { return cGatlingRoundsAssignment_20; }
+		
+		//INT
+		public RuleCall getGatlingRoundsINTTerminalRuleCall_20_0() { return cGatlingRoundsINTTerminalRuleCall_20_0; }
+		
+		//'gatlingInterval'
+		public Keyword getGatlingIntervalKeyword_21() { return cGatlingIntervalKeyword_21; }
+		
+		//gatlingRoundIntervalSeconds=DOUBLE
+		public Assignment getGatlingRoundIntervalSecondsAssignment_22() { return cGatlingRoundIntervalSecondsAssignment_22; }
+		
+		//DOUBLE
+		public RuleCall getGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0() { return cGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0; }
+		
+		//'gatlingDamage'
+		public Keyword getGatlingDamageKeyword_23() { return cGatlingDamageKeyword_23; }
+		
+		//gatlingDamage=INT
+		public Assignment getGatlingDamageAssignment_24() { return cGatlingDamageAssignment_24; }
+		
+		//INT
+		public RuleCall getGatlingDamageINTTerminalRuleCall_24_0() { return cGatlingDamageINTTerminalRuleCall_24_0; }
+		
+		//'deathBlast'
+		public Keyword getDeathBlastKeyword_25() { return cDeathBlastKeyword_25; }
+		
+		//deathBlastDamage=INT
+		public Assignment getDeathBlastDamageAssignment_26() { return cDeathBlastDamageAssignment_26; }
+		
+		//INT
+		public RuleCall getDeathBlastDamageINTTerminalRuleCall_26_0() { return cDeathBlastDamageINTTerminalRuleCall_26_0; }
+		
+		//'sprite'
+		public Keyword getSpriteKeyword_27() { return cSpriteKeyword_27; }
+		
+		//sprite=STRING
+		public Assignment getSpriteAssignment_28() { return cSpriteAssignment_28; }
+		
+		//STRING
+		public RuleCall getSpriteSTRINGTerminalRuleCall_28_0() { return cSpriteSTRINGTerminalRuleCall_28_0; }
+		
+		//('rpgLaunchSound' rpgLaunchSound=STRING)?
+		public Group getGroup_29() { return cGroup_29; }
+		
+		//'rpgLaunchSound'
+		public Keyword getRpgLaunchSoundKeyword_29_0() { return cRpgLaunchSoundKeyword_29_0; }
+		
+		//rpgLaunchSound=STRING
+		public Assignment getRpgLaunchSoundAssignment_29_1() { return cRpgLaunchSoundAssignment_29_1; }
+		
+		//STRING
+		public RuleCall getRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0() { return cRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0; }
+		
+		//('rpgExplosionSound' rpgExplosionSound=STRING)?
+		public Group getGroup_30() { return cGroup_30; }
+		
+		//'rpgExplosionSound'
+		public Keyword getRpgExplosionSoundKeyword_30_0() { return cRpgExplosionSoundKeyword_30_0; }
+		
+		//rpgExplosionSound=STRING
+		public Assignment getRpgExplosionSoundAssignment_30_1() { return cRpgExplosionSoundAssignment_30_1; }
+		
+		//STRING
+		public RuleCall getRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0() { return cRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0; }
+		
+		//('gatlingSound' gatlingSound=STRING)?
+		public Group getGroup_31() { return cGroup_31; }
+		
+		//'gatlingSound'
+		public Keyword getGatlingSoundKeyword_31_0() { return cGatlingSoundKeyword_31_0; }
+		
+		//gatlingSound=STRING
+		public Assignment getGatlingSoundAssignment_31_1() { return cGatlingSoundAssignment_31_1; }
+		
+		//STRING
+		public RuleCall getGatlingSoundSTRINGTerminalRuleCall_31_1_0() { return cGatlingSoundSTRINGTerminalRuleCall_31_1_0; }
+		
+		//('hitSound' hitSound=STRING)?
+		public Group getGroup_32() { return cGroup_32; }
+		
+		//'hitSound'
+		public Keyword getHitSoundKeyword_32_0() { return cHitSoundKeyword_32_0; }
+		
+		//hitSound=STRING
+		public Assignment getHitSoundAssignment_32_1() { return cHitSoundAssignment_32_1; }
+		
+		//STRING
+		public RuleCall getHitSoundSTRINGTerminalRuleCall_32_1_0() { return cHitSoundSTRINGTerminalRuleCall_32_1_0; }
+		
+		//('destroyedSound' destroyedSound=STRING)?
+		public Group getGroup_33() { return cGroup_33; }
+		
+		//'destroyedSound'
+		public Keyword getDestroyedSoundKeyword_33_0() { return cDestroyedSoundKeyword_33_0; }
+		
+		//destroyedSound=STRING
+		public Assignment getDestroyedSoundAssignment_33_1() { return cDestroyedSoundAssignment_33_1; }
+		
+		//STRING
+		public RuleCall getDestroyedSoundSTRINGTerminalRuleCall_33_1_0() { return cDestroyedSoundSTRINGTerminalRuleCall_33_1_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_34() { return cRightCurlyBracketKeyword_34; }
+	}
+	public class TowerCountConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.TowerCountConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cTowersKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDifficultyAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDifficultyDifficultyLevelEnumRuleCall_1_0 = (RuleCall)cDifficultyAssignment_1.eContents().get(0);
+		private final Assignment cCountAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cCountINTTerminalRuleCall_2_0 = (RuleCall)cCountAssignment_2.eContents().get(0);
+		
+		//TowerCountConfig:
+		//    'towers' difficulty=DifficultyLevel count=INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'towers' difficulty=DifficultyLevel count=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'towers'
+		public Keyword getTowersKeyword_0() { return cTowersKeyword_0; }
 		
 		//difficulty=DifficultyLevel
 		public Assignment getDifficultyAssignment_1() { return cDifficultyAssignment_1; }
@@ -2300,17 +2676,35 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cBannerSecondsKeyword_35 = (Keyword)cAlternatives.eContents().get(35);
 		private final Keyword cZapSoundKeyword_36 = (Keyword)cAlternatives.eContents().get(36);
 		private final Keyword cVoiceSoundKeyword_37 = (Keyword)cAlternatives.eContents().get(37);
+		private final Keyword cSecondRingKeyword_38 = (Keyword)cAlternatives.eContents().get(38);
+		private final Keyword cGuardTowerKeyword_39 = (Keyword)cAlternatives.eContents().get(39);
+		private final Keyword cTowersKeyword_40 = (Keyword)cAlternatives.eContents().get(40);
+		private final Keyword cWallsOverKeyword_41 = (Keyword)cAlternatives.eContents().get(41);
+		private final Keyword cRpgIntervalKeyword_42 = (Keyword)cAlternatives.eContents().get(42);
+		private final Keyword cRpgSpeedKeyword_43 = (Keyword)cAlternatives.eContents().get(43);
+		private final Keyword cRpgBlastRadiusKeyword_44 = (Keyword)cAlternatives.eContents().get(44);
+		private final Keyword cRpgPlayerDamageKeyword_45 = (Keyword)cAlternatives.eContents().get(45);
+		private final Keyword cRpgWallDamageKeyword_46 = (Keyword)cAlternatives.eContents().get(46);
+		private final Keyword cGatlingRoundsKeyword_47 = (Keyword)cAlternatives.eContents().get(47);
+		private final Keyword cGatlingIntervalKeyword_48 = (Keyword)cAlternatives.eContents().get(48);
+		private final Keyword cGatlingDamageKeyword_49 = (Keyword)cAlternatives.eContents().get(49);
+		private final Keyword cDeathBlastKeyword_50 = (Keyword)cAlternatives.eContents().get(50);
+		private final Keyword cRpgLaunchSoundKeyword_51 = (Keyword)cAlternatives.eContents().get(51);
+		private final Keyword cRpgExplosionSoundKeyword_52 = (Keyword)cAlternatives.eContents().get(52);
+		private final Keyword cGatlingSoundKeyword_53 = (Keyword)cAlternatives.eContents().get(53);
+		private final Keyword cHitSoundKeyword_54 = (Keyword)cAlternatives.eContents().get(54);
+		private final Keyword cDestroyedSoundKeyword_55 = (Keyword)cAlternatives.eContents().get(55);
 		
 		///*
 		// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
 		// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 		// */
 		//ValidID returns ecore::EString:
-		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -2426,6 +2820,60 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'voiceSound'
 		public Keyword getVoiceSoundKeyword_37() { return cVoiceSoundKeyword_37; }
+		
+		//'secondRing'
+		public Keyword getSecondRingKeyword_38() { return cSecondRingKeyword_38; }
+		
+		//'guardTower'
+		public Keyword getGuardTowerKeyword_39() { return cGuardTowerKeyword_39; }
+		
+		//'towers'
+		public Keyword getTowersKeyword_40() { return cTowersKeyword_40; }
+		
+		//'wallsOver'
+		public Keyword getWallsOverKeyword_41() { return cWallsOverKeyword_41; }
+		
+		//'rpgInterval'
+		public Keyword getRpgIntervalKeyword_42() { return cRpgIntervalKeyword_42; }
+		
+		//'rpgSpeed'
+		public Keyword getRpgSpeedKeyword_43() { return cRpgSpeedKeyword_43; }
+		
+		//'rpgBlastRadius'
+		public Keyword getRpgBlastRadiusKeyword_44() { return cRpgBlastRadiusKeyword_44; }
+		
+		//'rpgPlayerDamage'
+		public Keyword getRpgPlayerDamageKeyword_45() { return cRpgPlayerDamageKeyword_45; }
+		
+		//'rpgWallDamage'
+		public Keyword getRpgWallDamageKeyword_46() { return cRpgWallDamageKeyword_46; }
+		
+		//'gatlingRounds'
+		public Keyword getGatlingRoundsKeyword_47() { return cGatlingRoundsKeyword_47; }
+		
+		//'gatlingInterval'
+		public Keyword getGatlingIntervalKeyword_48() { return cGatlingIntervalKeyword_48; }
+		
+		//'gatlingDamage'
+		public Keyword getGatlingDamageKeyword_49() { return cGatlingDamageKeyword_49; }
+		
+		//'deathBlast'
+		public Keyword getDeathBlastKeyword_50() { return cDeathBlastKeyword_50; }
+		
+		//'rpgLaunchSound'
+		public Keyword getRpgLaunchSoundKeyword_51() { return cRpgLaunchSoundKeyword_51; }
+		
+		//'rpgExplosionSound'
+		public Keyword getRpgExplosionSoundKeyword_52() { return cRpgExplosionSoundKeyword_52; }
+		
+		//'gatlingSound'
+		public Keyword getGatlingSoundKeyword_53() { return cGatlingSoundKeyword_53; }
+		
+		//'hitSound'
+		public Keyword getHitSoundKeyword_54() { return cHitSoundKeyword_54; }
+		
+		//'destroyedSound'
+		public Keyword getDestroyedSoundKeyword_55() { return cDestroyedSoundKeyword_55; }
 	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
@@ -2705,6 +3153,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final MineRingConfigElements pMineRingConfig;
 	private final PortalGhostConfigElements pPortalGhostConfig;
 	private final GhostCountConfigElements pGhostCountConfig;
+	private final GuardTowerConfigElements pGuardTowerConfig;
+	private final TowerCountConfigElements pTowerCountConfig;
 	private final TeleportRulesConfigElements pTeleportRulesConfig;
 	private final DOUBLEElements pDOUBLE;
 	private final SIGNED_INTElements pSIGNED_INT;
@@ -2751,6 +3201,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pMineRingConfig = new MineRingConfigElements();
 		this.pPortalGhostConfig = new PortalGhostConfigElements();
 		this.pGhostCountConfig = new GhostCountConfigElements();
+		this.pGuardTowerConfig = new GuardTowerConfigElements();
+		this.pTowerCountConfig = new TowerCountConfigElements();
 		this.pTeleportRulesConfig = new TeleportRulesConfigElements();
 		this.pDOUBLE = new DOUBLEElements();
 		this.pSIGNED_INT = new SIGNED_INTElements();
@@ -3112,6 +3564,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (portalGhost=PortalGhostConfig)?
 	//        (ghostCounts+=GhostCountConfig)*
 	//        (teleport=TeleportRulesConfig)?
+	//        (guardTower=GuardTowerConfig)?
+	//        (towerCounts+=TowerCountConfig)*
 	//    '}'
 	//;
 	public LevelConfigElements getLevelConfigAccess() {
@@ -3183,6 +3637,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//    'mines' '{'
 	//        'count' count=INT
 	//        'ringRadius' ringRadius=DOUBLE
+	//        ('secondRing' secondRingRadius=DOUBLE)?
 	//        'triggerRadius' triggerRadius=DOUBLE
 	//        'pulse' pulseSeconds=DOUBLE
 	//        'blastRadius' blastRadius=DOUBLE
@@ -3223,6 +3678,47 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getGhostCountConfigRule() {
 		return getGhostCountConfigAccess().getRule();
+	}
+	
+	//GuardTowerConfig:
+	//    'guardTower' displayName=STRING '{'
+	//        'health' health=INT
+	//        'sightRange' sightRange=DOUBLE
+	//        'wallsOver' maxWallsOver=INT
+	//        'rpgInterval' rpgIntervalSeconds=DOUBLE
+	//        'rpgSpeed' rpgSpeed=DOUBLE
+	//        'rpgBlastRadius' rpgBlastRadius=DOUBLE
+	//        'rpgPlayerDamage' rpgPlayerDamage=INT
+	//        'rpgWallDamage' rpgWallDamage=INT
+	//        'gatlingRounds' gatlingRounds=INT
+	//        'gatlingInterval' gatlingRoundIntervalSeconds=DOUBLE
+	//        'gatlingDamage' gatlingDamage=INT
+	//        'deathBlast' deathBlastDamage=INT
+	//        'sprite' sprite=STRING
+	//        ('rpgLaunchSound' rpgLaunchSound=STRING)?
+	//        ('rpgExplosionSound' rpgExplosionSound=STRING)?
+	//        ('gatlingSound' gatlingSound=STRING)?
+	//        ('hitSound' hitSound=STRING)?
+	//        ('destroyedSound' destroyedSound=STRING)?
+	//    '}'
+	//;
+	public GuardTowerConfigElements getGuardTowerConfigAccess() {
+		return pGuardTowerConfig;
+	}
+	
+	public ParserRule getGuardTowerConfigRule() {
+		return getGuardTowerConfigAccess().getRule();
+	}
+	
+	//TowerCountConfig:
+	//    'towers' difficulty=DifficultyLevel count=INT
+	//;
+	public TowerCountConfigElements getTowerCountConfigAccess() {
+		return pTowerCountConfig;
+	}
+	
+	public ParserRule getTowerCountConfigRule() {
+		return getTowerCountConfigAccess().getRule();
 	}
 	
 	//TeleportRulesConfig:
@@ -3322,7 +3818,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 	// */
 	//ValidID returns ecore::EString:
-	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
 	//;
 	public ValidIDElements getValidIDAccess() {
 		return pValidID;

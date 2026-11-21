@@ -19,6 +19,12 @@ public class GameOverController extends ActionScreenController implements Initia
         AudioEngine.get().playLoop(AudioResourceConstants.GameOverSound, AudioChannelConstants.GAME_OVER_MUSIC);
     }
 
+    /** Plays the level that was lost again from its start (not from level 1), with the weapons it was entered with. */
+    @javafx.fxml.FXML
+    protected void restartLevel() {
+        main.game.maze.actions.RestartGameAction.retryLevel(screenRoot).Load();
+    }
+
     public void showDeathPenaltyLabel(int amount) {
         deathPenaltyNoticeLabel.setText("- Death penalty: -" + amount);
         deathPenaltyNoticeLabel.setVisible(true);

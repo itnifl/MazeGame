@@ -478,8 +478,11 @@ public class MazeDslGenerator extends AbstractGenerator {
             }
             MineRingConfig m = level.getMines();
             if (m != null) {
-                x.append("    <mines count=\"").append(m.getCount()).append("\" ringRadius=\"").append(m.getRingRadius())
-                 .append("\" triggerRadius=\"").append(m.getTriggerRadius()).append("\" pulseSeconds=\"").append(m.getPulseSeconds())
+                x.append("    <mines count=\"").append(m.getCount()).append("\" ringRadius=\"").append(m.getRingRadius());
+                if (m.getSecondRingRadius() > 0) {
+                    x.append("\" secondRingRadius=\"").append(m.getSecondRingRadius());
+                }
+                x.append("\" triggerRadius=\"").append(m.getTriggerRadius()).append("\" pulseSeconds=\"").append(m.getPulseSeconds())
                  .append("\" blastRadius=\"").append(m.getBlastRadius()).append("\" blastDamage=\"").append(m.getBlastDamage())
                  .append("\" playerDamage=\"").append(m.getPlayerDamage()).append("\" holeRadius=\"").append(m.getHoleRadius()).append("\"/>\n");
             }
@@ -503,10 +506,36 @@ public class MazeDslGenerator extends AbstractGenerator {
                 }
                 x.append("/>\n");
             }
+            GuardTowerConfig w = level.getGuardTower();
+            if (w != null) {
+                x.append("    <guardTower displayName=\"").append(xml(w.getDisplayName())).append("\" health=\"").append(w.getHealth())
+                 .append("\" sightRange=\"").append(w.getSightRange()).append("\" maxWallsOver=\"").append(w.getMaxWallsOver())
+                 .append("\" rpgIntervalSeconds=\"").append(w.getRpgIntervalSeconds()).append("\" rpgSpeed=\"").append(w.getRpgSpeed())
+                 .append("\" rpgBlastRadius=\"").append(w.getRpgBlastRadius()).append("\" rpgPlayerDamage=\"").append(w.getRpgPlayerDamage())
+                 .append("\" rpgWallDamage=\"").append(w.getRpgWallDamage()).append("\" gatlingRounds=\"").append(w.getGatlingRounds())
+                 .append("\" gatlingRoundIntervalSeconds=\"").append(w.getGatlingRoundIntervalSeconds())
+                 .append("\" gatlingDamage=\"").append(w.getGatlingDamage()).append("\" deathBlastDamage=\"").append(w.getDeathBlastDamage())
+                 .append("\" sprite=\"").append(xml(w.getSprite())).append('"');
+                optionalText(x, "rpgLaunchSound", w.getRpgLaunchSound());
+                optionalText(x, "rpgExplosionSound", w.getRpgExplosionSound());
+                optionalText(x, "gatlingSound", w.getGatlingSound());
+                optionalText(x, "hitSound", w.getHitSound());
+                optionalText(x, "destroyedSound", w.getDestroyedSound());
+                x.append("/>\n");
+            }
+            for (TowerCountConfig count : level.getTowerCounts()) {
+                x.append("    <towerCounts difficulty=\"").append(count.getDifficulty().name()).append("\" count=\"").append(count.getCount()).append("\"/>\n");
+            }
             x.append("  </levels>\n");
         }
         x.append("</levels:LevelModel>\n");
         return x.toString();
+    }
+
+    private static void optionalText(StringBuilder x, String name, String value) {
+        if (value != null) {
+            x.append(' ').append(name).append("=\"").append(xml(value)).append('"');
+        }
     }
 
     private static void attribute(StringBuilder x, String name, Object value) {
