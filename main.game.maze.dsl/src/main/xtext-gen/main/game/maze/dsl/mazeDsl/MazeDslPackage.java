@@ -123,13 +123,22 @@ public interface MazeDslPackage extends EPackage
   int GAME_CONFIGURATION__LOOT_TABLES = 5;
 
   /**
+   * The feature id for the '<em><b>Levels</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAME_CONFIGURATION__LEVELS = 6;
+
+  /**
    * The number of structural features of the '<em>Game Configuration</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GAME_CONFIGURATION_FEATURE_COUNT = 6;
+  int GAME_CONFIGURATION_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -838,6 +847,599 @@ public interface MazeDslPackage extends EPackage
   int LOOT_ITEM_CONFIG_FEATURE_COUNT = 4;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl <em>Level Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLevelConfig()
+   * @generated
+   */
+  int LEVEL_CONFIG = 14;
+
+  /**
+   * The feature id for the '<em><b>Number</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__NUMBER = 0;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__NAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Base Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__BASE_LEVEL = 2;
+
+  /**
+   * The feature id for the '<em><b>Threat Capacity Factor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__THREAT_CAPACITY_FACTOR = 3;
+
+  /**
+   * The feature id for the '<em><b>Show Wall Materials</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__SHOW_WALL_MATERIALS = 4;
+
+  /**
+   * The feature id for the '<em><b>Inherit Weapons</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__INHERIT_WEAPONS = 5;
+
+  /**
+   * The feature id for the '<em><b>Cascade Depth</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__CASCADE_DEPTH = 6;
+
+  /**
+   * The feature id for the '<em><b>Zones</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__ZONES = 7;
+
+  /**
+   * The feature id for the '<em><b>Sergeant</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__SERGEANT = 8;
+
+  /**
+   * The feature id for the '<em><b>Sergeant Posts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__SERGEANT_POSTS = 9;
+
+  /**
+   * The feature id for the '<em><b>Mines</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__MINES = 10;
+
+  /**
+   * The feature id for the '<em><b>Portal Ghost</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__PORTAL_GHOST = 11;
+
+  /**
+   * The feature id for the '<em><b>Ghost Counts</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__GHOST_COUNTS = 12;
+
+  /**
+   * The feature id for the '<em><b>Teleport</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__TELEPORT = 13;
+
+  /**
+   * The number of structural features of the '<em>Level Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG_FEATURE_COUNT = 14;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLevelZone()
+   * @generated
+   */
+  int LEVEL_ZONE = 15;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_ZONE__DISPLAY_NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Breakable Share</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_ZONE__BREAKABLE_SHARE = 1;
+
+  /**
+   * The feature id for the '<em><b>Material Ids</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_ZONE__MATERIAL_IDS = 2;
+
+  /**
+   * The number of structural features of the '<em>Level Zone</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_ZONE_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.SergeantConfigImpl <em>Sergeant Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.SergeantConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getSergeantConfig()
+   * @generated
+   */
+  int SERGEANT_CONFIG = 16;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__DISPLAY_NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Health</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__HEALTH = 1;
+
+  /**
+   * The feature id for the '<em><b>Sight Range</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__SIGHT_RANGE = 2;
+
+  /**
+   * The feature id for the '<em><b>Rounds Per Burst</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__ROUNDS_PER_BURST = 3;
+
+  /**
+   * The feature id for the '<em><b>Round Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__ROUND_DAMAGE = 4;
+
+  /**
+   * The feature id for the '<em><b>Round Interval Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__ROUND_INTERVAL_SECONDS = 5;
+
+  /**
+   * The feature id for the '<em><b>Burst Cooldown Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__BURST_COOLDOWN_SECONDS = 6;
+
+  /**
+   * The feature id for the '<em><b>Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__SPRITE = 7;
+
+  /**
+   * The feature id for the '<em><b>Fire Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__FIRE_SOUND = 8;
+
+  /**
+   * The feature id for the '<em><b>Drop Weapon</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__DROP_WEAPON = 9;
+
+  /**
+   * The feature id for the '<em><b>Post Distance From Heart</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG__POST_DISTANCE_FROM_HEART = 10;
+
+  /**
+   * The number of structural features of the '<em>Sergeant Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SERGEANT_CONFIG_FEATURE_COUNT = 11;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TierCountConfigImpl <em>Tier Count Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.TierCountConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTierCountConfig()
+   * @generated
+   */
+  int TIER_COUNT_CONFIG = 17;
+
+  /**
+   * The feature id for the '<em><b>Difficulty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIER_COUNT_CONFIG__DIFFICULTY = 0;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIER_COUNT_CONFIG__COUNT = 1;
+
+  /**
+   * The number of structural features of the '<em>Tier Count Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIER_COUNT_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl <em>Mine Ring Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getMineRingConfig()
+   * @generated
+   */
+  int MINE_RING_CONFIG = 18;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__COUNT = 0;
+
+  /**
+   * The feature id for the '<em><b>Ring Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__RING_RADIUS = 1;
+
+  /**
+   * The feature id for the '<em><b>Trigger Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__TRIGGER_RADIUS = 2;
+
+  /**
+   * The feature id for the '<em><b>Pulse Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__PULSE_SECONDS = 3;
+
+  /**
+   * The feature id for the '<em><b>Blast Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__BLAST_RADIUS = 4;
+
+  /**
+   * The feature id for the '<em><b>Blast Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__BLAST_DAMAGE = 5;
+
+  /**
+   * The feature id for the '<em><b>Player Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__PLAYER_DAMAGE = 6;
+
+  /**
+   * The feature id for the '<em><b>Hole Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG__HOLE_RADIUS = 7;
+
+  /**
+   * The number of structural features of the '<em>Mine Ring Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MINE_RING_CONFIG_FEATURE_COUNT = 8;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.PortalGhostConfigImpl <em>Portal Ghost Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.PortalGhostConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getPortalGhostConfig()
+   * @generated
+   */
+  int PORTAL_GHOST_CONFIG = 19;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PORTAL_GHOST_CONFIG__DISPLAY_NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Health</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PORTAL_GHOST_CONFIG__HEALTH = 1;
+
+  /**
+   * The feature id for the '<em><b>Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PORTAL_GHOST_CONFIG__SPEED = 2;
+
+  /**
+   * The feature id for the '<em><b>Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PORTAL_GHOST_CONFIG__SPRITE = 3;
+
+  /**
+   * The number of structural features of the '<em>Portal Ghost Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PORTAL_GHOST_CONFIG_FEATURE_COUNT = 4;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.GhostCountConfigImpl <em>Ghost Count Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.GhostCountConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getGhostCountConfig()
+   * @generated
+   */
+  int GHOST_COUNT_CONFIG = 20;
+
+  /**
+   * The feature id for the '<em><b>Difficulty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GHOST_COUNT_CONFIG__DIFFICULTY = 0;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GHOST_COUNT_CONFIG__COUNT = 1;
+
+  /**
+   * The number of structural features of the '<em>Ghost Count Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GHOST_COUNT_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
+   * @generated
+   */
+  int TELEPORT_RULES_CONFIG = 21;
+
+  /**
+   * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS = 0;
+
+  /**
+   * The feature id for the '<em><b>Banner Text</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG__BANNER_TEXT = 1;
+
+  /**
+   * The feature id for the '<em><b>Banner Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG__BANNER_SECONDS = 2;
+
+  /**
+   * The feature id for the '<em><b>Zap Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG__ZAP_SOUND = 3;
+
+  /**
+   * The feature id for the '<em><b>Voice Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG__VOICE_SOUND = 4;
+
+  /**
+   * The number of structural features of the '<em>Teleport Rules Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TELEPORT_RULES_CONFIG_FEATURE_COUNT = 5;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DifficultyLevel <em>Difficulty Level</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -845,7 +1447,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 14;
+  int DIFFICULTY_LEVEL = 22;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -855,7 +1457,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 15;
+  int ENEMY_TYPE = 23;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -865,7 +1467,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 16;
+  int CHARACTER_TYPE_ENUM = 24;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -875,7 +1477,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 17;
+  int BEHAVIOR_TYPE_ENUM = 25;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -885,7 +1487,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 18;
+  int PROJECTILE_TYPE_ENUM = 26;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -895,7 +1497,17 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 19;
+  int LOOT_ITEM_TYPE_ENUM = 27;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.DropWeaponEnum
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
+   * @generated
+   */
+  int DROP_WEAPON_ENUM = 28;
 
 
   /**
@@ -973,6 +1585,17 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EReference getGameConfiguration_LootTables();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getLevels <em>Levels</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Levels</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GameConfiguration#getLevels()
+   * @see #getGameConfiguration()
+   * @generated
+   */
+  EReference getGameConfiguration_Levels();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.Import <em>Import</em>}'.
@@ -1633,6 +2256,625 @@ public interface MazeDslPackage extends EPackage
   EAttribute getLootItemConfig_Weight();
 
   /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelConfig <em>Level Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Level Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig
+   * @generated
+   */
+  EClass getLevelConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getNumber <em>Number</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Number</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getNumber()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_Number();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getName()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBaseLevel <em>Base Level</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Base Level</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getBaseLevel()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_BaseLevel();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getThreatCapacityFactor <em>Threat Capacity Factor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Threat Capacity Factor</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getThreatCapacityFactor()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_ThreatCapacityFactor();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getShowWallMaterials <em>Show Wall Materials</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Show Wall Materials</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getShowWallMaterials()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_ShowWallMaterials();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getInheritWeapons <em>Inherit Weapons</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Inherit Weapons</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getInheritWeapons()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_InheritWeapons();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getCascadeDepth <em>Cascade Depth</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cascade Depth</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getCascadeDepth()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EAttribute getLevelConfig_CascadeDepth();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getZones <em>Zones</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Zones</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getZones()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_Zones();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getSergeant <em>Sergeant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Sergeant</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getSergeant()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_Sergeant();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getSergeantPosts <em>Sergeant Posts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Sergeant Posts</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getSergeantPosts()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_SergeantPosts();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getMines <em>Mines</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Mines</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getMines()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_Mines();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getPortalGhost <em>Portal Ghost</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Portal Ghost</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getPortalGhost()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_PortalGhost();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getGhostCounts <em>Ghost Counts</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Ghost Counts</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getGhostCounts()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_GhostCounts();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTeleport <em>Teleport</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Teleport</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getTeleport()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_Teleport();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Level Zone</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelZone
+   * @generated
+   */
+  EClass getLevelZone();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelZone#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelZone#getDisplayName()
+   * @see #getLevelZone()
+   * @generated
+   */
+  EAttribute getLevelZone_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LevelZone#getBreakableShare <em>Breakable Share</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Breakable Share</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelZone#getBreakableShare()
+   * @see #getLevelZone()
+   * @generated
+   */
+  EAttribute getLevelZone_BreakableShare();
+
+  /**
+   * Returns the meta object for the attribute list '{@link main.game.maze.dsl.mazeDsl.LevelZone#getMaterialIds <em>Material Ids</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Material Ids</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelZone#getMaterialIds()
+   * @see #getLevelZone()
+   * @generated
+   */
+  EAttribute getLevelZone_MaterialIds();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.SergeantConfig <em>Sergeant Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Sergeant Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig
+   * @generated
+   */
+  EClass getSergeantConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getDisplayName()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getHealth <em>Health</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Health</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getHealth()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_Health();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getSightRange <em>Sight Range</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sight Range</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getSightRange()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_SightRange();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundsPerBurst <em>Rounds Per Burst</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rounds Per Burst</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundsPerBurst()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_RoundsPerBurst();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundDamage <em>Round Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Round Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundDamage()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_RoundDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundIntervalSeconds <em>Round Interval Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Round Interval Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getRoundIntervalSeconds()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_RoundIntervalSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getBurstCooldownSeconds <em>Burst Cooldown Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Burst Cooldown Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getBurstCooldownSeconds()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_BurstCooldownSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getSprite <em>Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getSprite()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_Sprite();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getFireSound <em>Fire Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Fire Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getFireSound()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_FireSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getDropWeapon <em>Drop Weapon</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Drop Weapon</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getDropWeapon()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_DropWeapon();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.SergeantConfig#getPostDistanceFromHeart <em>Post Distance From Heart</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Post Distance From Heart</em>'.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig#getPostDistanceFromHeart()
+   * @see #getSergeantConfig()
+   * @generated
+   */
+  EAttribute getSergeantConfig_PostDistanceFromHeart();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TierCountConfig <em>Tier Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Tier Count Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TierCountConfig
+   * @generated
+   */
+  EClass getTierCountConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TierCountConfig#getDifficulty <em>Difficulty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Difficulty</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TierCountConfig#getDifficulty()
+   * @see #getTierCountConfig()
+   * @generated
+   */
+  EAttribute getTierCountConfig_Difficulty();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TierCountConfig#getCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TierCountConfig#getCount()
+   * @see #getTierCountConfig()
+   * @generated
+   */
+  EAttribute getTierCountConfig_Count();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.MineRingConfig <em>Mine Ring Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Mine Ring Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig
+   * @generated
+   */
+  EClass getMineRingConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getCount()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_Count();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getRingRadius <em>Ring Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ring Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getRingRadius()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_RingRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getTriggerRadius <em>Trigger Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getTriggerRadius()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_TriggerRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getPulseSeconds <em>Pulse Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Pulse Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getPulseSeconds()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_PulseSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getBlastRadius <em>Blast Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Blast Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getBlastRadius()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_BlastRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getBlastDamage <em>Blast Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Blast Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getBlastDamage()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_BlastDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getPlayerDamage <em>Player Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Player Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getPlayerDamage()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_PlayerDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MineRingConfig#getHoleRadius <em>Hole Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Hole Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig#getHoleRadius()
+   * @see #getMineRingConfig()
+   * @generated
+   */
+  EAttribute getMineRingConfig_HoleRadius();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig <em>Portal Ghost Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Portal Ghost Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig
+   * @generated
+   */
+  EClass getPortalGhostConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig#getDisplayName()
+   * @see #getPortalGhostConfig()
+   * @generated
+   */
+  EAttribute getPortalGhostConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig#getHealth <em>Health</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Health</em>'.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig#getHealth()
+   * @see #getPortalGhostConfig()
+   * @generated
+   */
+  EAttribute getPortalGhostConfig_Health();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig#getSpeed <em>Speed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Speed</em>'.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig#getSpeed()
+   * @see #getPortalGhostConfig()
+   * @generated
+   */
+  EAttribute getPortalGhostConfig_Speed();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig#getSprite <em>Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig#getSprite()
+   * @see #getPortalGhostConfig()
+   * @generated
+   */
+  EAttribute getPortalGhostConfig_Sprite();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.GhostCountConfig <em>Ghost Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Ghost Count Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GhostCountConfig
+   * @generated
+   */
+  EClass getGhostCountConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GhostCountConfig#getDifficulty <em>Difficulty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Difficulty</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GhostCountConfig#getDifficulty()
+   * @see #getGhostCountConfig()
+   * @generated
+   */
+  EAttribute getGhostCountConfig_Difficulty();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.GhostCountConfig#getCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GhostCountConfig#getCount()
+   * @see #getGhostCountConfig()
+   * @generated
+   */
+  EAttribute getGhostCountConfig_Count();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Teleport Rules Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig
+   * @generated
+   */
+  EClass getTeleportRulesConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getCooldownSeconds <em>Cooldown Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cooldown Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getCooldownSeconds()
+   * @see #getTeleportRulesConfig()
+   * @generated
+   */
+  EAttribute getTeleportRulesConfig_CooldownSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getBannerText <em>Banner Text</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Banner Text</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getBannerText()
+   * @see #getTeleportRulesConfig()
+   * @generated
+   */
+  EAttribute getTeleportRulesConfig_BannerText();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getBannerSeconds <em>Banner Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Banner Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getBannerSeconds()
+   * @see #getTeleportRulesConfig()
+   * @generated
+   */
+  EAttribute getTeleportRulesConfig_BannerSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getZapSound <em>Zap Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Zap Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getZapSound()
+   * @see #getTeleportRulesConfig()
+   * @generated
+   */
+  EAttribute getTeleportRulesConfig_ZapSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getVoiceSound <em>Voice Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Voice Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig#getVoiceSound()
+   * @see #getTeleportRulesConfig()
+   * @generated
+   */
+  EAttribute getTeleportRulesConfig_VoiceSound();
+
+  /**
    * Returns the meta object for enum '{@link main.game.maze.dsl.mazeDsl.DifficultyLevel <em>Difficulty Level</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1691,6 +2933,16 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EEnum getLootItemTypeEnum();
+
+  /**
+   * Returns the meta object for enum '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Drop Weapon Enum</em>'.
+   * @see main.game.maze.dsl.mazeDsl.DropWeaponEnum
+   * @generated
+   */
+  EEnum getDropWeaponEnum();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -1772,6 +3024,14 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EReference GAME_CONFIGURATION__LOOT_TABLES = eINSTANCE.getGameConfiguration_LootTables();
+
+    /**
+     * The meta object literal for the '<em><b>Levels</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GAME_CONFIGURATION__LEVELS = eINSTANCE.getGameConfiguration_Levels();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -2288,6 +3548,478 @@ public interface MazeDslPackage extends EPackage
     EAttribute LOOT_ITEM_CONFIG__WEIGHT = eINSTANCE.getLootItemConfig_Weight();
 
     /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl <em>Level Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLevelConfig()
+     * @generated
+     */
+    EClass LEVEL_CONFIG = eINSTANCE.getLevelConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Number</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__NUMBER = eINSTANCE.getLevelConfig_Number();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__NAME = eINSTANCE.getLevelConfig_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Base Level</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__BASE_LEVEL = eINSTANCE.getLevelConfig_BaseLevel();
+
+    /**
+     * The meta object literal for the '<em><b>Threat Capacity Factor</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__THREAT_CAPACITY_FACTOR = eINSTANCE.getLevelConfig_ThreatCapacityFactor();
+
+    /**
+     * The meta object literal for the '<em><b>Show Wall Materials</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__SHOW_WALL_MATERIALS = eINSTANCE.getLevelConfig_ShowWallMaterials();
+
+    /**
+     * The meta object literal for the '<em><b>Inherit Weapons</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__INHERIT_WEAPONS = eINSTANCE.getLevelConfig_InheritWeapons();
+
+    /**
+     * The meta object literal for the '<em><b>Cascade Depth</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_CONFIG__CASCADE_DEPTH = eINSTANCE.getLevelConfig_CascadeDepth();
+
+    /**
+     * The meta object literal for the '<em><b>Zones</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__ZONES = eINSTANCE.getLevelConfig_Zones();
+
+    /**
+     * The meta object literal for the '<em><b>Sergeant</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__SERGEANT = eINSTANCE.getLevelConfig_Sergeant();
+
+    /**
+     * The meta object literal for the '<em><b>Sergeant Posts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__SERGEANT_POSTS = eINSTANCE.getLevelConfig_SergeantPosts();
+
+    /**
+     * The meta object literal for the '<em><b>Mines</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__MINES = eINSTANCE.getLevelConfig_Mines();
+
+    /**
+     * The meta object literal for the '<em><b>Portal Ghost</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__PORTAL_GHOST = eINSTANCE.getLevelConfig_PortalGhost();
+
+    /**
+     * The meta object literal for the '<em><b>Ghost Counts</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__GHOST_COUNTS = eINSTANCE.getLevelConfig_GhostCounts();
+
+    /**
+     * The meta object literal for the '<em><b>Teleport</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__TELEPORT = eINSTANCE.getLevelConfig_Teleport();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLevelZone()
+     * @generated
+     */
+    EClass LEVEL_ZONE = eINSTANCE.getLevelZone();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_ZONE__DISPLAY_NAME = eINSTANCE.getLevelZone_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Breakable Share</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_ZONE__BREAKABLE_SHARE = eINSTANCE.getLevelZone_BreakableShare();
+
+    /**
+     * The meta object literal for the '<em><b>Material Ids</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LEVEL_ZONE__MATERIAL_IDS = eINSTANCE.getLevelZone_MaterialIds();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.SergeantConfigImpl <em>Sergeant Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.SergeantConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getSergeantConfig()
+     * @generated
+     */
+    EClass SERGEANT_CONFIG = eINSTANCE.getSergeantConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__DISPLAY_NAME = eINSTANCE.getSergeantConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Health</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__HEALTH = eINSTANCE.getSergeantConfig_Health();
+
+    /**
+     * The meta object literal for the '<em><b>Sight Range</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__SIGHT_RANGE = eINSTANCE.getSergeantConfig_SightRange();
+
+    /**
+     * The meta object literal for the '<em><b>Rounds Per Burst</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__ROUNDS_PER_BURST = eINSTANCE.getSergeantConfig_RoundsPerBurst();
+
+    /**
+     * The meta object literal for the '<em><b>Round Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__ROUND_DAMAGE = eINSTANCE.getSergeantConfig_RoundDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Round Interval Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__ROUND_INTERVAL_SECONDS = eINSTANCE.getSergeantConfig_RoundIntervalSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Burst Cooldown Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__BURST_COOLDOWN_SECONDS = eINSTANCE.getSergeantConfig_BurstCooldownSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__SPRITE = eINSTANCE.getSergeantConfig_Sprite();
+
+    /**
+     * The meta object literal for the '<em><b>Fire Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__FIRE_SOUND = eINSTANCE.getSergeantConfig_FireSound();
+
+    /**
+     * The meta object literal for the '<em><b>Drop Weapon</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__DROP_WEAPON = eINSTANCE.getSergeantConfig_DropWeapon();
+
+    /**
+     * The meta object literal for the '<em><b>Post Distance From Heart</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SERGEANT_CONFIG__POST_DISTANCE_FROM_HEART = eINSTANCE.getSergeantConfig_PostDistanceFromHeart();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TierCountConfigImpl <em>Tier Count Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.TierCountConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTierCountConfig()
+     * @generated
+     */
+    EClass TIER_COUNT_CONFIG = eINSTANCE.getTierCountConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Difficulty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIER_COUNT_CONFIG__DIFFICULTY = eINSTANCE.getTierCountConfig_Difficulty();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIER_COUNT_CONFIG__COUNT = eINSTANCE.getTierCountConfig_Count();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl <em>Mine Ring Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getMineRingConfig()
+     * @generated
+     */
+    EClass MINE_RING_CONFIG = eINSTANCE.getMineRingConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__COUNT = eINSTANCE.getMineRingConfig_Count();
+
+    /**
+     * The meta object literal for the '<em><b>Ring Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__RING_RADIUS = eINSTANCE.getMineRingConfig_RingRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__TRIGGER_RADIUS = eINSTANCE.getMineRingConfig_TriggerRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Pulse Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__PULSE_SECONDS = eINSTANCE.getMineRingConfig_PulseSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Blast Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__BLAST_RADIUS = eINSTANCE.getMineRingConfig_BlastRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Blast Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__BLAST_DAMAGE = eINSTANCE.getMineRingConfig_BlastDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Player Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__PLAYER_DAMAGE = eINSTANCE.getMineRingConfig_PlayerDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Hole Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MINE_RING_CONFIG__HOLE_RADIUS = eINSTANCE.getMineRingConfig_HoleRadius();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.PortalGhostConfigImpl <em>Portal Ghost Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.PortalGhostConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getPortalGhostConfig()
+     * @generated
+     */
+    EClass PORTAL_GHOST_CONFIG = eINSTANCE.getPortalGhostConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PORTAL_GHOST_CONFIG__DISPLAY_NAME = eINSTANCE.getPortalGhostConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Health</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PORTAL_GHOST_CONFIG__HEALTH = eINSTANCE.getPortalGhostConfig_Health();
+
+    /**
+     * The meta object literal for the '<em><b>Speed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PORTAL_GHOST_CONFIG__SPEED = eINSTANCE.getPortalGhostConfig_Speed();
+
+    /**
+     * The meta object literal for the '<em><b>Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PORTAL_GHOST_CONFIG__SPRITE = eINSTANCE.getPortalGhostConfig_Sprite();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.GhostCountConfigImpl <em>Ghost Count Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.GhostCountConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getGhostCountConfig()
+     * @generated
+     */
+    EClass GHOST_COUNT_CONFIG = eINSTANCE.getGhostCountConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Difficulty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GHOST_COUNT_CONFIG__DIFFICULTY = eINSTANCE.getGhostCountConfig_Difficulty();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GHOST_COUNT_CONFIG__COUNT = eINSTANCE.getGhostCountConfig_Count();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
+     * @generated
+     */
+    EClass TELEPORT_RULES_CONFIG = eINSTANCE.getTeleportRulesConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Cooldown Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS = eINSTANCE.getTeleportRulesConfig_CooldownSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Banner Text</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TELEPORT_RULES_CONFIG__BANNER_TEXT = eINSTANCE.getTeleportRulesConfig_BannerText();
+
+    /**
+     * The meta object literal for the '<em><b>Banner Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TELEPORT_RULES_CONFIG__BANNER_SECONDS = eINSTANCE.getTeleportRulesConfig_BannerSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Zap Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TELEPORT_RULES_CONFIG__ZAP_SOUND = eINSTANCE.getTeleportRulesConfig_ZapSound();
+
+    /**
+     * The meta object literal for the '<em><b>Voice Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TELEPORT_RULES_CONFIG__VOICE_SOUND = eINSTANCE.getTeleportRulesConfig_VoiceSound();
+
+    /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.DifficultyLevel <em>Difficulty Level</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2346,6 +4078,16 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EEnum LOOT_ITEM_TYPE_ENUM = eINSTANCE.getLootItemTypeEnum();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.DropWeaponEnum
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
+     * @generated
+     */
+    EEnum DROP_WEAPON_ENUM = eINSTANCE.getDropWeaponEnum();
 
   }
 

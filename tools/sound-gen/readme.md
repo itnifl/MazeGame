@@ -13,6 +13,9 @@ No external tools or samples; output is deterministic (seeded noise) and overwri
 | `pickup-shield.wav` | shimmering rising chord |
 | `pickup-gatling.wav` | two metallic clacks (a magazine slapped in) |
 | `gatling-burst.wav` | a gatling gun: a motor spinning up under a stream of 20 sharp shots a second, then spinning down; used by the sergeants' guns and the gatling gun the player picks up |
+| `bomb-explosion.wav` | a deep bomb: a crack, a sub-bass boom sliding from 90 to 28 Hz and a low rumble that dies over 1.5 s; played when the player's bomb (or a mine) goes off |
+| `teleport.wav` | a magical zap: a shimmering tone sweeping up and then down over an airy whoosh; played when the player is teleported |
+| `teleported.wav` | a deep spoken "Teleported". Not generated from nothing: `RecordVoice.ps1` records the word with the Windows speech synthesizer (Microsoft David), then `DeepVoiceGenerator.java` trims it, lowers its pitch by a quarter, adds a sub-harmonic layer an octave down, rolls off the top and adds a short room echo. Needs Windows to record; the generator step runs anywhere |
 | `pickup-heart.wav` | 8-bit "extra life" jingle: six quick square-wave notes rising over two octaves (G-B-D), the last one ringing with vibrato. Written for this game, not a copy of any other game's sound |
 | `pickup-extra-life.wav` | bell fanfare: a quick C-E-G-C climb in a triangle wave ending on a shimmering major chord |
 | `laser-fire.wav` | laser "pew" |

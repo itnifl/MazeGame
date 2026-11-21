@@ -90,4 +90,40 @@ class LevelSpawnTest {
         long level2 = load(2, hard()).enemies().stream().filter(e -> !SergeantSpec.isSergeantId(e.id())).count();
         assertTrue(level2 >= level1, "level 2 fits at least as many enemies: " + level2 + " vs " + level1);
     }
+
+    private static List<EnemySpawn> portalGhosts(RuntimeVisualModel model) {
+        return model.enemies().stream().filter(e -> main.game.maze.game.level.TeleportGhostSpec.isPortalGhostId(e.id())).toList();
+    }
+
+    @Test
+    @DisplayName("level 3: portal ghosts, 10 on hard, 6 on normal, 3 on easy, besides the sergeants and everything else")
+    void portalGhostsPerDifficulty() {
+        assertEquals(10, portalGhosts(load(3, hard())).size());
+        assertEquals(6, portalGhosts(load(3, normal())).size());
+        assertEquals(3, portalGhosts(load(3, easy())).size());
+        assertEquals(0, portalGhosts(load(2, hard())).size());
+        assertEquals(6, sergeants(load(3, hard())).size(), "the sergeants of level 2 are still there");
+        assertEquals(4, sergeants(load(3, normal())).size());
+    }
+
+    @Test
+    @DisplayName("a portal ghost does no damage, wanders, has the level's health and stays dead when killed")
+    void portalGhostValues() {
+        var spec = LEVELS.level(3).teleportGhost();
+        for (EnemySpawn ghost : portalGhosts(load(3, hard()))) {
+            assertEquals(0, ghost.attackDamage());
+            assertEquals(spec.health(), ghost.maxHitPoints());
+            assertEquals(spec.sprite(), ghost.imagePath());
+            assertEquals(0, ghost.resurrectionTimeMs());
+            assertEquals(main.game.maze.opponents.BehaviorType.WANDER, ghost.behavior());
+        }
+    }
+
+    @Test
+    @DisplayName("level 3 keeps the extra enemies of its difficulty: more than level 2 can fit with the same threat")
+    void levelThreeAddsToLevelTwo() {
+        long levelTwo = load(2, hard()).enemies().size();
+        long levelThree = load(3, hard()).enemies().size();
+        assertTrue(levelThree >= levelTwo + 10, "level 3 has the 10 portal ghosts on top: " + levelThree + " vs " + levelTwo);
+    }
 }

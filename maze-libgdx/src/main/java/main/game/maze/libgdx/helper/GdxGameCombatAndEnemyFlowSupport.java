@@ -95,6 +95,14 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         return combatFrame.dead();
     }
 
+    /**
+     * Whether the player is dead in this frame once damage that came after the combat frame was read (sergeant
+     * rounds, mines) is counted: dead if the frame said so, or if that damage has since killed them.
+     */
+    public static boolean deadAfterExtraDamage(boolean frameDead, PlayerCombatStateService combatState) {
+        return frameDead || (combatState != null && combatState.isDead());
+    }
+
     public static int applyPlayerFlameAttack(List<GdxEnemyRuntime> animatedEnemies, int damage) {
         if (animatedEnemies == null || animatedEnemies.isEmpty() || damage <= 0) {
             return 0;
@@ -306,7 +314,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             maxShake = Math.max(maxShake, enemy.impactShake());
         }
         if (maxShake > 0f) {
-            worldModel.setExplosionShakeRemainingSeconds(EXPLOSION_SHAKE_DURATION_SECONDS);
+            worldModel.setExplosionShakeRemainingSeconds(
+                    Math.max(worldModel.explosionShakeRemainingSeconds(), EXPLOSION_SHAKE_DURATION_SECONDS));
             worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), maxShake));
         }
         return totalDamage;

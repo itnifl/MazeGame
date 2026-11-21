@@ -33,6 +33,7 @@ import main.game.maze.libgdx.view.GdxGameWorldView;
 import main.game.maze.libgdx.view.GdxHighScoresOverlayView;
 import main.game.maze.libgdx.view.GdxHudView;
 import main.game.maze.libgdx.view.GdxInfectionOverlayView;
+import main.game.maze.libgdx.view.GdxBannerView;
 import main.game.maze.libgdx.view.GdxWinOverlayView;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.mazeworld.Point2D;
@@ -43,6 +44,8 @@ import main.game.maze.mazeworld.generators.PlayerState;
  * Dedicated render orchestration for gameplay and overlays.
  */
 public final class GdxGameRenderPipeline {
+
+    private final GdxBannerView bannerView = new GdxBannerView();
 
     public HudLayout render(RenderState state) {
         ScreenUtils.clear(0.07f, 0.07f, 0.12f, 1f);
@@ -151,6 +154,7 @@ public final class GdxGameRenderPipeline {
 
         applyFullWindowGlViewport();
         HudLayout nextHudLayout = drawHud(state);
+        drawBannerIfNeeded(state);
         drawHighScoresOverlayIfNeeded(state);
         drawWinOverlayIfNeeded(state);
         drawGameOverOverlayIfNeeded(state);
@@ -207,6 +211,15 @@ public final class GdxGameRenderPipeline {
                     sprite.x(), sprite.y(), sprite.size(), sprite.rotationDegrees(), sprite.flipX()));
         }
         return overlays;
+    }
+
+    /** The big word in the middle of the screen (Teleported), while there is one. */
+    private void drawBannerIfNeeded(RenderState state) {
+        if (state.session().mode() != GameMode.PLAYING || !state.statusMessageBus().hasBanner()) {
+            return;
+        }
+        bannerView.render(state.batch(), state.font(), state.hudCamera(),
+                state.statusMessageBus().bannerText(), state.statusMessageBus().bannerAlpha());
     }
 
     private void drawHighScoresOverlayIfNeeded(RenderState state) {

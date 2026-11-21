@@ -580,6 +580,11 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         return phase;
     }
 
+    /** The ghost that teleports the player instead of hurting them. */
+    public boolean isPortalGhost() {
+        return main.game.maze.game.level.TeleportGhostSpec.isPortalGhostId(spawn != null ? spawn.id() : null);
+    }
+
     /** Sergeants stand where they are put and only shoot. */
     public boolean isStationary() {
         return main.game.maze.game.level.SergeantSpec.isSergeantId(spawn != null ? spawn.id() : null);

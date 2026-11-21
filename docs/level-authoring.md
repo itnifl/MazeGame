@@ -1,7 +1,31 @@
 # Making a level
 
-Levels are data. A new level is one `<levels>` element in
-[`levels.xmi`](../maze-common-backend/src/main/resources/xmi/levels/levels.xmi); no Java is needed. The
+Levels are data. A new level is one `level` block in the DSL file
+[`levels.mazegame`](../maze-common-backend/src/main/resources/xmi/levels/levels.mazegame) (Xtext, the `level` section of
+`MazeDsl.xtext`); [`levels.xmi`](../maze-common-backend/src/main/resources/xmi/levels/levels.xmi), which the game loads, is
+generated from it. No Java is needed.
+
+```
+level 3 "The Minefield" {
+    basedOn 2
+    mines { count 3 ringRadius 62.0 triggerRadius 22.0 pulse 0.9 blastRadius 150.0 blastDamage 15 playerDamage 20 holeRadius 30.0 }
+    portalGhost "Portal ghost" { health 60 speed 1.6 sprite "/main/game/maze/ghost-portal.png" }
+    portalGhosts easy 3
+    portalGhosts normal 6
+    portalGhosts hard 10
+}
+```
+
+After editing `levels.mazegame`, regenerate the XMI:
+
+```
+MAZE_LEVELS_REGENERATE=true mvn -o test -pl main.game.maze.dsl.tests
+```
+
+(`MazeDslLevelsTest` rewrites `levels.xmi` from the DSL and checks it is valid against `levels.ecore`; without the variable it
+fails when the two are out of step.) The attribute names below are the model's (`levels.xmi`); the DSL keywords are
+`threatCapacity`, `wallMaterials`, `inheritWeapons`, `cascadeDepth`, `basedOn`, `ring`, `sergeant`, `sergeants`, `mines`,
+`portalGhost`, `portalGhosts` and `teleport`. The
 structure is defined by the metamodel [`levels.ecore`](../maze-common-backend/src/main/resources/xmi/levels/levels.ecore),
 and the game checks the file when it loads and refuses to start with a broken level.
 
@@ -16,8 +40,12 @@ Both frontends play the same levels: after a win, the win screen offers *Next le
 | `threatCapacityFactor` | multiplies the difficulty's maximum threat: how many / how dangerous enemies may be | `1.0` |
 | `showWallMaterials` | draw every wall with the sprite of its material (glass, dirt, wood, stone, steel) | `false` |
 | `maxCascadeDepth` | how far a collapse spreads: breakable walls that touch a broken wall fall with it, up to this many steps away. `0` = only the wall hit; `-1` = no limit (the classic rule) | `-1` |
+| `baseLevel` | number of an earlier level this one is built on: whatever the level does not set itself (zones, wall look, cascade depth, weapon inheritance, threat capacity, sergeants, mines, ghosts) is taken from that level. `0` = none | `0` |
 | `inheritWeapons` | start with the weapons the player had at the end of the previous level | `true` |
 | `<zones>` | concentric zones around the heart, outer zone first, **any number**; see below | none = the classic random walls |
+| `<mines>` | a circle of anti-personnel mines round every sergeant (`count` of them): a touched mine hurts the player a little (`playerDamage`), walls and enemies a little less (`blastDamage` within `blastRadius`) and leaves a hole (`holeRadius`) that sends the player to the opposite edge of the map | none |
+| `<teleport>` | what a teleport does: `cooldownSeconds`, the word on the screen and in the voice (`bannerText`, `bannerSeconds`) and the sounds (`zapSound`, `voiceSound`); a level without it uses the defaults | defaults |
+| `<teleportGhost>` + `<ghostCounts>` | a ghost that does not hurt but teleports the player to a random spot at the edge of the map; `cooldownSeconds` is the pause before the player can be teleported again | none |
 | `<sergeant>` + `<sergeantPosts>` | stationary zombie sergeants guarding the heart, and how many per difficulty | none |
 
 The maze is always generated as usual. A level only changes which walls are strong and how they look.
@@ -62,9 +90,30 @@ A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
 
+## Building on another level
+
+`baseLevel="2"` makes a level "level 2 plus": it takes the zones, wall look, cascade limit, sergeants and the rest from
+level 2 and only needs to say what is new. Level 3 is just this:
+
+```xml
+<levels number="3" name="The Minefield" baseLevel="2">
+  <mines count="3" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
+      blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
+  <teleportGhost displayName="Portal ghost" health="60" speed="1.6" sprite="/main/game/maze/ghost-portal.png"/>
+  <teleport cooldownSeconds="2.5" bannerText="Teleported" bannerSeconds="1.6"
+      zapSound="/main/game/maze/sounds/teleport.wav" voiceSound="/main/game/maze/sounds/teleported.wav"/>
+  <ghostCounts difficulty="EASY" count="3"/>
+  <ghostCounts difficulty="NORMAL" count="6"/>
+  <ghostCounts difficulty="HARD" count="10"/>
+</levels>
+```
+
+A level can also override what it takes (`threatCapacityFactor`, `showWallMaterials`, `maxCascadeDepth`, `inheritWeapons`,
+zones, sergeants). The base level must be an earlier one.
+
 ## Checking a new level
 
-1. Add the `<levels>` element.
+1. Add the `level` block to `levels.mazegame` and regenerate `levels.xmi`.
 2. Run `mvn -o test -pl maze-common-backend`: `LevelCatalogTest` loads the shipped file, so a mistake fails there with
    a message that names the level.
 3. Play it: win the level before it. With the last level won, *Next level* is no longer offered.

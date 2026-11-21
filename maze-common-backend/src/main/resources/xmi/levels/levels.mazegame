@@ -1,0 +1,65 @@
+/*
+ * The levels of the game, written in the MazeGame DSL (Xtext). This is the source of levels.xmi:
+ * MazeDslGenerator.levelsXmi turns it into the instance of levels.ecore that the game loads, and
+ * MazeDslLevelsTest checks that the shipped levels.xmi says the same. See docs/level-authoring.md.
+ */
+game MazeGameLevels {
+
+    level 1 "The Maze" {
+    }
+
+    level 2 "The Sergeants' Keep" {
+        threatCapacity 1.5
+        wallMaterials true
+        inheritWeapons true
+        cascadeDepth 2
+        ring "Outer wall" materials STEEL_BASIC
+        ring "Second ring" materials STONE_BASIC
+        ring "Third ring" materials WOOD_BASIC
+        ring "Inner ring" materials DIRT_BASIC, GLASS_BASIC
+        sergeant "Zombie sergeant" {
+            health 200
+            sightRange 380.0
+            rounds 5
+            roundDamage 3
+            roundInterval 0.12
+            burstCooldown 1.2
+            sprite "/main/game/maze/zombie-sergeant.png"
+            fireSound "/main/game/maze/sounds/gatling-burst.wav"
+            drops gatling
+            postDistance 110.0
+        }
+        sergeants easy 1
+        sergeants normal 4
+        sergeants hard 6
+    }
+
+    level 3 "The Minefield" {
+        basedOn 2
+        mines {
+            count 3
+            ringRadius 62.0
+            triggerRadius 22.0
+            pulse 0.9
+            blastRadius 150.0
+            blastDamage 15
+            playerDamage 20
+            holeRadius 30.0
+        }
+        portalGhost "Portal ghost" {
+            health 60
+            speed 1.6
+            sprite "/main/game/maze/ghost-portal.png"
+        }
+        portalGhosts easy 3
+        portalGhosts normal 6
+        portalGhosts hard 10
+        teleport {
+            cooldown 2.5
+            banner "Teleported"
+            bannerSeconds 1.6
+            zapSound "/main/game/maze/sounds/teleport.wav"
+            voiceSound "/main/game/maze/sounds/teleported.wav"
+        }
+    }
+}

@@ -8,21 +8,30 @@ import main.game.maze.dsl.mazeDsl.CharacterSpecifics;
 import main.game.maze.dsl.mazeDsl.CharacterTypeEnum;
 import main.game.maze.dsl.mazeDsl.DifficultyConfig;
 import main.game.maze.dsl.mazeDsl.DifficultyLevel;
+import main.game.maze.dsl.mazeDsl.DropWeaponEnum;
 import main.game.maze.dsl.mazeDsl.EnemyLimit;
 import main.game.maze.dsl.mazeDsl.EnemyType;
 import main.game.maze.dsl.mazeDsl.GameConfiguration;
+import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LevelConfig;
+import main.game.maze.dsl.mazeDsl.LevelZone;
 import main.game.maze.dsl.mazeDsl.LootItemConfig;
 import main.game.maze.dsl.mazeDsl.LootItemTypeEnum;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslFactory;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
+import main.game.maze.dsl.mazeDsl.MineRingConfig;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
 import main.game.maze.dsl.mazeDsl.PatrolZoneConfig;
+import main.game.maze.dsl.mazeDsl.PortalGhostConfig;
 import main.game.maze.dsl.mazeDsl.ProjectileTypeEnum;
 import main.game.maze.dsl.mazeDsl.RangedSpecifics;
+import main.game.maze.dsl.mazeDsl.SergeantConfig;
+import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
+import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
 
@@ -145,6 +154,62 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass levelConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass levelZoneEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass sergeantConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass tierCountConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass mineRingConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass portalGhostConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass ghostCountConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass teleportRulesConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EEnum difficultyLevelEEnum = null;
 
   /**
@@ -181,6 +246,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EEnum lootItemTypeEnumEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum dropWeaponEnumEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -319,6 +391,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
   public EReference getGameConfiguration_LootTables()
   {
     return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getGameConfiguration_Levels()
+  {
+    return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -998,6 +1081,633 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getLevelConfig()
+  {
+    return levelConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_Number()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_Name()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_BaseLevel()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_ThreatCapacityFactor()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_ShowWallMaterials()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_InheritWeapons()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelConfig_CascadeDepth()
+  {
+    return (EAttribute)levelConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_Zones()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_Sergeant()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_SergeantPosts()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_Mines()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_PortalGhost()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_GhostCounts()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_Teleport()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getLevelZone()
+  {
+    return levelZoneEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelZone_DisplayName()
+  {
+    return (EAttribute)levelZoneEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelZone_BreakableShare()
+  {
+    return (EAttribute)levelZoneEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLevelZone_MaterialIds()
+  {
+    return (EAttribute)levelZoneEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getSergeantConfig()
+  {
+    return sergeantConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_DisplayName()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_Health()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_SightRange()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_RoundsPerBurst()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_RoundDamage()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_RoundIntervalSeconds()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_BurstCooldownSeconds()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_Sprite()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_FireSound()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_DropWeapon()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getSergeantConfig_PostDistanceFromHeart()
+  {
+    return (EAttribute)sergeantConfigEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getTierCountConfig()
+  {
+    return tierCountConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTierCountConfig_Difficulty()
+  {
+    return (EAttribute)tierCountConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTierCountConfig_Count()
+  {
+    return (EAttribute)tierCountConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getMineRingConfig()
+  {
+    return mineRingConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_Count()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_RingRadius()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_TriggerRadius()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_PulseSeconds()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_BlastRadius()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_BlastDamage()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_PlayerDamage()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMineRingConfig_HoleRadius()
+  {
+    return (EAttribute)mineRingConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getPortalGhostConfig()
+  {
+    return portalGhostConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPortalGhostConfig_DisplayName()
+  {
+    return (EAttribute)portalGhostConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPortalGhostConfig_Health()
+  {
+    return (EAttribute)portalGhostConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPortalGhostConfig_Speed()
+  {
+    return (EAttribute)portalGhostConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPortalGhostConfig_Sprite()
+  {
+    return (EAttribute)portalGhostConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getGhostCountConfig()
+  {
+    return ghostCountConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGhostCountConfig_Difficulty()
+  {
+    return (EAttribute)ghostCountConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getGhostCountConfig_Count()
+  {
+    return (EAttribute)ghostCountConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getTeleportRulesConfig()
+  {
+    return teleportRulesConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTeleportRulesConfig_CooldownSeconds()
+  {
+    return (EAttribute)teleportRulesConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTeleportRulesConfig_BannerText()
+  {
+    return (EAttribute)teleportRulesConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTeleportRulesConfig_BannerSeconds()
+  {
+    return (EAttribute)teleportRulesConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTeleportRulesConfig_ZapSound()
+  {
+    return (EAttribute)teleportRulesConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getTeleportRulesConfig_VoiceSound()
+  {
+    return (EAttribute)teleportRulesConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EEnum getDifficultyLevel()
   {
     return difficultyLevelEEnum;
@@ -1064,6 +1774,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EEnum getDropWeaponEnum()
+  {
+    return dropWeaponEnumEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public MazeDslFactory getMazeDslFactory()
   {
     return (MazeDslFactory)getEFactoryInstance();
@@ -1096,6 +1817,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__OPPONENTS);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__PATROLS);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LOOT_TABLES);
+    createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LEVELS);
 
     importEClass = createEClass(IMPORT);
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
@@ -1171,6 +1893,71 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lootItemConfigEClass, LOOT_ITEM_CONFIG__VALUE);
     createEAttribute(lootItemConfigEClass, LOOT_ITEM_CONFIG__WEIGHT);
 
+    levelConfigEClass = createEClass(LEVEL_CONFIG);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__NUMBER);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__NAME);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__BASE_LEVEL);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__THREAT_CAPACITY_FACTOR);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__SHOW_WALL_MATERIALS);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__INHERIT_WEAPONS);
+    createEAttribute(levelConfigEClass, LEVEL_CONFIG__CASCADE_DEPTH);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__ZONES);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__SERGEANT);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__SERGEANT_POSTS);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__MINES);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__PORTAL_GHOST);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__GHOST_COUNTS);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__TELEPORT);
+
+    levelZoneEClass = createEClass(LEVEL_ZONE);
+    createEAttribute(levelZoneEClass, LEVEL_ZONE__DISPLAY_NAME);
+    createEAttribute(levelZoneEClass, LEVEL_ZONE__BREAKABLE_SHARE);
+    createEAttribute(levelZoneEClass, LEVEL_ZONE__MATERIAL_IDS);
+
+    sergeantConfigEClass = createEClass(SERGEANT_CONFIG);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__DISPLAY_NAME);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__HEALTH);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__SIGHT_RANGE);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__ROUNDS_PER_BURST);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__ROUND_DAMAGE);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__ROUND_INTERVAL_SECONDS);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__BURST_COOLDOWN_SECONDS);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__SPRITE);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__FIRE_SOUND);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__DROP_WEAPON);
+    createEAttribute(sergeantConfigEClass, SERGEANT_CONFIG__POST_DISTANCE_FROM_HEART);
+
+    tierCountConfigEClass = createEClass(TIER_COUNT_CONFIG);
+    createEAttribute(tierCountConfigEClass, TIER_COUNT_CONFIG__DIFFICULTY);
+    createEAttribute(tierCountConfigEClass, TIER_COUNT_CONFIG__COUNT);
+
+    mineRingConfigEClass = createEClass(MINE_RING_CONFIG);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__COUNT);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__RING_RADIUS);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__TRIGGER_RADIUS);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__PULSE_SECONDS);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__BLAST_RADIUS);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__BLAST_DAMAGE);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__PLAYER_DAMAGE);
+    createEAttribute(mineRingConfigEClass, MINE_RING_CONFIG__HOLE_RADIUS);
+
+    portalGhostConfigEClass = createEClass(PORTAL_GHOST_CONFIG);
+    createEAttribute(portalGhostConfigEClass, PORTAL_GHOST_CONFIG__DISPLAY_NAME);
+    createEAttribute(portalGhostConfigEClass, PORTAL_GHOST_CONFIG__HEALTH);
+    createEAttribute(portalGhostConfigEClass, PORTAL_GHOST_CONFIG__SPEED);
+    createEAttribute(portalGhostConfigEClass, PORTAL_GHOST_CONFIG__SPRITE);
+
+    ghostCountConfigEClass = createEClass(GHOST_COUNT_CONFIG);
+    createEAttribute(ghostCountConfigEClass, GHOST_COUNT_CONFIG__DIFFICULTY);
+    createEAttribute(ghostCountConfigEClass, GHOST_COUNT_CONFIG__COUNT);
+
+    teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
+    createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS);
+    createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__BANNER_TEXT);
+    createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__BANNER_SECONDS);
+    createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__ZAP_SOUND);
+    createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__VOICE_SOUND);
+
     // Create enums
     difficultyLevelEEnum = createEEnum(DIFFICULTY_LEVEL);
     enemyTypeEEnum = createEEnum(ENEMY_TYPE);
@@ -1178,6 +1965,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     behaviorTypeEnumEEnum = createEEnum(BEHAVIOR_TYPE_ENUM);
     projectileTypeEnumEEnum = createEEnum(PROJECTILE_TYPE_ENUM);
     lootItemTypeEnumEEnum = createEEnum(LOOT_ITEM_TYPE_ENUM);
+    dropWeaponEnumEEnum = createEEnum(DROP_WEAPON_ENUM);
   }
 
   /**
@@ -1221,6 +2009,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getGameConfiguration_Opponents(), this.getOpponentConfig(), null, "opponents", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_Patrols(), this.getPatrolConfig(), null, "patrols", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_LootTables(), this.getLootTableConfig(), null, "lootTables", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getGameConfiguration_Levels(), this.getLevelConfig(), null, "levels", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1296,6 +2085,71 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLootItemConfig_Value(), ecorePackage.getEInt(), "value", null, 0, 1, LootItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLootItemConfig_Weight(), ecorePackage.getEInt(), "weight", null, 0, 1, LootItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(levelConfigEClass, LevelConfig.class, "LevelConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLevelConfig_Number(), ecorePackage.getEInt(), "number", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_Name(), ecorePackage.getEString(), "name", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_BaseLevel(), ecorePackage.getEInt(), "baseLevel", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_ThreatCapacityFactor(), ecorePackage.getEDoubleObject(), "threatCapacityFactor", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_ShowWallMaterials(), ecorePackage.getEBooleanObject(), "showWallMaterials", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_InheritWeapons(), ecorePackage.getEBooleanObject(), "inheritWeapons", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelConfig_CascadeDepth(), ecorePackage.getEIntegerObject(), "cascadeDepth", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_Zones(), this.getLevelZone(), null, "zones", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_Sergeant(), this.getSergeantConfig(), null, "sergeant", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_SergeantPosts(), this.getTierCountConfig(), null, "sergeantPosts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_Mines(), this.getMineRingConfig(), null, "mines", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_PortalGhost(), this.getPortalGhostConfig(), null, "portalGhost", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_GhostCounts(), this.getGhostCountConfig(), null, "ghostCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_Teleport(), this.getTeleportRulesConfig(), null, "teleport", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLevelZone_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelZone_BreakableShare(), ecorePackage.getEDoubleObject(), "breakableShare", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLevelZone_MaterialIds(), ecorePackage.getEString(), "materialIds", null, 0, -1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(sergeantConfigEClass, SergeantConfig.class, "SergeantConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getSergeantConfig_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_Health(), ecorePackage.getEInt(), "health", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_SightRange(), ecorePackage.getEDouble(), "sightRange", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_RoundsPerBurst(), ecorePackage.getEInt(), "roundsPerBurst", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_RoundDamage(), ecorePackage.getEInt(), "roundDamage", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_RoundIntervalSeconds(), ecorePackage.getEDouble(), "roundIntervalSeconds", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_BurstCooldownSeconds(), ecorePackage.getEDouble(), "burstCooldownSeconds", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_Sprite(), ecorePackage.getEString(), "sprite", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_FireSound(), ecorePackage.getEString(), "fireSound", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_DropWeapon(), this.getDropWeaponEnum(), "dropWeapon", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSergeantConfig_PostDistanceFromHeart(), ecorePackage.getEDouble(), "postDistanceFromHeart", null, 0, 1, SergeantConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(tierCountConfigEClass, TierCountConfig.class, "TierCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTierCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, TierCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTierCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, TierCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(mineRingConfigEClass, MineRingConfig.class, "MineRingConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMineRingConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_RingRadius(), ecorePackage.getEDouble(), "ringRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_TriggerRadius(), ecorePackage.getEDouble(), "triggerRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_PulseSeconds(), ecorePackage.getEDouble(), "pulseSeconds", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_BlastRadius(), ecorePackage.getEDouble(), "blastRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_BlastDamage(), ecorePackage.getEInt(), "blastDamage", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_PlayerDamage(), ecorePackage.getEInt(), "playerDamage", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMineRingConfig_HoleRadius(), ecorePackage.getEDouble(), "holeRadius", null, 0, 1, MineRingConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(portalGhostConfigEClass, PortalGhostConfig.class, "PortalGhostConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPortalGhostConfig_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, PortalGhostConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPortalGhostConfig_Health(), ecorePackage.getEInt(), "health", null, 0, 1, PortalGhostConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPortalGhostConfig_Speed(), ecorePackage.getEDouble(), "speed", null, 0, 1, PortalGhostConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPortalGhostConfig_Sprite(), ecorePackage.getEString(), "sprite", null, 0, 1, PortalGhostConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(ghostCountConfigEClass, GhostCountConfig.class, "GhostCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getGhostCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, GhostCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGhostCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, GhostCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTeleportRulesConfig_CooldownSeconds(), ecorePackage.getEDouble(), "cooldownSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTeleportRulesConfig_BannerText(), ecorePackage.getEString(), "bannerText", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTeleportRulesConfig_BannerSeconds(), ecorePackage.getEDouble(), "bannerSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTeleportRulesConfig_ZapSound(), ecorePackage.getEString(), "zapSound", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTeleportRulesConfig_VoiceSound(), ecorePackage.getEString(), "voiceSound", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     // Initialize enums and add enum literals
     initEEnum(difficultyLevelEEnum, DifficultyLevel.class, "DifficultyLevel");
     addEEnumLiteral(difficultyLevelEEnum, DifficultyLevel.EASY);
@@ -1328,6 +2182,9 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     addEEnumLiteral(lootItemTypeEnumEEnum, LootItemTypeEnum.BOMB);
     addEEnumLiteral(lootItemTypeEnumEEnum, LootItemTypeEnum.TRAP);
     addEEnumLiteral(lootItemTypeEnumEEnum, LootItemTypeEnum.WEAPON);
+
+    initEEnum(dropWeaponEnumEEnum, DropWeaponEnum.class, "DropWeaponEnum");
+    addEEnumLiteral(dropWeaponEnumEEnum, DropWeaponEnum.GATLING_GUN);
 
     // Create resource
     createResource(eNS_URI);

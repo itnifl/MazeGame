@@ -44,21 +44,79 @@ public final class LevelCatalogLoader {
         EObject root = DynamicModel.load(LevelCatalogLoader.class, ecorePath, modelPath, "levels");
         List<LevelSpec> levels = new ArrayList<>();
         for (EObject level : DynamicModel.list(root, "levels")) {
-            levels.add(levelOf(level));
-        }
-        for (int index = 0; index < levels.size(); index++) {
-            if (levels.get(index).number() != index + 1) {
-                throw new IllegalStateException("levels must be numbered 1.." + levels.size() + " in order, but level "
-                        + levels.get(index).number() + " is number " + (index + 1));
+            int expected = levels.size() + 1;
+            int number = DynamicModel.integer(level, "number");
+            if (number != expected) {
+                throw new IllegalStateException("levels must be numbered 1..n in order, but level "
+                        + number + " is number " + expected);
             }
+            levels.add(levelOf(level, levels));
         }
         return new LevelCatalog(levels);
     }
 
-    private static LevelSpec levelOf(EObject level) {
+    /** Builds one level; what it does not set itself comes from its base level, when it has one. */
+    private static LevelSpec levelOf(EObject level, List<LevelSpec> earlier) {
         int number = DynamicModel.integer(level, "number");
         String name = DynamicModel.string(level, "name");
+        int baseNumber = DynamicModel.integer(level, "baseLevel");
+        LevelSpec base = null;
+        if (baseNumber != 0) {
+            if (baseNumber < 1 || baseNumber >= number) {
+                throw new IllegalStateException("level " + number + ": baseLevel " + baseNumber
+                        + " must be an earlier level");
+            }
+            base = earlier.get(baseNumber - 1);
+        }
 
+        List<LevelSpec.ZoneSpec> zones = zonesOf(level, number);
+        if (zones.isEmpty() && base != null) {
+            zones = base.zones();
+        }
+
+        SergeantSpec sergeant = DynamicModel.value(level, "sergeant") instanceof EObject own ? sergeantOf(own)
+                : base != null ? base.sergeant() : null;
+        Map<DifficultyTier, Integer> posts = countsOf(level, "sergeantPosts", number, "sergeant");
+        if (posts.isEmpty() && base != null) {
+            posts = base.sergeantPosts();
+        }
+        requireAllTiers(sergeant != null, posts, number, "sergeant");
+
+        MineSpec mines = DynamicModel.value(level, "mines") instanceof EObject own ? minesOf(own, number)
+                : base != null ? base.mines() : null;
+
+        TeleportGhostSpec ghost = DynamicModel.value(level, "teleportGhost") instanceof EObject own ? ghostOf(own)
+                : base != null ? base.teleportGhost() : null;
+        Map<DifficultyTier, Integer> ghostCounts = countsOf(level, "ghostCounts", number, "teleporting ghost");
+        if (ghostCounts.isEmpty() && base != null) {
+            ghostCounts = base.ghostCounts();
+        }
+        requireAllTiers(ghost != null, ghostCounts, number, "teleporting ghost");
+
+        TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
+                : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
+
+        double threatCapacityFactor = inherited(level, "threatCapacityFactor", base,
+                DynamicModel.decimal(level, "threatCapacityFactor"), base == null ? 0 : base.threatCapacityFactor());
+        if (!(threatCapacityFactor > 0)) {
+            throw new IllegalStateException("level " + number + ": threatCapacityFactor must be positive");
+        }
+        boolean showWallMaterials = inherited(level, "showWallMaterials", base,
+                Boolean.TRUE.equals(DynamicModel.value(level, "showWallMaterials")), base != null && base.showWallMaterials());
+        boolean inheritWeapons = inherited(level, "inheritWeapons", base,
+                !Boolean.FALSE.equals(DynamicModel.value(level, "inheritWeapons")), base == null || base.inheritWeapons());
+        int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
+                DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
+        return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport);
+    }
+
+    /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
+    private static <T> T inherited(EObject level, String feature, LevelSpec base, T own, T fromBase) {
+        return base == null || DynamicModel.isSet(level, feature) ? own : fromBase;
+    }
+
+    private static List<LevelSpec.ZoneSpec> zonesOf(EObject level, int number) {
         List<LevelSpec.ZoneSpec> zones = new ArrayList<>();
         for (EObject zone : DynamicModel.list(level, "zones")) {
             double share = DynamicModel.decimal(zone, "breakableShare");
@@ -81,35 +139,53 @@ public final class LevelCatalogLoader {
                         + " must have weaker walls than the zone outside it");
             }
         }
+        return zones;
+    }
 
-        SergeantSpec sergeant = null;
-        List<EObject> sergeants = DynamicModel.value(level, "sergeant") instanceof EObject one ? List.of(one) : List.of();
-        if (!sergeants.isEmpty()) {
-            sergeant = sergeantOf(sergeants.get(0));
-        }
-        Map<DifficultyTier, Integer> posts = new EnumMap<>(DifficultyTier.class);
-        for (EObject post : DynamicModel.list(level, "sergeantPosts")) {
-            int count = DynamicModel.integer(post, "count");
+    private static Map<DifficultyTier, Integer> countsOf(EObject level, String feature, int number, String what) {
+        Map<DifficultyTier, Integer> counts = new EnumMap<>(DifficultyTier.class);
+        for (EObject entry : DynamicModel.list(level, feature)) {
+            int count = DynamicModel.integer(entry, "count");
             if (count < 0) {
-                throw new IllegalStateException("level " + number + ": a sergeant count cannot be negative");
+                throw new IllegalStateException("level " + number + ": a " + what + " count cannot be negative");
             }
-            posts.put(DifficultyTier.valueOf(DynamicModel.literalName(post, "difficulty")), count);
+            counts.put(DifficultyTier.valueOf(DynamicModel.literalName(entry, "difficulty")), count);
         }
-        if (sergeant != null) {
-            Set<DifficultyTier> missing = new HashSet<>(List.of(DifficultyTier.values()));
-            missing.removeAll(posts.keySet());
-            if (!missing.isEmpty()) {
-                throw new IllegalStateException("level " + number + ": no sergeant count for " + missing);
-            }
+        return counts;
+    }
+
+    private static void requireAllTiers(boolean present, Map<DifficultyTier, Integer> counts, int number, String what) {
+        if (!present) {
+            return;
         }
-        double threatCapacityFactor = DynamicModel.decimal(level, "threatCapacityFactor");
-        if (!(threatCapacityFactor > 0)) {
-            throw new IllegalStateException("level " + number + ": threatCapacityFactor must be positive");
+        Set<DifficultyTier> missing = new HashSet<>(List.of(DifficultyTier.values()));
+        missing.removeAll(counts.keySet());
+        if (!missing.isEmpty()) {
+            throw new IllegalStateException("level " + number + ": no " + what + " count for " + missing);
         }
-        return new LevelSpec(number, name, threatCapacityFactor,
-                Boolean.TRUE.equals(DynamicModel.value(level, "showWallMaterials")),
-                !Boolean.FALSE.equals(DynamicModel.value(level, "inheritWeapons")),
-                DynamicModel.integer(level, "maxCascadeDepth"), zones, sergeant, posts);
+    }
+
+    private static MineSpec minesOf(EObject mines, int number) {
+        try {
+            return new MineSpec(DynamicModel.integer(mines, "count"), DynamicModel.decimal(mines, "ringRadius"),
+                    DynamicModel.decimal(mines, "triggerRadius"), DynamicModel.decimal(mines, "pulseSeconds"),
+                    DynamicModel.decimal(mines, "blastRadius"), DynamicModel.integer(mines, "blastDamage"),
+                    DynamicModel.integer(mines, "playerDamage"),
+                    DynamicModel.decimal(mines, "holeRadius"));
+        } catch (IllegalArgumentException invalid) {
+            throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
+        }
+    }
+
+    private static TeleportGhostSpec ghostOf(EObject ghost) {
+        return new TeleportGhostSpec(DynamicModel.string(ghost, "displayName"), DynamicModel.integer(ghost, "health"),
+                DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"));
+    }
+
+    private static TeleportRulesSpec teleportOf(EObject rules) {
+        return new TeleportRulesSpec(DynamicModel.decimal(rules, "cooldownSeconds"),
+                DynamicModel.string(rules, "bannerText"), DynamicModel.decimal(rules, "bannerSeconds"),
+                DynamicModel.string(rules, "zapSound"), DynamicModel.string(rules, "voiceSound"));
     }
 
     private static SergeantSpec sergeantOf(EObject sergeant) {

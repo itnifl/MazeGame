@@ -13,12 +13,13 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
  * Root element - A game configuration containing all game elements
  */
 GameConfiguration:
-    'game' name=ID '{'
+    'game' name=ValidID '{'
         (imports+=Import)*
         (difficulty=DifficultyConfig)?
         (opponents+=OpponentConfig)*
         (patrols+=PatrolConfig)*
         (lootTables+=LootTableConfig)*
+        (levels+=LevelConfig)*
     '}'
 ;
 
@@ -62,7 +63,7 @@ enum EnemyType:
  * Opponent/Enemy configuration
  */
 OpponentConfig:
-    'opponent' name=ID '{'
+    'opponent' name=ValidID '{'
         'type' type=CharacterTypeEnum
         ('displayName' displayName=STRING)?
         ('health' health=SIGNED_INT)?
@@ -71,8 +72,8 @@ OpponentConfig:
         ('enabled' enabled=BOOLEAN)?
         ('behavior' behavior=BehaviorTypeEnum)?
         (characterSpecifics=CharacterSpecifics)?
-        ('patrol' patrolRef=[PatrolConfig])?
-        ('loot' lootRef=[LootTableConfig])?
+        ('patrol' patrolRef=[PatrolConfig|ValidID])?
+        ('loot' lootRef=[LootTableConfig|ValidID])?
     '}'
 ;
 
@@ -129,7 +130,7 @@ enum ProjectileTypeEnum:
  * Patrol path configuration
  */
 PatrolConfig:
-    'patrol' name=ID '{'
+    'patrol' name=ValidID '{'
         ('visionRange' visionRange=DOUBLE)?
         (zone=PatrolZoneConfig)?
         'path' '['
@@ -155,14 +156,14 @@ Waypoint:
  * Loot table configuration
  */
 LootTableConfig:
-    'loot-table' name=ID '{'
+    'loot-table' name=ValidID '{'
         ('capacity' capacity=INT)?
         items+=LootItemConfig+
     '}'
 ;
 
 LootItemConfig:
-    'item' name=ID '{'
+    'item' name=ValidID '{'
         'type' type=LootItemTypeEnum
         'value' value=INT
         ('weight' weight=INT)?
@@ -171,6 +172,93 @@ LootItemConfig:
 
 enum LootItemTypeEnum:
     FOOD='food' | BOMB='bomb' | TRAP='trap' | WEAPON='weapon'
+;
+
+
+/*
+ * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
+ * Scalar values are nullable on purpose: a value that is not written is "not set", so a level built on
+ * another one (basedOn) takes it from there, and the model's default applies otherwise.
+ */
+LevelConfig:
+    'level' number=INT name=STRING '{'
+        ('basedOn' baseLevel=INT)?
+        ('threatCapacity' threatCapacityFactor=DOUBLE_OBJECT)?
+        ('wallMaterials' showWallMaterials=BOOLEAN_OBJECT)?
+        ('inheritWeapons' inheritWeapons=BOOLEAN_OBJECT)?
+        ('cascadeDepth' cascadeDepth=INT_OBJECT)?
+        (zones+=LevelZone)*
+        (sergeant=SergeantConfig)?
+        (sergeantPosts+=TierCountConfig)*
+        (mines=MineRingConfig)?
+        (portalGhost=PortalGhostConfig)?
+        (ghostCounts+=GhostCountConfig)*
+        (teleport=TeleportRulesConfig)?
+    '}'
+;
+
+/* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
+LevelZone:
+    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
+    'materials' materialIds+=ID (',' materialIds+=ID)*
+;
+
+SergeantConfig:
+    'sergeant' displayName=STRING '{'
+        'health' health=INT
+        'sightRange' sightRange=DOUBLE
+        'rounds' roundsPerBurst=INT
+        'roundDamage' roundDamage=INT
+        'roundInterval' roundIntervalSeconds=DOUBLE
+        'burstCooldown' burstCooldownSeconds=DOUBLE
+        'sprite' sprite=STRING
+        ('fireSound' fireSound=STRING)?
+        'drops' dropWeapon=DropWeaponEnum
+        'postDistance' postDistanceFromHeart=DOUBLE
+    '}'
+;
+
+enum DropWeaponEnum:
+    GATLING_GUN='gatling'
+;
+
+TierCountConfig:
+    'sergeants' difficulty=DifficultyLevel count=INT
+;
+
+MineRingConfig:
+    'mines' '{'
+        'count' count=INT
+        'ringRadius' ringRadius=DOUBLE
+        'triggerRadius' triggerRadius=DOUBLE
+        'pulse' pulseSeconds=DOUBLE
+        'blastRadius' blastRadius=DOUBLE
+        'blastDamage' blastDamage=INT
+        'playerDamage' playerDamage=INT
+        'holeRadius' holeRadius=DOUBLE
+    '}'
+;
+
+PortalGhostConfig:
+    'portalGhost' displayName=STRING '{'
+        'health' health=INT
+        'speed' speed=DOUBLE
+        'sprite' sprite=STRING
+    '}'
+;
+
+GhostCountConfig:
+    'portalGhosts' difficulty=DifficultyLevel count=INT
+;
+
+TeleportRulesConfig:
+    'teleport' '{'
+        'cooldown' cooldownSeconds=DOUBLE
+        'banner' bannerText=STRING
+        'bannerSeconds' bannerSeconds=DOUBLE
+        ('zapSound' zapSound=STRING)?
+        ('voiceSound' voiceSound=STRING)?
+    '}'
 ;
 
 /*
@@ -189,4 +277,27 @@ SIGNED_INT returns ecore::EInt:
  */
 BOOLEAN returns ecore::EBoolean:
     'true' | 'false'
+;
+
+/*
+ * Nullable value types: left out in the source they stay null ("not set").
+ */
+DOUBLE_OBJECT returns ecore::EDoubleObject:
+    ('-')? INT ('.' INT)?
+;
+
+INT_OBJECT returns ecore::EIntegerObject:
+    ('-')? INT
+;
+
+BOOLEAN_OBJECT returns ecore::EBooleanObject:
+    'true' | 'false'
+;
+
+/*
+ * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
+ * allowed as names and references, so existing files that used them as identifiers keep parsing.
+ */
+ValidID returns ecore::EString:
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
 ;

@@ -8,15 +8,23 @@ import java.util.Set;
 import main.game.maze.dsl.mazeDsl.DifficultyConfig;
 import main.game.maze.dsl.mazeDsl.EnemyLimit;
 import main.game.maze.dsl.mazeDsl.GameConfiguration;
+import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LevelConfig;
+import main.game.maze.dsl.mazeDsl.LevelZone;
 import main.game.maze.dsl.mazeDsl.LootItemConfig;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
+import main.game.maze.dsl.mazeDsl.MineRingConfig;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
 import main.game.maze.dsl.mazeDsl.PatrolZoneConfig;
+import main.game.maze.dsl.mazeDsl.PortalGhostConfig;
 import main.game.maze.dsl.mazeDsl.RangedSpecifics;
+import main.game.maze.dsl.mazeDsl.SergeantConfig;
+import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
+import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
 import main.game.maze.dsl.services.MazeDslGrammarAccess;
@@ -53,17 +61,29 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case MazeDslPackage.GAME_CONFIGURATION:
 				sequence_GameConfiguration(context, (GameConfiguration) semanticObject); 
 				return; 
+			case MazeDslPackage.GHOST_COUNT_CONFIG:
+				sequence_GhostCountConfig(context, (GhostCountConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.GHOST_SPECIFICS:
 				sequence_GhostSpecifics(context, (GhostSpecifics) semanticObject); 
 				return; 
 			case MazeDslPackage.IMPORT:
 				sequence_Import(context, (Import) semanticObject); 
 				return; 
+			case MazeDslPackage.LEVEL_CONFIG:
+				sequence_LevelConfig(context, (LevelConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.LEVEL_ZONE:
+				sequence_LevelZone(context, (LevelZone) semanticObject); 
+				return; 
 			case MazeDslPackage.LOOT_ITEM_CONFIG:
 				sequence_LootItemConfig(context, (LootItemConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.LOOT_TABLE_CONFIG:
 				sequence_LootTableConfig(context, (LootTableConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.MINE_RING_CONFIG:
+				sequence_MineRingConfig(context, (MineRingConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.OPPONENT_CONFIG:
 				sequence_OpponentConfig(context, (OpponentConfig) semanticObject); 
@@ -74,8 +94,20 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case MazeDslPackage.PATROL_ZONE_CONFIG:
 				sequence_PatrolZoneConfig(context, (PatrolZoneConfig) semanticObject); 
 				return; 
+			case MazeDslPackage.PORTAL_GHOST_CONFIG:
+				sequence_PortalGhostConfig(context, (PortalGhostConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.RANGED_SPECIFICS:
 				sequence_RangedSpecifics(context, (RangedSpecifics) semanticObject); 
+				return; 
+			case MazeDslPackage.SERGEANT_CONFIG:
+				sequence_SergeantConfig(context, (SergeantConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.TELEPORT_RULES_CONFIG:
+				sequence_TeleportRulesConfig(context, (TeleportRulesConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.TIER_COUNT_CONFIG:
+				sequence_TierCountConfig(context, (TierCountConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.WAYPOINT:
 				sequence_Waypoint(context, (Waypoint) semanticObject); 
@@ -139,17 +171,41 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=ID 
+	 *         name=ValidID 
 	 *         imports+=Import* 
 	 *         difficulty=DifficultyConfig? 
 	 *         opponents+=OpponentConfig* 
 	 *         patrols+=PatrolConfig* 
-	 *         lootTables+=LootTableConfig*
+	 *         lootTables+=LootTableConfig* 
+	 *         levels+=LevelConfig*
 	 *     )
 	 * </pre>
 	 */
 	protected void sequence_GameConfiguration(ISerializationContext context, GameConfiguration semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     GhostCountConfig returns GhostCountConfig
+	 *
+	 * Constraint:
+	 *     (difficulty=DifficultyLevel count=INT)
+	 * </pre>
+	 */
+	protected void sequence_GhostCountConfig(ISerializationContext context, GhostCountConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.GHOST_COUNT_CONFIG__DIFFICULTY) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.GHOST_COUNT_CONFIG__DIFFICULTY));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.GHOST_COUNT_CONFIG__COUNT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.GHOST_COUNT_CONFIG__COUNT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getGhostCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0(), semanticObject.getDifficulty());
+		feeder.accept(grammarAccess.getGhostCountConfigAccess().getCountINTTerminalRuleCall_2_0(), semanticObject.getCount());
+		feeder.finish();
 	}
 	
 	
@@ -191,10 +247,53 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     LevelConfig returns LevelConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         number=INT 
+	 *         name=STRING 
+	 *         baseLevel=INT? 
+	 *         threatCapacityFactor=DOUBLE_OBJECT? 
+	 *         showWallMaterials=BOOLEAN_OBJECT? 
+	 *         inheritWeapons=BOOLEAN_OBJECT? 
+	 *         cascadeDepth=INT_OBJECT? 
+	 *         zones+=LevelZone* 
+	 *         sergeant=SergeantConfig? 
+	 *         sergeantPosts+=TierCountConfig* 
+	 *         mines=MineRingConfig? 
+	 *         portalGhost=PortalGhostConfig? 
+	 *         ghostCounts+=GhostCountConfig* 
+	 *         teleport=TeleportRulesConfig?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_LevelConfig(ISerializationContext context, LevelConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     LevelZone returns LevelZone
+	 *
+	 * Constraint:
+	 *     (displayName=STRING breakableShare=DOUBLE_OBJECT? materialIds+=ID materialIds+=ID*)
+	 * </pre>
+	 */
+	protected void sequence_LevelZone(ISerializationContext context, LevelZone semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     LootItemConfig returns LootItemConfig
 	 *
 	 * Constraint:
-	 *     (name=ID type=LootItemTypeEnum value=INT weight=INT?)
+	 *     (name=ValidID type=LootItemTypeEnum value=INT weight=INT?)
 	 * </pre>
 	 */
 	protected void sequence_LootItemConfig(ISerializationContext context, LootItemConfig semanticObject) {
@@ -208,7 +307,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     LootTableConfig returns LootTableConfig
 	 *
 	 * Constraint:
-	 *     (name=ID capacity=INT? items+=LootItemConfig+)
+	 *     (name=ValidID capacity=INT? items+=LootItemConfig+)
 	 * </pre>
 	 */
 	protected void sequence_LootTableConfig(ISerializationContext context, LootTableConfig semanticObject) {
@@ -219,11 +318,61 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     MineRingConfig returns MineRingConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         count=INT 
+	 *         ringRadius=DOUBLE 
+	 *         triggerRadius=DOUBLE 
+	 *         pulseSeconds=DOUBLE 
+	 *         blastRadius=DOUBLE 
+	 *         blastDamage=INT 
+	 *         playerDamage=INT 
+	 *         holeRadius=DOUBLE
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_MineRingConfig(ISerializationContext context, MineRingConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__COUNT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__COUNT));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__RING_RADIUS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__RING_RADIUS));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__TRIGGER_RADIUS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__TRIGGER_RADIUS));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__PULSE_SECONDS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__PULSE_SECONDS));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__BLAST_RADIUS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__BLAST_RADIUS));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__BLAST_DAMAGE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__BLAST_DAMAGE));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__PLAYER_DAMAGE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__PLAYER_DAMAGE));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__HOLE_RADIUS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.MINE_RING_CONFIG__HOLE_RADIUS));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getCountINTTerminalRuleCall_3_0(), semanticObject.getCount());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getRingRadiusDOUBLEParserRuleCall_5_0(), semanticObject.getRingRadius());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_7_0(), semanticObject.getTriggerRadius());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_9_0(), semanticObject.getPulseSeconds());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_11_0(), semanticObject.getBlastRadius());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_13_0(), semanticObject.getBlastDamage());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_15_0(), semanticObject.getPlayerDamage());
+		feeder.accept(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_17_0(), semanticObject.getHoleRadius());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     OpponentConfig returns OpponentConfig
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=ID 
+	 *         name=ValidID 
 	 *         type=CharacterTypeEnum 
 	 *         displayName=STRING? 
 	 *         health=SIGNED_INT? 
@@ -232,8 +381,8 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         enabled=BOOLEAN? 
 	 *         behavior=BehaviorTypeEnum? 
 	 *         characterSpecifics=CharacterSpecifics? 
-	 *         patrolRef=[PatrolConfig|ID]? 
-	 *         lootRef=[LootTableConfig|ID]?
+	 *         patrolRef=[PatrolConfig|ValidID]? 
+	 *         lootRef=[LootTableConfig|ValidID]?
 	 *     )
 	 * </pre>
 	 */
@@ -248,7 +397,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     PatrolConfig returns PatrolConfig
 	 *
 	 * Constraint:
-	 *     (name=ID visionRange=DOUBLE? zone=PatrolZoneConfig? waypoints+=Waypoint waypoints+=Waypoint*)
+	 *     (name=ValidID visionRange=DOUBLE? zone=PatrolZoneConfig? waypoints+=Waypoint waypoints+=Waypoint*)
 	 * </pre>
 	 */
 	protected void sequence_PatrolConfig(ISerializationContext context, PatrolConfig semanticObject) {
@@ -288,6 +437,35 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     PortalGhostConfig returns PortalGhostConfig
+	 *
+	 * Constraint:
+	 *     (displayName=STRING health=INT speed=DOUBLE sprite=STRING)
+	 * </pre>
+	 */
+	protected void sequence_PortalGhostConfig(ISerializationContext context, PortalGhostConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__DISPLAY_NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__DISPLAY_NAME));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__HEALTH) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__HEALTH));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__SPEED) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__SPEED));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__SPRITE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.PORTAL_GHOST_CONFIG__SPRITE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getPortalGhostConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0(), semanticObject.getDisplayName());
+		feeder.accept(grammarAccess.getPortalGhostConfigAccess().getHealthINTTerminalRuleCall_4_0(), semanticObject.getHealth());
+		feeder.accept(grammarAccess.getPortalGhostConfigAccess().getSpeedDOUBLEParserRuleCall_6_0(), semanticObject.getSpeed());
+		feeder.accept(grammarAccess.getPortalGhostConfigAccess().getSpriteSTRINGTerminalRuleCall_8_0(), semanticObject.getSprite());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     CharacterSpecifics returns RangedSpecifics
 	 *     RangedSpecifics returns RangedSpecifics
 	 *
@@ -304,6 +482,69 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 */
 	protected void sequence_RangedSpecifics(ISerializationContext context, RangedSpecifics semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     SergeantConfig returns SergeantConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         displayName=STRING 
+	 *         health=INT 
+	 *         sightRange=DOUBLE 
+	 *         roundsPerBurst=INT 
+	 *         roundDamage=INT 
+	 *         roundIntervalSeconds=DOUBLE 
+	 *         burstCooldownSeconds=DOUBLE 
+	 *         sprite=STRING 
+	 *         fireSound=STRING? 
+	 *         dropWeapon=DropWeaponEnum 
+	 *         postDistanceFromHeart=DOUBLE
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_SergeantConfig(ISerializationContext context, SergeantConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     TeleportRulesConfig returns TeleportRulesConfig
+	 *
+	 * Constraint:
+	 *     (cooldownSeconds=DOUBLE bannerText=STRING bannerSeconds=DOUBLE zapSound=STRING? voiceSound=STRING?)
+	 * </pre>
+	 */
+	protected void sequence_TeleportRulesConfig(ISerializationContext context, TeleportRulesConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     TierCountConfig returns TierCountConfig
+	 *
+	 * Constraint:
+	 *     (difficulty=DifficultyLevel count=INT)
+	 * </pre>
+	 */
+	protected void sequence_TierCountConfig(ISerializationContext context, TierCountConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.TIER_COUNT_CONFIG__DIFFICULTY) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.TIER_COUNT_CONFIG__DIFFICULTY));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.TIER_COUNT_CONFIG__COUNT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.TIER_COUNT_CONFIG__COUNT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getTierCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0(), semanticObject.getDifficulty());
+		feeder.accept(grammarAccess.getTierCountConfigAccess().getCountINTTerminalRuleCall_2_0(), semanticObject.getCount());
+		feeder.finish();
 	}
 	
 	

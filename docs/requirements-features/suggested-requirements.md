@@ -392,3 +392,17 @@ These requirements have been implemented and verified.
 - **SR-295a** *(UX, performance)*: The new normal background is a 1.8 MB PNG; convert it to JPEG or an indexed PNG if start-up or repository size matters, and consider animating the flames (a few frames the renderers cycle) so the patches flicker.
 
 - **SR-295b** *(Gameplay, readability)*: The bright flames can distract from enemies and pickups; offer a "calm background" option (a setting) that draws the meadow without the burning patches.
+
+- **SR-303** *(Gameplay)*: Decide whether mines should chain (a blast sets off mines within its reach), whether enemies can touch mines and fall into holes too (today only the player does), and whether holes should fill in after a while; a hole stays for the whole level now.
+
+- **SR-304** *(Observability)*: Count mines set off, holes fallen into and portal-ghost teleports per level and log them at `FINE` next to the kill statistics (SR-252); a debug overlay listing mines and holes would help level designers.
+
+- **SR-305** *(Accessibility)*: Mines pulse red and holes are black; add an audio cue (a faint beep that quickens near a mine) and a high-contrast outline so the mines can be told from walls and sergeants' tracers.
+
+- **SR-306** *(Model-driven)*: The portal ghost lives in `levels.ecore` like the sergeant (SR-287); move both into `opponents.ecore` once the generated EMF code can be regenerated headlessly, so enemy kinds have one home.
+
+- **SR-307** *(Parity, UX)*: The libGDX screen shake uses the old fixed-envelope shake with the new strength and duration; use the shared decaying `BombImpact.shakeOffset` there too so both frontends shake identically.
+
+- **SR-310** *(MDD, Xtext)*: Run the levels generation as part of the build (today `levels.xmi` is regenerated on demand with `MAZE_LEVELS_REGENERATE=true` and a test fails when it is out of step), validate levels in the DSL validator (a zone weaker than the one outside it, an unknown material, a missing difficulty count, a base level that is not earlier) so authors get errors in the editor, and add DSL support for the remaining models (walls, pickups, opponents) so every game data file has one textual source.
+
+- **SR-311** *(Accessibility)*: The spoken "Teleported" is English only and recorded with a Windows voice; offer text-only banner and a volume or mute option for voices, and re-record per language.

@@ -325,6 +325,11 @@ public class PlayerCharacter extends Character
             return;
         }
 
+        if (entity instanceof PortalGhostCharacter portalGhost) {
+            portalGhost.handlePlayerContact(myBounds, this);
+            return;
+        }
+
         // A wall between the enemy centre and the player centre blocks damage for solid enemies.
         // Phasing ghosts bypass this check.
         if (!isPhasing

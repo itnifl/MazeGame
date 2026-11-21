@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<levels:LevelModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:levels="http://main.game.maze/levels">
+  <levels number="1" name="One" threatCapacityFactor="1.0"/>
+  <levels number="2" name="Two" threatCapacityFactor="2.0" showWallMaterials="true" maxCascadeDepth="2">
+    <zones displayName="a" materialIds="STEEL_BASIC"/>
+    <zones displayName="b" materialIds="STONE_BASIC"/>
+    <sergeant displayName="S" sprite="/s.png" dropWeapon="GATLING_GUN"/>
+    <sergeantPosts difficulty="EASY" count="1"/>
+    <sergeantPosts difficulty="NORMAL" count="2"/>
+    <sergeantPosts difficulty="HARD" count="4"/>
+  </levels>
+  <levels number="3" name="Three" baseLevel="2">
+    <teleportGhost displayName="G" sprite="/g.png"/>
+    <ghostCounts difficulty="EASY" count="1"/>
+    <ghostCounts difficulty="NORMAL" count="2"/>
+  </levels>
+</levels:LevelModel>

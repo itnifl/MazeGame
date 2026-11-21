@@ -40,6 +40,14 @@ public class MazeDslGenerator extends AbstractGenerator {
                     generateXmiInstance(game)
                 );
                 
+                // Generate the levels model instance (xmi/levels/levels.xmi, see levels.ecore)
+                if (!game.getLevels().isEmpty()) {
+                    fsa.generateFile(
+                        "xmi/" + baseName + "-levels.xmi",
+                        levelsXmi(game)
+                    );
+                }
+
                 // Generate difficulty configuration
                 if (game.getDifficulty() != null) {
                     fsa.generateFile(
@@ -425,6 +433,95 @@ public class MazeDslGenerator extends AbstractGenerator {
             case HARD: return "HardDifficulty";
             default: return "NormalDifficulty";
         }
+    }
+
+    /**
+     * The levels of the game as an instance of the levels metamodel ({@code levels.ecore}): what the game loads as
+     * {@code levels.xmi}. A value the source leaves out is left out here too, so the model's defaults and a level's
+     * {@code basedOn} apply exactly as if the XMI had been written by hand.
+     */
+    public static String levelsXmi(GameConfiguration game) {
+        StringBuilder x = new StringBuilder();
+        x.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        x.append("<!-- Generated from ").append(game.getName()).append(".mazegame by MazeDslGenerator. DO NOT EDIT. -->\n");
+        x.append("<levels:LevelModel xmi:version=\"2.0\" xmlns:xmi=\"http://www.omg.org/XMI\"")
+         .append(" xmlns:levels=\"http://main.game.maze/levels\">\n");
+        for (LevelConfig level : game.getLevels()) {
+            x.append("  <levels number=\"").append(level.getNumber()).append("\" name=\"").append(xml(level.getName())).append('"');
+            if (level.getBaseLevel() != 0) {
+                x.append(" baseLevel=\"").append(level.getBaseLevel()).append('"');
+            }
+            attribute(x, "threatCapacityFactor", level.getThreatCapacityFactor());
+            attribute(x, "showWallMaterials", level.getShowWallMaterials());
+            attribute(x, "inheritWeapons", level.getInheritWeapons());
+            attribute(x, "maxCascadeDepth", level.getCascadeDepth());
+            x.append(">\n");
+            for (LevelZone zone : level.getZones()) {
+                x.append("    <zones displayName=\"").append(xml(zone.getDisplayName())).append('"');
+                attribute(x, "breakableShare", zone.getBreakableShare());
+                x.append(" materialIds=\"").append(String.join(" ", zone.getMaterialIds())).append("\"/>\n");
+            }
+            SergeantConfig s = level.getSergeant();
+            if (s != null) {
+                x.append("    <sergeant displayName=\"").append(xml(s.getDisplayName())).append("\" health=\"").append(s.getHealth())
+                 .append("\" sightRange=\"").append(s.getSightRange()).append("\" roundsPerBurst=\"").append(s.getRoundsPerBurst())
+                 .append("\" roundDamage=\"").append(s.getRoundDamage()).append("\" roundIntervalSeconds=\"").append(s.getRoundIntervalSeconds())
+                 .append("\" burstCooldownSeconds=\"").append(s.getBurstCooldownSeconds()).append("\" sprite=\"").append(xml(s.getSprite())).append('"');
+                if (s.getFireSound() != null) {
+                    x.append(" fireSound=\"").append(xml(s.getFireSound())).append('"');
+                }
+                x.append(" dropWeapon=\"").append(s.getDropWeapon().name()).append("\" postDistanceFromHeart=\"")
+                 .append(s.getPostDistanceFromHeart()).append("\"/>\n");
+            }
+            for (TierCountConfig post : level.getSergeantPosts()) {
+                x.append("    <sergeantPosts difficulty=\"").append(post.getDifficulty().name()).append("\" count=\"").append(post.getCount()).append("\"/>\n");
+            }
+            MineRingConfig m = level.getMines();
+            if (m != null) {
+                x.append("    <mines count=\"").append(m.getCount()).append("\" ringRadius=\"").append(m.getRingRadius())
+                 .append("\" triggerRadius=\"").append(m.getTriggerRadius()).append("\" pulseSeconds=\"").append(m.getPulseSeconds())
+                 .append("\" blastRadius=\"").append(m.getBlastRadius()).append("\" blastDamage=\"").append(m.getBlastDamage())
+                 .append("\" playerDamage=\"").append(m.getPlayerDamage()).append("\" holeRadius=\"").append(m.getHoleRadius()).append("\"/>\n");
+            }
+            PortalGhostConfig g = level.getPortalGhost();
+            if (g != null) {
+                x.append("    <teleportGhost displayName=\"").append(xml(g.getDisplayName())).append("\" health=\"").append(g.getHealth())
+                 .append("\" speed=\"").append(g.getSpeed()).append("\" sprite=\"").append(xml(g.getSprite())).append("\"/>\n");
+            }
+            for (GhostCountConfig count : level.getGhostCounts()) {
+                x.append("    <ghostCounts difficulty=\"").append(count.getDifficulty().name()).append("\" count=\"").append(count.getCount()).append("\"/>\n");
+            }
+            TeleportRulesConfig t = level.getTeleport();
+            if (t != null) {
+                x.append("    <teleport cooldownSeconds=\"").append(t.getCooldownSeconds()).append("\" bannerText=\"").append(xml(t.getBannerText()))
+                 .append("\" bannerSeconds=\"").append(t.getBannerSeconds()).append('"');
+                if (t.getZapSound() != null) {
+                    x.append(" zapSound=\"").append(xml(t.getZapSound())).append('"');
+                }
+                if (t.getVoiceSound() != null) {
+                    x.append(" voiceSound=\"").append(xml(t.getVoiceSound())).append('"');
+                }
+                x.append("/>\n");
+            }
+            x.append("  </levels>\n");
+        }
+        x.append("</levels:LevelModel>\n");
+        return x.toString();
+    }
+
+    private static void attribute(StringBuilder x, String name, Object value) {
+        if (value != null) {
+            x.append(' ').append(name).append("=\"").append(value).append('"');
+        }
+    }
+
+    private static String xml(String value) {
+        return value == null ? "" : value
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&apos;");
     }
 
     private String escapeForJavaString(String value) {

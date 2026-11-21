@@ -148,6 +148,11 @@ public final class FxWeaponController {
         pickupField.dropAt(kind, x, y);
     }
 
+    /** Plays a short visual effect on the board (a sparkle where a teleported player appears, ...). */
+    public void showEffect(main.game.maze.common.graphics.fire.PuffEffect effect) {
+        playEffect(effect);
+    }
+
     /** One enemy round on its way: a short tracer line. */
     public void showTracer(double fromX, double fromY, double toX, double toY) {
         playEffect(main.game.maze.game.items.ShotEffects.enemyRound(fromX, fromY, toX, toY));

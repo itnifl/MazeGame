@@ -80,6 +80,14 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.WAYPOINT: return createWaypoint();
       case MazeDslPackage.LOOT_TABLE_CONFIG: return createLootTableConfig();
       case MazeDslPackage.LOOT_ITEM_CONFIG: return createLootItemConfig();
+      case MazeDslPackage.LEVEL_CONFIG: return createLevelConfig();
+      case MazeDslPackage.LEVEL_ZONE: return createLevelZone();
+      case MazeDslPackage.SERGEANT_CONFIG: return createSergeantConfig();
+      case MazeDslPackage.TIER_COUNT_CONFIG: return createTierCountConfig();
+      case MazeDslPackage.MINE_RING_CONFIG: return createMineRingConfig();
+      case MazeDslPackage.PORTAL_GHOST_CONFIG: return createPortalGhostConfig();
+      case MazeDslPackage.GHOST_COUNT_CONFIG: return createGhostCountConfig();
+      case MazeDslPackage.TELEPORT_RULES_CONFIG: return createTeleportRulesConfig();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -107,6 +115,8 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
         return createProjectileTypeEnumFromString(eDataType, initialValue);
       case MazeDslPackage.LOOT_ITEM_TYPE_ENUM:
         return createLootItemTypeEnumFromString(eDataType, initialValue);
+      case MazeDslPackage.DROP_WEAPON_ENUM:
+        return createDropWeaponEnumFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -134,6 +144,8 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
         return convertProjectileTypeEnumToString(eDataType, instanceValue);
       case MazeDslPackage.LOOT_ITEM_TYPE_ENUM:
         return convertLootItemTypeEnumToString(eDataType, instanceValue);
+      case MazeDslPackage.DROP_WEAPON_ENUM:
+        return convertDropWeaponEnumToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -312,6 +324,102 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
+  public LevelConfig createLevelConfig()
+  {
+    LevelConfigImpl levelConfig = new LevelConfigImpl();
+    return levelConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public LevelZone createLevelZone()
+  {
+    LevelZoneImpl levelZone = new LevelZoneImpl();
+    return levelZone;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public SergeantConfig createSergeantConfig()
+  {
+    SergeantConfigImpl sergeantConfig = new SergeantConfigImpl();
+    return sergeantConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public TierCountConfig createTierCountConfig()
+  {
+    TierCountConfigImpl tierCountConfig = new TierCountConfigImpl();
+    return tierCountConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public MineRingConfig createMineRingConfig()
+  {
+    MineRingConfigImpl mineRingConfig = new MineRingConfigImpl();
+    return mineRingConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public PortalGhostConfig createPortalGhostConfig()
+  {
+    PortalGhostConfigImpl portalGhostConfig = new PortalGhostConfigImpl();
+    return portalGhostConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public GhostCountConfig createGhostCountConfig()
+  {
+    GhostCountConfigImpl ghostCountConfig = new GhostCountConfigImpl();
+    return ghostCountConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public TeleportRulesConfig createTeleportRulesConfig()
+  {
+    TeleportRulesConfigImpl teleportRulesConfig = new TeleportRulesConfigImpl();
+    return teleportRulesConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public DifficultyLevel createDifficultyLevelFromString(EDataType eDataType, String initialValue)
   {
     DifficultyLevel result = DifficultyLevel.get(initialValue);
@@ -435,6 +543,28 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
    * @generated
    */
   public String convertLootItemTypeEnumToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DropWeaponEnum createDropWeaponEnumFromString(EDataType eDataType, String initialValue)
+  {
+    DropWeaponEnum result = DropWeaponEnum.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertDropWeaponEnumToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

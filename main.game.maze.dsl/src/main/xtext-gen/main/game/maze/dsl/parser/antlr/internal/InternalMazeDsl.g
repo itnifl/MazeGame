@@ -83,19 +83,20 @@ ruleGameConfiguration returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getGameConfigurationAccess().getNameIDTerminalRuleCall_1_0());
+					newCompositeNode(grammarAccess.getGameConfigurationAccess().getNameValidIDParserRuleCall_1_0());
 				}
+				lv_name_1_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getGameConfigurationRule());
+						$current = createModelElementForParent(grammarAccess.getGameConfigurationRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -198,9 +199,28 @@ ruleGameConfiguration returns [EObject current=null]
 				}
 			)
 		)*
-		otherlv_8='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGameConfigurationAccess().getLevelsLevelConfigParserRuleCall_8_0());
+				}
+				lv_levels_8_0=ruleLevelConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGameConfigurationRule());
+					}
+					add(
+						$current,
+						"levels",
+						lv_levels_8_0,
+						"main.game.maze.dsl.MazeDsl.LevelConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_9='}'
 		{
-			newLeafNode(otherlv_8, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_8());
+			newLeafNode(otherlv_9, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_9());
 		}
 	)
 ;
@@ -501,19 +521,20 @@ ruleOpponentConfig returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getOpponentConfigAccess().getNameIDTerminalRuleCall_1_0());
+					newCompositeNode(grammarAccess.getOpponentConfigAccess().getNameValidIDParserRuleCall_1_0());
 				}
+				lv_name_1_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getOpponentConfigRule());
+						$current = createModelElementForParent(grammarAccess.getOpponentConfigRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -724,9 +745,12 @@ ruleOpponentConfig returns [EObject current=null]
 							$current = createModelElement(grammarAccess.getOpponentConfigRule());
 						}
 					}
-					otherlv_19=RULE_ID
 					{
-						newLeafNode(otherlv_19, grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigCrossReference_12_1_0());
+						newCompositeNode(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigCrossReference_12_1_0());
+					}
+					ruleValidID
+					{
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -743,9 +767,12 @@ ruleOpponentConfig returns [EObject current=null]
 							$current = createModelElement(grammarAccess.getOpponentConfigRule());
 						}
 					}
-					otherlv_21=RULE_ID
 					{
-						newLeafNode(otherlv_21, grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigCrossReference_13_1_0());
+						newCompositeNode(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigCrossReference_13_1_0());
+					}
+					ruleValidID
+					{
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -1231,19 +1258,20 @@ rulePatrolConfig returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getPatrolConfigAccess().getNameIDTerminalRuleCall_1_0());
+					newCompositeNode(grammarAccess.getPatrolConfigAccess().getNameValidIDParserRuleCall_1_0());
 				}
+				lv_name_1_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getPatrolConfigRule());
+						$current = createModelElementForParent(grammarAccess.getPatrolConfigRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -1608,19 +1636,20 @@ ruleLootTableConfig returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getLootTableConfigAccess().getNameIDTerminalRuleCall_1_0());
+					newCompositeNode(grammarAccess.getLootTableConfigAccess().getNameValidIDParserRuleCall_1_0());
 				}
+				lv_name_1_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getLootTableConfigRule());
+						$current = createModelElementForParent(grammarAccess.getLootTableConfigRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -1700,19 +1729,20 @@ ruleLootItemConfig returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getLootItemConfigAccess().getNameIDTerminalRuleCall_1_0());
+					newCompositeNode(grammarAccess.getLootItemConfigAccess().getNameValidIDParserRuleCall_1_0());
 				}
+				lv_name_1_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getLootItemConfigRule());
+						$current = createModelElementForParent(grammarAccess.getLootItemConfigRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -1792,6 +1822,1313 @@ ruleLootItemConfig returns [EObject current=null]
 		otherlv_9='}'
 		{
 			newLeafNode(otherlv_9, grammarAccess.getLootItemConfigAccess().getRightCurlyBracketKeyword_8());
+		}
+	)
+;
+
+// Entry rule entryRuleLevelConfig
+entryRuleLevelConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLevelConfigRule()); }
+	iv_ruleLevelConfig=ruleLevelConfig
+	{ $current=$iv_ruleLevelConfig.current; }
+	EOF;
+
+// Rule LevelConfig
+ruleLevelConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='level'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getLevelConfigAccess().getLevelKeyword_0());
+		}
+		(
+			(
+				lv_number_1_0=RULE_INT
+				{
+					newLeafNode(lv_number_1_0, grammarAccess.getLevelConfigAccess().getNumberINTTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLevelConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"number",
+						lv_number_1_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		(
+			(
+				lv_name_2_0=RULE_STRING
+				{
+					newLeafNode(lv_name_2_0, grammarAccess.getLevelConfigAccess().getNameSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLevelConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_2_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_3='{'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getLevelConfigAccess().getLeftCurlyBracketKeyword_3());
+		}
+		(
+			otherlv_4='basedOn'
+			{
+				newLeafNode(otherlv_4, grammarAccess.getLevelConfigAccess().getBasedOnKeyword_4_0());
+			}
+			(
+				(
+					lv_baseLevel_5_0=RULE_INT
+					{
+						newLeafNode(lv_baseLevel_5_0, grammarAccess.getLevelConfigAccess().getBaseLevelINTTerminalRuleCall_4_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLevelConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"baseLevel",
+							lv_baseLevel_5_0,
+							"org.eclipse.xtext.common.Terminals.INT");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_6='threatCapacity'
+			{
+				newLeafNode(otherlv_6, grammarAccess.getLevelConfigAccess().getThreatCapacityKeyword_5_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLevelConfigAccess().getThreatCapacityFactorDOUBLE_OBJECTParserRuleCall_5_1_0());
+					}
+					lv_threatCapacityFactor_7_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+						}
+						set(
+							$current,
+							"threatCapacityFactor",
+							lv_threatCapacityFactor_7_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_8='wallMaterials'
+			{
+				newLeafNode(otherlv_8, grammarAccess.getLevelConfigAccess().getWallMaterialsKeyword_6_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLevelConfigAccess().getShowWallMaterialsBOOLEAN_OBJECTParserRuleCall_6_1_0());
+					}
+					lv_showWallMaterials_9_0=ruleBOOLEAN_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+						}
+						set(
+							$current,
+							"showWallMaterials",
+							lv_showWallMaterials_9_0,
+							"main.game.maze.dsl.MazeDsl.BOOLEAN_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_10='inheritWeapons'
+			{
+				newLeafNode(otherlv_10, grammarAccess.getLevelConfigAccess().getInheritWeaponsKeyword_7_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLevelConfigAccess().getInheritWeaponsBOOLEAN_OBJECTParserRuleCall_7_1_0());
+					}
+					lv_inheritWeapons_11_0=ruleBOOLEAN_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+						}
+						set(
+							$current,
+							"inheritWeapons",
+							lv_inheritWeapons_11_0,
+							"main.game.maze.dsl.MazeDsl.BOOLEAN_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_12='cascadeDepth'
+			{
+				newLeafNode(otherlv_12, grammarAccess.getLevelConfigAccess().getCascadeDepthKeyword_8_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLevelConfigAccess().getCascadeDepthINT_OBJECTParserRuleCall_8_1_0());
+					}
+					lv_cascadeDepth_13_0=ruleINT_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+						}
+						set(
+							$current,
+							"cascadeDepth",
+							lv_cascadeDepth_13_0,
+							"main.game.maze.dsl.MazeDsl.INT_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getZonesLevelZoneParserRuleCall_9_0());
+				}
+				lv_zones_14_0=ruleLevelZone
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					add(
+						$current,
+						"zones",
+						lv_zones_14_0,
+						"main.game.maze.dsl.MazeDsl.LevelZone");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getSergeantSergeantConfigParserRuleCall_10_0());
+				}
+				lv_sergeant_15_0=ruleSergeantConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"sergeant",
+						lv_sergeant_15_0,
+						"main.game.maze.dsl.MazeDsl.SergeantConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getSergeantPostsTierCountConfigParserRuleCall_11_0());
+				}
+				lv_sergeantPosts_16_0=ruleTierCountConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					add(
+						$current,
+						"sergeantPosts",
+						lv_sergeantPosts_16_0,
+						"main.game.maze.dsl.MazeDsl.TierCountConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getMinesMineRingConfigParserRuleCall_12_0());
+				}
+				lv_mines_17_0=ruleMineRingConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"mines",
+						lv_mines_17_0,
+						"main.game.maze.dsl.MazeDsl.MineRingConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getPortalGhostPortalGhostConfigParserRuleCall_13_0());
+				}
+				lv_portalGhost_18_0=rulePortalGhostConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"portalGhost",
+						lv_portalGhost_18_0,
+						"main.game.maze.dsl.MazeDsl.PortalGhostConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getGhostCountsGhostCountConfigParserRuleCall_14_0());
+				}
+				lv_ghostCounts_19_0=ruleGhostCountConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					add(
+						$current,
+						"ghostCounts",
+						lv_ghostCounts_19_0,
+						"main.game.maze.dsl.MazeDsl.GhostCountConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getTeleportTeleportRulesConfigParserRuleCall_15_0());
+				}
+				lv_teleport_20_0=ruleTeleportRulesConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"teleport",
+						lv_teleport_20_0,
+						"main.game.maze.dsl.MazeDsl.TeleportRulesConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_21='}'
+		{
+			newLeafNode(otherlv_21, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_16());
+		}
+	)
+;
+
+// Entry rule entryRuleLevelZone
+entryRuleLevelZone returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLevelZoneRule()); }
+	iv_ruleLevelZone=ruleLevelZone
+	{ $current=$iv_ruleLevelZone.current; }
+	EOF;
+
+// Rule LevelZone
+ruleLevelZone returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='ring'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getLevelZoneAccess().getRingKeyword_0());
+		}
+		(
+			(
+				lv_displayName_1_0=RULE_STRING
+				{
+					newLeafNode(lv_displayName_1_0, grammarAccess.getLevelZoneAccess().getDisplayNameSTRINGTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLevelZoneRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"displayName",
+						lv_displayName_1_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			otherlv_2='share'
+			{
+				newLeafNode(otherlv_2, grammarAccess.getLevelZoneAccess().getShareKeyword_2_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLevelZoneAccess().getBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0());
+					}
+					lv_breakableShare_3_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLevelZoneRule());
+						}
+						set(
+							$current,
+							"breakableShare",
+							lv_breakableShare_3_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		otherlv_4='materials'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getLevelZoneAccess().getMaterialsKeyword_3());
+		}
+		(
+			(
+				lv_materialIds_5_0=RULE_ID
+				{
+					newLeafNode(lv_materialIds_5_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLevelZoneRule());
+					}
+					addWithLastConsumed(
+						$current,
+						"materialIds",
+						lv_materialIds_5_0,
+						"org.eclipse.xtext.common.Terminals.ID");
+				}
+			)
+		)
+		(
+			otherlv_6=','
+			{
+				newLeafNode(otherlv_6, grammarAccess.getLevelZoneAccess().getCommaKeyword_5_0());
+			}
+			(
+				(
+					lv_materialIds_7_0=RULE_ID
+					{
+						newLeafNode(lv_materialIds_7_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLevelZoneRule());
+						}
+						addWithLastConsumed(
+							$current,
+							"materialIds",
+							lv_materialIds_7_0,
+							"org.eclipse.xtext.common.Terminals.ID");
+					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleSergeantConfig
+entryRuleSergeantConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getSergeantConfigRule()); }
+	iv_ruleSergeantConfig=ruleSergeantConfig
+	{ $current=$iv_ruleSergeantConfig.current; }
+	EOF;
+
+// Rule SergeantConfig
+ruleSergeantConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='sergeant'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getSergeantConfigAccess().getSergeantKeyword_0());
+		}
+		(
+			(
+				lv_displayName_1_0=RULE_STRING
+				{
+					newLeafNode(lv_displayName_1_0, grammarAccess.getSergeantConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSergeantConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"displayName",
+						lv_displayName_1_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_2='{'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getSergeantConfigAccess().getLeftCurlyBracketKeyword_2());
+		}
+		otherlv_3='health'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getSergeantConfigAccess().getHealthKeyword_3());
+		}
+		(
+			(
+				lv_health_4_0=RULE_INT
+				{
+					newLeafNode(lv_health_4_0, grammarAccess.getSergeantConfigAccess().getHealthINTTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSergeantConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"health",
+						lv_health_4_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_5='sightRange'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getSergeantConfigAccess().getSightRangeKeyword_5());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSergeantConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0());
+				}
+				lv_sightRange_6_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSergeantConfigRule());
+					}
+					set(
+						$current,
+						"sightRange",
+						lv_sightRange_6_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_7='rounds'
+		{
+			newLeafNode(otherlv_7, grammarAccess.getSergeantConfigAccess().getRoundsKeyword_7());
+		}
+		(
+			(
+				lv_roundsPerBurst_8_0=RULE_INT
+				{
+					newLeafNode(lv_roundsPerBurst_8_0, grammarAccess.getSergeantConfigAccess().getRoundsPerBurstINTTerminalRuleCall_8_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSergeantConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"roundsPerBurst",
+						lv_roundsPerBurst_8_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_9='roundDamage'
+		{
+			newLeafNode(otherlv_9, grammarAccess.getSergeantConfigAccess().getRoundDamageKeyword_9());
+		}
+		(
+			(
+				lv_roundDamage_10_0=RULE_INT
+				{
+					newLeafNode(lv_roundDamage_10_0, grammarAccess.getSergeantConfigAccess().getRoundDamageINTTerminalRuleCall_10_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSergeantConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"roundDamage",
+						lv_roundDamage_10_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_11='roundInterval'
+		{
+			newLeafNode(otherlv_11, grammarAccess.getSergeantConfigAccess().getRoundIntervalKeyword_11());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSergeantConfigAccess().getRoundIntervalSecondsDOUBLEParserRuleCall_12_0());
+				}
+				lv_roundIntervalSeconds_12_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSergeantConfigRule());
+					}
+					set(
+						$current,
+						"roundIntervalSeconds",
+						lv_roundIntervalSeconds_12_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_13='burstCooldown'
+		{
+			newLeafNode(otherlv_13, grammarAccess.getSergeantConfigAccess().getBurstCooldownKeyword_13());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSergeantConfigAccess().getBurstCooldownSecondsDOUBLEParserRuleCall_14_0());
+				}
+				lv_burstCooldownSeconds_14_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSergeantConfigRule());
+					}
+					set(
+						$current,
+						"burstCooldownSeconds",
+						lv_burstCooldownSeconds_14_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_15='sprite'
+		{
+			newLeafNode(otherlv_15, grammarAccess.getSergeantConfigAccess().getSpriteKeyword_15());
+		}
+		(
+			(
+				lv_sprite_16_0=RULE_STRING
+				{
+					newLeafNode(lv_sprite_16_0, grammarAccess.getSergeantConfigAccess().getSpriteSTRINGTerminalRuleCall_16_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSergeantConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"sprite",
+						lv_sprite_16_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			otherlv_17='fireSound'
+			{
+				newLeafNode(otherlv_17, grammarAccess.getSergeantConfigAccess().getFireSoundKeyword_17_0());
+			}
+			(
+				(
+					lv_fireSound_18_0=RULE_STRING
+					{
+						newLeafNode(lv_fireSound_18_0, grammarAccess.getSergeantConfigAccess().getFireSoundSTRINGTerminalRuleCall_17_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getSergeantConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"fireSound",
+							lv_fireSound_18_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_19='drops'
+		{
+			newLeafNode(otherlv_19, grammarAccess.getSergeantConfigAccess().getDropsKeyword_18());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSergeantConfigAccess().getDropWeaponDropWeaponEnumEnumRuleCall_19_0());
+				}
+				lv_dropWeapon_20_0=ruleDropWeaponEnum
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSergeantConfigRule());
+					}
+					set(
+						$current,
+						"dropWeapon",
+						lv_dropWeapon_20_0,
+						"main.game.maze.dsl.MazeDsl.DropWeaponEnum");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_21='postDistance'
+		{
+			newLeafNode(otherlv_21, grammarAccess.getSergeantConfigAccess().getPostDistanceKeyword_20());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSergeantConfigAccess().getPostDistanceFromHeartDOUBLEParserRuleCall_21_0());
+				}
+				lv_postDistanceFromHeart_22_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSergeantConfigRule());
+					}
+					set(
+						$current,
+						"postDistanceFromHeart",
+						lv_postDistanceFromHeart_22_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_23='}'
+		{
+			newLeafNode(otherlv_23, grammarAccess.getSergeantConfigAccess().getRightCurlyBracketKeyword_22());
+		}
+	)
+;
+
+// Entry rule entryRuleTierCountConfig
+entryRuleTierCountConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTierCountConfigRule()); }
+	iv_ruleTierCountConfig=ruleTierCountConfig
+	{ $current=$iv_ruleTierCountConfig.current; }
+	EOF;
+
+// Rule TierCountConfig
+ruleTierCountConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='sergeants'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getTierCountConfigAccess().getSergeantsKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTierCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
+				}
+				lv_difficulty_1_0=ruleDifficultyLevel
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTierCountConfigRule());
+					}
+					set(
+						$current,
+						"difficulty",
+						lv_difficulty_1_0,
+						"main.game.maze.dsl.MazeDsl.DifficultyLevel");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_count_2_0=RULE_INT
+				{
+					newLeafNode(lv_count_2_0, grammarAccess.getTierCountConfigAccess().getCountINTTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTierCountConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"count",
+						lv_count_2_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleMineRingConfig
+entryRuleMineRingConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMineRingConfigRule()); }
+	iv_ruleMineRingConfig=ruleMineRingConfig
+	{ $current=$iv_ruleMineRingConfig.current; }
+	EOF;
+
+// Rule MineRingConfig
+ruleMineRingConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='mines'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getMineRingConfigAccess().getMinesKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getMineRingConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		otherlv_2='count'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getMineRingConfigAccess().getCountKeyword_2());
+		}
+		(
+			(
+				lv_count_3_0=RULE_INT
+				{
+					newLeafNode(lv_count_3_0, grammarAccess.getMineRingConfigAccess().getCountINTTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMineRingConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"count",
+						lv_count_3_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_4='ringRadius'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getMineRingConfigAccess().getRingRadiusKeyword_4());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getRingRadiusDOUBLEParserRuleCall_5_0());
+				}
+				lv_ringRadius_5_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+					}
+					set(
+						$current,
+						"ringRadius",
+						lv_ringRadius_5_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_6='triggerRadius'
+		{
+			newLeafNode(otherlv_6, grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_6());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_7_0());
+				}
+				lv_triggerRadius_7_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+					}
+					set(
+						$current,
+						"triggerRadius",
+						lv_triggerRadius_7_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_8='pulse'
+		{
+			newLeafNode(otherlv_8, grammarAccess.getMineRingConfigAccess().getPulseKeyword_8());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_9_0());
+				}
+				lv_pulseSeconds_9_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+					}
+					set(
+						$current,
+						"pulseSeconds",
+						lv_pulseSeconds_9_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_10='blastRadius'
+		{
+			newLeafNode(otherlv_10, grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_10());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_11_0());
+				}
+				lv_blastRadius_11_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+					}
+					set(
+						$current,
+						"blastRadius",
+						lv_blastRadius_11_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_12='blastDamage'
+		{
+			newLeafNode(otherlv_12, grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_12());
+		}
+		(
+			(
+				lv_blastDamage_13_0=RULE_INT
+				{
+					newLeafNode(lv_blastDamage_13_0, grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_13_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMineRingConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"blastDamage",
+						lv_blastDamage_13_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_14='playerDamage'
+		{
+			newLeafNode(otherlv_14, grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_14());
+		}
+		(
+			(
+				lv_playerDamage_15_0=RULE_INT
+				{
+					newLeafNode(lv_playerDamage_15_0, grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_15_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMineRingConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"playerDamage",
+						lv_playerDamage_15_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_16='holeRadius'
+		{
+			newLeafNode(otherlv_16, grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_16());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_17_0());
+				}
+				lv_holeRadius_17_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+					}
+					set(
+						$current,
+						"holeRadius",
+						lv_holeRadius_17_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_18='}'
+		{
+			newLeafNode(otherlv_18, grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_18());
+		}
+	)
+;
+
+// Entry rule entryRulePortalGhostConfig
+entryRulePortalGhostConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getPortalGhostConfigRule()); }
+	iv_rulePortalGhostConfig=rulePortalGhostConfig
+	{ $current=$iv_rulePortalGhostConfig.current; }
+	EOF;
+
+// Rule PortalGhostConfig
+rulePortalGhostConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='portalGhost'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getPortalGhostConfigAccess().getPortalGhostKeyword_0());
+		}
+		(
+			(
+				lv_displayName_1_0=RULE_STRING
+				{
+					newLeafNode(lv_displayName_1_0, grammarAccess.getPortalGhostConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getPortalGhostConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"displayName",
+						lv_displayName_1_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_2='{'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getPortalGhostConfigAccess().getLeftCurlyBracketKeyword_2());
+		}
+		otherlv_3='health'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getPortalGhostConfigAccess().getHealthKeyword_3());
+		}
+		(
+			(
+				lv_health_4_0=RULE_INT
+				{
+					newLeafNode(lv_health_4_0, grammarAccess.getPortalGhostConfigAccess().getHealthINTTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getPortalGhostConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"health",
+						lv_health_4_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_5='speed'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getPortalGhostConfigAccess().getSpeedKeyword_5());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getPortalGhostConfigAccess().getSpeedDOUBLEParserRuleCall_6_0());
+				}
+				lv_speed_6_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getPortalGhostConfigRule());
+					}
+					set(
+						$current,
+						"speed",
+						lv_speed_6_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_7='sprite'
+		{
+			newLeafNode(otherlv_7, grammarAccess.getPortalGhostConfigAccess().getSpriteKeyword_7());
+		}
+		(
+			(
+				lv_sprite_8_0=RULE_STRING
+				{
+					newLeafNode(lv_sprite_8_0, grammarAccess.getPortalGhostConfigAccess().getSpriteSTRINGTerminalRuleCall_8_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getPortalGhostConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"sprite",
+						lv_sprite_8_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_9='}'
+		{
+			newLeafNode(otherlv_9, grammarAccess.getPortalGhostConfigAccess().getRightCurlyBracketKeyword_9());
+		}
+	)
+;
+
+// Entry rule entryRuleGhostCountConfig
+entryRuleGhostCountConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getGhostCountConfigRule()); }
+	iv_ruleGhostCountConfig=ruleGhostCountConfig
+	{ $current=$iv_ruleGhostCountConfig.current; }
+	EOF;
+
+// Rule GhostCountConfig
+ruleGhostCountConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='portalGhosts'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getGhostCountConfigAccess().getPortalGhostsKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGhostCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
+				}
+				lv_difficulty_1_0=ruleDifficultyLevel
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGhostCountConfigRule());
+					}
+					set(
+						$current,
+						"difficulty",
+						lv_difficulty_1_0,
+						"main.game.maze.dsl.MazeDsl.DifficultyLevel");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_count_2_0=RULE_INT
+				{
+					newLeafNode(lv_count_2_0, grammarAccess.getGhostCountConfigAccess().getCountINTTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGhostCountConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"count",
+						lv_count_2_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleTeleportRulesConfig
+entryRuleTeleportRulesConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTeleportRulesConfigRule()); }
+	iv_ruleTeleportRulesConfig=ruleTeleportRulesConfig
+	{ $current=$iv_ruleTeleportRulesConfig.current; }
+	EOF;
+
+// Rule TeleportRulesConfig
+ruleTeleportRulesConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='teleport'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getTeleportRulesConfigAccess().getTeleportKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getTeleportRulesConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		otherlv_2='cooldown'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getTeleportRulesConfigAccess().getCooldownKeyword_2());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsDOUBLEParserRuleCall_3_0());
+				}
+				lv_cooldownSeconds_3_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTeleportRulesConfigRule());
+					}
+					set(
+						$current,
+						"cooldownSeconds",
+						lv_cooldownSeconds_3_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_4='banner'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getTeleportRulesConfigAccess().getBannerKeyword_4());
+		}
+		(
+			(
+				lv_bannerText_5_0=RULE_STRING
+				{
+					newLeafNode(lv_bannerText_5_0, grammarAccess.getTeleportRulesConfigAccess().getBannerTextSTRINGTerminalRuleCall_5_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTeleportRulesConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"bannerText",
+						lv_bannerText_5_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_6='bannerSeconds'
+		{
+			newLeafNode(otherlv_6, grammarAccess.getTeleportRulesConfigAccess().getBannerSecondsKeyword_6());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTeleportRulesConfigAccess().getBannerSecondsDOUBLEParserRuleCall_7_0());
+				}
+				lv_bannerSeconds_7_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTeleportRulesConfigRule());
+					}
+					set(
+						$current,
+						"bannerSeconds",
+						lv_bannerSeconds_7_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_8='zapSound'
+			{
+				newLeafNode(otherlv_8, grammarAccess.getTeleportRulesConfigAccess().getZapSoundKeyword_8_0());
+			}
+			(
+				(
+					lv_zapSound_9_0=RULE_STRING
+					{
+						newLeafNode(lv_zapSound_9_0, grammarAccess.getTeleportRulesConfigAccess().getZapSoundSTRINGTerminalRuleCall_8_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getTeleportRulesConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"zapSound",
+							lv_zapSound_9_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_10='voiceSound'
+			{
+				newLeafNode(otherlv_10, grammarAccess.getTeleportRulesConfigAccess().getVoiceSoundKeyword_9_0());
+			}
+			(
+				(
+					lv_voiceSound_11_0=RULE_STRING
+					{
+						newLeafNode(lv_voiceSound_11_0, grammarAccess.getTeleportRulesConfigAccess().getVoiceSoundSTRINGTerminalRuleCall_9_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getTeleportRulesConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"voiceSound",
+							lv_voiceSound_11_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_12='}'
+		{
+			newLeafNode(otherlv_12, grammarAccess.getTeleportRulesConfigAccess().getRightCurlyBracketKeyword_10());
 		}
 	)
 ;
@@ -1902,6 +3239,364 @@ ruleBOOLEAN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getBOOLEANAccess().getFalseKeyword_1());
+		}
+	)
+;
+
+// Entry rule entryRuleDOUBLE_OBJECT
+entryRuleDOUBLE_OBJECT returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getDOUBLE_OBJECTRule()); }
+	iv_ruleDOUBLE_OBJECT=ruleDOUBLE_OBJECT
+	{ $current=$iv_ruleDOUBLE_OBJECT.current.getText(); }
+	EOF;
+
+// Rule DOUBLE_OBJECT
+ruleDOUBLE_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			kw='-'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getDOUBLE_OBJECTAccess().getHyphenMinusKeyword_0());
+			}
+		)?
+		this_INT_1=RULE_INT
+		{
+			$current.merge(this_INT_1);
+		}
+		{
+			newLeafNode(this_INT_1, grammarAccess.getDOUBLE_OBJECTAccess().getINTTerminalRuleCall_1());
+		}
+		(
+			kw='.'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getDOUBLE_OBJECTAccess().getFullStopKeyword_2_0());
+			}
+			this_INT_3=RULE_INT
+			{
+				$current.merge(this_INT_3);
+			}
+			{
+				newLeafNode(this_INT_3, grammarAccess.getDOUBLE_OBJECTAccess().getINTTerminalRuleCall_2_1());
+			}
+		)?
+	)
+;
+
+// Entry rule entryRuleINT_OBJECT
+entryRuleINT_OBJECT returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getINT_OBJECTRule()); }
+	iv_ruleINT_OBJECT=ruleINT_OBJECT
+	{ $current=$iv_ruleINT_OBJECT.current.getText(); }
+	EOF;
+
+// Rule INT_OBJECT
+ruleINT_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			kw='-'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getINT_OBJECTAccess().getHyphenMinusKeyword_0());
+			}
+		)?
+		this_INT_1=RULE_INT
+		{
+			$current.merge(this_INT_1);
+		}
+		{
+			newLeafNode(this_INT_1, grammarAccess.getINT_OBJECTAccess().getINTTerminalRuleCall_1());
+		}
+	)
+;
+
+// Entry rule entryRuleBOOLEAN_OBJECT
+entryRuleBOOLEAN_OBJECT returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getBOOLEAN_OBJECTRule()); }
+	iv_ruleBOOLEAN_OBJECT=ruleBOOLEAN_OBJECT
+	{ $current=$iv_ruleBOOLEAN_OBJECT.current.getText(); }
+	EOF;
+
+// Rule BOOLEAN_OBJECT
+ruleBOOLEAN_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw='true'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getBOOLEAN_OBJECTAccess().getTrueKeyword_0());
+		}
+		    |
+		kw='false'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getBOOLEAN_OBJECTAccess().getFalseKeyword_1());
+		}
+	)
+;
+
+// Entry rule entryRuleValidID
+entryRuleValidID returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getValidIDRule()); }
+	iv_ruleValidID=ruleValidID
+	{ $current=$iv_ruleValidID.current.getText(); }
+	EOF;
+
+// Rule ValidID
+ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		this_ID_0=RULE_ID
+		{
+			$current.merge(this_ID_0);
+		}
+		{
+			newLeafNode(this_ID_0, grammarAccess.getValidIDAccess().getIDTerminalRuleCall_0());
+		}
+		    |
+		kw='basedOn'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBasedOnKeyword_1());
+		}
+		    |
+		kw='threatCapacity'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getThreatCapacityKeyword_2());
+		}
+		    |
+		kw='wallMaterials'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWallMaterialsKeyword_3());
+		}
+		    |
+		kw='inheritWeapons'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getInheritWeaponsKeyword_4());
+		}
+		    |
+		kw='cascadeDepth'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getCascadeDepthKeyword_5());
+		}
+		    |
+		kw='ring'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRingKeyword_6());
+		}
+		    |
+		kw='share'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getShareKeyword_7());
+		}
+		    |
+		kw='materials'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getMaterialsKeyword_8());
+		}
+		    |
+		kw='sergeant'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSergeantKeyword_9());
+		}
+		    |
+		kw='sergeants'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSergeantsKeyword_10());
+		}
+		    |
+		kw='sightRange'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSightRangeKeyword_11());
+		}
+		    |
+		kw='rounds'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRoundsKeyword_12());
+		}
+		    |
+		kw='roundDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRoundDamageKeyword_13());
+		}
+		    |
+		kw='roundInterval'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRoundIntervalKeyword_14());
+		}
+		    |
+		kw='burstCooldown'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBurstCooldownKeyword_15());
+		}
+		    |
+		kw='sprite'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSpriteKeyword_16());
+		}
+		    |
+		kw='fireSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFireSoundKeyword_17());
+		}
+		    |
+		kw='drops'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDropsKeyword_18());
+		}
+		    |
+		kw='gatling'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGatlingKeyword_19());
+		}
+		    |
+		kw='postDistance'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPostDistanceKeyword_20());
+		}
+		    |
+		kw='mines'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getMinesKeyword_21());
+		}
+		    |
+		kw='count'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getCountKeyword_22());
+		}
+		    |
+		kw='ringRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRingRadiusKeyword_23());
+		}
+		    |
+		kw='triggerRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTriggerRadiusKeyword_24());
+		}
+		    |
+		kw='pulse'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPulseKeyword_25());
+		}
+		    |
+		kw='blastRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBlastRadiusKeyword_26());
+		}
+		    |
+		kw='blastDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBlastDamageKeyword_27());
+		}
+		    |
+		kw='playerDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPlayerDamageKeyword_28());
+		}
+		    |
+		kw='holeRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getHoleRadiusKeyword_29());
+		}
+		    |
+		kw='portalGhost'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPortalGhostKeyword_30());
+		}
+		    |
+		kw='portalGhosts'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPortalGhostsKeyword_31());
+		}
+		    |
+		kw='teleport'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTeleportKeyword_32());
+		}
+		    |
+		kw='cooldown'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getCooldownKeyword_33());
+		}
+		    |
+		kw='banner'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBannerKeyword_34());
+		}
+		    |
+		kw='bannerSeconds'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBannerSecondsKeyword_35());
+		}
+		    |
+		kw='zapSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getZapSoundKeyword_36());
+		}
+		    |
+		kw='voiceSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37());
 		}
 	)
 ;
@@ -2129,6 +3824,23 @@ ruleLootItemTypeEnum returns [Enumerator current=null]
 				newLeafNode(enumLiteral_3, grammarAccess.getLootItemTypeEnumAccess().getWEAPONEnumLiteralDeclaration_3());
 			}
 		)
+	)
+;
+
+// Rule DropWeaponEnum
+ruleDropWeaponEnum returns [Enumerator current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		enumLiteral_0='gatling'
+		{
+			$current = grammarAccess.getDropWeaponEnumAccess().getGATLING_GUNEnumLiteralDeclaration().getEnumLiteral().getInstance();
+			newLeafNode(enumLiteral_0, grammarAccess.getDropWeaponEnumAccess().getGATLING_GUNEnumLiteralDeclaration());
+		}
 	)
 ;
 
