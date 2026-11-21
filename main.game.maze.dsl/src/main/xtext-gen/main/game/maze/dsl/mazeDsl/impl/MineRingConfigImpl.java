@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getCount <em>Count</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getRingRadius <em>Ring Radius</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getSecondRingRadius <em>Second Ring Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getTriggerRadius <em>Trigger Radius</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getPulseSeconds <em>Pulse Seconds</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.MineRingConfigImpl#getBlastRadius <em>Blast Radius</em>}</li>
@@ -74,6 +75,26 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
    * @ordered
    */
   protected double ringRadius = RING_RADIUS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getSecondRingRadius() <em>Second Ring Radius</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSecondRingRadius()
+   * @generated
+   * @ordered
+   */
+  protected static final double SECOND_RING_RADIUS_EDEFAULT = 0.0;
+
+  /**
+   * The cached value of the '{@link #getSecondRingRadius() <em>Second Ring Radius</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getSecondRingRadius()
+   * @generated
+   * @ordered
+   */
+  protected double secondRingRadius = SECOND_RING_RADIUS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getTriggerRadius() <em>Trigger Radius</em>}' attribute.
@@ -272,6 +293,31 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
+  public double getSecondRingRadius()
+  {
+    return secondRingRadius;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setSecondRingRadius(double newSecondRingRadius)
+  {
+    double oldSecondRingRadius = secondRingRadius;
+    secondRingRadius = newSecondRingRadius;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.MINE_RING_CONFIG__SECOND_RING_RADIUS, oldSecondRingRadius, secondRingRadius));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public double getTriggerRadius()
   {
     return triggerRadius;
@@ -430,6 +476,8 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
         return getCount();
       case MazeDslPackage.MINE_RING_CONFIG__RING_RADIUS:
         return getRingRadius();
+      case MazeDslPackage.MINE_RING_CONFIG__SECOND_RING_RADIUS:
+        return getSecondRingRadius();
       case MazeDslPackage.MINE_RING_CONFIG__TRIGGER_RADIUS:
         return getTriggerRadius();
       case MazeDslPackage.MINE_RING_CONFIG__PULSE_SECONDS:
@@ -461,6 +509,9 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
         return;
       case MazeDslPackage.MINE_RING_CONFIG__RING_RADIUS:
         setRingRadius((Double)newValue);
+        return;
+      case MazeDslPackage.MINE_RING_CONFIG__SECOND_RING_RADIUS:
+        setSecondRingRadius((Double)newValue);
         return;
       case MazeDslPackage.MINE_RING_CONFIG__TRIGGER_RADIUS:
         setTriggerRadius((Double)newValue);
@@ -500,6 +551,9 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
       case MazeDslPackage.MINE_RING_CONFIG__RING_RADIUS:
         setRingRadius(RING_RADIUS_EDEFAULT);
         return;
+      case MazeDslPackage.MINE_RING_CONFIG__SECOND_RING_RADIUS:
+        setSecondRingRadius(SECOND_RING_RADIUS_EDEFAULT);
+        return;
       case MazeDslPackage.MINE_RING_CONFIG__TRIGGER_RADIUS:
         setTriggerRadius(TRIGGER_RADIUS_EDEFAULT);
         return;
@@ -536,6 +590,8 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
         return count != COUNT_EDEFAULT;
       case MazeDslPackage.MINE_RING_CONFIG__RING_RADIUS:
         return ringRadius != RING_RADIUS_EDEFAULT;
+      case MazeDslPackage.MINE_RING_CONFIG__SECOND_RING_RADIUS:
+        return secondRingRadius != SECOND_RING_RADIUS_EDEFAULT;
       case MazeDslPackage.MINE_RING_CONFIG__TRIGGER_RADIUS:
         return triggerRadius != TRIGGER_RADIUS_EDEFAULT;
       case MazeDslPackage.MINE_RING_CONFIG__PULSE_SECONDS:
@@ -567,6 +623,8 @@ public class MineRingConfigImpl extends MinimalEObjectImpl.Container implements 
     result.append(count);
     result.append(", ringRadius: ");
     result.append(ringRadius);
+    result.append(", secondRingRadius: ");
+    result.append(secondRingRadius);
     result.append(", triggerRadius: ");
     result.append(triggerRadius);
     result.append(", pulseSeconds: ");

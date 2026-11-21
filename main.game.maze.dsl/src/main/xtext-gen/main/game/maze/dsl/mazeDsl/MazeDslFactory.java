@@ -213,6 +213,24 @@ public interface MazeDslFactory extends EFactory
   GhostCountConfig createGhostCountConfig();
 
   /**
+   * Returns a new object of class '<em>Guard Tower Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Guard Tower Config</em>'.
+   * @generated
+   */
+  GuardTowerConfig createGuardTowerConfig();
+
+  /**
+   * Returns a new object of class '<em>Tower Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Tower Count Config</em>'.
+   * @generated
+   */
+  TowerCountConfig createTowerCountConfig();
+
+  /**
    * Returns a new object of class '<em>Teleport Rules Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

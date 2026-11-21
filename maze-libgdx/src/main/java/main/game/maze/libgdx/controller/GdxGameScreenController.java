@@ -65,6 +65,7 @@ import main.game.maze.game.level.LevelCatalogLoader;
 import main.game.maze.game.level.LevelProgress;
 import main.game.maze.game.hazard.TeleportFeedback;
 import main.game.maze.libgdx.helper.GdxHazardSupport;
+import main.game.maze.libgdx.helper.GdxGuardTowerSupport;
 import main.game.maze.libgdx.helper.GdxSergeantSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
@@ -179,6 +180,29 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final LevelProgress levelProgress = new LevelProgress(LevelCatalogLoader.loadDefault());
     private final GdxSergeantSupport sergeantSupport = new GdxSergeantSupport();
     private final GdxHazardSupport hazardSupport = new GdxHazardSupport();
+    private final GdxGuardTowerSupport guardTowerSupport = new GdxGuardTowerSupport();
+    /** What the guard towers ask of this screen. */
+    private final GdxGuardTowerSupport.Host guardTowerHost = new GdxGuardTowerSupport.Host() {
+        @Override public int wallsBetween(float fromX, float fromY, float toX, float toY) {
+            return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countSegments(fromX, fromY, toX, toY, maze.walls());
+        }
+        @Override public void blast(float x, float y, int damage, float range, String sound, boolean shake) {
+            detonateBlast(x, y, damage, range, false, "Tower", sound, shake);
+        }
+        @Override public void hurtPlayer(int damage) {
+            combatState.applyDirectDamage(damage);
+        }
+        @Override public void showEffect(main.game.maze.common.graphics.fire.PuffEffect effect) {
+            worldModel.effects().add(new GameWorldModel.ActiveEffect(effect));
+        }
+        @Override public void play(String path, String key, long coolDownMillis) {
+            if (coolDownMillis > 0) {
+                AudioEngine.get().playRateLimited(path, key, coolDownMillis);
+            } else {
+                AudioEngine.get().play(path);
+            }
+        }
+    };
     private final ScoringEngine scoringEngine = new ScoringEngine();
     final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();    private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
     private final GdxGameAudioCoordinator gameAudioCoordinator = new GdxGameAudioCoordinator(gameAudioDirector, visualStyle);
@@ -499,6 +523,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
         tickHazards(dt);
+        if (player != null) {
+            guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
+        }
         // sergeant rounds and mines hurt the player after the combat frame was read: a lethal hit counts now,
         // so it suppresses a win on the goal in this same frame
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.deadAfterExtraDamage(combatFrameDead, combatState);
@@ -572,6 +599,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
      * boom and the screen shake. Only the player's own bomb hurts the player.
      */
     private void detonateBlast(float x, float y, int damage, float range, boolean hurtsPlayer, String label) {
+        detonateBlast(x, y, damage, range, hurtsPlayer, label, BombImpact.SOUND, true);
+    }
+
+    /** As above, with the sound of this blast (null: silent, the caller plays its own) and whether it shakes the screen. */
+    private void detonateBlast(float x, float y, int damage, float range, boolean hurtsPlayer, String label,
+                               String sound, boolean shake) {
         // player.x()/y() are already centre coordinates (see PlayerState.collides);
         // do NOT add halfSize() here.
         float playerCx = hurtsPlayer ? player.x() : Float.NaN;
@@ -606,9 +639,13 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         activePlayerFireBlasts.add(new ActivePlayerFireBlast(blast, PLAYER_FLAME_VISUAL_SECONDS));
 
         // a deep boom and a heavy shake of the whole screen
-        AudioEngine.get().play(BombImpact.SOUND);
-        worldModel.setExplosionShakeRemainingSeconds((float) BombImpact.SHAKE_SECONDS);
-        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), (float) BombImpact.SHAKE_STRENGTH));
+        if (sound != null) {
+            AudioEngine.get().play(sound);
+        }
+        if (shake) {
+            worldModel.setExplosionShakeRemainingSeconds((float) BombImpact.SHAKE_SECONDS);
+            worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), (float) BombImpact.SHAKE_STRENGTH));
+        }
 
         int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
                 animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(),
@@ -825,6 +862,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             worldModel.inheritArsenal(inherited);
         }
         sergeantSupport.reset();
+        guardTowerSupport.reset(levelProgress.current().guardTower());
         if (levelProgress.number() > 1) {
             flashStatus("Level " + levelProgress.number() + ": " + levelProgress.current().name(), 2.5f);
         }

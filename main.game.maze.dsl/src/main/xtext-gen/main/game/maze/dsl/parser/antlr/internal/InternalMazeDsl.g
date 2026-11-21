@@ -2143,9 +2143,47 @@ ruleLevelConfig returns [EObject current=null]
 				}
 			)
 		)?
-		otherlv_21='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getGuardTowerGuardTowerConfigParserRuleCall_16_0());
+				}
+				lv_guardTower_21_0=ruleGuardTowerConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"guardTower",
+						lv_guardTower_21_0,
+						"main.game.maze.dsl.MazeDsl.GuardTowerConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getTowerCountsTowerCountConfigParserRuleCall_17_0());
+				}
+				lv_towerCounts_22_0=ruleTowerCountConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					add(
+						$current,
+						"towerCounts",
+						lv_towerCounts_22_0,
+						"main.game.maze.dsl.MazeDsl.TowerCountConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_23='}'
 		{
-			newLeafNode(otherlv_21, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_16());
+			newLeafNode(otherlv_23, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_18());
 		}
 	)
 ;
@@ -2667,16 +2705,41 @@ ruleMineRingConfig returns [EObject current=null]
 				}
 			)
 		)
-		otherlv_6='triggerRadius'
+		(
+			otherlv_6='secondRing'
+			{
+				newLeafNode(otherlv_6, grammarAccess.getMineRingConfigAccess().getSecondRingKeyword_6_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusDOUBLEParserRuleCall_6_1_0());
+					}
+					lv_secondRingRadius_7_0=ruleDOUBLE
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
+						}
+						set(
+							$current,
+							"secondRingRadius",
+							lv_secondRingRadius_7_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		otherlv_8='triggerRadius'
 		{
-			newLeafNode(otherlv_6, grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_6());
+			newLeafNode(otherlv_8, grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_7());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_7_0());
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_8_0());
 				}
-				lv_triggerRadius_7_0=ruleDOUBLE
+				lv_triggerRadius_9_0=ruleDOUBLE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
@@ -2684,22 +2747,22 @@ ruleMineRingConfig returns [EObject current=null]
 					set(
 						$current,
 						"triggerRadius",
-						lv_triggerRadius_7_0,
+						lv_triggerRadius_9_0,
 						"main.game.maze.dsl.MazeDsl.DOUBLE");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_8='pulse'
+		otherlv_10='pulse'
 		{
-			newLeafNode(otherlv_8, grammarAccess.getMineRingConfigAccess().getPulseKeyword_8());
+			newLeafNode(otherlv_10, grammarAccess.getMineRingConfigAccess().getPulseKeyword_9());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_9_0());
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_10_0());
 				}
-				lv_pulseSeconds_9_0=ruleDOUBLE
+				lv_pulseSeconds_11_0=ruleDOUBLE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
@@ -2707,22 +2770,22 @@ ruleMineRingConfig returns [EObject current=null]
 					set(
 						$current,
 						"pulseSeconds",
-						lv_pulseSeconds_9_0,
+						lv_pulseSeconds_11_0,
 						"main.game.maze.dsl.MazeDsl.DOUBLE");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_10='blastRadius'
+		otherlv_12='blastRadius'
 		{
-			newLeafNode(otherlv_10, grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_10());
+			newLeafNode(otherlv_12, grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_11());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_11_0());
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_12_0());
 				}
-				lv_blastRadius_11_0=ruleDOUBLE
+				lv_blastRadius_13_0=ruleDOUBLE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
@@ -2730,21 +2793,21 @@ ruleMineRingConfig returns [EObject current=null]
 					set(
 						$current,
 						"blastRadius",
-						lv_blastRadius_11_0,
+						lv_blastRadius_13_0,
 						"main.game.maze.dsl.MazeDsl.DOUBLE");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_12='blastDamage'
+		otherlv_14='blastDamage'
 		{
-			newLeafNode(otherlv_12, grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_12());
+			newLeafNode(otherlv_14, grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_13());
 		}
 		(
 			(
-				lv_blastDamage_13_0=RULE_INT
+				lv_blastDamage_15_0=RULE_INT
 				{
-					newLeafNode(lv_blastDamage_13_0, grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_13_0());
+					newLeafNode(lv_blastDamage_15_0, grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_14_0());
 				}
 				{
 					if ($current==null) {
@@ -2753,20 +2816,20 @@ ruleMineRingConfig returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"blastDamage",
-						lv_blastDamage_13_0,
+						lv_blastDamage_15_0,
 						"org.eclipse.xtext.common.Terminals.INT");
 				}
 			)
 		)
-		otherlv_14='playerDamage'
+		otherlv_16='playerDamage'
 		{
-			newLeafNode(otherlv_14, grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_14());
+			newLeafNode(otherlv_16, grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_15());
 		}
 		(
 			(
-				lv_playerDamage_15_0=RULE_INT
+				lv_playerDamage_17_0=RULE_INT
 				{
-					newLeafNode(lv_playerDamage_15_0, grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_15_0());
+					newLeafNode(lv_playerDamage_17_0, grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_16_0());
 				}
 				{
 					if ($current==null) {
@@ -2775,21 +2838,21 @@ ruleMineRingConfig returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"playerDamage",
-						lv_playerDamage_15_0,
+						lv_playerDamage_17_0,
 						"org.eclipse.xtext.common.Terminals.INT");
 				}
 			)
 		)
-		otherlv_16='holeRadius'
+		otherlv_18='holeRadius'
 		{
-			newLeafNode(otherlv_16, grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_16());
+			newLeafNode(otherlv_18, grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_17());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_17_0());
+					newCompositeNode(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_18_0());
 				}
-				lv_holeRadius_17_0=ruleDOUBLE
+				lv_holeRadius_19_0=ruleDOUBLE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMineRingConfigRule());
@@ -2797,15 +2860,15 @@ ruleMineRingConfig returns [EObject current=null]
 					set(
 						$current,
 						"holeRadius",
-						lv_holeRadius_17_0,
+						lv_holeRadius_19_0,
 						"main.game.maze.dsl.MazeDsl.DOUBLE");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_18='}'
+		otherlv_20='}'
 		{
-			newLeafNode(otherlv_18, grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_18());
+			newLeafNode(otherlv_20, grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_19());
 		}
 	)
 ;
@@ -2974,6 +3037,526 @@ ruleGhostCountConfig returns [EObject current=null]
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getGhostCountConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"count",
+						lv_count_2_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleGuardTowerConfig
+entryRuleGuardTowerConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getGuardTowerConfigRule()); }
+	iv_ruleGuardTowerConfig=ruleGuardTowerConfig
+	{ $current=$iv_ruleGuardTowerConfig.current; }
+	EOF;
+
+// Rule GuardTowerConfig
+ruleGuardTowerConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='guardTower'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getGuardTowerConfigAccess().getGuardTowerKeyword_0());
+		}
+		(
+			(
+				lv_displayName_1_0=RULE_STRING
+				{
+					newLeafNode(lv_displayName_1_0, grammarAccess.getGuardTowerConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"displayName",
+						lv_displayName_1_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_2='{'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getGuardTowerConfigAccess().getLeftCurlyBracketKeyword_2());
+		}
+		otherlv_3='health'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getGuardTowerConfigAccess().getHealthKeyword_3());
+		}
+		(
+			(
+				lv_health_4_0=RULE_INT
+				{
+					newLeafNode(lv_health_4_0, grammarAccess.getGuardTowerConfigAccess().getHealthINTTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"health",
+						lv_health_4_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_5='sightRange'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getGuardTowerConfigAccess().getSightRangeKeyword_5());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0());
+				}
+				lv_sightRange_6_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGuardTowerConfigRule());
+					}
+					set(
+						$current,
+						"sightRange",
+						lv_sightRange_6_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_7='wallsOver'
+		{
+			newLeafNode(otherlv_7, grammarAccess.getGuardTowerConfigAccess().getWallsOverKeyword_7());
+		}
+		(
+			(
+				lv_maxWallsOver_8_0=RULE_INT
+				{
+					newLeafNode(lv_maxWallsOver_8_0, grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverINTTerminalRuleCall_8_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"maxWallsOver",
+						lv_maxWallsOver_8_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_9='rpgInterval'
+		{
+			newLeafNode(otherlv_9, grammarAccess.getGuardTowerConfigAccess().getRpgIntervalKeyword_9());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsDOUBLEParserRuleCall_10_0());
+				}
+				lv_rpgIntervalSeconds_10_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGuardTowerConfigRule());
+					}
+					set(
+						$current,
+						"rpgIntervalSeconds",
+						lv_rpgIntervalSeconds_10_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_11='rpgSpeed'
+		{
+			newLeafNode(otherlv_11, grammarAccess.getGuardTowerConfigAccess().getRpgSpeedKeyword_11());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedDOUBLEParserRuleCall_12_0());
+				}
+				lv_rpgSpeed_12_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGuardTowerConfigRule());
+					}
+					set(
+						$current,
+						"rpgSpeed",
+						lv_rpgSpeed_12_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_13='rpgBlastRadius'
+		{
+			newLeafNode(otherlv_13, grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusKeyword_13());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusDOUBLEParserRuleCall_14_0());
+				}
+				lv_rpgBlastRadius_14_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGuardTowerConfigRule());
+					}
+					set(
+						$current,
+						"rpgBlastRadius",
+						lv_rpgBlastRadius_14_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_15='rpgPlayerDamage'
+		{
+			newLeafNode(otherlv_15, grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageKeyword_15());
+		}
+		(
+			(
+				lv_rpgPlayerDamage_16_0=RULE_INT
+				{
+					newLeafNode(lv_rpgPlayerDamage_16_0, grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageINTTerminalRuleCall_16_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"rpgPlayerDamage",
+						lv_rpgPlayerDamage_16_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_17='rpgWallDamage'
+		{
+			newLeafNode(otherlv_17, grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageKeyword_17());
+		}
+		(
+			(
+				lv_rpgWallDamage_18_0=RULE_INT
+				{
+					newLeafNode(lv_rpgWallDamage_18_0, grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageINTTerminalRuleCall_18_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"rpgWallDamage",
+						lv_rpgWallDamage_18_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_19='gatlingRounds'
+		{
+			newLeafNode(otherlv_19, grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsKeyword_19());
+		}
+		(
+			(
+				lv_gatlingRounds_20_0=RULE_INT
+				{
+					newLeafNode(lv_gatlingRounds_20_0, grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsINTTerminalRuleCall_20_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"gatlingRounds",
+						lv_gatlingRounds_20_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_21='gatlingInterval'
+		{
+			newLeafNode(otherlv_21, grammarAccess.getGuardTowerConfigAccess().getGatlingIntervalKeyword_21());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0());
+				}
+				lv_gatlingRoundIntervalSeconds_22_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGuardTowerConfigRule());
+					}
+					set(
+						$current,
+						"gatlingRoundIntervalSeconds",
+						lv_gatlingRoundIntervalSeconds_22_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_23='gatlingDamage'
+		{
+			newLeafNode(otherlv_23, grammarAccess.getGuardTowerConfigAccess().getGatlingDamageKeyword_23());
+		}
+		(
+			(
+				lv_gatlingDamage_24_0=RULE_INT
+				{
+					newLeafNode(lv_gatlingDamage_24_0, grammarAccess.getGuardTowerConfigAccess().getGatlingDamageINTTerminalRuleCall_24_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"gatlingDamage",
+						lv_gatlingDamage_24_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_25='deathBlast'
+		{
+			newLeafNode(otherlv_25, grammarAccess.getGuardTowerConfigAccess().getDeathBlastKeyword_25());
+		}
+		(
+			(
+				lv_deathBlastDamage_26_0=RULE_INT
+				{
+					newLeafNode(lv_deathBlastDamage_26_0, grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageINTTerminalRuleCall_26_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"deathBlastDamage",
+						lv_deathBlastDamage_26_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_27='sprite'
+		{
+			newLeafNode(otherlv_27, grammarAccess.getGuardTowerConfigAccess().getSpriteKeyword_27());
+		}
+		(
+			(
+				lv_sprite_28_0=RULE_STRING
+				{
+					newLeafNode(lv_sprite_28_0, grammarAccess.getGuardTowerConfigAccess().getSpriteSTRINGTerminalRuleCall_28_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"sprite",
+						lv_sprite_28_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			otherlv_29='rpgLaunchSound'
+			{
+				newLeafNode(otherlv_29, grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundKeyword_29_0());
+			}
+			(
+				(
+					lv_rpgLaunchSound_30_0=RULE_STRING
+					{
+						newLeafNode(lv_rpgLaunchSound_30_0, grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"rpgLaunchSound",
+							lv_rpgLaunchSound_30_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_31='rpgExplosionSound'
+			{
+				newLeafNode(otherlv_31, grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundKeyword_30_0());
+			}
+			(
+				(
+					lv_rpgExplosionSound_32_0=RULE_STRING
+					{
+						newLeafNode(lv_rpgExplosionSound_32_0, grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"rpgExplosionSound",
+							lv_rpgExplosionSound_32_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_33='gatlingSound'
+			{
+				newLeafNode(otherlv_33, grammarAccess.getGuardTowerConfigAccess().getGatlingSoundKeyword_31_0());
+			}
+			(
+				(
+					lv_gatlingSound_34_0=RULE_STRING
+					{
+						newLeafNode(lv_gatlingSound_34_0, grammarAccess.getGuardTowerConfigAccess().getGatlingSoundSTRINGTerminalRuleCall_31_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"gatlingSound",
+							lv_gatlingSound_34_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_35='hitSound'
+			{
+				newLeafNode(otherlv_35, grammarAccess.getGuardTowerConfigAccess().getHitSoundKeyword_32_0());
+			}
+			(
+				(
+					lv_hitSound_36_0=RULE_STRING
+					{
+						newLeafNode(lv_hitSound_36_0, grammarAccess.getGuardTowerConfigAccess().getHitSoundSTRINGTerminalRuleCall_32_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"hitSound",
+							lv_hitSound_36_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_37='destroyedSound'
+			{
+				newLeafNode(otherlv_37, grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundKeyword_33_0());
+			}
+			(
+				(
+					lv_destroyedSound_38_0=RULE_STRING
+					{
+						newLeafNode(lv_destroyedSound_38_0, grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundSTRINGTerminalRuleCall_33_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getGuardTowerConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"destroyedSound",
+							lv_destroyedSound_38_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_39='}'
+		{
+			newLeafNode(otherlv_39, grammarAccess.getGuardTowerConfigAccess().getRightCurlyBracketKeyword_34());
+		}
+	)
+;
+
+// Entry rule entryRuleTowerCountConfig
+entryRuleTowerCountConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTowerCountConfigRule()); }
+	iv_ruleTowerCountConfig=ruleTowerCountConfig
+	{ $current=$iv_ruleTowerCountConfig.current; }
+	EOF;
+
+// Rule TowerCountConfig
+ruleTowerCountConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='towers'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getTowerCountConfigAccess().getTowersKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
+				}
+				lv_difficulty_1_0=ruleDifficultyLevel
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getTowerCountConfigRule());
+					}
+					set(
+						$current,
+						"difficulty",
+						lv_difficulty_1_0,
+						"main.game.maze.dsl.MazeDsl.DifficultyLevel");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_count_2_0=RULE_INT
+				{
+					newLeafNode(lv_count_2_0, grammarAccess.getTowerCountConfigAccess().getCountINTTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getTowerCountConfigRule());
 					}
 					setWithLastConsumed(
 						$current,
@@ -3597,6 +4180,114 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37());
+		}
+		    |
+		kw='secondRing'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSecondRingKeyword_38());
+		}
+		    |
+		kw='guardTower'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGuardTowerKeyword_39());
+		}
+		    |
+		kw='towers'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTowersKeyword_40());
+		}
+		    |
+		kw='wallsOver'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWallsOverKeyword_41());
+		}
+		    |
+		kw='rpgInterval'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgIntervalKeyword_42());
+		}
+		    |
+		kw='rpgSpeed'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgSpeedKeyword_43());
+		}
+		    |
+		kw='rpgBlastRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgBlastRadiusKeyword_44());
+		}
+		    |
+		kw='rpgPlayerDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgPlayerDamageKeyword_45());
+		}
+		    |
+		kw='rpgWallDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgWallDamageKeyword_46());
+		}
+		    |
+		kw='gatlingRounds'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGatlingRoundsKeyword_47());
+		}
+		    |
+		kw='gatlingInterval'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGatlingIntervalKeyword_48());
+		}
+		    |
+		kw='gatlingDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGatlingDamageKeyword_49());
+		}
+		    |
+		kw='deathBlast'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDeathBlastKeyword_50());
+		}
+		    |
+		kw='rpgLaunchSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgLaunchSoundKeyword_51());
+		}
+		    |
+		kw='rpgExplosionSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getRpgExplosionSoundKeyword_52());
+		}
+		    |
+		kw='gatlingSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGatlingSoundKeyword_53());
+		}
+		    |
+		kw='hitSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getHitSoundKeyword_54());
+		}
+		    |
+		kw='destroyedSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDestroyedSoundKeyword_55());
 		}
 	)
 ;

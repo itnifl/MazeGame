@@ -22,14 +22,15 @@ class LevelCatalogTest {
     @Test
     @DisplayName("the shipped model has the classic first level and a second level")
     void shippedLevels() {
-        assertEquals(3, CATALOG.count());
+        assertEquals(4, CATALOG.count());
         LevelSpec first = CATALOG.level(1);
         assertFalse(first.hasZones(), "level 1 keeps the classic random walls");
         assertFalse(first.hasSergeants());
         assertEquals(1.0, first.threatCapacityFactor(), 1e-9);
         assertTrue(CATALOG.hasNext(1));
         assertTrue(CATALOG.hasNext(2));
-        assertFalse(CATALOG.hasNext(3), "level 3 is the last one for now");
+        assertTrue(CATALOG.hasNext(3));
+        assertFalse(CATALOG.hasNext(4), "level 4 is the last one for now");
     }
 
     @Test
@@ -92,7 +93,7 @@ class LevelCatalogTest {
     @DisplayName("an unknown level number is rejected")
     void unknownLevel() {
         assertThrows(IllegalArgumentException.class, () -> CATALOG.level(0));
-        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(4));
+        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(5));
     }
 
     @Test
@@ -210,6 +211,42 @@ class LevelCatalogTest {
         TeleportGhostSpec ghost = three.teleportGhost();
         assertTrue(TeleportGhostSpec.isPortalGhostId(TeleportGhostSpec.SPAWN_ID_PREFIX + "_3"));
         assertTrue(three.teleport().cooldownSeconds() > 0, "no instant bounce-back");
+    }
+
+    @Test
+    @DisplayName("level 4 is level 3 plus a second circle of mines, doubling the mines on the map")
+    void levelFourDoublesTheMines() {
+        LevelSpec three = CATALOG.level(3);
+        LevelSpec four = CATALOG.level(4);
+        assertEquals(0, three.mines().secondRingRadius(), "level 3 has one circle");
+        assertEquals(three.mines().count(), four.mines().count());
+        assertTrue(four.mines().secondRingRadius() > four.mines().ringRadius() + 2 * four.mines().triggerRadius(),
+                "the second circle keeps some distance from the inner one");
+        assertEquals(2 * three.mines().minesPerSergeant(), four.mines().minesPerSergeant());
+        assertEquals(three.zones().size(), four.zones().size());
+        assertTrue(four.hasTeleportGhosts(), "ghosts, sergeants and teleport come from the levels below");
+        assertEquals(three.ghostCount(DifficultyTier.HARD), four.ghostCount(DifficultyTier.HARD));
+        assertEquals(three.sergeantCount(DifficultyTier.HARD), four.sergeantCount(DifficultyTier.HARD));
+    }
+
+    @Test
+    @DisplayName("level 4 adds guard towers: 2 on easy, 3 on normal, 4 on hard; levels 1 to 3 have none")
+    void levelFourHasGuardTowers() {
+        for (int number = 1; number <= 3; number++) {
+            assertFalse(CATALOG.level(number).hasTowers());
+            assertEquals(0, CATALOG.level(number).towerCount(DifficultyTier.HARD));
+        }
+        LevelSpec four = CATALOG.level(4);
+        assertTrue(four.hasTowers());
+        assertEquals(2, four.towerCount(DifficultyTier.EASY));
+        assertEquals(3, four.towerCount(DifficultyTier.NORMAL));
+        assertEquals(4, four.towerCount(DifficultyTier.HARD));
+        GuardTowerSpec tower = four.guardTower();
+        assertEquals(3, tower.maxWallsOver(), "shoots over walls, but only up to 3");
+        assertEquals(3.0, tower.rpgIntervalSeconds(), 1e-9, "an rpg every 3 seconds");
+        assertEquals(1.5, tower.gatlingStartSeconds(), 1e-9, "the gatling fires in between");
+        assertTrue(tower.health() >= 5 * CATALOG.level(2).sergeant().health(), "takes a whole lot of damage");
+        assertTrue(GuardTowerSpec.isTowerId(GuardTowerSpec.SPAWN_ID_PREFIX + "_1"));
     }
 
     @Test

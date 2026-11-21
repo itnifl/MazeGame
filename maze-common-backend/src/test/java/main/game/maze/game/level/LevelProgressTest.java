@@ -67,6 +67,7 @@ class LevelProgressTest {
     void cannotAdvancePastTheLastLevel() {
         progress.advance(new PlayerArsenal(1));
         progress.advance(new PlayerArsenal(1));
+        progress.advance(new PlayerArsenal(1));
         assertFalse(progress.hasNext());
         assertThrows(IllegalStateException.class, () -> progress.advance(new PlayerArsenal(1)));
     }

@@ -574,6 +574,56 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleGuardTowerConfig
+entryRuleGuardTowerConfig
+:
+{ before(grammarAccess.getGuardTowerConfigRule()); }
+	 ruleGuardTowerConfig
+{ after(grammarAccess.getGuardTowerConfigRule()); } 
+	 EOF 
+;
+
+// Rule GuardTowerConfig
+ruleGuardTowerConfig 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getGroup()); }
+		(rule__GuardTowerConfig__Group__0)
+		{ after(grammarAccess.getGuardTowerConfigAccess().getGroup()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+// Entry rule entryRuleTowerCountConfig
+entryRuleTowerCountConfig
+:
+{ before(grammarAccess.getTowerCountConfigRule()); }
+	 ruleTowerCountConfig
+{ after(grammarAccess.getTowerCountConfigRule()); } 
+	 EOF 
+;
+
+// Rule TowerCountConfig
+ruleTowerCountConfig 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getTowerCountConfigAccess().getGroup()); }
+		(rule__TowerCountConfig__Group__0)
+		{ after(grammarAccess.getTowerCountConfigAccess().getGroup()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Entry rule entryRuleTeleportRulesConfig
 entryRuleTeleportRulesConfig
 :
@@ -1186,6 +1236,114 @@ rule__ValidID__Alternatives
 		{ before(grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37()); }
 		'voiceSound'
 		{ after(grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSecondRingKeyword_38()); }
+		'secondRing'
+		{ after(grammarAccess.getValidIDAccess().getSecondRingKeyword_38()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGuardTowerKeyword_39()); }
+		'guardTower'
+		{ after(grammarAccess.getValidIDAccess().getGuardTowerKeyword_39()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getTowersKeyword_40()); }
+		'towers'
+		{ after(grammarAccess.getValidIDAccess().getTowersKeyword_40()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getWallsOverKeyword_41()); }
+		'wallsOver'
+		{ after(grammarAccess.getValidIDAccess().getWallsOverKeyword_41()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgIntervalKeyword_42()); }
+		'rpgInterval'
+		{ after(grammarAccess.getValidIDAccess().getRpgIntervalKeyword_42()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgSpeedKeyword_43()); }
+		'rpgSpeed'
+		{ after(grammarAccess.getValidIDAccess().getRpgSpeedKeyword_43()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgBlastRadiusKeyword_44()); }
+		'rpgBlastRadius'
+		{ after(grammarAccess.getValidIDAccess().getRpgBlastRadiusKeyword_44()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgPlayerDamageKeyword_45()); }
+		'rpgPlayerDamage'
+		{ after(grammarAccess.getValidIDAccess().getRpgPlayerDamageKeyword_45()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgWallDamageKeyword_46()); }
+		'rpgWallDamage'
+		{ after(grammarAccess.getValidIDAccess().getRpgWallDamageKeyword_46()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGatlingRoundsKeyword_47()); }
+		'gatlingRounds'
+		{ after(grammarAccess.getValidIDAccess().getGatlingRoundsKeyword_47()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGatlingIntervalKeyword_48()); }
+		'gatlingInterval'
+		{ after(grammarAccess.getValidIDAccess().getGatlingIntervalKeyword_48()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGatlingDamageKeyword_49()); }
+		'gatlingDamage'
+		{ after(grammarAccess.getValidIDAccess().getGatlingDamageKeyword_49()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getDeathBlastKeyword_50()); }
+		'deathBlast'
+		{ after(grammarAccess.getValidIDAccess().getDeathBlastKeyword_50()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgLaunchSoundKeyword_51()); }
+		'rpgLaunchSound'
+		{ after(grammarAccess.getValidIDAccess().getRpgLaunchSoundKeyword_51()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRpgExplosionSoundKeyword_52()); }
+		'rpgExplosionSound'
+		{ after(grammarAccess.getValidIDAccess().getRpgExplosionSoundKeyword_52()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGatlingSoundKeyword_53()); }
+		'gatlingSound'
+		{ after(grammarAccess.getValidIDAccess().getGatlingSoundKeyword_53()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getHitSoundKeyword_54()); }
+		'hitSound'
+		{ after(grammarAccess.getValidIDAccess().getHitSoundKeyword_54()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getDestroyedSoundKeyword_55()); }
+		'destroyedSound'
+		{ after(grammarAccess.getValidIDAccess().getDestroyedSoundKeyword_55()); }
 	)
 ;
 finally {
@@ -6374,6 +6532,7 @@ rule__LevelConfig__Group__16
 	}
 :
 	rule__LevelConfig__Group__16__Impl
+	rule__LevelConfig__Group__17
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -6385,9 +6544,62 @@ rule__LevelConfig__Group__16__Impl
 	}
 :
 (
-	{ before(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_16()); }
+	{ before(grammarAccess.getLevelConfigAccess().getGuardTowerAssignment_16()); }
+	(rule__LevelConfig__GuardTowerAssignment_16)?
+	{ after(grammarAccess.getLevelConfigAccess().getGuardTowerAssignment_16()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__17
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__LevelConfig__Group__17__Impl
+	rule__LevelConfig__Group__18
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__17__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getLevelConfigAccess().getTowerCountsAssignment_17()); }
+	(rule__LevelConfig__TowerCountsAssignment_17)*
+	{ after(grammarAccess.getLevelConfigAccess().getTowerCountsAssignment_17()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__18
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__LevelConfig__Group__18__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__18__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_18()); }
 	'}'
-	{ after(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_16()); }
+	{ after(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_18()); }
 )
 ;
 finally {
@@ -7871,9 +8083,9 @@ rule__MineRingConfig__Group__6__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_6()); }
-	'triggerRadius'
-	{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_6()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getGroup_6()); }
+	(rule__MineRingConfig__Group_6__0)?
+	{ after(grammarAccess.getMineRingConfigAccess().getGroup_6()); }
 )
 ;
 finally {
@@ -7898,9 +8110,9 @@ rule__MineRingConfig__Group__7__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusAssignment_7()); }
-	(rule__MineRingConfig__TriggerRadiusAssignment_7)
-	{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusAssignment_7()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_7()); }
+	'triggerRadius'
+	{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_7()); }
 )
 ;
 finally {
@@ -7925,9 +8137,9 @@ rule__MineRingConfig__Group__8__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getPulseKeyword_8()); }
-	'pulse'
-	{ after(grammarAccess.getMineRingConfigAccess().getPulseKeyword_8()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusAssignment_8()); }
+	(rule__MineRingConfig__TriggerRadiusAssignment_8)
+	{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusAssignment_8()); }
 )
 ;
 finally {
@@ -7952,9 +8164,9 @@ rule__MineRingConfig__Group__9__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getPulseSecondsAssignment_9()); }
-	(rule__MineRingConfig__PulseSecondsAssignment_9)
-	{ after(grammarAccess.getMineRingConfigAccess().getPulseSecondsAssignment_9()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getPulseKeyword_9()); }
+	'pulse'
+	{ after(grammarAccess.getMineRingConfigAccess().getPulseKeyword_9()); }
 )
 ;
 finally {
@@ -7979,9 +8191,9 @@ rule__MineRingConfig__Group__10__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_10()); }
-	'blastRadius'
-	{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_10()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getPulseSecondsAssignment_10()); }
+	(rule__MineRingConfig__PulseSecondsAssignment_10)
+	{ after(grammarAccess.getMineRingConfigAccess().getPulseSecondsAssignment_10()); }
 )
 ;
 finally {
@@ -8006,9 +8218,9 @@ rule__MineRingConfig__Group__11__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusAssignment_11()); }
-	(rule__MineRingConfig__BlastRadiusAssignment_11)
-	{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusAssignment_11()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_11()); }
+	'blastRadius'
+	{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_11()); }
 )
 ;
 finally {
@@ -8033,9 +8245,9 @@ rule__MineRingConfig__Group__12__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_12()); }
-	'blastDamage'
-	{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_12()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusAssignment_12()); }
+	(rule__MineRingConfig__BlastRadiusAssignment_12)
+	{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusAssignment_12()); }
 )
 ;
 finally {
@@ -8060,9 +8272,9 @@ rule__MineRingConfig__Group__13__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageAssignment_13()); }
-	(rule__MineRingConfig__BlastDamageAssignment_13)
-	{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageAssignment_13()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_13()); }
+	'blastDamage'
+	{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_13()); }
 )
 ;
 finally {
@@ -8087,9 +8299,9 @@ rule__MineRingConfig__Group__14__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_14()); }
-	'playerDamage'
-	{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_14()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageAssignment_14()); }
+	(rule__MineRingConfig__BlastDamageAssignment_14)
+	{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageAssignment_14()); }
 )
 ;
 finally {
@@ -8114,9 +8326,9 @@ rule__MineRingConfig__Group__15__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageAssignment_15()); }
-	(rule__MineRingConfig__PlayerDamageAssignment_15)
-	{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageAssignment_15()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_15()); }
+	'playerDamage'
+	{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_15()); }
 )
 ;
 finally {
@@ -8141,9 +8353,9 @@ rule__MineRingConfig__Group__16__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_16()); }
-	'holeRadius'
-	{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_16()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageAssignment_16()); }
+	(rule__MineRingConfig__PlayerDamageAssignment_16)
+	{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageAssignment_16()); }
 )
 ;
 finally {
@@ -8168,9 +8380,9 @@ rule__MineRingConfig__Group__17__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusAssignment_17()); }
-	(rule__MineRingConfig__HoleRadiusAssignment_17)
-	{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusAssignment_17()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_17()); }
+	'holeRadius'
+	{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_17()); }
 )
 ;
 finally {
@@ -8183,6 +8395,7 @@ rule__MineRingConfig__Group__18
 	}
 :
 	rule__MineRingConfig__Group__18__Impl
+	rule__MineRingConfig__Group__19
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -8194,9 +8407,89 @@ rule__MineRingConfig__Group__18__Impl
 	}
 :
 (
-	{ before(grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_18()); }
+	{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusAssignment_18()); }
+	(rule__MineRingConfig__HoleRadiusAssignment_18)
+	{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusAssignment_18()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__Group__19
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__MineRingConfig__Group__19__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__Group__19__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_19()); }
 	'}'
-	{ after(grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_18()); }
+	{ after(grammarAccess.getMineRingConfigAccess().getRightCurlyBracketKeyword_19()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__MineRingConfig__Group_6__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__MineRingConfig__Group_6__0__Impl
+	rule__MineRingConfig__Group_6__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__Group_6__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getMineRingConfigAccess().getSecondRingKeyword_6_0()); }
+	'secondRing'
+	{ after(grammarAccess.getMineRingConfigAccess().getSecondRingKeyword_6_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__Group_6__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__MineRingConfig__Group_6__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__Group_6__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusAssignment_6_1()); }
+	(rule__MineRingConfig__SecondRingRadiusAssignment_6_1)
+	{ after(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusAssignment_6_1()); }
 )
 ;
 finally {
@@ -8548,6 +8841,1302 @@ rule__GhostCountConfig__Group__2__Impl
 	{ before(grammarAccess.getGhostCountConfigAccess().getCountAssignment_2()); }
 	(rule__GhostCountConfig__CountAssignment_2)
 	{ after(grammarAccess.getGhostCountConfigAccess().getCountAssignment_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__0__Impl
+	rule__GuardTowerConfig__Group__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGuardTowerKeyword_0()); }
+	'guardTower'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGuardTowerKeyword_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__1__Impl
+	rule__GuardTowerConfig__Group__2
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getDisplayNameAssignment_1()); }
+	(rule__GuardTowerConfig__DisplayNameAssignment_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getDisplayNameAssignment_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__2__Impl
+	rule__GuardTowerConfig__Group__3
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getLeftCurlyBracketKeyword_2()); }
+	'{'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getLeftCurlyBracketKeyword_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__3__Impl
+	rule__GuardTowerConfig__Group__4
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getHealthKeyword_3()); }
+	'health'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getHealthKeyword_3()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__4__Impl
+	rule__GuardTowerConfig__Group__5
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__4__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getHealthAssignment_4()); }
+	(rule__GuardTowerConfig__HealthAssignment_4)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getHealthAssignment_4()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__5__Impl
+	rule__GuardTowerConfig__Group__6
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__5__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getSightRangeKeyword_5()); }
+	'sightRange'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getSightRangeKeyword_5()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__6
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__6__Impl
+	rule__GuardTowerConfig__Group__7
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__6__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getSightRangeAssignment_6()); }
+	(rule__GuardTowerConfig__SightRangeAssignment_6)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getSightRangeAssignment_6()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__7
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__7__Impl
+	rule__GuardTowerConfig__Group__8
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__7__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getWallsOverKeyword_7()); }
+	'wallsOver'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getWallsOverKeyword_7()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__8
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__8__Impl
+	rule__GuardTowerConfig__Group__9
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__8__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverAssignment_8()); }
+	(rule__GuardTowerConfig__MaxWallsOverAssignment_8)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverAssignment_8()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__9
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__9__Impl
+	rule__GuardTowerConfig__Group__10
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__9__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalKeyword_9()); }
+	'rpgInterval'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalKeyword_9()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__10
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__10__Impl
+	rule__GuardTowerConfig__Group__11
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__10__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsAssignment_10()); }
+	(rule__GuardTowerConfig__RpgIntervalSecondsAssignment_10)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsAssignment_10()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__11
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__11__Impl
+	rule__GuardTowerConfig__Group__12
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__11__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedKeyword_11()); }
+	'rpgSpeed'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedKeyword_11()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__12
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__12__Impl
+	rule__GuardTowerConfig__Group__13
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__12__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedAssignment_12()); }
+	(rule__GuardTowerConfig__RpgSpeedAssignment_12)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedAssignment_12()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__13
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__13__Impl
+	rule__GuardTowerConfig__Group__14
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__13__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusKeyword_13()); }
+	'rpgBlastRadius'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusKeyword_13()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__14
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__14__Impl
+	rule__GuardTowerConfig__Group__15
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__14__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusAssignment_14()); }
+	(rule__GuardTowerConfig__RpgBlastRadiusAssignment_14)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusAssignment_14()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__15
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__15__Impl
+	rule__GuardTowerConfig__Group__16
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__15__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageKeyword_15()); }
+	'rpgPlayerDamage'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageKeyword_15()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__16__Impl
+	rule__GuardTowerConfig__Group__17
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__16__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageAssignment_16()); }
+	(rule__GuardTowerConfig__RpgPlayerDamageAssignment_16)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageAssignment_16()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__17
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__17__Impl
+	rule__GuardTowerConfig__Group__18
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__17__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageKeyword_17()); }
+	'rpgWallDamage'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageKeyword_17()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__18
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__18__Impl
+	rule__GuardTowerConfig__Group__19
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__18__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageAssignment_18()); }
+	(rule__GuardTowerConfig__RpgWallDamageAssignment_18)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageAssignment_18()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__19
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__19__Impl
+	rule__GuardTowerConfig__Group__20
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__19__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsKeyword_19()); }
+	'gatlingRounds'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsKeyword_19()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__20
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__20__Impl
+	rule__GuardTowerConfig__Group__21
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__20__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsAssignment_20()); }
+	(rule__GuardTowerConfig__GatlingRoundsAssignment_20)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsAssignment_20()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__21
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__21__Impl
+	rule__GuardTowerConfig__Group__22
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__21__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingIntervalKeyword_21()); }
+	'gatlingInterval'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingIntervalKeyword_21()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__22
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__22__Impl
+	rule__GuardTowerConfig__Group__23
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__22__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsAssignment_22()); }
+	(rule__GuardTowerConfig__GatlingRoundIntervalSecondsAssignment_22)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsAssignment_22()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__23
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__23__Impl
+	rule__GuardTowerConfig__Group__24
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__23__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageKeyword_23()); }
+	'gatlingDamage'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageKeyword_23()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__24
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__24__Impl
+	rule__GuardTowerConfig__Group__25
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__24__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageAssignment_24()); }
+	(rule__GuardTowerConfig__GatlingDamageAssignment_24)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageAssignment_24()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__25
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__25__Impl
+	rule__GuardTowerConfig__Group__26
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__25__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getDeathBlastKeyword_25()); }
+	'deathBlast'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getDeathBlastKeyword_25()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__26
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__26__Impl
+	rule__GuardTowerConfig__Group__27
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__26__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageAssignment_26()); }
+	(rule__GuardTowerConfig__DeathBlastDamageAssignment_26)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageAssignment_26()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__27
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__27__Impl
+	rule__GuardTowerConfig__Group__28
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__27__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getSpriteKeyword_27()); }
+	'sprite'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getSpriteKeyword_27()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__28
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__28__Impl
+	rule__GuardTowerConfig__Group__29
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__28__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getSpriteAssignment_28()); }
+	(rule__GuardTowerConfig__SpriteAssignment_28)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getSpriteAssignment_28()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__29
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__29__Impl
+	rule__GuardTowerConfig__Group__30
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__29__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGroup_29()); }
+	(rule__GuardTowerConfig__Group_29__0)?
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGroup_29()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__30
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__30__Impl
+	rule__GuardTowerConfig__Group__31
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__30__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGroup_30()); }
+	(rule__GuardTowerConfig__Group_30__0)?
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGroup_30()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__31
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__31__Impl
+	rule__GuardTowerConfig__Group__32
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__31__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGroup_31()); }
+	(rule__GuardTowerConfig__Group_31__0)?
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGroup_31()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__32
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__32__Impl
+	rule__GuardTowerConfig__Group__33
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__32__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGroup_32()); }
+	(rule__GuardTowerConfig__Group_32__0)?
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGroup_32()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__33
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__33__Impl
+	rule__GuardTowerConfig__Group__34
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__33__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGroup_33()); }
+	(rule__GuardTowerConfig__Group_33__0)?
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGroup_33()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__34
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group__34__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group__34__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRightCurlyBracketKeyword_34()); }
+	'}'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRightCurlyBracketKeyword_34()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group_29__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_29__0__Impl
+	rule__GuardTowerConfig__Group_29__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_29__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundKeyword_29_0()); }
+	'rpgLaunchSound'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundKeyword_29_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_29__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_29__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_29__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundAssignment_29_1()); }
+	(rule__GuardTowerConfig__RpgLaunchSoundAssignment_29_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundAssignment_29_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group_30__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_30__0__Impl
+	rule__GuardTowerConfig__Group_30__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_30__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundKeyword_30_0()); }
+	'rpgExplosionSound'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundKeyword_30_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_30__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_30__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_30__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundAssignment_30_1()); }
+	(rule__GuardTowerConfig__RpgExplosionSoundAssignment_30_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundAssignment_30_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group_31__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_31__0__Impl
+	rule__GuardTowerConfig__Group_31__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_31__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundKeyword_31_0()); }
+	'gatlingSound'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundKeyword_31_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_31__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_31__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_31__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundAssignment_31_1()); }
+	(rule__GuardTowerConfig__GatlingSoundAssignment_31_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundAssignment_31_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group_32__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_32__0__Impl
+	rule__GuardTowerConfig__Group_32__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_32__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getHitSoundKeyword_32_0()); }
+	'hitSound'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getHitSoundKeyword_32_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_32__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_32__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_32__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getHitSoundAssignment_32_1()); }
+	(rule__GuardTowerConfig__HitSoundAssignment_32_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getHitSoundAssignment_32_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__GuardTowerConfig__Group_33__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_33__0__Impl
+	rule__GuardTowerConfig__Group_33__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_33__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundKeyword_33_0()); }
+	'destroyedSound'
+	{ after(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundKeyword_33_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_33__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__GuardTowerConfig__Group_33__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__Group_33__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundAssignment_33_1()); }
+	(rule__GuardTowerConfig__DestroyedSoundAssignment_33_1)
+	{ after(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundAssignment_33_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__TowerCountConfig__Group__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__TowerCountConfig__Group__0__Impl
+	rule__TowerCountConfig__Group__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__Group__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getTowerCountConfigAccess().getTowersKeyword_0()); }
+	'towers'
+	{ after(grammarAccess.getTowerCountConfigAccess().getTowersKeyword_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__Group__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__TowerCountConfig__Group__1__Impl
+	rule__TowerCountConfig__Group__2
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__Group__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getTowerCountConfigAccess().getDifficultyAssignment_1()); }
+	(rule__TowerCountConfig__DifficultyAssignment_1)
+	{ after(grammarAccess.getTowerCountConfigAccess().getDifficultyAssignment_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__Group__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__TowerCountConfig__Group__2__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__Group__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getTowerCountConfigAccess().getCountAssignment_2()); }
+	(rule__TowerCountConfig__CountAssignment_2)
+	{ after(grammarAccess.getTowerCountConfigAccess().getCountAssignment_2()); }
 )
 ;
 finally {
@@ -10430,6 +12019,36 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__LevelConfig__GuardTowerAssignment_16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getLevelConfigAccess().getGuardTowerGuardTowerConfigParserRuleCall_16_0()); }
+		ruleGuardTowerConfig
+		{ after(grammarAccess.getLevelConfigAccess().getGuardTowerGuardTowerConfigParserRuleCall_16_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__TowerCountsAssignment_17
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getLevelConfigAccess().getTowerCountsTowerCountConfigParserRuleCall_17_0()); }
+		ruleTowerCountConfig
+		{ after(grammarAccess.getLevelConfigAccess().getTowerCountsTowerCountConfigParserRuleCall_17_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__LevelZone__DisplayNameAssignment_1
 	@init {
 		int stackSize = keepStackSize();
@@ -10715,90 +12334,105 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__TriggerRadiusAssignment_7
+rule__MineRingConfig__SecondRingRadiusAssignment_6_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_7_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusDOUBLEParserRuleCall_6_1_0()); }
 		ruleDOUBLE
-		{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_7_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusDOUBLEParserRuleCall_6_1_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__PulseSecondsAssignment_9
+rule__MineRingConfig__TriggerRadiusAssignment_8
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_9_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_8_0()); }
 		ruleDOUBLE
-		{ after(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_9_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_8_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__BlastRadiusAssignment_11
+rule__MineRingConfig__PulseSecondsAssignment_10
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_11_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_10_0()); }
 		ruleDOUBLE
-		{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_11_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_10_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__BlastDamageAssignment_13
+rule__MineRingConfig__BlastRadiusAssignment_12
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_13_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_12_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_12_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__MineRingConfig__BlastDamageAssignment_14
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_14_0()); }
 		RULE_INT
-		{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_13_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_14_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__PlayerDamageAssignment_15
+rule__MineRingConfig__PlayerDamageAssignment_16
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_15_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_16_0()); }
 		RULE_INT
-		{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_15_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_16_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__MineRingConfig__HoleRadiusAssignment_17
+rule__MineRingConfig__HoleRadiusAssignment_18
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_17_0()); }
+		{ before(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_18_0()); }
 		ruleDOUBLE
-		{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_17_0()); }
+		{ after(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_18_0()); }
 	)
 ;
 finally {
@@ -10889,6 +12523,321 @@ rule__GhostCountConfig__CountAssignment_2
 		{ before(grammarAccess.getGhostCountConfigAccess().getCountINTTerminalRuleCall_2_0()); }
 		RULE_INT
 		{ after(grammarAccess.getGhostCountConfigAccess().getCountINTTerminalRuleCall_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__DisplayNameAssignment_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getDisplayNameSTRINGTerminalRuleCall_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__HealthAssignment_4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getHealthINTTerminalRuleCall_4_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getHealthINTTerminalRuleCall_4_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__SightRangeAssignment_6
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getGuardTowerConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__MaxWallsOverAssignment_8
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverINTTerminalRuleCall_8_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverINTTerminalRuleCall_8_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgIntervalSecondsAssignment_10
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsDOUBLEParserRuleCall_10_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsDOUBLEParserRuleCall_10_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgSpeedAssignment_12
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedDOUBLEParserRuleCall_12_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedDOUBLEParserRuleCall_12_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgBlastRadiusAssignment_14
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusDOUBLEParserRuleCall_14_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusDOUBLEParserRuleCall_14_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgPlayerDamageAssignment_16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageINTTerminalRuleCall_16_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageINTTerminalRuleCall_16_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgWallDamageAssignment_18
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageINTTerminalRuleCall_18_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageINTTerminalRuleCall_18_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__GatlingRoundsAssignment_20
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsINTTerminalRuleCall_20_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsINTTerminalRuleCall_20_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__GatlingRoundIntervalSecondsAssignment_22
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__GatlingDamageAssignment_24
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageINTTerminalRuleCall_24_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingDamageINTTerminalRuleCall_24_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__DeathBlastDamageAssignment_26
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageINTTerminalRuleCall_26_0()); }
+		RULE_INT
+		{ after(grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageINTTerminalRuleCall_26_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__SpriteAssignment_28
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getSpriteSTRINGTerminalRuleCall_28_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getSpriteSTRINGTerminalRuleCall_28_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgLaunchSoundAssignment_29_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__RpgExplosionSoundAssignment_30_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__GatlingSoundAssignment_31_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundSTRINGTerminalRuleCall_31_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getGatlingSoundSTRINGTerminalRuleCall_31_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__HitSoundAssignment_32_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getHitSoundSTRINGTerminalRuleCall_32_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getHitSoundSTRINGTerminalRuleCall_32_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__GuardTowerConfig__DestroyedSoundAssignment_33_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundSTRINGTerminalRuleCall_33_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundSTRINGTerminalRuleCall_33_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__DifficultyAssignment_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0()); }
+		ruleDifficultyLevel
+		{ after(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__TowerCountConfig__CountAssignment_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getTowerCountConfigAccess().getCountINTTerminalRuleCall_2_0()); }
+		RULE_INT
+		{ after(grammarAccess.getTowerCountConfigAccess().getCountINTTerminalRuleCall_2_0()); }
 	)
 ;
 finally {

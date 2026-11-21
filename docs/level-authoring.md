@@ -25,7 +25,7 @@ MAZE_LEVELS_REGENERATE=true mvn -o test -pl main.game.maze.dsl.tests
 (`MazeDslLevelsTest` rewrites `levels.xmi` from the DSL and checks it is valid against `levels.ecore`; without the variable it
 fails when the two are out of step.) The attribute names below are the model's (`levels.xmi`); the DSL keywords are
 `threatCapacity`, `wallMaterials`, `inheritWeapons`, `cascadeDepth`, `basedOn`, `ring`, `sergeant`, `sergeants`, `mines`,
-`portalGhost`, `portalGhosts` and `teleport`. The
+`portalGhost`, `portalGhosts`, `teleport`, `secondRing` (inside `mines`), `guardTower` and `towers`. The
 structure is defined by the metamodel [`levels.ecore`](../maze-common-backend/src/main/resources/xmi/levels/levels.ecore),
 and the game checks the file when it loads and refuses to start with a broken level.
 
@@ -44,6 +44,8 @@ Both frontends play the same levels: after a win, the win screen offers *Next le
 | `inheritWeapons` | start with the weapons the player had at the end of the previous level | `true` |
 | `<zones>` | concentric zones around the heart, outer zone first, **any number**; see below | none = the classic random walls |
 | `<mines>` | a circle of anti-personnel mines round every sergeant (`count` of them): a touched mine hurts the player a little (`playerDamage`), walls and enemies a little less (`blastDamage` within `blastRadius`) and leaves a hole (`holeRadius`) that sends the player to the opposite edge of the map | none |
+| `<mines>` `secondRingRadius` | a second circle of mines round every sergeant with the same number of mines, staggered half a step from the first and further out (`secondRing` in the DSL), so the level has twice the mines; `0` = no second circle | `0` |
+| `<guardTower>` + `<towerCounts>` | guard towers on the outer parts of the map and how many per difficulty; see [Guard towers](#guard-towers) | none |
 | `<teleport>` | what a teleport does: `cooldownSeconds`, the word on the screen and in the voice (`bannerText`, `bannerSeconds`) and the sounds (`zapSound`, `voiceSound`); a level without it uses the defaults | defaults |
 | `<teleportGhost>` + `<ghostCounts>` | a ghost that does not hurt but teleports the player to a random spot at the edge of the map; `cooldownSeconds` is the pause before the player can be teleported again | none |
 | `<sergeant>` + `<sergeantPosts>` | stationary zombie sergeants guarding the heart, and how many per difficulty | none |
@@ -90,6 +92,31 @@ A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
 
+## Guard towers
+
+```xml
+<guardTower displayName="Guard tower" health="1500" sightRange="650.0" maxWallsOver="3"
+    rpgIntervalSeconds="3.0" rpgSpeed="300.0" rpgBlastRadius="60.0" rpgPlayerDamage="25" rpgWallDamage="40"
+    gatlingRounds="6" gatlingRoundIntervalSeconds="0.1" gatlingDamage="3" deathBlastDamage="60"
+    sprite="/main/game/maze/guard-tower.png" rpgLaunchSound="..." rpgExplosionSound="..." gatlingSound="..."
+    hitSound="..." destroyedSound="..."/>
+<towerCounts difficulty="EASY" count="2"/>
+<towerCounts difficulty="NORMAL" count="3"/>
+<towerCounts difficulty="HARD" count="4"/>
+```
+
+A level with a `<guardTower>` needs a `<towerCounts>` for all three difficulties. A tower never moves and takes a very
+great deal of damage (`health`; bombs, lasers, sledgehammers and mine blasts all hurt it). It shoots at a player it
+sees: within `sightRange`, and with no more than `maxWallsOver` walls in between (it shoots **over** walls). Its weapons
+work to one steady cycle: an **rpg every `rpgIntervalSeconds`** (a rocket that flies `rpgSpeed` pixels a second to where
+the player was, and explodes with `rpgBlastRadius`) and, **halfway between two rpgs, a burst of `gatlingRounds`
+gatling rounds** (`gatlingDamage` each). A burst must fit between two rpgs (the model refuses a level where it does not).
+The towers stand on free ground in the outer band of the map, as far apart as the maze allows, away from the player's
+start. When a tower is damaged its sprite changes: `sprite` is the healthy look and the damaged looks come with it by
+the usual name (`guard-tower-damaged.png`, `-bleeding.png`, `-tired.png`, made by `tools/sprite-gen/GuardTowerSpriteGenerator.java`).
+Sounds: `rpgLaunchSound` when a rocket leaves, `rpgExplosionSound` when it lands, `gatlingSound` for a burst, `hitSound`
+when the tower is hit, `destroyedSound` when it is blown up (and the deep bomb boom and the screen shake come with the explosion).
+
 ## Building on another level
 
 `baseLevel="2"` makes a level "level 2 plus": it takes the zones, wall look, cascade limit, sergeants and the rest from
@@ -105,6 +132,18 @@ level 2 and only needs to say what is new. Level 3 is just this:
   <ghostCounts difficulty="EASY" count="3"/>
   <ghostCounts difficulty="NORMAL" count="6"/>
   <ghostCounts difficulty="HARD" count="10"/>
+</levels>
+```
+
+Level 4 is level 3 plus a second circle of mines and the guard towers; since a level restates a whole `<mines>`
+block to change it, it repeats the mine values and adds `secondRingRadius="118.0"`:
+
+```xml
+<levels number="4" name="The Guard Towers" baseLevel="3">
+  <mines count="3" ringRadius="62.0" secondRingRadius="118.0" triggerRadius="22.0" pulseSeconds="0.9"
+      blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
+  <guardTower displayName="Guard tower" health="1500" ... />
+  <towerCounts difficulty="EASY" count="2"/> <towerCounts difficulty="NORMAL" count="3"/> <towerCounts difficulty="HARD" count="4"/>
 </levels>
 ```
 

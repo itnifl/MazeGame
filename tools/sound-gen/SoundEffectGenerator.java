@@ -43,6 +43,10 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-gatling.wav", pickupGatling());
         write(dir, "bomb-explosion.wav", bombExplosion());
         write(dir, "teleport.wav", teleport());
+        write(dir, "rpg-launch.wav", rpgLaunch());
+        write(dir, "rpg-explosion.wav", rpgExplosion());
+        write(dir, "tower-hit.wav", towerHit());
+        write(dir, "tower-destroyed.wav", towerDestroyed());
         write(dir, "laser-fire.wav", laserFire());
         write(dir, "gatling-burst.wav", gatlingBurst());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
@@ -236,6 +240,85 @@ public final class SoundEffectGenerator {
             double rumbleLevel = rumble * 9.0 * Math.exp(-t * 2.3) * Math.min(1, t / 0.03);
             double crack = white * Math.exp(-t * 70) * 0.55;
             out[i] = boom + rumbleLevel + crack;
+        }
+        return out;
+    }
+
+    /**
+     * An rpg leaving its tube: a hard hollow thump, then a rocket motor that ignites with a roaring hiss and
+     * fades as it flies away.
+     */
+    static double[] rpgLaunch() {
+        double[] out = buffer(1.1);
+        Random noise = new Random(41);
+        double hiss = 0;
+        double phase = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double thump = Math.sin(2 * Math.PI * (95 - 60 * t) * t) * Math.exp(-t * 16) * 1.0
+                    + (noise.nextDouble() * 2 - 1) * Math.exp(-t * 60) * 0.5;
+            double white = noise.nextDouble() * 2 - 1;
+            hiss += (0.12 + 0.2 * Math.min(1, t / 0.3)) * (white - hiss);
+            double motor = t > 0.04 ? hiss * 1.1 * Math.min(1, (t - 0.04) / 0.08) * Math.exp(-(t - 0.04) * 2.6) : 0;
+            phase += 2 * Math.PI * (70 + 40 * Math.exp(-t * 4)) / RATE;
+            double roar = t > 0.04 ? Math.signum(Math.sin(phase)) * 0.1 * Math.exp(-(t - 0.04) * 3.2) : 0;
+            out[i] = thump + motor + roar;
+        }
+        return out;
+    }
+
+    /** A rocket going off: a sharp crack, a short punchy boom and a fast-dying rumble (quicker than a bomb). */
+    static double[] rpgExplosion() {
+        double[] out = buffer(0.9);
+        Random noise = new Random(43);
+        double boomPhase = 0;
+        double rumble = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            boomPhase += 2 * Math.PI * (45 + 85 * Math.exp(-t * 9)) / RATE;
+            double boom = Math.sin(boomPhase) * Math.exp(-t * 5.5);
+            double white = noise.nextDouble() * 2 - 1;
+            rumble += 0.08 * (white - rumble);
+            double crack = white * Math.exp(-t * 55) * 0.9;
+            out[i] = boom + rumble * 4.5 * Math.exp(-t * 5.0) * Math.min(1, t / 0.01) + crack;
+        }
+        return out;
+    }
+
+    /** A hit on the tower: a dull stone knock with a ring of metal and a few chips. */
+    static double[] towerHit() {
+        double[] out = buffer(0.28);
+        Random noise = new Random(47);
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double knock = Math.sin(2 * Math.PI * (160 - 80 * t) * t) * Math.exp(-t * 28);
+            double ring = (Math.sin(2 * Math.PI * 820 * t) + 0.6 * Math.sin(2 * Math.PI * 1370 * t)) * Math.exp(-t * 22) * 0.25;
+            double chips = (noise.nextDouble() * 2 - 1) * Math.exp(-t * 90) * 0.5;
+            out[i] = knock + ring + chips;
+        }
+        return out;
+    }
+
+    /**
+     * A tower collapsing: a huge boom, a long low rumble of falling masonry and a clatter of rubble landing after it.
+     */
+    static double[] towerDestroyed() {
+        double[] out = buffer(2.4);
+        Random noise = new Random(53);
+        double boomPhase = 0;
+        double rumble = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            boomPhase += 2 * Math.PI * (24 + 70 * Math.exp(-t * 2.6)) / RATE;
+            double boom = (Math.sin(boomPhase) + 0.4 * Math.sin(boomPhase * 2)) * Math.exp(-t * 1.5);
+            double white = noise.nextDouble() * 2 - 1;
+            rumble += 0.04 * (white - rumble);
+            double crumble = rumble * 8.5 * Math.exp(-t * 1.2) * Math.min(1, t / 0.03);
+            double crack = white * Math.exp(-t * 45) * 0.6;
+            // rubble clatter: random short ticks that thin out
+            double clatter = noise.nextDouble() < 0.012 * Math.exp(-t * 0.9) && t > 0.3
+                    ? (noise.nextDouble() * 2 - 1) * 0.8 : 0;
+            out[i] = boom + crumble + crack + clatter;
         }
         return out;
     }

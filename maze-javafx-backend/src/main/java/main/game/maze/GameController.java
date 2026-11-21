@@ -238,6 +238,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private FxMazeCanvasRenderer      mazeCanvasRenderer;
     private FxGameSessionBootstrapper bootstrapper;
     private FxHazardLayer hazardLayer;
+    private main.game.maze.javafx.render.FxRocketLayer rocketLayer;
     /** Mines, the holes they leave and the teleports of the level. */
     private final FxHazardController hazards = new FxHazardController(new FxHazardController.Host() {
         @Override public PlayerCharacter player()                  { return playerCharacter; }
@@ -256,6 +257,42 @@ public class GameController implements Initializable, EnemyRegistrar {
             if (hazardLayer != null) hazardLayer.render(field);
         }
     });
+
+    /** The guard towers of level 4: they shoot rpgs and a gatling gun, decided by the shared tower session. */
+    private final FxGuardTowerController guardTowers = new FxGuardTowerController(new FxGuardTowerController.Host() {
+        @Override public PlayerCharacter player() { return playerCharacter; }
+        @Override public int wallsBetween(double fromX, double fromY, double toX, double toY) {
+            return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countVectors(fromX, fromY, toX, toY, maze.getMazeVectors());
+        }
+        @Override public void blast(double x, double y, int damage, double range, String sound, boolean shake) {
+            blastAt(x, y, damage, range, false, "Tower", sound, shake);
+        }
+        @Override public void hurtPlayer(int damage) {
+            if (playerCharacter != null) playerCharacter.subtractHitPoints(damage);
+        }
+        @Override public void tracer(double fromX, double fromY, double toX, double toY) {
+            weapons.showTracer(fromX, fromY, toX, toY);
+        }
+        @Override public void drawRockets(List<main.game.maze.common.graphics.fire.RocketEffect> rockets, double clockSeconds) {
+            if (rocketLayer != null) rocketLayer.render(rockets, clockSeconds);
+        }
+        @Override public void play(String path, String key, long coolDownMillis) {
+            if (coolDownMillis > 0) {
+                main.game.maze.common.graphics.AudioEngine.get().playRateLimited(path, key, coolDownMillis);
+            } else {
+                main.game.maze.common.graphics.AudioEngine.get().play(path);
+            }
+        }
+    });
+
+    /** A guard tower has been placed (called by the spawner). */
+    public void registerGuardTower(String id, main.game.maze.characters.GuardTowerCharacter tower) {
+        guardTowers.register(id, new FxGuardTowerController.Body() {
+            @Override public double centerX() { return tower.centerX(); }
+            @Override public double centerY() { return tower.centerY(); }
+            @Override public int health() { return tower.isAlive() ? Math.max(1, tower.getHitPoints()) : 0; }
+        });
+    }
 
     public GameController() {
         inputCommandContext = new JavaFxInputCommandContext(actionSink);
@@ -399,6 +436,12 @@ public class GameController implements Initializable, EnemyRegistrar {
      * screen shake. Only the player's own bomb hurts the player.
      */
     private void blastAt(double x, double y, int damage, double range, boolean hurtsPlayer, String label) {
+        blastAt(x, y, damage, range, hurtsPlayer, label, main.game.maze.common.graphics.fire.BombImpact.SOUND, true);
+    }
+
+    /** As above, with the sound of this blast (null: silent, the caller plays its own) and whether it shakes the screen. */
+    private void blastAt(double x, double y, int damage, double range, boolean hurtsPlayer, String label,
+                         String sound, boolean shake) {
         List<Vector2D> walls = maze != null ? maze.getMazeVectors() : List.of();
 
         double playerCx = hurtsPlayer && playerCharacter != null
@@ -425,8 +468,10 @@ public class GameController implements Initializable, EnemyRegistrar {
         List<Vector2D> survivingWalls = maze != null ? maze.getMazeVectors() : List.of();
         showFlameExplosionVisual(x, y, range, survivingWalls);
         // a deep boom and a heavy shake of the whole screen
-        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.common.graphics.fire.BombImpact.SOUND);
-        if (gameBoard != null) {
+        if (sound != null) {
+            main.game.maze.common.graphics.AudioEngine.get().play(sound);
+        }
+        if (shake && gameBoard != null) {
             main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent());
         }
 
@@ -716,6 +761,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         hazardLayer.attach();
         hazards.startGame(maze, App.levelProgress.current(),
                 main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze));
+        // guard towers (level 4): they are placed by the session bootstrapper; they register here as they appear
+        if (rocketLayer != null) rocketLayer.detach();
+        rocketLayer = new main.game.maze.javafx.render.FxRocketLayer(gameBoard);
+        rocketLayer.attach();
+        guardTowers.startGame(App.levelProgress.current().guardTower());
         announceLevel();
 
         winarea = new WinArea(heart);
@@ -781,6 +831,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         playingModeController.update(currentInputFrame, now);
         weapons.tick(now);
         hazards.tick(now);
+        guardTowers.tick(now);
     }
 
     private final FxBannerView banner = new FxBannerView(() -> root);
@@ -892,6 +943,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void dispose() {
         clearActivePlayerBombs();
         hazards.dispose();
+        guardTowers.dispose();
+        if (rocketLayer != null) { rocketLayer.detach(); rocketLayer = null; }
         banner.hide();
         if (hazardLayer != null) { hazardLayer.detach(); hazardLayer = null; }
         weapons.dispose();

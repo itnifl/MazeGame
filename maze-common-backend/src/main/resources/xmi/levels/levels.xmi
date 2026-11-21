@@ -21,4 +21,11 @@
     <ghostCounts difficulty="HARD" count="10"/>
     <teleport cooldownSeconds="2.5" bannerText="Teleported" bannerSeconds="1.6" zapSound="/main/game/maze/sounds/teleport.wav" voiceSound="/main/game/maze/sounds/teleported.wav"/>
   </levels>
+  <levels number="4" name="The Guard Towers" baseLevel="3">
+    <mines count="3" ringRadius="62.0" secondRingRadius="118.0" triggerRadius="22.0" pulseSeconds="0.9" blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
+    <guardTower displayName="Guard tower" health="1500" sightRange="650.0" maxWallsOver="3" rpgIntervalSeconds="3.0" rpgSpeed="300.0" rpgBlastRadius="60.0" rpgPlayerDamage="25" rpgWallDamage="40" gatlingRounds="6" gatlingRoundIntervalSeconds="0.1" gatlingDamage="3" deathBlastDamage="60" sprite="/main/game/maze/guard-tower.png" rpgLaunchSound="/main/game/maze/sounds/rpg-launch.wav" rpgExplosionSound="/main/game/maze/sounds/rpg-explosion.wav" gatlingSound="/main/game/maze/sounds/gatling-burst.wav" hitSound="/main/game/maze/sounds/tower-hit.wav" destroyedSound="/main/game/maze/sounds/tower-destroyed.wav"/>
+    <towerCounts difficulty="EASY" count="2"/>
+    <towerCounts difficulty="NORMAL" count="3"/>
+    <towerCounts difficulty="HARD" count="4"/>
+  </levels>
 </levels:LevelModel>

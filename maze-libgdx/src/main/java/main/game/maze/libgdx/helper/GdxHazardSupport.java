@@ -88,7 +88,7 @@ public final class GdxHazardSupport {
         heightPx = maze.heightPx();
         List<Point2D> posts = new ArrayList<>();
         for (GdxEnemyRuntime enemy : enemies) {
-            if (enemy.isStationary()) {
+            if (enemy.isSergeant()) {
                 posts.add(new Point2D(enemy.x(), maze.heightPx() - enemy.y()));
             }
         }

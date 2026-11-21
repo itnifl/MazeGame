@@ -223,6 +223,20 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.GUARD_TOWER_CONFIG:
+      {
+        GuardTowerConfig guardTowerConfig = (GuardTowerConfig)theEObject;
+        T result = caseGuardTowerConfig(guardTowerConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.TOWER_COUNT_CONFIG:
+      {
+        TowerCountConfig towerCountConfig = (TowerCountConfig)theEObject;
+        T result = caseTowerCountConfig(towerCountConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.TELEPORT_RULES_CONFIG:
       {
         TeleportRulesConfig teleportRulesConfig = (TeleportRulesConfig)theEObject;
@@ -566,6 +580,38 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseGhostCountConfig(GhostCountConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Guard Tower Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Guard Tower Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGuardTowerConfig(GuardTowerConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Tower Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Tower Count Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTowerCountConfig(TowerCountConfig object)
   {
     return null;
   }

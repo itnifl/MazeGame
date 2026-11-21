@@ -115,6 +115,8 @@ runtime renderer is JavaFX, libGDX, or something else.
     command-context adapter.
 
 
+`RocketEffect` (package `common.graphics.fire`) is the rpg rocket in flight (body, flame, smoke trail), drawn each frame by playing a fresh one that lives a moment, so both frontends need no layer of their own. Sprites and sounds of level 4 (`guard-tower*.png`, `rpg-launch.wav`, `rpg-explosion.wav`, `tower-hit.wav`, `tower-destroyed.wav`) come from `tools/sprite-gen/GuardTowerSpriteGenerator.java` and `tools/sound-gen/SoundEffectGenerator.java`.
+
 ## Default behaviour with no backend installed
 
 The defaults are deliberately inert so tests and library consumers do not

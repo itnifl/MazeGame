@@ -384,6 +384,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
     private static void retire(GdxEnemyRuntime enemy, List<DeadEnemy> deadEnemies,
                                List<EnemyDeathAnimation> dyingEnemies,
                                RemainsLedger<EnemySpawn, RemainsVisual> remains) {
+        if (enemy.isGuardTower()) {
+            return;   // no corpse and no zombie death animation: the explosion is the end of a tower
+        }
         dyingEnemies.add(new EnemyDeathAnimation(enemy.x(), enemy.y(), enemy.size()));
         GdxRemainsSupport.leaveRemains(remains, enemy);
         EnemySpawn spawn = enemy.originalSpawn();

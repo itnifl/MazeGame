@@ -126,4 +126,34 @@ class LevelSpawnTest {
         long levelThree = load(3, hard()).enemies().size();
         assertTrue(levelThree >= levelTwo + 10, "level 3 has the 10 portal ghosts on top: " + levelThree + " vs " + levelTwo);
     }
+
+    private static List<EnemySpawn> towers(RuntimeVisualModel model) {
+        return model.enemies().stream().filter(e -> main.game.maze.game.level.GuardTowerSpec.isTowerId(e.id())).toList();
+    }
+
+    @Test
+    @DisplayName("level 4: guard towers, 4 on hard, 3 on normal, 2 on easy; none on the levels below; everything else stays")
+    void guardTowersPerDifficulty() {
+        assertEquals(4, towers(load(4, hard())).size());
+        assertEquals(3, towers(load(4, normal())).size());
+        assertEquals(2, towers(load(4, easy())).size());
+        assertEquals(0, towers(load(3, hard())).size());
+        assertEquals(10, portalGhosts(load(4, hard())).size(), "the portal ghosts of level 3 are still there");
+        assertEquals(6, sergeants(load(4, hard())).size());
+    }
+
+    @Test
+    @DisplayName("a guard tower stands in the outer part of the map, never moves, is very tough, shows damage, stays dead")
+    void guardTowerValues() {
+        var spec = LEVELS.level(4).guardTower();
+        for (EnemySpawn tower : towers(load(4, hard()))) {
+            assertEquals(spec.health(), tower.maxHitPoints());
+            assertEquals(spec.sprite(), tower.imagePath());
+            assertEquals(0, tower.resurrectionTimeMs());
+            assertEquals(0, tower.attackDamage());
+            assertTrue(tower.animationSpec().damageStatesEnabled(), "a damaged tower looks damaged");
+            double edge = Math.min(Math.min(tower.x(), WIDTH - tower.x()), Math.min(tower.y(), HEIGHT - tower.y()));
+            assertTrue(edge <= 0.2 * Math.min(WIDTH, HEIGHT), "in the outer band: " + edge);
+        }
+    }
 }

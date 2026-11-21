@@ -28,6 +28,18 @@ class LevelAssetsTest {
             if (level.hasTeleportGhosts()) {
                 exists(level.teleportGhost().sprite(), "level " + number + " portal ghost sprite");
             }
+            if (level.hasTowers()) {
+                GuardTowerSpec tower = level.guardTower();
+                exists(tower.sprite(), "level " + number + " guard tower sprite");
+                for (String state : new String[] {"damaged", "bleeding", "tired"}) {
+                    exists(tower.sprite().replace(".png", "-" + state + ".png"), "level " + number + " guard tower " + state + " sprite");
+                }
+                exists(tower.rpgLaunchSound(), "level " + number + " rpg launch sound");
+                exists(tower.rpgExplosionSound(), "level " + number + " rpg explosion sound");
+                exists(tower.gatlingSound(), "level " + number + " tower gatling sound");
+                exists(tower.hitSound(), "level " + number + " tower hit sound");
+                exists(tower.destroyedSound(), "level " + number + " tower destroyed sound");
+            }
             exists(level.teleport().zapSound(), "level " + number + " teleport zap");
             exists(level.teleport().voiceSound(), "level " + number + " teleport voice");
         }

@@ -51,6 +51,28 @@ class MineFieldTest {
     }
 
     @Test
+    @DisplayName("level 4: a second circle with the same number of mines, staggered, doubles the mines")
+    void secondCircle() {
+        MineSpec spec = LevelCatalogLoader.loadDefault().level(4).mines();
+        MineField doubled = new MineField(spec);
+        doubled.place(List.of(new Point2D(400, 300)), point -> true, (from, to) -> true);
+        assertEquals(2 * spec.count(), doubled.mines().size());
+        long inner = doubled.mines().stream()
+                .filter(mine -> Math.abs(Math.hypot(mine.x() - 400, mine.y() - 300) - spec.ringRadius()) < 1e-6).count();
+        long outer = doubled.mines().stream()
+                .filter(mine -> Math.abs(Math.hypot(mine.x() - 400, mine.y() - 300) - spec.secondRingRadius()) < 1e-6).count();
+        assertEquals(spec.count(), inner);
+        assertEquals(spec.count(), outer);
+        for (MineField.Mine a : doubled.mines()) {
+            for (MineField.Mine b : doubled.mines()) {
+                if (a != b) {
+                    assertTrue(Math.hypot(a.x() - b.x(), a.y() - b.y()) > spec.triggerRadius(), "no two mines on top of each other");
+                }
+            }
+        }
+    }
+
+    @Test
     @DisplayName("every sergeant gets its own ring")
     void aRingPerSergeant() {
         placeAround(new Point2D(200, 200), new Point2D(600, 400));

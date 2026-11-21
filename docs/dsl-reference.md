@@ -592,6 +592,7 @@ level 2 "The Sergeants' Keep" {
     sergeants hard 6
 }
 level 3 "The Minefield" { basedOn 2  mines { ... }  portalGhost "Portal ghost" { ... }  portalGhosts easy 3  ... teleport { ... } }
+level 4 "The Guard Towers" { basedOn 3  mines { ... secondRing 118.0 ... }  guardTower "Guard tower" { health 1500 sightRange 650.0 wallsOver 3 rpgInterval 3.0 ... }  towers easy 2  towers normal 3  towers hard 4 }
 ```
 
 Values you leave out are "not set": a level built `basedOn` another takes them from it, otherwise the model's defaults apply.
