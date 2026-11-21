@@ -34,12 +34,16 @@ public final class DeepVoiceGenerator {
 
     public static void main(String[] args) throws IOException, UnsupportedAudioFileException {
         if (args.length < 1) {
-            System.err.println("usage: DeepVoiceGenerator <raw.wav> [soundDir]");
+            System.err.println("usage: DeepVoiceGenerator <raw.wav> [outName] [soundDir] [pitch]");
             System.exit(2);
         }
         String outName = args.length > 1 ? args[1] : "teleported.wav";
         Path outDir = Path.of(args.length > 2 ? args[2] : "maze-common-frontend/src/main/resources/main/game/maze/sounds");
         double pitch = args.length > 3 ? Double.parseDouble(args[3]) : PITCH;
+        if (!Double.isFinite(pitch) || pitch <= 0) {
+            System.err.println("pitch must be a positive number (default " + PITCH + "), got: " + args[3]);
+            System.exit(2);
+        }
         Files.createDirectories(outDir);
         AudioInputStream in = AudioSystem.getAudioInputStream(new File(args[0]));
         float rate = in.getFormat().getSampleRate();

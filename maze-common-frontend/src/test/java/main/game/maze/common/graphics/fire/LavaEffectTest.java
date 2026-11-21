@@ -125,4 +125,20 @@ class LavaEffectTest {
         double c = lava(0).puffs(0, 1.3).stream().filter(p -> p.layer() == FirePuff.Layer.EMBER).mapToDouble(FirePuff::y).sum();
         assertTrue(b != c);
     }
+
+    @Test
+    @DisplayName("details placed by distance along the stream land where they belong, also on a path of many short bent segments")
+    void detailsSitOnTheStream() {
+        List<LavaEffect.Point> path = new ArrayList<>();
+        for (int i = 0; i <= 100; i++) {
+            path.add(new LavaEffect.Point(i * 13.0, 100 + (i % 2) * 3));   // 100 segments of about 13 px
+        }
+        LavaEffect effect = new LavaEffect(List.of(new LavaEffect.Stream(path, List.of())), 46, 10,
+                new LavaEffect.Look(34, 0.5, 1.0), 1400, 300, 0);
+        for (FirePuff puff : effect.puffs(0, 5.0)) {
+            if (puff.layer() == FirePuff.Layer.SMOKE && puff.radius() < 14 && puff.alpha() > 0.9) {   // crust plates
+                assertTrue(puff.x() >= -20 && puff.x() <= 1320 && Math.abs(puff.y() - 101.5) <= 40, "a plate off the stream at " + puff.x() + "," + puff.y());
+            }
+        }
+    }
 }

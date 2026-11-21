@@ -217,8 +217,21 @@ public final class LavaEffect implements PuffEffect {
 
     /** The sample at this distance along the stream (the nearest one). */
     private static double[] at(List<double[]> samples, double distance) {
-        int index = (int) Math.round(distance / CHAIN_STEP);
-        return samples.get(Math.max(0, Math.min(samples.size() - 1, index)));
+        // the samples restart their spacing on every segment, so look the distance up in what was recorded (binary search)
+        int low = 0;
+        int high = samples.size() - 1;
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (samples.get(mid)[2] < distance) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        if (low > 0 && Math.abs(samples.get(low - 1)[2] - distance) <= Math.abs(samples.get(low)[2] - distance)) {
+            low--;
+        }
+        return samples.get(low);
     }
 
     /** Smooth pseudo-random wobble between about -1 and 1, the same everywhere for the same input. */
