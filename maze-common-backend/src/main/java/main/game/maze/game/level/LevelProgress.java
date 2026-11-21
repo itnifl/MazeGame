@@ -65,12 +65,20 @@ public final class LevelProgress {
      * @param scoreAtTheEnd the final score of the level, with everything carried into it included
      */
     public synchronized void completeLevel(PlayerArsenal arsenalAtTheEnd, int scoreAtTheEnd) {
+        completeLevel(arsenalAtTheEnd, scoreAtTheEnd, "");
+    }
+
+    /**
+     * As {@link #completeLevel(PlayerArsenal, int)}, also keeping the name of the difficulty the game is played on,
+     * so that loading the savepoint from the main menu comes back to the same difficulty.
+     */
+    public synchronized void completeLevel(PlayerArsenal arsenalAtTheEnd, int scoreAtTheEnd, String difficultyName) {
         if (!catalog.hasNext(number)) {
             return;
         }
         int next = number + 1;
         ArsenalSnapshot carried = catalog.level(next).inheritWeapons() ? arsenalAtTheEnd.snapshot() : null;
-        pending = new SavePoint(next, carried, Math.max(0, scoreAtTheEnd));
+        pending = new SavePoint(next, carried, Math.max(0, scoreAtTheEnd), difficultyName);
         store.save(pending);
     }
 

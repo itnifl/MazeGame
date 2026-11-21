@@ -26,6 +26,7 @@ public final class FileSavePointStore implements SavePointStore {
     private static final String LEVEL = "level";
     private static final String SELECTED = "selected";
     private static final String SCORE = "score";
+    private static final String DIFFICULTY = "difficulty";
     private static final String COUNT_PREFIX = "count.";
 
     private final Path file;
@@ -39,6 +40,7 @@ public final class FileSavePointStore implements SavePointStore {
         Properties properties = new Properties();
         properties.setProperty(LEVEL, Integer.toString(savePoint.level()));
         properties.setProperty(SCORE, Integer.toString(savePoint.score()));
+        properties.setProperty(DIFFICULTY, savePoint.difficulty());
         ArsenalSnapshot arsenal = savePoint.arsenal();
         if (arsenal != null) {
             properties.setProperty(SELECTED, arsenal.selected().name());
@@ -76,15 +78,16 @@ public final class FileSavePointStore implements SavePointStore {
             properties.load(in);
             int level = Integer.parseInt(properties.getProperty(LEVEL, "").trim());
             int score = Integer.parseInt(properties.getProperty(SCORE, "0").trim());   // older files have none
+            String difficulty = properties.getProperty(DIFFICULTY, "");   // older files have none
             String selected = properties.getProperty(SELECTED);
             if (selected == null) {
-                return Optional.of(new SavePoint(level, null, score));
+                return Optional.of(new SavePoint(level, null, score, difficulty));
             }
             Map<Weapon, Integer> counts = new EnumMap<>(Weapon.class);
             for (Weapon weapon : Weapon.values()) {
                 counts.put(weapon, Math.max(0, Integer.parseInt(properties.getProperty(COUNT_PREFIX + weapon.name(), "0").trim())));
             }
-            return Optional.of(new SavePoint(level, new ArsenalSnapshot(counts, Weapon.valueOf(selected)), score));
+            return Optional.of(new SavePoint(level, new ArsenalSnapshot(counts, Weapon.valueOf(selected)), score, difficulty));
         } catch (IOException | IllegalArgumentException e) {
             LOGGER.log(Level.WARNING, "Ignoring an unreadable savepoint " + file, e);
             return Optional.empty();

@@ -45,6 +45,7 @@ class PulseCannonTest {
         PickupSpec laser = PickupCatalogLoader.loadDefault().spec(PickupKind.LASER_RIFLE);
         assertTrue(CANNON.damage() > 20 * laser.damage(), "extremely strong");
         assertTrue(CANNON.range() > laser.range());
+        assertEquals(12000, CANNON.damage(), "double the power it first had (6000): enough to go through walls and still hurt");
     }
 
     @Test

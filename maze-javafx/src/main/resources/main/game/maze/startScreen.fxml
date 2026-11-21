@@ -25,6 +25,8 @@
                 <Button text="High Scores" onAction="#onHighScores" prefWidth="170" style="-fx-background-color: #8fffe0; -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
             </HBox>
 
+            <Button fx:id="loadButton" text="Load" onAction="#onLoad" prefWidth="354" style="-fx-background-color: #99c7ff; -fx-text-fill: #0d2145; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
+
             <Label text="Arrow keys to move, P path hint, O spanning tree, H high score, ESC restart menu" style="-fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-text-fill: #d7fff5;" wrapText="true" maxWidth="520" />
             <Label fx:id="error" textFill="orangered" style="-fx-font-family: 'Consolas'; -fx-font-size: 14px; -fx-font-weight: bold;" />
         </VBox>

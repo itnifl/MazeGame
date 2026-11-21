@@ -79,3 +79,5 @@ JaCoCo 0.8.12 with a **60 % LINE** minimum. The profile is inherited from root
 `game.items.PulseCharge` is the two second charge of the pulse beam cannon (the gift of the last life from level 6, `LastLifeGiftSpec` in `game.level`): the attack key starts it, the shot leaves when it is full, changing weapon cancels it.
 
 `LevelProgress` also carries the score forward (`carriedScore`): the score a level ends with is added to the next level's starting score, and it is part of the savepoint.
+
+`game.level.LoadGameMenu` is what the main menu Load button needs (shared by both frontends): the savepoint kept (`SavePoint` now also keeps the difficulty it was entered on), the button text and the difficulty to load on. `game.hazard.MazeHazards` keeps every mine `HEART_CLEARANCE` px from the heart.

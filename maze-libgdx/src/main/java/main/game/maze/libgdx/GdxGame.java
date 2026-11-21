@@ -42,12 +42,12 @@ public class GdxGame extends Game {
         context = new GdxGameContext(cfg, assetService);
         Screen initialScreen = initialScreenFactory != null
                 ? initialScreenFactory.apply(assetService)
-                : new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores());
+                : new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores(), d -> routeToLoadedGame(d));
         routeToScreen(initialScreen);
     }
 
     void routeToMenuScreen() {
-        routeToScreen(new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores()));
+        routeToScreen(new MenuScreenController(context, d -> routeToPlayScreen(d), () -> routeToHighScores(), d -> routeToLoadedGame(d)));
     }
 
     void routeToPlayScreen() {
@@ -56,6 +56,11 @@ public class GdxGame extends Game {
 
     void routeToPlayScreen(Difficulty selected) {
         routeToScreen(new PlayScreenController(context, selected, this::routeToMenuScreen));
+    }
+
+    /** The Load button: the last saved level, as it was entered. */
+    void routeToLoadedGame(Difficulty selected) {
+        routeToScreen(new PlayScreenController(context, selected, true, this::routeToMenuScreen));
     }
 
     void routeToLegacyPlay(boolean autoStartOnCreate) {

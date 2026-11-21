@@ -15,6 +15,11 @@ public final class PlayScreenController extends AbstractLegacyAdapterScreen {
     }
 
     public PlayScreenController(GdxGameContext context, Difficulty forcedDifficulty, Runnable returnToMenuAction) {
+        this(context, forcedDifficulty, false, returnToMenuAction);
+    }
+
+    /** @param loadSavedGame start from the saved level, with the state it was entered at, instead of a new game */
+    public PlayScreenController(GdxGameContext context, Difficulty forcedDifficulty, boolean loadSavedGame, Runnable returnToMenuAction) {
         super(context, new GdxGameScreenController(GdxGameScreenOptions.builder()
                 .runtimeConfig(context.runtimeConfig())
                 .assetService(context.assets())
@@ -23,6 +28,7 @@ public final class PlayScreenController extends AbstractLegacyAdapterScreen {
                 .immediateStartOnCreate(true)
                 .returnToMenuAction(returnToMenuAction)
                 .forcedDifficulty(forcedDifficulty)
+                .loadSavedGame(loadSavedGame)
                 .build()));
     }
 }

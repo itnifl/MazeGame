@@ -805,7 +805,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         hazardLayer = new FxHazardLayer(gameBoard);
         hazardLayer.attach();
         hazards.startGame(maze, App.levelProgress.current(),
-                main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze));
+                main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze),
+                App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0);   // the heart is at the centre of the board: no mine on it
         // guard towers (level 4): they are placed by the session bootstrapper; they register here as they appear
         if (rocketLayer != null) rocketLayer.detach();
         rocketLayer = new main.game.maze.javafx.render.FxRocketLayer(gameBoard);

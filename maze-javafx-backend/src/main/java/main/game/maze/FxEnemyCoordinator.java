@@ -370,9 +370,9 @@ public final class FxEnemyCoordinator {
             });
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
-        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = LaserBeamEngine.fire(targets, world,
-                world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
-                laser.damage(), laser.range(), halfWidth));
+        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
+                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
+                        laser.damage(), laser.range(), halfWidth));
         return new LaserHit(shot[0], hit[0], dealt[0]);
     }
 

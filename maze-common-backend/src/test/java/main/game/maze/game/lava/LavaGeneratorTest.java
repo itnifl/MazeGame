@@ -190,7 +190,7 @@ class LavaGeneratorTest {
             world.setLava(LavaGenerator.generate(SPEC, world, W, H, start, new Point2D(W / 2.0, H / 2.0), new Random()));
             main.game.maze.game.hazard.HazardSession session = new main.game.maze.game.hazard.HazardSession(new Random(3));
             List<Point2D> posts = MazeHazards.freePoints(world).stream().limit(6).toList();
-            session.start(world, LevelCatalogLoader.loadDefault().level(6), posts);
+            session.start(world, LevelCatalogLoader.loadDefault().level(6), posts, W / 2.0, H / 2.0);
             if (session.field() != null) {
                 for (var mine : session.field().mines()) {
                     assertFalse(world.getLava().isLava(mine.x(), mine.y()), "a mine in the lava");

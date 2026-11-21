@@ -448,3 +448,9 @@ These requirements have been implemented and verified.
 - **SR-364** *(Model-driven)*: Which weapon, and how many shots, is in the level model, but when it is given (the last life) is in code; add a trigger to `LastLifeGift` (last life, level start, boss defeated) so authors can place gifts.
 
 - **SR-366** *(UX)*: The score of a level and the score of the whole game are not told apart on the win screen or in the high scores. Show "this level" and "total" and keep a high score per game, not per level; also decide whether the damage and move penalties of later levels should be scaled, since the carried score makes them smaller in proportion.
+
+- **SR-370** *(Gameplay)*: Several save slots (one per level entered, or a manual save) instead of one savepoint, with a list in the Load screen showing level, score and difficulty.
+
+- **SR-371** *(Observability, 12-factor)*: Log when a savepoint is written, loaded or found unreadable (structured, with level and difficulty), and keep the savepoint path configurable by an environment variable rather than only the relative `data/` folder.
+
+- **SR-372** *(Model-driven)*: Let the level model say how far a beam goes through walls (a `pierce` factor on the pickup in `items.ecore`) so other weapons can pierce too, and let the heart clearance of mines be a value of `MineSpec`.

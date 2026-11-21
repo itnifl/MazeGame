@@ -15,9 +15,13 @@ public record MenuLayout(
         float highScoresButtonX,
         float highScoresButtonY,
         float highScoresButtonW,
-        float highScoresButtonH) {
+        float highScoresButtonH,
+        float loadButtonX,
+        float loadButtonY,
+        float loadButtonW,
+        float loadButtonH) {
 
     public static MenuLayout zero() {
-        return new MenuLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        return new MenuLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
     }
 }

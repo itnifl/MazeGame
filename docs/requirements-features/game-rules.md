@@ -331,7 +331,12 @@ MUST be added to the shared core, not to a single frontend.
   slam, shake, fade) and a dark voice. Winning it shows GAME WON and a dark
   voice says "Ultimate victory".
 - **GR-74**: From level 6 on, starting the last life gives the pulse beam cannon
-  (6 shots) in the hands. Fire charges for 2 s, then one beam of 6000 damage
+  (6 shots) in the hands. Fire charges for 2 s, then one beam of 12000 damage
   over 1200 px that blows up a tower in one shot; another weapon cancels it.
 - **GR-75**: The starting score of a level is the difficulty's starting score (5 000 easy, 10 000 normal, 30 000 hard) plus the score the previous level ended with.
   Restarting a level restores the score it was entered with; level 1 and a new game carry nothing.
+- **GR-75**: A mine is never on the heart: there is a clear space round it.
+- **GR-76**: The pulse beam cannon does 12000 damage and goes through every wall it is strong
+  enough to break (wall hit points are taken from its power); steel and solid walls stop it.
+- **GR-77**: The main menu's Load button goes back to the last level entered, with the weapons,
+  the score and the difficulty it was entered with.

@@ -62,5 +62,5 @@
       pickupSound="/main/game/maze/sounds/pickup-pulse.wav"
       useSound="/main/game/maze/sounds/pulse-fire.wav"
       chargeSound="/main/game/maze/sounds/pulse-charge.wav"
-      spawnWeight="0" amount="6" damage="6000" range="1200.0" chargeSeconds="2.0"/>
+      spawnWeight="0" amount="6" damage="12000" range="1200.0" chargeSeconds="2.0"/>
 </items:PickupModel>

@@ -128,6 +128,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final Runnable returnToMenuAction;
     /** If non-null, overrides {@link DifficultyService#getCurrent()} when starting a game. */
     private final Difficulty forcedDifficulty;
+    private final boolean loadSavedGame;
     private final DifficultyService difficultyService = new DifficultyService();
     final GameSession session = new GameSession();
     private final MazeVisualStyleConfig visualStyle = GdxVisualStyleSupport.loadOrDefault();
@@ -302,6 +303,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         this.showHighScoresOnCreate = options.showHighScoresOnCreate();
         this.returnToMenuAction = options.returnToMenuAction();
         this.forcedDifficulty = options.forcedDifficulty();
+        this.loadSavedGame = options.loadSavedGame();
         GdxGameCollaborators collaborators = GdxGameScreenAssembler.assemble(this);
         this.overlayModeCoordinator = collaborators.overlayModeCoordinator();
         this.inputCommandContext = collaborators.inputCommandContext();
@@ -366,7 +368,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void startGameIfConfigured() {
-        if (immediateStartOnCreate || autoStartOnCreate) {
+        if (loadSavedGame && levelProgress.resumeFromSavePoint()) {
+            startCurrentLevel();   // the last level entered, with the state it was entered at
+        } else if (immediateStartOnCreate || autoStartOnCreate) {
             startGameFromSelection();
         }
         if (showHighScoresOnCreate) {
@@ -824,7 +828,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
         }
         // the level is completed: the savepoint for the next one is made now
-        levelProgress.completeLevel(worldModel.arsenal(), currentScore());
+        levelProgress.completeLevel(worldModel.arsenal(), currentScore(), selectedDifficultyName());
     }
 
     private void draw() {
@@ -915,6 +919,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         runtimeModelLoader.useLevel(levelProgress.current());
         var startFlow = gameSessionStartFlowCoordinator.start(buildStartFlowRequest(selected));
         applyStartFlow(startFlow, selected);
+    }
+
+    /** The name a savepoint keeps the difficulty under (Easy, Medium, Hard). */
+    private String selectedDifficultyName() {
+        Difficulty selected = selectedDifficulty();
+        return selected == null ? "" : selected.eClass().getName();
     }
 
     private Difficulty selectedDifficulty() {
