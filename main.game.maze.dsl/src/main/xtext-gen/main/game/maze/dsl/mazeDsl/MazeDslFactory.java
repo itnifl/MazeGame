@@ -150,6 +150,78 @@ public interface MazeDslFactory extends EFactory
   LootItemConfig createLootItemConfig();
 
   /**
+   * Returns a new object of class '<em>Level Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Level Config</em>'.
+   * @generated
+   */
+  LevelConfig createLevelConfig();
+
+  /**
+   * Returns a new object of class '<em>Level Zone</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Level Zone</em>'.
+   * @generated
+   */
+  LevelZone createLevelZone();
+
+  /**
+   * Returns a new object of class '<em>Sergeant Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Sergeant Config</em>'.
+   * @generated
+   */
+  SergeantConfig createSergeantConfig();
+
+  /**
+   * Returns a new object of class '<em>Tier Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Tier Count Config</em>'.
+   * @generated
+   */
+  TierCountConfig createTierCountConfig();
+
+  /**
+   * Returns a new object of class '<em>Mine Ring Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Mine Ring Config</em>'.
+   * @generated
+   */
+  MineRingConfig createMineRingConfig();
+
+  /**
+   * Returns a new object of class '<em>Portal Ghost Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Portal Ghost Config</em>'.
+   * @generated
+   */
+  PortalGhostConfig createPortalGhostConfig();
+
+  /**
+   * Returns a new object of class '<em>Ghost Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Ghost Count Config</em>'.
+   * @generated
+   */
+  GhostCountConfig createGhostCountConfig();
+
+  /**
+   * Returns a new object of class '<em>Teleport Rules Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Teleport Rules Config</em>'.
+   * @generated
+   */
+  TeleportRulesConfig createTeleportRulesConfig();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

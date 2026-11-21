@@ -8,6 +8,7 @@ import java.util.Collection;
 import main.game.maze.dsl.mazeDsl.DifficultyConfig;
 import main.game.maze.dsl.mazeDsl.GameConfiguration;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
@@ -41,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getOpponents <em>Opponents</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getPatrols <em>Patrols</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLootTables <em>Loot Tables</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLevels <em>Levels</em>}</li>
  * </ul>
  *
  * @generated
@@ -116,6 +118,16 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected EList<LootTableConfig> lootTables;
+
+  /**
+   * The cached value of the '{@link #getLevels() <em>Levels</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLevels()
+   * @generated
+   * @ordered
+   */
+  protected EList<LevelConfig> levels;
 
   /**
    * <!-- begin-user-doc -->
@@ -279,6 +291,21 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @generated
    */
   @Override
+  public EList<LevelConfig> getLevels()
+  {
+    if (levels == null)
+    {
+      levels = new EObjectContainmentEList<LevelConfig>(LevelConfig.class, this, MazeDslPackage.GAME_CONFIGURATION__LEVELS);
+    }
+    return levels;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -293,6 +320,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return ((InternalEList<?>)getPatrols()).basicRemove(otherEnd, msgs);
       case MazeDslPackage.GAME_CONFIGURATION__LOOT_TABLES:
         return ((InternalEList<?>)getLootTables()).basicRemove(otherEnd, msgs);
+      case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
+        return ((InternalEList<?>)getLevels()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -319,6 +348,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return getPatrols();
       case MazeDslPackage.GAME_CONFIGURATION__LOOT_TABLES:
         return getLootTables();
+      case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
+        return getLevels();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -356,6 +387,10 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         getLootTables().clear();
         getLootTables().addAll((Collection<? extends LootTableConfig>)newValue);
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
+        getLevels().clear();
+        getLevels().addAll((Collection<? extends LevelConfig>)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -388,6 +423,9 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
       case MazeDslPackage.GAME_CONFIGURATION__LOOT_TABLES:
         getLootTables().clear();
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
+        getLevels().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -414,6 +452,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return patrols != null && !patrols.isEmpty();
       case MazeDslPackage.GAME_CONFIGURATION__LOOT_TABLES:
         return lootTables != null && !lootTables.isEmpty();
+      case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
+        return levels != null && !levels.isEmpty();
     }
     return super.eIsSet(featureID);
   }

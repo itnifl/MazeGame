@@ -146,6 +146,46 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createLootItemConfigAdapter();
       }
       @Override
+      public Adapter caseLevelConfig(LevelConfig object)
+      {
+        return createLevelConfigAdapter();
+      }
+      @Override
+      public Adapter caseLevelZone(LevelZone object)
+      {
+        return createLevelZoneAdapter();
+      }
+      @Override
+      public Adapter caseSergeantConfig(SergeantConfig object)
+      {
+        return createSergeantConfigAdapter();
+      }
+      @Override
+      public Adapter caseTierCountConfig(TierCountConfig object)
+      {
+        return createTierCountConfigAdapter();
+      }
+      @Override
+      public Adapter caseMineRingConfig(MineRingConfig object)
+      {
+        return createMineRingConfigAdapter();
+      }
+      @Override
+      public Adapter casePortalGhostConfig(PortalGhostConfig object)
+      {
+        return createPortalGhostConfigAdapter();
+      }
+      @Override
+      public Adapter caseGhostCountConfig(GhostCountConfig object)
+      {
+        return createGhostCountConfigAdapter();
+      }
+      @Override
+      public Adapter caseTeleportRulesConfig(TeleportRulesConfig object)
+      {
+        return createTeleportRulesConfigAdapter();
+      }
+      @Override
       public Adapter defaultCase(EObject object)
       {
         return createEObjectAdapter();
@@ -373,6 +413,126 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createLootItemConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.LevelConfig <em>Level Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig
+   * @generated
+   */
+  public Adapter createLevelConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.LevelZone
+   * @generated
+   */
+  public Adapter createLevelZoneAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.SergeantConfig <em>Sergeant Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.SergeantConfig
+   * @generated
+   */
+  public Adapter createSergeantConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.TierCountConfig <em>Tier Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.TierCountConfig
+   * @generated
+   */
+  public Adapter createTierCountConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.MineRingConfig <em>Mine Ring Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.MineRingConfig
+   * @generated
+   */
+  public Adapter createMineRingConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.PortalGhostConfig <em>Portal Ghost Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.PortalGhostConfig
+   * @generated
+   */
+  public Adapter createPortalGhostConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.GhostCountConfig <em>Ghost Count Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.GhostCountConfig
+   * @generated
+   */
+  public Adapter createGhostCountConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.TeleportRulesConfig
+   * @generated
+   */
+  public Adapter createTeleportRulesConfigAdapter()
   {
     return null;
   }

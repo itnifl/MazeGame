@@ -403,6 +403,6 @@ These requirements have been implemented and verified.
 
 - **SR-307** *(Parity, UX)*: The libGDX screen shake uses the old fixed-envelope shake with the new strength and duration; use the shared decaying `BombImpact.shakeOffset` there too so both frontends shake identically.
 
-- **SR-310** *(MDD, Xtext)*: Author levels in the Xtext DSL (`levels.mazegame`) and generate `levels.xmi` from it in the build, so the DSL is the single source of the level data and a test proves the generated XMI equals the shipped one. Regenerating the Xtext sources works here (`mvn generate-sources -pl main.game.maze.dsl -Dxtext.codegen.skip=false`); the grammar, the XMI generator and the equality test still have to be written.
+- **SR-310** *(MDD, Xtext)*: Run the levels generation as part of the build (today `levels.xmi` is regenerated on demand with `MAZE_LEVELS_REGENERATE=true` and a test fails when it is out of step), validate levels in the DSL validator (a zone weaker than the one outside it, an unknown material, a missing difficulty count, a base level that is not earlier) so authors get errors in the editor, and add DSL support for the remaining models (walls, pickups, opponents) so every game data file has one textual source.
 
 - **SR-311** *(Accessibility)*: The spoken "Teleported" is English only and recorded with a Windows voice; offer text-only banner and a volume or mute option for voices, and re-record per language.

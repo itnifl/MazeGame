@@ -1,7 +1,31 @@
 # Making a level
 
-Levels are data. A new level is one `<levels>` element in
-[`levels.xmi`](../maze-common-backend/src/main/resources/xmi/levels/levels.xmi); no Java is needed. The
+Levels are data. A new level is one `level` block in the DSL file
+[`levels.mazegame`](../maze-common-backend/src/main/resources/xmi/levels/levels.mazegame) (Xtext, the `level` section of
+`MazeDsl.xtext`); [`levels.xmi`](../maze-common-backend/src/main/resources/xmi/levels/levels.xmi), which the game loads, is
+generated from it. No Java is needed.
+
+```
+level 3 "The Minefield" {
+    basedOn 2
+    mines { count 3 ringRadius 62.0 triggerRadius 22.0 pulse 0.9 blastRadius 150.0 blastDamage 15 playerDamage 20 holeRadius 30.0 }
+    portalGhost "Portal ghost" { health 60 speed 1.6 sprite "/main/game/maze/ghost-portal.png" }
+    portalGhosts easy 3
+    portalGhosts normal 6
+    portalGhosts hard 10
+}
+```
+
+After editing `levels.mazegame`, regenerate the XMI:
+
+```
+MAZE_LEVELS_REGENERATE=true mvn -o test -pl main.game.maze.dsl.tests
+```
+
+(`MazeDslLevelsTest` rewrites `levels.xmi` from the DSL and checks it is valid against `levels.ecore`; without the variable it
+fails when the two are out of step.) The attribute names below are the model's (`levels.xmi`); the DSL keywords are
+`threatCapacity`, `wallMaterials`, `inheritWeapons`, `cascadeDepth`, `basedOn`, `ring`, `sergeant`, `sergeants`, `mines`,
+`portalGhost`, `portalGhosts` and `teleport`. The
 structure is defined by the metamodel [`levels.ecore`](../maze-common-backend/src/main/resources/xmi/levels/levels.ecore),
 and the game checks the file when it loads and refuses to start with a broken level.
 
@@ -89,7 +113,7 @@ zones, sergeants). The base level must be an earlier one.
 
 ## Checking a new level
 
-1. Add the `<levels>` element.
+1. Add the `level` block to `levels.mazegame` and regenerate `levels.xmi`.
 2. Run `mvn -o test -pl maze-common-backend`: `LevelCatalogTest` loads the shipped file, so a mistake fails there with
    a message that names the level.
 3. Play it: win the level before it. With the last level won, *Next level* is no longer offered.

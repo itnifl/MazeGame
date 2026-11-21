@@ -174,6 +174,62 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.LEVEL_CONFIG:
+      {
+        LevelConfig levelConfig = (LevelConfig)theEObject;
+        T result = caseLevelConfig(levelConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.LEVEL_ZONE:
+      {
+        LevelZone levelZone = (LevelZone)theEObject;
+        T result = caseLevelZone(levelZone);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.SERGEANT_CONFIG:
+      {
+        SergeantConfig sergeantConfig = (SergeantConfig)theEObject;
+        T result = caseSergeantConfig(sergeantConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.TIER_COUNT_CONFIG:
+      {
+        TierCountConfig tierCountConfig = (TierCountConfig)theEObject;
+        T result = caseTierCountConfig(tierCountConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.MINE_RING_CONFIG:
+      {
+        MineRingConfig mineRingConfig = (MineRingConfig)theEObject;
+        T result = caseMineRingConfig(mineRingConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.PORTAL_GHOST_CONFIG:
+      {
+        PortalGhostConfig portalGhostConfig = (PortalGhostConfig)theEObject;
+        T result = casePortalGhostConfig(portalGhostConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.GHOST_COUNT_CONFIG:
+      {
+        GhostCountConfig ghostCountConfig = (GhostCountConfig)theEObject;
+        T result = caseGhostCountConfig(ghostCountConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.TELEPORT_RULES_CONFIG:
+      {
+        TeleportRulesConfig teleportRulesConfig = (TeleportRulesConfig)theEObject;
+        T result = caseTeleportRulesConfig(teleportRulesConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       default: return defaultCase(theEObject);
     }
   }
@@ -398,6 +454,134 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseLootItemConfig(LootItemConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Level Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Level Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLevelConfig(LevelConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Level Zone</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Level Zone</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLevelZone(LevelZone object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Sergeant Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Sergeant Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseSergeantConfig(SergeantConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Tier Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Tier Count Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTierCountConfig(TierCountConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Mine Ring Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Mine Ring Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMineRingConfig(MineRingConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Portal Ghost Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Portal Ghost Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T casePortalGhostConfig(PortalGhostConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Ghost Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Ghost Count Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGhostCountConfig(GhostCountConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Teleport Rules Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Teleport Rules Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTeleportRulesConfig(TeleportRulesConfig object)
   {
     return null;
   }

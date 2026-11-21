@@ -43,7 +43,9 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cPatrolsPatrolConfigParserRuleCall_6_0 = (RuleCall)cPatrolsAssignment_6.eContents().get(0);
 		private final Assignment cLootTablesAssignment_7 = (Assignment)cGroup.eContents().get(7);
 		private final RuleCall cLootTablesLootTableConfigParserRuleCall_7_0 = (RuleCall)cLootTablesAssignment_7.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Assignment cLevelsAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cLevelsLevelConfigParserRuleCall_8_0 = (RuleCall)cLevelsAssignment_8.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_9 = (Keyword)cGroup.eContents().get(9);
 		
 		///*
 		// * Root element - A game configuration containing all game elements
@@ -55,6 +57,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (opponents+=OpponentConfig)*
 		//        (patrols+=PatrolConfig)*
 		//        (lootTables+=LootTableConfig)*
+		//        (levels+=LevelConfig)*
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -65,6 +68,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    (opponents+=OpponentConfig)*
 		//    (patrols+=PatrolConfig)*
 		//    (lootTables+=LootTableConfig)*
+		//    (levels+=LevelConfig)*
 		//'}'
 		public Group getGroup() { return cGroup; }
 		
@@ -110,8 +114,14 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//LootTableConfig
 		public RuleCall getLootTablesLootTableConfigParserRuleCall_7_0() { return cLootTablesLootTableConfigParserRuleCall_7_0; }
 		
+		//(levels+=LevelConfig)*
+		public Assignment getLevelsAssignment_8() { return cLevelsAssignment_8; }
+		
+		//LevelConfig
+		public RuleCall getLevelsLevelConfigParserRuleCall_8_0() { return cLevelsLevelConfigParserRuleCall_8_0; }
+		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_8() { return cRightCurlyBracketKeyword_8; }
+		public Keyword getRightCurlyBracketKeyword_9() { return cRightCurlyBracketKeyword_9; }
 	}
 	public class ImportElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.Import");
@@ -1258,6 +1268,844 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_8() { return cRightCurlyBracketKeyword_8; }
 	}
+	public class LevelConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LevelConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cLevelKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNumberAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNumberINTTerminalRuleCall_1_0 = (RuleCall)cNumberAssignment_1.eContents().get(0);
+		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cNameSTRINGTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Keyword cBasedOnKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Assignment cBaseLevelAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cBaseLevelINTTerminalRuleCall_4_1_0 = (RuleCall)cBaseLevelAssignment_4_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cThreatCapacityKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cThreatCapacityFactorAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cThreatCapacityFactorDOUBLE_OBJECTParserRuleCall_5_1_0 = (RuleCall)cThreatCapacityFactorAssignment_5_1.eContents().get(0);
+		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
+		private final Keyword cWallMaterialsKeyword_6_0 = (Keyword)cGroup_6.eContents().get(0);
+		private final Assignment cShowWallMaterialsAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
+		private final RuleCall cShowWallMaterialsBOOLEAN_OBJECTParserRuleCall_6_1_0 = (RuleCall)cShowWallMaterialsAssignment_6_1.eContents().get(0);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cInheritWeaponsKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final Assignment cInheritWeaponsAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
+		private final RuleCall cInheritWeaponsBOOLEAN_OBJECTParserRuleCall_7_1_0 = (RuleCall)cInheritWeaponsAssignment_7_1.eContents().get(0);
+		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
+		private final Keyword cCascadeDepthKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
+		private final Assignment cCascadeDepthAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
+		private final RuleCall cCascadeDepthINT_OBJECTParserRuleCall_8_1_0 = (RuleCall)cCascadeDepthAssignment_8_1.eContents().get(0);
+		private final Assignment cZonesAssignment_9 = (Assignment)cGroup.eContents().get(9);
+		private final RuleCall cZonesLevelZoneParserRuleCall_9_0 = (RuleCall)cZonesAssignment_9.eContents().get(0);
+		private final Assignment cSergeantAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cSergeantSergeantConfigParserRuleCall_10_0 = (RuleCall)cSergeantAssignment_10.eContents().get(0);
+		private final Assignment cSergeantPostsAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cSergeantPostsTierCountConfigParserRuleCall_11_0 = (RuleCall)cSergeantPostsAssignment_11.eContents().get(0);
+		private final Assignment cMinesAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cMinesMineRingConfigParserRuleCall_12_0 = (RuleCall)cMinesAssignment_12.eContents().get(0);
+		private final Assignment cPortalGhostAssignment_13 = (Assignment)cGroup.eContents().get(13);
+		private final RuleCall cPortalGhostPortalGhostConfigParserRuleCall_13_0 = (RuleCall)cPortalGhostAssignment_13.eContents().get(0);
+		private final Assignment cGhostCountsAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cGhostCountsGhostCountConfigParserRuleCall_14_0 = (RuleCall)cGhostCountsAssignment_14.eContents().get(0);
+		private final Assignment cTeleportAssignment_15 = (Assignment)cGroup.eContents().get(15);
+		private final RuleCall cTeleportTeleportRulesConfigParserRuleCall_15_0 = (RuleCall)cTeleportAssignment_15.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_16 = (Keyword)cGroup.eContents().get(16);
+		
+		///*
+		// * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
+		// * Scalar values are nullable on purpose: a value that is not written is "not set", so a level built on
+		// * another one (basedOn) takes it from there, and the model's default applies otherwise.
+		// */
+		//LevelConfig:
+		//    'level' number=INT name=STRING '{'
+		//        ('basedOn' baseLevel=INT)?
+		//        ('threatCapacity' threatCapacityFactor=DOUBLE_OBJECT)?
+		//        ('wallMaterials' showWallMaterials=BOOLEAN_OBJECT)?
+		//        ('inheritWeapons' inheritWeapons=BOOLEAN_OBJECT)?
+		//        ('cascadeDepth' cascadeDepth=INT_OBJECT)?
+		//        (zones+=LevelZone)*
+		//        (sergeant=SergeantConfig)?
+		//        (sergeantPosts+=TierCountConfig)*
+		//        (mines=MineRingConfig)?
+		//        (portalGhost=PortalGhostConfig)?
+		//        (ghostCounts+=GhostCountConfig)*
+		//        (teleport=TeleportRulesConfig)?
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'level' number=INT name=STRING '{'
+		//    ('basedOn' baseLevel=INT)?
+		//    ('threatCapacity' threatCapacityFactor=DOUBLE_OBJECT)?
+		//    ('wallMaterials' showWallMaterials=BOOLEAN_OBJECT)?
+		//    ('inheritWeapons' inheritWeapons=BOOLEAN_OBJECT)?
+		//    ('cascadeDepth' cascadeDepth=INT_OBJECT)?
+		//    (zones+=LevelZone)*
+		//    (sergeant=SergeantConfig)?
+		//    (sergeantPosts+=TierCountConfig)*
+		//    (mines=MineRingConfig)?
+		//    (portalGhost=PortalGhostConfig)?
+		//    (ghostCounts+=GhostCountConfig)*
+		//    (teleport=TeleportRulesConfig)?
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'level'
+		public Keyword getLevelKeyword_0() { return cLevelKeyword_0; }
+		
+		//number=INT
+		public Assignment getNumberAssignment_1() { return cNumberAssignment_1; }
+		
+		//INT
+		public RuleCall getNumberINTTerminalRuleCall_1_0() { return cNumberINTTerminalRuleCall_1_0; }
+		
+		//name=STRING
+		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		
+		//STRING
+		public RuleCall getNameSTRINGTerminalRuleCall_2_0() { return cNameSTRINGTerminalRuleCall_2_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_3() { return cLeftCurlyBracketKeyword_3; }
+		
+		//('basedOn' baseLevel=INT)?
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//'basedOn'
+		public Keyword getBasedOnKeyword_4_0() { return cBasedOnKeyword_4_0; }
+		
+		//baseLevel=INT
+		public Assignment getBaseLevelAssignment_4_1() { return cBaseLevelAssignment_4_1; }
+		
+		//INT
+		public RuleCall getBaseLevelINTTerminalRuleCall_4_1_0() { return cBaseLevelINTTerminalRuleCall_4_1_0; }
+		
+		//('threatCapacity' threatCapacityFactor=DOUBLE_OBJECT)?
+		public Group getGroup_5() { return cGroup_5; }
+		
+		//'threatCapacity'
+		public Keyword getThreatCapacityKeyword_5_0() { return cThreatCapacityKeyword_5_0; }
+		
+		//threatCapacityFactor=DOUBLE_OBJECT
+		public Assignment getThreatCapacityFactorAssignment_5_1() { return cThreatCapacityFactorAssignment_5_1; }
+		
+		//DOUBLE_OBJECT
+		public RuleCall getThreatCapacityFactorDOUBLE_OBJECTParserRuleCall_5_1_0() { return cThreatCapacityFactorDOUBLE_OBJECTParserRuleCall_5_1_0; }
+		
+		//('wallMaterials' showWallMaterials=BOOLEAN_OBJECT)?
+		public Group getGroup_6() { return cGroup_6; }
+		
+		//'wallMaterials'
+		public Keyword getWallMaterialsKeyword_6_0() { return cWallMaterialsKeyword_6_0; }
+		
+		//showWallMaterials=BOOLEAN_OBJECT
+		public Assignment getShowWallMaterialsAssignment_6_1() { return cShowWallMaterialsAssignment_6_1; }
+		
+		//BOOLEAN_OBJECT
+		public RuleCall getShowWallMaterialsBOOLEAN_OBJECTParserRuleCall_6_1_0() { return cShowWallMaterialsBOOLEAN_OBJECTParserRuleCall_6_1_0; }
+		
+		//('inheritWeapons' inheritWeapons=BOOLEAN_OBJECT)?
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//'inheritWeapons'
+		public Keyword getInheritWeaponsKeyword_7_0() { return cInheritWeaponsKeyword_7_0; }
+		
+		//inheritWeapons=BOOLEAN_OBJECT
+		public Assignment getInheritWeaponsAssignment_7_1() { return cInheritWeaponsAssignment_7_1; }
+		
+		//BOOLEAN_OBJECT
+		public RuleCall getInheritWeaponsBOOLEAN_OBJECTParserRuleCall_7_1_0() { return cInheritWeaponsBOOLEAN_OBJECTParserRuleCall_7_1_0; }
+		
+		//('cascadeDepth' cascadeDepth=INT_OBJECT)?
+		public Group getGroup_8() { return cGroup_8; }
+		
+		//'cascadeDepth'
+		public Keyword getCascadeDepthKeyword_8_0() { return cCascadeDepthKeyword_8_0; }
+		
+		//cascadeDepth=INT_OBJECT
+		public Assignment getCascadeDepthAssignment_8_1() { return cCascadeDepthAssignment_8_1; }
+		
+		//INT_OBJECT
+		public RuleCall getCascadeDepthINT_OBJECTParserRuleCall_8_1_0() { return cCascadeDepthINT_OBJECTParserRuleCall_8_1_0; }
+		
+		//(zones+=LevelZone)*
+		public Assignment getZonesAssignment_9() { return cZonesAssignment_9; }
+		
+		//LevelZone
+		public RuleCall getZonesLevelZoneParserRuleCall_9_0() { return cZonesLevelZoneParserRuleCall_9_0; }
+		
+		//(sergeant=SergeantConfig)?
+		public Assignment getSergeantAssignment_10() { return cSergeantAssignment_10; }
+		
+		//SergeantConfig
+		public RuleCall getSergeantSergeantConfigParserRuleCall_10_0() { return cSergeantSergeantConfigParserRuleCall_10_0; }
+		
+		//(sergeantPosts+=TierCountConfig)*
+		public Assignment getSergeantPostsAssignment_11() { return cSergeantPostsAssignment_11; }
+		
+		//TierCountConfig
+		public RuleCall getSergeantPostsTierCountConfigParserRuleCall_11_0() { return cSergeantPostsTierCountConfigParserRuleCall_11_0; }
+		
+		//(mines=MineRingConfig)?
+		public Assignment getMinesAssignment_12() { return cMinesAssignment_12; }
+		
+		//MineRingConfig
+		public RuleCall getMinesMineRingConfigParserRuleCall_12_0() { return cMinesMineRingConfigParserRuleCall_12_0; }
+		
+		//(portalGhost=PortalGhostConfig)?
+		public Assignment getPortalGhostAssignment_13() { return cPortalGhostAssignment_13; }
+		
+		//PortalGhostConfig
+		public RuleCall getPortalGhostPortalGhostConfigParserRuleCall_13_0() { return cPortalGhostPortalGhostConfigParserRuleCall_13_0; }
+		
+		//(ghostCounts+=GhostCountConfig)*
+		public Assignment getGhostCountsAssignment_14() { return cGhostCountsAssignment_14; }
+		
+		//GhostCountConfig
+		public RuleCall getGhostCountsGhostCountConfigParserRuleCall_14_0() { return cGhostCountsGhostCountConfigParserRuleCall_14_0; }
+		
+		//(teleport=TeleportRulesConfig)?
+		public Assignment getTeleportAssignment_15() { return cTeleportAssignment_15; }
+		
+		//TeleportRulesConfig
+		public RuleCall getTeleportTeleportRulesConfigParserRuleCall_15_0() { return cTeleportTeleportRulesConfigParserRuleCall_15_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_16() { return cRightCurlyBracketKeyword_16; }
+	}
+	public class LevelZoneElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LevelZone");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cRingKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cDisplayNameAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cShareKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cBreakableShareAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0 = (RuleCall)cBreakableShareAssignment_2_1.eContents().get(0);
+		private final Keyword cMaterialsKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cMaterialIdsAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cMaterialIdsIDTerminalRuleCall_4_0 = (RuleCall)cMaterialIdsAssignment_4.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cMaterialIdsAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cMaterialIdsIDTerminalRuleCall_5_1_0 = (RuleCall)cMaterialIdsAssignment_5_1.eContents().get(0);
+		
+		///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
+		//LevelZone:
+		//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
+		//    'materials' materialIds+=ID (',' materialIds+=ID)*
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
+		//'materials' materialIds+=ID (',' materialIds+=ID)*
+		public Group getGroup() { return cGroup; }
+		
+		//'ring'
+		public Keyword getRingKeyword_0() { return cRingKeyword_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_1() { return cDisplayNameAssignment_1; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_1_0() { return cDisplayNameSTRINGTerminalRuleCall_1_0; }
+		
+		//('share' breakableShare=DOUBLE_OBJECT)?
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//'share'
+		public Keyword getShareKeyword_2_0() { return cShareKeyword_2_0; }
+		
+		//breakableShare=DOUBLE_OBJECT
+		public Assignment getBreakableShareAssignment_2_1() { return cBreakableShareAssignment_2_1; }
+		
+		//DOUBLE_OBJECT
+		public RuleCall getBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0() { return cBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0; }
+		
+		//'materials'
+		public Keyword getMaterialsKeyword_3() { return cMaterialsKeyword_3; }
+		
+		//materialIds+=ID
+		public Assignment getMaterialIdsAssignment_4() { return cMaterialIdsAssignment_4; }
+		
+		//ID
+		public RuleCall getMaterialIdsIDTerminalRuleCall_4_0() { return cMaterialIdsIDTerminalRuleCall_4_0; }
+		
+		//(',' materialIds+=ID)*
+		public Group getGroup_5() { return cGroup_5; }
+		
+		//','
+		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
+		
+		//materialIds+=ID
+		public Assignment getMaterialIdsAssignment_5_1() { return cMaterialIdsAssignment_5_1; }
+		
+		//ID
+		public RuleCall getMaterialIdsIDTerminalRuleCall_5_1_0() { return cMaterialIdsIDTerminalRuleCall_5_1_0; }
+	}
+	public class SergeantConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.SergeantConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cSergeantKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cDisplayNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cHealthKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cHealthAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cHealthINTTerminalRuleCall_4_0 = (RuleCall)cHealthAssignment_4.eContents().get(0);
+		private final Keyword cSightRangeKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cSightRangeAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cSightRangeDOUBLEParserRuleCall_6_0 = (RuleCall)cSightRangeAssignment_6.eContents().get(0);
+		private final Keyword cRoundsKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cRoundsPerBurstAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cRoundsPerBurstINTTerminalRuleCall_8_0 = (RuleCall)cRoundsPerBurstAssignment_8.eContents().get(0);
+		private final Keyword cRoundDamageKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cRoundDamageAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cRoundDamageINTTerminalRuleCall_10_0 = (RuleCall)cRoundDamageAssignment_10.eContents().get(0);
+		private final Keyword cRoundIntervalKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cRoundIntervalSecondsAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cRoundIntervalSecondsDOUBLEParserRuleCall_12_0 = (RuleCall)cRoundIntervalSecondsAssignment_12.eContents().get(0);
+		private final Keyword cBurstCooldownKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cBurstCooldownSecondsAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cBurstCooldownSecondsDOUBLEParserRuleCall_14_0 = (RuleCall)cBurstCooldownSecondsAssignment_14.eContents().get(0);
+		private final Keyword cSpriteKeyword_15 = (Keyword)cGroup.eContents().get(15);
+		private final Assignment cSpriteAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cSpriteSTRINGTerminalRuleCall_16_0 = (RuleCall)cSpriteAssignment_16.eContents().get(0);
+		private final Group cGroup_17 = (Group)cGroup.eContents().get(17);
+		private final Keyword cFireSoundKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
+		private final Assignment cFireSoundAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
+		private final RuleCall cFireSoundSTRINGTerminalRuleCall_17_1_0 = (RuleCall)cFireSoundAssignment_17_1.eContents().get(0);
+		private final Keyword cDropsKeyword_18 = (Keyword)cGroup.eContents().get(18);
+		private final Assignment cDropWeaponAssignment_19 = (Assignment)cGroup.eContents().get(19);
+		private final RuleCall cDropWeaponDropWeaponEnumEnumRuleCall_19_0 = (RuleCall)cDropWeaponAssignment_19.eContents().get(0);
+		private final Keyword cPostDistanceKeyword_20 = (Keyword)cGroup.eContents().get(20);
+		private final Assignment cPostDistanceFromHeartAssignment_21 = (Assignment)cGroup.eContents().get(21);
+		private final RuleCall cPostDistanceFromHeartDOUBLEParserRuleCall_21_0 = (RuleCall)cPostDistanceFromHeartAssignment_21.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_22 = (Keyword)cGroup.eContents().get(22);
+		
+		//SergeantConfig:
+		//    'sergeant' displayName=STRING '{'
+		//        'health' health=INT
+		//        'sightRange' sightRange=DOUBLE
+		//        'rounds' roundsPerBurst=INT
+		//        'roundDamage' roundDamage=INT
+		//        'roundInterval' roundIntervalSeconds=DOUBLE
+		//        'burstCooldown' burstCooldownSeconds=DOUBLE
+		//        'sprite' sprite=STRING
+		//        ('fireSound' fireSound=STRING)?
+		//        'drops' dropWeapon=DropWeaponEnum
+		//        'postDistance' postDistanceFromHeart=DOUBLE
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'sergeant' displayName=STRING '{'
+		//    'health' health=INT
+		//    'sightRange' sightRange=DOUBLE
+		//    'rounds' roundsPerBurst=INT
+		//    'roundDamage' roundDamage=INT
+		//    'roundInterval' roundIntervalSeconds=DOUBLE
+		//    'burstCooldown' burstCooldownSeconds=DOUBLE
+		//    'sprite' sprite=STRING
+		//    ('fireSound' fireSound=STRING)?
+		//    'drops' dropWeapon=DropWeaponEnum
+		//    'postDistance' postDistanceFromHeart=DOUBLE
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'sergeant'
+		public Keyword getSergeantKeyword_0() { return cSergeantKeyword_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_1() { return cDisplayNameAssignment_1; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_1_0() { return cDisplayNameSTRINGTerminalRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'health'
+		public Keyword getHealthKeyword_3() { return cHealthKeyword_3; }
+		
+		//health=INT
+		public Assignment getHealthAssignment_4() { return cHealthAssignment_4; }
+		
+		//INT
+		public RuleCall getHealthINTTerminalRuleCall_4_0() { return cHealthINTTerminalRuleCall_4_0; }
+		
+		//'sightRange'
+		public Keyword getSightRangeKeyword_5() { return cSightRangeKeyword_5; }
+		
+		//sightRange=DOUBLE
+		public Assignment getSightRangeAssignment_6() { return cSightRangeAssignment_6; }
+		
+		//DOUBLE
+		public RuleCall getSightRangeDOUBLEParserRuleCall_6_0() { return cSightRangeDOUBLEParserRuleCall_6_0; }
+		
+		//'rounds'
+		public Keyword getRoundsKeyword_7() { return cRoundsKeyword_7; }
+		
+		//roundsPerBurst=INT
+		public Assignment getRoundsPerBurstAssignment_8() { return cRoundsPerBurstAssignment_8; }
+		
+		//INT
+		public RuleCall getRoundsPerBurstINTTerminalRuleCall_8_0() { return cRoundsPerBurstINTTerminalRuleCall_8_0; }
+		
+		//'roundDamage'
+		public Keyword getRoundDamageKeyword_9() { return cRoundDamageKeyword_9; }
+		
+		//roundDamage=INT
+		public Assignment getRoundDamageAssignment_10() { return cRoundDamageAssignment_10; }
+		
+		//INT
+		public RuleCall getRoundDamageINTTerminalRuleCall_10_0() { return cRoundDamageINTTerminalRuleCall_10_0; }
+		
+		//'roundInterval'
+		public Keyword getRoundIntervalKeyword_11() { return cRoundIntervalKeyword_11; }
+		
+		//roundIntervalSeconds=DOUBLE
+		public Assignment getRoundIntervalSecondsAssignment_12() { return cRoundIntervalSecondsAssignment_12; }
+		
+		//DOUBLE
+		public RuleCall getRoundIntervalSecondsDOUBLEParserRuleCall_12_0() { return cRoundIntervalSecondsDOUBLEParserRuleCall_12_0; }
+		
+		//'burstCooldown'
+		public Keyword getBurstCooldownKeyword_13() { return cBurstCooldownKeyword_13; }
+		
+		//burstCooldownSeconds=DOUBLE
+		public Assignment getBurstCooldownSecondsAssignment_14() { return cBurstCooldownSecondsAssignment_14; }
+		
+		//DOUBLE
+		public RuleCall getBurstCooldownSecondsDOUBLEParserRuleCall_14_0() { return cBurstCooldownSecondsDOUBLEParserRuleCall_14_0; }
+		
+		//'sprite'
+		public Keyword getSpriteKeyword_15() { return cSpriteKeyword_15; }
+		
+		//sprite=STRING
+		public Assignment getSpriteAssignment_16() { return cSpriteAssignment_16; }
+		
+		//STRING
+		public RuleCall getSpriteSTRINGTerminalRuleCall_16_0() { return cSpriteSTRINGTerminalRuleCall_16_0; }
+		
+		//('fireSound' fireSound=STRING)?
+		public Group getGroup_17() { return cGroup_17; }
+		
+		//'fireSound'
+		public Keyword getFireSoundKeyword_17_0() { return cFireSoundKeyword_17_0; }
+		
+		//fireSound=STRING
+		public Assignment getFireSoundAssignment_17_1() { return cFireSoundAssignment_17_1; }
+		
+		//STRING
+		public RuleCall getFireSoundSTRINGTerminalRuleCall_17_1_0() { return cFireSoundSTRINGTerminalRuleCall_17_1_0; }
+		
+		//'drops'
+		public Keyword getDropsKeyword_18() { return cDropsKeyword_18; }
+		
+		//dropWeapon=DropWeaponEnum
+		public Assignment getDropWeaponAssignment_19() { return cDropWeaponAssignment_19; }
+		
+		//DropWeaponEnum
+		public RuleCall getDropWeaponDropWeaponEnumEnumRuleCall_19_0() { return cDropWeaponDropWeaponEnumEnumRuleCall_19_0; }
+		
+		//'postDistance'
+		public Keyword getPostDistanceKeyword_20() { return cPostDistanceKeyword_20; }
+		
+		//postDistanceFromHeart=DOUBLE
+		public Assignment getPostDistanceFromHeartAssignment_21() { return cPostDistanceFromHeartAssignment_21; }
+		
+		//DOUBLE
+		public RuleCall getPostDistanceFromHeartDOUBLEParserRuleCall_21_0() { return cPostDistanceFromHeartDOUBLEParserRuleCall_21_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_22() { return cRightCurlyBracketKeyword_22; }
+	}
+	public class TierCountConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.TierCountConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cSergeantsKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDifficultyAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDifficultyDifficultyLevelEnumRuleCall_1_0 = (RuleCall)cDifficultyAssignment_1.eContents().get(0);
+		private final Assignment cCountAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cCountINTTerminalRuleCall_2_0 = (RuleCall)cCountAssignment_2.eContents().get(0);
+		
+		//TierCountConfig:
+		//    'sergeants' difficulty=DifficultyLevel count=INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'sergeants' difficulty=DifficultyLevel count=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'sergeants'
+		public Keyword getSergeantsKeyword_0() { return cSergeantsKeyword_0; }
+		
+		//difficulty=DifficultyLevel
+		public Assignment getDifficultyAssignment_1() { return cDifficultyAssignment_1; }
+		
+		//DifficultyLevel
+		public RuleCall getDifficultyDifficultyLevelEnumRuleCall_1_0() { return cDifficultyDifficultyLevelEnumRuleCall_1_0; }
+		
+		//count=INT
+		public Assignment getCountAssignment_2() { return cCountAssignment_2; }
+		
+		//INT
+		public RuleCall getCountINTTerminalRuleCall_2_0() { return cCountINTTerminalRuleCall_2_0; }
+	}
+	public class MineRingConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.MineRingConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cMinesKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Keyword cCountKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cCountAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cCountINTTerminalRuleCall_3_0 = (RuleCall)cCountAssignment_3.eContents().get(0);
+		private final Keyword cRingRadiusKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cRingRadiusAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cRingRadiusDOUBLEParserRuleCall_5_0 = (RuleCall)cRingRadiusAssignment_5.eContents().get(0);
+		private final Keyword cTriggerRadiusKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		private final Assignment cTriggerRadiusAssignment_7 = (Assignment)cGroup.eContents().get(7);
+		private final RuleCall cTriggerRadiusDOUBLEParserRuleCall_7_0 = (RuleCall)cTriggerRadiusAssignment_7.eContents().get(0);
+		private final Keyword cPulseKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Assignment cPulseSecondsAssignment_9 = (Assignment)cGroup.eContents().get(9);
+		private final RuleCall cPulseSecondsDOUBLEParserRuleCall_9_0 = (RuleCall)cPulseSecondsAssignment_9.eContents().get(0);
+		private final Keyword cBlastRadiusKeyword_10 = (Keyword)cGroup.eContents().get(10);
+		private final Assignment cBlastRadiusAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cBlastRadiusDOUBLEParserRuleCall_11_0 = (RuleCall)cBlastRadiusAssignment_11.eContents().get(0);
+		private final Keyword cBlastDamageKeyword_12 = (Keyword)cGroup.eContents().get(12);
+		private final Assignment cBlastDamageAssignment_13 = (Assignment)cGroup.eContents().get(13);
+		private final RuleCall cBlastDamageINTTerminalRuleCall_13_0 = (RuleCall)cBlastDamageAssignment_13.eContents().get(0);
+		private final Keyword cPlayerDamageKeyword_14 = (Keyword)cGroup.eContents().get(14);
+		private final Assignment cPlayerDamageAssignment_15 = (Assignment)cGroup.eContents().get(15);
+		private final RuleCall cPlayerDamageINTTerminalRuleCall_15_0 = (RuleCall)cPlayerDamageAssignment_15.eContents().get(0);
+		private final Keyword cHoleRadiusKeyword_16 = (Keyword)cGroup.eContents().get(16);
+		private final Assignment cHoleRadiusAssignment_17 = (Assignment)cGroup.eContents().get(17);
+		private final RuleCall cHoleRadiusDOUBLEParserRuleCall_17_0 = (RuleCall)cHoleRadiusAssignment_17.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_18 = (Keyword)cGroup.eContents().get(18);
+		
+		//MineRingConfig:
+		//    'mines' '{'
+		//        'count' count=INT
+		//        'ringRadius' ringRadius=DOUBLE
+		//        'triggerRadius' triggerRadius=DOUBLE
+		//        'pulse' pulseSeconds=DOUBLE
+		//        'blastRadius' blastRadius=DOUBLE
+		//        'blastDamage' blastDamage=INT
+		//        'playerDamage' playerDamage=INT
+		//        'holeRadius' holeRadius=DOUBLE
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'mines' '{'
+		//    'count' count=INT
+		//    'ringRadius' ringRadius=DOUBLE
+		//    'triggerRadius' triggerRadius=DOUBLE
+		//    'pulse' pulseSeconds=DOUBLE
+		//    'blastRadius' blastRadius=DOUBLE
+		//    'blastDamage' blastDamage=INT
+		//    'playerDamage' playerDamage=INT
+		//    'holeRadius' holeRadius=DOUBLE
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'mines'
+		public Keyword getMinesKeyword_0() { return cMinesKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//'count'
+		public Keyword getCountKeyword_2() { return cCountKeyword_2; }
+		
+		//count=INT
+		public Assignment getCountAssignment_3() { return cCountAssignment_3; }
+		
+		//INT
+		public RuleCall getCountINTTerminalRuleCall_3_0() { return cCountINTTerminalRuleCall_3_0; }
+		
+		//'ringRadius'
+		public Keyword getRingRadiusKeyword_4() { return cRingRadiusKeyword_4; }
+		
+		//ringRadius=DOUBLE
+		public Assignment getRingRadiusAssignment_5() { return cRingRadiusAssignment_5; }
+		
+		//DOUBLE
+		public RuleCall getRingRadiusDOUBLEParserRuleCall_5_0() { return cRingRadiusDOUBLEParserRuleCall_5_0; }
+		
+		//'triggerRadius'
+		public Keyword getTriggerRadiusKeyword_6() { return cTriggerRadiusKeyword_6; }
+		
+		//triggerRadius=DOUBLE
+		public Assignment getTriggerRadiusAssignment_7() { return cTriggerRadiusAssignment_7; }
+		
+		//DOUBLE
+		public RuleCall getTriggerRadiusDOUBLEParserRuleCall_7_0() { return cTriggerRadiusDOUBLEParserRuleCall_7_0; }
+		
+		//'pulse'
+		public Keyword getPulseKeyword_8() { return cPulseKeyword_8; }
+		
+		//pulseSeconds=DOUBLE
+		public Assignment getPulseSecondsAssignment_9() { return cPulseSecondsAssignment_9; }
+		
+		//DOUBLE
+		public RuleCall getPulseSecondsDOUBLEParserRuleCall_9_0() { return cPulseSecondsDOUBLEParserRuleCall_9_0; }
+		
+		//'blastRadius'
+		public Keyword getBlastRadiusKeyword_10() { return cBlastRadiusKeyword_10; }
+		
+		//blastRadius=DOUBLE
+		public Assignment getBlastRadiusAssignment_11() { return cBlastRadiusAssignment_11; }
+		
+		//DOUBLE
+		public RuleCall getBlastRadiusDOUBLEParserRuleCall_11_0() { return cBlastRadiusDOUBLEParserRuleCall_11_0; }
+		
+		//'blastDamage'
+		public Keyword getBlastDamageKeyword_12() { return cBlastDamageKeyword_12; }
+		
+		//blastDamage=INT
+		public Assignment getBlastDamageAssignment_13() { return cBlastDamageAssignment_13; }
+		
+		//INT
+		public RuleCall getBlastDamageINTTerminalRuleCall_13_0() { return cBlastDamageINTTerminalRuleCall_13_0; }
+		
+		//'playerDamage'
+		public Keyword getPlayerDamageKeyword_14() { return cPlayerDamageKeyword_14; }
+		
+		//playerDamage=INT
+		public Assignment getPlayerDamageAssignment_15() { return cPlayerDamageAssignment_15; }
+		
+		//INT
+		public RuleCall getPlayerDamageINTTerminalRuleCall_15_0() { return cPlayerDamageINTTerminalRuleCall_15_0; }
+		
+		//'holeRadius'
+		public Keyword getHoleRadiusKeyword_16() { return cHoleRadiusKeyword_16; }
+		
+		//holeRadius=DOUBLE
+		public Assignment getHoleRadiusAssignment_17() { return cHoleRadiusAssignment_17; }
+		
+		//DOUBLE
+		public RuleCall getHoleRadiusDOUBLEParserRuleCall_17_0() { return cHoleRadiusDOUBLEParserRuleCall_17_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_18() { return cRightCurlyBracketKeyword_18; }
+	}
+	public class PortalGhostConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.PortalGhostConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cPortalGhostKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cDisplayNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cHealthKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cHealthAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cHealthINTTerminalRuleCall_4_0 = (RuleCall)cHealthAssignment_4.eContents().get(0);
+		private final Keyword cSpeedKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cSpeedAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cSpeedDOUBLEParserRuleCall_6_0 = (RuleCall)cSpeedAssignment_6.eContents().get(0);
+		private final Keyword cSpriteKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cSpriteAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cSpriteSTRINGTerminalRuleCall_8_0 = (RuleCall)cSpriteAssignment_8.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		
+		//PortalGhostConfig:
+		//    'portalGhost' displayName=STRING '{'
+		//        'health' health=INT
+		//        'speed' speed=DOUBLE
+		//        'sprite' sprite=STRING
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'portalGhost' displayName=STRING '{'
+		//    'health' health=INT
+		//    'speed' speed=DOUBLE
+		//    'sprite' sprite=STRING
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'portalGhost'
+		public Keyword getPortalGhostKeyword_0() { return cPortalGhostKeyword_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_1() { return cDisplayNameAssignment_1; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_1_0() { return cDisplayNameSTRINGTerminalRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'health'
+		public Keyword getHealthKeyword_3() { return cHealthKeyword_3; }
+		
+		//health=INT
+		public Assignment getHealthAssignment_4() { return cHealthAssignment_4; }
+		
+		//INT
+		public RuleCall getHealthINTTerminalRuleCall_4_0() { return cHealthINTTerminalRuleCall_4_0; }
+		
+		//'speed'
+		public Keyword getSpeedKeyword_5() { return cSpeedKeyword_5; }
+		
+		//speed=DOUBLE
+		public Assignment getSpeedAssignment_6() { return cSpeedAssignment_6; }
+		
+		//DOUBLE
+		public RuleCall getSpeedDOUBLEParserRuleCall_6_0() { return cSpeedDOUBLEParserRuleCall_6_0; }
+		
+		//'sprite'
+		public Keyword getSpriteKeyword_7() { return cSpriteKeyword_7; }
+		
+		//sprite=STRING
+		public Assignment getSpriteAssignment_8() { return cSpriteAssignment_8; }
+		
+		//STRING
+		public RuleCall getSpriteSTRINGTerminalRuleCall_8_0() { return cSpriteSTRINGTerminalRuleCall_8_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_9() { return cRightCurlyBracketKeyword_9; }
+	}
+	public class GhostCountConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.GhostCountConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cPortalGhostsKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDifficultyAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDifficultyDifficultyLevelEnumRuleCall_1_0 = (RuleCall)cDifficultyAssignment_1.eContents().get(0);
+		private final Assignment cCountAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cCountINTTerminalRuleCall_2_0 = (RuleCall)cCountAssignment_2.eContents().get(0);
+		
+		//GhostCountConfig:
+		//    'portalGhosts' difficulty=DifficultyLevel count=INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'portalGhosts' difficulty=DifficultyLevel count=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'portalGhosts'
+		public Keyword getPortalGhostsKeyword_0() { return cPortalGhostsKeyword_0; }
+		
+		//difficulty=DifficultyLevel
+		public Assignment getDifficultyAssignment_1() { return cDifficultyAssignment_1; }
+		
+		//DifficultyLevel
+		public RuleCall getDifficultyDifficultyLevelEnumRuleCall_1_0() { return cDifficultyDifficultyLevelEnumRuleCall_1_0; }
+		
+		//count=INT
+		public Assignment getCountAssignment_2() { return cCountAssignment_2; }
+		
+		//INT
+		public RuleCall getCountINTTerminalRuleCall_2_0() { return cCountINTTerminalRuleCall_2_0; }
+	}
+	public class TeleportRulesConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.TeleportRulesConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cTeleportKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Keyword cCooldownKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cCooldownSecondsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cCooldownSecondsDOUBLEParserRuleCall_3_0 = (RuleCall)cCooldownSecondsAssignment_3.eContents().get(0);
+		private final Keyword cBannerKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cBannerTextAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cBannerTextSTRINGTerminalRuleCall_5_0 = (RuleCall)cBannerTextAssignment_5.eContents().get(0);
+		private final Keyword cBannerSecondsKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		private final Assignment cBannerSecondsAssignment_7 = (Assignment)cGroup.eContents().get(7);
+		private final RuleCall cBannerSecondsDOUBLEParserRuleCall_7_0 = (RuleCall)cBannerSecondsAssignment_7.eContents().get(0);
+		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
+		private final Keyword cZapSoundKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
+		private final Assignment cZapSoundAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
+		private final RuleCall cZapSoundSTRINGTerminalRuleCall_8_1_0 = (RuleCall)cZapSoundAssignment_8_1.eContents().get(0);
+		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
+		private final Keyword cVoiceSoundKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
+		private final Assignment cVoiceSoundAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
+		private final RuleCall cVoiceSoundSTRINGTerminalRuleCall_9_1_0 = (RuleCall)cVoiceSoundAssignment_9_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_10 = (Keyword)cGroup.eContents().get(10);
+		
+		//TeleportRulesConfig:
+		//    'teleport' '{'
+		//        'cooldown' cooldownSeconds=DOUBLE
+		//        'banner' bannerText=STRING
+		//        'bannerSeconds' bannerSeconds=DOUBLE
+		//        ('zapSound' zapSound=STRING)?
+		//        ('voiceSound' voiceSound=STRING)?
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'teleport' '{'
+		//    'cooldown' cooldownSeconds=DOUBLE
+		//    'banner' bannerText=STRING
+		//    'bannerSeconds' bannerSeconds=DOUBLE
+		//    ('zapSound' zapSound=STRING)?
+		//    ('voiceSound' voiceSound=STRING)?
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'teleport'
+		public Keyword getTeleportKeyword_0() { return cTeleportKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//'cooldown'
+		public Keyword getCooldownKeyword_2() { return cCooldownKeyword_2; }
+		
+		//cooldownSeconds=DOUBLE
+		public Assignment getCooldownSecondsAssignment_3() { return cCooldownSecondsAssignment_3; }
+		
+		//DOUBLE
+		public RuleCall getCooldownSecondsDOUBLEParserRuleCall_3_0() { return cCooldownSecondsDOUBLEParserRuleCall_3_0; }
+		
+		//'banner'
+		public Keyword getBannerKeyword_4() { return cBannerKeyword_4; }
+		
+		//bannerText=STRING
+		public Assignment getBannerTextAssignment_5() { return cBannerTextAssignment_5; }
+		
+		//STRING
+		public RuleCall getBannerTextSTRINGTerminalRuleCall_5_0() { return cBannerTextSTRINGTerminalRuleCall_5_0; }
+		
+		//'bannerSeconds'
+		public Keyword getBannerSecondsKeyword_6() { return cBannerSecondsKeyword_6; }
+		
+		//bannerSeconds=DOUBLE
+		public Assignment getBannerSecondsAssignment_7() { return cBannerSecondsAssignment_7; }
+		
+		//DOUBLE
+		public RuleCall getBannerSecondsDOUBLEParserRuleCall_7_0() { return cBannerSecondsDOUBLEParserRuleCall_7_0; }
+		
+		//('zapSound' zapSound=STRING)?
+		public Group getGroup_8() { return cGroup_8; }
+		
+		//'zapSound'
+		public Keyword getZapSoundKeyword_8_0() { return cZapSoundKeyword_8_0; }
+		
+		//zapSound=STRING
+		public Assignment getZapSoundAssignment_8_1() { return cZapSoundAssignment_8_1; }
+		
+		//STRING
+		public RuleCall getZapSoundSTRINGTerminalRuleCall_8_1_0() { return cZapSoundSTRINGTerminalRuleCall_8_1_0; }
+		
+		//('voiceSound' voiceSound=STRING)?
+		public Group getGroup_9() { return cGroup_9; }
+		
+		//'voiceSound'
+		public Keyword getVoiceSoundKeyword_9_0() { return cVoiceSoundKeyword_9_0; }
+		
+		//voiceSound=STRING
+		public Assignment getVoiceSoundAssignment_9_1() { return cVoiceSoundAssignment_9_1; }
+		
+		//STRING
+		public RuleCall getVoiceSoundSTRINGTerminalRuleCall_9_1_0() { return cVoiceSoundSTRINGTerminalRuleCall_9_1_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_10() { return cRightCurlyBracketKeyword_10; }
+	}
 	public class DOUBLEElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.DOUBLE");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1323,6 +2171,81 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// * Datatype rule for boolean values
 		// */
 		//BOOLEAN returns ecore::EBoolean:
+		//    'true' | 'false'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'true' | 'false'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//'true'
+		public Keyword getTrueKeyword_0() { return cTrueKeyword_0; }
+		
+		//'false'
+		public Keyword getFalseKeyword_1() { return cFalseKeyword_1; }
+	}
+	public class DOUBLE_OBJECTElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cHyphenMinusKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cFullStopKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_2_1 = (RuleCall)cGroup_2.eContents().get(1);
+		
+		///*
+		// * Nullable value types: left out in the source they stay null ("not set").
+		// */
+		//DOUBLE_OBJECT returns ecore::EDoubleObject:
+		//    ('-')? INT ('.' INT)?
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//('-')? INT ('.' INT)?
+		public Group getGroup() { return cGroup; }
+		
+		//('-')?
+		public Keyword getHyphenMinusKeyword_0() { return cHyphenMinusKeyword_0; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_1() { return cINTTerminalRuleCall_1; }
+		
+		//('.' INT)?
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_2_0() { return cFullStopKeyword_2_0; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_2_1() { return cINTTerminalRuleCall_2_1; }
+	}
+	public class INT_OBJECTElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.INT_OBJECT");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cHyphenMinusKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_1 = (RuleCall)cGroup.eContents().get(1);
+		
+		//INT_OBJECT returns ecore::EIntegerObject:
+		//    ('-')? INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//('-')? INT
+		public Group getGroup() { return cGroup; }
+		
+		//('-')?
+		public Keyword getHyphenMinusKeyword_0() { return cHyphenMinusKeyword_0; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_1() { return cINTTerminalRuleCall_1; }
+	}
+	public class BOOLEAN_OBJECTElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.BOOLEAN_OBJECT");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cTrueKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cFalseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		
+		//BOOLEAN_OBJECT returns ecore::EBooleanObject:
 		//    'true' | 'false'
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -1569,6 +2492,22 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'weapon'
 		public Keyword getWEAPONWeaponKeyword_3_0() { return cWEAPONWeaponKeyword_3_0; }
 	}
+	public class DropWeaponEnumElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.DropWeaponEnum");
+		private final EnumLiteralDeclaration cGATLING_GUNEnumLiteralDeclaration = (EnumLiteralDeclaration)rule.eContents().get(1);
+		private final Keyword cGATLING_GUNGatlingKeyword_0 = (Keyword)cGATLING_GUNEnumLiteralDeclaration.eContents().get(0);
+		
+		//enum DropWeaponEnum:
+		//    GATLING_GUN='gatling'
+		//;
+		public EnumRule getRule() { return rule; }
+		
+		//GATLING_GUN='gatling'
+		public EnumLiteralDeclaration getGATLING_GUNEnumLiteralDeclaration() { return cGATLING_GUNEnumLiteralDeclaration; }
+		
+		//'gatling'
+		public Keyword getGATLING_GUNGatlingKeyword_0() { return cGATLING_GUNGatlingKeyword_0; }
+	}
 	
 	private final GameConfigurationElements pGameConfiguration;
 	private final ImportElements pImport;
@@ -1590,9 +2529,21 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final LootTableConfigElements pLootTableConfig;
 	private final LootItemConfigElements pLootItemConfig;
 	private final LootItemTypeEnumElements eLootItemTypeEnum;
+	private final LevelConfigElements pLevelConfig;
+	private final LevelZoneElements pLevelZone;
+	private final SergeantConfigElements pSergeantConfig;
+	private final DropWeaponEnumElements eDropWeaponEnum;
+	private final TierCountConfigElements pTierCountConfig;
+	private final MineRingConfigElements pMineRingConfig;
+	private final PortalGhostConfigElements pPortalGhostConfig;
+	private final GhostCountConfigElements pGhostCountConfig;
+	private final TeleportRulesConfigElements pTeleportRulesConfig;
 	private final DOUBLEElements pDOUBLE;
 	private final SIGNED_INTElements pSIGNED_INT;
 	private final BOOLEANElements pBOOLEAN;
+	private final DOUBLE_OBJECTElements pDOUBLE_OBJECT;
+	private final INT_OBJECTElements pINT_OBJECT;
+	private final BOOLEAN_OBJECTElements pBOOLEAN_OBJECT;
 	
 	private final Grammar grammar;
 	
@@ -1623,9 +2574,21 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pLootTableConfig = new LootTableConfigElements();
 		this.pLootItemConfig = new LootItemConfigElements();
 		this.eLootItemTypeEnum = new LootItemTypeEnumElements();
+		this.pLevelConfig = new LevelConfigElements();
+		this.pLevelZone = new LevelZoneElements();
+		this.pSergeantConfig = new SergeantConfigElements();
+		this.eDropWeaponEnum = new DropWeaponEnumElements();
+		this.pTierCountConfig = new TierCountConfigElements();
+		this.pMineRingConfig = new MineRingConfigElements();
+		this.pPortalGhostConfig = new PortalGhostConfigElements();
+		this.pGhostCountConfig = new GhostCountConfigElements();
+		this.pTeleportRulesConfig = new TeleportRulesConfigElements();
 		this.pDOUBLE = new DOUBLEElements();
 		this.pSIGNED_INT = new SIGNED_INTElements();
 		this.pBOOLEAN = new BOOLEANElements();
+		this.pDOUBLE_OBJECT = new DOUBLE_OBJECTElements();
+		this.pINT_OBJECT = new INT_OBJECTElements();
+		this.pBOOLEAN_OBJECT = new BOOLEAN_OBJECTElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -1665,6 +2628,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (opponents+=OpponentConfig)*
 	//        (patrols+=PatrolConfig)*
 	//        (lootTables+=LootTableConfig)*
+	//        (levels+=LevelConfig)*
 	//    '}'
 	//;
 	public GameConfigurationElements getGameConfigurationAccess() {
@@ -1960,6 +2924,155 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	///*
+	// * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
+	// * Scalar values are nullable on purpose: a value that is not written is "not set", so a level built on
+	// * another one (basedOn) takes it from there, and the model's default applies otherwise.
+	// */
+	//LevelConfig:
+	//    'level' number=INT name=STRING '{'
+	//        ('basedOn' baseLevel=INT)?
+	//        ('threatCapacity' threatCapacityFactor=DOUBLE_OBJECT)?
+	//        ('wallMaterials' showWallMaterials=BOOLEAN_OBJECT)?
+	//        ('inheritWeapons' inheritWeapons=BOOLEAN_OBJECT)?
+	//        ('cascadeDepth' cascadeDepth=INT_OBJECT)?
+	//        (zones+=LevelZone)*
+	//        (sergeant=SergeantConfig)?
+	//        (sergeantPosts+=TierCountConfig)*
+	//        (mines=MineRingConfig)?
+	//        (portalGhost=PortalGhostConfig)?
+	//        (ghostCounts+=GhostCountConfig)*
+	//        (teleport=TeleportRulesConfig)?
+	//    '}'
+	//;
+	public LevelConfigElements getLevelConfigAccess() {
+		return pLevelConfig;
+	}
+	
+	public ParserRule getLevelConfigRule() {
+		return getLevelConfigAccess().getRule();
+	}
+	
+	///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
+	//LevelZone:
+	//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
+	//    'materials' materialIds+=ID (',' materialIds+=ID)*
+	//;
+	public LevelZoneElements getLevelZoneAccess() {
+		return pLevelZone;
+	}
+	
+	public ParserRule getLevelZoneRule() {
+		return getLevelZoneAccess().getRule();
+	}
+	
+	//SergeantConfig:
+	//    'sergeant' displayName=STRING '{'
+	//        'health' health=INT
+	//        'sightRange' sightRange=DOUBLE
+	//        'rounds' roundsPerBurst=INT
+	//        'roundDamage' roundDamage=INT
+	//        'roundInterval' roundIntervalSeconds=DOUBLE
+	//        'burstCooldown' burstCooldownSeconds=DOUBLE
+	//        'sprite' sprite=STRING
+	//        ('fireSound' fireSound=STRING)?
+	//        'drops' dropWeapon=DropWeaponEnum
+	//        'postDistance' postDistanceFromHeart=DOUBLE
+	//    '}'
+	//;
+	public SergeantConfigElements getSergeantConfigAccess() {
+		return pSergeantConfig;
+	}
+	
+	public ParserRule getSergeantConfigRule() {
+		return getSergeantConfigAccess().getRule();
+	}
+	
+	//enum DropWeaponEnum:
+	//    GATLING_GUN='gatling'
+	//;
+	public DropWeaponEnumElements getDropWeaponEnumAccess() {
+		return eDropWeaponEnum;
+	}
+	
+	public EnumRule getDropWeaponEnumRule() {
+		return getDropWeaponEnumAccess().getRule();
+	}
+	
+	//TierCountConfig:
+	//    'sergeants' difficulty=DifficultyLevel count=INT
+	//;
+	public TierCountConfigElements getTierCountConfigAccess() {
+		return pTierCountConfig;
+	}
+	
+	public ParserRule getTierCountConfigRule() {
+		return getTierCountConfigAccess().getRule();
+	}
+	
+	//MineRingConfig:
+	//    'mines' '{'
+	//        'count' count=INT
+	//        'ringRadius' ringRadius=DOUBLE
+	//        'triggerRadius' triggerRadius=DOUBLE
+	//        'pulse' pulseSeconds=DOUBLE
+	//        'blastRadius' blastRadius=DOUBLE
+	//        'blastDamage' blastDamage=INT
+	//        'playerDamage' playerDamage=INT
+	//        'holeRadius' holeRadius=DOUBLE
+	//    '}'
+	//;
+	public MineRingConfigElements getMineRingConfigAccess() {
+		return pMineRingConfig;
+	}
+	
+	public ParserRule getMineRingConfigRule() {
+		return getMineRingConfigAccess().getRule();
+	}
+	
+	//PortalGhostConfig:
+	//    'portalGhost' displayName=STRING '{'
+	//        'health' health=INT
+	//        'speed' speed=DOUBLE
+	//        'sprite' sprite=STRING
+	//    '}'
+	//;
+	public PortalGhostConfigElements getPortalGhostConfigAccess() {
+		return pPortalGhostConfig;
+	}
+	
+	public ParserRule getPortalGhostConfigRule() {
+		return getPortalGhostConfigAccess().getRule();
+	}
+	
+	//GhostCountConfig:
+	//    'portalGhosts' difficulty=DifficultyLevel count=INT
+	//;
+	public GhostCountConfigElements getGhostCountConfigAccess() {
+		return pGhostCountConfig;
+	}
+	
+	public ParserRule getGhostCountConfigRule() {
+		return getGhostCountConfigAccess().getRule();
+	}
+	
+	//TeleportRulesConfig:
+	//    'teleport' '{'
+	//        'cooldown' cooldownSeconds=DOUBLE
+	//        'banner' bannerText=STRING
+	//        'bannerSeconds' bannerSeconds=DOUBLE
+	//        ('zapSound' zapSound=STRING)?
+	//        ('voiceSound' voiceSound=STRING)?
+	//    '}'
+	//;
+	public TeleportRulesConfigElements getTeleportRulesConfigAccess() {
+		return pTeleportRulesConfig;
+	}
+	
+	public ParserRule getTeleportRulesConfigRule() {
+		return getTeleportRulesConfigAccess().getRule();
+	}
+	
+	///*
 	// * Datatype rule for double values (accepts both integers and decimals)
 	// */
 	//DOUBLE returns ecore::EDouble:
@@ -1996,6 +3109,42 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getBOOLEANRule() {
 		return getBOOLEANAccess().getRule();
+	}
+	
+	///*
+	// * Nullable value types: left out in the source they stay null ("not set").
+	// */
+	//DOUBLE_OBJECT returns ecore::EDoubleObject:
+	//    ('-')? INT ('.' INT)?
+	//;
+	public DOUBLE_OBJECTElements getDOUBLE_OBJECTAccess() {
+		return pDOUBLE_OBJECT;
+	}
+	
+	public ParserRule getDOUBLE_OBJECTRule() {
+		return getDOUBLE_OBJECTAccess().getRule();
+	}
+	
+	//INT_OBJECT returns ecore::EIntegerObject:
+	//    ('-')? INT
+	//;
+	public INT_OBJECTElements getINT_OBJECTAccess() {
+		return pINT_OBJECT;
+	}
+	
+	public ParserRule getINT_OBJECTRule() {
+		return getINT_OBJECTAccess().getRule();
+	}
+	
+	//BOOLEAN_OBJECT returns ecore::EBooleanObject:
+	//    'true' | 'false'
+	//;
+	public BOOLEAN_OBJECTElements getBOOLEAN_OBJECTAccess() {
+		return pBOOLEAN_OBJECT;
+	}
+	
+	public ParserRule getBOOLEAN_OBJECTRule() {
+		return getBOOLEAN_OBJECTAccess().getRule();
 	}
 	
 	//terminal ID: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

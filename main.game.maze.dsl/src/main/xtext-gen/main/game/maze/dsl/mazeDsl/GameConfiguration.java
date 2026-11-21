@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getOpponents <em>Opponents</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getPatrols <em>Patrols</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getLootTables <em>Loot Tables</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getLevels <em>Levels</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getGameConfiguration()
@@ -121,5 +122,17 @@ public interface GameConfiguration extends EObject
    * @generated
    */
   EList<LootTableConfig> getLootTables();
+
+  /**
+   * Returns the value of the '<em><b>Levels</b></em>' containment reference list.
+   * The list contents are of type {@link main.game.maze.dsl.mazeDsl.LevelConfig}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Levels</em>' containment reference list.
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getGameConfiguration_Levels()
+   * @model containment="true"
+   * @generated
+   */
+  EList<LevelConfig> getLevels();
 
 } // GameConfiguration

@@ -570,3 +570,28 @@ LootTableConfig ::= 'loot-table' ID '{' ('capacity' INT)? LootItemConfig+ '}'
 
 LootItemConfig ::= 'item' ID '{' 'type' LootItemType 'value' INT ('weight' INT)? '}'
 ```
+
+## Levels
+
+A `game` can contain `level` blocks (after the loot tables). They are the source of the game's `levels.xmi`
+(`maze-common-backend/src/main/resources/xmi/levels/levels.mazegame`); see [level-authoring.md](level-authoring.md) for what each
+value means and how to regenerate the XMI.
+
+```
+level 2 "The Sergeants' Keep" {
+    threatCapacity 1.5            // optional values come first, in this order:
+    wallMaterials true            //   threatCapacity, wallMaterials, inheritWeapons, cascadeDepth
+    inheritWeapons true
+    cascadeDepth 2
+    ring "Outer wall" materials STEEL_BASIC           // outermost first; `share 0.5` makes only half breakable
+    ring "Inner ring" materials DIRT_BASIC, GLASS_BASIC
+    sergeant "Zombie sergeant" { health 200 sightRange 380.0 rounds 5 roundDamage 3 roundInterval 0.12
+                                 burstCooldown 1.2 sprite "/main/game/maze/zombie-sergeant.png" drops gatling postDistance 110.0 }
+    sergeants easy 1
+    sergeants normal 4
+    sergeants hard 6
+}
+level 3 "The Minefield" { basedOn 2  mines { ... }  portalGhost "Portal ghost" { ... }  portalGhosts easy 3  ... teleport { ... } }
+```
+
+Values you leave out are "not set": a level built `basedOn` another takes them from it, otherwise the model's defaults apply.
