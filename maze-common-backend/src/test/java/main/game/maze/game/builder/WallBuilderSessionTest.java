@@ -155,7 +155,7 @@ class WallBuilderSessionTest {
     @Test
     @DisplayName("walls are built in whole corridors of pieces one piece long, and each piece only once")
     void piecesAreWholeAndUnique() {
-        List<WallBuilderSession.Piece> built = run(120, crew("b", 4), 0, 0);
+        List<WallBuilderSession.Piece> built = run(300, crew("b", 4), 0, 0);
         assertFalse(built.isEmpty());
         Set<String> distinct = new HashSet<>();
         for (WallBuilderSession.Piece piece : built) {
@@ -215,7 +215,7 @@ class WallBuilderSessionTest {
     @DisplayName("a killed builder is forgotten and another finishes its half-built wall")
     void deadBuildersLeaveTheirWorkToOthers() {
         List<Builder> two = crew("old", 2);
-        List<WallBuilderSession.Piece> some = run(60, two, 0, 0);
+        List<WallBuilderSession.Piece> some = run(240, two, 0, 0);
         assertFalse(some.isEmpty());
         List<Builder> dead = new ArrayList<>();
         for (Builder b : two) {
@@ -233,7 +233,7 @@ class WallBuilderSessionTest {
         List<Builder> one = crew("b", 1);
         // find the corridor the builder works on, then stand in it
         Edge site = null;
-        for (int i = 0; i < 400 && site == null; i++) {
+        for (int i = 0; i < 8000 && site == null; i++) {
             Result r = session.tick(0.05, one, world.getMazeVectors(), -1000, -1000);
             one = follow(one, r);
             site = session.siteOf("b0").orElse(null);
@@ -319,5 +319,61 @@ class WallBuilderSessionTest {
         }
         assertEquals(SPEC.blockRadiusCells(), rings.get(rings.size() - 1), "down to the innermost ring");
         assertEquals(-1, session.ringInProgress(world.getMazeVectors()), "all rings closed in the end");
+    }
+
+    @Test
+    @DisplayName("a builder does not walk through a wall that goes up across its route")
+    void doesNotWalkThroughANewWall() {
+        CellGrid grid = new CellGrid(world.getMazeVectors(), W, H);
+        List<Builder> one = crew("b", 1);
+        Cell blockedCell = null;
+        // run until the builder is on its way between two cells, then wall that corridor up in front of it
+        for (int i = 0; i < 4000 && blockedCell == null; i++) {
+            Builder before = one.get(0);
+            Result r = session.tick(0.05, one, world.getMazeVectors(), -1000, -1000);
+            one = follow(one, r);
+            Builder after = one.get(0);
+            double dx = after.x() - before.x();
+            double dy = after.y() - before.y();
+            Cell from = grid.cellOf(before.x(), before.y());
+            if (Math.hypot(dx, dy) > 0.1 && grid.cellOf(after.x(), after.y()).equals(from)) {
+                Cell next = Math.abs(dx) > Math.abs(dy) ? new Cell(from.row(), from.col() + (int) Math.signum(dx))
+                        : new Cell(from.row() + (int) Math.signum(dy), from.col());
+                if (grid.contains(next) && grid.isOpen(new Edge(from, next))) {
+                    for (Vector2D piece : grid.pieces(new Edge(from, next))) {
+                        put(piece);
+                    }
+                    blockedCell = next;
+                }
+            }
+        }
+        assertTrue(blockedCell != null, "the builder was seen walking");
+        CellGrid walled = new CellGrid(world.getMazeVectors(), W, H);
+        boolean startedOutside = !walled.cellOf(one.get(0).x(), one.get(0).y()).equals(blockedCell);
+        assertTrue(startedOutside);
+        for (int i = 0; i < 400; i++) {
+            Result r = session.tick(0.05, one, world.getMazeVectors(), -1000, -1000);
+            for (WallBuilderSession.Piece piece : r.pieces()) {
+                put(piece.wall());
+            }
+            one = follow(one, r);
+            assertFalse(walled.cellOf(one.get(0).x(), one.get(0).y()).equals(blockedCell),
+                    "walked through the wall into " + blockedCell);
+        }
+    }
+
+    @Test
+    @DisplayName("a wall the player breaks only in part is repaired, but a corridor the maze itself walls is not taken for a builder wall")
+    void repairsPartlyBrokenWalls() {
+        List<WallBuilderSession.Piece> built = run(500, crew("b", 5), 0, 0);
+        assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty());
+        Vector2D broken = built.get(built.size() - 1).wall();   // the innermost ring is the last one closed
+        world.getMazeVectors().removeIf(v -> Math.round(v.getStart().getX()) == Math.round(broken.getStart().getX())
+                && Math.round(v.getStart().getY()) == Math.round(broken.getStart().getY())
+                && Math.round(v.getEnd().getX()) == Math.round(broken.getEnd().getX())
+                && Math.round(v.getEnd().getY()) == Math.round(broken.getEnd().getY()));
+        assertFalse(session.openingsLeft(world.getMazeVectors()).isEmpty(), "one piece is missing");
+        run(300, crew("b", 5), 0, 0);
+        assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty(), "the gap was filled");
     }
 }

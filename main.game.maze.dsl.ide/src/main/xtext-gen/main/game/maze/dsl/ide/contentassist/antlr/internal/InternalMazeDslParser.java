@@ -22211,7 +22211,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7117:1: ( rule__LevelZone__Group__3__Impl rule__LevelZone__Group__4 )
             // InternalMazeDsl.g:7118:2: rule__LevelZone__Group__3__Impl rule__LevelZone__Group__4
             {
-            pushFollow(FOLLOW_57);
+            pushFollow(FOLLOW_3);
             rule__LevelZone__Group__3__Impl();
 
             state._fsp--;
@@ -22624,7 +22624,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7252:1: ( rule__LevelZone__Group_5__0__Impl rule__LevelZone__Group_5__1 )
             // InternalMazeDsl.g:7253:2: rule__LevelZone__Group_5__0__Impl rule__LevelZone__Group_5__1
             {
-            pushFollow(FOLLOW_57);
+            pushFollow(FOLLOW_3);
             rule__LevelZone__Group_5__0__Impl();
 
             state._fsp--;
@@ -22939,7 +22939,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7360:1: ( rule__SergeantConfig__Group__2__Impl rule__SergeantConfig__Group__3 )
             // InternalMazeDsl.g:7361:2: rule__SergeantConfig__Group__2__Impl rule__SergeantConfig__Group__3
             {
-            pushFollow(FOLLOW_58);
+            pushFollow(FOLLOW_57);
             rule__SergeantConfig__Group__2__Impl();
 
             state._fsp--;
@@ -23089,7 +23089,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7414:1: ( rule__SergeantConfig__Group__4__Impl rule__SergeantConfig__Group__5 )
             // InternalMazeDsl.g:7415:2: rule__SergeantConfig__Group__4__Impl rule__SergeantConfig__Group__5
             {
-            pushFollow(FOLLOW_59);
+            pushFollow(FOLLOW_58);
             rule__SergeantConfig__Group__4__Impl();
 
             state._fsp--;
@@ -23249,7 +23249,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7468:1: ( rule__SergeantConfig__Group__6__Impl rule__SergeantConfig__Group__7 )
             // InternalMazeDsl.g:7469:2: rule__SergeantConfig__Group__6__Impl rule__SergeantConfig__Group__7
             {
-            pushFollow(FOLLOW_60);
+            pushFollow(FOLLOW_59);
             rule__SergeantConfig__Group__6__Impl();
 
             state._fsp--;
@@ -23409,7 +23409,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7522:1: ( rule__SergeantConfig__Group__8__Impl rule__SergeantConfig__Group__9 )
             // InternalMazeDsl.g:7523:2: rule__SergeantConfig__Group__8__Impl rule__SergeantConfig__Group__9
             {
-            pushFollow(FOLLOW_61);
+            pushFollow(FOLLOW_60);
             rule__SergeantConfig__Group__8__Impl();
 
             state._fsp--;
@@ -23569,7 +23569,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7576:1: ( rule__SergeantConfig__Group__10__Impl rule__SergeantConfig__Group__11 )
             // InternalMazeDsl.g:7577:2: rule__SergeantConfig__Group__10__Impl rule__SergeantConfig__Group__11
             {
-            pushFollow(FOLLOW_62);
+            pushFollow(FOLLOW_61);
             rule__SergeantConfig__Group__10__Impl();
 
             state._fsp--;
@@ -23729,7 +23729,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7630:1: ( rule__SergeantConfig__Group__12__Impl rule__SergeantConfig__Group__13 )
             // InternalMazeDsl.g:7631:2: rule__SergeantConfig__Group__12__Impl rule__SergeantConfig__Group__13
             {
-            pushFollow(FOLLOW_63);
+            pushFollow(FOLLOW_62);
             rule__SergeantConfig__Group__12__Impl();
 
             state._fsp--;
@@ -23889,7 +23889,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7684:1: ( rule__SergeantConfig__Group__14__Impl rule__SergeantConfig__Group__15 )
             // InternalMazeDsl.g:7685:2: rule__SergeantConfig__Group__14__Impl rule__SergeantConfig__Group__15
             {
-            pushFollow(FOLLOW_64);
+            pushFollow(FOLLOW_63);
             rule__SergeantConfig__Group__14__Impl();
 
             state._fsp--;
@@ -24049,7 +24049,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7738:1: ( rule__SergeantConfig__Group__16__Impl rule__SergeantConfig__Group__17 )
             // InternalMazeDsl.g:7739:2: rule__SergeantConfig__Group__16__Impl rule__SergeantConfig__Group__17
             {
-            pushFollow(FOLLOW_65);
+            pushFollow(FOLLOW_64);
             rule__SergeantConfig__Group__16__Impl();
 
             state._fsp--;
@@ -24134,7 +24134,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7765:1: ( rule__SergeantConfig__Group__17__Impl rule__SergeantConfig__Group__18 )
             // InternalMazeDsl.g:7766:2: rule__SergeantConfig__Group__17__Impl rule__SergeantConfig__Group__18
             {
-            pushFollow(FOLLOW_65);
+            pushFollow(FOLLOW_64);
             rule__SergeantConfig__Group__17__Impl();
 
             state._fsp--;
@@ -24230,7 +24230,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7792:1: ( rule__SergeantConfig__Group__18__Impl rule__SergeantConfig__Group__19 )
             // InternalMazeDsl.g:7793:2: rule__SergeantConfig__Group__18__Impl rule__SergeantConfig__Group__19
             {
-            pushFollow(FOLLOW_66);
+            pushFollow(FOLLOW_65);
             rule__SergeantConfig__Group__18__Impl();
 
             state._fsp--;
@@ -24305,7 +24305,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:7819:1: ( rule__SergeantConfig__Group__19__Impl rule__SergeantConfig__Group__20 )
             // InternalMazeDsl.g:7820:2: rule__SergeantConfig__Group__19__Impl rule__SergeantConfig__Group__20
             {
-            pushFollow(FOLLOW_67);
+            pushFollow(FOLLOW_66);
             rule__SergeantConfig__Group__19__Impl();
 
             state._fsp--;
@@ -25090,7 +25090,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8089:1: ( rule__MineRingConfig__Group__1__Impl rule__MineRingConfig__Group__2 )
             // InternalMazeDsl.g:8090:2: rule__MineRingConfig__Group__1__Impl rule__MineRingConfig__Group__2
             {
-            pushFollow(FOLLOW_68);
+            pushFollow(FOLLOW_67);
             rule__MineRingConfig__Group__1__Impl();
 
             state._fsp--;
@@ -25240,7 +25240,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8143:1: ( rule__MineRingConfig__Group__3__Impl rule__MineRingConfig__Group__4 )
             // InternalMazeDsl.g:8144:2: rule__MineRingConfig__Group__3__Impl rule__MineRingConfig__Group__4
             {
-            pushFollow(FOLLOW_69);
+            pushFollow(FOLLOW_68);
             rule__MineRingConfig__Group__3__Impl();
 
             state._fsp--;
@@ -25400,7 +25400,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8197:1: ( rule__MineRingConfig__Group__5__Impl rule__MineRingConfig__Group__6 )
             // InternalMazeDsl.g:8198:2: rule__MineRingConfig__Group__5__Impl rule__MineRingConfig__Group__6
             {
-            pushFollow(FOLLOW_70);
+            pushFollow(FOLLOW_69);
             rule__MineRingConfig__Group__5__Impl();
 
             state._fsp--;
@@ -25485,7 +25485,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8224:1: ( rule__MineRingConfig__Group__6__Impl rule__MineRingConfig__Group__7 )
             // InternalMazeDsl.g:8225:2: rule__MineRingConfig__Group__6__Impl rule__MineRingConfig__Group__7
             {
-            pushFollow(FOLLOW_70);
+            pushFollow(FOLLOW_69);
             rule__MineRingConfig__Group__6__Impl();
 
             state._fsp--;
@@ -25656,7 +25656,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8278:1: ( rule__MineRingConfig__Group__8__Impl rule__MineRingConfig__Group__9 )
             // InternalMazeDsl.g:8279:2: rule__MineRingConfig__Group__8__Impl rule__MineRingConfig__Group__9
             {
-            pushFollow(FOLLOW_71);
+            pushFollow(FOLLOW_70);
             rule__MineRingConfig__Group__8__Impl();
 
             state._fsp--;
@@ -25816,7 +25816,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8332:1: ( rule__MineRingConfig__Group__10__Impl rule__MineRingConfig__Group__11 )
             // InternalMazeDsl.g:8333:2: rule__MineRingConfig__Group__10__Impl rule__MineRingConfig__Group__11
             {
-            pushFollow(FOLLOW_72);
+            pushFollow(FOLLOW_71);
             rule__MineRingConfig__Group__10__Impl();
 
             state._fsp--;
@@ -25976,7 +25976,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8386:1: ( rule__MineRingConfig__Group__12__Impl rule__MineRingConfig__Group__13 )
             // InternalMazeDsl.g:8387:2: rule__MineRingConfig__Group__12__Impl rule__MineRingConfig__Group__13
             {
-            pushFollow(FOLLOW_73);
+            pushFollow(FOLLOW_72);
             rule__MineRingConfig__Group__12__Impl();
 
             state._fsp--;
@@ -26136,7 +26136,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8440:1: ( rule__MineRingConfig__Group__14__Impl rule__MineRingConfig__Group__15 )
             // InternalMazeDsl.g:8441:2: rule__MineRingConfig__Group__14__Impl rule__MineRingConfig__Group__15
             {
-            pushFollow(FOLLOW_74);
+            pushFollow(FOLLOW_73);
             rule__MineRingConfig__Group__14__Impl();
 
             state._fsp--;
@@ -26296,7 +26296,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8494:1: ( rule__MineRingConfig__Group__16__Impl rule__MineRingConfig__Group__17 )
             // InternalMazeDsl.g:8495:2: rule__MineRingConfig__Group__16__Impl rule__MineRingConfig__Group__17
             {
-            pushFollow(FOLLOW_75);
+            pushFollow(FOLLOW_74);
             rule__MineRingConfig__Group__16__Impl();
 
             state._fsp--;
@@ -26926,7 +26926,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8710:1: ( rule__PortalGhostConfig__Group__2__Impl rule__PortalGhostConfig__Group__3 )
             // InternalMazeDsl.g:8711:2: rule__PortalGhostConfig__Group__2__Impl rule__PortalGhostConfig__Group__3
             {
-            pushFollow(FOLLOW_58);
+            pushFollow(FOLLOW_57);
             rule__PortalGhostConfig__Group__2__Impl();
 
             state._fsp--;
@@ -27076,7 +27076,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8764:1: ( rule__PortalGhostConfig__Group__4__Impl rule__PortalGhostConfig__Group__5 )
             // InternalMazeDsl.g:8765:2: rule__PortalGhostConfig__Group__4__Impl rule__PortalGhostConfig__Group__5
             {
-            pushFollow(FOLLOW_76);
+            pushFollow(FOLLOW_75);
             rule__PortalGhostConfig__Group__4__Impl();
 
             state._fsp--;
@@ -27236,7 +27236,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:8818:1: ( rule__PortalGhostConfig__Group__6__Impl rule__PortalGhostConfig__Group__7 )
             // InternalMazeDsl.g:8819:2: rule__PortalGhostConfig__Group__6__Impl rule__PortalGhostConfig__Group__7
             {
-            pushFollow(FOLLOW_64);
+            pushFollow(FOLLOW_63);
             rule__PortalGhostConfig__Group__6__Impl();
 
             state._fsp--;
@@ -27951,7 +27951,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9061:1: ( rule__GuardTowerConfig__Group__2__Impl rule__GuardTowerConfig__Group__3 )
             // InternalMazeDsl.g:9062:2: rule__GuardTowerConfig__Group__2__Impl rule__GuardTowerConfig__Group__3
             {
-            pushFollow(FOLLOW_58);
+            pushFollow(FOLLOW_57);
             rule__GuardTowerConfig__Group__2__Impl();
 
             state._fsp--;
@@ -28101,7 +28101,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9115:1: ( rule__GuardTowerConfig__Group__4__Impl rule__GuardTowerConfig__Group__5 )
             // InternalMazeDsl.g:9116:2: rule__GuardTowerConfig__Group__4__Impl rule__GuardTowerConfig__Group__5
             {
-            pushFollow(FOLLOW_59);
+            pushFollow(FOLLOW_58);
             rule__GuardTowerConfig__Group__4__Impl();
 
             state._fsp--;
@@ -28261,7 +28261,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9169:1: ( rule__GuardTowerConfig__Group__6__Impl rule__GuardTowerConfig__Group__7 )
             // InternalMazeDsl.g:9170:2: rule__GuardTowerConfig__Group__6__Impl rule__GuardTowerConfig__Group__7
             {
-            pushFollow(FOLLOW_77);
+            pushFollow(FOLLOW_76);
             rule__GuardTowerConfig__Group__6__Impl();
 
             state._fsp--;
@@ -28421,7 +28421,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9223:1: ( rule__GuardTowerConfig__Group__8__Impl rule__GuardTowerConfig__Group__9 )
             // InternalMazeDsl.g:9224:2: rule__GuardTowerConfig__Group__8__Impl rule__GuardTowerConfig__Group__9
             {
-            pushFollow(FOLLOW_78);
+            pushFollow(FOLLOW_77);
             rule__GuardTowerConfig__Group__8__Impl();
 
             state._fsp--;
@@ -28581,7 +28581,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9277:1: ( rule__GuardTowerConfig__Group__10__Impl rule__GuardTowerConfig__Group__11 )
             // InternalMazeDsl.g:9278:2: rule__GuardTowerConfig__Group__10__Impl rule__GuardTowerConfig__Group__11
             {
-            pushFollow(FOLLOW_79);
+            pushFollow(FOLLOW_78);
             rule__GuardTowerConfig__Group__10__Impl();
 
             state._fsp--;
@@ -28741,7 +28741,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9331:1: ( rule__GuardTowerConfig__Group__12__Impl rule__GuardTowerConfig__Group__13 )
             // InternalMazeDsl.g:9332:2: rule__GuardTowerConfig__Group__12__Impl rule__GuardTowerConfig__Group__13
             {
-            pushFollow(FOLLOW_80);
+            pushFollow(FOLLOW_79);
             rule__GuardTowerConfig__Group__12__Impl();
 
             state._fsp--;
@@ -28901,7 +28901,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9385:1: ( rule__GuardTowerConfig__Group__14__Impl rule__GuardTowerConfig__Group__15 )
             // InternalMazeDsl.g:9386:2: rule__GuardTowerConfig__Group__14__Impl rule__GuardTowerConfig__Group__15
             {
-            pushFollow(FOLLOW_81);
+            pushFollow(FOLLOW_80);
             rule__GuardTowerConfig__Group__14__Impl();
 
             state._fsp--;
@@ -29061,7 +29061,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9439:1: ( rule__GuardTowerConfig__Group__16__Impl rule__GuardTowerConfig__Group__17 )
             // InternalMazeDsl.g:9440:2: rule__GuardTowerConfig__Group__16__Impl rule__GuardTowerConfig__Group__17
             {
-            pushFollow(FOLLOW_82);
+            pushFollow(FOLLOW_81);
             rule__GuardTowerConfig__Group__16__Impl();
 
             state._fsp--;
@@ -29221,7 +29221,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9493:1: ( rule__GuardTowerConfig__Group__18__Impl rule__GuardTowerConfig__Group__19 )
             // InternalMazeDsl.g:9494:2: rule__GuardTowerConfig__Group__18__Impl rule__GuardTowerConfig__Group__19
             {
-            pushFollow(FOLLOW_83);
+            pushFollow(FOLLOW_82);
             rule__GuardTowerConfig__Group__18__Impl();
 
             state._fsp--;
@@ -29381,7 +29381,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9547:1: ( rule__GuardTowerConfig__Group__20__Impl rule__GuardTowerConfig__Group__21 )
             // InternalMazeDsl.g:9548:2: rule__GuardTowerConfig__Group__20__Impl rule__GuardTowerConfig__Group__21
             {
-            pushFollow(FOLLOW_84);
+            pushFollow(FOLLOW_83);
             rule__GuardTowerConfig__Group__20__Impl();
 
             state._fsp--;
@@ -29541,7 +29541,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9601:1: ( rule__GuardTowerConfig__Group__22__Impl rule__GuardTowerConfig__Group__23 )
             // InternalMazeDsl.g:9602:2: rule__GuardTowerConfig__Group__22__Impl rule__GuardTowerConfig__Group__23
             {
-            pushFollow(FOLLOW_85);
+            pushFollow(FOLLOW_84);
             rule__GuardTowerConfig__Group__22__Impl();
 
             state._fsp--;
@@ -29701,7 +29701,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9655:1: ( rule__GuardTowerConfig__Group__24__Impl rule__GuardTowerConfig__Group__25 )
             // InternalMazeDsl.g:9656:2: rule__GuardTowerConfig__Group__24__Impl rule__GuardTowerConfig__Group__25
             {
-            pushFollow(FOLLOW_86);
+            pushFollow(FOLLOW_85);
             rule__GuardTowerConfig__Group__24__Impl();
 
             state._fsp--;
@@ -29861,7 +29861,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9709:1: ( rule__GuardTowerConfig__Group__26__Impl rule__GuardTowerConfig__Group__27 )
             // InternalMazeDsl.g:9710:2: rule__GuardTowerConfig__Group__26__Impl rule__GuardTowerConfig__Group__27
             {
-            pushFollow(FOLLOW_64);
+            pushFollow(FOLLOW_63);
             rule__GuardTowerConfig__Group__26__Impl();
 
             state._fsp--;
@@ -30021,7 +30021,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9763:1: ( rule__GuardTowerConfig__Group__28__Impl rule__GuardTowerConfig__Group__29 )
             // InternalMazeDsl.g:9764:2: rule__GuardTowerConfig__Group__28__Impl rule__GuardTowerConfig__Group__29
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__28__Impl();
 
             state._fsp--;
@@ -30106,7 +30106,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9790:1: ( rule__GuardTowerConfig__Group__29__Impl rule__GuardTowerConfig__Group__30 )
             // InternalMazeDsl.g:9791:2: rule__GuardTowerConfig__Group__29__Impl rule__GuardTowerConfig__Group__30
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__29__Impl();
 
             state._fsp--;
@@ -30202,7 +30202,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9817:1: ( rule__GuardTowerConfig__Group__30__Impl rule__GuardTowerConfig__Group__31 )
             // InternalMazeDsl.g:9818:2: rule__GuardTowerConfig__Group__30__Impl rule__GuardTowerConfig__Group__31
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__30__Impl();
 
             state._fsp--;
@@ -30298,7 +30298,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9844:1: ( rule__GuardTowerConfig__Group__31__Impl rule__GuardTowerConfig__Group__32 )
             // InternalMazeDsl.g:9845:2: rule__GuardTowerConfig__Group__31__Impl rule__GuardTowerConfig__Group__32
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__31__Impl();
 
             state._fsp--;
@@ -30394,7 +30394,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9871:1: ( rule__GuardTowerConfig__Group__32__Impl rule__GuardTowerConfig__Group__33 )
             // InternalMazeDsl.g:9872:2: rule__GuardTowerConfig__Group__32__Impl rule__GuardTowerConfig__Group__33
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__32__Impl();
 
             state._fsp--;
@@ -30490,7 +30490,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:9898:1: ( rule__GuardTowerConfig__Group__33__Impl rule__GuardTowerConfig__Group__34 )
             // InternalMazeDsl.g:9899:2: rule__GuardTowerConfig__Group__33__Impl rule__GuardTowerConfig__Group__34
             {
-            pushFollow(FOLLOW_87);
+            pushFollow(FOLLOW_86);
             rule__GuardTowerConfig__Group__33__Impl();
 
             state._fsp--;
@@ -31831,7 +31831,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10357:1: ( rule__WallBuilderConfig__Group__2__Impl rule__WallBuilderConfig__Group__3 )
             // InternalMazeDsl.g:10358:2: rule__WallBuilderConfig__Group__2__Impl rule__WallBuilderConfig__Group__3
             {
-            pushFollow(FOLLOW_58);
+            pushFollow(FOLLOW_57);
             rule__WallBuilderConfig__Group__2__Impl();
 
             state._fsp--;
@@ -31981,7 +31981,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10411:1: ( rule__WallBuilderConfig__Group__4__Impl rule__WallBuilderConfig__Group__5 )
             // InternalMazeDsl.g:10412:2: rule__WallBuilderConfig__Group__4__Impl rule__WallBuilderConfig__Group__5
             {
-            pushFollow(FOLLOW_76);
+            pushFollow(FOLLOW_75);
             rule__WallBuilderConfig__Group__4__Impl();
 
             state._fsp--;
@@ -32141,7 +32141,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10465:1: ( rule__WallBuilderConfig__Group__6__Impl rule__WallBuilderConfig__Group__7 )
             // InternalMazeDsl.g:10466:2: rule__WallBuilderConfig__Group__6__Impl rule__WallBuilderConfig__Group__7
             {
-            pushFollow(FOLLOW_64);
+            pushFollow(FOLLOW_63);
             rule__WallBuilderConfig__Group__6__Impl();
 
             state._fsp--;
@@ -32301,7 +32301,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10519:1: ( rule__WallBuilderConfig__Group__8__Impl rule__WallBuilderConfig__Group__9 )
             // InternalMazeDsl.g:10520:2: rule__WallBuilderConfig__Group__8__Impl rule__WallBuilderConfig__Group__9
             {
-            pushFollow(FOLLOW_88);
+            pushFollow(FOLLOW_87);
             rule__WallBuilderConfig__Group__8__Impl();
 
             state._fsp--;
@@ -32461,7 +32461,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10573:1: ( rule__WallBuilderConfig__Group__10__Impl rule__WallBuilderConfig__Group__11 )
             // InternalMazeDsl.g:10574:2: rule__WallBuilderConfig__Group__10__Impl rule__WallBuilderConfig__Group__11
             {
-            pushFollow(FOLLOW_89);
+            pushFollow(FOLLOW_88);
             rule__WallBuilderConfig__Group__10__Impl();
 
             state._fsp--;
@@ -32621,7 +32621,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10627:1: ( rule__WallBuilderConfig__Group__12__Impl rule__WallBuilderConfig__Group__13 )
             // InternalMazeDsl.g:10628:2: rule__WallBuilderConfig__Group__12__Impl rule__WallBuilderConfig__Group__13
             {
-            pushFollow(FOLLOW_90);
+            pushFollow(FOLLOW_89);
             rule__WallBuilderConfig__Group__12__Impl();
 
             state._fsp--;
@@ -32781,7 +32781,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10681:1: ( rule__WallBuilderConfig__Group__14__Impl rule__WallBuilderConfig__Group__15 )
             // InternalMazeDsl.g:10682:2: rule__WallBuilderConfig__Group__14__Impl rule__WallBuilderConfig__Group__15
             {
-            pushFollow(FOLLOW_91);
+            pushFollow(FOLLOW_90);
             rule__WallBuilderConfig__Group__14__Impl();
 
             state._fsp--;
@@ -32941,7 +32941,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10735:1: ( rule__WallBuilderConfig__Group__16__Impl rule__WallBuilderConfig__Group__17 )
             // InternalMazeDsl.g:10736:2: rule__WallBuilderConfig__Group__16__Impl rule__WallBuilderConfig__Group__17
             {
-            pushFollow(FOLLOW_92);
+            pushFollow(FOLLOW_91);
             rule__WallBuilderConfig__Group__16__Impl();
 
             state._fsp--;
@@ -33026,7 +33026,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10762:1: ( rule__WallBuilderConfig__Group__17__Impl rule__WallBuilderConfig__Group__18 )
             // InternalMazeDsl.g:10763:2: rule__WallBuilderConfig__Group__17__Impl rule__WallBuilderConfig__Group__18
             {
-            pushFollow(FOLLOW_57);
+            pushFollow(FOLLOW_3);
             rule__WallBuilderConfig__Group__17__Impl();
 
             state._fsp--;
@@ -33101,7 +33101,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10789:1: ( rule__WallBuilderConfig__Group__18__Impl rule__WallBuilderConfig__Group__19 )
             // InternalMazeDsl.g:10790:2: rule__WallBuilderConfig__Group__18__Impl rule__WallBuilderConfig__Group__19
             {
-            pushFollow(FOLLOW_93);
+            pushFollow(FOLLOW_92);
             rule__WallBuilderConfig__Group__18__Impl();
 
             state._fsp--;
@@ -33186,7 +33186,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:10816:1: ( rule__WallBuilderConfig__Group__19__Impl rule__WallBuilderConfig__Group__20 )
             // InternalMazeDsl.g:10817:2: rule__WallBuilderConfig__Group__19__Impl rule__WallBuilderConfig__Group__20
             {
-            pushFollow(FOLLOW_93);
+            pushFollow(FOLLOW_92);
             rule__WallBuilderConfig__Group__19__Impl();
 
             state._fsp--;
@@ -33822,7 +33822,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11032:1: ( rule__TeleportRulesConfig__Group__1__Impl rule__TeleportRulesConfig__Group__2 )
             // InternalMazeDsl.g:11033:2: rule__TeleportRulesConfig__Group__1__Impl rule__TeleportRulesConfig__Group__2
             {
-            pushFollow(FOLLOW_94);
+            pushFollow(FOLLOW_93);
             rule__TeleportRulesConfig__Group__1__Impl();
 
             state._fsp--;
@@ -33972,7 +33972,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11086:1: ( rule__TeleportRulesConfig__Group__3__Impl rule__TeleportRulesConfig__Group__4 )
             // InternalMazeDsl.g:11087:2: rule__TeleportRulesConfig__Group__3__Impl rule__TeleportRulesConfig__Group__4
             {
-            pushFollow(FOLLOW_95);
+            pushFollow(FOLLOW_94);
             rule__TeleportRulesConfig__Group__3__Impl();
 
             state._fsp--;
@@ -34132,7 +34132,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11140:1: ( rule__TeleportRulesConfig__Group__5__Impl rule__TeleportRulesConfig__Group__6 )
             // InternalMazeDsl.g:11141:2: rule__TeleportRulesConfig__Group__5__Impl rule__TeleportRulesConfig__Group__6
             {
-            pushFollow(FOLLOW_96);
+            pushFollow(FOLLOW_95);
             rule__TeleportRulesConfig__Group__5__Impl();
 
             state._fsp--;
@@ -34292,7 +34292,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11194:1: ( rule__TeleportRulesConfig__Group__7__Impl rule__TeleportRulesConfig__Group__8 )
             // InternalMazeDsl.g:11195:2: rule__TeleportRulesConfig__Group__7__Impl rule__TeleportRulesConfig__Group__8
             {
-            pushFollow(FOLLOW_97);
+            pushFollow(FOLLOW_96);
             rule__TeleportRulesConfig__Group__7__Impl();
 
             state._fsp--;
@@ -34377,7 +34377,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11221:1: ( rule__TeleportRulesConfig__Group__8__Impl rule__TeleportRulesConfig__Group__9 )
             // InternalMazeDsl.g:11222:2: rule__TeleportRulesConfig__Group__8__Impl rule__TeleportRulesConfig__Group__9
             {
-            pushFollow(FOLLOW_97);
+            pushFollow(FOLLOW_96);
             rule__TeleportRulesConfig__Group__8__Impl();
 
             state._fsp--;
@@ -34473,7 +34473,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11248:1: ( rule__TeleportRulesConfig__Group__9__Impl rule__TeleportRulesConfig__Group__10 )
             // InternalMazeDsl.g:11249:2: rule__TeleportRulesConfig__Group__9__Impl rule__TeleportRulesConfig__Group__10
             {
-            pushFollow(FOLLOW_97);
+            pushFollow(FOLLOW_96);
             rule__TeleportRulesConfig__Group__9__Impl();
 
             state._fsp--;
@@ -35041,7 +35041,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11437:1: ( rule__DOUBLE__Group__1__Impl rule__DOUBLE__Group__2 )
             // InternalMazeDsl.g:11438:2: rule__DOUBLE__Group__1__Impl rule__DOUBLE__Group__2
             {
-            pushFollow(FOLLOW_98);
+            pushFollow(FOLLOW_97);
             rule__DOUBLE__Group__1__Impl();
 
             state._fsp--;
@@ -35606,7 +35606,7 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
             // InternalMazeDsl.g:11626:1: ( rule__DOUBLE_OBJECT__Group__1__Impl rule__DOUBLE_OBJECT__Group__2 )
             // InternalMazeDsl.g:11627:2: rule__DOUBLE_OBJECT__Group__1__Impl rule__DOUBLE_OBJECT__Group__2
             {
-            pushFollow(FOLLOW_98);
+            pushFollow(FOLLOW_97);
             rule__DOUBLE_OBJECT__Group__1__Impl();
 
             state._fsp--;
@@ -39220,21 +39220,25 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LevelZone__MaterialIdsAssignment_4"
-    // InternalMazeDsl.g:12966:1: rule__LevelZone__MaterialIdsAssignment_4 : ( RULE_ID ) ;
+    // InternalMazeDsl.g:12966:1: rule__LevelZone__MaterialIdsAssignment_4 : ( ruleValidID ) ;
     public final void rule__LevelZone__MaterialIdsAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalMazeDsl.g:12970:1: ( ( RULE_ID ) )
-            // InternalMazeDsl.g:12971:2: ( RULE_ID )
+            // InternalMazeDsl.g:12970:1: ( ( ruleValidID ) )
+            // InternalMazeDsl.g:12971:2: ( ruleValidID )
             {
-            // InternalMazeDsl.g:12971:2: ( RULE_ID )
-            // InternalMazeDsl.g:12972:3: RULE_ID
+            // InternalMazeDsl.g:12971:2: ( ruleValidID )
+            // InternalMazeDsl.g:12972:3: ruleValidID
             {
-             before(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0()); 
-            match(input,RULE_ID,FOLLOW_2); 
-             after(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0()); 
+             before(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0()); 
+            pushFollow(FOLLOW_2);
+            ruleValidID();
+
+            state._fsp--;
+
+             after(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0()); 
 
             }
 
@@ -39257,21 +39261,25 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LevelZone__MaterialIdsAssignment_5_1"
-    // InternalMazeDsl.g:12981:1: rule__LevelZone__MaterialIdsAssignment_5_1 : ( RULE_ID ) ;
+    // InternalMazeDsl.g:12981:1: rule__LevelZone__MaterialIdsAssignment_5_1 : ( ruleValidID ) ;
     public final void rule__LevelZone__MaterialIdsAssignment_5_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalMazeDsl.g:12985:1: ( ( RULE_ID ) )
-            // InternalMazeDsl.g:12986:2: ( RULE_ID )
+            // InternalMazeDsl.g:12985:1: ( ( ruleValidID ) )
+            // InternalMazeDsl.g:12986:2: ( ruleValidID )
             {
-            // InternalMazeDsl.g:12986:2: ( RULE_ID )
-            // InternalMazeDsl.g:12987:3: RULE_ID
+            // InternalMazeDsl.g:12986:2: ( ruleValidID )
+            // InternalMazeDsl.g:12987:3: ruleValidID
             {
-             before(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0()); 
-            match(input,RULE_ID,FOLLOW_2); 
-             after(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0()); 
+             before(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0()); 
+            pushFollow(FOLLOW_2);
+            ruleValidID();
+
+            state._fsp--;
+
+             after(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0()); 
 
             }
 
@@ -41495,21 +41503,25 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__WallBuilderConfig__WallMaterialAssignment_18"
-    // InternalMazeDsl.g:13851:1: rule__WallBuilderConfig__WallMaterialAssignment_18 : ( RULE_ID ) ;
+    // InternalMazeDsl.g:13851:1: rule__WallBuilderConfig__WallMaterialAssignment_18 : ( ruleValidID ) ;
     public final void rule__WallBuilderConfig__WallMaterialAssignment_18() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalMazeDsl.g:13855:1: ( ( RULE_ID ) )
-            // InternalMazeDsl.g:13856:2: ( RULE_ID )
+            // InternalMazeDsl.g:13855:1: ( ( ruleValidID ) )
+            // InternalMazeDsl.g:13856:2: ( ruleValidID )
             {
-            // InternalMazeDsl.g:13856:2: ( RULE_ID )
-            // InternalMazeDsl.g:13857:3: RULE_ID
+            // InternalMazeDsl.g:13856:2: ( ruleValidID )
+            // InternalMazeDsl.g:13857:3: ruleValidID
             {
-             before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); 
-            match(input,RULE_ID,FOLLOW_2); 
-             after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); 
+             before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0()); 
+            pushFollow(FOLLOW_2);
+            ruleValidID();
+
+            state._fsp--;
+
+             after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0()); 
 
             }
 
@@ -41899,47 +41911,46 @@ public class InternalMazeDslParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0010000000000002L});
     public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000020L});
     public static final BitSet FOLLOW_56 = new BitSet(new long[]{0x0000000000300000L});
-    public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
-    public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000002000000L});
-    public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000000008000000L});
-    public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_65 = new BitSet(new long[]{0x00000000C0000000L});
-    public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_69 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_70 = new BitSet(new long[]{0x0004001000000000L});
-    public static final BitSet FOLLOW_71 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_72 = new BitSet(new long[]{0x0000004000000000L});
-    public static final BitSet FOLLOW_73 = new BitSet(new long[]{0x0000008000000000L});
-    public static final BitSet FOLLOW_74 = new BitSet(new long[]{0x0000010000000000L});
-    public static final BitSet FOLLOW_75 = new BitSet(new long[]{0x0000020000000000L});
-    public static final BitSet FOLLOW_76 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
-    public static final BitSet FOLLOW_77 = new BitSet(new long[]{0x0020000000000000L});
-    public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x0040000000000000L});
-    public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x0080000000000000L});
-    public static final BitSet FOLLOW_80 = new BitSet(new long[]{0x0100000000000000L});
-    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0200000000000000L});
-    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0400000000000000L});
-    public static final BitSet FOLLOW_83 = new BitSet(new long[]{0x0800000000000000L});
-    public static final BitSet FOLLOW_84 = new BitSet(new long[]{0x1000000000000000L});
-    public static final BitSet FOLLOW_85 = new BitSet(new long[]{0x2000000000000000L});
-    public static final BitSet FOLLOW_86 = new BitSet(new long[]{0x4000000000000000L});
-    public static final BitSet FOLLOW_87 = new BitSet(new long[]{0x8000000000000000L,0x000000008000000FL});
-    public static final BitSet FOLLOW_88 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_89 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_90 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000080L});
-    public static final BitSet FOLLOW_91 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000100L});
-    public static final BitSet FOLLOW_92 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000200L});
-    public static final BitSet FOLLOW_93 = new BitSet(new long[]{0x0000000000000000L,0x0000000080000800L});
-    public static final BitSet FOLLOW_94 = new BitSet(new long[]{0x0000200000000000L});
-    public static final BitSet FOLLOW_95 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_96 = new BitSet(new long[]{0x0000800000000000L});
-    public static final BitSet FOLLOW_97 = new BitSet(new long[]{0x0003000000000000L,0x0000000080000000L});
-    public static final BitSet FOLLOW_98 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0000000000000000L,0x0000100000000000L});
+    public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x0000000002000000L});
+    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000020000000L});
+    public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x00000000C0000000L});
+    public static final BitSet FOLLOW_65 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000400000000L});
+    public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_69 = new BitSet(new long[]{0x0004001000000000L});
+    public static final BitSet FOLLOW_70 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_71 = new BitSet(new long[]{0x0000004000000000L});
+    public static final BitSet FOLLOW_72 = new BitSet(new long[]{0x0000008000000000L});
+    public static final BitSet FOLLOW_73 = new BitSet(new long[]{0x0000010000000000L});
+    public static final BitSet FOLLOW_74 = new BitSet(new long[]{0x0000020000000000L});
+    public static final BitSet FOLLOW_75 = new BitSet(new long[]{0x0000000000000000L,0x0000200000000000L});
+    public static final BitSet FOLLOW_76 = new BitSet(new long[]{0x0020000000000000L});
+    public static final BitSet FOLLOW_77 = new BitSet(new long[]{0x0040000000000000L});
+    public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x0080000000000000L});
+    public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x0100000000000000L});
+    public static final BitSet FOLLOW_80 = new BitSet(new long[]{0x0200000000000000L});
+    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0400000000000000L});
+    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0800000000000000L});
+    public static final BitSet FOLLOW_83 = new BitSet(new long[]{0x1000000000000000L});
+    public static final BitSet FOLLOW_84 = new BitSet(new long[]{0x2000000000000000L});
+    public static final BitSet FOLLOW_85 = new BitSet(new long[]{0x4000000000000000L});
+    public static final BitSet FOLLOW_86 = new BitSet(new long[]{0x8000000000000000L,0x000000008000000FL});
+    public static final BitSet FOLLOW_87 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000040L});
+    public static final BitSet FOLLOW_88 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_89 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000080L});
+    public static final BitSet FOLLOW_90 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000100L});
+    public static final BitSet FOLLOW_91 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000200L});
+    public static final BitSet FOLLOW_92 = new BitSet(new long[]{0x0000000000000000L,0x0000000080000800L});
+    public static final BitSet FOLLOW_93 = new BitSet(new long[]{0x0000200000000000L});
+    public static final BitSet FOLLOW_94 = new BitSet(new long[]{0x0000400000000000L});
+    public static final BitSet FOLLOW_95 = new BitSet(new long[]{0x0000800000000000L});
+    public static final BitSet FOLLOW_96 = new BitSet(new long[]{0x0003000000000000L,0x0000000080000000L});
+    public static final BitSet FOLLOW_97 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000040000L});
 
 }

@@ -3,8 +3,10 @@ package main.game.maze.game.level;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -46,8 +48,16 @@ public final class FileSavePointStore implements SavePointStore {
             if (file.getParent() != null) {
                 Files.createDirectories(file.getParent());
             }
-            try (OutputStream out = Files.newOutputStream(file)) {
+            // write the new savepoint beside the old one and swap it in only when it is complete: a failed or
+            // interrupted write leaves the previous savepoint as it was
+            Path temporary = file.resolveSibling(file.getFileName() + ".tmp");
+            try (OutputStream out = Files.newOutputStream(temporary)) {
                 properties.store(out, "MazeGame savepoint");
+            }
+            try {
+                Files.move(temporary, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException notAtomic) {
+                Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not save the savepoint to " + file, e);

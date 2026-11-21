@@ -5203,7 +5203,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleLevelZone"
-    // InternalMazeDsl.g:2237:1: ruleLevelZone returns [EObject current=null] : (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= RULE_ID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )* ) ;
+    // InternalMazeDsl.g:2237:1: ruleLevelZone returns [EObject current=null] : (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= ruleValidID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )* ) ;
     public final EObject ruleLevelZone() throws RecognitionException {
         EObject current = null;
 
@@ -5211,21 +5211,23 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         Token lv_displayName_1_0=null;
         Token otherlv_2=null;
         Token otherlv_4=null;
-        Token lv_materialIds_5_0=null;
         Token otherlv_6=null;
-        Token lv_materialIds_7_0=null;
         AntlrDatatypeRuleToken lv_breakableShare_3_0 = null;
+
+        AntlrDatatypeRuleToken lv_materialIds_5_0 = null;
+
+        AntlrDatatypeRuleToken lv_materialIds_7_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:2243:2: ( (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= RULE_ID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )* ) )
-            // InternalMazeDsl.g:2244:2: (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= RULE_ID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )* )
+            // InternalMazeDsl.g:2243:2: ( (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= ruleValidID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )* ) )
+            // InternalMazeDsl.g:2244:2: (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= ruleValidID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )* )
             {
-            // InternalMazeDsl.g:2244:2: (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= RULE_ID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )* )
-            // InternalMazeDsl.g:2245:3: otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= RULE_ID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )*
+            // InternalMazeDsl.g:2244:2: (otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= ruleValidID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )* )
+            // InternalMazeDsl.g:2245:3: otherlv_0= 'ring' ( (lv_displayName_1_0= RULE_STRING ) ) (otherlv_2= 'share' ( (lv_breakableShare_3_0= ruleDOUBLE_OBJECT ) ) )? otherlv_4= 'materials' ( (lv_materialIds_5_0= ruleValidID ) ) (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )*
             {
             otherlv_0=(Token)match(input,70,FOLLOW_10); 
 
@@ -5309,29 +5311,34 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_4=(Token)match(input,72,FOLLOW_81); 
+            otherlv_4=(Token)match(input,72,FOLLOW_3); 
 
             			newLeafNode(otherlv_4, grammarAccess.getLevelZoneAccess().getMaterialsKeyword_3());
             		
-            // InternalMazeDsl.g:2296:3: ( (lv_materialIds_5_0= RULE_ID ) )
-            // InternalMazeDsl.g:2297:4: (lv_materialIds_5_0= RULE_ID )
+            // InternalMazeDsl.g:2296:3: ( (lv_materialIds_5_0= ruleValidID ) )
+            // InternalMazeDsl.g:2297:4: (lv_materialIds_5_0= ruleValidID )
             {
-            // InternalMazeDsl.g:2297:4: (lv_materialIds_5_0= RULE_ID )
-            // InternalMazeDsl.g:2298:5: lv_materialIds_5_0= RULE_ID
+            // InternalMazeDsl.g:2297:4: (lv_materialIds_5_0= ruleValidID )
+            // InternalMazeDsl.g:2298:5: lv_materialIds_5_0= ruleValidID
             {
-            lv_materialIds_5_0=(Token)match(input,RULE_ID,FOLLOW_82); 
 
-            					newLeafNode(lv_materialIds_5_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0());
+            					newCompositeNode(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0());
             				
+            pushFollow(FOLLOW_81);
+            lv_materialIds_5_0=ruleValidID();
+
+            state._fsp--;
+
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getLevelZoneRule());
+            						current = createModelElementForParent(grammarAccess.getLevelZoneRule());
             					}
-            					addWithLastConsumed(
+            					add(
             						current,
             						"materialIds",
             						lv_materialIds_5_0,
-            						"org.eclipse.xtext.common.Terminals.ID");
+            						"main.game.maze.dsl.MazeDsl.ValidID");
+            					afterParserOrEnumRuleCall();
             				
 
             }
@@ -5339,7 +5346,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:2314:3: (otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) ) )*
+            // InternalMazeDsl.g:2315:3: (otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) ) )*
             loop58:
             do {
                 int alt58=2;
@@ -5352,31 +5359,36 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
                 switch (alt58) {
             	case 1 :
-            	    // InternalMazeDsl.g:2315:4: otherlv_6= ',' ( (lv_materialIds_7_0= RULE_ID ) )
+            	    // InternalMazeDsl.g:2316:4: otherlv_6= ',' ( (lv_materialIds_7_0= ruleValidID ) )
             	    {
-            	    otherlv_6=(Token)match(input,50,FOLLOW_81); 
+            	    otherlv_6=(Token)match(input,50,FOLLOW_3); 
 
             	    				newLeafNode(otherlv_6, grammarAccess.getLevelZoneAccess().getCommaKeyword_5_0());
             	    			
-            	    // InternalMazeDsl.g:2319:4: ( (lv_materialIds_7_0= RULE_ID ) )
-            	    // InternalMazeDsl.g:2320:5: (lv_materialIds_7_0= RULE_ID )
+            	    // InternalMazeDsl.g:2320:4: ( (lv_materialIds_7_0= ruleValidID ) )
+            	    // InternalMazeDsl.g:2321:5: (lv_materialIds_7_0= ruleValidID )
             	    {
-            	    // InternalMazeDsl.g:2320:5: (lv_materialIds_7_0= RULE_ID )
-            	    // InternalMazeDsl.g:2321:6: lv_materialIds_7_0= RULE_ID
+            	    // InternalMazeDsl.g:2321:5: (lv_materialIds_7_0= ruleValidID )
+            	    // InternalMazeDsl.g:2322:6: lv_materialIds_7_0= ruleValidID
             	    {
-            	    lv_materialIds_7_0=(Token)match(input,RULE_ID,FOLLOW_82); 
 
-            	    						newLeafNode(lv_materialIds_7_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0());
+            	    						newCompositeNode(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0());
             	    					
+            	    pushFollow(FOLLOW_81);
+            	    lv_materialIds_7_0=ruleValidID();
+
+            	    state._fsp--;
+
 
             	    						if (current==null) {
-            	    							current = createModelElement(grammarAccess.getLevelZoneRule());
+            	    							current = createModelElementForParent(grammarAccess.getLevelZoneRule());
             	    						}
-            	    						addWithLastConsumed(
+            	    						add(
             	    							current,
             	    							"materialIds",
             	    							lv_materialIds_7_0,
-            	    							"org.eclipse.xtext.common.Terminals.ID");
+            	    							"main.game.maze.dsl.MazeDsl.ValidID");
+            	    						afterParserOrEnumRuleCall();
             	    					
 
             	    }
@@ -5416,7 +5428,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSergeantConfig"
-    // InternalMazeDsl.g:2342:1: entryRuleSergeantConfig returns [EObject current=null] : iv_ruleSergeantConfig= ruleSergeantConfig EOF ;
+    // InternalMazeDsl.g:2344:1: entryRuleSergeantConfig returns [EObject current=null] : iv_ruleSergeantConfig= ruleSergeantConfig EOF ;
     public final EObject entryRuleSergeantConfig() throws RecognitionException {
         EObject current = null;
 
@@ -5424,8 +5436,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:2342:55: (iv_ruleSergeantConfig= ruleSergeantConfig EOF )
-            // InternalMazeDsl.g:2343:2: iv_ruleSergeantConfig= ruleSergeantConfig EOF
+            // InternalMazeDsl.g:2344:55: (iv_ruleSergeantConfig= ruleSergeantConfig EOF )
+            // InternalMazeDsl.g:2345:2: iv_ruleSergeantConfig= ruleSergeantConfig EOF
             {
              newCompositeNode(grammarAccess.getSergeantConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -5452,7 +5464,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSergeantConfig"
-    // InternalMazeDsl.g:2349:1: ruleSergeantConfig returns [EObject current=null] : (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' ) ;
+    // InternalMazeDsl.g:2351:1: ruleSergeantConfig returns [EObject current=null] : (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' ) ;
     public final EObject ruleSergeantConfig() throws RecognitionException {
         EObject current = null;
 
@@ -5490,21 +5502,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:2355:2: ( (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' ) )
-            // InternalMazeDsl.g:2356:2: (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' )
+            // InternalMazeDsl.g:2357:2: ( (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' ) )
+            // InternalMazeDsl.g:2358:2: (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' )
             {
-            // InternalMazeDsl.g:2356:2: (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' )
-            // InternalMazeDsl.g:2357:3: otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}'
+            // InternalMazeDsl.g:2358:2: (otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}' )
+            // InternalMazeDsl.g:2359:3: otherlv_0= 'sergeant' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'rounds' ( (lv_roundsPerBurst_8_0= RULE_INT ) ) otherlv_9= 'roundDamage' ( (lv_roundDamage_10_0= RULE_INT ) ) otherlv_11= 'roundInterval' ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) ) otherlv_13= 'burstCooldown' ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) ) otherlv_15= 'sprite' ( (lv_sprite_16_0= RULE_STRING ) ) (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )? otherlv_19= 'drops' ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) ) otherlv_21= 'postDistance' ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) ) otherlv_23= '}'
             {
             otherlv_0=(Token)match(input,73,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getSergeantConfigAccess().getSergeantKeyword_0());
             		
-            // InternalMazeDsl.g:2361:3: ( (lv_displayName_1_0= RULE_STRING ) )
-            // InternalMazeDsl.g:2362:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:2363:3: ( (lv_displayName_1_0= RULE_STRING ) )
+            // InternalMazeDsl.g:2364:4: (lv_displayName_1_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:2362:4: (lv_displayName_1_0= RULE_STRING )
-            // InternalMazeDsl.g:2363:5: lv_displayName_1_0= RULE_STRING
+            // InternalMazeDsl.g:2364:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:2365:5: lv_displayName_1_0= RULE_STRING
             {
             lv_displayName_1_0=(Token)match(input,RULE_STRING,FOLLOW_4); 
 
@@ -5526,7 +5538,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,12,FOLLOW_83); 
+            otherlv_2=(Token)match(input,12,FOLLOW_82); 
 
             			newLeafNode(otherlv_2, grammarAccess.getSergeantConfigAccess().getLeftCurlyBracketKeyword_2());
             		
@@ -5534,13 +5546,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getSergeantConfigAccess().getHealthKeyword_3());
             		
-            // InternalMazeDsl.g:2387:3: ( (lv_health_4_0= RULE_INT ) )
-            // InternalMazeDsl.g:2388:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:2389:3: ( (lv_health_4_0= RULE_INT ) )
+            // InternalMazeDsl.g:2390:4: (lv_health_4_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2388:4: (lv_health_4_0= RULE_INT )
-            // InternalMazeDsl.g:2389:5: lv_health_4_0= RULE_INT
+            // InternalMazeDsl.g:2390:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:2391:5: lv_health_4_0= RULE_INT
             {
-            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_84); 
+            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_83); 
 
             					newLeafNode(lv_health_4_0, grammarAccess.getSergeantConfigAccess().getHealthINTTerminalRuleCall_4_0());
             				
@@ -5564,16 +5576,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getSergeantConfigAccess().getSightRangeKeyword_5());
             		
-            // InternalMazeDsl.g:2409:3: ( (lv_sightRange_6_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2410:4: (lv_sightRange_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2411:3: ( (lv_sightRange_6_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2412:4: (lv_sightRange_6_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2410:4: (lv_sightRange_6_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2411:5: lv_sightRange_6_0= ruleDOUBLE
+            // InternalMazeDsl.g:2412:4: (lv_sightRange_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2413:5: lv_sightRange_6_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getSergeantConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0());
             				
-            pushFollow(FOLLOW_85);
+            pushFollow(FOLLOW_84);
             lv_sightRange_6_0=ruleDOUBLE();
 
             state._fsp--;
@@ -5599,13 +5611,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_7, grammarAccess.getSergeantConfigAccess().getRoundsKeyword_7());
             		
-            // InternalMazeDsl.g:2432:3: ( (lv_roundsPerBurst_8_0= RULE_INT ) )
-            // InternalMazeDsl.g:2433:4: (lv_roundsPerBurst_8_0= RULE_INT )
+            // InternalMazeDsl.g:2434:3: ( (lv_roundsPerBurst_8_0= RULE_INT ) )
+            // InternalMazeDsl.g:2435:4: (lv_roundsPerBurst_8_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2433:4: (lv_roundsPerBurst_8_0= RULE_INT )
-            // InternalMazeDsl.g:2434:5: lv_roundsPerBurst_8_0= RULE_INT
+            // InternalMazeDsl.g:2435:4: (lv_roundsPerBurst_8_0= RULE_INT )
+            // InternalMazeDsl.g:2436:5: lv_roundsPerBurst_8_0= RULE_INT
             {
-            lv_roundsPerBurst_8_0=(Token)match(input,RULE_INT,FOLLOW_86); 
+            lv_roundsPerBurst_8_0=(Token)match(input,RULE_INT,FOLLOW_85); 
 
             					newLeafNode(lv_roundsPerBurst_8_0, grammarAccess.getSergeantConfigAccess().getRoundsPerBurstINTTerminalRuleCall_8_0());
             				
@@ -5629,13 +5641,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_9, grammarAccess.getSergeantConfigAccess().getRoundDamageKeyword_9());
             		
-            // InternalMazeDsl.g:2454:3: ( (lv_roundDamage_10_0= RULE_INT ) )
-            // InternalMazeDsl.g:2455:4: (lv_roundDamage_10_0= RULE_INT )
+            // InternalMazeDsl.g:2456:3: ( (lv_roundDamage_10_0= RULE_INT ) )
+            // InternalMazeDsl.g:2457:4: (lv_roundDamage_10_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2455:4: (lv_roundDamage_10_0= RULE_INT )
-            // InternalMazeDsl.g:2456:5: lv_roundDamage_10_0= RULE_INT
+            // InternalMazeDsl.g:2457:4: (lv_roundDamage_10_0= RULE_INT )
+            // InternalMazeDsl.g:2458:5: lv_roundDamage_10_0= RULE_INT
             {
-            lv_roundDamage_10_0=(Token)match(input,RULE_INT,FOLLOW_87); 
+            lv_roundDamage_10_0=(Token)match(input,RULE_INT,FOLLOW_86); 
 
             					newLeafNode(lv_roundDamage_10_0, grammarAccess.getSergeantConfigAccess().getRoundDamageINTTerminalRuleCall_10_0());
             				
@@ -5659,16 +5671,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_11, grammarAccess.getSergeantConfigAccess().getRoundIntervalKeyword_11());
             		
-            // InternalMazeDsl.g:2476:3: ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2477:4: (lv_roundIntervalSeconds_12_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2478:3: ( (lv_roundIntervalSeconds_12_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2479:4: (lv_roundIntervalSeconds_12_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2477:4: (lv_roundIntervalSeconds_12_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2478:5: lv_roundIntervalSeconds_12_0= ruleDOUBLE
+            // InternalMazeDsl.g:2479:4: (lv_roundIntervalSeconds_12_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2480:5: lv_roundIntervalSeconds_12_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getSergeantConfigAccess().getRoundIntervalSecondsDOUBLEParserRuleCall_12_0());
             				
-            pushFollow(FOLLOW_88);
+            pushFollow(FOLLOW_87);
             lv_roundIntervalSeconds_12_0=ruleDOUBLE();
 
             state._fsp--;
@@ -5694,16 +5706,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_13, grammarAccess.getSergeantConfigAccess().getBurstCooldownKeyword_13());
             		
-            // InternalMazeDsl.g:2499:3: ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2500:4: (lv_burstCooldownSeconds_14_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2501:3: ( (lv_burstCooldownSeconds_14_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2502:4: (lv_burstCooldownSeconds_14_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2500:4: (lv_burstCooldownSeconds_14_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2501:5: lv_burstCooldownSeconds_14_0= ruleDOUBLE
+            // InternalMazeDsl.g:2502:4: (lv_burstCooldownSeconds_14_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2503:5: lv_burstCooldownSeconds_14_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getSergeantConfigAccess().getBurstCooldownSecondsDOUBLEParserRuleCall_14_0());
             				
-            pushFollow(FOLLOW_89);
+            pushFollow(FOLLOW_88);
             lv_burstCooldownSeconds_14_0=ruleDOUBLE();
 
             state._fsp--;
@@ -5729,13 +5741,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_15, grammarAccess.getSergeantConfigAccess().getSpriteKeyword_15());
             		
-            // InternalMazeDsl.g:2522:3: ( (lv_sprite_16_0= RULE_STRING ) )
-            // InternalMazeDsl.g:2523:4: (lv_sprite_16_0= RULE_STRING )
+            // InternalMazeDsl.g:2524:3: ( (lv_sprite_16_0= RULE_STRING ) )
+            // InternalMazeDsl.g:2525:4: (lv_sprite_16_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:2523:4: (lv_sprite_16_0= RULE_STRING )
-            // InternalMazeDsl.g:2524:5: lv_sprite_16_0= RULE_STRING
+            // InternalMazeDsl.g:2525:4: (lv_sprite_16_0= RULE_STRING )
+            // InternalMazeDsl.g:2526:5: lv_sprite_16_0= RULE_STRING
             {
-            lv_sprite_16_0=(Token)match(input,RULE_STRING,FOLLOW_90); 
+            lv_sprite_16_0=(Token)match(input,RULE_STRING,FOLLOW_89); 
 
             					newLeafNode(lv_sprite_16_0, grammarAccess.getSergeantConfigAccess().getSpriteSTRINGTerminalRuleCall_16_0());
             				
@@ -5755,7 +5767,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:2540:3: (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:2542:3: (otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) ) )?
             int alt59=2;
             int LA59_0 = input.LA(1);
 
@@ -5764,19 +5776,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt59) {
                 case 1 :
-                    // InternalMazeDsl.g:2541:4: otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:2543:4: otherlv_17= 'fireSound' ( (lv_fireSound_18_0= RULE_STRING ) )
                     {
                     otherlv_17=(Token)match(input,80,FOLLOW_10); 
 
                     				newLeafNode(otherlv_17, grammarAccess.getSergeantConfigAccess().getFireSoundKeyword_17_0());
                     			
-                    // InternalMazeDsl.g:2545:4: ( (lv_fireSound_18_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:2546:5: (lv_fireSound_18_0= RULE_STRING )
+                    // InternalMazeDsl.g:2547:4: ( (lv_fireSound_18_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:2548:5: (lv_fireSound_18_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:2546:5: (lv_fireSound_18_0= RULE_STRING )
-                    // InternalMazeDsl.g:2547:6: lv_fireSound_18_0= RULE_STRING
+                    // InternalMazeDsl.g:2548:5: (lv_fireSound_18_0= RULE_STRING )
+                    // InternalMazeDsl.g:2549:6: lv_fireSound_18_0= RULE_STRING
                     {
-                    lv_fireSound_18_0=(Token)match(input,RULE_STRING,FOLLOW_91); 
+                    lv_fireSound_18_0=(Token)match(input,RULE_STRING,FOLLOW_90); 
 
                     						newLeafNode(lv_fireSound_18_0, grammarAccess.getSergeantConfigAccess().getFireSoundSTRINGTerminalRuleCall_17_1_0());
                     					
@@ -5802,20 +5814,20 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_19=(Token)match(input,81,FOLLOW_92); 
+            otherlv_19=(Token)match(input,81,FOLLOW_91); 
 
             			newLeafNode(otherlv_19, grammarAccess.getSergeantConfigAccess().getDropsKeyword_18());
             		
-            // InternalMazeDsl.g:2568:3: ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) )
-            // InternalMazeDsl.g:2569:4: (lv_dropWeapon_20_0= ruleDropWeaponEnum )
+            // InternalMazeDsl.g:2570:3: ( (lv_dropWeapon_20_0= ruleDropWeaponEnum ) )
+            // InternalMazeDsl.g:2571:4: (lv_dropWeapon_20_0= ruleDropWeaponEnum )
             {
-            // InternalMazeDsl.g:2569:4: (lv_dropWeapon_20_0= ruleDropWeaponEnum )
-            // InternalMazeDsl.g:2570:5: lv_dropWeapon_20_0= ruleDropWeaponEnum
+            // InternalMazeDsl.g:2571:4: (lv_dropWeapon_20_0= ruleDropWeaponEnum )
+            // InternalMazeDsl.g:2572:5: lv_dropWeapon_20_0= ruleDropWeaponEnum
             {
 
             					newCompositeNode(grammarAccess.getSergeantConfigAccess().getDropWeaponDropWeaponEnumEnumRuleCall_19_0());
             				
-            pushFollow(FOLLOW_93);
+            pushFollow(FOLLOW_92);
             lv_dropWeapon_20_0=ruleDropWeaponEnum();
 
             state._fsp--;
@@ -5841,11 +5853,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_21, grammarAccess.getSergeantConfigAccess().getPostDistanceKeyword_20());
             		
-            // InternalMazeDsl.g:2591:3: ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2592:4: (lv_postDistanceFromHeart_22_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2593:3: ( (lv_postDistanceFromHeart_22_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2594:4: (lv_postDistanceFromHeart_22_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2592:4: (lv_postDistanceFromHeart_22_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2593:5: lv_postDistanceFromHeart_22_0= ruleDOUBLE
+            // InternalMazeDsl.g:2594:4: (lv_postDistanceFromHeart_22_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2595:5: lv_postDistanceFromHeart_22_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getSergeantConfigAccess().getPostDistanceFromHeartDOUBLEParserRuleCall_21_0());
@@ -5899,7 +5911,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTierCountConfig"
-    // InternalMazeDsl.g:2618:1: entryRuleTierCountConfig returns [EObject current=null] : iv_ruleTierCountConfig= ruleTierCountConfig EOF ;
+    // InternalMazeDsl.g:2620:1: entryRuleTierCountConfig returns [EObject current=null] : iv_ruleTierCountConfig= ruleTierCountConfig EOF ;
     public final EObject entryRuleTierCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -5907,8 +5919,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:2618:56: (iv_ruleTierCountConfig= ruleTierCountConfig EOF )
-            // InternalMazeDsl.g:2619:2: iv_ruleTierCountConfig= ruleTierCountConfig EOF
+            // InternalMazeDsl.g:2620:56: (iv_ruleTierCountConfig= ruleTierCountConfig EOF )
+            // InternalMazeDsl.g:2621:2: iv_ruleTierCountConfig= ruleTierCountConfig EOF
             {
              newCompositeNode(grammarAccess.getTierCountConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -5935,7 +5947,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTierCountConfig"
-    // InternalMazeDsl.g:2625:1: ruleTierCountConfig returns [EObject current=null] : (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
+    // InternalMazeDsl.g:2627:1: ruleTierCountConfig returns [EObject current=null] : (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
     public final EObject ruleTierCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -5948,21 +5960,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:2631:2: ( (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
-            // InternalMazeDsl.g:2632:2: (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:2633:2: ( (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
+            // InternalMazeDsl.g:2634:2: (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
             {
-            // InternalMazeDsl.g:2632:2: (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
-            // InternalMazeDsl.g:2633:3: otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:2634:2: (otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:2635:3: otherlv_0= 'sergeants' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
             {
             otherlv_0=(Token)match(input,83,FOLLOW_12); 
 
             			newLeafNode(otherlv_0, grammarAccess.getTierCountConfigAccess().getSergeantsKeyword_0());
             		
-            // InternalMazeDsl.g:2637:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
-            // InternalMazeDsl.g:2638:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:2639:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
+            // InternalMazeDsl.g:2640:4: (lv_difficulty_1_0= ruleDifficultyLevel )
             {
-            // InternalMazeDsl.g:2638:4: (lv_difficulty_1_0= ruleDifficultyLevel )
-            // InternalMazeDsl.g:2639:5: lv_difficulty_1_0= ruleDifficultyLevel
+            // InternalMazeDsl.g:2640:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:2641:5: lv_difficulty_1_0= ruleDifficultyLevel
             {
 
             					newCompositeNode(grammarAccess.getTierCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
@@ -5989,11 +6001,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:2656:3: ( (lv_count_2_0= RULE_INT ) )
-            // InternalMazeDsl.g:2657:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:2658:3: ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:2659:4: (lv_count_2_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2657:4: (lv_count_2_0= RULE_INT )
-            // InternalMazeDsl.g:2658:5: lv_count_2_0= RULE_INT
+            // InternalMazeDsl.g:2659:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:2660:5: lv_count_2_0= RULE_INT
             {
             lv_count_2_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -6038,7 +6050,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMineRingConfig"
-    // InternalMazeDsl.g:2678:1: entryRuleMineRingConfig returns [EObject current=null] : iv_ruleMineRingConfig= ruleMineRingConfig EOF ;
+    // InternalMazeDsl.g:2680:1: entryRuleMineRingConfig returns [EObject current=null] : iv_ruleMineRingConfig= ruleMineRingConfig EOF ;
     public final EObject entryRuleMineRingConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6046,8 +6058,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:2678:55: (iv_ruleMineRingConfig= ruleMineRingConfig EOF )
-            // InternalMazeDsl.g:2679:2: iv_ruleMineRingConfig= ruleMineRingConfig EOF
+            // InternalMazeDsl.g:2680:55: (iv_ruleMineRingConfig= ruleMineRingConfig EOF )
+            // InternalMazeDsl.g:2681:2: iv_ruleMineRingConfig= ruleMineRingConfig EOF
             {
              newCompositeNode(grammarAccess.getMineRingConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -6074,7 +6086,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMineRingConfig"
-    // InternalMazeDsl.g:2685:1: ruleMineRingConfig returns [EObject current=null] : (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' ) ;
+    // InternalMazeDsl.g:2687:1: ruleMineRingConfig returns [EObject current=null] : (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' ) ;
     public final EObject ruleMineRingConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6110,17 +6122,17 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:2691:2: ( (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' ) )
-            // InternalMazeDsl.g:2692:2: (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' )
+            // InternalMazeDsl.g:2693:2: ( (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' ) )
+            // InternalMazeDsl.g:2694:2: (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' )
             {
-            // InternalMazeDsl.g:2692:2: (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' )
-            // InternalMazeDsl.g:2693:3: otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}'
+            // InternalMazeDsl.g:2694:2: (otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}' )
+            // InternalMazeDsl.g:2695:3: otherlv_0= 'mines' otherlv_1= '{' otherlv_2= 'count' ( (lv_count_3_0= RULE_INT ) ) otherlv_4= 'ringRadius' ( (lv_ringRadius_5_0= ruleDOUBLE ) ) (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )? otherlv_8= 'triggerRadius' ( (lv_triggerRadius_9_0= ruleDOUBLE ) ) otherlv_10= 'pulse' ( (lv_pulseSeconds_11_0= ruleDOUBLE ) ) otherlv_12= 'blastRadius' ( (lv_blastRadius_13_0= ruleDOUBLE ) ) otherlv_14= 'blastDamage' ( (lv_blastDamage_15_0= RULE_INT ) ) otherlv_16= 'playerDamage' ( (lv_playerDamage_17_0= RULE_INT ) ) otherlv_18= 'holeRadius' ( (lv_holeRadius_19_0= ruleDOUBLE ) ) otherlv_20= '}'
             {
             otherlv_0=(Token)match(input,84,FOLLOW_4); 
 
             			newLeafNode(otherlv_0, grammarAccess.getMineRingConfigAccess().getMinesKeyword_0());
             		
-            otherlv_1=(Token)match(input,12,FOLLOW_94); 
+            otherlv_1=(Token)match(input,12,FOLLOW_93); 
 
             			newLeafNode(otherlv_1, grammarAccess.getMineRingConfigAccess().getLeftCurlyBracketKeyword_1());
             		
@@ -6128,13 +6140,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_2, grammarAccess.getMineRingConfigAccess().getCountKeyword_2());
             		
-            // InternalMazeDsl.g:2705:3: ( (lv_count_3_0= RULE_INT ) )
-            // InternalMazeDsl.g:2706:4: (lv_count_3_0= RULE_INT )
+            // InternalMazeDsl.g:2707:3: ( (lv_count_3_0= RULE_INT ) )
+            // InternalMazeDsl.g:2708:4: (lv_count_3_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2706:4: (lv_count_3_0= RULE_INT )
-            // InternalMazeDsl.g:2707:5: lv_count_3_0= RULE_INT
+            // InternalMazeDsl.g:2708:4: (lv_count_3_0= RULE_INT )
+            // InternalMazeDsl.g:2709:5: lv_count_3_0= RULE_INT
             {
-            lv_count_3_0=(Token)match(input,RULE_INT,FOLLOW_95); 
+            lv_count_3_0=(Token)match(input,RULE_INT,FOLLOW_94); 
 
             					newLeafNode(lv_count_3_0, grammarAccess.getMineRingConfigAccess().getCountINTTerminalRuleCall_3_0());
             				
@@ -6158,16 +6170,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_4, grammarAccess.getMineRingConfigAccess().getRingRadiusKeyword_4());
             		
-            // InternalMazeDsl.g:2727:3: ( (lv_ringRadius_5_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2728:4: (lv_ringRadius_5_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2729:3: ( (lv_ringRadius_5_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2730:4: (lv_ringRadius_5_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2728:4: (lv_ringRadius_5_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2729:5: lv_ringRadius_5_0= ruleDOUBLE
+            // InternalMazeDsl.g:2730:4: (lv_ringRadius_5_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2731:5: lv_ringRadius_5_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getMineRingConfigAccess().getRingRadiusDOUBLEParserRuleCall_5_0());
             				
-            pushFollow(FOLLOW_96);
+            pushFollow(FOLLOW_95);
             lv_ringRadius_5_0=ruleDOUBLE();
 
             state._fsp--;
@@ -6189,7 +6201,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:2746:3: (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )?
+            // InternalMazeDsl.g:2748:3: (otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) ) )?
             int alt60=2;
             int LA60_0 = input.LA(1);
 
@@ -6198,22 +6210,22 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt60) {
                 case 1 :
-                    // InternalMazeDsl.g:2747:4: otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) )
+                    // InternalMazeDsl.g:2749:4: otherlv_6= 'secondRing' ( (lv_secondRingRadius_7_0= ruleDOUBLE ) )
                     {
                     otherlv_6=(Token)match(input,87,FOLLOW_16); 
 
                     				newLeafNode(otherlv_6, grammarAccess.getMineRingConfigAccess().getSecondRingKeyword_6_0());
                     			
-                    // InternalMazeDsl.g:2751:4: ( (lv_secondRingRadius_7_0= ruleDOUBLE ) )
-                    // InternalMazeDsl.g:2752:5: (lv_secondRingRadius_7_0= ruleDOUBLE )
+                    // InternalMazeDsl.g:2753:4: ( (lv_secondRingRadius_7_0= ruleDOUBLE ) )
+                    // InternalMazeDsl.g:2754:5: (lv_secondRingRadius_7_0= ruleDOUBLE )
                     {
-                    // InternalMazeDsl.g:2752:5: (lv_secondRingRadius_7_0= ruleDOUBLE )
-                    // InternalMazeDsl.g:2753:6: lv_secondRingRadius_7_0= ruleDOUBLE
+                    // InternalMazeDsl.g:2754:5: (lv_secondRingRadius_7_0= ruleDOUBLE )
+                    // InternalMazeDsl.g:2755:6: lv_secondRingRadius_7_0= ruleDOUBLE
                     {
 
                     						newCompositeNode(grammarAccess.getMineRingConfigAccess().getSecondRingRadiusDOUBLEParserRuleCall_6_1_0());
                     					
-                    pushFollow(FOLLOW_97);
+                    pushFollow(FOLLOW_96);
                     lv_secondRingRadius_7_0=ruleDOUBLE();
 
                     state._fsp--;
@@ -6245,16 +6257,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_8, grammarAccess.getMineRingConfigAccess().getTriggerRadiusKeyword_7());
             		
-            // InternalMazeDsl.g:2775:3: ( (lv_triggerRadius_9_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2776:4: (lv_triggerRadius_9_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2777:3: ( (lv_triggerRadius_9_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2778:4: (lv_triggerRadius_9_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2776:4: (lv_triggerRadius_9_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2777:5: lv_triggerRadius_9_0= ruleDOUBLE
+            // InternalMazeDsl.g:2778:4: (lv_triggerRadius_9_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2779:5: lv_triggerRadius_9_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getMineRingConfigAccess().getTriggerRadiusDOUBLEParserRuleCall_8_0());
             				
-            pushFollow(FOLLOW_98);
+            pushFollow(FOLLOW_97);
             lv_triggerRadius_9_0=ruleDOUBLE();
 
             state._fsp--;
@@ -6280,16 +6292,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_10, grammarAccess.getMineRingConfigAccess().getPulseKeyword_9());
             		
-            // InternalMazeDsl.g:2798:3: ( (lv_pulseSeconds_11_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2799:4: (lv_pulseSeconds_11_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2800:3: ( (lv_pulseSeconds_11_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2801:4: (lv_pulseSeconds_11_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2799:4: (lv_pulseSeconds_11_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2800:5: lv_pulseSeconds_11_0= ruleDOUBLE
+            // InternalMazeDsl.g:2801:4: (lv_pulseSeconds_11_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2802:5: lv_pulseSeconds_11_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getMineRingConfigAccess().getPulseSecondsDOUBLEParserRuleCall_10_0());
             				
-            pushFollow(FOLLOW_99);
+            pushFollow(FOLLOW_98);
             lv_pulseSeconds_11_0=ruleDOUBLE();
 
             state._fsp--;
@@ -6315,16 +6327,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_12, grammarAccess.getMineRingConfigAccess().getBlastRadiusKeyword_11());
             		
-            // InternalMazeDsl.g:2821:3: ( (lv_blastRadius_13_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2822:4: (lv_blastRadius_13_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2823:3: ( (lv_blastRadius_13_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2824:4: (lv_blastRadius_13_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2822:4: (lv_blastRadius_13_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2823:5: lv_blastRadius_13_0= ruleDOUBLE
+            // InternalMazeDsl.g:2824:4: (lv_blastRadius_13_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2825:5: lv_blastRadius_13_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getMineRingConfigAccess().getBlastRadiusDOUBLEParserRuleCall_12_0());
             				
-            pushFollow(FOLLOW_100);
+            pushFollow(FOLLOW_99);
             lv_blastRadius_13_0=ruleDOUBLE();
 
             state._fsp--;
@@ -6350,13 +6362,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_14, grammarAccess.getMineRingConfigAccess().getBlastDamageKeyword_13());
             		
-            // InternalMazeDsl.g:2844:3: ( (lv_blastDamage_15_0= RULE_INT ) )
-            // InternalMazeDsl.g:2845:4: (lv_blastDamage_15_0= RULE_INT )
+            // InternalMazeDsl.g:2846:3: ( (lv_blastDamage_15_0= RULE_INT ) )
+            // InternalMazeDsl.g:2847:4: (lv_blastDamage_15_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2845:4: (lv_blastDamage_15_0= RULE_INT )
-            // InternalMazeDsl.g:2846:5: lv_blastDamage_15_0= RULE_INT
+            // InternalMazeDsl.g:2847:4: (lv_blastDamage_15_0= RULE_INT )
+            // InternalMazeDsl.g:2848:5: lv_blastDamage_15_0= RULE_INT
             {
-            lv_blastDamage_15_0=(Token)match(input,RULE_INT,FOLLOW_101); 
+            lv_blastDamage_15_0=(Token)match(input,RULE_INT,FOLLOW_100); 
 
             					newLeafNode(lv_blastDamage_15_0, grammarAccess.getMineRingConfigAccess().getBlastDamageINTTerminalRuleCall_14_0());
             				
@@ -6380,13 +6392,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_16, grammarAccess.getMineRingConfigAccess().getPlayerDamageKeyword_15());
             		
-            // InternalMazeDsl.g:2866:3: ( (lv_playerDamage_17_0= RULE_INT ) )
-            // InternalMazeDsl.g:2867:4: (lv_playerDamage_17_0= RULE_INT )
+            // InternalMazeDsl.g:2868:3: ( (lv_playerDamage_17_0= RULE_INT ) )
+            // InternalMazeDsl.g:2869:4: (lv_playerDamage_17_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2867:4: (lv_playerDamage_17_0= RULE_INT )
-            // InternalMazeDsl.g:2868:5: lv_playerDamage_17_0= RULE_INT
+            // InternalMazeDsl.g:2869:4: (lv_playerDamage_17_0= RULE_INT )
+            // InternalMazeDsl.g:2870:5: lv_playerDamage_17_0= RULE_INT
             {
-            lv_playerDamage_17_0=(Token)match(input,RULE_INT,FOLLOW_102); 
+            lv_playerDamage_17_0=(Token)match(input,RULE_INT,FOLLOW_101); 
 
             					newLeafNode(lv_playerDamage_17_0, grammarAccess.getMineRingConfigAccess().getPlayerDamageINTTerminalRuleCall_16_0());
             				
@@ -6410,11 +6422,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_18, grammarAccess.getMineRingConfigAccess().getHoleRadiusKeyword_17());
             		
-            // InternalMazeDsl.g:2888:3: ( (lv_holeRadius_19_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2889:4: (lv_holeRadius_19_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2890:3: ( (lv_holeRadius_19_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2891:4: (lv_holeRadius_19_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2889:4: (lv_holeRadius_19_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2890:5: lv_holeRadius_19_0= ruleDOUBLE
+            // InternalMazeDsl.g:2891:4: (lv_holeRadius_19_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2892:5: lv_holeRadius_19_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getMineRingConfigAccess().getHoleRadiusDOUBLEParserRuleCall_18_0());
@@ -6468,7 +6480,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePortalGhostConfig"
-    // InternalMazeDsl.g:2915:1: entryRulePortalGhostConfig returns [EObject current=null] : iv_rulePortalGhostConfig= rulePortalGhostConfig EOF ;
+    // InternalMazeDsl.g:2917:1: entryRulePortalGhostConfig returns [EObject current=null] : iv_rulePortalGhostConfig= rulePortalGhostConfig EOF ;
     public final EObject entryRulePortalGhostConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6476,8 +6488,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:2915:58: (iv_rulePortalGhostConfig= rulePortalGhostConfig EOF )
-            // InternalMazeDsl.g:2916:2: iv_rulePortalGhostConfig= rulePortalGhostConfig EOF
+            // InternalMazeDsl.g:2917:58: (iv_rulePortalGhostConfig= rulePortalGhostConfig EOF )
+            // InternalMazeDsl.g:2918:2: iv_rulePortalGhostConfig= rulePortalGhostConfig EOF
             {
              newCompositeNode(grammarAccess.getPortalGhostConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -6504,7 +6516,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePortalGhostConfig"
-    // InternalMazeDsl.g:2922:1: rulePortalGhostConfig returns [EObject current=null] : (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' ) ;
+    // InternalMazeDsl.g:2924:1: rulePortalGhostConfig returns [EObject current=null] : (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' ) ;
     public final EObject rulePortalGhostConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6524,21 +6536,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:2928:2: ( (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' ) )
-            // InternalMazeDsl.g:2929:2: (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' )
+            // InternalMazeDsl.g:2930:2: ( (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' ) )
+            // InternalMazeDsl.g:2931:2: (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' )
             {
-            // InternalMazeDsl.g:2929:2: (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' )
-            // InternalMazeDsl.g:2930:3: otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}'
+            // InternalMazeDsl.g:2931:2: (otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}' )
+            // InternalMazeDsl.g:2932:3: otherlv_0= 'portalGhost' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= '}'
             {
             otherlv_0=(Token)match(input,94,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getPortalGhostConfigAccess().getPortalGhostKeyword_0());
             		
-            // InternalMazeDsl.g:2934:3: ( (lv_displayName_1_0= RULE_STRING ) )
-            // InternalMazeDsl.g:2935:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:2936:3: ( (lv_displayName_1_0= RULE_STRING ) )
+            // InternalMazeDsl.g:2937:4: (lv_displayName_1_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:2935:4: (lv_displayName_1_0= RULE_STRING )
-            // InternalMazeDsl.g:2936:5: lv_displayName_1_0= RULE_STRING
+            // InternalMazeDsl.g:2937:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:2938:5: lv_displayName_1_0= RULE_STRING
             {
             lv_displayName_1_0=(Token)match(input,RULE_STRING,FOLLOW_4); 
 
@@ -6560,7 +6572,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,12,FOLLOW_83); 
+            otherlv_2=(Token)match(input,12,FOLLOW_82); 
 
             			newLeafNode(otherlv_2, grammarAccess.getPortalGhostConfigAccess().getLeftCurlyBracketKeyword_2());
             		
@@ -6568,13 +6580,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getPortalGhostConfigAccess().getHealthKeyword_3());
             		
-            // InternalMazeDsl.g:2960:3: ( (lv_health_4_0= RULE_INT ) )
-            // InternalMazeDsl.g:2961:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:2962:3: ( (lv_health_4_0= RULE_INT ) )
+            // InternalMazeDsl.g:2963:4: (lv_health_4_0= RULE_INT )
             {
-            // InternalMazeDsl.g:2961:4: (lv_health_4_0= RULE_INT )
-            // InternalMazeDsl.g:2962:5: lv_health_4_0= RULE_INT
+            // InternalMazeDsl.g:2963:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:2964:5: lv_health_4_0= RULE_INT
             {
-            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_103); 
+            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_102); 
 
             					newLeafNode(lv_health_4_0, grammarAccess.getPortalGhostConfigAccess().getHealthINTTerminalRuleCall_4_0());
             				
@@ -6598,16 +6610,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getPortalGhostConfigAccess().getSpeedKeyword_5());
             		
-            // InternalMazeDsl.g:2982:3: ( (lv_speed_6_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:2983:4: (lv_speed_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2984:3: ( (lv_speed_6_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:2985:4: (lv_speed_6_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:2983:4: (lv_speed_6_0= ruleDOUBLE )
-            // InternalMazeDsl.g:2984:5: lv_speed_6_0= ruleDOUBLE
+            // InternalMazeDsl.g:2985:4: (lv_speed_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:2986:5: lv_speed_6_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getPortalGhostConfigAccess().getSpeedDOUBLEParserRuleCall_6_0());
             				
-            pushFollow(FOLLOW_89);
+            pushFollow(FOLLOW_88);
             lv_speed_6_0=ruleDOUBLE();
 
             state._fsp--;
@@ -6633,11 +6645,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_7, grammarAccess.getPortalGhostConfigAccess().getSpriteKeyword_7());
             		
-            // InternalMazeDsl.g:3005:3: ( (lv_sprite_8_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3006:4: (lv_sprite_8_0= RULE_STRING )
+            // InternalMazeDsl.g:3007:3: ( (lv_sprite_8_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3008:4: (lv_sprite_8_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3006:4: (lv_sprite_8_0= RULE_STRING )
-            // InternalMazeDsl.g:3007:5: lv_sprite_8_0= RULE_STRING
+            // InternalMazeDsl.g:3008:4: (lv_sprite_8_0= RULE_STRING )
+            // InternalMazeDsl.g:3009:5: lv_sprite_8_0= RULE_STRING
             {
             lv_sprite_8_0=(Token)match(input,RULE_STRING,FOLLOW_34); 
 
@@ -6686,7 +6698,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleGhostCountConfig"
-    // InternalMazeDsl.g:3031:1: entryRuleGhostCountConfig returns [EObject current=null] : iv_ruleGhostCountConfig= ruleGhostCountConfig EOF ;
+    // InternalMazeDsl.g:3033:1: entryRuleGhostCountConfig returns [EObject current=null] : iv_ruleGhostCountConfig= ruleGhostCountConfig EOF ;
     public final EObject entryRuleGhostCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6694,8 +6706,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3031:57: (iv_ruleGhostCountConfig= ruleGhostCountConfig EOF )
-            // InternalMazeDsl.g:3032:2: iv_ruleGhostCountConfig= ruleGhostCountConfig EOF
+            // InternalMazeDsl.g:3033:57: (iv_ruleGhostCountConfig= ruleGhostCountConfig EOF )
+            // InternalMazeDsl.g:3034:2: iv_ruleGhostCountConfig= ruleGhostCountConfig EOF
             {
              newCompositeNode(grammarAccess.getGhostCountConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -6722,7 +6734,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleGhostCountConfig"
-    // InternalMazeDsl.g:3038:1: ruleGhostCountConfig returns [EObject current=null] : (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
+    // InternalMazeDsl.g:3040:1: ruleGhostCountConfig returns [EObject current=null] : (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
     public final EObject ruleGhostCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6735,21 +6747,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3044:2: ( (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
-            // InternalMazeDsl.g:3045:2: (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3046:2: ( (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
+            // InternalMazeDsl.g:3047:2: (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
             {
-            // InternalMazeDsl.g:3045:2: (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
-            // InternalMazeDsl.g:3046:3: otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3047:2: (otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3048:3: otherlv_0= 'portalGhosts' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
             {
             otherlv_0=(Token)match(input,95,FOLLOW_12); 
 
             			newLeafNode(otherlv_0, grammarAccess.getGhostCountConfigAccess().getPortalGhostsKeyword_0());
             		
-            // InternalMazeDsl.g:3050:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
-            // InternalMazeDsl.g:3051:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3052:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
+            // InternalMazeDsl.g:3053:4: (lv_difficulty_1_0= ruleDifficultyLevel )
             {
-            // InternalMazeDsl.g:3051:4: (lv_difficulty_1_0= ruleDifficultyLevel )
-            // InternalMazeDsl.g:3052:5: lv_difficulty_1_0= ruleDifficultyLevel
+            // InternalMazeDsl.g:3053:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3054:5: lv_difficulty_1_0= ruleDifficultyLevel
             {
 
             					newCompositeNode(grammarAccess.getGhostCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
@@ -6776,11 +6788,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3069:3: ( (lv_count_2_0= RULE_INT ) )
-            // InternalMazeDsl.g:3070:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3071:3: ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3072:4: (lv_count_2_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3070:4: (lv_count_2_0= RULE_INT )
-            // InternalMazeDsl.g:3071:5: lv_count_2_0= RULE_INT
+            // InternalMazeDsl.g:3072:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3073:5: lv_count_2_0= RULE_INT
             {
             lv_count_2_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -6825,7 +6837,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleGuardTowerConfig"
-    // InternalMazeDsl.g:3091:1: entryRuleGuardTowerConfig returns [EObject current=null] : iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF ;
+    // InternalMazeDsl.g:3093:1: entryRuleGuardTowerConfig returns [EObject current=null] : iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF ;
     public final EObject entryRuleGuardTowerConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6833,8 +6845,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3091:57: (iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF )
-            // InternalMazeDsl.g:3092:2: iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF
+            // InternalMazeDsl.g:3093:57: (iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF )
+            // InternalMazeDsl.g:3094:2: iv_ruleGuardTowerConfig= ruleGuardTowerConfig EOF
             {
              newCompositeNode(grammarAccess.getGuardTowerConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -6861,7 +6873,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleGuardTowerConfig"
-    // InternalMazeDsl.g:3098:1: ruleGuardTowerConfig returns [EObject current=null] : (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' ) ;
+    // InternalMazeDsl.g:3100:1: ruleGuardTowerConfig returns [EObject current=null] : (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' ) ;
     public final EObject ruleGuardTowerConfig() throws RecognitionException {
         EObject current = null;
 
@@ -6915,21 +6927,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3104:2: ( (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' ) )
-            // InternalMazeDsl.g:3105:2: (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' )
+            // InternalMazeDsl.g:3106:2: ( (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' ) )
+            // InternalMazeDsl.g:3107:2: (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' )
             {
-            // InternalMazeDsl.g:3105:2: (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' )
-            // InternalMazeDsl.g:3106:3: otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}'
+            // InternalMazeDsl.g:3107:2: (otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}' )
+            // InternalMazeDsl.g:3108:3: otherlv_0= 'guardTower' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'sightRange' ( (lv_sightRange_6_0= ruleDOUBLE ) ) otherlv_7= 'wallsOver' ( (lv_maxWallsOver_8_0= RULE_INT ) ) otherlv_9= 'rpgInterval' ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) ) otherlv_11= 'rpgSpeed' ( (lv_rpgSpeed_12_0= ruleDOUBLE ) ) otherlv_13= 'rpgBlastRadius' ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) ) otherlv_15= 'rpgPlayerDamage' ( (lv_rpgPlayerDamage_16_0= RULE_INT ) ) otherlv_17= 'rpgWallDamage' ( (lv_rpgWallDamage_18_0= RULE_INT ) ) otherlv_19= 'gatlingRounds' ( (lv_gatlingRounds_20_0= RULE_INT ) ) otherlv_21= 'gatlingInterval' ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) ) otherlv_23= 'gatlingDamage' ( (lv_gatlingDamage_24_0= RULE_INT ) ) otherlv_25= 'deathBlast' ( (lv_deathBlastDamage_26_0= RULE_INT ) ) otherlv_27= 'sprite' ( (lv_sprite_28_0= RULE_STRING ) ) (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )? (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )? (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )? (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )? (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )? otherlv_39= '}'
             {
             otherlv_0=(Token)match(input,96,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getGuardTowerConfigAccess().getGuardTowerKeyword_0());
             		
-            // InternalMazeDsl.g:3110:3: ( (lv_displayName_1_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3111:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:3112:3: ( (lv_displayName_1_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3113:4: (lv_displayName_1_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3111:4: (lv_displayName_1_0= RULE_STRING )
-            // InternalMazeDsl.g:3112:5: lv_displayName_1_0= RULE_STRING
+            // InternalMazeDsl.g:3113:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:3114:5: lv_displayName_1_0= RULE_STRING
             {
             lv_displayName_1_0=(Token)match(input,RULE_STRING,FOLLOW_4); 
 
@@ -6951,7 +6963,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,12,FOLLOW_83); 
+            otherlv_2=(Token)match(input,12,FOLLOW_82); 
 
             			newLeafNode(otherlv_2, grammarAccess.getGuardTowerConfigAccess().getLeftCurlyBracketKeyword_2());
             		
@@ -6959,13 +6971,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getGuardTowerConfigAccess().getHealthKeyword_3());
             		
-            // InternalMazeDsl.g:3136:3: ( (lv_health_4_0= RULE_INT ) )
-            // InternalMazeDsl.g:3137:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:3138:3: ( (lv_health_4_0= RULE_INT ) )
+            // InternalMazeDsl.g:3139:4: (lv_health_4_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3137:4: (lv_health_4_0= RULE_INT )
-            // InternalMazeDsl.g:3138:5: lv_health_4_0= RULE_INT
+            // InternalMazeDsl.g:3139:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:3140:5: lv_health_4_0= RULE_INT
             {
-            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_84); 
+            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_83); 
 
             					newLeafNode(lv_health_4_0, grammarAccess.getGuardTowerConfigAccess().getHealthINTTerminalRuleCall_4_0());
             				
@@ -6989,16 +7001,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getGuardTowerConfigAccess().getSightRangeKeyword_5());
             		
-            // InternalMazeDsl.g:3158:3: ( (lv_sightRange_6_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3159:4: (lv_sightRange_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3160:3: ( (lv_sightRange_6_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3161:4: (lv_sightRange_6_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3159:4: (lv_sightRange_6_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3160:5: lv_sightRange_6_0= ruleDOUBLE
+            // InternalMazeDsl.g:3161:4: (lv_sightRange_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3162:5: lv_sightRange_6_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getSightRangeDOUBLEParserRuleCall_6_0());
             				
-            pushFollow(FOLLOW_104);
+            pushFollow(FOLLOW_103);
             lv_sightRange_6_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7024,13 +7036,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_7, grammarAccess.getGuardTowerConfigAccess().getWallsOverKeyword_7());
             		
-            // InternalMazeDsl.g:3181:3: ( (lv_maxWallsOver_8_0= RULE_INT ) )
-            // InternalMazeDsl.g:3182:4: (lv_maxWallsOver_8_0= RULE_INT )
+            // InternalMazeDsl.g:3183:3: ( (lv_maxWallsOver_8_0= RULE_INT ) )
+            // InternalMazeDsl.g:3184:4: (lv_maxWallsOver_8_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3182:4: (lv_maxWallsOver_8_0= RULE_INT )
-            // InternalMazeDsl.g:3183:5: lv_maxWallsOver_8_0= RULE_INT
+            // InternalMazeDsl.g:3184:4: (lv_maxWallsOver_8_0= RULE_INT )
+            // InternalMazeDsl.g:3185:5: lv_maxWallsOver_8_0= RULE_INT
             {
-            lv_maxWallsOver_8_0=(Token)match(input,RULE_INT,FOLLOW_105); 
+            lv_maxWallsOver_8_0=(Token)match(input,RULE_INT,FOLLOW_104); 
 
             					newLeafNode(lv_maxWallsOver_8_0, grammarAccess.getGuardTowerConfigAccess().getMaxWallsOverINTTerminalRuleCall_8_0());
             				
@@ -7054,16 +7066,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_9, grammarAccess.getGuardTowerConfigAccess().getRpgIntervalKeyword_9());
             		
-            // InternalMazeDsl.g:3203:3: ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3204:4: (lv_rpgIntervalSeconds_10_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3205:3: ( (lv_rpgIntervalSeconds_10_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3206:4: (lv_rpgIntervalSeconds_10_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3204:4: (lv_rpgIntervalSeconds_10_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3205:5: lv_rpgIntervalSeconds_10_0= ruleDOUBLE
+            // InternalMazeDsl.g:3206:4: (lv_rpgIntervalSeconds_10_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3207:5: lv_rpgIntervalSeconds_10_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgIntervalSecondsDOUBLEParserRuleCall_10_0());
             				
-            pushFollow(FOLLOW_106);
+            pushFollow(FOLLOW_105);
             lv_rpgIntervalSeconds_10_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7089,16 +7101,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_11, grammarAccess.getGuardTowerConfigAccess().getRpgSpeedKeyword_11());
             		
-            // InternalMazeDsl.g:3226:3: ( (lv_rpgSpeed_12_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3227:4: (lv_rpgSpeed_12_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3228:3: ( (lv_rpgSpeed_12_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3229:4: (lv_rpgSpeed_12_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3227:4: (lv_rpgSpeed_12_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3228:5: lv_rpgSpeed_12_0= ruleDOUBLE
+            // InternalMazeDsl.g:3229:4: (lv_rpgSpeed_12_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3230:5: lv_rpgSpeed_12_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgSpeedDOUBLEParserRuleCall_12_0());
             				
-            pushFollow(FOLLOW_107);
+            pushFollow(FOLLOW_106);
             lv_rpgSpeed_12_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7124,16 +7136,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_13, grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusKeyword_13());
             		
-            // InternalMazeDsl.g:3249:3: ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3250:4: (lv_rpgBlastRadius_14_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3251:3: ( (lv_rpgBlastRadius_14_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3252:4: (lv_rpgBlastRadius_14_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3250:4: (lv_rpgBlastRadius_14_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3251:5: lv_rpgBlastRadius_14_0= ruleDOUBLE
+            // InternalMazeDsl.g:3252:4: (lv_rpgBlastRadius_14_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3253:5: lv_rpgBlastRadius_14_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getRpgBlastRadiusDOUBLEParserRuleCall_14_0());
             				
-            pushFollow(FOLLOW_108);
+            pushFollow(FOLLOW_107);
             lv_rpgBlastRadius_14_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7159,13 +7171,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_15, grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageKeyword_15());
             		
-            // InternalMazeDsl.g:3272:3: ( (lv_rpgPlayerDamage_16_0= RULE_INT ) )
-            // InternalMazeDsl.g:3273:4: (lv_rpgPlayerDamage_16_0= RULE_INT )
+            // InternalMazeDsl.g:3274:3: ( (lv_rpgPlayerDamage_16_0= RULE_INT ) )
+            // InternalMazeDsl.g:3275:4: (lv_rpgPlayerDamage_16_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3273:4: (lv_rpgPlayerDamage_16_0= RULE_INT )
-            // InternalMazeDsl.g:3274:5: lv_rpgPlayerDamage_16_0= RULE_INT
+            // InternalMazeDsl.g:3275:4: (lv_rpgPlayerDamage_16_0= RULE_INT )
+            // InternalMazeDsl.g:3276:5: lv_rpgPlayerDamage_16_0= RULE_INT
             {
-            lv_rpgPlayerDamage_16_0=(Token)match(input,RULE_INT,FOLLOW_109); 
+            lv_rpgPlayerDamage_16_0=(Token)match(input,RULE_INT,FOLLOW_108); 
 
             					newLeafNode(lv_rpgPlayerDamage_16_0, grammarAccess.getGuardTowerConfigAccess().getRpgPlayerDamageINTTerminalRuleCall_16_0());
             				
@@ -7189,13 +7201,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_17, grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageKeyword_17());
             		
-            // InternalMazeDsl.g:3294:3: ( (lv_rpgWallDamage_18_0= RULE_INT ) )
-            // InternalMazeDsl.g:3295:4: (lv_rpgWallDamage_18_0= RULE_INT )
+            // InternalMazeDsl.g:3296:3: ( (lv_rpgWallDamage_18_0= RULE_INT ) )
+            // InternalMazeDsl.g:3297:4: (lv_rpgWallDamage_18_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3295:4: (lv_rpgWallDamage_18_0= RULE_INT )
-            // InternalMazeDsl.g:3296:5: lv_rpgWallDamage_18_0= RULE_INT
+            // InternalMazeDsl.g:3297:4: (lv_rpgWallDamage_18_0= RULE_INT )
+            // InternalMazeDsl.g:3298:5: lv_rpgWallDamage_18_0= RULE_INT
             {
-            lv_rpgWallDamage_18_0=(Token)match(input,RULE_INT,FOLLOW_110); 
+            lv_rpgWallDamage_18_0=(Token)match(input,RULE_INT,FOLLOW_109); 
 
             					newLeafNode(lv_rpgWallDamage_18_0, grammarAccess.getGuardTowerConfigAccess().getRpgWallDamageINTTerminalRuleCall_18_0());
             				
@@ -7219,13 +7231,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_19, grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsKeyword_19());
             		
-            // InternalMazeDsl.g:3316:3: ( (lv_gatlingRounds_20_0= RULE_INT ) )
-            // InternalMazeDsl.g:3317:4: (lv_gatlingRounds_20_0= RULE_INT )
+            // InternalMazeDsl.g:3318:3: ( (lv_gatlingRounds_20_0= RULE_INT ) )
+            // InternalMazeDsl.g:3319:4: (lv_gatlingRounds_20_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3317:4: (lv_gatlingRounds_20_0= RULE_INT )
-            // InternalMazeDsl.g:3318:5: lv_gatlingRounds_20_0= RULE_INT
+            // InternalMazeDsl.g:3319:4: (lv_gatlingRounds_20_0= RULE_INT )
+            // InternalMazeDsl.g:3320:5: lv_gatlingRounds_20_0= RULE_INT
             {
-            lv_gatlingRounds_20_0=(Token)match(input,RULE_INT,FOLLOW_111); 
+            lv_gatlingRounds_20_0=(Token)match(input,RULE_INT,FOLLOW_110); 
 
             					newLeafNode(lv_gatlingRounds_20_0, grammarAccess.getGuardTowerConfigAccess().getGatlingRoundsINTTerminalRuleCall_20_0());
             				
@@ -7249,16 +7261,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_21, grammarAccess.getGuardTowerConfigAccess().getGatlingIntervalKeyword_21());
             		
-            // InternalMazeDsl.g:3338:3: ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3339:4: (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3340:3: ( (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3341:4: (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3339:4: (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3340:5: lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE
+            // InternalMazeDsl.g:3341:4: (lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3342:5: lv_gatlingRoundIntervalSeconds_22_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getGuardTowerConfigAccess().getGatlingRoundIntervalSecondsDOUBLEParserRuleCall_22_0());
             				
-            pushFollow(FOLLOW_112);
+            pushFollow(FOLLOW_111);
             lv_gatlingRoundIntervalSeconds_22_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7284,13 +7296,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_23, grammarAccess.getGuardTowerConfigAccess().getGatlingDamageKeyword_23());
             		
-            // InternalMazeDsl.g:3361:3: ( (lv_gatlingDamage_24_0= RULE_INT ) )
-            // InternalMazeDsl.g:3362:4: (lv_gatlingDamage_24_0= RULE_INT )
+            // InternalMazeDsl.g:3363:3: ( (lv_gatlingDamage_24_0= RULE_INT ) )
+            // InternalMazeDsl.g:3364:4: (lv_gatlingDamage_24_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3362:4: (lv_gatlingDamage_24_0= RULE_INT )
-            // InternalMazeDsl.g:3363:5: lv_gatlingDamage_24_0= RULE_INT
+            // InternalMazeDsl.g:3364:4: (lv_gatlingDamage_24_0= RULE_INT )
+            // InternalMazeDsl.g:3365:5: lv_gatlingDamage_24_0= RULE_INT
             {
-            lv_gatlingDamage_24_0=(Token)match(input,RULE_INT,FOLLOW_113); 
+            lv_gatlingDamage_24_0=(Token)match(input,RULE_INT,FOLLOW_112); 
 
             					newLeafNode(lv_gatlingDamage_24_0, grammarAccess.getGuardTowerConfigAccess().getGatlingDamageINTTerminalRuleCall_24_0());
             				
@@ -7314,13 +7326,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_25, grammarAccess.getGuardTowerConfigAccess().getDeathBlastKeyword_25());
             		
-            // InternalMazeDsl.g:3383:3: ( (lv_deathBlastDamage_26_0= RULE_INT ) )
-            // InternalMazeDsl.g:3384:4: (lv_deathBlastDamage_26_0= RULE_INT )
+            // InternalMazeDsl.g:3385:3: ( (lv_deathBlastDamage_26_0= RULE_INT ) )
+            // InternalMazeDsl.g:3386:4: (lv_deathBlastDamage_26_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3384:4: (lv_deathBlastDamage_26_0= RULE_INT )
-            // InternalMazeDsl.g:3385:5: lv_deathBlastDamage_26_0= RULE_INT
+            // InternalMazeDsl.g:3386:4: (lv_deathBlastDamage_26_0= RULE_INT )
+            // InternalMazeDsl.g:3387:5: lv_deathBlastDamage_26_0= RULE_INT
             {
-            lv_deathBlastDamage_26_0=(Token)match(input,RULE_INT,FOLLOW_89); 
+            lv_deathBlastDamage_26_0=(Token)match(input,RULE_INT,FOLLOW_88); 
 
             					newLeafNode(lv_deathBlastDamage_26_0, grammarAccess.getGuardTowerConfigAccess().getDeathBlastDamageINTTerminalRuleCall_26_0());
             				
@@ -7344,13 +7356,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_27, grammarAccess.getGuardTowerConfigAccess().getSpriteKeyword_27());
             		
-            // InternalMazeDsl.g:3405:3: ( (lv_sprite_28_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3406:4: (lv_sprite_28_0= RULE_STRING )
+            // InternalMazeDsl.g:3407:3: ( (lv_sprite_28_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3408:4: (lv_sprite_28_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3406:4: (lv_sprite_28_0= RULE_STRING )
-            // InternalMazeDsl.g:3407:5: lv_sprite_28_0= RULE_STRING
+            // InternalMazeDsl.g:3408:4: (lv_sprite_28_0= RULE_STRING )
+            // InternalMazeDsl.g:3409:5: lv_sprite_28_0= RULE_STRING
             {
-            lv_sprite_28_0=(Token)match(input,RULE_STRING,FOLLOW_114); 
+            lv_sprite_28_0=(Token)match(input,RULE_STRING,FOLLOW_113); 
 
             					newLeafNode(lv_sprite_28_0, grammarAccess.getGuardTowerConfigAccess().getSpriteSTRINGTerminalRuleCall_28_0());
             				
@@ -7370,7 +7382,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3423:3: (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3425:3: (otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) ) )?
             int alt61=2;
             int LA61_0 = input.LA(1);
 
@@ -7379,19 +7391,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt61) {
                 case 1 :
-                    // InternalMazeDsl.g:3424:4: otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3426:4: otherlv_29= 'rpgLaunchSound' ( (lv_rpgLaunchSound_30_0= RULE_STRING ) )
                     {
                     otherlv_29=(Token)match(input,107,FOLLOW_10); 
 
                     				newLeafNode(otherlv_29, grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundKeyword_29_0());
                     			
-                    // InternalMazeDsl.g:3428:4: ( (lv_rpgLaunchSound_30_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3429:5: (lv_rpgLaunchSound_30_0= RULE_STRING )
+                    // InternalMazeDsl.g:3430:4: ( (lv_rpgLaunchSound_30_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3431:5: (lv_rpgLaunchSound_30_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3429:5: (lv_rpgLaunchSound_30_0= RULE_STRING )
-                    // InternalMazeDsl.g:3430:6: lv_rpgLaunchSound_30_0= RULE_STRING
+                    // InternalMazeDsl.g:3431:5: (lv_rpgLaunchSound_30_0= RULE_STRING )
+                    // InternalMazeDsl.g:3432:6: lv_rpgLaunchSound_30_0= RULE_STRING
                     {
-                    lv_rpgLaunchSound_30_0=(Token)match(input,RULE_STRING,FOLLOW_115); 
+                    lv_rpgLaunchSound_30_0=(Token)match(input,RULE_STRING,FOLLOW_114); 
 
                     						newLeafNode(lv_rpgLaunchSound_30_0, grammarAccess.getGuardTowerConfigAccess().getRpgLaunchSoundSTRINGTerminalRuleCall_29_1_0());
                     					
@@ -7417,7 +7429,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3447:3: (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3449:3: (otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) ) )?
             int alt62=2;
             int LA62_0 = input.LA(1);
 
@@ -7426,19 +7438,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt62) {
                 case 1 :
-                    // InternalMazeDsl.g:3448:4: otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3450:4: otherlv_31= 'rpgExplosionSound' ( (lv_rpgExplosionSound_32_0= RULE_STRING ) )
                     {
                     otherlv_31=(Token)match(input,108,FOLLOW_10); 
 
                     				newLeafNode(otherlv_31, grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundKeyword_30_0());
                     			
-                    // InternalMazeDsl.g:3452:4: ( (lv_rpgExplosionSound_32_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3453:5: (lv_rpgExplosionSound_32_0= RULE_STRING )
+                    // InternalMazeDsl.g:3454:4: ( (lv_rpgExplosionSound_32_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3455:5: (lv_rpgExplosionSound_32_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3453:5: (lv_rpgExplosionSound_32_0= RULE_STRING )
-                    // InternalMazeDsl.g:3454:6: lv_rpgExplosionSound_32_0= RULE_STRING
+                    // InternalMazeDsl.g:3455:5: (lv_rpgExplosionSound_32_0= RULE_STRING )
+                    // InternalMazeDsl.g:3456:6: lv_rpgExplosionSound_32_0= RULE_STRING
                     {
-                    lv_rpgExplosionSound_32_0=(Token)match(input,RULE_STRING,FOLLOW_116); 
+                    lv_rpgExplosionSound_32_0=(Token)match(input,RULE_STRING,FOLLOW_115); 
 
                     						newLeafNode(lv_rpgExplosionSound_32_0, grammarAccess.getGuardTowerConfigAccess().getRpgExplosionSoundSTRINGTerminalRuleCall_30_1_0());
                     					
@@ -7464,7 +7476,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3471:3: (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3473:3: (otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) ) )?
             int alt63=2;
             int LA63_0 = input.LA(1);
 
@@ -7473,19 +7485,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt63) {
                 case 1 :
-                    // InternalMazeDsl.g:3472:4: otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3474:4: otherlv_33= 'gatlingSound' ( (lv_gatlingSound_34_0= RULE_STRING ) )
                     {
                     otherlv_33=(Token)match(input,109,FOLLOW_10); 
 
                     				newLeafNode(otherlv_33, grammarAccess.getGuardTowerConfigAccess().getGatlingSoundKeyword_31_0());
                     			
-                    // InternalMazeDsl.g:3476:4: ( (lv_gatlingSound_34_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3477:5: (lv_gatlingSound_34_0= RULE_STRING )
+                    // InternalMazeDsl.g:3478:4: ( (lv_gatlingSound_34_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3479:5: (lv_gatlingSound_34_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3477:5: (lv_gatlingSound_34_0= RULE_STRING )
-                    // InternalMazeDsl.g:3478:6: lv_gatlingSound_34_0= RULE_STRING
+                    // InternalMazeDsl.g:3479:5: (lv_gatlingSound_34_0= RULE_STRING )
+                    // InternalMazeDsl.g:3480:6: lv_gatlingSound_34_0= RULE_STRING
                     {
-                    lv_gatlingSound_34_0=(Token)match(input,RULE_STRING,FOLLOW_117); 
+                    lv_gatlingSound_34_0=(Token)match(input,RULE_STRING,FOLLOW_116); 
 
                     						newLeafNode(lv_gatlingSound_34_0, grammarAccess.getGuardTowerConfigAccess().getGatlingSoundSTRINGTerminalRuleCall_31_1_0());
                     					
@@ -7511,7 +7523,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3495:3: (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3497:3: (otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) ) )?
             int alt64=2;
             int LA64_0 = input.LA(1);
 
@@ -7520,19 +7532,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt64) {
                 case 1 :
-                    // InternalMazeDsl.g:3496:4: otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3498:4: otherlv_35= 'hitSound' ( (lv_hitSound_36_0= RULE_STRING ) )
                     {
                     otherlv_35=(Token)match(input,110,FOLLOW_10); 
 
                     				newLeafNode(otherlv_35, grammarAccess.getGuardTowerConfigAccess().getHitSoundKeyword_32_0());
                     			
-                    // InternalMazeDsl.g:3500:4: ( (lv_hitSound_36_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3501:5: (lv_hitSound_36_0= RULE_STRING )
+                    // InternalMazeDsl.g:3502:4: ( (lv_hitSound_36_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3503:5: (lv_hitSound_36_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3501:5: (lv_hitSound_36_0= RULE_STRING )
-                    // InternalMazeDsl.g:3502:6: lv_hitSound_36_0= RULE_STRING
+                    // InternalMazeDsl.g:3503:5: (lv_hitSound_36_0= RULE_STRING )
+                    // InternalMazeDsl.g:3504:6: lv_hitSound_36_0= RULE_STRING
                     {
-                    lv_hitSound_36_0=(Token)match(input,RULE_STRING,FOLLOW_118); 
+                    lv_hitSound_36_0=(Token)match(input,RULE_STRING,FOLLOW_117); 
 
                     						newLeafNode(lv_hitSound_36_0, grammarAccess.getGuardTowerConfigAccess().getHitSoundSTRINGTerminalRuleCall_32_1_0());
                     					
@@ -7558,7 +7570,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3519:3: (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3521:3: (otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) ) )?
             int alt65=2;
             int LA65_0 = input.LA(1);
 
@@ -7567,17 +7579,17 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt65) {
                 case 1 :
-                    // InternalMazeDsl.g:3520:4: otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3522:4: otherlv_37= 'destroyedSound' ( (lv_destroyedSound_38_0= RULE_STRING ) )
                     {
                     otherlv_37=(Token)match(input,111,FOLLOW_10); 
 
                     				newLeafNode(otherlv_37, grammarAccess.getGuardTowerConfigAccess().getDestroyedSoundKeyword_33_0());
                     			
-                    // InternalMazeDsl.g:3524:4: ( (lv_destroyedSound_38_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3525:5: (lv_destroyedSound_38_0= RULE_STRING )
+                    // InternalMazeDsl.g:3526:4: ( (lv_destroyedSound_38_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3527:5: (lv_destroyedSound_38_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3525:5: (lv_destroyedSound_38_0= RULE_STRING )
-                    // InternalMazeDsl.g:3526:6: lv_destroyedSound_38_0= RULE_STRING
+                    // InternalMazeDsl.g:3527:5: (lv_destroyedSound_38_0= RULE_STRING )
+                    // InternalMazeDsl.g:3528:6: lv_destroyedSound_38_0= RULE_STRING
                     {
                     lv_destroyedSound_38_0=(Token)match(input,RULE_STRING,FOLLOW_34); 
 
@@ -7632,7 +7644,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTowerCountConfig"
-    // InternalMazeDsl.g:3551:1: entryRuleTowerCountConfig returns [EObject current=null] : iv_ruleTowerCountConfig= ruleTowerCountConfig EOF ;
+    // InternalMazeDsl.g:3553:1: entryRuleTowerCountConfig returns [EObject current=null] : iv_ruleTowerCountConfig= ruleTowerCountConfig EOF ;
     public final EObject entryRuleTowerCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -7640,8 +7652,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3551:57: (iv_ruleTowerCountConfig= ruleTowerCountConfig EOF )
-            // InternalMazeDsl.g:3552:2: iv_ruleTowerCountConfig= ruleTowerCountConfig EOF
+            // InternalMazeDsl.g:3553:57: (iv_ruleTowerCountConfig= ruleTowerCountConfig EOF )
+            // InternalMazeDsl.g:3554:2: iv_ruleTowerCountConfig= ruleTowerCountConfig EOF
             {
              newCompositeNode(grammarAccess.getTowerCountConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -7668,7 +7680,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTowerCountConfig"
-    // InternalMazeDsl.g:3558:1: ruleTowerCountConfig returns [EObject current=null] : (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
+    // InternalMazeDsl.g:3560:1: ruleTowerCountConfig returns [EObject current=null] : (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
     public final EObject ruleTowerCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -7681,21 +7693,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3564:2: ( (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
-            // InternalMazeDsl.g:3565:2: (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3566:2: ( (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
+            // InternalMazeDsl.g:3567:2: (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
             {
-            // InternalMazeDsl.g:3565:2: (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
-            // InternalMazeDsl.g:3566:3: otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3567:2: (otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3568:3: otherlv_0= 'towers' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
             {
             otherlv_0=(Token)match(input,112,FOLLOW_12); 
 
             			newLeafNode(otherlv_0, grammarAccess.getTowerCountConfigAccess().getTowersKeyword_0());
             		
-            // InternalMazeDsl.g:3570:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
-            // InternalMazeDsl.g:3571:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3572:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
+            // InternalMazeDsl.g:3573:4: (lv_difficulty_1_0= ruleDifficultyLevel )
             {
-            // InternalMazeDsl.g:3571:4: (lv_difficulty_1_0= ruleDifficultyLevel )
-            // InternalMazeDsl.g:3572:5: lv_difficulty_1_0= ruleDifficultyLevel
+            // InternalMazeDsl.g:3573:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3574:5: lv_difficulty_1_0= ruleDifficultyLevel
             {
 
             					newCompositeNode(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
@@ -7722,11 +7734,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3589:3: ( (lv_count_2_0= RULE_INT ) )
-            // InternalMazeDsl.g:3590:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3591:3: ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3592:4: (lv_count_2_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3590:4: (lv_count_2_0= RULE_INT )
-            // InternalMazeDsl.g:3591:5: lv_count_2_0= RULE_INT
+            // InternalMazeDsl.g:3592:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3593:5: lv_count_2_0= RULE_INT
             {
             lv_count_2_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -7771,7 +7783,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleWallBuilderConfig"
-    // InternalMazeDsl.g:3611:1: entryRuleWallBuilderConfig returns [EObject current=null] : iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF ;
+    // InternalMazeDsl.g:3613:1: entryRuleWallBuilderConfig returns [EObject current=null] : iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF ;
     public final EObject entryRuleWallBuilderConfig() throws RecognitionException {
         EObject current = null;
 
@@ -7779,8 +7791,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3611:58: (iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF )
-            // InternalMazeDsl.g:3612:2: iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF
+            // InternalMazeDsl.g:3613:58: (iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF )
+            // InternalMazeDsl.g:3614:2: iv_ruleWallBuilderConfig= ruleWallBuilderConfig EOF
             {
              newCompositeNode(grammarAccess.getWallBuilderConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -7807,7 +7819,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleWallBuilderConfig"
-    // InternalMazeDsl.g:3618:1: ruleWallBuilderConfig returns [EObject current=null] : (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= RULE_ID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' ) ;
+    // InternalMazeDsl.g:3620:1: ruleWallBuilderConfig returns [EObject current=null] : (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= ruleValidID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' ) ;
     public final EObject ruleWallBuilderConfig() throws RecognitionException {
         EObject current = null;
 
@@ -7826,7 +7838,6 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         Token lv_blockRadiusCells_14_0=null;
         Token otherlv_15=null;
         Token otherlv_17=null;
-        Token lv_wallMaterial_18_0=null;
         Token otherlv_19=null;
         Token lv_buildSound_20_0=null;
         Token otherlv_21=null;
@@ -7836,26 +7847,28 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
         AntlrDatatypeRuleToken lv_spawnRadius_16_0 = null;
 
+        AntlrDatatypeRuleToken lv_wallMaterial_18_0 = null;
+
 
 
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3624:2: ( (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= RULE_ID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' ) )
-            // InternalMazeDsl.g:3625:2: (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= RULE_ID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' )
+            // InternalMazeDsl.g:3626:2: ( (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= ruleValidID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' ) )
+            // InternalMazeDsl.g:3627:2: (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= ruleValidID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' )
             {
-            // InternalMazeDsl.g:3625:2: (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= RULE_ID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' )
-            // InternalMazeDsl.g:3626:3: otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= RULE_ID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}'
+            // InternalMazeDsl.g:3627:2: (otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= ruleValidID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}' )
+            // InternalMazeDsl.g:3628:3: otherlv_0= 'wallBuilder' ( (lv_displayName_1_0= RULE_STRING ) ) otherlv_2= '{' otherlv_3= 'health' ( (lv_health_4_0= RULE_INT ) ) otherlv_5= 'speed' ( (lv_speed_6_0= ruleDOUBLE ) ) otherlv_7= 'sprite' ( (lv_sprite_8_0= RULE_STRING ) ) otherlv_9= 'buildSeconds' ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) ) otherlv_11= 'startRadius' ( (lv_startRadiusCells_12_0= RULE_INT ) ) otherlv_13= 'blockRadius' ( (lv_blockRadiusCells_14_0= RULE_INT ) ) otherlv_15= 'spawnRadius' ( (lv_spawnRadius_16_0= ruleDOUBLE ) ) otherlv_17= 'material' ( (lv_wallMaterial_18_0= ruleValidID ) ) (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )? otherlv_21= '}'
             {
             otherlv_0=(Token)match(input,113,FOLLOW_10); 
 
             			newLeafNode(otherlv_0, grammarAccess.getWallBuilderConfigAccess().getWallBuilderKeyword_0());
             		
-            // InternalMazeDsl.g:3630:3: ( (lv_displayName_1_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3631:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:3632:3: ( (lv_displayName_1_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3633:4: (lv_displayName_1_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3631:4: (lv_displayName_1_0= RULE_STRING )
-            // InternalMazeDsl.g:3632:5: lv_displayName_1_0= RULE_STRING
+            // InternalMazeDsl.g:3633:4: (lv_displayName_1_0= RULE_STRING )
+            // InternalMazeDsl.g:3634:5: lv_displayName_1_0= RULE_STRING
             {
             lv_displayName_1_0=(Token)match(input,RULE_STRING,FOLLOW_4); 
 
@@ -7877,7 +7890,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,12,FOLLOW_83); 
+            otherlv_2=(Token)match(input,12,FOLLOW_82); 
 
             			newLeafNode(otherlv_2, grammarAccess.getWallBuilderConfigAccess().getLeftCurlyBracketKeyword_2());
             		
@@ -7885,13 +7898,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getWallBuilderConfigAccess().getHealthKeyword_3());
             		
-            // InternalMazeDsl.g:3656:3: ( (lv_health_4_0= RULE_INT ) )
-            // InternalMazeDsl.g:3657:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:3658:3: ( (lv_health_4_0= RULE_INT ) )
+            // InternalMazeDsl.g:3659:4: (lv_health_4_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3657:4: (lv_health_4_0= RULE_INT )
-            // InternalMazeDsl.g:3658:5: lv_health_4_0= RULE_INT
+            // InternalMazeDsl.g:3659:4: (lv_health_4_0= RULE_INT )
+            // InternalMazeDsl.g:3660:5: lv_health_4_0= RULE_INT
             {
-            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_103); 
+            lv_health_4_0=(Token)match(input,RULE_INT,FOLLOW_102); 
 
             					newLeafNode(lv_health_4_0, grammarAccess.getWallBuilderConfigAccess().getHealthINTTerminalRuleCall_4_0());
             				
@@ -7915,16 +7928,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getWallBuilderConfigAccess().getSpeedKeyword_5());
             		
-            // InternalMazeDsl.g:3678:3: ( (lv_speed_6_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3679:4: (lv_speed_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3680:3: ( (lv_speed_6_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3681:4: (lv_speed_6_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3679:4: (lv_speed_6_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3680:5: lv_speed_6_0= ruleDOUBLE
+            // InternalMazeDsl.g:3681:4: (lv_speed_6_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3682:5: lv_speed_6_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getSpeedDOUBLEParserRuleCall_6_0());
             				
-            pushFollow(FOLLOW_89);
+            pushFollow(FOLLOW_88);
             lv_speed_6_0=ruleDOUBLE();
 
             state._fsp--;
@@ -7950,13 +7963,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_7, grammarAccess.getWallBuilderConfigAccess().getSpriteKeyword_7());
             		
-            // InternalMazeDsl.g:3701:3: ( (lv_sprite_8_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3702:4: (lv_sprite_8_0= RULE_STRING )
+            // InternalMazeDsl.g:3703:3: ( (lv_sprite_8_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3704:4: (lv_sprite_8_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3702:4: (lv_sprite_8_0= RULE_STRING )
-            // InternalMazeDsl.g:3703:5: lv_sprite_8_0= RULE_STRING
+            // InternalMazeDsl.g:3704:4: (lv_sprite_8_0= RULE_STRING )
+            // InternalMazeDsl.g:3705:5: lv_sprite_8_0= RULE_STRING
             {
-            lv_sprite_8_0=(Token)match(input,RULE_STRING,FOLLOW_119); 
+            lv_sprite_8_0=(Token)match(input,RULE_STRING,FOLLOW_118); 
 
             					newLeafNode(lv_sprite_8_0, grammarAccess.getWallBuilderConfigAccess().getSpriteSTRINGTerminalRuleCall_8_0());
             				
@@ -7980,16 +7993,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_9, grammarAccess.getWallBuilderConfigAccess().getBuildSecondsKeyword_9());
             		
-            // InternalMazeDsl.g:3723:3: ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3724:4: (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3725:3: ( (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3726:4: (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3724:4: (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3725:5: lv_buildSecondsPerCorridor_10_0= ruleDOUBLE
+            // InternalMazeDsl.g:3726:4: (lv_buildSecondsPerCorridor_10_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3727:5: lv_buildSecondsPerCorridor_10_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getBuildSecondsPerCorridorDOUBLEParserRuleCall_10_0());
             				
-            pushFollow(FOLLOW_120);
+            pushFollow(FOLLOW_119);
             lv_buildSecondsPerCorridor_10_0=ruleDOUBLE();
 
             state._fsp--;
@@ -8015,13 +8028,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_11, grammarAccess.getWallBuilderConfigAccess().getStartRadiusKeyword_11());
             		
-            // InternalMazeDsl.g:3746:3: ( (lv_startRadiusCells_12_0= RULE_INT ) )
-            // InternalMazeDsl.g:3747:4: (lv_startRadiusCells_12_0= RULE_INT )
+            // InternalMazeDsl.g:3748:3: ( (lv_startRadiusCells_12_0= RULE_INT ) )
+            // InternalMazeDsl.g:3749:4: (lv_startRadiusCells_12_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3747:4: (lv_startRadiusCells_12_0= RULE_INT )
-            // InternalMazeDsl.g:3748:5: lv_startRadiusCells_12_0= RULE_INT
+            // InternalMazeDsl.g:3749:4: (lv_startRadiusCells_12_0= RULE_INT )
+            // InternalMazeDsl.g:3750:5: lv_startRadiusCells_12_0= RULE_INT
             {
-            lv_startRadiusCells_12_0=(Token)match(input,RULE_INT,FOLLOW_121); 
+            lv_startRadiusCells_12_0=(Token)match(input,RULE_INT,FOLLOW_120); 
 
             					newLeafNode(lv_startRadiusCells_12_0, grammarAccess.getWallBuilderConfigAccess().getStartRadiusCellsINTTerminalRuleCall_12_0());
             				
@@ -8045,13 +8058,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_13, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusKeyword_13());
             		
-            // InternalMazeDsl.g:3768:3: ( (lv_blockRadiusCells_14_0= RULE_INT ) )
-            // InternalMazeDsl.g:3769:4: (lv_blockRadiusCells_14_0= RULE_INT )
+            // InternalMazeDsl.g:3770:3: ( (lv_blockRadiusCells_14_0= RULE_INT ) )
+            // InternalMazeDsl.g:3771:4: (lv_blockRadiusCells_14_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3769:4: (lv_blockRadiusCells_14_0= RULE_INT )
-            // InternalMazeDsl.g:3770:5: lv_blockRadiusCells_14_0= RULE_INT
+            // InternalMazeDsl.g:3771:4: (lv_blockRadiusCells_14_0= RULE_INT )
+            // InternalMazeDsl.g:3772:5: lv_blockRadiusCells_14_0= RULE_INT
             {
-            lv_blockRadiusCells_14_0=(Token)match(input,RULE_INT,FOLLOW_122); 
+            lv_blockRadiusCells_14_0=(Token)match(input,RULE_INT,FOLLOW_121); 
 
             					newLeafNode(lv_blockRadiusCells_14_0, grammarAccess.getWallBuilderConfigAccess().getBlockRadiusCellsINTTerminalRuleCall_14_0());
             				
@@ -8075,16 +8088,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_15, grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusKeyword_15());
             		
-            // InternalMazeDsl.g:3790:3: ( (lv_spawnRadius_16_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3791:4: (lv_spawnRadius_16_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3792:3: ( (lv_spawnRadius_16_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3793:4: (lv_spawnRadius_16_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3791:4: (lv_spawnRadius_16_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3792:5: lv_spawnRadius_16_0= ruleDOUBLE
+            // InternalMazeDsl.g:3793:4: (lv_spawnRadius_16_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3794:5: lv_spawnRadius_16_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getSpawnRadiusDOUBLEParserRuleCall_16_0());
             				
-            pushFollow(FOLLOW_123);
+            pushFollow(FOLLOW_122);
             lv_spawnRadius_16_0=ruleDOUBLE();
 
             state._fsp--;
@@ -8106,29 +8119,34 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_17=(Token)match(input,118,FOLLOW_81); 
+            otherlv_17=(Token)match(input,118,FOLLOW_3); 
 
             			newLeafNode(otherlv_17, grammarAccess.getWallBuilderConfigAccess().getMaterialKeyword_17());
             		
-            // InternalMazeDsl.g:3813:3: ( (lv_wallMaterial_18_0= RULE_ID ) )
-            // InternalMazeDsl.g:3814:4: (lv_wallMaterial_18_0= RULE_ID )
+            // InternalMazeDsl.g:3815:3: ( (lv_wallMaterial_18_0= ruleValidID ) )
+            // InternalMazeDsl.g:3816:4: (lv_wallMaterial_18_0= ruleValidID )
             {
-            // InternalMazeDsl.g:3814:4: (lv_wallMaterial_18_0= RULE_ID )
-            // InternalMazeDsl.g:3815:5: lv_wallMaterial_18_0= RULE_ID
+            // InternalMazeDsl.g:3816:4: (lv_wallMaterial_18_0= ruleValidID )
+            // InternalMazeDsl.g:3817:5: lv_wallMaterial_18_0= ruleValidID
             {
-            lv_wallMaterial_18_0=(Token)match(input,RULE_ID,FOLLOW_124); 
 
-            					newLeafNode(lv_wallMaterial_18_0, grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0());
+            					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0());
             				
+            pushFollow(FOLLOW_123);
+            lv_wallMaterial_18_0=ruleValidID();
+
+            state._fsp--;
+
 
             					if (current==null) {
-            						current = createModelElement(grammarAccess.getWallBuilderConfigRule());
+            						current = createModelElementForParent(grammarAccess.getWallBuilderConfigRule());
             					}
-            					setWithLastConsumed(
+            					set(
             						current,
             						"wallMaterial",
             						lv_wallMaterial_18_0,
-            						"org.eclipse.xtext.common.Terminals.ID");
+            						"main.game.maze.dsl.MazeDsl.ValidID");
+            					afterParserOrEnumRuleCall();
             				
 
             }
@@ -8136,7 +8154,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3831:3: (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:3834:3: (otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) ) )?
             int alt66=2;
             int LA66_0 = input.LA(1);
 
@@ -8145,17 +8163,17 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt66) {
                 case 1 :
-                    // InternalMazeDsl.g:3832:4: otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3835:4: otherlv_19= 'buildSound' ( (lv_buildSound_20_0= RULE_STRING ) )
                     {
                     otherlv_19=(Token)match(input,119,FOLLOW_10); 
 
                     				newLeafNode(otherlv_19, grammarAccess.getWallBuilderConfigAccess().getBuildSoundKeyword_19_0());
                     			
-                    // InternalMazeDsl.g:3836:4: ( (lv_buildSound_20_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:3837:5: (lv_buildSound_20_0= RULE_STRING )
+                    // InternalMazeDsl.g:3839:4: ( (lv_buildSound_20_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:3840:5: (lv_buildSound_20_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:3837:5: (lv_buildSound_20_0= RULE_STRING )
-                    // InternalMazeDsl.g:3838:6: lv_buildSound_20_0= RULE_STRING
+                    // InternalMazeDsl.g:3840:5: (lv_buildSound_20_0= RULE_STRING )
+                    // InternalMazeDsl.g:3841:6: lv_buildSound_20_0= RULE_STRING
                     {
                     lv_buildSound_20_0=(Token)match(input,RULE_STRING,FOLLOW_34); 
 
@@ -8210,7 +8228,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBuilderCountConfig"
-    // InternalMazeDsl.g:3863:1: entryRuleBuilderCountConfig returns [EObject current=null] : iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF ;
+    // InternalMazeDsl.g:3866:1: entryRuleBuilderCountConfig returns [EObject current=null] : iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF ;
     public final EObject entryRuleBuilderCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -8218,8 +8236,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3863:59: (iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF )
-            // InternalMazeDsl.g:3864:2: iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF
+            // InternalMazeDsl.g:3866:59: (iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF )
+            // InternalMazeDsl.g:3867:2: iv_ruleBuilderCountConfig= ruleBuilderCountConfig EOF
             {
              newCompositeNode(grammarAccess.getBuilderCountConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -8246,7 +8264,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBuilderCountConfig"
-    // InternalMazeDsl.g:3870:1: ruleBuilderCountConfig returns [EObject current=null] : (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
+    // InternalMazeDsl.g:3873:1: ruleBuilderCountConfig returns [EObject current=null] : (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) ;
     public final EObject ruleBuilderCountConfig() throws RecognitionException {
         EObject current = null;
 
@@ -8259,21 +8277,21 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3876:2: ( (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
-            // InternalMazeDsl.g:3877:2: (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3879:2: ( (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) ) )
+            // InternalMazeDsl.g:3880:2: (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
             {
-            // InternalMazeDsl.g:3877:2: (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
-            // InternalMazeDsl.g:3878:3: otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3880:2: (otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) ) )
+            // InternalMazeDsl.g:3881:3: otherlv_0= 'builders' ( (lv_difficulty_1_0= ruleDifficultyLevel ) ) ( (lv_count_2_0= RULE_INT ) )
             {
             otherlv_0=(Token)match(input,120,FOLLOW_12); 
 
             			newLeafNode(otherlv_0, grammarAccess.getBuilderCountConfigAccess().getBuildersKeyword_0());
             		
-            // InternalMazeDsl.g:3882:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
-            // InternalMazeDsl.g:3883:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3885:3: ( (lv_difficulty_1_0= ruleDifficultyLevel ) )
+            // InternalMazeDsl.g:3886:4: (lv_difficulty_1_0= ruleDifficultyLevel )
             {
-            // InternalMazeDsl.g:3883:4: (lv_difficulty_1_0= ruleDifficultyLevel )
-            // InternalMazeDsl.g:3884:5: lv_difficulty_1_0= ruleDifficultyLevel
+            // InternalMazeDsl.g:3886:4: (lv_difficulty_1_0= ruleDifficultyLevel )
+            // InternalMazeDsl.g:3887:5: lv_difficulty_1_0= ruleDifficultyLevel
             {
 
             					newCompositeNode(grammarAccess.getBuilderCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0());
@@ -8300,11 +8318,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:3901:3: ( (lv_count_2_0= RULE_INT ) )
-            // InternalMazeDsl.g:3902:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3904:3: ( (lv_count_2_0= RULE_INT ) )
+            // InternalMazeDsl.g:3905:4: (lv_count_2_0= RULE_INT )
             {
-            // InternalMazeDsl.g:3902:4: (lv_count_2_0= RULE_INT )
-            // InternalMazeDsl.g:3903:5: lv_count_2_0= RULE_INT
+            // InternalMazeDsl.g:3905:4: (lv_count_2_0= RULE_INT )
+            // InternalMazeDsl.g:3906:5: lv_count_2_0= RULE_INT
             {
             lv_count_2_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -8349,7 +8367,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTeleportRulesConfig"
-    // InternalMazeDsl.g:3923:1: entryRuleTeleportRulesConfig returns [EObject current=null] : iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF ;
+    // InternalMazeDsl.g:3926:1: entryRuleTeleportRulesConfig returns [EObject current=null] : iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF ;
     public final EObject entryRuleTeleportRulesConfig() throws RecognitionException {
         EObject current = null;
 
@@ -8357,8 +8375,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:3923:60: (iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF )
-            // InternalMazeDsl.g:3924:2: iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF
+            // InternalMazeDsl.g:3926:60: (iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF )
+            // InternalMazeDsl.g:3927:2: iv_ruleTeleportRulesConfig= ruleTeleportRulesConfig EOF
             {
              newCompositeNode(grammarAccess.getTeleportRulesConfigRule()); 
             pushFollow(FOLLOW_1);
@@ -8385,7 +8403,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTeleportRulesConfig"
-    // InternalMazeDsl.g:3930:1: ruleTeleportRulesConfig returns [EObject current=null] : (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' ) ;
+    // InternalMazeDsl.g:3933:1: ruleTeleportRulesConfig returns [EObject current=null] : (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' ) ;
     public final EObject ruleTeleportRulesConfig() throws RecognitionException {
         EObject current = null;
 
@@ -8409,17 +8427,17 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:3936:2: ( (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' ) )
-            // InternalMazeDsl.g:3937:2: (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' )
+            // InternalMazeDsl.g:3939:2: ( (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' ) )
+            // InternalMazeDsl.g:3940:2: (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' )
             {
-            // InternalMazeDsl.g:3937:2: (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' )
-            // InternalMazeDsl.g:3938:3: otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}'
+            // InternalMazeDsl.g:3940:2: (otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}' )
+            // InternalMazeDsl.g:3941:3: otherlv_0= 'teleport' otherlv_1= '{' otherlv_2= 'cooldown' ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) ) otherlv_4= 'banner' ( (lv_bannerText_5_0= RULE_STRING ) ) otherlv_6= 'bannerSeconds' ( (lv_bannerSeconds_7_0= ruleDOUBLE ) ) (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )? (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )? otherlv_12= '}'
             {
             otherlv_0=(Token)match(input,121,FOLLOW_4); 
 
             			newLeafNode(otherlv_0, grammarAccess.getTeleportRulesConfigAccess().getTeleportKeyword_0());
             		
-            otherlv_1=(Token)match(input,12,FOLLOW_125); 
+            otherlv_1=(Token)match(input,12,FOLLOW_124); 
 
             			newLeafNode(otherlv_1, grammarAccess.getTeleportRulesConfigAccess().getLeftCurlyBracketKeyword_1());
             		
@@ -8427,16 +8445,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_2, grammarAccess.getTeleportRulesConfigAccess().getCooldownKeyword_2());
             		
-            // InternalMazeDsl.g:3950:3: ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3951:4: (lv_cooldownSeconds_3_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3953:3: ( (lv_cooldownSeconds_3_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3954:4: (lv_cooldownSeconds_3_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3951:4: (lv_cooldownSeconds_3_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3952:5: lv_cooldownSeconds_3_0= ruleDOUBLE
+            // InternalMazeDsl.g:3954:4: (lv_cooldownSeconds_3_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3955:5: lv_cooldownSeconds_3_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsDOUBLEParserRuleCall_3_0());
             				
-            pushFollow(FOLLOW_126);
+            pushFollow(FOLLOW_125);
             lv_cooldownSeconds_3_0=ruleDOUBLE();
 
             state._fsp--;
@@ -8462,13 +8480,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_4, grammarAccess.getTeleportRulesConfigAccess().getBannerKeyword_4());
             		
-            // InternalMazeDsl.g:3973:3: ( (lv_bannerText_5_0= RULE_STRING ) )
-            // InternalMazeDsl.g:3974:4: (lv_bannerText_5_0= RULE_STRING )
+            // InternalMazeDsl.g:3976:3: ( (lv_bannerText_5_0= RULE_STRING ) )
+            // InternalMazeDsl.g:3977:4: (lv_bannerText_5_0= RULE_STRING )
             {
-            // InternalMazeDsl.g:3974:4: (lv_bannerText_5_0= RULE_STRING )
-            // InternalMazeDsl.g:3975:5: lv_bannerText_5_0= RULE_STRING
+            // InternalMazeDsl.g:3977:4: (lv_bannerText_5_0= RULE_STRING )
+            // InternalMazeDsl.g:3978:5: lv_bannerText_5_0= RULE_STRING
             {
-            lv_bannerText_5_0=(Token)match(input,RULE_STRING,FOLLOW_127); 
+            lv_bannerText_5_0=(Token)match(input,RULE_STRING,FOLLOW_126); 
 
             					newLeafNode(lv_bannerText_5_0, grammarAccess.getTeleportRulesConfigAccess().getBannerTextSTRINGTerminalRuleCall_5_0());
             				
@@ -8492,16 +8510,16 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_6, grammarAccess.getTeleportRulesConfigAccess().getBannerSecondsKeyword_6());
             		
-            // InternalMazeDsl.g:3995:3: ( (lv_bannerSeconds_7_0= ruleDOUBLE ) )
-            // InternalMazeDsl.g:3996:4: (lv_bannerSeconds_7_0= ruleDOUBLE )
+            // InternalMazeDsl.g:3998:3: ( (lv_bannerSeconds_7_0= ruleDOUBLE ) )
+            // InternalMazeDsl.g:3999:4: (lv_bannerSeconds_7_0= ruleDOUBLE )
             {
-            // InternalMazeDsl.g:3996:4: (lv_bannerSeconds_7_0= ruleDOUBLE )
-            // InternalMazeDsl.g:3997:5: lv_bannerSeconds_7_0= ruleDOUBLE
+            // InternalMazeDsl.g:3999:4: (lv_bannerSeconds_7_0= ruleDOUBLE )
+            // InternalMazeDsl.g:4000:5: lv_bannerSeconds_7_0= ruleDOUBLE
             {
 
             					newCompositeNode(grammarAccess.getTeleportRulesConfigAccess().getBannerSecondsDOUBLEParserRuleCall_7_0());
             				
-            pushFollow(FOLLOW_128);
+            pushFollow(FOLLOW_127);
             lv_bannerSeconds_7_0=ruleDOUBLE();
 
             state._fsp--;
@@ -8523,7 +8541,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:4014:3: (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:4017:3: (otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) ) )?
             int alt67=2;
             int LA67_0 = input.LA(1);
 
@@ -8532,19 +8550,19 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt67) {
                 case 1 :
-                    // InternalMazeDsl.g:4015:4: otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:4018:4: otherlv_8= 'zapSound' ( (lv_zapSound_9_0= RULE_STRING ) )
                     {
                     otherlv_8=(Token)match(input,125,FOLLOW_10); 
 
                     				newLeafNode(otherlv_8, grammarAccess.getTeleportRulesConfigAccess().getZapSoundKeyword_8_0());
                     			
-                    // InternalMazeDsl.g:4019:4: ( (lv_zapSound_9_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:4020:5: (lv_zapSound_9_0= RULE_STRING )
+                    // InternalMazeDsl.g:4022:4: ( (lv_zapSound_9_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:4023:5: (lv_zapSound_9_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:4020:5: (lv_zapSound_9_0= RULE_STRING )
-                    // InternalMazeDsl.g:4021:6: lv_zapSound_9_0= RULE_STRING
+                    // InternalMazeDsl.g:4023:5: (lv_zapSound_9_0= RULE_STRING )
+                    // InternalMazeDsl.g:4024:6: lv_zapSound_9_0= RULE_STRING
                     {
-                    lv_zapSound_9_0=(Token)match(input,RULE_STRING,FOLLOW_129); 
+                    lv_zapSound_9_0=(Token)match(input,RULE_STRING,FOLLOW_128); 
 
                     						newLeafNode(lv_zapSound_9_0, grammarAccess.getTeleportRulesConfigAccess().getZapSoundSTRINGTerminalRuleCall_8_1_0());
                     					
@@ -8570,7 +8588,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalMazeDsl.g:4038:3: (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )?
+            // InternalMazeDsl.g:4041:3: (otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) ) )?
             int alt68=2;
             int LA68_0 = input.LA(1);
 
@@ -8579,17 +8597,17 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt68) {
                 case 1 :
-                    // InternalMazeDsl.g:4039:4: otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:4042:4: otherlv_10= 'voiceSound' ( (lv_voiceSound_11_0= RULE_STRING ) )
                     {
                     otherlv_10=(Token)match(input,126,FOLLOW_10); 
 
                     				newLeafNode(otherlv_10, grammarAccess.getTeleportRulesConfigAccess().getVoiceSoundKeyword_9_0());
                     			
-                    // InternalMazeDsl.g:4043:4: ( (lv_voiceSound_11_0= RULE_STRING ) )
-                    // InternalMazeDsl.g:4044:5: (lv_voiceSound_11_0= RULE_STRING )
+                    // InternalMazeDsl.g:4046:4: ( (lv_voiceSound_11_0= RULE_STRING ) )
+                    // InternalMazeDsl.g:4047:5: (lv_voiceSound_11_0= RULE_STRING )
                     {
-                    // InternalMazeDsl.g:4044:5: (lv_voiceSound_11_0= RULE_STRING )
-                    // InternalMazeDsl.g:4045:6: lv_voiceSound_11_0= RULE_STRING
+                    // InternalMazeDsl.g:4047:5: (lv_voiceSound_11_0= RULE_STRING )
+                    // InternalMazeDsl.g:4048:6: lv_voiceSound_11_0= RULE_STRING
                     {
                     lv_voiceSound_11_0=(Token)match(input,RULE_STRING,FOLLOW_34); 
 
@@ -8644,7 +8662,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDOUBLE"
-    // InternalMazeDsl.g:4070:1: entryRuleDOUBLE returns [String current=null] : iv_ruleDOUBLE= ruleDOUBLE EOF ;
+    // InternalMazeDsl.g:4073:1: entryRuleDOUBLE returns [String current=null] : iv_ruleDOUBLE= ruleDOUBLE EOF ;
     public final String entryRuleDOUBLE() throws RecognitionException {
         String current = null;
 
@@ -8652,8 +8670,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4070:46: (iv_ruleDOUBLE= ruleDOUBLE EOF )
-            // InternalMazeDsl.g:4071:2: iv_ruleDOUBLE= ruleDOUBLE EOF
+            // InternalMazeDsl.g:4073:46: (iv_ruleDOUBLE= ruleDOUBLE EOF )
+            // InternalMazeDsl.g:4074:2: iv_ruleDOUBLE= ruleDOUBLE EOF
             {
              newCompositeNode(grammarAccess.getDOUBLERule()); 
             pushFollow(FOLLOW_1);
@@ -8680,7 +8698,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDOUBLE"
-    // InternalMazeDsl.g:4077:1: ruleDOUBLE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) ;
+    // InternalMazeDsl.g:4080:1: ruleDOUBLE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) ;
     public final AntlrDatatypeRuleToken ruleDOUBLE() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8692,13 +8710,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4083:2: ( ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) )
-            // InternalMazeDsl.g:4084:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
+            // InternalMazeDsl.g:4086:2: ( ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) )
+            // InternalMazeDsl.g:4087:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
             {
-            // InternalMazeDsl.g:4084:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
-            // InternalMazeDsl.g:4085:3: (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )?
+            // InternalMazeDsl.g:4087:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
+            // InternalMazeDsl.g:4088:3: (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )?
             {
-            // InternalMazeDsl.g:4085:3: (kw= '-' )?
+            // InternalMazeDsl.g:4088:3: (kw= '-' )?
             int alt69=2;
             int LA69_0 = input.LA(1);
 
@@ -8707,7 +8725,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt69) {
                 case 1 :
-                    // InternalMazeDsl.g:4086:4: kw= '-'
+                    // InternalMazeDsl.g:4089:4: kw= '-'
                     {
                     kw=(Token)match(input,127,FOLLOW_36); 
 
@@ -8720,14 +8738,14 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            this_INT_1=(Token)match(input,RULE_INT,FOLLOW_130); 
+            this_INT_1=(Token)match(input,RULE_INT,FOLLOW_129); 
 
             			current.merge(this_INT_1);
             		
 
             			newLeafNode(this_INT_1, grammarAccess.getDOUBLEAccess().getINTTerminalRuleCall_1());
             		
-            // InternalMazeDsl.g:4099:3: (kw= '.' this_INT_3= RULE_INT )?
+            // InternalMazeDsl.g:4102:3: (kw= '.' this_INT_3= RULE_INT )?
             int alt70=2;
             int LA70_0 = input.LA(1);
 
@@ -8736,7 +8754,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt70) {
                 case 1 :
-                    // InternalMazeDsl.g:4100:4: kw= '.' this_INT_3= RULE_INT
+                    // InternalMazeDsl.g:4103:4: kw= '.' this_INT_3= RULE_INT
                     {
                     kw=(Token)match(input,128,FOLLOW_36); 
 
@@ -8779,7 +8797,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSIGNED_INT"
-    // InternalMazeDsl.g:4117:1: entryRuleSIGNED_INT returns [String current=null] : iv_ruleSIGNED_INT= ruleSIGNED_INT EOF ;
+    // InternalMazeDsl.g:4120:1: entryRuleSIGNED_INT returns [String current=null] : iv_ruleSIGNED_INT= ruleSIGNED_INT EOF ;
     public final String entryRuleSIGNED_INT() throws RecognitionException {
         String current = null;
 
@@ -8787,8 +8805,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4117:50: (iv_ruleSIGNED_INT= ruleSIGNED_INT EOF )
-            // InternalMazeDsl.g:4118:2: iv_ruleSIGNED_INT= ruleSIGNED_INT EOF
+            // InternalMazeDsl.g:4120:50: (iv_ruleSIGNED_INT= ruleSIGNED_INT EOF )
+            // InternalMazeDsl.g:4121:2: iv_ruleSIGNED_INT= ruleSIGNED_INT EOF
             {
              newCompositeNode(grammarAccess.getSIGNED_INTRule()); 
             pushFollow(FOLLOW_1);
@@ -8815,7 +8833,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSIGNED_INT"
-    // InternalMazeDsl.g:4124:1: ruleSIGNED_INT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT ) ;
+    // InternalMazeDsl.g:4127:1: ruleSIGNED_INT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT ) ;
     public final AntlrDatatypeRuleToken ruleSIGNED_INT() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8826,13 +8844,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4130:2: ( ( (kw= '-' )? this_INT_1= RULE_INT ) )
-            // InternalMazeDsl.g:4131:2: ( (kw= '-' )? this_INT_1= RULE_INT )
+            // InternalMazeDsl.g:4133:2: ( ( (kw= '-' )? this_INT_1= RULE_INT ) )
+            // InternalMazeDsl.g:4134:2: ( (kw= '-' )? this_INT_1= RULE_INT )
             {
-            // InternalMazeDsl.g:4131:2: ( (kw= '-' )? this_INT_1= RULE_INT )
-            // InternalMazeDsl.g:4132:3: (kw= '-' )? this_INT_1= RULE_INT
+            // InternalMazeDsl.g:4134:2: ( (kw= '-' )? this_INT_1= RULE_INT )
+            // InternalMazeDsl.g:4135:3: (kw= '-' )? this_INT_1= RULE_INT
             {
-            // InternalMazeDsl.g:4132:3: (kw= '-' )?
+            // InternalMazeDsl.g:4135:3: (kw= '-' )?
             int alt71=2;
             int LA71_0 = input.LA(1);
 
@@ -8841,7 +8859,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt71) {
                 case 1 :
-                    // InternalMazeDsl.g:4133:4: kw= '-'
+                    // InternalMazeDsl.g:4136:4: kw= '-'
                     {
                     kw=(Token)match(input,127,FOLLOW_36); 
 
@@ -8884,7 +8902,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBOOLEAN"
-    // InternalMazeDsl.g:4150:1: entryRuleBOOLEAN returns [String current=null] : iv_ruleBOOLEAN= ruleBOOLEAN EOF ;
+    // InternalMazeDsl.g:4153:1: entryRuleBOOLEAN returns [String current=null] : iv_ruleBOOLEAN= ruleBOOLEAN EOF ;
     public final String entryRuleBOOLEAN() throws RecognitionException {
         String current = null;
 
@@ -8892,8 +8910,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4150:47: (iv_ruleBOOLEAN= ruleBOOLEAN EOF )
-            // InternalMazeDsl.g:4151:2: iv_ruleBOOLEAN= ruleBOOLEAN EOF
+            // InternalMazeDsl.g:4153:47: (iv_ruleBOOLEAN= ruleBOOLEAN EOF )
+            // InternalMazeDsl.g:4154:2: iv_ruleBOOLEAN= ruleBOOLEAN EOF
             {
              newCompositeNode(grammarAccess.getBOOLEANRule()); 
             pushFollow(FOLLOW_1);
@@ -8920,7 +8938,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBOOLEAN"
-    // InternalMazeDsl.g:4157:1: ruleBOOLEAN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    // InternalMazeDsl.g:4160:1: ruleBOOLEAN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
     public final AntlrDatatypeRuleToken ruleBOOLEAN() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8930,10 +8948,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4163:2: ( (kw= 'true' | kw= 'false' ) )
-            // InternalMazeDsl.g:4164:2: (kw= 'true' | kw= 'false' )
+            // InternalMazeDsl.g:4166:2: ( (kw= 'true' | kw= 'false' ) )
+            // InternalMazeDsl.g:4167:2: (kw= 'true' | kw= 'false' )
             {
-            // InternalMazeDsl.g:4164:2: (kw= 'true' | kw= 'false' )
+            // InternalMazeDsl.g:4167:2: (kw= 'true' | kw= 'false' )
             int alt72=2;
             int LA72_0 = input.LA(1);
 
@@ -8951,7 +8969,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt72) {
                 case 1 :
-                    // InternalMazeDsl.g:4165:3: kw= 'true'
+                    // InternalMazeDsl.g:4168:3: kw= 'true'
                     {
                     kw=(Token)match(input,18,FOLLOW_2); 
 
@@ -8962,7 +8980,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4171:3: kw= 'false'
+                    // InternalMazeDsl.g:4174:3: kw= 'false'
                     {
                     kw=(Token)match(input,129,FOLLOW_2); 
 
@@ -8995,7 +9013,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDOUBLE_OBJECT"
-    // InternalMazeDsl.g:4180:1: entryRuleDOUBLE_OBJECT returns [String current=null] : iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF ;
+    // InternalMazeDsl.g:4183:1: entryRuleDOUBLE_OBJECT returns [String current=null] : iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF ;
     public final String entryRuleDOUBLE_OBJECT() throws RecognitionException {
         String current = null;
 
@@ -9003,8 +9021,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4180:53: (iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF )
-            // InternalMazeDsl.g:4181:2: iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF
+            // InternalMazeDsl.g:4183:53: (iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF )
+            // InternalMazeDsl.g:4184:2: iv_ruleDOUBLE_OBJECT= ruleDOUBLE_OBJECT EOF
             {
              newCompositeNode(grammarAccess.getDOUBLE_OBJECTRule()); 
             pushFollow(FOLLOW_1);
@@ -9031,7 +9049,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDOUBLE_OBJECT"
-    // InternalMazeDsl.g:4187:1: ruleDOUBLE_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) ;
+    // InternalMazeDsl.g:4190:1: ruleDOUBLE_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) ;
     public final AntlrDatatypeRuleToken ruleDOUBLE_OBJECT() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -9043,13 +9061,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4193:2: ( ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) )
-            // InternalMazeDsl.g:4194:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
+            // InternalMazeDsl.g:4196:2: ( ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? ) )
+            // InternalMazeDsl.g:4197:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
             {
-            // InternalMazeDsl.g:4194:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
-            // InternalMazeDsl.g:4195:3: (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )?
+            // InternalMazeDsl.g:4197:2: ( (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )? )
+            // InternalMazeDsl.g:4198:3: (kw= '-' )? this_INT_1= RULE_INT (kw= '.' this_INT_3= RULE_INT )?
             {
-            // InternalMazeDsl.g:4195:3: (kw= '-' )?
+            // InternalMazeDsl.g:4198:3: (kw= '-' )?
             int alt73=2;
             int LA73_0 = input.LA(1);
 
@@ -9058,7 +9076,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt73) {
                 case 1 :
-                    // InternalMazeDsl.g:4196:4: kw= '-'
+                    // InternalMazeDsl.g:4199:4: kw= '-'
                     {
                     kw=(Token)match(input,127,FOLLOW_36); 
 
@@ -9071,14 +9089,14 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             }
 
-            this_INT_1=(Token)match(input,RULE_INT,FOLLOW_130); 
+            this_INT_1=(Token)match(input,RULE_INT,FOLLOW_129); 
 
             			current.merge(this_INT_1);
             		
 
             			newLeafNode(this_INT_1, grammarAccess.getDOUBLE_OBJECTAccess().getINTTerminalRuleCall_1());
             		
-            // InternalMazeDsl.g:4209:3: (kw= '.' this_INT_3= RULE_INT )?
+            // InternalMazeDsl.g:4212:3: (kw= '.' this_INT_3= RULE_INT )?
             int alt74=2;
             int LA74_0 = input.LA(1);
 
@@ -9087,7 +9105,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt74) {
                 case 1 :
-                    // InternalMazeDsl.g:4210:4: kw= '.' this_INT_3= RULE_INT
+                    // InternalMazeDsl.g:4213:4: kw= '.' this_INT_3= RULE_INT
                     {
                     kw=(Token)match(input,128,FOLLOW_36); 
 
@@ -9130,7 +9148,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleINT_OBJECT"
-    // InternalMazeDsl.g:4227:1: entryRuleINT_OBJECT returns [String current=null] : iv_ruleINT_OBJECT= ruleINT_OBJECT EOF ;
+    // InternalMazeDsl.g:4230:1: entryRuleINT_OBJECT returns [String current=null] : iv_ruleINT_OBJECT= ruleINT_OBJECT EOF ;
     public final String entryRuleINT_OBJECT() throws RecognitionException {
         String current = null;
 
@@ -9138,8 +9156,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4227:50: (iv_ruleINT_OBJECT= ruleINT_OBJECT EOF )
-            // InternalMazeDsl.g:4228:2: iv_ruleINT_OBJECT= ruleINT_OBJECT EOF
+            // InternalMazeDsl.g:4230:50: (iv_ruleINT_OBJECT= ruleINT_OBJECT EOF )
+            // InternalMazeDsl.g:4231:2: iv_ruleINT_OBJECT= ruleINT_OBJECT EOF
             {
              newCompositeNode(grammarAccess.getINT_OBJECTRule()); 
             pushFollow(FOLLOW_1);
@@ -9166,7 +9184,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleINT_OBJECT"
-    // InternalMazeDsl.g:4234:1: ruleINT_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT ) ;
+    // InternalMazeDsl.g:4237:1: ruleINT_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : ( (kw= '-' )? this_INT_1= RULE_INT ) ;
     public final AntlrDatatypeRuleToken ruleINT_OBJECT() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -9177,13 +9195,13 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4240:2: ( ( (kw= '-' )? this_INT_1= RULE_INT ) )
-            // InternalMazeDsl.g:4241:2: ( (kw= '-' )? this_INT_1= RULE_INT )
+            // InternalMazeDsl.g:4243:2: ( ( (kw= '-' )? this_INT_1= RULE_INT ) )
+            // InternalMazeDsl.g:4244:2: ( (kw= '-' )? this_INT_1= RULE_INT )
             {
-            // InternalMazeDsl.g:4241:2: ( (kw= '-' )? this_INT_1= RULE_INT )
-            // InternalMazeDsl.g:4242:3: (kw= '-' )? this_INT_1= RULE_INT
+            // InternalMazeDsl.g:4244:2: ( (kw= '-' )? this_INT_1= RULE_INT )
+            // InternalMazeDsl.g:4245:3: (kw= '-' )? this_INT_1= RULE_INT
             {
-            // InternalMazeDsl.g:4242:3: (kw= '-' )?
+            // InternalMazeDsl.g:4245:3: (kw= '-' )?
             int alt75=2;
             int LA75_0 = input.LA(1);
 
@@ -9192,7 +9210,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt75) {
                 case 1 :
-                    // InternalMazeDsl.g:4243:4: kw= '-'
+                    // InternalMazeDsl.g:4246:4: kw= '-'
                     {
                     kw=(Token)match(input,127,FOLLOW_36); 
 
@@ -9235,7 +9253,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBOOLEAN_OBJECT"
-    // InternalMazeDsl.g:4260:1: entryRuleBOOLEAN_OBJECT returns [String current=null] : iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF ;
+    // InternalMazeDsl.g:4263:1: entryRuleBOOLEAN_OBJECT returns [String current=null] : iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF ;
     public final String entryRuleBOOLEAN_OBJECT() throws RecognitionException {
         String current = null;
 
@@ -9243,8 +9261,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4260:54: (iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF )
-            // InternalMazeDsl.g:4261:2: iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF
+            // InternalMazeDsl.g:4263:54: (iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF )
+            // InternalMazeDsl.g:4264:2: iv_ruleBOOLEAN_OBJECT= ruleBOOLEAN_OBJECT EOF
             {
              newCompositeNode(grammarAccess.getBOOLEAN_OBJECTRule()); 
             pushFollow(FOLLOW_1);
@@ -9271,7 +9289,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBOOLEAN_OBJECT"
-    // InternalMazeDsl.g:4267:1: ruleBOOLEAN_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    // InternalMazeDsl.g:4270:1: ruleBOOLEAN_OBJECT returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
     public final AntlrDatatypeRuleToken ruleBOOLEAN_OBJECT() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -9281,10 +9299,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4273:2: ( (kw= 'true' | kw= 'false' ) )
-            // InternalMazeDsl.g:4274:2: (kw= 'true' | kw= 'false' )
+            // InternalMazeDsl.g:4276:2: ( (kw= 'true' | kw= 'false' ) )
+            // InternalMazeDsl.g:4277:2: (kw= 'true' | kw= 'false' )
             {
-            // InternalMazeDsl.g:4274:2: (kw= 'true' | kw= 'false' )
+            // InternalMazeDsl.g:4277:2: (kw= 'true' | kw= 'false' )
             int alt76=2;
             int LA76_0 = input.LA(1);
 
@@ -9302,7 +9320,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
             }
             switch (alt76) {
                 case 1 :
-                    // InternalMazeDsl.g:4275:3: kw= 'true'
+                    // InternalMazeDsl.g:4278:3: kw= 'true'
                     {
                     kw=(Token)match(input,18,FOLLOW_2); 
 
@@ -9313,7 +9331,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4281:3: kw= 'false'
+                    // InternalMazeDsl.g:4284:3: kw= 'false'
                     {
                     kw=(Token)match(input,129,FOLLOW_2); 
 
@@ -9346,7 +9364,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleValidID"
-    // InternalMazeDsl.g:4290:1: entryRuleValidID returns [String current=null] : iv_ruleValidID= ruleValidID EOF ;
+    // InternalMazeDsl.g:4293:1: entryRuleValidID returns [String current=null] : iv_ruleValidID= ruleValidID EOF ;
     public final String entryRuleValidID() throws RecognitionException {
         String current = null;
 
@@ -9354,8 +9372,8 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalMazeDsl.g:4290:47: (iv_ruleValidID= ruleValidID EOF )
-            // InternalMazeDsl.g:4291:2: iv_ruleValidID= ruleValidID EOF
+            // InternalMazeDsl.g:4293:47: (iv_ruleValidID= ruleValidID EOF )
+            // InternalMazeDsl.g:4294:2: iv_ruleValidID= ruleValidID EOF
             {
              newCompositeNode(grammarAccess.getValidIDRule()); 
             pushFollow(FOLLOW_1);
@@ -9382,7 +9400,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleValidID"
-    // InternalMazeDsl.g:4297:1: ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' ) ;
+    // InternalMazeDsl.g:4300:1: ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' ) ;
     public final AntlrDatatypeRuleToken ruleValidID() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -9393,10 +9411,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4303:2: ( (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' ) )
-            // InternalMazeDsl.g:4304:2: (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' )
+            // InternalMazeDsl.g:4306:2: ( (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' ) )
+            // InternalMazeDsl.g:4307:2: (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' )
             {
-            // InternalMazeDsl.g:4304:2: (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' )
+            // InternalMazeDsl.g:4307:2: (this_ID_0= RULE_ID | kw= 'basedOn' | kw= 'threatCapacity' | kw= 'wallMaterials' | kw= 'inheritWeapons' | kw= 'cascadeDepth' | kw= 'ring' | kw= 'share' | kw= 'materials' | kw= 'sergeant' | kw= 'sergeants' | kw= 'sightRange' | kw= 'rounds' | kw= 'roundDamage' | kw= 'roundInterval' | kw= 'burstCooldown' | kw= 'sprite' | kw= 'fireSound' | kw= 'drops' | kw= 'gatling' | kw= 'postDistance' | kw= 'mines' | kw= 'count' | kw= 'ringRadius' | kw= 'triggerRadius' | kw= 'pulse' | kw= 'blastRadius' | kw= 'blastDamage' | kw= 'playerDamage' | kw= 'holeRadius' | kw= 'portalGhost' | kw= 'portalGhosts' | kw= 'teleport' | kw= 'cooldown' | kw= 'banner' | kw= 'bannerSeconds' | kw= 'zapSound' | kw= 'voiceSound' | kw= 'secondRing' | kw= 'guardTower' | kw= 'towers' | kw= 'wallsOver' | kw= 'rpgInterval' | kw= 'rpgSpeed' | kw= 'rpgBlastRadius' | kw= 'rpgPlayerDamage' | kw= 'rpgWallDamage' | kw= 'gatlingRounds' | kw= 'gatlingInterval' | kw= 'gatlingDamage' | kw= 'deathBlast' | kw= 'rpgLaunchSound' | kw= 'rpgExplosionSound' | kw= 'gatlingSound' | kw= 'hitSound' | kw= 'destroyedSound' | kw= 'wallBuilder' | kw= 'builders' | kw= 'buildSeconds' | kw= 'blockRadius' | kw= 'spawnRadius' | kw= 'material' | kw= 'startRadius' | kw= 'buildSound' )
             int alt77=64;
             switch ( input.LA(1) ) {
             case RULE_ID:
@@ -9728,7 +9746,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt77) {
                 case 1 :
-                    // InternalMazeDsl.g:4305:3: this_ID_0= RULE_ID
+                    // InternalMazeDsl.g:4308:3: this_ID_0= RULE_ID
                     {
                     this_ID_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -9741,7 +9759,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4313:3: kw= 'basedOn'
+                    // InternalMazeDsl.g:4316:3: kw= 'basedOn'
                     {
                     kw=(Token)match(input,65,FOLLOW_2); 
 
@@ -9752,7 +9770,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4319:3: kw= 'threatCapacity'
+                    // InternalMazeDsl.g:4322:3: kw= 'threatCapacity'
                     {
                     kw=(Token)match(input,66,FOLLOW_2); 
 
@@ -9763,7 +9781,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalMazeDsl.g:4325:3: kw= 'wallMaterials'
+                    // InternalMazeDsl.g:4328:3: kw= 'wallMaterials'
                     {
                     kw=(Token)match(input,67,FOLLOW_2); 
 
@@ -9774,7 +9792,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalMazeDsl.g:4331:3: kw= 'inheritWeapons'
+                    // InternalMazeDsl.g:4334:3: kw= 'inheritWeapons'
                     {
                     kw=(Token)match(input,68,FOLLOW_2); 
 
@@ -9785,7 +9803,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalMazeDsl.g:4337:3: kw= 'cascadeDepth'
+                    // InternalMazeDsl.g:4340:3: kw= 'cascadeDepth'
                     {
                     kw=(Token)match(input,69,FOLLOW_2); 
 
@@ -9796,7 +9814,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalMazeDsl.g:4343:3: kw= 'ring'
+                    // InternalMazeDsl.g:4346:3: kw= 'ring'
                     {
                     kw=(Token)match(input,70,FOLLOW_2); 
 
@@ -9807,7 +9825,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 8 :
-                    // InternalMazeDsl.g:4349:3: kw= 'share'
+                    // InternalMazeDsl.g:4352:3: kw= 'share'
                     {
                     kw=(Token)match(input,71,FOLLOW_2); 
 
@@ -9818,7 +9836,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 9 :
-                    // InternalMazeDsl.g:4355:3: kw= 'materials'
+                    // InternalMazeDsl.g:4358:3: kw= 'materials'
                     {
                     kw=(Token)match(input,72,FOLLOW_2); 
 
@@ -9829,7 +9847,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 10 :
-                    // InternalMazeDsl.g:4361:3: kw= 'sergeant'
+                    // InternalMazeDsl.g:4364:3: kw= 'sergeant'
                     {
                     kw=(Token)match(input,73,FOLLOW_2); 
 
@@ -9840,7 +9858,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 11 :
-                    // InternalMazeDsl.g:4367:3: kw= 'sergeants'
+                    // InternalMazeDsl.g:4370:3: kw= 'sergeants'
                     {
                     kw=(Token)match(input,83,FOLLOW_2); 
 
@@ -9851,7 +9869,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 12 :
-                    // InternalMazeDsl.g:4373:3: kw= 'sightRange'
+                    // InternalMazeDsl.g:4376:3: kw= 'sightRange'
                     {
                     kw=(Token)match(input,74,FOLLOW_2); 
 
@@ -9862,7 +9880,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 13 :
-                    // InternalMazeDsl.g:4379:3: kw= 'rounds'
+                    // InternalMazeDsl.g:4382:3: kw= 'rounds'
                     {
                     kw=(Token)match(input,75,FOLLOW_2); 
 
@@ -9873,7 +9891,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 14 :
-                    // InternalMazeDsl.g:4385:3: kw= 'roundDamage'
+                    // InternalMazeDsl.g:4388:3: kw= 'roundDamage'
                     {
                     kw=(Token)match(input,76,FOLLOW_2); 
 
@@ -9884,7 +9902,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 15 :
-                    // InternalMazeDsl.g:4391:3: kw= 'roundInterval'
+                    // InternalMazeDsl.g:4394:3: kw= 'roundInterval'
                     {
                     kw=(Token)match(input,77,FOLLOW_2); 
 
@@ -9895,7 +9913,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 16 :
-                    // InternalMazeDsl.g:4397:3: kw= 'burstCooldown'
+                    // InternalMazeDsl.g:4400:3: kw= 'burstCooldown'
                     {
                     kw=(Token)match(input,78,FOLLOW_2); 
 
@@ -9906,7 +9924,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 17 :
-                    // InternalMazeDsl.g:4403:3: kw= 'sprite'
+                    // InternalMazeDsl.g:4406:3: kw= 'sprite'
                     {
                     kw=(Token)match(input,79,FOLLOW_2); 
 
@@ -9917,7 +9935,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 18 :
-                    // InternalMazeDsl.g:4409:3: kw= 'fireSound'
+                    // InternalMazeDsl.g:4412:3: kw= 'fireSound'
                     {
                     kw=(Token)match(input,80,FOLLOW_2); 
 
@@ -9928,7 +9946,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 19 :
-                    // InternalMazeDsl.g:4415:3: kw= 'drops'
+                    // InternalMazeDsl.g:4418:3: kw= 'drops'
                     {
                     kw=(Token)match(input,81,FOLLOW_2); 
 
@@ -9939,7 +9957,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 20 :
-                    // InternalMazeDsl.g:4421:3: kw= 'gatling'
+                    // InternalMazeDsl.g:4424:3: kw= 'gatling'
                     {
                     kw=(Token)match(input,130,FOLLOW_2); 
 
@@ -9950,7 +9968,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 21 :
-                    // InternalMazeDsl.g:4427:3: kw= 'postDistance'
+                    // InternalMazeDsl.g:4430:3: kw= 'postDistance'
                     {
                     kw=(Token)match(input,82,FOLLOW_2); 
 
@@ -9961,7 +9979,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 22 :
-                    // InternalMazeDsl.g:4433:3: kw= 'mines'
+                    // InternalMazeDsl.g:4436:3: kw= 'mines'
                     {
                     kw=(Token)match(input,84,FOLLOW_2); 
 
@@ -9972,7 +9990,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 23 :
-                    // InternalMazeDsl.g:4439:3: kw= 'count'
+                    // InternalMazeDsl.g:4442:3: kw= 'count'
                     {
                     kw=(Token)match(input,85,FOLLOW_2); 
 
@@ -9983,7 +10001,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 24 :
-                    // InternalMazeDsl.g:4445:3: kw= 'ringRadius'
+                    // InternalMazeDsl.g:4448:3: kw= 'ringRadius'
                     {
                     kw=(Token)match(input,86,FOLLOW_2); 
 
@@ -9994,7 +10012,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 25 :
-                    // InternalMazeDsl.g:4451:3: kw= 'triggerRadius'
+                    // InternalMazeDsl.g:4454:3: kw= 'triggerRadius'
                     {
                     kw=(Token)match(input,88,FOLLOW_2); 
 
@@ -10005,7 +10023,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 26 :
-                    // InternalMazeDsl.g:4457:3: kw= 'pulse'
+                    // InternalMazeDsl.g:4460:3: kw= 'pulse'
                     {
                     kw=(Token)match(input,89,FOLLOW_2); 
 
@@ -10016,7 +10034,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 27 :
-                    // InternalMazeDsl.g:4463:3: kw= 'blastRadius'
+                    // InternalMazeDsl.g:4466:3: kw= 'blastRadius'
                     {
                     kw=(Token)match(input,90,FOLLOW_2); 
 
@@ -10027,7 +10045,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 28 :
-                    // InternalMazeDsl.g:4469:3: kw= 'blastDamage'
+                    // InternalMazeDsl.g:4472:3: kw= 'blastDamage'
                     {
                     kw=(Token)match(input,91,FOLLOW_2); 
 
@@ -10038,7 +10056,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 29 :
-                    // InternalMazeDsl.g:4475:3: kw= 'playerDamage'
+                    // InternalMazeDsl.g:4478:3: kw= 'playerDamage'
                     {
                     kw=(Token)match(input,92,FOLLOW_2); 
 
@@ -10049,7 +10067,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 30 :
-                    // InternalMazeDsl.g:4481:3: kw= 'holeRadius'
+                    // InternalMazeDsl.g:4484:3: kw= 'holeRadius'
                     {
                     kw=(Token)match(input,93,FOLLOW_2); 
 
@@ -10060,7 +10078,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 31 :
-                    // InternalMazeDsl.g:4487:3: kw= 'portalGhost'
+                    // InternalMazeDsl.g:4490:3: kw= 'portalGhost'
                     {
                     kw=(Token)match(input,94,FOLLOW_2); 
 
@@ -10071,7 +10089,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 32 :
-                    // InternalMazeDsl.g:4493:3: kw= 'portalGhosts'
+                    // InternalMazeDsl.g:4496:3: kw= 'portalGhosts'
                     {
                     kw=(Token)match(input,95,FOLLOW_2); 
 
@@ -10082,7 +10100,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 33 :
-                    // InternalMazeDsl.g:4499:3: kw= 'teleport'
+                    // InternalMazeDsl.g:4502:3: kw= 'teleport'
                     {
                     kw=(Token)match(input,121,FOLLOW_2); 
 
@@ -10093,7 +10111,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 34 :
-                    // InternalMazeDsl.g:4505:3: kw= 'cooldown'
+                    // InternalMazeDsl.g:4508:3: kw= 'cooldown'
                     {
                     kw=(Token)match(input,122,FOLLOW_2); 
 
@@ -10104,7 +10122,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 35 :
-                    // InternalMazeDsl.g:4511:3: kw= 'banner'
+                    // InternalMazeDsl.g:4514:3: kw= 'banner'
                     {
                     kw=(Token)match(input,123,FOLLOW_2); 
 
@@ -10115,7 +10133,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 36 :
-                    // InternalMazeDsl.g:4517:3: kw= 'bannerSeconds'
+                    // InternalMazeDsl.g:4520:3: kw= 'bannerSeconds'
                     {
                     kw=(Token)match(input,124,FOLLOW_2); 
 
@@ -10126,7 +10144,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 37 :
-                    // InternalMazeDsl.g:4523:3: kw= 'zapSound'
+                    // InternalMazeDsl.g:4526:3: kw= 'zapSound'
                     {
                     kw=(Token)match(input,125,FOLLOW_2); 
 
@@ -10137,7 +10155,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 38 :
-                    // InternalMazeDsl.g:4529:3: kw= 'voiceSound'
+                    // InternalMazeDsl.g:4532:3: kw= 'voiceSound'
                     {
                     kw=(Token)match(input,126,FOLLOW_2); 
 
@@ -10148,7 +10166,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 39 :
-                    // InternalMazeDsl.g:4535:3: kw= 'secondRing'
+                    // InternalMazeDsl.g:4538:3: kw= 'secondRing'
                     {
                     kw=(Token)match(input,87,FOLLOW_2); 
 
@@ -10159,7 +10177,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 40 :
-                    // InternalMazeDsl.g:4541:3: kw= 'guardTower'
+                    // InternalMazeDsl.g:4544:3: kw= 'guardTower'
                     {
                     kw=(Token)match(input,96,FOLLOW_2); 
 
@@ -10170,7 +10188,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 41 :
-                    // InternalMazeDsl.g:4547:3: kw= 'towers'
+                    // InternalMazeDsl.g:4550:3: kw= 'towers'
                     {
                     kw=(Token)match(input,112,FOLLOW_2); 
 
@@ -10181,7 +10199,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 42 :
-                    // InternalMazeDsl.g:4553:3: kw= 'wallsOver'
+                    // InternalMazeDsl.g:4556:3: kw= 'wallsOver'
                     {
                     kw=(Token)match(input,97,FOLLOW_2); 
 
@@ -10192,7 +10210,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 43 :
-                    // InternalMazeDsl.g:4559:3: kw= 'rpgInterval'
+                    // InternalMazeDsl.g:4562:3: kw= 'rpgInterval'
                     {
                     kw=(Token)match(input,98,FOLLOW_2); 
 
@@ -10203,7 +10221,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 44 :
-                    // InternalMazeDsl.g:4565:3: kw= 'rpgSpeed'
+                    // InternalMazeDsl.g:4568:3: kw= 'rpgSpeed'
                     {
                     kw=(Token)match(input,99,FOLLOW_2); 
 
@@ -10214,7 +10232,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 45 :
-                    // InternalMazeDsl.g:4571:3: kw= 'rpgBlastRadius'
+                    // InternalMazeDsl.g:4574:3: kw= 'rpgBlastRadius'
                     {
                     kw=(Token)match(input,100,FOLLOW_2); 
 
@@ -10225,7 +10243,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 46 :
-                    // InternalMazeDsl.g:4577:3: kw= 'rpgPlayerDamage'
+                    // InternalMazeDsl.g:4580:3: kw= 'rpgPlayerDamage'
                     {
                     kw=(Token)match(input,101,FOLLOW_2); 
 
@@ -10236,7 +10254,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 47 :
-                    // InternalMazeDsl.g:4583:3: kw= 'rpgWallDamage'
+                    // InternalMazeDsl.g:4586:3: kw= 'rpgWallDamage'
                     {
                     kw=(Token)match(input,102,FOLLOW_2); 
 
@@ -10247,7 +10265,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 48 :
-                    // InternalMazeDsl.g:4589:3: kw= 'gatlingRounds'
+                    // InternalMazeDsl.g:4592:3: kw= 'gatlingRounds'
                     {
                     kw=(Token)match(input,103,FOLLOW_2); 
 
@@ -10258,7 +10276,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 49 :
-                    // InternalMazeDsl.g:4595:3: kw= 'gatlingInterval'
+                    // InternalMazeDsl.g:4598:3: kw= 'gatlingInterval'
                     {
                     kw=(Token)match(input,104,FOLLOW_2); 
 
@@ -10269,7 +10287,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 50 :
-                    // InternalMazeDsl.g:4601:3: kw= 'gatlingDamage'
+                    // InternalMazeDsl.g:4604:3: kw= 'gatlingDamage'
                     {
                     kw=(Token)match(input,105,FOLLOW_2); 
 
@@ -10280,7 +10298,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 51 :
-                    // InternalMazeDsl.g:4607:3: kw= 'deathBlast'
+                    // InternalMazeDsl.g:4610:3: kw= 'deathBlast'
                     {
                     kw=(Token)match(input,106,FOLLOW_2); 
 
@@ -10291,7 +10309,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 52 :
-                    // InternalMazeDsl.g:4613:3: kw= 'rpgLaunchSound'
+                    // InternalMazeDsl.g:4616:3: kw= 'rpgLaunchSound'
                     {
                     kw=(Token)match(input,107,FOLLOW_2); 
 
@@ -10302,7 +10320,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 53 :
-                    // InternalMazeDsl.g:4619:3: kw= 'rpgExplosionSound'
+                    // InternalMazeDsl.g:4622:3: kw= 'rpgExplosionSound'
                     {
                     kw=(Token)match(input,108,FOLLOW_2); 
 
@@ -10313,7 +10331,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 54 :
-                    // InternalMazeDsl.g:4625:3: kw= 'gatlingSound'
+                    // InternalMazeDsl.g:4628:3: kw= 'gatlingSound'
                     {
                     kw=(Token)match(input,109,FOLLOW_2); 
 
@@ -10324,7 +10342,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 55 :
-                    // InternalMazeDsl.g:4631:3: kw= 'hitSound'
+                    // InternalMazeDsl.g:4634:3: kw= 'hitSound'
                     {
                     kw=(Token)match(input,110,FOLLOW_2); 
 
@@ -10335,7 +10353,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 56 :
-                    // InternalMazeDsl.g:4637:3: kw= 'destroyedSound'
+                    // InternalMazeDsl.g:4640:3: kw= 'destroyedSound'
                     {
                     kw=(Token)match(input,111,FOLLOW_2); 
 
@@ -10346,7 +10364,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 57 :
-                    // InternalMazeDsl.g:4643:3: kw= 'wallBuilder'
+                    // InternalMazeDsl.g:4646:3: kw= 'wallBuilder'
                     {
                     kw=(Token)match(input,113,FOLLOW_2); 
 
@@ -10357,7 +10375,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 58 :
-                    // InternalMazeDsl.g:4649:3: kw= 'builders'
+                    // InternalMazeDsl.g:4652:3: kw= 'builders'
                     {
                     kw=(Token)match(input,120,FOLLOW_2); 
 
@@ -10368,7 +10386,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 59 :
-                    // InternalMazeDsl.g:4655:3: kw= 'buildSeconds'
+                    // InternalMazeDsl.g:4658:3: kw= 'buildSeconds'
                     {
                     kw=(Token)match(input,114,FOLLOW_2); 
 
@@ -10379,7 +10397,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 60 :
-                    // InternalMazeDsl.g:4661:3: kw= 'blockRadius'
+                    // InternalMazeDsl.g:4664:3: kw= 'blockRadius'
                     {
                     kw=(Token)match(input,116,FOLLOW_2); 
 
@@ -10390,7 +10408,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 61 :
-                    // InternalMazeDsl.g:4667:3: kw= 'spawnRadius'
+                    // InternalMazeDsl.g:4670:3: kw= 'spawnRadius'
                     {
                     kw=(Token)match(input,117,FOLLOW_2); 
 
@@ -10401,7 +10419,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 62 :
-                    // InternalMazeDsl.g:4673:3: kw= 'material'
+                    // InternalMazeDsl.g:4676:3: kw= 'material'
                     {
                     kw=(Token)match(input,118,FOLLOW_2); 
 
@@ -10412,7 +10430,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 63 :
-                    // InternalMazeDsl.g:4679:3: kw= 'startRadius'
+                    // InternalMazeDsl.g:4682:3: kw= 'startRadius'
                     {
                     kw=(Token)match(input,115,FOLLOW_2); 
 
@@ -10423,7 +10441,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 64 :
-                    // InternalMazeDsl.g:4685:3: kw= 'buildSound'
+                    // InternalMazeDsl.g:4688:3: kw= 'buildSound'
                     {
                     kw=(Token)match(input,119,FOLLOW_2); 
 
@@ -10456,7 +10474,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDifficultyLevel"
-    // InternalMazeDsl.g:4694:1: ruleDifficultyLevel returns [Enumerator current=null] : ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) ) ;
+    // InternalMazeDsl.g:4697:1: ruleDifficultyLevel returns [Enumerator current=null] : ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) ) ;
     public final Enumerator ruleDifficultyLevel() throws RecognitionException {
         Enumerator current = null;
 
@@ -10468,10 +10486,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4700:2: ( ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) ) )
-            // InternalMazeDsl.g:4701:2: ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) )
+            // InternalMazeDsl.g:4703:2: ( ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) ) )
+            // InternalMazeDsl.g:4704:2: ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) )
             {
-            // InternalMazeDsl.g:4701:2: ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) )
+            // InternalMazeDsl.g:4704:2: ( (enumLiteral_0= 'easy' ) | (enumLiteral_1= 'normal' ) | (enumLiteral_2= 'hard' ) )
             int alt78=3;
             switch ( input.LA(1) ) {
             case 131:
@@ -10498,10 +10516,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt78) {
                 case 1 :
-                    // InternalMazeDsl.g:4702:3: (enumLiteral_0= 'easy' )
+                    // InternalMazeDsl.g:4705:3: (enumLiteral_0= 'easy' )
                     {
-                    // InternalMazeDsl.g:4702:3: (enumLiteral_0= 'easy' )
-                    // InternalMazeDsl.g:4703:4: enumLiteral_0= 'easy'
+                    // InternalMazeDsl.g:4705:3: (enumLiteral_0= 'easy' )
+                    // InternalMazeDsl.g:4706:4: enumLiteral_0= 'easy'
                     {
                     enumLiteral_0=(Token)match(input,131,FOLLOW_2); 
 
@@ -10515,10 +10533,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4710:3: (enumLiteral_1= 'normal' )
+                    // InternalMazeDsl.g:4713:3: (enumLiteral_1= 'normal' )
                     {
-                    // InternalMazeDsl.g:4710:3: (enumLiteral_1= 'normal' )
-                    // InternalMazeDsl.g:4711:4: enumLiteral_1= 'normal'
+                    // InternalMazeDsl.g:4713:3: (enumLiteral_1= 'normal' )
+                    // InternalMazeDsl.g:4714:4: enumLiteral_1= 'normal'
                     {
                     enumLiteral_1=(Token)match(input,132,FOLLOW_2); 
 
@@ -10532,10 +10550,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4718:3: (enumLiteral_2= 'hard' )
+                    // InternalMazeDsl.g:4721:3: (enumLiteral_2= 'hard' )
                     {
-                    // InternalMazeDsl.g:4718:3: (enumLiteral_2= 'hard' )
-                    // InternalMazeDsl.g:4719:4: enumLiteral_2= 'hard'
+                    // InternalMazeDsl.g:4721:3: (enumLiteral_2= 'hard' )
+                    // InternalMazeDsl.g:4722:4: enumLiteral_2= 'hard'
                     {
                     enumLiteral_2=(Token)match(input,133,FOLLOW_2); 
 
@@ -10571,7 +10589,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEnemyType"
-    // InternalMazeDsl.g:4729:1: ruleEnemyType returns [Enumerator current=null] : ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) ;
+    // InternalMazeDsl.g:4732:1: ruleEnemyType returns [Enumerator current=null] : ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) ;
     public final Enumerator ruleEnemyType() throws RecognitionException {
         Enumerator current = null;
 
@@ -10583,10 +10601,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4735:2: ( ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) )
-            // InternalMazeDsl.g:4736:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
+            // InternalMazeDsl.g:4738:2: ( ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) )
+            // InternalMazeDsl.g:4739:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
             {
-            // InternalMazeDsl.g:4736:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
+            // InternalMazeDsl.g:4739:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
             int alt79=3;
             switch ( input.LA(1) ) {
             case 134:
@@ -10613,10 +10631,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt79) {
                 case 1 :
-                    // InternalMazeDsl.g:4737:3: (enumLiteral_0= 'zombie' )
+                    // InternalMazeDsl.g:4740:3: (enumLiteral_0= 'zombie' )
                     {
-                    // InternalMazeDsl.g:4737:3: (enumLiteral_0= 'zombie' )
-                    // InternalMazeDsl.g:4738:4: enumLiteral_0= 'zombie'
+                    // InternalMazeDsl.g:4740:3: (enumLiteral_0= 'zombie' )
+                    // InternalMazeDsl.g:4741:4: enumLiteral_0= 'zombie'
                     {
                     enumLiteral_0=(Token)match(input,134,FOLLOW_2); 
 
@@ -10630,10 +10648,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4745:3: (enumLiteral_1= 'ghost' )
+                    // InternalMazeDsl.g:4748:3: (enumLiteral_1= 'ghost' )
                     {
-                    // InternalMazeDsl.g:4745:3: (enumLiteral_1= 'ghost' )
-                    // InternalMazeDsl.g:4746:4: enumLiteral_1= 'ghost'
+                    // InternalMazeDsl.g:4748:3: (enumLiteral_1= 'ghost' )
+                    // InternalMazeDsl.g:4749:4: enumLiteral_1= 'ghost'
                     {
                     enumLiteral_1=(Token)match(input,135,FOLLOW_2); 
 
@@ -10647,10 +10665,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4753:3: (enumLiteral_2= 'pumpkinbomber' )
+                    // InternalMazeDsl.g:4756:3: (enumLiteral_2= 'pumpkinbomber' )
                     {
-                    // InternalMazeDsl.g:4753:3: (enumLiteral_2= 'pumpkinbomber' )
-                    // InternalMazeDsl.g:4754:4: enumLiteral_2= 'pumpkinbomber'
+                    // InternalMazeDsl.g:4756:3: (enumLiteral_2= 'pumpkinbomber' )
+                    // InternalMazeDsl.g:4757:4: enumLiteral_2= 'pumpkinbomber'
                     {
                     enumLiteral_2=(Token)match(input,136,FOLLOW_2); 
 
@@ -10686,7 +10704,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCharacterTypeEnum"
-    // InternalMazeDsl.g:4764:1: ruleCharacterTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) ;
+    // InternalMazeDsl.g:4767:1: ruleCharacterTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) ;
     public final Enumerator ruleCharacterTypeEnum() throws RecognitionException {
         Enumerator current = null;
 
@@ -10698,10 +10716,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4770:2: ( ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) )
-            // InternalMazeDsl.g:4771:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
+            // InternalMazeDsl.g:4773:2: ( ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) ) )
+            // InternalMazeDsl.g:4774:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
             {
-            // InternalMazeDsl.g:4771:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
+            // InternalMazeDsl.g:4774:2: ( (enumLiteral_0= 'zombie' ) | (enumLiteral_1= 'ghost' ) | (enumLiteral_2= 'pumpkinbomber' ) )
             int alt80=3;
             switch ( input.LA(1) ) {
             case 134:
@@ -10728,10 +10746,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt80) {
                 case 1 :
-                    // InternalMazeDsl.g:4772:3: (enumLiteral_0= 'zombie' )
+                    // InternalMazeDsl.g:4775:3: (enumLiteral_0= 'zombie' )
                     {
-                    // InternalMazeDsl.g:4772:3: (enumLiteral_0= 'zombie' )
-                    // InternalMazeDsl.g:4773:4: enumLiteral_0= 'zombie'
+                    // InternalMazeDsl.g:4775:3: (enumLiteral_0= 'zombie' )
+                    // InternalMazeDsl.g:4776:4: enumLiteral_0= 'zombie'
                     {
                     enumLiteral_0=(Token)match(input,134,FOLLOW_2); 
 
@@ -10745,10 +10763,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4780:3: (enumLiteral_1= 'ghost' )
+                    // InternalMazeDsl.g:4783:3: (enumLiteral_1= 'ghost' )
                     {
-                    // InternalMazeDsl.g:4780:3: (enumLiteral_1= 'ghost' )
-                    // InternalMazeDsl.g:4781:4: enumLiteral_1= 'ghost'
+                    // InternalMazeDsl.g:4783:3: (enumLiteral_1= 'ghost' )
+                    // InternalMazeDsl.g:4784:4: enumLiteral_1= 'ghost'
                     {
                     enumLiteral_1=(Token)match(input,135,FOLLOW_2); 
 
@@ -10762,10 +10780,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4788:3: (enumLiteral_2= 'pumpkinbomber' )
+                    // InternalMazeDsl.g:4791:3: (enumLiteral_2= 'pumpkinbomber' )
                     {
-                    // InternalMazeDsl.g:4788:3: (enumLiteral_2= 'pumpkinbomber' )
-                    // InternalMazeDsl.g:4789:4: enumLiteral_2= 'pumpkinbomber'
+                    // InternalMazeDsl.g:4791:3: (enumLiteral_2= 'pumpkinbomber' )
+                    // InternalMazeDsl.g:4792:4: enumLiteral_2= 'pumpkinbomber'
                     {
                     enumLiteral_2=(Token)match(input,136,FOLLOW_2); 
 
@@ -10801,7 +10819,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBehaviorTypeEnum"
-    // InternalMazeDsl.g:4799:1: ruleBehaviorTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) ) ;
+    // InternalMazeDsl.g:4802:1: ruleBehaviorTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) ) ;
     public final Enumerator ruleBehaviorTypeEnum() throws RecognitionException {
         Enumerator current = null;
 
@@ -10814,10 +10832,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4805:2: ( ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) ) )
-            // InternalMazeDsl.g:4806:2: ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) )
+            // InternalMazeDsl.g:4808:2: ( ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) ) )
+            // InternalMazeDsl.g:4809:2: ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) )
             {
-            // InternalMazeDsl.g:4806:2: ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) )
+            // InternalMazeDsl.g:4809:2: ( (enumLiteral_0= 'passive' ) | (enumLiteral_1= 'wander' ) | (enumLiteral_2= 'aggressive' ) | (enumLiteral_3= 'patrol' ) )
             int alt81=4;
             switch ( input.LA(1) ) {
             case 137:
@@ -10849,10 +10867,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt81) {
                 case 1 :
-                    // InternalMazeDsl.g:4807:3: (enumLiteral_0= 'passive' )
+                    // InternalMazeDsl.g:4810:3: (enumLiteral_0= 'passive' )
                     {
-                    // InternalMazeDsl.g:4807:3: (enumLiteral_0= 'passive' )
-                    // InternalMazeDsl.g:4808:4: enumLiteral_0= 'passive'
+                    // InternalMazeDsl.g:4810:3: (enumLiteral_0= 'passive' )
+                    // InternalMazeDsl.g:4811:4: enumLiteral_0= 'passive'
                     {
                     enumLiteral_0=(Token)match(input,137,FOLLOW_2); 
 
@@ -10866,10 +10884,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4815:3: (enumLiteral_1= 'wander' )
+                    // InternalMazeDsl.g:4818:3: (enumLiteral_1= 'wander' )
                     {
-                    // InternalMazeDsl.g:4815:3: (enumLiteral_1= 'wander' )
-                    // InternalMazeDsl.g:4816:4: enumLiteral_1= 'wander'
+                    // InternalMazeDsl.g:4818:3: (enumLiteral_1= 'wander' )
+                    // InternalMazeDsl.g:4819:4: enumLiteral_1= 'wander'
                     {
                     enumLiteral_1=(Token)match(input,138,FOLLOW_2); 
 
@@ -10883,10 +10901,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4823:3: (enumLiteral_2= 'aggressive' )
+                    // InternalMazeDsl.g:4826:3: (enumLiteral_2= 'aggressive' )
                     {
-                    // InternalMazeDsl.g:4823:3: (enumLiteral_2= 'aggressive' )
-                    // InternalMazeDsl.g:4824:4: enumLiteral_2= 'aggressive'
+                    // InternalMazeDsl.g:4826:3: (enumLiteral_2= 'aggressive' )
+                    // InternalMazeDsl.g:4827:4: enumLiteral_2= 'aggressive'
                     {
                     enumLiteral_2=(Token)match(input,139,FOLLOW_2); 
 
@@ -10900,10 +10918,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalMazeDsl.g:4831:3: (enumLiteral_3= 'patrol' )
+                    // InternalMazeDsl.g:4834:3: (enumLiteral_3= 'patrol' )
                     {
-                    // InternalMazeDsl.g:4831:3: (enumLiteral_3= 'patrol' )
-                    // InternalMazeDsl.g:4832:4: enumLiteral_3= 'patrol'
+                    // InternalMazeDsl.g:4834:3: (enumLiteral_3= 'patrol' )
+                    // InternalMazeDsl.g:4835:4: enumLiteral_3= 'patrol'
                     {
                     enumLiteral_3=(Token)match(input,32,FOLLOW_2); 
 
@@ -10939,7 +10957,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProjectileTypeEnum"
-    // InternalMazeDsl.g:4842:1: ruleProjectileTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) ) ;
+    // InternalMazeDsl.g:4845:1: ruleProjectileTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) ) ;
     public final Enumerator ruleProjectileTypeEnum() throws RecognitionException {
         Enumerator current = null;
 
@@ -10951,10 +10969,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4848:2: ( ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) ) )
-            // InternalMazeDsl.g:4849:2: ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) )
+            // InternalMazeDsl.g:4851:2: ( ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) ) )
+            // InternalMazeDsl.g:4852:2: ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) )
             {
-            // InternalMazeDsl.g:4849:2: ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) )
+            // InternalMazeDsl.g:4852:2: ( (enumLiteral_0= 'straight' ) | (enumLiteral_1= 'lob' ) | (enumLiteral_2= 'beam' ) )
             int alt82=3;
             switch ( input.LA(1) ) {
             case 140:
@@ -10981,10 +10999,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt82) {
                 case 1 :
-                    // InternalMazeDsl.g:4850:3: (enumLiteral_0= 'straight' )
+                    // InternalMazeDsl.g:4853:3: (enumLiteral_0= 'straight' )
                     {
-                    // InternalMazeDsl.g:4850:3: (enumLiteral_0= 'straight' )
-                    // InternalMazeDsl.g:4851:4: enumLiteral_0= 'straight'
+                    // InternalMazeDsl.g:4853:3: (enumLiteral_0= 'straight' )
+                    // InternalMazeDsl.g:4854:4: enumLiteral_0= 'straight'
                     {
                     enumLiteral_0=(Token)match(input,140,FOLLOW_2); 
 
@@ -10998,10 +11016,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4858:3: (enumLiteral_1= 'lob' )
+                    // InternalMazeDsl.g:4861:3: (enumLiteral_1= 'lob' )
                     {
-                    // InternalMazeDsl.g:4858:3: (enumLiteral_1= 'lob' )
-                    // InternalMazeDsl.g:4859:4: enumLiteral_1= 'lob'
+                    // InternalMazeDsl.g:4861:3: (enumLiteral_1= 'lob' )
+                    // InternalMazeDsl.g:4862:4: enumLiteral_1= 'lob'
                     {
                     enumLiteral_1=(Token)match(input,141,FOLLOW_2); 
 
@@ -11015,10 +11033,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4866:3: (enumLiteral_2= 'beam' )
+                    // InternalMazeDsl.g:4869:3: (enumLiteral_2= 'beam' )
                     {
-                    // InternalMazeDsl.g:4866:3: (enumLiteral_2= 'beam' )
-                    // InternalMazeDsl.g:4867:4: enumLiteral_2= 'beam'
+                    // InternalMazeDsl.g:4869:3: (enumLiteral_2= 'beam' )
+                    // InternalMazeDsl.g:4870:4: enumLiteral_2= 'beam'
                     {
                     enumLiteral_2=(Token)match(input,142,FOLLOW_2); 
 
@@ -11054,7 +11072,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleLootItemTypeEnum"
-    // InternalMazeDsl.g:4877:1: ruleLootItemTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) ) ;
+    // InternalMazeDsl.g:4880:1: ruleLootItemTypeEnum returns [Enumerator current=null] : ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) ) ;
     public final Enumerator ruleLootItemTypeEnum() throws RecognitionException {
         Enumerator current = null;
 
@@ -11067,10 +11085,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4883:2: ( ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) ) )
-            // InternalMazeDsl.g:4884:2: ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) )
+            // InternalMazeDsl.g:4886:2: ( ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) ) )
+            // InternalMazeDsl.g:4887:2: ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) )
             {
-            // InternalMazeDsl.g:4884:2: ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) )
+            // InternalMazeDsl.g:4887:2: ( (enumLiteral_0= 'food' ) | (enumLiteral_1= 'bomb' ) | (enumLiteral_2= 'trap' ) | (enumLiteral_3= 'weapon' ) )
             int alt83=4;
             switch ( input.LA(1) ) {
             case 143:
@@ -11102,10 +11120,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
             switch (alt83) {
                 case 1 :
-                    // InternalMazeDsl.g:4885:3: (enumLiteral_0= 'food' )
+                    // InternalMazeDsl.g:4888:3: (enumLiteral_0= 'food' )
                     {
-                    // InternalMazeDsl.g:4885:3: (enumLiteral_0= 'food' )
-                    // InternalMazeDsl.g:4886:4: enumLiteral_0= 'food'
+                    // InternalMazeDsl.g:4888:3: (enumLiteral_0= 'food' )
+                    // InternalMazeDsl.g:4889:4: enumLiteral_0= 'food'
                     {
                     enumLiteral_0=(Token)match(input,143,FOLLOW_2); 
 
@@ -11119,10 +11137,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalMazeDsl.g:4893:3: (enumLiteral_1= 'bomb' )
+                    // InternalMazeDsl.g:4896:3: (enumLiteral_1= 'bomb' )
                     {
-                    // InternalMazeDsl.g:4893:3: (enumLiteral_1= 'bomb' )
-                    // InternalMazeDsl.g:4894:4: enumLiteral_1= 'bomb'
+                    // InternalMazeDsl.g:4896:3: (enumLiteral_1= 'bomb' )
+                    // InternalMazeDsl.g:4897:4: enumLiteral_1= 'bomb'
                     {
                     enumLiteral_1=(Token)match(input,144,FOLLOW_2); 
 
@@ -11136,10 +11154,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalMazeDsl.g:4901:3: (enumLiteral_2= 'trap' )
+                    // InternalMazeDsl.g:4904:3: (enumLiteral_2= 'trap' )
                     {
-                    // InternalMazeDsl.g:4901:3: (enumLiteral_2= 'trap' )
-                    // InternalMazeDsl.g:4902:4: enumLiteral_2= 'trap'
+                    // InternalMazeDsl.g:4904:3: (enumLiteral_2= 'trap' )
+                    // InternalMazeDsl.g:4905:4: enumLiteral_2= 'trap'
                     {
                     enumLiteral_2=(Token)match(input,145,FOLLOW_2); 
 
@@ -11153,10 +11171,10 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalMazeDsl.g:4909:3: (enumLiteral_3= 'weapon' )
+                    // InternalMazeDsl.g:4912:3: (enumLiteral_3= 'weapon' )
                     {
-                    // InternalMazeDsl.g:4909:3: (enumLiteral_3= 'weapon' )
-                    // InternalMazeDsl.g:4910:4: enumLiteral_3= 'weapon'
+                    // InternalMazeDsl.g:4912:3: (enumLiteral_3= 'weapon' )
+                    // InternalMazeDsl.g:4913:4: enumLiteral_3= 'weapon'
                     {
                     enumLiteral_3=(Token)match(input,146,FOLLOW_2); 
 
@@ -11192,7 +11210,7 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDropWeaponEnum"
-    // InternalMazeDsl.g:4920:1: ruleDropWeaponEnum returns [Enumerator current=null] : (enumLiteral_0= 'gatling' ) ;
+    // InternalMazeDsl.g:4923:1: ruleDropWeaponEnum returns [Enumerator current=null] : (enumLiteral_0= 'gatling' ) ;
     public final Enumerator ruleDropWeaponEnum() throws RecognitionException {
         Enumerator current = null;
 
@@ -11202,11 +11220,11 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalMazeDsl.g:4926:2: ( (enumLiteral_0= 'gatling' ) )
-            // InternalMazeDsl.g:4927:2: (enumLiteral_0= 'gatling' )
+            // InternalMazeDsl.g:4929:2: ( (enumLiteral_0= 'gatling' ) )
+            // InternalMazeDsl.g:4930:2: (enumLiteral_0= 'gatling' )
             {
-            // InternalMazeDsl.g:4927:2: (enumLiteral_0= 'gatling' )
-            // InternalMazeDsl.g:4928:3: enumLiteral_0= 'gatling'
+            // InternalMazeDsl.g:4930:2: (enumLiteral_0= 'gatling' )
+            // InternalMazeDsl.g:4931:3: enumLiteral_0= 'gatling'
             {
             enumLiteral_0=(Token)match(input,130,FOLLOW_2); 
 
@@ -11319,55 +11337,54 @@ public class InternalMazeDslParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x0000000000002000L,0x0100000000000000L});
     public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000180L});
     public static final BitSet FOLLOW_80 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000100L});
-    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0004000000000002L});
-    public static final BitSet FOLLOW_83 = new BitSet(new long[]{0x0000000008000000L});
-    public static final BitSet FOLLOW_84 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000400L});
-    public static final BitSet FOLLOW_85 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_86 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
-    public static final BitSet FOLLOW_87 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
-    public static final BitSet FOLLOW_88 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
-    public static final BitSet FOLLOW_89 = new BitSet(new long[]{0x0000000000000000L,0x0000000000008000L});
-    public static final BitSet FOLLOW_90 = new BitSet(new long[]{0x0000000000000000L,0x0000000000030000L});
-    public static final BitSet FOLLOW_91 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
-    public static final BitSet FOLLOW_92 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
-    public static final BitSet FOLLOW_93 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_94 = new BitSet(new long[]{0x0000000000000000L,0x0000000000200000L});
-    public static final BitSet FOLLOW_95 = new BitSet(new long[]{0x0000000000000000L,0x0000000000400000L});
-    public static final BitSet FOLLOW_96 = new BitSet(new long[]{0x0000000000000000L,0x0000000001800000L});
-    public static final BitSet FOLLOW_97 = new BitSet(new long[]{0x0000000000000000L,0x0000000001000000L});
-    public static final BitSet FOLLOW_98 = new BitSet(new long[]{0x0000000000000000L,0x0000000002000000L});
-    public static final BitSet FOLLOW_99 = new BitSet(new long[]{0x0000000000000000L,0x0000000004000000L});
-    public static final BitSet FOLLOW_100 = new BitSet(new long[]{0x0000000000000000L,0x0000000008000000L});
-    public static final BitSet FOLLOW_101 = new BitSet(new long[]{0x0000000000000000L,0x0000000010000000L});
-    public static final BitSet FOLLOW_102 = new BitSet(new long[]{0x0000000000000000L,0x0000000020000000L});
-    public static final BitSet FOLLOW_103 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_104 = new BitSet(new long[]{0x0000000000000000L,0x0000000200000000L});
-    public static final BitSet FOLLOW_105 = new BitSet(new long[]{0x0000000000000000L,0x0000000400000000L});
-    public static final BitSet FOLLOW_106 = new BitSet(new long[]{0x0000000000000000L,0x0000000800000000L});
-    public static final BitSet FOLLOW_107 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_108 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
-    public static final BitSet FOLLOW_109 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
-    public static final BitSet FOLLOW_110 = new BitSet(new long[]{0x0000000000000000L,0x0000008000000000L});
-    public static final BitSet FOLLOW_111 = new BitSet(new long[]{0x0000000000000000L,0x0000010000000000L});
-    public static final BitSet FOLLOW_112 = new BitSet(new long[]{0x0000000000000000L,0x0000020000000000L});
-    public static final BitSet FOLLOW_113 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
-    public static final BitSet FOLLOW_114 = new BitSet(new long[]{0x0000000000002000L,0x0000F80000000000L});
-    public static final BitSet FOLLOW_115 = new BitSet(new long[]{0x0000000000002000L,0x0000F00000000000L});
-    public static final BitSet FOLLOW_116 = new BitSet(new long[]{0x0000000000002000L,0x0000E00000000000L});
-    public static final BitSet FOLLOW_117 = new BitSet(new long[]{0x0000000000002000L,0x0000C00000000000L});
-    public static final BitSet FOLLOW_118 = new BitSet(new long[]{0x0000000000002000L,0x0000800000000000L});
-    public static final BitSet FOLLOW_119 = new BitSet(new long[]{0x0000000000000000L,0x0004000000000000L});
-    public static final BitSet FOLLOW_120 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
-    public static final BitSet FOLLOW_121 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
-    public static final BitSet FOLLOW_122 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
-    public static final BitSet FOLLOW_123 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
-    public static final BitSet FOLLOW_124 = new BitSet(new long[]{0x0000000000002000L,0x0080000000000000L});
-    public static final BitSet FOLLOW_125 = new BitSet(new long[]{0x0000000000000000L,0x0400000000000000L});
-    public static final BitSet FOLLOW_126 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L});
-    public static final BitSet FOLLOW_127 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
-    public static final BitSet FOLLOW_128 = new BitSet(new long[]{0x0000000000002000L,0x6000000000000000L});
-    public static final BitSet FOLLOW_129 = new BitSet(new long[]{0x0000000000002000L,0x4000000000000000L});
-    public static final BitSet FOLLOW_130 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000001L});
+    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0004000000000002L});
+    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_83 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000400L});
+    public static final BitSet FOLLOW_84 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_85 = new BitSet(new long[]{0x0000000000000000L,0x0000000000001000L});
+    public static final BitSet FOLLOW_86 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
+    public static final BitSet FOLLOW_87 = new BitSet(new long[]{0x0000000000000000L,0x0000000000004000L});
+    public static final BitSet FOLLOW_88 = new BitSet(new long[]{0x0000000000000000L,0x0000000000008000L});
+    public static final BitSet FOLLOW_89 = new BitSet(new long[]{0x0000000000000000L,0x0000000000030000L});
+    public static final BitSet FOLLOW_90 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
+    public static final BitSet FOLLOW_91 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    public static final BitSet FOLLOW_92 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_93 = new BitSet(new long[]{0x0000000000000000L,0x0000000000200000L});
+    public static final BitSet FOLLOW_94 = new BitSet(new long[]{0x0000000000000000L,0x0000000000400000L});
+    public static final BitSet FOLLOW_95 = new BitSet(new long[]{0x0000000000000000L,0x0000000001800000L});
+    public static final BitSet FOLLOW_96 = new BitSet(new long[]{0x0000000000000000L,0x0000000001000000L});
+    public static final BitSet FOLLOW_97 = new BitSet(new long[]{0x0000000000000000L,0x0000000002000000L});
+    public static final BitSet FOLLOW_98 = new BitSet(new long[]{0x0000000000000000L,0x0000000004000000L});
+    public static final BitSet FOLLOW_99 = new BitSet(new long[]{0x0000000000000000L,0x0000000008000000L});
+    public static final BitSet FOLLOW_100 = new BitSet(new long[]{0x0000000000000000L,0x0000000010000000L});
+    public static final BitSet FOLLOW_101 = new BitSet(new long[]{0x0000000000000000L,0x0000000020000000L});
+    public static final BitSet FOLLOW_102 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_103 = new BitSet(new long[]{0x0000000000000000L,0x0000000200000000L});
+    public static final BitSet FOLLOW_104 = new BitSet(new long[]{0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_105 = new BitSet(new long[]{0x0000000000000000L,0x0000000800000000L});
+    public static final BitSet FOLLOW_106 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    public static final BitSet FOLLOW_107 = new BitSet(new long[]{0x0000000000000000L,0x0000002000000000L});
+    public static final BitSet FOLLOW_108 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
+    public static final BitSet FOLLOW_109 = new BitSet(new long[]{0x0000000000000000L,0x0000008000000000L});
+    public static final BitSet FOLLOW_110 = new BitSet(new long[]{0x0000000000000000L,0x0000010000000000L});
+    public static final BitSet FOLLOW_111 = new BitSet(new long[]{0x0000000000000000L,0x0000020000000000L});
+    public static final BitSet FOLLOW_112 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
+    public static final BitSet FOLLOW_113 = new BitSet(new long[]{0x0000000000002000L,0x0000F80000000000L});
+    public static final BitSet FOLLOW_114 = new BitSet(new long[]{0x0000000000002000L,0x0000F00000000000L});
+    public static final BitSet FOLLOW_115 = new BitSet(new long[]{0x0000000000002000L,0x0000E00000000000L});
+    public static final BitSet FOLLOW_116 = new BitSet(new long[]{0x0000000000002000L,0x0000C00000000000L});
+    public static final BitSet FOLLOW_117 = new BitSet(new long[]{0x0000000000002000L,0x0000800000000000L});
+    public static final BitSet FOLLOW_118 = new BitSet(new long[]{0x0000000000000000L,0x0004000000000000L});
+    public static final BitSet FOLLOW_119 = new BitSet(new long[]{0x0000000000000000L,0x0008000000000000L});
+    public static final BitSet FOLLOW_120 = new BitSet(new long[]{0x0000000000000000L,0x0010000000000000L});
+    public static final BitSet FOLLOW_121 = new BitSet(new long[]{0x0000000000000000L,0x0020000000000000L});
+    public static final BitSet FOLLOW_122 = new BitSet(new long[]{0x0000000000000000L,0x0040000000000000L});
+    public static final BitSet FOLLOW_123 = new BitSet(new long[]{0x0000000000002000L,0x0080000000000000L});
+    public static final BitSet FOLLOW_124 = new BitSet(new long[]{0x0000000000000000L,0x0400000000000000L});
+    public static final BitSet FOLLOW_125 = new BitSet(new long[]{0x0000000000000000L,0x0800000000000000L});
+    public static final BitSet FOLLOW_126 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    public static final BitSet FOLLOW_127 = new BitSet(new long[]{0x0000000000002000L,0x6000000000000000L});
+    public static final BitSet FOLLOW_128 = new BitSet(new long[]{0x0000000000002000L,0x4000000000000000L});
+    public static final BitSet FOLLOW_129 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000001L});
 
 }

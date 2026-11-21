@@ -356,7 +356,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     LevelZone returns LevelZone
 	 *
 	 * Constraint:
-	 *     (displayName=STRING breakableShare=DOUBLE_OBJECT? materialIds+=ID materialIds+=ID*)
+	 *     (displayName=STRING breakableShare=DOUBLE_OBJECT? materialIds+=ValidID materialIds+=ValidID*)
 	 * </pre>
 	 */
 	protected void sequence_LevelZone(ISerializationContext context, LevelZone semanticObject) {
@@ -637,7 +637,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         startRadiusCells=INT 
 	 *         blockRadiusCells=INT 
 	 *         spawnRadius=DOUBLE 
-	 *         wallMaterial=ID 
+	 *         wallMaterial=ValidID 
 	 *         buildSound=STRING?
 	 *     )
 	 * </pre>

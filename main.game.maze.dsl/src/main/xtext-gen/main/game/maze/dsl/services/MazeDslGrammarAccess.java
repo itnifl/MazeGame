@@ -1527,21 +1527,21 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0 = (RuleCall)cBreakableShareAssignment_2_1.eContents().get(0);
 		private final Keyword cMaterialsKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cMaterialIdsAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cMaterialIdsIDTerminalRuleCall_4_0 = (RuleCall)cMaterialIdsAssignment_4.eContents().get(0);
+		private final RuleCall cMaterialIdsValidIDParserRuleCall_4_0 = (RuleCall)cMaterialIdsAssignment_4.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
 		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
 		private final Assignment cMaterialIdsAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
-		private final RuleCall cMaterialIdsIDTerminalRuleCall_5_1_0 = (RuleCall)cMaterialIdsAssignment_5_1.eContents().get(0);
+		private final RuleCall cMaterialIdsValidIDParserRuleCall_5_1_0 = (RuleCall)cMaterialIdsAssignment_5_1.eContents().get(0);
 		
 		///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
 		//LevelZone:
 		//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-		//    'materials' materialIds+=ID (',' materialIds+=ID)*
+		//    'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-		//'materials' materialIds+=ID (',' materialIds+=ID)*
+		//'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 		public Group getGroup() { return cGroup; }
 		
 		//'ring'
@@ -1568,23 +1568,23 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'materials'
 		public Keyword getMaterialsKeyword_3() { return cMaterialsKeyword_3; }
 		
-		//materialIds+=ID
+		//materialIds+=ValidID
 		public Assignment getMaterialIdsAssignment_4() { return cMaterialIdsAssignment_4; }
 		
-		//ID
-		public RuleCall getMaterialIdsIDTerminalRuleCall_4_0() { return cMaterialIdsIDTerminalRuleCall_4_0; }
+		//ValidID
+		public RuleCall getMaterialIdsValidIDParserRuleCall_4_0() { return cMaterialIdsValidIDParserRuleCall_4_0; }
 		
-		//(',' materialIds+=ID)*
+		//(',' materialIds+=ValidID)*
 		public Group getGroup_5() { return cGroup_5; }
 		
 		//','
 		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
 		
-		//materialIds+=ID
+		//materialIds+=ValidID
 		public Assignment getMaterialIdsAssignment_5_1() { return cMaterialIdsAssignment_5_1; }
 		
-		//ID
-		public RuleCall getMaterialIdsIDTerminalRuleCall_5_1_0() { return cMaterialIdsIDTerminalRuleCall_5_1_0; }
+		//ValidID
+		public RuleCall getMaterialIdsValidIDParserRuleCall_5_1_0() { return cMaterialIdsValidIDParserRuleCall_5_1_0; }
 	}
 	public class SergeantConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.SergeantConfig");
@@ -2428,7 +2428,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cSpawnRadiusDOUBLEParserRuleCall_16_0 = (RuleCall)cSpawnRadiusAssignment_16.eContents().get(0);
 		private final Keyword cMaterialKeyword_17 = (Keyword)cGroup.eContents().get(17);
 		private final Assignment cWallMaterialAssignment_18 = (Assignment)cGroup.eContents().get(18);
-		private final RuleCall cWallMaterialIDTerminalRuleCall_18_0 = (RuleCall)cWallMaterialAssignment_18.eContents().get(0);
+		private final RuleCall cWallMaterialValidIDParserRuleCall_18_0 = (RuleCall)cWallMaterialAssignment_18.eContents().get(0);
 		private final Group cGroup_19 = (Group)cGroup.eContents().get(19);
 		private final Keyword cBuildSoundKeyword_19_0 = (Keyword)cGroup_19.eContents().get(0);
 		private final Assignment cBuildSoundAssignment_19_1 = (Assignment)cGroup_19.eContents().get(1);
@@ -2444,7 +2444,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        'startRadius' startRadiusCells=INT
 		//        'blockRadius' blockRadiusCells=INT
 		//        'spawnRadius' spawnRadius=DOUBLE
-		//        'material' wallMaterial=ID
+		//        'material' wallMaterial=ValidID
 		//        ('buildSound' buildSound=STRING)?
 		//    '}'
 		//;
@@ -2458,7 +2458,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    'startRadius' startRadiusCells=INT
 		//    'blockRadius' blockRadiusCells=INT
 		//    'spawnRadius' spawnRadius=DOUBLE
-		//    'material' wallMaterial=ID
+		//    'material' wallMaterial=ValidID
 		//    ('buildSound' buildSound=STRING)?
 		//'}'
 		public Group getGroup() { return cGroup; }
@@ -2541,11 +2541,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'material'
 		public Keyword getMaterialKeyword_17() { return cMaterialKeyword_17; }
 		
-		//wallMaterial=ID
+		//wallMaterial=ValidID
 		public Assignment getWallMaterialAssignment_18() { return cWallMaterialAssignment_18; }
 		
-		//ID
-		public RuleCall getWallMaterialIDTerminalRuleCall_18_0() { return cWallMaterialIDTerminalRuleCall_18_0; }
+		//ValidID
+		public RuleCall getWallMaterialValidIDParserRuleCall_18_0() { return cWallMaterialValidIDParserRuleCall_18_0; }
 		
 		//('buildSound' buildSound=STRING)?
 		public Group getGroup_19() { return cGroup_19; }
@@ -3833,7 +3833,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
 	//LevelZone:
 	//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-	//    'materials' materialIds+=ID (',' materialIds+=ID)*
+	//    'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 	//;
 	public LevelZoneElements getLevelZoneAccess() {
 		return pLevelZone;
@@ -3984,7 +3984,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        'startRadius' startRadiusCells=INT
 	//        'blockRadius' blockRadiusCells=INT
 	//        'spawnRadius' spawnRadius=DOUBLE
-	//        'material' wallMaterial=ID
+	//        'material' wallMaterial=ValidID
 	//        ('buildSound' buildSound=STRING)?
 	//    '}'
 	//;

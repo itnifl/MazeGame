@@ -12969,9 +12969,9 @@ rule__LevelZone__MaterialIdsAssignment_4
 	}
 :
 	(
-		{ before(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0()); }
-		RULE_ID
-		{ after(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0()); }
+		{ before(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0()); }
+		ruleValidID
+		{ after(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0()); }
 	)
 ;
 finally {
@@ -12984,9 +12984,9 @@ rule__LevelZone__MaterialIdsAssignment_5_1
 	}
 :
 	(
-		{ before(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0()); }
+		{ before(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0()); }
 	)
 ;
 finally {
@@ -13854,9 +13854,9 @@ rule__WallBuilderConfig__WallMaterialAssignment_18
 	}
 :
 	(
-		{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); }
-		RULE_ID
-		{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0()); }
+		{ before(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0()); }
+		ruleValidID
+		{ after(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0()); }
 	)
 ;
 finally {

@@ -2295,19 +2295,20 @@ ruleLevelZone returns [EObject current=null]
 		}
 		(
 			(
-				lv_materialIds_5_0=RULE_ID
 				{
-					newLeafNode(lv_materialIds_5_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_4_0());
+					newCompositeNode(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_4_0());
 				}
+				lv_materialIds_5_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getLevelZoneRule());
+						$current = createModelElementForParent(grammarAccess.getLevelZoneRule());
 					}
-					addWithLastConsumed(
+					add(
 						$current,
 						"materialIds",
 						lv_materialIds_5_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -2318,19 +2319,20 @@ ruleLevelZone returns [EObject current=null]
 			}
 			(
 				(
-					lv_materialIds_7_0=RULE_ID
 					{
-						newLeafNode(lv_materialIds_7_0, grammarAccess.getLevelZoneAccess().getMaterialIdsIDTerminalRuleCall_5_1_0());
+						newCompositeNode(grammarAccess.getLevelZoneAccess().getMaterialIdsValidIDParserRuleCall_5_1_0());
 					}
+					lv_materialIds_7_0=ruleValidID
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getLevelZoneRule());
+							$current = createModelElementForParent(grammarAccess.getLevelZoneRule());
 						}
-						addWithLastConsumed(
+						add(
 							$current,
 							"materialIds",
 							lv_materialIds_7_0,
-							"org.eclipse.xtext.common.Terminals.ID");
+							"main.game.maze.dsl.MazeDsl.ValidID");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -3812,19 +3814,20 @@ ruleWallBuilderConfig returns [EObject current=null]
 		}
 		(
 			(
-				lv_wallMaterial_18_0=RULE_ID
 				{
-					newLeafNode(lv_wallMaterial_18_0, grammarAccess.getWallBuilderConfigAccess().getWallMaterialIDTerminalRuleCall_18_0());
+					newCompositeNode(grammarAccess.getWallBuilderConfigAccess().getWallMaterialValidIDParserRuleCall_18_0());
 				}
+				lv_wallMaterial_18_0=ruleValidID
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getWallBuilderConfigRule());
+						$current = createModelElementForParent(grammarAccess.getWallBuilderConfigRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"wallMaterial",
 						lv_wallMaterial_18_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)

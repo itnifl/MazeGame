@@ -86,7 +86,11 @@ public final class WallBuilderSession {
     private final Cell heart;
     private final Random random;
     private final Map<String, State> states = new HashMap<>();
-    /** Corridors a builder has begun, until they are finished (so another can finish one whose builder was killed). */
+    /**
+     * Every corridor a builder has worked on, kept for the whole level: a half-built wall (its builder was killed, or
+     * the player broke part of it) is finished by another builder, while a corridor that is partly walled by the maze
+     * itself is left alone.
+     */
     private final List<Edge> started = new ArrayList<>();
 
     public WallBuilderSession(WallBuilderSpec spec, int widthPx, int heightPx, double heartX, double heartY) {
@@ -343,6 +347,10 @@ public final class WallBuilderSession {
             giveUp(state);
             return;
         }
+        if (routeBlocked(state, grid)) {
+            giveUp(state);   // a wall went up across the way (another builder's): plan again
+            return;
+        }
         double budget = spec.speed() * dt;
         while (budget > 0 && !state.path.isEmpty()) {
             Point2D target = state.path.peek();
@@ -369,6 +377,20 @@ public final class WallBuilderSession {
                 state.timer = 0;
             }
         }
+    }
+
+    /** Whether the next leg of the route now runs through a wall: from the cell the builder is in to the next one. */
+    private static boolean routeBlocked(State state, CellGrid grid) {
+        Point2D next = state.path.peek();
+        if (next == null) {
+            return false;
+        }
+        Cell from = grid.cellOf(state.x, state.y);
+        Cell to = grid.cellOf(next.getX(), next.getY());
+        if (from.equals(to) || Math.abs(from.row() - to.row()) + Math.abs(from.col() - to.col()) != 1) {
+            return false;
+        }
+        return !grid.isOpen(new Edge(from, to));
     }
 
     private void build(String id, State state, CellGrid grid, double dt, double playerX, double playerY,
@@ -410,8 +432,7 @@ public final class WallBuilderSession {
     }
 
     private void finish(State state) {
-        started.removeIf(edge -> edge.sameAs(state.site));
-        giveUp(state);
+        giveUp(state);   // the corridor stays in `started`, so a wall the player breaks only in part is repaired too
     }
 
     private void giveUp(State state) {

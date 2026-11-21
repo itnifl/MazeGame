@@ -204,7 +204,7 @@ LevelConfig:
 /* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
 LevelZone:
     'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-    'materials' materialIds+=ID (',' materialIds+=ID)*
+    'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 ;
 
 SergeantConfig:
@@ -292,7 +292,7 @@ WallBuilderConfig:
         'startRadius' startRadiusCells=INT
         'blockRadius' blockRadiusCells=INT
         'spawnRadius' spawnRadius=DOUBLE
-        'material' wallMaterial=ID
+        'material' wallMaterial=ValidID
         ('buildSound' buildSound=STRING)?
     '}'
 ;

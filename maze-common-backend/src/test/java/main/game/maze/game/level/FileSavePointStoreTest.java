@@ -63,4 +63,29 @@ class FileSavePointStoreTest {
     void levelOneHasNoSavepoint() {
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new SavePoint(1, null));
     }
+
+    @Test
+    @DisplayName("a savepoint that cannot be written leaves the previous one as it was")
+    void aFailedWriteKeepsTheOldSavePoint() throws Exception {
+        Path file = dir.resolve("s.properties");
+        FileSavePointStore store = new FileSavePointStore(file);
+        store.save(new SavePoint(2, null));
+        // the temporary file cannot be created: something else (a non-empty directory) is in its place
+        Path blocker = dir.resolve("s.properties.tmp");
+        Files.createDirectories(blocker);
+        Files.writeString(blocker.resolve("x"), "x");
+        store.save(new SavePoint(4, null));
+        assertEquals(2, store.load().orElseThrow().level(), "the old savepoint is still there");
+    }
+
+    @Test
+    @DisplayName("a new savepoint replaces the old one and leaves no temporary file")
+    void replacesCleanly() throws Exception {
+        Path file = dir.resolve("s.properties");
+        FileSavePointStore store = new FileSavePointStore(file);
+        store.save(new SavePoint(2, null));
+        store.save(new SavePoint(3, null));
+        assertEquals(3, store.load().orElseThrow().level());
+        assertFalse(Files.exists(dir.resolve("s.properties.tmp")));
+    }
 }
