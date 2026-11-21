@@ -113,7 +113,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="pulseSeconds" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.9"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastRadius" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="160.0"/>
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="300.0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastDamage" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="250"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="holeRadius" lowerBound="1"

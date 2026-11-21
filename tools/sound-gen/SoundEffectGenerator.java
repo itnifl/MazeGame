@@ -42,6 +42,7 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-extra-life.wav", pickupExtraLife());
         write(dir, "pickup-gatling.wav", pickupGatling());
         write(dir, "bomb-explosion.wav", bombExplosion());
+        write(dir, "teleport.wav", teleport());
         write(dir, "laser-fire.wav", laserFire());
         write(dir, "gatling-burst.wav", gatlingBurst());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
@@ -235,6 +236,26 @@ public final class SoundEffectGenerator {
             double rumbleLevel = rumble * 9.0 * Math.exp(-t * 2.3) * Math.min(1, t / 0.03);
             double crack = white * Math.exp(-t * 70) * 0.55;
             out[i] = boom + rumbleLevel + crack;
+        }
+        return out;
+    }
+
+    /** A magical zap: a tone that sweeps up and then drops away, shimmering, over a short airy whoosh. */
+    static double[] teleport() {
+        double[] out = buffer(0.7);
+        Random noise = new Random(33);
+        double phase = 0;
+        double air = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            // up for the first 0.3 s (300 -> 1800 Hz), then down (1800 -> 200 Hz)
+            double freq = t < 0.3 ? 300 + 1500 * (t / 0.3) : 1800 - 1600 * ((t - 0.3) / 0.4);
+            phase += 2 * Math.PI * freq / RATE;
+            double shimmer = 0.75 + 0.25 * Math.sin(2 * Math.PI * 28 * t);
+            double tone = (Math.sin(phase) * 0.5 + Math.sin(phase * 2.01) * 0.2) * shimmer;
+            air += 0.25 * ((noise.nextDouble() * 2 - 1) - air);
+            double whoosh = air * 0.5 * Math.sin(Math.PI * Math.min(1, t / 0.7));
+            out[i] = (tone + whoosh) * envelope(t, 0.01, 0.7);
         }
         return out;
     }

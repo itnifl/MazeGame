@@ -37,7 +37,7 @@
   -->
   <levels number="3" name="The Minefield" baseLevel="2">
     <mines count="8" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
-        blastRadius="160.0" blastDamage="250" holeRadius="30.0"/>
+        blastRadius="300.0" blastDamage="250" holeRadius="30.0"/>
     <teleportGhost displayName="Portal ghost" health="60" speed="1.6"
         sprite="/main/game/maze/ghost-portal.png"
         teleportSound="/main/game/maze/sounds/teleport.wav" cooldownSeconds="2.5"/>

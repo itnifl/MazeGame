@@ -32,6 +32,7 @@ import main.game.maze.game.level.DifficultyTier;
 import main.game.maze.game.level.LevelSpec;
 import main.game.maze.game.level.SergeantPosts;
 import main.game.maze.game.level.SergeantSpec;
+import main.game.maze.game.level.TeleportGhostSpec;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.generators.RealMaze;
 import main.game.maze.opponents.BehaviorType;
@@ -70,6 +71,10 @@ public final class RuntimeVisualModelLoader {
     private static final float CENTER_RATIO = 0.5f;
     /** Danger of a sergeant, for the kill points. */
     private static final float SERGEANT_THREAT = 5f;
+    /** Danger of a portal ghost, for the kill points (it never hurts). */
+    private static final float PORTAL_GHOST_THREAT = 3f;
+    private static final float PORTAL_GHOST_MIN_START_DISTANCE = 200f;
+    private static final long PORTAL_GHOST_SEED = 4242L;
     private static final long ENEMY_SPAWN_RANDOM_SEED = 1337L;
     private static final float MIN_THREAT_BUDGET = 1f;
     // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
@@ -262,6 +267,7 @@ public final class RuntimeVisualModelLoader {
         }
 
         out.addAll(sergeantSpawns(activeLevel, arena, difficulty, widthPx, heightPx));
+        out.addAll(portalGhostSpawns(activeLevel, arena, difficulty, widthPx, heightPx, startX, startY));
         return List.copyOf(out);
     }
 
@@ -291,6 +297,36 @@ public final class RuntimeVisualModelLoader {
                     EnemySpawn.DEFAULT_ATTACK_RANGE, EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS,
                     EnemySpawn.DEFAULT_PROJECTILE_SPEED, 0, spec.health(), EnemyAnimationSpec.defaults(),
                     KillScoring.pointsForThreat(SERGEANT_THREAT)));
+        }
+        return spawns;
+    }
+
+    /**
+     * The level's teleporting ghosts: as many as the difficulty says, at random free corridor points away from
+     * the start (only in a generated maze). Screen space is y-up.
+     */
+    private static List<EnemySpawn> portalGhostSpawns(LevelSpec level, MazeArena arena, Difficulty difficulty,
+                                                      float widthPx, float heightPx, float startX, float startY) {
+        if (level == null || !level.hasTeleportGhosts() || !(arena instanceof RealMaze realMaze)) {
+            return List.of();
+        }
+        TeleportGhostSpec ghost = level.teleportGhost();
+        DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
+        List<Point2D> corridor = new ArrayList<>(new PickupField(PickupCatalogLoader.loadDefault(), new Random())
+                .spawnPointsOf(realMaze.sourceWorld()));
+        corridor.removeIf(point -> Math.hypot(point.getX() - startX, heightPx - point.getY() - startY) < PORTAL_GHOST_MIN_START_DISTANCE);
+        java.util.Collections.shuffle(corridor, new Random(PORTAL_GHOST_SEED));
+        List<EnemySpawn> spawns = new ArrayList<>();
+        for (int index = 0; index < level.ghostCount(tier) && index < corridor.size(); index++) {
+            Point2D spot = corridor.get(index);
+            spawns.add(new EnemySpawn(TeleportGhostSpec.SPAWN_ID_PREFIX + GENERATED_ENEMY_ID_SEPARATOR + index,
+                    ghost.sprite(), (float) spot.getX(), heightPx - (float) spot.getY(),
+                    StageConstants.GhostCharacterXYSize, PORTAL_GHOST_THREAT, 0, 0, EMPTY_TEXT,
+                    BehaviorType.WANDER, (float) ghost.speed(), 0d, EnemySpawn.DEFAULT_VISIBILITY_LEVEL,
+                    EnemySpawn.DEFAULT_PROJECTILE_TYPE, EnemySpawn.DEFAULT_SPLASH_RADIUS, EnemySpawn.DEFAULT_ARC_HEIGHT,
+                    EnemySpawn.DEFAULT_ATTACK_RANGE, EnemySpawn.DEFAULT_ATTACK_COOLDOWN_MS,
+                    EnemySpawn.DEFAULT_PROJECTILE_SPEED, 0, ghost.health(), EnemyAnimationSpec.defaults(),
+                    KillScoring.pointsForThreat(PORTAL_GHOST_THREAT)));
         }
         return spawns;
     }

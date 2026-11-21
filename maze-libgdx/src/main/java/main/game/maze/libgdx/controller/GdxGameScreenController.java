@@ -63,6 +63,7 @@ import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
 import main.game.maze.common.graphics.fire.BombImpact;
 import main.game.maze.game.level.LevelCatalogLoader;
 import main.game.maze.game.level.LevelProgress;
+import main.game.maze.libgdx.helper.GdxHazardSupport;
 import main.game.maze.libgdx.helper.GdxSergeantSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
@@ -105,6 +106,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
     private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
     private static final float PLAYER_FLAME_RANGE = 220.0f;
+    private static final String TELEPORT_SOUND = "/main/game/maze/sounds/teleport.wav";
     private static final float PLAYER_FLAME_VISUAL_SECONDS = (float) FireBlast.DEFAULT_LIFETIME_SECONDS;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
@@ -176,6 +178,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     /** Which level is being played; the win overlay moves on to the next one. */
     private final LevelProgress levelProgress = new LevelProgress(LevelCatalogLoader.loadDefault());
     private final GdxSergeantSupport sergeantSupport = new GdxSergeantSupport();
+    private final GdxHazardSupport hazardSupport = new GdxHazardSupport();
     private final ScoringEngine scoringEngine = new ScoringEngine();
     final EnemyDirectorService enemyDirectorService = new EnemyDirectorService();    private final GameAudioDirector gameAudioDirector = new GameAudioDirector(AudioEngine::get);
     private final GdxGameAudioCoordinator gameAudioCoordinator = new GdxGameAudioCoordinator(gameAudioDirector, visualStyle);
@@ -495,6 +498,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
+        tickHazards(dt);
         GdxWeaponSupport.tickEffects(worldModel, animatedEnemies, dt);
         // enemies die from bombs, lasers, sledgehammers and collapsing walls; credit each kill to its killer
         GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
@@ -531,21 +535,49 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         }
     }
 
+    /** One frame of the mines, holes and teleports: mines that go off blast, a fall or a ghost touch teleports. */
+    private void tickHazards(float dt) {
+        var result = hazardSupport.tick(worldModel, player, animatedEnemies, dt, System.nanoTime() / 1e9);
+        var mines = hazardSupport.mineSpec();
+        for (var detonation : result.detonations()) {
+            // a great blast at the mine; it never hurts the player, who is sent away through the hole instead
+            detonateBlast((float) detonation.mine().x(), maze.heightPx() - (float) detonation.mine().y(),
+                    mines.blastDamage(), (float) mines.blastRadius(), false, "Mine");
+        }
+        if (result.teleport() != null) {
+            player.teleportTo(result.teleport().x(), result.teleport().y());
+            AudioEngine.get().play(TELEPORT_SOUND);
+            worldModel.effects().add(new GameWorldModel.ActiveEffect(new main.game.maze.common.graphics.fire.PickupSparkleEffect(
+                    result.teleport().x(), result.teleport().y(), 0.55f, 0.85f, 1.0f)));
+            flashStatus(result.teleport().cause() == GdxHazardSupport.Cause.HOLE
+                    ? "You fell through the hole - out at the other edge of the map"
+                    : "A portal ghost sent you to the edge of the map", 2.0f);
+        }
+    }
+
     private void detonatePlayerBomb(float x, float y) {
+        detonateBlast(x, y, playerBombDamage, PLAYER_FLAME_RANGE, true, "Bomb");
+    }
+
+    /**
+     * A blast at (x, y) (screen space): flame corridors that break walls and hurt enemies, the visual, the deep
+     * boom and the screen shake. Only the player's own bomb hurts the player.
+     */
+    private void detonateBlast(float x, float y, int damage, float range, boolean hurtsPlayer, String label) {
         // player.x()/y() are already centre coordinates (see PlayerState.collides);
         // do NOT add halfSize() here.
-        float playerCx = player.x();
-        float playerCy = player.y();
+        float playerCx = hurtsPlayer ? player.x() : Float.NaN;
+        float playerCy = hurtsPlayer ? player.y() : Float.NaN;
         int appliedDamage = GdxGameCombatAndEnemyFlowSupport.applyDirectionalFlameExplosion(
                 animatedEnemies,
                 maze,
                 x,
                 y,
-                playerBombDamage,
-                PLAYER_FLAME_RANGE,
+                damage,
+                range,
                 playerCx,
                 playerCy,
-                dmg -> combatState.applyDirectDamage(dmg),
+                hurtsPlayer ? dmg -> combatState.applyDirectDamage(dmg) : null,
                 PlayerIds.LOCAL_PLAYER);
 
         // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
@@ -557,10 +589,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
         // Screen +y (up in libGDX) is world dirY=-1 (walls are Y-down); screen -y is world dirY=+1.
         FireBlast blast = new FireBlast(x, y,
-                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  1,  0, surviving, PLAYER_FLAME_RANGE),
-                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY, -1,  0, surviving, PLAYER_FLAME_RANGE),
-                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0, -1, surviving, PLAYER_FLAME_RANGE),
-                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0,  1, surviving, PLAYER_FLAME_RANGE),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  1,  0, surviving, range),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY, -1,  0, surviving, range),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0, -1, surviving, range),
+                GdxGameCombatAndEnemyFlowSupport.flameVisualRange(x, worldOriginY,  0,  1, surviving, range),
                 GdxGameCombatAndEnemyFlowSupport.FLAME_CORRIDOR_WIDTH,
                 FireBlast.seedFor(x, y));
         activePlayerFireBlasts.add(new ActivePlayerFireBlast(blast, PLAYER_FLAME_VISUAL_SECONDS));
@@ -576,11 +608,11 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
         if (appliedDamage > 0 || flamedKilled > 0) {
             String msg = flamedKilled > 0
-                    ? "Bomb killed " + flamedKilled + " enem" + (flamedKilled == 1 ? "y" : "ies") + "!"
-                    : "Bomb exploded, enemy damage " + appliedDamage;
+                    ? label + " killed " + flamedKilled + " enem" + (flamedKilled == 1 ? "y" : "ies") + "!"
+                    : label + " exploded, enemy damage " + appliedDamage;
             flashStatus(msg, 1.2f);
         } else {
-            flashStatus("Bomb exploded", 1.0f);
+            flashStatus(label + " exploded", 1.0f);
         }
     }
 
@@ -793,6 +825,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);   // spawn shield, like the pickup
         worldModel.killLedger().clear();
         worldModel.effects().clear();
+        // mines, holes and portal ghosts of the level (after the old effects are gone, so their drawings stay)
+        hazardSupport.start(worldModel, maze, levelProgress.current(), animatedEnemies);
         worldModel.healFeedback().reset();
         combatState.setShield(() -> worldModel.shield().isActive());
         pickupSpawnPoints = worldModel.pickupField().spawnPointsOf(GdxWallDamageSupport.worldFrom(maze));
