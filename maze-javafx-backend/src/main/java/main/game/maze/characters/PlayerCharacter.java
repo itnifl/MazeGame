@@ -272,6 +272,17 @@ public class PlayerCharacter extends Character
         if (shielded.getAsBoolean()) {
             return;   // the power shield blocks all damage
         }
+        loseHitPoints(hp);
+    }
+
+    /** Dies at once, whatever the shield says (lava): all hit points are gone. */
+    public void killOutright() {
+        if (hitPoints.get() > 0) {
+            loseHitPoints(hitPoints.get());
+        }
+    }
+
+    private void loseHitPoints(int hp) {
         hitPoints.addAndGet(-hp);
 
         UiScheduler.get().runLater(this::updateHpBarProgress);

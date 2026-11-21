@@ -37,6 +37,7 @@
     <eLiterals name="HEART" value="4"/>
     <eLiterals name="EXTRA_LIFE" value="5"/>
     <eLiterals name="GATLING_GUN" value="6"/>
+    <eLiterals name="PULSE_CANNON" value="7"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PickupSpec">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//PickupKind"/>
@@ -58,5 +59,13 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="range"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="chargeSeconds"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Seconds a weapon takes to charge up from the moment it is fired until the shot leaves (the pulse beam cannon); 0 = fires at once."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="chargeSound"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>

@@ -175,3 +175,7 @@ vest with reflective stripes and a hammer.
 ```
 "$JAVA_HOME/bin/java" tools/sprite-gen/WallBuilderSpriteGenerator.java
 ```
+
+## Pulse beam cannon pickup
+
+`PickupSpriteGenerator` also draws `pickups/pulse-cannon.png` (the weapon HUD icon and the weapon in hand): a dark-steel barrel with glowing blue coils and a charged blue-white muzzle.

@@ -60,8 +60,8 @@ public final class FxHazardController {
      *
      * @param posts where the sergeants stand (world space, centres)
      */
-    public void startGame(GameMazeWorld world, LevelSpec level, List<Point2D> posts) {
-        session.start(world, level, posts);
+    public void startGame(GameMazeWorld world, LevelSpec level, List<Point2D> posts, double heartX, double heartY) {
+        session.start(world, level, posts, heartX, heartY);
         lastNanos = -1;
         host.draw(session.field());
     }

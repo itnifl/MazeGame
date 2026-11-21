@@ -183,6 +183,23 @@ public final class MazeNavigationGraphService {
         }
     }
 
+    /** Closes every navigation edge that runs through deadly lava (an edge across a bridge stays). */
+    public static void removeEdgesThroughLava(MazeNavigationGraph graph, main.game.maze.mazeworld.LavaField lava) {
+        if (graph == null || lava == null) return;
+        Node[][] grid = graph.getGrid();
+        for (int c = 0; c < graph.getCols(); c++) {
+            for (int r = 0; r < graph.getRows(); r++) {
+                Node n = grid[c][r];
+                if (n == null) continue;
+                for (Node neighbor : new ArrayList<>(n.getNeighbors())) {
+                    if (lava.crossesDeadly(n.getX(), n.getY(), neighbor.getX(), neighbor.getY())) {
+                        n.getNeighbors().remove(neighbor);
+                    }
+                }
+            }
+        }
+    }
+
     /** A wall was put up: every navigation edge that crosses it is closed. */
     public static void removeEdgesCrossing(MazeNavigationGraph graph, Vector2D wall) {
         if (graph == null || wall == null) return;

@@ -25,6 +25,14 @@ public interface WorldView {
      */
     boolean wouldCollide(double centerX, double centerY, double size);
 
+    /**
+     * True if the point is in deadly lava: no enemy may step there, not even a ghost that phases through walls.
+     * Levels without lava keep the default.
+     */
+    default boolean inDeadlyLava(double centerX, double centerY) {
+        return false;
+    }
+
     /** Minimum playable x bound in world units. */
     default double minX() {
         return 0d;

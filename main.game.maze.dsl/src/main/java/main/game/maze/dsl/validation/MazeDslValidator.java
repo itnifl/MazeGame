@@ -21,6 +21,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     public static final String INVALID_THREAT_LEVEL = "invalidThreatLevel";
     public static final String INVALID_HEALTH = "invalidHealth";
     public static final String INVALID_SECOND_RING = "invalidSecondRing";
+    public static final String INVALID_LAVA = "invalidLava";
     public static final String INVALID_SPEED = "invalidSpeed";
     public static final String INSUFFICIENT_WAYPOINTS = "insufficientWaypoints";
     public static final String INVALID_MAX_COUNT = "invalidMaxCount";
@@ -51,6 +52,45 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     /**
      * Validates that health is positive (0 means use default).
      */
+    /**
+     * The lava values the game would refuse to load (see {@code LavaSpec}) are errors in the DSL, so a bad value is found
+     * before the levels XMI is written and not when the game starts.
+     */
+    @Check
+    public void checkLava(LavaConfig lava) {
+        positive(lava.getStreamCount() >= 1, "streams must be at least 1", MazeDslPackage.Literals.LAVA_CONFIG__STREAM_COUNT);
+        positive(lava.getWidth() > 0, "width must be positive", MazeDslPackage.Literals.LAVA_CONFIG__WIDTH);
+        positive(lava.getBridgesPerStream() >= 1, "bridges must be at least 1", MazeDslPackage.Literals.LAVA_CONFIG__BRIDGES_PER_STREAM);
+        positive(lava.getBridgeLength() > 0, "bridgeLength must be positive", MazeDslPackage.Literals.LAVA_CONFIG__BRIDGE_LENGTH);
+        if (lava.getMeander() != null) {
+            positive(lava.getMeander() >= 0, "meander cannot be negative", MazeDslPackage.Literals.LAVA_CONFIG__MEANDER);
+        }
+        if (lava.getWavelength() != null) {
+            positive(lava.getWavelength() > 0, "wavelength must be positive", MazeDslPackage.Literals.LAVA_CONFIG__WAVELENGTH);
+        }
+        if (lava.getFlowSpeed() != null) {
+            positive(lava.getFlowSpeed() >= 0, "flowSpeed cannot be negative", MazeDslPackage.Literals.LAVA_CONFIG__FLOW_SPEED);
+        }
+        if (lava.getGlow() != null) {
+            positive(lava.getGlow() >= 0 && lava.getGlow() <= 1, "glow must be between 0 and 1", MazeDslPackage.Literals.LAVA_CONFIG__GLOW);
+        }
+        if (lava.getCrust() != null) {
+            positive(lava.getCrust() >= 0 && lava.getCrust() <= 1, "crust must be between 0 and 1", MazeDslPackage.Literals.LAVA_CONFIG__CRUST);
+        }
+    }
+
+    /** The last-life gift needs at least one shot. */
+    @Check
+    public void checkLastLifeGift(LastLifeGiftConfig gift) {
+        positive(gift.getShots() >= 1, "a gift needs at least one shot", MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__SHOTS);
+    }
+
+    private void positive(boolean ok, String message, org.eclipse.emf.ecore.EStructuralFeature feature) {
+        if (!ok) {
+            error(message, feature, INVALID_LAVA);
+        }
+    }
+
     /** 0 (or leaving it out) is the only way to say "no second ring"; a negative radius is a mistake, not a silent 0. */
     @Check
     public void checkSecondRing(MineRingConfig mines) {

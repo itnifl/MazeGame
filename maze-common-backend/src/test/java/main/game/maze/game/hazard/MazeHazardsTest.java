@@ -27,6 +27,23 @@ class MazeHazardsTest {
     }
 
     @Test
+    @DisplayName("a mine is never on the heart, even when the sergeant stands right beside it")
+    void noMineOnTheHeart() {
+        LevelSpec level = LevelCatalogLoader.loadDefault().level(3);
+        int totalMines = 0;
+        for (int maze = 0; maze < 12; maze++) {
+            GameMazeWorld world = freshMaze();
+            MineField field = new MineField(level.mines());
+            MazeHazards.placeMines(field, List.of(new Point2D(400, 332)), world, 400, 332);
+            for (MineField.Mine mine : field.mines()) {
+                totalMines++;
+                assertTrue(Math.hypot(mine.x() - 400, mine.y() - 332) >= MazeHazards.HEART_CLEARANCE, "off the heart");
+            }
+        }
+        assertTrue(totalMines > 0, "the circles still get mines");
+    }
+
+    @Test
     @DisplayName("every mine lies clear of the walls and can be seen from its sergeant, in many mazes")
     void minesAreOnFreeGround() {
         LevelSpec level = LevelCatalogLoader.loadDefault().level(3);
@@ -36,7 +53,7 @@ class MazeHazardsTest {
             List<Point2D> corridor = MazeHazards.freePoints(world);
             List<Point2D> posts = SergeantPosts.choose(corridor, 400, 332, level.sergeant().postDistanceFromHeart(), 4, 80);
             MineField field = new MineField(level.mines());
-            MazeHazards.placeMines(field, posts, world);
+            MazeHazards.placeMines(field, posts, world, 400, 332);
             List<Vector2D> walls = world.getMazeVectors();
             for (MineField.Mine mine : field.mines()) {
                 totalMines++;

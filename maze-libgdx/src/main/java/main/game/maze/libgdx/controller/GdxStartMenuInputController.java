@@ -50,6 +50,7 @@ public final class GdxStartMenuInputController {
         boolean playSelectSound = false;
         boolean startRequested = false;
         boolean highScoresRequested = false;
+        boolean loadRequested = false;
 
         if (dropdownOpen && difficultyCount > 0) {
             float optionHeight = layout.comboH();
@@ -59,7 +60,7 @@ public final class GdxStartMenuInputController {
                     nextIndex = i;
                     nextDropdownOpen = false;
                     playSelectSound = true;
-                    return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, playSelectSound);
+                    return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, loadRequested, playSelectSound);
                 }
             }
             if (!contains(mouseX, mouseY, layout.comboX(), layout.comboY(), layout.comboW(), layout.comboH())) {
@@ -70,23 +71,30 @@ public final class GdxStartMenuInputController {
         if (contains(mouseX, mouseY, layout.comboX(), layout.comboY(), layout.comboW(), layout.comboH()) && difficultyCount > 0) {
             nextDropdownOpen = !nextDropdownOpen;
             playSelectSound = true;
-            return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, playSelectSound);
+            return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, loadRequested, playSelectSound);
         }
 
         if (contains(mouseX, mouseY, layout.buttonX(), layout.buttonY(), layout.buttonW(), layout.buttonH())) {
             nextDropdownOpen = false;
             startRequested = true;
             playSelectSound = true;
-            return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, playSelectSound);
+            return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, loadRequested, playSelectSound);
         }
 
         if (contains(mouseX, mouseY, layout.highScoresButtonX(), layout.highScoresButtonY(), layout.highScoresButtonW(), layout.highScoresButtonH())) {
             nextDropdownOpen = false;
             highScoresRequested = true;
             playSelectSound = true;
+            return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, loadRequested, playSelectSound);
         }
 
-        return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, playSelectSound);
+        if (contains(mouseX, mouseY, layout.loadButtonX(), layout.loadButtonY(), layout.loadButtonW(), layout.loadButtonH())) {
+            nextDropdownOpen = false;
+            loadRequested = true;
+            playSelectSound = true;
+        }
+
+        return new MouseResult(nextIndex, nextDropdownOpen, startRequested, highScoresRequested, loadRequested, playSelectSound);
     }
 
     private static boolean contains(float px, float py, float x, float y, float w, float h) {
@@ -96,7 +104,7 @@ public final class GdxStartMenuInputController {
     public record KeyboardResult(int selectedDifficultyIndex, boolean startRequested, boolean playSelectSound) {
     }
 
-    public record MouseResult(int selectedDifficultyIndex, boolean dropdownOpen, boolean startRequested, boolean highScoresRequested, boolean playSelectSound) {
+    public record MouseResult(int selectedDifficultyIndex, boolean dropdownOpen, boolean startRequested, boolean highScoresRequested, boolean loadRequested, boolean playSelectSound) {
     }
 
     public record MenuLayoutValues(
@@ -111,6 +119,10 @@ public final class GdxStartMenuInputController {
             float highScoresButtonX,
             float highScoresButtonY,
             float highScoresButtonW,
-            float highScoresButtonH) {
+            float highScoresButtonH,
+            float loadButtonX,
+            float loadButtonY,
+            float loadButtonW,
+            float loadButtonH) {
     }
 }

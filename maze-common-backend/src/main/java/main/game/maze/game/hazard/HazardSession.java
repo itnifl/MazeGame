@@ -65,17 +65,17 @@ public final class HazardSession {
         return rules;
     }
 
-    /** New level on a generated maze: the free corridor points, and mines round every sergeant post. */
-    public void start(GameMazeWorld world, LevelSpec level, List<Point2D> sergeantPosts) {
+    /** New level on a generated maze: the free corridor points, and mines round every sergeant post (never on the heart). */
+    public void start(GameMazeWorld world, LevelSpec level, List<Point2D> sergeantPosts, double heartX, double heartY) {
         if (world == null || level == null) {
             clear();
             return;
         }
         List<main.game.maze.mazeworld.Vector2D> walls = world.getMazeVectors();
-        start(level, sergeantPosts, MazeHazards.freePoints(world), MazeHazards.freeSpot(walls), MazeHazards.clearLine(walls));
+        start(level, sergeantPosts, MazeHazards.freePoints(world), MazeHazards.freeSpot(world, heartX, heartY), MazeHazards.clearLine(walls));
     }
 
-    /** As {@link #start(GameMazeWorld, LevelSpec, List)} with the maze's geometry given (world space, y-down). */
+    /** As {@link #start(GameMazeWorld, LevelSpec, List, double, double)} with the maze's geometry given (world space, y-down). */
     public void start(LevelSpec level, List<Point2D> sergeantPosts, List<Point2D> freePoints,
                       Predicate<Point2D> free, BiPredicate<Point2D, Point2D> clearLine) {
         clear();

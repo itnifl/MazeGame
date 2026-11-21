@@ -92,7 +92,7 @@ public final class GdxHazardSupport {
                 posts.add(new Point2D(enemy.x(), maze.heightPx() - enemy.y()));
             }
         }
-        session.start(world, level, posts);
+        session.start(world, level, posts, maze.widthPx() / 2.0, maze.heightPx() / 2.0);
         drawMines(model);
     }
 

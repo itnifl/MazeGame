@@ -5,6 +5,7 @@ import main.game.maze.game.score.PlayerIds;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.PickupKind;
+import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.common.remains.DeathCause;
@@ -127,6 +128,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private final Runnable returnToMenuAction;
     /** If non-null, overrides {@link DifficultyService#getCurrent()} when starting a game. */
     private final Difficulty forcedDifficulty;
+    private final boolean loadSavedGame;
     private final DifficultyService difficultyService = new DifficultyService();
     final GameSession session = new GameSession();
     private final MazeVisualStyleConfig visualStyle = GdxVisualStyleSupport.loadOrDefault();
@@ -301,6 +303,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         this.showHighScoresOnCreate = options.showHighScoresOnCreate();
         this.returnToMenuAction = options.returnToMenuAction();
         this.forcedDifficulty = options.forcedDifficulty();
+        this.loadSavedGame = options.loadSavedGame();
         GdxGameCollaborators collaborators = GdxGameScreenAssembler.assemble(this);
         this.overlayModeCoordinator = collaborators.overlayModeCoordinator();
         this.inputCommandContext = collaborators.inputCommandContext();
@@ -365,7 +368,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void startGameIfConfigured() {
-        if (immediateStartOnCreate || autoStartOnCreate) {
+        if (loadSavedGame && levelProgress.resumeFromSavePoint()) {
+            startCurrentLevel();   // the last level entered, with the state it was entered at
+        } else if (immediateStartOnCreate || autoStartOnCreate) {
             startGameFromSelection();
         }
         if (showHighScoresOnCreate) {
@@ -496,6 +501,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         if (player == null) {
             return;
         }
+        if (worldModel.arsenal().selected() == Weapon.PULSE_CANNON && worldModel.arsenal().count(Weapon.PULSE_CANNON) > 0) {
+            startPulseCharge();   // it takes two seconds to energy up before the beam leaves; nothing is spent yet
+            return;
+        }
         Weapon used = worldModel.arsenal().use();
         if (used == null) {
             AudioEngine.get().play(WEAPON_SWITCH_SOUND);
@@ -514,11 +523,61 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                     catalog.spec(PickupKind.SLEDGEHAMMER), PlayerIds.LOCAL_PLAYER);
             case GATLING_GUN -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
                     catalog.spec(PickupKind.GATLING_GUN), PlayerIds.LOCAL_PLAYER);
+            case PULSE_CANNON -> firePulseBeam();
+        }
+    }
+
+    private final main.game.maze.game.items.PulseCharge pulseCharge = new main.game.maze.game.items.PulseCharge();
+
+    private void startPulseCharge() {
+        if (pulseCharge.charging()) {
+            return;
+        }
+        PickupSpec spec = worldModel.pickupField().catalog().spec(PickupKind.PULSE_CANNON);
+        pulseCharge.start(spec.chargeSeconds());
+        if (spec.chargeSound() != null) {
+            AudioEngine.get().play(spec.chargeSound());
+        }
+        flashStatus("Pulse cannon charging...", 2.0f);
+    }
+
+    /** Per frame while the pulse beam cannon charges: the ball of light on the player, and the shot when the charge is full. */
+    private void tickPulseCharge(float dt) {
+        if (!pulseCharge.charging()) {
+            return;
+        }
+        if (player == null || combatState.isDead() || worldModel.arsenal().selected() != Weapon.PULSE_CANNON
+                || worldModel.arsenal().count(Weapon.PULSE_CANNON) <= 0) {
+            pulseCharge.cancel();   // another weapon was chosen, or the player died: nothing is spent
+            return;
+        }
+        worldModel.effects().add(new GameWorldModel.ActiveEffect(new main.game.maze.common.graphics.fire.PulseChargeEffect(
+                player.x(), player.y(), pulseCharge.progress())));
+        if (pulseCharge.tick(dt) && worldModel.arsenal().use() == Weapon.PULSE_CANNON) {
+            firePulseBeam();
+        }
+    }
+
+    private void firePulseBeam() {
+        PickupSpec cannon = worldModel.pickupField().catalog().spec(PickupKind.PULSE_CANNON);
+        // the beam: far stronger than the laser, it blows up a tower in one shot
+        GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player, cannon, PlayerIds.LOCAL_PLAYER);
+        worldModel.setExplosionShakeRemainingSeconds((float) BombImpact.SHAKE_SECONDS * 0.6f);
+        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), (float) BombImpact.SHAKE_STRENGTH * 0.7f));
+    }
+
+    /** Level 6 and every level after it: the pulse beam cannon is given when the player starts their last life. */
+    private void giveLastLifeGift() {
+        var gift = levelProgress.current().lastLifeGift();
+        if (gift != null) {
+            gift.give(worldModel.arsenal());
+            flashStatus("Last life! " + ArsenalHud.text(worldModel.arsenal(), null), 2.5f);
         }
     }
 
     /** Tab: switch to the next weapon in stock. */
     void switchWeapon() {
+        pulseCharge.cancel();
         Weapon before = worldModel.arsenal().selected();
         Weapon now = worldModel.arsenal().cycle();
         if (now != before) {
@@ -548,6 +607,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
+        tickLava();   // first: lava kills before a hole or anything else can move the player
+        tickPulseCharge(dt);
         tickHazards(dt);
         if (player != null) {
             guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
@@ -589,6 +650,23 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             } else {
                 activePlayerFireBlasts.remove(i);
             }
+        }
+    }
+
+    /** The player who steps into lava (not on a bridge) dies at once, shield or not. */
+    private void tickLava() {
+        if (maze == null || player == null || combatState.isDead()
+                || !(maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze)) {
+            return;
+        }
+        var lava = realMaze.sourceWorld().getLava();
+        if (lava != null && lava.isDeadly(player.x(), maze.heightPx() - player.y())) {
+            var spec = levelProgress.current().lava();
+            if (spec != null && spec.deathSound() != null) {
+                AudioEngine.get().play(spec.deathSound());
+            }
+            flashStatus("Burned in the lava!", 1.6f);
+            combatState.killOutright();
         }
     }
 
@@ -727,6 +805,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.shield().activate(PlayerLives.RESPAWN_PROTECTION_SECONDS);
         int left = worldModel.lives().remaining();
         flashStatus(left == 1 ? "Last life!" : "Life lost - " + left + " lives left", 2.5f);
+        pulseCharge.cancel();
+        if (left == 1) {
+            giveLastLifeGift();
+        }
         return true;
     }
 
@@ -741,8 +823,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 worldModel,
                 gameAudioCoordinator::switchToWinMusic);
         winOverlayController.setNextLevelAvailable(levelProgress.hasNext());
+        if (!levelProgress.hasNext()) {
+            // the last level is won: the game is won ("GAME WON" on the screen) and a dark voice says it
+            AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
+        }
         // the level is completed: the savepoint for the next one is made now
-        levelProgress.completeLevel(worldModel.arsenal());
+        levelProgress.completeLevel(worldModel.arsenal(), currentScore(), selectedDifficultyName());
     }
 
     private void draw() {
@@ -835,6 +921,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         applyStartFlow(startFlow, selected);
     }
 
+    /** The name a savepoint keeps the difficulty under (Easy, Medium, Hard). */
+    private String selectedDifficultyName() {
+        Difficulty selected = selectedDifficulty();
+        return selected == null ? "" : selected.eClass().getName();
+    }
+
     private Difficulty selectedDifficulty() {
         return forcedDifficulty != null ? forcedDifficulty : difficultyService.getCurrent();
     }
@@ -852,6 +944,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         // same generated maze; a level with zones only changes which walls are strong and which weak
         levelProgress.current().applyWalls(GdxWallDamageSupport.worldFrom(arena),
                 (int) arena.widthPx(), (int) arena.heightPx());
+        // lava under the maze, before anything is placed on it (spawns and free points keep out of the lava)
+        levelProgress.current().applyLava(GdxWallDamageSupport.worldFrom(arena),
+                (int) arena.widthPx(), (int) arena.heightPx());
         if (arena instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
             realMaze.invalidateWalls();   // the walls have new materials
         }
@@ -859,7 +954,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     int baseScoreForDifficulty(Difficulty difficulty) {
-        return GameScoringConstants.baseScoreFor(difficulty);
+        // the difficulty's starting score, plus the score the levels before this one ended with
+        return GameScoringConstants.baseScoreFor(difficulty) + levelProgress.carriedScore();
     }
 
     /** Collapsing walls fall as rubble and crush enemies next to them; follows the current level's world. */
@@ -897,10 +993,22 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             worldModel.inheritArsenal(inherited);
         }
         sergeantSupport.reset();
+        pulseCharge.cancel();
+        if (worldModel.lives().remaining() == 1) {
+            giveLastLifeGift();   // a level that is started on the last life gives the gift at once
+        }
         guardTowerSupport.reset(levelProgress.current().guardTower());
-        wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx());
+        var builderWorld = GdxWallDamageSupport.worldFrom(maze);
+        wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx(),
+                builderWorld == null ? null : builderWorld.getLava());
         if (levelProgress.number() > 1) {
             flashStatus("Level " + levelProgress.number() + ": " + levelProgress.current().name(), 2.5f);
+        }
+        // the last level, whichever it is: the words slam onto the screen and a dark voice says them
+        if (main.game.maze.game.status.FinalLevelIntro.applies(levelProgress)) {
+            statusMessageBus.showTitleCard(main.game.maze.game.status.FinalLevelIntro.TEXT,
+                    main.game.maze.game.status.FinalLevelIntro.SECONDS);
+            AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.VOICE);
         }
         worldModel.pickupField().clear();
         worldModel.shield().reset();
@@ -928,6 +1036,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         goalTexture = textures.goalTexture();
         wallTexture = textures.wallTexture();
         gameWorldView.setWallLookTextures(levelProgress.current().showWallMaterials() ? loadWallLookTextures() : null);
+        // the lava of the level, drawn under the walls (the screen is y-up: the picture is flipped over the height)
+        var lavaWorld = GdxWallDamageSupport.worldFrom(maze);
+        gameWorldView.setLava(lavaWorld == null ? null : main.game.maze.game.lava.LavaEffects.of(lavaWorld.getLava(),
+                levelProgress.current().lava(), maze.widthPx(), maze.heightPx(), maze.heightPx()));
         backgroundTexture = textures.backgroundTexture();
     }
 

@@ -68,6 +68,8 @@ blast frame paints fire at the centre, and that a pumpkin burst frame paints sol
 
 `FxWallBuilderControllerTest` and `WallBuilderSpawnerTest` cover the level 5 wall builders (`FxWallBuilderController`, `WallBuilderSpawner`, `WallBuilderCharacter`): the shared `WallBuilderSession` decides where a builder goes and what it builds; the controller moves the builder, adds the wooden wall to the world and redraws the maze. A builder is a zombie-model enemy with no touch damage and no resurrection.
 
+`FxLavaLayer` draws the lava of level 6 (the shared `LavaEffect`) on a canvas at the very bottom of the board, below the maze canvas, redrawn every frame so it flows; `GameController.tickLava` kills the player who is in deadly lava (`PlayerCharacter.killOutright`, the shield does not help) and `FxEnemyCoordinator` keeps enemies out of it. `PlayerLavaDeathTest` covers the death.
+
 `FxRemainsLayerTest` covers enemy death remains (`javafx.render.FxRemainsLayer`): remains lie just
 above the maze canvas at the spot where the enemy died, one per enemy (a second death replaces it), cleared
 when the enemy resurrects or the level restarts, capped (oldest removed from the board), nothing for

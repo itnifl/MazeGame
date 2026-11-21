@@ -49,6 +49,7 @@ public class MazeDslLevelsTest {
     private static final String LEVELS_DIR = "maze-common-backend/src/main/resources/xmi/levels/";
 
     private ParseHelper<GameConfiguration> parseHelper;
+    private org.eclipse.xtext.testing.validation.ValidationTestHelper validationHelper;
     private ISerializer serializer;
 
     @BeforeEach
@@ -56,6 +57,7 @@ public class MazeDslLevelsTest {
         IInjectorProvider provider = new MazeDslInjectorProvider();
         Injector injector = provider.getInjector();
         parseHelper = injector.getInstance(Key.get(new TypeLiteral<ParseHelper<GameConfiguration>>() {}));
+        validationHelper = injector.getInstance(org.eclipse.xtext.testing.validation.ValidationTestHelper.class);
         serializer = injector.getInstance(ISerializer.class);
     }
 
@@ -150,7 +152,10 @@ public class MazeDslLevelsTest {
     @Test
     public void shippedLevelsSourceGeneratesTheShippedXmi() throws Exception {
         EPackage levels = levelsMetamodel();
-        String generated = MazeDslGenerator.levelsXmi(parseShippedLevels());
+        GameConfiguration source = parseShippedLevels();
+        // a bad value in the DSL is found here, before levels.xmi is written (regenerating must never leave a file the game cannot load)
+        validationHelper.assertNoErrors(source);
+        String generated = MazeDslGenerator.levelsXmi(source);
         if ("true".equalsIgnoreCase(System.getenv("MAZE_LEVELS_REGENERATE"))) {
             // MAZE_LEVELS_REGENERATE=true mvn -o test -pl main.game.maze.dsl.tests rewrites levels.xmi from levels.mazegame
             Files.writeString(repoFile(LEVELS_DIR + "levels.xmi"), generated, StandardCharsets.UTF_8);

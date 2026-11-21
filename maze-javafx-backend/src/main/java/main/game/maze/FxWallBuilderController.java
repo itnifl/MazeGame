@@ -52,9 +52,12 @@ public final class FxWallBuilderController {
     }
 
     /** New level: no builders yet (they register as they are placed); a level without builders has none. */
-    public void startGame(WallBuilderSpec spec, int boardWidth, int boardHeight) {
+    public void startGame(WallBuilderSpec spec, int boardWidth, int boardHeight, main.game.maze.mazeworld.LavaField lava) {
         builders.clear();
         session = spec == null ? null : new WallBuilderSession(spec, boardWidth, boardHeight, boardWidth / 2.0, boardHeight / 2.0);
+        if (session != null) {
+            session.setLava(lava);   // the builders keep out of the lava of the level
+        }
         lastNanos = -1;
     }
 

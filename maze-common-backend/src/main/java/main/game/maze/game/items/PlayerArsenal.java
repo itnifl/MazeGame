@@ -61,6 +61,13 @@ public final class PlayerArsenal {
         }
     }
 
+    /** Puts this weapon in the hands (when any is in stock): the pulse cannon is the weapon in hand until something else is chosen. */
+    public synchronized void select(Weapon weapon) {
+        if (counts.get(weapon) > 0) {
+            selected = weapon;
+        }
+    }
+
     /**
      * Advances the free-bomb timer. Every {@link #BOMB_REGEN_SECONDS} the player gets one bomb, or
      * {@link #BOMB_REGEN_WHEN_EMPTY} when out of bombs.

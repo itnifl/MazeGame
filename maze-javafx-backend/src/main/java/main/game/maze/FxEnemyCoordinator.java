@@ -370,9 +370,9 @@ public final class FxEnemyCoordinator {
             });
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
-        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = LaserBeamEngine.fire(targets, world,
-                world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
-                laser.damage(), laser.range(), halfWidth));
+        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
+                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
+                        laser.damage(), laser.range(), halfWidth));
         return new LaserHit(shot[0], hit[0], dealt[0]);
     }
 
@@ -973,9 +973,14 @@ public final class FxEnemyCoordinator {
             @Override public double minY() { return 0d; }
             @Override public double maxX() { return App.getBoardMaxX(); }
             @Override public double maxY() { return App.getBoardMaxY(); }
+            @Override public boolean inDeadlyLava(double centerX, double centerY) {
+                GameMazeWorld maze = mazeSupplier.get();
+                return maze != null && maze.getLava() != null && maze.getLava().isDeadly(centerX, centerY);
+            }
             @Override public boolean wouldCollide(double centerX, double centerY, double size) {
                 GameMazeWorld maze = mazeSupplier.get();
                 if (maze == null || maze.getMazeVectors() == null) return false;
+                if (maze.getLava() != null && maze.getLava().isDeadly(centerX, centerY)) return true;   // enemies keep out of lava
                 return WallCollisionUtil.wouldCollideVectors(
                         centerX, centerY, size, App.getBoardMaxX(), App.getBoardMaxY(), maze.getMazeVectors());
             }

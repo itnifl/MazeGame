@@ -19,6 +19,9 @@ public final class MazeHazards {
     /** Clearance a mine keeps from a wall's centre line: half a wall, the mine's body and a little air. */
     public static final double WALL_CLEARANCE = 14.0;
 
+    /** How far a mine keeps from the heart's centre: the heart's size, the mine's trigger radius and a little air. */
+    public static final double HEART_CLEARANCE = 60.0;
+
     private MazeHazards() {
     }
 
@@ -42,14 +45,21 @@ public final class MazeHazards {
         return spot -> clearOfWalls(spot, walls);
     }
 
+    /** Where a mine may lie in this world: clear of the walls, out of the lava and never on the heart. */
+    public static Predicate<Point2D> freeSpot(GameMazeWorld world, double heartX, double heartY) {
+        Predicate<Point2D> clear = freeSpot(world.getMazeVectors());
+        return spot -> clear.test(spot)
+                && Math.hypot(spot.getX() - heartX, spot.getY() - heartY) >= HEART_CLEARANCE
+                && (world.getLava() == null || !world.getLava().isLava(spot.getX(), spot.getY()));
+    }
+
     /** Whether a mine can be seen from its sergeant: no wall between them. */
     public static BiPredicate<Point2D, Point2D> clearLine(List<Vector2D> walls) {
         return (from, to) -> !WallCollisionUtil.wallBetweenVectors(from.getX(), from.getY(), to.getX(), to.getY(), walls);
     }
 
     /** A circle of mines round every post, only where a mine is clear of walls and can be seen from its post. */
-    public static void placeMines(MineField field, List<Point2D> posts, GameMazeWorld world) {
-        List<Vector2D> walls = world.getMazeVectors();
-        field.place(posts, freeSpot(walls), clearLine(walls));
+    public static void placeMines(MineField field, List<Point2D> posts, GameMazeWorld world, double heartX, double heartY) {
+        field.place(posts, freeSpot(world, heartX, heartY), clearLine(world.getMazeVectors()));
     }
 }

@@ -124,6 +124,10 @@ public final class FxGameSessionBootstrapper {
         // same generated maze; a level with zones only changes which walls are strong and which weak
         LevelSpec     level     = App.levelProgress.current();
         level.applyWalls(maze, App.getBoardMaxX(), App.getBoardMaxY());
+        level.applyLava(maze, App.getBoardMaxX(), App.getBoardMaxY());   // before anything is placed: nothing stands in lava
+        // with lava under the maze the maze canvas has no floor of its own: the lava layer beneath it paints the floor,
+        // so the lava shows wherever there is no wall
+        mazeCanvasRenderer.setTransparentBackground(main.game.maze.game.lava.LavaEffects.visible(maze.getLava()));
         PlayerConfig  config    = loadPlayerConfig();
 
         setPlayerBaseImage(playerImageView, config.imageBase());

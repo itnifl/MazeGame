@@ -69,7 +69,7 @@ class FxHazardControllerTest {
             free = MazeHazards.freePoints(world);
             Point2D post = free.stream().min((a, b) -> Double.compare(
                     Math.hypot(a.getX() - 400, a.getY() - 332), Math.hypot(b.getX() - 400, b.getY() - 332))).orElseThrow();
-            hazards.startGame(world, LEVEL_3, List.of(post));
+            hazards.startGame(world, LEVEL_3, List.of(post), 400, 332);
             if (hazards.field() != null && !hazards.field().mines().isEmpty()) {
                 return;
             }
@@ -87,7 +87,7 @@ class FxHazardControllerTest {
     @Test
     @DisplayName("a level without mines has none")
     void noMinesOnLevelTwo() {
-        hazards.startGame(world, LevelCatalogLoader.loadDefault().level(2), List.of(new Point2D(400, 332)));
+        hazards.startGame(world, LevelCatalogLoader.loadDefault().level(2), List.of(new Point2D(400, 332)), 400, 332);
         assertNull(hazards.field());
     }
 

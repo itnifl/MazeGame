@@ -50,6 +50,11 @@ public final class GdxStartMenuView {
         float highScoresButtonX = buttonX;
         float highScoresButtonY = buttonY - highScoresButtonH - 12f;
 
+        float loadButtonW = buttonW;
+        float loadButtonH = highScoresButtonH;
+        float loadButtonX = buttonX;
+        float loadButtonY = highScoresButtonY - loadButtonH - 12f;
+
         MenuLayout menuLayout = new MenuLayout(
                 comboX,
                 comboY,
@@ -62,7 +67,11 @@ public final class GdxStartMenuView {
                 highScoresButtonX,
                 highScoresButtonY,
                 highScoresButtonW,
-                highScoresButtonH);
+                highScoresButtonH,
+                loadButtonX,
+                loadButtonY,
+                loadButtonW,
+                loadButtonH);
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0.11f, 0.05f, 0.18f, 1f);
@@ -81,6 +90,12 @@ public final class GdxStartMenuView {
         shapes.rect(buttonX, buttonY, buttonW, buttonH);
         shapes.setColor(0.56f, 1.0f, 0.88f, 1f);
         shapes.rect(highScoresButtonX, highScoresButtonY, highScoresButtonW, highScoresButtonH);
+        if (context.loadAvailable()) {
+            shapes.setColor(0.60f, 0.78f, 1.0f, 1f);
+        } else {
+            shapes.setColor(0.25f, 0.30f, 0.38f, 1f);   // nothing saved yet: the button is dimmed
+        }
+        shapes.rect(loadButtonX, loadButtonY, loadButtonW, loadButtonH);
         if (context.startMenuDropdownOpen() && !context.difficultyNames().isEmpty()) {
             float optH = comboH;
             shapes.setColor(0.03f, 0.09f, 0.15f, 1f);
@@ -157,7 +172,11 @@ public final class GdxStartMenuView {
         glyphLayout.setText(font, "High Scores");
         font.draw(batch, "High Scores", highScoresButtonX + (highScoresButtonW - glyphLayout.width) * 0.5f, highScoresButtonY + 26f);
 
-        float hintY = highScoresButtonY - 22f;
+        font.setColor(context.loadAvailable() ? new Color(0.05f, 0.13f, 0.27f, 1f) : new Color(0.62f, 0.66f, 0.72f, 1f));
+        glyphLayout.setText(font, context.loadLabel());
+        font.draw(batch, context.loadLabel(), loadButtonX + (loadButtonW - glyphLayout.width) * 0.5f, loadButtonY + 26f);
+
+        float hintY = loadButtonY - 22f;
         font.setColor(new Color(0.93f, 0.97f, 1f, 1f));
         font.draw(batch, "Arrow keys to move, P path hint, O spanning tree, H high score, ESC", panelX + 38f, hintY);
         font.draw(batch, context.pausedFromGame() ? "return to game" : "restart menu", panelX + 38f, hintY - 24f);
@@ -248,6 +267,8 @@ public final class GdxStartMenuView {
             boolean pausedFromGame,
             boolean loadingPending,
             String selectedDifficultySummary,
-            String statusMessage) {
+            String statusMessage,
+            boolean loadAvailable,
+            String loadLabel) {
     }
 }

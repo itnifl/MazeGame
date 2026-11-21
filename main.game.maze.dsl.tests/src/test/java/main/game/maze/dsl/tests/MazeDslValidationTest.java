@@ -257,4 +257,25 @@ public class MazeDslValidationTest {
         validationHelper.assertNoErrors(result);
         org.junit.jupiter.api.Assertions.assertEquals("material", ((LevelConfig) result.getLevels().get(0)).getZones().get(0).getMaterialIds().get(0));
     }
+
+    private static String levelWithLava(String values) {
+        return "game G { level 6 \"Six\" { lava { streams 2 width 46.0 bridges 2 bridgeLength 56.0 " + values + " } } }";
+    }
+
+    @Test
+    public void testLavaValuesOutOfRangeAreErrors() throws Exception {
+        for (String bad : new String[] {"glow 1.5", "crust 1.2", "wavelength 0.0", "flowSpeed -1.0", "meander -5.0"}) {
+            validationHelper.assertError(parseHelper.parse(levelWithLava(bad)), MazeDslPackage.Literals.LAVA_CONFIG,
+                MazeDslValidator.INVALID_LAVA);
+        }
+        validationHelper.assertNoErrors(parseHelper.parse(levelWithLava("meander 95.0 wavelength 340.0 flowSpeed 34.0 glow 0.65 crust 0.45")));
+        validationHelper.assertNoErrors(parseHelper.parse(levelWithLava("")));
+    }
+
+    @Test
+    public void testAGiftNeedsAShot() throws Exception {
+        validationHelper.assertError(parseHelper.parse("game G { level 6 \"Six\" { lastLifeWeapon PULSE_CANNON shots 0 } }"),
+            MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG, MazeDslValidator.INVALID_LAVA);
+        validationHelper.assertNoErrors(parseHelper.parse("game G { level 6 \"Six\" { lastLifeWeapon PULSE_CANNON shots 6 } }"));
+    }
 }

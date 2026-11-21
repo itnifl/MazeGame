@@ -218,6 +218,11 @@ public final class GdxGameRenderPipeline {
         if (state.session().mode() != GameMode.PLAYING || !state.statusMessageBus().hasBanner()) {
             return;
         }
+        if (state.statusMessageBus().isTitleCard()) {
+            bannerView.renderTitleCard(state.batch(), state.font(), state.hudCamera(),
+                    state.statusMessageBus().bannerText(), state.statusMessageBus().titleFrame());
+            return;
+        }
         bannerView.render(state.batch(), state.font(), state.hudCamera(),
                 state.statusMessageBus().bannerText(), state.statusMessageBus().bannerAlpha());
     }

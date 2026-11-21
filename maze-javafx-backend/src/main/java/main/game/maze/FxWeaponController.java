@@ -21,6 +21,9 @@ import main.game.maze.game.items.PickupField;
 import main.game.maze.game.items.PickupKind;
 import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.PlayerArsenal;
+import main.game.maze.game.items.PulseCharge;
+import main.game.maze.common.graphics.fire.PulseChargeEffect;
+import main.game.maze.game.level.LastLifeGiftSpec;
 import main.game.maze.game.items.PowerShield;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.WeaponHud;
@@ -66,6 +69,10 @@ public final class FxWeaponController {
 
         /** The arsenal or shield changed: refresh the arsenal HUD ({@link #hudText()}). */
         void arsenalChanged();
+
+        /** The pulse beam left the cannon: shake the screen. */
+        default void impactShake() {
+        }
     }
 
     static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
@@ -80,6 +87,8 @@ public final class FxWeaponController {
     private final KillLedger killLedger = new KillLedger();
     private final FxPickupLayer pickupLayer;
     private final HealFeedback healFeedback = new HealFeedback();
+    private final PulseCharge pulseCharge = new PulseCharge();
+    private double chargeEffectTimer;
     private PlayerArsenal arsenal = new PlayerArsenal(0);
     private PlayerLives lives = new PlayerLives(1);
     private List<Point2D> spawnPoints = List.of();
@@ -115,6 +124,7 @@ public final class FxWeaponController {
         pickupLayer.clear();
         healFeedback.reset();
         lastTickNanos = -1;
+        pulseCharge.cancel();
         player.setShield(shield::isActive);
         spawnPoints = pickupField.spawnPointsOf(world);
         host.arsenalChanged();
@@ -124,6 +134,10 @@ public final class FxWeaponController {
     public void useWeapon() {
         PlayerCharacter player = host.player();
         if (player == null) {
+            return;
+        }
+        if (arsenal.selected() == Weapon.PULSE_CANNON && arsenal.count(Weapon.PULSE_CANNON) > 0) {
+            startPulseCharge();   // it takes two seconds to energy up before the beam leaves; nothing is spent yet
             return;
         }
         Weapon used = arsenal.use();
@@ -140,7 +154,64 @@ public final class FxWeaponController {
             case LASER_RIFLE -> fireLaser(player, center, catalog.spec(PickupKind.LASER_RIFLE));
             case SLEDGEHAMMER -> swingSledgehammer(player, center, catalog.spec(PickupKind.SLEDGEHAMMER));
             case GATLING_GUN -> fireLaser(player, center, catalog.spec(PickupKind.GATLING_GUN));
+            case PULSE_CANNON -> firePulseBeam(player, center, catalog.spec(PickupKind.PULSE_CANNON));
         }
+    }
+
+    private void startPulseCharge() {
+        if (pulseCharge.charging()) {
+            return;
+        }
+        PickupSpec spec = pickupField.catalog().spec(PickupKind.PULSE_CANNON);
+        pulseCharge.start(spec.chargeSeconds());
+        chargeEffectTimer = 0;
+        if (spec.chargeSound() != null) {
+            AudioEngine.get().play(spec.chargeSound());
+        }
+        host.showMessage("Pulse cannon charging...");
+    }
+
+    /** Whether the pulse beam cannon is charging up now. */
+    public boolean pulseCharging() {
+        return pulseCharge.charging();
+    }
+
+    /** Per frame while it charges: the ball of light on the player, and the shot when the charge is full. */
+    private void tickPulseCharge(double dt, PlayerCharacter player, double[] center) {
+        if (!pulseCharge.charging()) {
+            return;
+        }
+        if (arsenal.selected() != Weapon.PULSE_CANNON || arsenal.count(Weapon.PULSE_CANNON) <= 0 || player.getHitPoints() <= 0) {
+            pulseCharge.cancel();   // another weapon was chosen, or the player died: nothing is spent
+            return;
+        }
+        chargeEffectTimer -= dt;
+        if (chargeEffectTimer <= 0) {
+            playEffect(new PulseChargeEffect(center[0], center[1], pulseCharge.progress()));
+            chargeEffectTimer = PulseChargeEffect.FRAME_SECONDS * 0.6;
+        }
+        if (pulseCharge.tick(dt) && arsenal.use() == Weapon.PULSE_CANNON) {
+            host.arsenalChanged();
+            firePulseBeam(player, center, pickupField.catalog().spec(PickupKind.PULSE_CANNON));
+        }
+    }
+
+    private void firePulseBeam(PlayerCharacter player, double[] center, PickupSpec cannon) {
+        fireLaser(player, center, cannon);   // the beam: far stronger than the laser, it blows up a tower in one shot
+        host.impactShake();
+    }
+
+    /**
+     * The gift of the last life: the weapon and its shots are put in the hands, and stay the weapon in hand until the
+     * player chooses another.
+     */
+    public void grantLastLifeGift(LastLifeGiftSpec gift) {
+        if (gift == null) {
+            return;
+        }
+        gift.give(arsenal);
+        host.arsenalChanged();
+        host.showMessage("Last life! " + ArsenalHud.text(arsenal, null));
     }
 
     /** An item lying where it was dropped, e.g. the gun of a killed sergeant. */
@@ -165,6 +236,7 @@ public final class FxWeaponController {
 
     /** Tab: switch to the next weapon in stock. */
     public void switchWeapon() {
+        pulseCharge.cancel();
         Weapon before = arsenal.selected();
         if (arsenal.cycle() != before) {
             AudioEngine.get().play(WEAPON_SWITCH_SOUND);
@@ -181,6 +253,7 @@ public final class FxWeaponController {
             return;
         }
         double[] center = centerOf(player);
+        tickPulseCharge(dt, player, center);
         pickupField.tick(dt, host.boardWidth(), spawnPoints, center[0], center[1]);
         for (Pickup pickup : pickupField.collect(center[0], center[1], HALF_PLAYER)) {
             PickupSpec spec = pickupField.catalog().spec(pickup.kind());

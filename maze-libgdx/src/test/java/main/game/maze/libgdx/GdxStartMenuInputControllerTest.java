@@ -109,6 +109,34 @@ class GdxStartMenuInputControllerTest {
         assertTrue(result.startRequested());
     }
 
+    @Test
+    void mouseClickLoadButtonRequestsLoad() {
+        GdxStartMenuInputController controller = new GdxStartMenuInputController();
+
+        GdxStartMenuInputController.MouseResult result = controller.handleLeftClick(
+                130f,
+                -20f,
+                layout(),
+                3,
+                1,
+                true);
+
+        assertTrue(result.loadRequested());
+        assertFalse(result.startRequested());
+        assertFalse(result.highScoresRequested());
+        assertFalse(result.dropdownOpen());
+        assertEquals(1, result.selectedDifficultyIndex());
+        assertTrue(result.playSelectSound());
+    }
+
+    @Test
+    void clickElsewhereDoesNotRequestLoad() {
+        GdxStartMenuInputController controller = new GdxStartMenuInputController();
+
+        assertFalse(controller.handleLeftClick(130f, 95f, layout(), 3, 0, false).loadRequested());
+        assertFalse(controller.handleLeftClick(5000f, 5000f, layout(), 3, 0, false).loadRequested());
+    }
+
     private static GdxStartMenuInputController.MenuLayoutValues layout() {
         return new GdxStartMenuInputController.MenuLayoutValues(
                 100f,
@@ -121,6 +149,10 @@ class GdxStartMenuInputControllerTest {
                 36f,
                 100f,
                 30f,
+                200f,
+                36f,
+                100f,
+                -40f,
                 200f,
                 36f);
     }

@@ -61,9 +61,11 @@ public final class StatusMessageBus {
     private String banner = "";
     private float bannerSecondsRemaining;
     private float bannerTotalSeconds;
+    private boolean titleCard;
 
     /** Shows {@code text} big in the middle of the screen for {@code durationSeconds}, fading in and out. */
     public void showBanner(String text, float durationSeconds) {
+        titleCard = false;
         banner = text == null ? "" : text;
         bannerTotalSeconds = Math.max(0f, durationSeconds);
         bannerSecondsRemaining = bannerTotalSeconds;
@@ -88,7 +90,27 @@ public final class StatusMessageBus {
         return BannerFade.alpha(bannerTotalSeconds - bannerSecondsRemaining, bannerTotalSeconds);
     }
 
+    /** Shows {@code text} as a fighting-game title card ({@link TitleCard}): slams in, shakes, holds, fades. */
+    public void showTitleCard(String text, float durationSeconds) {
+        showBanner(text, durationSeconds);
+        titleCard = hasBanner();
+    }
+
+    /** Whether the banner is a title card (it then moves as {@link #titleFrame()} says). */
+    public boolean isTitleCard() {
+        return titleCard && hasBanner();
+    }
+
+    /** Where the title card is in its moves now. */
+    public TitleCard.Frame titleFrame() {
+        if (!isTitleCard()) {
+            return TitleCard.Frame.GONE;
+        }
+        return TitleCard.frame(bannerTotalSeconds - bannerSecondsRemaining, bannerTotalSeconds);
+    }
+
     public void clearBanner() {
+        titleCard = false;
         banner = "";
         bannerSecondsRemaining = 0f;
         bannerTotalSeconds = 0f;

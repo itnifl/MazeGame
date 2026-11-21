@@ -57,7 +57,8 @@ public final class PickupField {
         for (MazeNavigationGraph.Node[] column : graph.getGrid()) {
             for (MazeNavigationGraph.Node node : column) {
                 if (node != null && isInside(node.getX(), node.getY(), minX, minY, maxX, maxY)
-                        && clearOfWalls(node.getX(), node.getY(), walls, clearance)) {
+                        && clearOfWalls(node.getX(), node.getY(), walls, clearance)
+                        && (world.getLava() == null || !world.getLava().isLava(node.getX(), node.getY()))) {
                     points.add(node.toPoint2D());
                 }
             }

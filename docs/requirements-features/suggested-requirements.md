@@ -428,3 +428,29 @@ These requirements have been implemented and verified.
 - **SR-338** *(Robustness)*: A builder walks straight lines between corridor middles ignoring enemies and the player; a builder boxed in by other builders or by a closed corridor just waits. Add a nudge or a re-plan after a few seconds without progress.
 
 - **SR-342** *(UX)*: The HUD rectangles in `HudZones` are copied from the layout of the two frontends (JavaFX FXML, libGDX render constants). Derive both layouts from one shared description so they cannot drift, and let the camera start where the player is so the HUD never covers the start.
+
+- **SR-348** *(Gameplay)*: Lava only kills the player today. Let a blast or a hit knock enemies into it (and burn them), let lava burn pickups that fall in it, and let a bridge be broken by a bomb (and rebuilt by the wall builders).
+
+- **SR-349** *(Accessibility)*: Lava is told from the floor by colour and glow only. Add a heat-shimmer or a soft warning sound near it, a distinct pattern for colour-blind players, and show the bridges more clearly (a highlighted rail).
+
+- **SR-350** *(Observability)*: Log how many tries the lava generator needed and how long it took (it is a search), and count lava deaths per level next to the other statistics (SR-252).
+
+- **SR-351** *(Model-driven)*: Done in SR-358 (meander, wavelength, flow speed, glow, crust are in the model). Still in code: the margins, the bridge clearance and spacing and the colours of the lava; move them into `LavaStreams` too so an author can make a green acid river or a frozen one.
+
+- **SR-355** *(UX)*: The FINAL LEVEL title shows over a game that is already running (the spawn shield protects the player for its 3 seconds). Freeze the enemies and the clock while the title is on, and offer to skip it; add a replay of the voice line and subtitles.
+
+- **SR-356** *(Accessibility)*: Both dark voices are English only and recorded with a Windows voice (like SR-311); provide text-only mode and re-record per language.
+
+- **SR-362** *(Gameplay)*: The pulse beam stops at the first enemy or wall like the laser. Let it pierce everything in a line, or at least a tower and what stands behind it, and let a charged shot be held and released with the key; an enemy hit while charging could break the charge.
+
+- **SR-363** *(Balance, observability)*: The gift is six shots whenever the last life starts, even on every restart of a level. Count how often it is given and used per level and difficulty (SR-252) and decide whether it should be given once per level; a HUD charge bar would also help.
+
+- **SR-364** *(Model-driven)*: Which weapon, and how many shots, is in the level model, but when it is given (the last life) is in code; add a trigger to `LastLifeGift` (last life, level start, boss defeated) so authors can place gifts.
+
+- **SR-366** *(UX)*: The score of a level and the score of the whole game are not told apart on the win screen or in the high scores. Show "this level" and "total" and keep a high score per game, not per level; also decide whether the damage and move penalties of later levels should be scaled, since the carried score makes them smaller in proportion.
+
+- **SR-370** *(Gameplay)*: Several save slots (one per level entered, or a manual save) instead of one savepoint, with a list in the Load screen showing level, score and difficulty.
+
+- **SR-371** *(Observability, 12-factor)*: Log when a savepoint is written, loaded or found unreadable (structured, with level and difficulty), and keep the savepoint path configurable by an environment variable rather than only the relative `data/` folder.
+
+- **SR-372** *(Model-driven)*: Let the level model say how far a beam goes through walls (a `pierce` factor on the pickup in `items.ecore`) so other weapons can pierce too, and let the heart clearance of mines be a value of `MineSpec`.

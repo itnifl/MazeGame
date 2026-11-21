@@ -197,6 +197,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void showMessage(String text)     { setHudMessage(text); }
         @Override public void livesChanged()               { runOnFx(GameController.this::updateBombHud); }
         @Override public IDeathSubscriber gameOver()       { return gameOverAction; }
+        @Override public void lastLifeStarted()            { giveLastLifeGift(); }
         @Override public void after(double seconds, Runnable action) {
             runOnFx(() -> {
                 PauseTransition wait = new PauseTransition(Duration.seconds(seconds));
@@ -213,6 +214,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
+        @Override public void impactShake() {
+            if (gameBoard != null) main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent());
+        }
         @Override public void redrawMaze() {
             if (mazeCanvas != null && maze != null) {
                 mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
@@ -238,6 +242,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private FxMazeCanvasRenderer      mazeCanvasRenderer;
     private FxGameSessionBootstrapper bootstrapper;
     private FxHazardLayer hazardLayer;
+    private main.game.maze.javafx.render.FxLavaLayer lavaLayer;
     private main.game.maze.javafx.render.FxRocketLayer rocketLayer;
     /** Mines, the holes they leave and the teleports of the level. */
     private final FxHazardController hazards = new FxHazardController(new FxHazardController.Host() {
@@ -344,7 +349,8 @@ public class GameController implements Initializable, EnemyRegistrar {
     public void setStartDifficulty(Difficulty d) { this.startDifficulty = d; }
 
     int getBaseScoreForCurrentDifficulty() {
-        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty);
+        // the difficulty's starting score, plus the score the levels before this one ended with
+        return main.game.maze.common.scoring.GameScoringConstants.baseScoreFor(startDifficulty) + App.levelProgress.carriedScore();
     }
 
     @Override
@@ -734,6 +740,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (App.levelProgress.number() > 1) {
             setHudMessage("Level " + App.levelProgress.number() + ": " + App.levelProgress.current().name());
         }
+        // the last level, whichever it is: the words slam onto the screen and a dark voice says them
+        if (main.game.maze.game.status.FinalLevelIntro.applies(App.levelProgress)) {
+            banner.showTitleCard(main.game.maze.game.status.FinalLevelIntro.TEXT, main.game.maze.game.status.FinalLevelIntro.SECONDS);
+            main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.VOICE);
+        }
     }
 
     /** An item dropped on the board, e.g. the gun of a killed sergeant. */
@@ -781,18 +792,27 @@ public class GameController implements Initializable, EnemyRegistrar {
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
+        if (lives.remaining() == 1) {
+            giveLastLifeGift();   // a level that is started on the last life gives the gift at once
+        }
         // mines round the sergeants (level 3 and on), and the free ground the teleports come out on
+        // lava under the maze: flowing streams with bridges (levels that have them)
+        if (lavaLayer != null) lavaLayer.detach();
+        lavaLayer = new main.game.maze.javafx.render.FxLavaLayer(gameBoard);
+        lavaLayer.attach(main.game.maze.game.lava.LavaEffects.of(maze.getLava(), App.levelProgress.current().lava(), App.getBoardMaxX(), App.getBoardMaxY(), 0),
+                (gc, canvas) -> mazeCanvasRenderer.paintBackground(gc, canvas.getWidth(), canvas.getHeight()));
         if (hazardLayer != null) hazardLayer.detach();
         hazardLayer = new FxHazardLayer(gameBoard);
         hazardLayer.attach();
         hazards.startGame(maze, App.levelProgress.current(),
-                main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze));
+                main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze),
+                App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0);   // the heart is at the centre of the board: no mine on it
         // guard towers (level 4): they are placed by the session bootstrapper; they register here as they appear
         if (rocketLayer != null) rocketLayer.detach();
         rocketLayer = new main.game.maze.javafx.render.FxRocketLayer(gameBoard);
         rocketLayer.attach();
         guardTowers.startGame(App.levelProgress.current().guardTower());
-        wallBuilders.startGame(App.levelProgress.current().wallBuilder(), App.getBoardMaxX(), App.getBoardMaxY());
+        wallBuilders.startGame(App.levelProgress.current().wallBuilder(), App.getBoardMaxX(), App.getBoardMaxY(), maze.getLava());
         announceLevel();
 
         winarea = new WinArea(heart);
@@ -857,12 +877,34 @@ public class GameController implements Initializable, EnemyRegistrar {
         rightMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
         weapons.tick(now);
+        tickLava();   // first: lava kills before a hole or anything else can move the player
         hazards.tick(now);
+        if (lavaLayer != null) lavaLayer.render(now / 1e9);
         guardTowers.tick(now);
         wallBuilders.tick(now);
     }
 
+    /** Level 6 and every level after it: the pulse beam cannon is given when the player starts their last life. */
+    private void giveLastLifeGift() {
+        weapons.grantLastLifeGift(App.levelProgress.current().lastLifeGift());
+    }
+
     private final FxBannerView banner = new FxBannerView(() -> root);
+
+    /** The player who steps into lava (not on a bridge) dies at once, shield or not. */
+    private void tickLava() {
+        if (maze == null || maze.getLava() == null || playerCharacter == null || playerCharacter.getHitPoints() <= 0) return;
+        double half = StageConstants.PlayerCharacterXYSize * 0.5d;
+        if (maze.getLava().isDeadly(playerCharacter.getCharacterPosition().getX() + half,
+                playerCharacter.getCharacterPosition().getY() + half)) {
+            var spec = App.levelProgress.current().lava();
+            if (spec != null && spec.deathSound() != null) {
+                main.game.maze.common.graphics.AudioEngine.get().play(spec.deathSound());
+            }
+            setHudMessage("Burned in the lava!", Duration.seconds(1.6));
+            playerCharacter.killOutright();
+        }
+    }
 
     /** The player is sent to a new place (centre at x, y): move, camera, sound, sparkle and a message. */
     private void teleportPlayerTo(double x, double y, main.game.maze.game.hazard.HazardSession.Cause cause) {
@@ -976,6 +1018,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (rocketLayer != null) { rocketLayer.detach(); rocketLayer = null; }
         banner.hide();
         if (hazardLayer != null) { hazardLayer.detach(); hazardLayer = null; }
+        if (lavaLayer != null) { lavaLayer.detach(); lavaLayer = null; }
         weapons.dispose();
         weaponHud.clear();
         lifeController.dispose();

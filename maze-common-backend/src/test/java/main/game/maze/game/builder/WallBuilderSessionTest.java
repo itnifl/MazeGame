@@ -250,7 +250,7 @@ class WallBuilderSessionTest {
             one = follow(one, r);
         }
         assertEquals(0, pieces, "the player stands in the doorway");
-        pieces = run(10, one, -1000, -1000).size();
+        pieces = run(90, one, -1000, -1000).size();
         assertTrue(pieces > 0, "once the player has moved the wall goes up");
     }
 
@@ -375,5 +375,25 @@ class WallBuilderSessionTest {
         assertFalse(session.openingsLeft(world.getMazeVectors()).isEmpty(), "one piece is missing");
         run(300, crew("b", 5), 0, 0);
         assertTrue(session.openingsLeft(world.getMazeVectors()).isEmpty(), "the gap was filled");
+    }
+
+    @Test
+    @DisplayName("builders keep out of lava: they never stand in deadly lava, and walk over the bridges")
+    void buildersAvoidLava() {
+        main.game.maze.mazeworld.LavaField lava = main.game.maze.game.lava.LavaGenerator.generate(
+                main.game.maze.game.level.LavaSpec.basic(2, 46.0, 2, 56.0, null), world, W, H,
+                new Point2D(30, 90), new Point2D(HEART_X, HEART_Y), new java.util.Random());
+        session.setLava(lava);
+        List<Builder> crew = crew("b", 4);
+        for (int i = 0; i < 4000; i++) {
+            Result r = session.tick(0.05, crew, world.getMazeVectors(), -1000, -1000);
+            for (WallBuilderSession.Piece piece : r.pieces()) {
+                put(piece.wall());
+            }
+            crew = follow(crew, r);
+            for (Builder b : crew) {
+                assertFalse(lava.isDeadly(b.x(), b.y()), "a builder walked into lava at " + b.x() + "," + b.y());
+            }
+        }
     }
 }

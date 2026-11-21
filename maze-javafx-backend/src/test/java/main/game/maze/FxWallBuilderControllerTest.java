@@ -62,7 +62,7 @@ class FxWallBuilderControllerTest {
         host = new Recording();
         host.player.teleportTo(-500, -500);
         builders = new FxWallBuilderController(host);
-        builders.startGame(SPEC, W, H);
+        builders.startGame(SPEC, W, H, null);
     }
 
     private void run(double seconds) {
@@ -99,9 +99,26 @@ class FxWallBuilderControllerTest {
         assertTrue(host.builtBy.isEmpty());
         assertEquals(x, a.x, 1e-9);
 
-        builders.startGame(null, W, H);
+        builders.startGame(null, W, H, null);
         builders.register("builder_1", new Worker(W / 2.0, H / 2.0));
         run(20);
         assertTrue(host.builtBy.isEmpty());
+    }
+
+    @Test
+    @DisplayName("the controller gives the level's lava to the builders: they never stand in deadly lava")
+    void buildersKeepOutOfLava() {
+        main.game.maze.mazeworld.LavaField lava = main.game.maze.game.lava.LavaGenerator.generate(
+                main.game.maze.game.level.LavaSpec.basic(2, 46.0, 2, 56.0, null), world, W, H,
+                new main.game.maze.mazeworld.Point2D(30, 90), new main.game.maze.mazeworld.Point2D(W / 2.0, H / 2.0),
+                new java.util.Random());
+        builders.startGame(SPEC, W, H, lava);
+        Worker a = new Worker(W / 2.0, H / 2.0);
+        builders.register("builder_0", a);
+        for (int i = 0; i < 3000; i++) {
+            now += TICK;
+            builders.tick(now);
+            assertFalse(lava.isDeadly(a.x, a.y), "in lava at " + a.x + "," + a.y);
+        }
     }
 }

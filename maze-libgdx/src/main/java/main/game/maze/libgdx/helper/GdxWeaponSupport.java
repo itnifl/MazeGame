@@ -118,9 +118,9 @@ public final class GdxWeaponSupport {
             });
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
-        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = LaserBeamEngine.fire(targets, world,
-                world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),
-                dirX, dirY, laser.damage(), laser.range(), LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH));
+        GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
+                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),
+                        dirX, dirY, laser.damage(), laser.range(), LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH));
 
         float endX = (float) (player.x() + player.facingX() * shot[0].reach());
         float endY = (float) (player.y() + player.facingY() * shot[0].reach());

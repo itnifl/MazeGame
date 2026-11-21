@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import main.game.maze.mazeworld.GameMazeWorld;
+import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.WallMaterialSpec;
 import main.game.maze.mazeworld.WallZoneSpec;
 import main.game.maze.mazeworld.ZoneGeometry;
@@ -26,13 +27,16 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param towerCounts          guard towers per difficulty tier
  * @param wallBuilder          the wall builders round the heart, or null
  * @param builderCounts        wall builders per difficulty tier
+ * @param lava                 the streams of lava under the walls, or null
+ * @param lastLifeGift         the weapon given when the player starts their last life, or null
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts,
                         MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
                         TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts,
-                        WallBuilderSpec wallBuilder, Map<DifficultyTier, Integer> builderCounts) {
+                        WallBuilderSpec wallBuilder, Map<DifficultyTier, Integer> builderCounts,
+                        LavaSpec lava, LastLifeGiftSpec lastLifeGift) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
@@ -61,6 +65,28 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
 
     public boolean hasTeleportGhosts() {
         return teleportGhost != null;
+    }
+
+    /**
+     * Puts this level lava under the maze (when it has some): random streams with bridges, the maze always solvable.
+     * Call after {@link #applyWalls}, with the board size; both frontends do the same.
+     */
+    public void applyLava(GameMazeWorld world, int boardWidth, int boardHeight) {
+        if (world == null || lava == null) {
+            return;
+        }
+        Point2D start = main.game.maze.game.spawn.PlayerSpawn.find(world, 30, 60, 30, boardWidth, boardHeight);
+        Point2D heart = new Point2D(boardWidth / 2.0, boardHeight / 2.0);
+        world.setLava(main.game.maze.game.lava.LavaGenerator.generate(lava, world, boardWidth, boardHeight, start, heart,
+                new java.util.Random()));
+    }
+
+    public boolean hasLastLifeGift() {
+        return lastLifeGift != null;
+    }
+
+    public boolean hasLava() {
+        return lava != null;
     }
 
     public boolean hasBuilders() {

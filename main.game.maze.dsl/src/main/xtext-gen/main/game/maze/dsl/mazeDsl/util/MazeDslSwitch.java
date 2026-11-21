@@ -251,6 +251,20 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.LAVA_CONFIG:
+      {
+        LavaConfig lavaConfig = (LavaConfig)theEObject;
+        T result = caseLavaConfig(lavaConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.LAST_LIFE_GIFT_CONFIG:
+      {
+        LastLifeGiftConfig lastLifeGiftConfig = (LastLifeGiftConfig)theEObject;
+        T result = caseLastLifeGiftConfig(lastLifeGiftConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.TELEPORT_RULES_CONFIG:
       {
         TeleportRulesConfig teleportRulesConfig = (TeleportRulesConfig)theEObject;
@@ -658,6 +672,38 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseBuilderCountConfig(BuilderCountConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Lava Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Lava Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLavaConfig(LavaConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Last Life Gift Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Last Life Gift Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLastLifeGiftConfig(LastLifeGiftConfig object)
   {
     return null;
   }

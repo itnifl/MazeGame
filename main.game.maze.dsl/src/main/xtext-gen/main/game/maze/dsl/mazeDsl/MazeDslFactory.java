@@ -249,6 +249,24 @@ public interface MazeDslFactory extends EFactory
   BuilderCountConfig createBuilderCountConfig();
 
   /**
+   * Returns a new object of class '<em>Lava Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Lava Config</em>'.
+   * @generated
+   */
+  LavaConfig createLavaConfig();
+
+  /**
+   * Returns a new object of class '<em>Last Life Gift Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Last Life Gift Config</em>'.
+   * @generated
+   */
+  LastLifeGiftConfig createLastLifeGiftConfig();
+
+  /**
    * Returns a new object of class '<em>Teleport Rules Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -2219,9 +2219,47 @@ ruleLevelConfig returns [EObject current=null]
 				}
 			)
 		)*
-		otherlv_25='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getLavaLavaConfigParserRuleCall_20_0());
+				}
+				lv_lava_25_0=ruleLavaConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"lava",
+						lv_lava_25_0,
+						"main.game.maze.dsl.MazeDsl.LavaConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0());
+				}
+				lv_lastLifeGift_26_0=ruleLastLifeGiftConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"lastLifeGift",
+						lv_lastLifeGift_26_0,
+						"main.game.maze.dsl.MazeDsl.LastLifeGiftConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_27='}'
 		{
-			newLeafNode(otherlv_25, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_20());
+			newLeafNode(otherlv_27, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_22());
 		}
 	)
 ;
@@ -3922,6 +3960,340 @@ ruleBuilderCountConfig returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleLavaConfig
+entryRuleLavaConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLavaConfigRule()); }
+	iv_ruleLavaConfig=ruleLavaConfig
+	{ $current=$iv_ruleLavaConfig.current; }
+	EOF;
+
+// Rule LavaConfig
+ruleLavaConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='lava'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getLavaConfigAccess().getLavaKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getLavaConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		otherlv_2='streams'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getLavaConfigAccess().getStreamsKeyword_2());
+		}
+		(
+			(
+				lv_streamCount_3_0=RULE_INT
+				{
+					newLeafNode(lv_streamCount_3_0, grammarAccess.getLavaConfigAccess().getStreamCountINTTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLavaConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"streamCount",
+						lv_streamCount_3_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_4='width'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getLavaConfigAccess().getWidthKeyword_4());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLavaConfigAccess().getWidthDOUBLEParserRuleCall_5_0());
+				}
+				lv_width_5_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+					}
+					set(
+						$current,
+						"width",
+						lv_width_5_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_6='bridges'
+		{
+			newLeafNode(otherlv_6, grammarAccess.getLavaConfigAccess().getBridgesKeyword_6());
+		}
+		(
+			(
+				lv_bridgesPerStream_7_0=RULE_INT
+				{
+					newLeafNode(lv_bridgesPerStream_7_0, grammarAccess.getLavaConfigAccess().getBridgesPerStreamINTTerminalRuleCall_7_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLavaConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"bridgesPerStream",
+						lv_bridgesPerStream_7_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_8='bridgeLength'
+		{
+			newLeafNode(otherlv_8, grammarAccess.getLavaConfigAccess().getBridgeLengthKeyword_8());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLavaConfigAccess().getBridgeLengthDOUBLEParserRuleCall_9_0());
+				}
+				lv_bridgeLength_9_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+					}
+					set(
+						$current,
+						"bridgeLength",
+						lv_bridgeLength_9_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_10='meander'
+			{
+				newLeafNode(otherlv_10, grammarAccess.getLavaConfigAccess().getMeanderKeyword_10_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLavaConfigAccess().getMeanderDOUBLE_OBJECTParserRuleCall_10_1_0());
+					}
+					lv_meander_11_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+						}
+						set(
+							$current,
+							"meander",
+							lv_meander_11_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_12='wavelength'
+			{
+				newLeafNode(otherlv_12, grammarAccess.getLavaConfigAccess().getWavelengthKeyword_11_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLavaConfigAccess().getWavelengthDOUBLE_OBJECTParserRuleCall_11_1_0());
+					}
+					lv_wavelength_13_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+						}
+						set(
+							$current,
+							"wavelength",
+							lv_wavelength_13_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_14='flowSpeed'
+			{
+				newLeafNode(otherlv_14, grammarAccess.getLavaConfigAccess().getFlowSpeedKeyword_12_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLavaConfigAccess().getFlowSpeedDOUBLE_OBJECTParserRuleCall_12_1_0());
+					}
+					lv_flowSpeed_15_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+						}
+						set(
+							$current,
+							"flowSpeed",
+							lv_flowSpeed_15_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_16='glow'
+			{
+				newLeafNode(otherlv_16, grammarAccess.getLavaConfigAccess().getGlowKeyword_13_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLavaConfigAccess().getGlowDOUBLE_OBJECTParserRuleCall_13_1_0());
+					}
+					lv_glow_17_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+						}
+						set(
+							$current,
+							"glow",
+							lv_glow_17_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_18='crust'
+			{
+				newLeafNode(otherlv_18, grammarAccess.getLavaConfigAccess().getCrustKeyword_14_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getLavaConfigAccess().getCrustDOUBLE_OBJECTParserRuleCall_14_1_0());
+					}
+					lv_crust_19_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getLavaConfigRule());
+						}
+						set(
+							$current,
+							"crust",
+							lv_crust_19_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_20='deathSound'
+			{
+				newLeafNode(otherlv_20, grammarAccess.getLavaConfigAccess().getDeathSoundKeyword_15_0());
+			}
+			(
+				(
+					lv_deathSound_21_0=RULE_STRING
+					{
+						newLeafNode(lv_deathSound_21_0, grammarAccess.getLavaConfigAccess().getDeathSoundSTRINGTerminalRuleCall_15_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLavaConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"deathSound",
+							lv_deathSound_21_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_22='}'
+		{
+			newLeafNode(otherlv_22, grammarAccess.getLavaConfigAccess().getRightCurlyBracketKeyword_16());
+		}
+	)
+;
+
+// Entry rule entryRuleLastLifeGiftConfig
+entryRuleLastLifeGiftConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getLastLifeGiftConfigRule()); }
+	iv_ruleLastLifeGiftConfig=ruleLastLifeGiftConfig
+	{ $current=$iv_ruleLastLifeGiftConfig.current; }
+	EOF;
+
+// Rule LastLifeGiftConfig
+ruleLastLifeGiftConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='lastLifeWeapon'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getLastLifeGiftConfigAccess().getLastLifeWeaponKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLastLifeGiftConfigAccess().getWeaponValidIDParserRuleCall_1_0());
+				}
+				lv_weapon_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLastLifeGiftConfigRule());
+					}
+					set(
+						$current,
+						"weapon",
+						lv_weapon_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_2='shots'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getLastLifeGiftConfigAccess().getShotsKeyword_2());
+		}
+		(
+			(
+				lv_shots_3_0=RULE_INT
+				{
+					newLeafNode(lv_shots_3_0, grammarAccess.getLastLifeGiftConfigAccess().getShotsINTTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getLastLifeGiftConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"shots",
+						lv_shots_3_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+	)
+;
+
 // Entry rule entryRuleTeleportRulesConfig
 entryRuleTeleportRulesConfig returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getTeleportRulesConfigRule()); }
@@ -4685,10 +5057,88 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getStartRadiusKeyword_62());
 		}
 		    |
+		kw='lastLifeWeapon'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getLastLifeWeaponKeyword_63());
+		}
+		    |
+		kw='shots'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getShotsKeyword_64());
+		}
+		    |
+		kw='lava'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getLavaKeyword_65());
+		}
+		    |
+		kw='streams'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getStreamsKeyword_66());
+		}
+		    |
+		kw='width'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWidthKeyword_67());
+		}
+		    |
+		kw='bridges'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgesKeyword_68());
+		}
+		    |
+		kw='bridgeLength'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBridgeLengthKeyword_69());
+		}
+		    |
+		kw='meander'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getMeanderKeyword_70());
+		}
+		    |
+		kw='wavelength'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getWavelengthKeyword_71());
+		}
+		    |
+		kw='flowSpeed'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFlowSpeedKeyword_72());
+		}
+		    |
+		kw='glow'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getGlowKeyword_73());
+		}
+		    |
+		kw='crust'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getCrustKeyword_74());
+		}
+		    |
+		kw='deathSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDeathSoundKeyword_75());
+		}
+		    |
 		kw='buildSound'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_63());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_76());
 		}
 	)
 ;

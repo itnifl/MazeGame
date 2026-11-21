@@ -31,6 +31,7 @@ public final class GdxGameScreenOptions {
     private final boolean showHighScoresOnCreate;
     private final Runnable returnToMenuAction;
     private final Difficulty forcedDifficulty;
+    private final boolean loadSavedGame;
 
     private GdxGameScreenOptions(Builder builder) {
         this.arena = builder.arena;
@@ -43,6 +44,7 @@ public final class GdxGameScreenOptions {
         this.showHighScoresOnCreate = builder.showHighScoresOnCreate;
         this.returnToMenuAction = builder.returnToMenuAction;
         this.forcedDifficulty = builder.forcedDifficulty;
+        this.loadSavedGame = builder.loadSavedGame;
     }
 
     /** Creates a builder pre-populated with the controller's default values. */
@@ -90,6 +92,11 @@ public final class GdxGameScreenOptions {
         return forcedDifficulty;
     }
 
+    /** Whether the game starts from the saved level (the main menu Load button) instead of a new game. */
+    public boolean loadSavedGame() {
+        return loadSavedGame;
+    }
+
     /**
      * Fluent builder for {@link GdxGameScreenOptions}. Defaults mirror the
      * controller's previous no-argument constructor: standalone maze owned asset
@@ -107,6 +114,7 @@ public final class GdxGameScreenOptions {
         private boolean showHighScoresOnCreate;
         private Runnable returnToMenuAction;
         private Difficulty forcedDifficulty;
+        private boolean loadSavedGame;
 
         private Builder() {
         }
@@ -165,6 +173,11 @@ public final class GdxGameScreenOptions {
 
         public Builder forcedDifficulty(Difficulty value) {
             this.forcedDifficulty = value;
+            return this;
+        }
+
+        public Builder loadSavedGame(boolean value) {
+            this.loadSavedGame = value;
             return this;
         }
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import main.game.maze.common.graphics.AudioEngine;
@@ -27,6 +28,9 @@ import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.constants.ImageResourceConstants;
 import main.game.maze.difficulties.Difficulty;
 import main.game.maze.game.audio.GameAudioDirector;
+import main.game.maze.game.level.LoadGameMenu;
+import main.game.maze.game.level.SavePoint;
+import main.game.maze.game.level.SavePointStore;
 import main.game.maze.libgdx.GdxGameContext;
 import main.game.maze.libgdx.audio.GdxGameAudioCoordinator;
 import main.game.maze.libgdx.helper.DifficultyBoardConfig;
@@ -52,6 +56,11 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     private final Consumer<Difficulty> startGameAction;
     private final Runnable openLegacyMenuAction;
+    /** Starts the game from the saved level (null: this menu has no Load button to act on). */
+    private final Consumer<Difficulty> loadGameAction;
+    private final SavePointStore savePointStore = LoadGameMenu.defaultStore();
+    private Optional<SavePoint> savedGame = Optional.empty();
+    private boolean loadPending;
     private final GdxGameAudioCoordinator audioCoordinator =
             new GdxGameAudioCoordinator(new GameAudioDirector(AudioEngine::get), visualStyle);
 
@@ -71,9 +80,15 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     private Texture menuIconTexture;
 
     public MenuScreenController(GdxGameContext context, Consumer<Difficulty> startGameAction, Runnable openLegacyMenuAction) {
+        this(context, startGameAction, openLegacyMenuAction, null);
+    }
+
+    public MenuScreenController(GdxGameContext context, Consumer<Difficulty> startGameAction, Runnable openLegacyMenuAction,
+                                Consumer<Difficulty> loadGameAction) {
         super(context);
         this.startGameAction = startGameAction;
         this.openLegacyMenuAction = openLegacyMenuAction;
+        this.loadGameAction = loadGameAction;
     }
 
     @Override
@@ -87,6 +102,7 @@ public final class MenuScreenController extends AbstractGdxScreenController {
 
         menuIconTexture = context().assets().getTexture(visualStyle.menuIconImagePath());
 
+        savedGame = loadGameAction == null ? Optional.empty() : LoadGameMenu.latest(savePointStore);
         difficulties.clear();
         difficulties.addAll(difficultyService.list());
         Difficulty current = difficultyService.getCurrent();
@@ -116,9 +132,13 @@ public final class MenuScreenController extends AbstractGdxScreenController {
                 loadingPending = false;
                 loadingStatusText = "";
                 if (!difficulties.isEmpty()) {
-                    Difficulty selected = difficulties.get(Math.max(0, Math.min(selectedDifficultyIndex, difficulties.size() - 1)));
+                    Difficulty selected = chosenDifficulty();
                     difficultyService.setCurrent(selected);
-                    startGameAction.accept(selected);
+                    if (loadPending) {
+                        loadGameAction.accept(selected);   // the saved level, as it was entered
+                    } else {
+                        startGameAction.accept(selected);
+                    }
                 }
             }
         }
@@ -186,7 +206,11 @@ public final class MenuScreenController extends AbstractGdxScreenController {
                         menuLayout.highScoresButtonX(),
                         menuLayout.highScoresButtonY(),
                         menuLayout.highScoresButtonW(),
-                        menuLayout.highScoresButtonH()),
+                        menuLayout.highScoresButtonH(),
+                        menuLayout.loadButtonX(),
+                        menuLayout.loadButtonY(),
+                        menuLayout.loadButtonW(),
+                        menuLayout.loadButtonH()),
                 difficulties.size(),
                 selectedDifficultyIndex,
                 startMenuDropdownOpen);
@@ -202,12 +226,31 @@ public final class MenuScreenController extends AbstractGdxScreenController {
         if (mouseResult.highScoresRequested()) {
             openLegacyMenuAction.run();
         }
+        if (mouseResult.loadRequested() && loadGameAction != null && savedGame.isPresent()) {
+            beginStartLoading(true);
+        }
     }
 
     private void beginStartLoading() {
-        Difficulty selected = difficulties.isEmpty()
-                ? null
-                : difficulties.get(Math.max(0, Math.min(selectedDifficultyIndex, difficulties.size() - 1)));
+        beginStartLoading(false);
+    }
+
+    /** The difficulty to play on: the menu choice, or for a loaded game the one it was saved on. */
+    private Difficulty chosenDifficulty() {
+        Difficulty selected = difficulties.get(Math.max(0, Math.min(selectedDifficultyIndex, difficulties.size() - 1)));
+        return loadPending && savedGame.isPresent()
+                ? LoadGameMenu.difficultyFor(savedGame.get(), difficulties, MenuScreenController::saveName, selected)
+                : selected;
+    }
+
+    /** The name a savepoint keeps a difficulty under: the name of its model class (Easy, Medium, Hard). */
+    private static String saveName(Difficulty difficulty) {
+        return difficulty.eClass().getName();
+    }
+
+    private void beginStartLoading(boolean loadSavedGame) {
+        loadPending = loadSavedGame;
+        Difficulty selected = difficulties.isEmpty() ? null : chosenDifficulty();
         queueMenuAndGameplayAssets(selected);
         loadingPending = true;
         loadingStartedAtNanos = TimeUtils.nanoTime();
@@ -296,7 +339,9 @@ public final class MenuScreenController extends AbstractGdxScreenController {
                 false,
                 loadingPending,
                 selectedDifficultySummary,
-                loadingStatusText));
+                loadingStatusText,
+                savedGame.isPresent(),
+                LoadGameMenu.label(savedGame)));
     }
 
     private static String displayName(Difficulty difficulty) {

@@ -69,6 +69,7 @@ class LevelProgressTest {
         progress.advance(new PlayerArsenal(1));
         progress.advance(new PlayerArsenal(1));
         progress.advance(new PlayerArsenal(1));
+        progress.advance(new PlayerArsenal(1));
         assertFalse(progress.hasNext());
         assertThrows(IllegalStateException.class, () -> progress.advance(new PlayerArsenal(1)));
     }
@@ -199,5 +200,60 @@ class LevelProgressTest {
         store.clear();
         p.completeLevel(new PlayerArsenal(1));
         assertTrue(store.load().isEmpty());
+    }
+
+    @Test
+    @DisplayName("the score is carried forward, not reset: 28 000 at the end of a level on hard starts the next level on 58 000")
+    void scoreIsCarriedForward() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress p = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        int hard = main.game.maze.common.scoring.GameScoringConstants.HARD_BASE_SCORE;
+        assertEquals(0, p.carriedScore(), "nothing is carried into level 1");
+        assertEquals(30_000, hard + p.carriedScore(), "level 1 starts at 30 000");
+
+        p.completeLevel(new PlayerArsenal(3), 28_000);   // the level ended on 28 000
+        assertEquals(0, p.carriedScore(), "still on level 1 until the player goes on");
+        p.advance(new PlayerArsenal(3));
+        assertEquals(28_000, p.carriedScore());
+        assertEquals(58_000, hard + p.carriedScore(), "level 2 starts at 58 000");
+
+        p.completeLevel(new PlayerArsenal(3), 61_500);   // level 2 ended on 61 500 (58 000 plus what was earned)
+        p.advance(new PlayerArsenal(3));
+        assertEquals(61_500, p.carriedScore());
+        assertEquals(91_500, hard + p.carriedScore(), "and so on");
+    }
+
+    @Test
+    @DisplayName("a restarted level goes back to the score it was entered with; a new game starts from nothing")
+    void restartingKeepsTheEntryScore() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress p = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        p.completeLevel(new PlayerArsenal(3), 28_000);
+        p.advance(new PlayerArsenal(3));
+        p.restartLevel();
+        assertEquals(28_000, p.carriedScore(), "level 2 restarts from its savepoint, score included");
+        assertEquals(28_000, store.load().orElseThrow().score());
+        p.restartLevel();
+        p.completeLevel(new PlayerArsenal(3));   // a completion with no score given adds nothing new
+        p.advance(new PlayerArsenal(3));
+        assertEquals(28_000, p.carriedScore());
+
+        p.restart();
+        assertEquals(0, p.carriedScore(), "a new game: no score carried");
+        p.restartLevel();
+        assertEquals(0, p.carriedScore(), "restarting level 1 is a new game");
+    }
+
+    @Test
+    @DisplayName("the carried score is part of the savepoint: picked up again, it is still there")
+    void scoreIsInTheSavePoint() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress before = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        before.completeLevel(new PlayerArsenal(3), 28_000);
+        LevelProgress after = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        assertTrue(after.resumeFromSavePoint());
+        assertEquals(28_000, after.carriedScore());
+        before.completeLevel(new PlayerArsenal(3), -5);
+        assertEquals(0, store.load().orElseThrow().score(), "a negative score carries as nothing");
     }
 }
