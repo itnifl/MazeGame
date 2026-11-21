@@ -499,6 +499,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
         tickHazards(dt);
+        // sergeant rounds and mines hurt the player after the combat frame was read: a lethal hit counts now,
+        // so it suppresses a win on the goal in this same frame
+        combatFrameDead = GdxGameCombatAndEnemyFlowSupport.deadAfterExtraDamage(combatFrameDead, combatState);
         GdxWeaponSupport.tickEffects(worldModel, animatedEnemies, dt);
         // enemies die from bombs, lasers, sledgehammers and collapsing walls; credit each kill to its killer
         GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(

@@ -40,7 +40,8 @@ public final class FxBannerView {
         shown.setAlignment(javafx.geometry.Pos.CENTER);
         AnchorPane.setLeftAnchor(shown, 0.0);
         AnchorPane.setRightAnchor(shown, 0.0);
-        shown.layoutYProperty().bind(root.heightProperty().multiply(HEIGHT_SHARE));
+        AnchorPane.setTopAnchor(shown, 0.0);
+        shown.translateYProperty().bind(root.heightProperty().multiply(HEIGHT_SHARE));
         root.getChildren().add(shown);
         label = shown;
 
@@ -71,7 +72,7 @@ public final class FxBannerView {
             timer = null;
         }
         if (label != null) {
-            label.layoutYProperty().unbind();
+            label.translateYProperty().unbind();
             AnchorPane root = rootSupplier.get();
             if (root != null) {
                 root.getChildren().remove(label);

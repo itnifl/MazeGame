@@ -13,7 +13,7 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
  * Root element - A game configuration containing all game elements
  */
 GameConfiguration:
-    'game' name=ID '{'
+    'game' name=ValidID '{'
         (imports+=Import)*
         (difficulty=DifficultyConfig)?
         (opponents+=OpponentConfig)*
@@ -63,7 +63,7 @@ enum EnemyType:
  * Opponent/Enemy configuration
  */
 OpponentConfig:
-    'opponent' name=ID '{'
+    'opponent' name=ValidID '{'
         'type' type=CharacterTypeEnum
         ('displayName' displayName=STRING)?
         ('health' health=SIGNED_INT)?
@@ -72,8 +72,8 @@ OpponentConfig:
         ('enabled' enabled=BOOLEAN)?
         ('behavior' behavior=BehaviorTypeEnum)?
         (characterSpecifics=CharacterSpecifics)?
-        ('patrol' patrolRef=[PatrolConfig])?
-        ('loot' lootRef=[LootTableConfig])?
+        ('patrol' patrolRef=[PatrolConfig|ValidID])?
+        ('loot' lootRef=[LootTableConfig|ValidID])?
     '}'
 ;
 
@@ -130,7 +130,7 @@ enum ProjectileTypeEnum:
  * Patrol path configuration
  */
 PatrolConfig:
-    'patrol' name=ID '{'
+    'patrol' name=ValidID '{'
         ('visionRange' visionRange=DOUBLE)?
         (zone=PatrolZoneConfig)?
         'path' '['
@@ -156,14 +156,14 @@ Waypoint:
  * Loot table configuration
  */
 LootTableConfig:
-    'loot-table' name=ID '{'
+    'loot-table' name=ValidID '{'
         ('capacity' capacity=INT)?
         items+=LootItemConfig+
     '}'
 ;
 
 LootItemConfig:
-    'item' name=ID '{'
+    'item' name=ValidID '{'
         'type' type=LootItemTypeEnum
         'value' value=INT
         ('weight' weight=INT)?
@@ -292,4 +292,12 @@ INT_OBJECT returns ecore::EIntegerObject:
 
 BOOLEAN_OBJECT returns ecore::EBooleanObject:
     'true' | 'false'
+;
+
+/*
+ * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
+ * allowed as names and references, so existing files that used them as identifiers keep parsing.
+ */
+ValidID returns ecore::EString:
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
 ;

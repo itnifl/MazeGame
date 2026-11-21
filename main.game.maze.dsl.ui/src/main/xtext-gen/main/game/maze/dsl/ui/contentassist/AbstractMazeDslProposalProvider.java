@@ -442,4 +442,7 @@ public abstract class AbstractMazeDslProposalProvider extends TerminalsProposalP
 	public void complete_BOOLEAN_OBJECT(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override
 	}
+	public void complete_ValidID(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		// subclasses may override
+	}
 }

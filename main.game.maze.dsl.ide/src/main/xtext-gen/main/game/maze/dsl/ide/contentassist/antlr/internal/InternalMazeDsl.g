@@ -749,6 +749,31 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleValidID
+entryRuleValidID
+:
+{ before(grammarAccess.getValidIDRule()); }
+	 ruleValidID
+{ after(grammarAccess.getValidIDRule()); } 
+	 EOF 
+;
+
+// Rule ValidID
+ruleValidID 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getValidIDAccess().getAlternatives()); }
+		(rule__ValidID__Alternatives)
+		{ after(grammarAccess.getValidIDAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Rule DifficultyLevel
 ruleDifficultyLevel
 	@init {
@@ -924,6 +949,243 @@ rule__BOOLEAN_OBJECT__Alternatives
 		{ before(grammarAccess.getBOOLEAN_OBJECTAccess().getFalseKeyword_1()); }
 		'false'
 		{ after(grammarAccess.getBOOLEAN_OBJECTAccess().getFalseKeyword_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ValidID__Alternatives
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getValidIDAccess().getIDTerminalRuleCall_0()); }
+		RULE_ID
+		{ after(grammarAccess.getValidIDAccess().getIDTerminalRuleCall_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBasedOnKeyword_1()); }
+		'basedOn'
+		{ after(grammarAccess.getValidIDAccess().getBasedOnKeyword_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getThreatCapacityKeyword_2()); }
+		'threatCapacity'
+		{ after(grammarAccess.getValidIDAccess().getThreatCapacityKeyword_2()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getWallMaterialsKeyword_3()); }
+		'wallMaterials'
+		{ after(grammarAccess.getValidIDAccess().getWallMaterialsKeyword_3()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getInheritWeaponsKeyword_4()); }
+		'inheritWeapons'
+		{ after(grammarAccess.getValidIDAccess().getInheritWeaponsKeyword_4()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getCascadeDepthKeyword_5()); }
+		'cascadeDepth'
+		{ after(grammarAccess.getValidIDAccess().getCascadeDepthKeyword_5()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRingKeyword_6()); }
+		'ring'
+		{ after(grammarAccess.getValidIDAccess().getRingKeyword_6()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getShareKeyword_7()); }
+		'share'
+		{ after(grammarAccess.getValidIDAccess().getShareKeyword_7()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getMaterialsKeyword_8()); }
+		'materials'
+		{ after(grammarAccess.getValidIDAccess().getMaterialsKeyword_8()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSergeantKeyword_9()); }
+		'sergeant'
+		{ after(grammarAccess.getValidIDAccess().getSergeantKeyword_9()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSergeantsKeyword_10()); }
+		'sergeants'
+		{ after(grammarAccess.getValidIDAccess().getSergeantsKeyword_10()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSightRangeKeyword_11()); }
+		'sightRange'
+		{ after(grammarAccess.getValidIDAccess().getSightRangeKeyword_11()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRoundsKeyword_12()); }
+		'rounds'
+		{ after(grammarAccess.getValidIDAccess().getRoundsKeyword_12()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRoundDamageKeyword_13()); }
+		'roundDamage'
+		{ after(grammarAccess.getValidIDAccess().getRoundDamageKeyword_13()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRoundIntervalKeyword_14()); }
+		'roundInterval'
+		{ after(grammarAccess.getValidIDAccess().getRoundIntervalKeyword_14()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBurstCooldownKeyword_15()); }
+		'burstCooldown'
+		{ after(grammarAccess.getValidIDAccess().getBurstCooldownKeyword_15()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSpriteKeyword_16()); }
+		'sprite'
+		{ after(grammarAccess.getValidIDAccess().getSpriteKeyword_16()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getFireSoundKeyword_17()); }
+		'fireSound'
+		{ after(grammarAccess.getValidIDAccess().getFireSoundKeyword_17()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getDropsKeyword_18()); }
+		'drops'
+		{ after(grammarAccess.getValidIDAccess().getDropsKeyword_18()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getGatlingKeyword_19()); }
+		'gatling'
+		{ after(grammarAccess.getValidIDAccess().getGatlingKeyword_19()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getPostDistanceKeyword_20()); }
+		'postDistance'
+		{ after(grammarAccess.getValidIDAccess().getPostDistanceKeyword_20()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getMinesKeyword_21()); }
+		'mines'
+		{ after(grammarAccess.getValidIDAccess().getMinesKeyword_21()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getCountKeyword_22()); }
+		'count'
+		{ after(grammarAccess.getValidIDAccess().getCountKeyword_22()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getRingRadiusKeyword_23()); }
+		'ringRadius'
+		{ after(grammarAccess.getValidIDAccess().getRingRadiusKeyword_23()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getTriggerRadiusKeyword_24()); }
+		'triggerRadius'
+		{ after(grammarAccess.getValidIDAccess().getTriggerRadiusKeyword_24()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getPulseKeyword_25()); }
+		'pulse'
+		{ after(grammarAccess.getValidIDAccess().getPulseKeyword_25()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBlastRadiusKeyword_26()); }
+		'blastRadius'
+		{ after(grammarAccess.getValidIDAccess().getBlastRadiusKeyword_26()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBlastDamageKeyword_27()); }
+		'blastDamage'
+		{ after(grammarAccess.getValidIDAccess().getBlastDamageKeyword_27()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getPlayerDamageKeyword_28()); }
+		'playerDamage'
+		{ after(grammarAccess.getValidIDAccess().getPlayerDamageKeyword_28()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getHoleRadiusKeyword_29()); }
+		'holeRadius'
+		{ after(grammarAccess.getValidIDAccess().getHoleRadiusKeyword_29()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getPortalGhostKeyword_30()); }
+		'portalGhost'
+		{ after(grammarAccess.getValidIDAccess().getPortalGhostKeyword_30()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getPortalGhostsKeyword_31()); }
+		'portalGhosts'
+		{ after(grammarAccess.getValidIDAccess().getPortalGhostsKeyword_31()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getTeleportKeyword_32()); }
+		'teleport'
+		{ after(grammarAccess.getValidIDAccess().getTeleportKeyword_32()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getCooldownKeyword_33()); }
+		'cooldown'
+		{ after(grammarAccess.getValidIDAccess().getCooldownKeyword_33()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBannerKeyword_34()); }
+		'banner'
+		{ after(grammarAccess.getValidIDAccess().getBannerKeyword_34()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBannerSecondsKeyword_35()); }
+		'bannerSeconds'
+		{ after(grammarAccess.getValidIDAccess().getBannerSecondsKeyword_35()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getZapSoundKeyword_36()); }
+		'zapSound'
+		{ after(grammarAccess.getValidIDAccess().getZapSoundKeyword_36()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37()); }
+		'voiceSound'
+		{ after(grammarAccess.getValidIDAccess().getVoiceSoundKeyword_37()); }
 	)
 ;
 finally {
@@ -9082,9 +9344,9 @@ rule__GameConfiguration__NameAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getGameConfigurationAccess().getNameIDTerminalRuleCall_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getGameConfigurationAccess().getNameIDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getGameConfigurationAccess().getNameValidIDParserRuleCall_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getGameConfigurationAccess().getNameValidIDParserRuleCall_1_0()); }
 	)
 ;
 finally {
@@ -9326,9 +9588,9 @@ rule__OpponentConfig__NameAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getOpponentConfigAccess().getNameIDTerminalRuleCall_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getOpponentConfigAccess().getNameIDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getOpponentConfigAccess().getNameValidIDParserRuleCall_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getOpponentConfigAccess().getNameValidIDParserRuleCall_1_0()); }
 	)
 ;
 finally {
@@ -9463,9 +9725,9 @@ rule__OpponentConfig__PatrolRefAssignment_12_1
 	(
 		{ before(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigCrossReference_12_1_0()); }
 		(
-			{ before(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigIDTerminalRuleCall_12_1_0_1()); }
-			RULE_ID
-			{ after(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigIDTerminalRuleCall_12_1_0_1()); }
+			{ before(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigValidIDParserRuleCall_12_1_0_1()); }
+			ruleValidID
+			{ after(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigValidIDParserRuleCall_12_1_0_1()); }
 		)
 		{ after(grammarAccess.getOpponentConfigAccess().getPatrolRefPatrolConfigCrossReference_12_1_0()); }
 	)
@@ -9482,9 +9744,9 @@ rule__OpponentConfig__LootRefAssignment_13_1
 	(
 		{ before(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigCrossReference_13_1_0()); }
 		(
-			{ before(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigIDTerminalRuleCall_13_1_0_1()); }
-			RULE_ID
-			{ after(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigIDTerminalRuleCall_13_1_0_1()); }
+			{ before(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigValidIDParserRuleCall_13_1_0_1()); }
+			ruleValidID
+			{ after(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigValidIDParserRuleCall_13_1_0_1()); }
 		)
 		{ after(grammarAccess.getOpponentConfigAccess().getLootRefLootTableConfigCrossReference_13_1_0()); }
 	)
@@ -9679,9 +9941,9 @@ rule__PatrolConfig__NameAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getPatrolConfigAccess().getNameIDTerminalRuleCall_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getPatrolConfigAccess().getNameIDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getPatrolConfigAccess().getNameValidIDParserRuleCall_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getPatrolConfigAccess().getNameValidIDParserRuleCall_1_0()); }
 	)
 ;
 finally {
@@ -9859,9 +10121,9 @@ rule__LootTableConfig__NameAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getLootTableConfigAccess().getNameIDTerminalRuleCall_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getLootTableConfigAccess().getNameIDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getLootTableConfigAccess().getNameValidIDParserRuleCall_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getLootTableConfigAccess().getNameValidIDParserRuleCall_1_0()); }
 	)
 ;
 finally {
@@ -9904,9 +10166,9 @@ rule__LootItemConfig__NameAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getLootItemConfigAccess().getNameIDTerminalRuleCall_1_0()); }
-		RULE_ID
-		{ after(grammarAccess.getLootItemConfigAccess().getNameIDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getLootItemConfigAccess().getNameValidIDParserRuleCall_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getLootItemConfigAccess().getNameValidIDParserRuleCall_1_0()); }
 	)
 ;
 finally {

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
@@ -26,9 +28,32 @@ class FxScreenShakeTest {
         }
     }
 
+    /** Runs the task on the JavaFX thread (where FxScreenShake lives and its timers pulse) and rethrows its failure here. */
+    private static void onFxThread(Runnable task) throws Exception {
+        FutureTask<Void> run = new FutureTask<>(task, null);
+        Platform.runLater(run);
+        try {
+            run.get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException failure) {
+            Throwable cause = failure.getCause();
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            if (cause instanceof Exception exception) {
+                throw exception;
+            }
+            throw failure;
+        }
+    }
+
     @Test
     @DisplayName("overlapping shakes preserve original baseline translation")
-    void overlappingShakesPreserveOriginalBaseline() {
+    void overlappingShakesPreserveOriginalBaseline() throws Exception {
+        // play, advance and assert in one task: a real pulse cannot interleave with it on the same thread
+        onFxThread(this::overlappingShakesSequence);
+    }
+
+    private void overlappingShakesSequence() {
         Pane pane = new Pane();
         pane.setTranslateX(15.0);
         pane.setTranslateY(25.0);

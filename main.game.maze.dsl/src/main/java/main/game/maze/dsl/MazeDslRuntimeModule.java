@@ -10,6 +10,12 @@ package main.game.maze.dsl;
  */
 public class MazeDslRuntimeModule extends AbstractMazeDslRuntimeModule {
 
+    /** Decimal numbers are written in plain notation so a serialized model parses again. */
+    @Override
+    public Class<? extends org.eclipse.xtext.conversion.IValueConverterService> bindIValueConverterService() {
+        return MazeDslValueConverters.class;
+    }
+
     // Custom bindings can be added here
     // For example:
     // @Override

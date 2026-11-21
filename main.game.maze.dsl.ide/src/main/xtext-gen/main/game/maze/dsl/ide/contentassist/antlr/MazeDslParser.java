@@ -34,6 +34,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getCharacterSpecificsAccess().getAlternatives(), "rule__CharacterSpecifics__Alternatives");
 			builder.put(grammarAccess.getBOOLEANAccess().getAlternatives(), "rule__BOOLEAN__Alternatives");
 			builder.put(grammarAccess.getBOOLEAN_OBJECTAccess().getAlternatives(), "rule__BOOLEAN_OBJECT__Alternatives");
+			builder.put(grammarAccess.getValidIDAccess().getAlternatives(), "rule__ValidID__Alternatives");
 			builder.put(grammarAccess.getDifficultyLevelAccess().getAlternatives(), "rule__DifficultyLevel__Alternatives");
 			builder.put(grammarAccess.getEnemyTypeAccess().getAlternatives(), "rule__EnemyType__Alternatives");
 			builder.put(grammarAccess.getCharacterTypeEnumAccess().getAlternatives(), "rule__CharacterTypeEnum__Alternatives");

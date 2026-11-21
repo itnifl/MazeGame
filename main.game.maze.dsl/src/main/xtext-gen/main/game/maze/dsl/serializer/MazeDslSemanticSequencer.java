@@ -171,7 +171,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=ID 
+	 *         name=ValidID 
 	 *         imports+=Import* 
 	 *         difficulty=DifficultyConfig? 
 	 *         opponents+=OpponentConfig* 
@@ -293,7 +293,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     LootItemConfig returns LootItemConfig
 	 *
 	 * Constraint:
-	 *     (name=ID type=LootItemTypeEnum value=INT weight=INT?)
+	 *     (name=ValidID type=LootItemTypeEnum value=INT weight=INT?)
 	 * </pre>
 	 */
 	protected void sequence_LootItemConfig(ISerializationContext context, LootItemConfig semanticObject) {
@@ -307,7 +307,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     LootTableConfig returns LootTableConfig
 	 *
 	 * Constraint:
-	 *     (name=ID capacity=INT? items+=LootItemConfig+)
+	 *     (name=ValidID capacity=INT? items+=LootItemConfig+)
 	 * </pre>
 	 */
 	protected void sequence_LootTableConfig(ISerializationContext context, LootTableConfig semanticObject) {
@@ -372,7 +372,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         name=ID 
+	 *         name=ValidID 
 	 *         type=CharacterTypeEnum 
 	 *         displayName=STRING? 
 	 *         health=SIGNED_INT? 
@@ -381,8 +381,8 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         enabled=BOOLEAN? 
 	 *         behavior=BehaviorTypeEnum? 
 	 *         characterSpecifics=CharacterSpecifics? 
-	 *         patrolRef=[PatrolConfig|ID]? 
-	 *         lootRef=[LootTableConfig|ID]?
+	 *         patrolRef=[PatrolConfig|ValidID]? 
+	 *         lootRef=[LootTableConfig|ValidID]?
 	 *     )
 	 * </pre>
 	 */
@@ -397,7 +397,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     PatrolConfig returns PatrolConfig
 	 *
 	 * Constraint:
-	 *     (name=ID visionRange=DOUBLE? zone=PatrolZoneConfig? waypoints+=Waypoint waypoints+=Waypoint*)
+	 *     (name=ValidID visionRange=DOUBLE? zone=PatrolZoneConfig? waypoints+=Waypoint waypoints+=Waypoint*)
 	 * </pre>
 	 */
 	protected void sequence_PatrolConfig(ISerializationContext context, PatrolConfig semanticObject) {

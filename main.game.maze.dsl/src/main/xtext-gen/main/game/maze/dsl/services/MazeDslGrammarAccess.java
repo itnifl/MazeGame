@@ -31,7 +31,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cGameKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameValidIDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cImportsAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cImportsImportParserRuleCall_3_0 = (RuleCall)cImportsAssignment_3.eContents().get(0);
@@ -51,7 +51,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// * Root element - A game configuration containing all game elements
 		// */
 		//GameConfiguration:
-		//    'game' name=ID '{'
+		//    'game' name=ValidID '{'
 		//        (imports+=Import)*
 		//        (difficulty=DifficultyConfig)?
 		//        (opponents+=OpponentConfig)*
@@ -62,7 +62,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'game' name=ID '{'
+		//'game' name=ValidID '{'
 		//    (imports+=Import)*
 		//    (difficulty=DifficultyConfig)?
 		//    (opponents+=OpponentConfig)*
@@ -75,11 +75,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'game'
 		public Keyword getGameKeyword_0() { return cGameKeyword_0; }
 		
-		//name=ID
+		//name=ValidID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		//ValidID
+		public RuleCall getNameValidIDParserRuleCall_1_0() { return cNameValidIDParserRuleCall_1_0; }
 		
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -319,7 +319,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cOpponentKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameValidIDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Keyword cTypeKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cTypeAssignment_4 = (Assignment)cGroup.eContents().get(4);
@@ -354,19 +354,19 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cPatrolKeyword_12_0 = (Keyword)cGroup_12.eContents().get(0);
 		private final Assignment cPatrolRefAssignment_12_1 = (Assignment)cGroup_12.eContents().get(1);
 		private final CrossReference cPatrolRefPatrolConfigCrossReference_12_1_0 = (CrossReference)cPatrolRefAssignment_12_1.eContents().get(0);
-		private final RuleCall cPatrolRefPatrolConfigIDTerminalRuleCall_12_1_0_1 = (RuleCall)cPatrolRefPatrolConfigCrossReference_12_1_0.eContents().get(1);
+		private final RuleCall cPatrolRefPatrolConfigValidIDParserRuleCall_12_1_0_1 = (RuleCall)cPatrolRefPatrolConfigCrossReference_12_1_0.eContents().get(1);
 		private final Group cGroup_13 = (Group)cGroup.eContents().get(13);
 		private final Keyword cLootKeyword_13_0 = (Keyword)cGroup_13.eContents().get(0);
 		private final Assignment cLootRefAssignment_13_1 = (Assignment)cGroup_13.eContents().get(1);
 		private final CrossReference cLootRefLootTableConfigCrossReference_13_1_0 = (CrossReference)cLootRefAssignment_13_1.eContents().get(0);
-		private final RuleCall cLootRefLootTableConfigIDTerminalRuleCall_13_1_0_1 = (RuleCall)cLootRefLootTableConfigCrossReference_13_1_0.eContents().get(1);
+		private final RuleCall cLootRefLootTableConfigValidIDParserRuleCall_13_1_0_1 = (RuleCall)cLootRefLootTableConfigCrossReference_13_1_0.eContents().get(1);
 		private final Keyword cRightCurlyBracketKeyword_14 = (Keyword)cGroup.eContents().get(14);
 		
 		///*
 		// * Opponent/Enemy configuration
 		// */
 		//OpponentConfig:
-		//    'opponent' name=ID '{'
+		//    'opponent' name=ValidID '{'
 		//        'type' type=CharacterTypeEnum
 		//        ('displayName' displayName=STRING)?
 		//        ('health' health=SIGNED_INT)?
@@ -375,13 +375,13 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        ('enabled' enabled=BOOLEAN)?
 		//        ('behavior' behavior=BehaviorTypeEnum)?
 		//        (characterSpecifics=CharacterSpecifics)?
-		//        ('patrol' patrolRef=[PatrolConfig])?
-		//        ('loot' lootRef=[LootTableConfig])?
+		//        ('patrol' patrolRef=[PatrolConfig|ValidID])?
+		//        ('loot' lootRef=[LootTableConfig|ValidID])?
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'opponent' name=ID '{'
+		//'opponent' name=ValidID '{'
 		//    'type' type=CharacterTypeEnum
 		//    ('displayName' displayName=STRING)?
 		//    ('health' health=SIGNED_INT)?
@@ -390,19 +390,19 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    ('enabled' enabled=BOOLEAN)?
 		//    ('behavior' behavior=BehaviorTypeEnum)?
 		//    (characterSpecifics=CharacterSpecifics)?
-		//    ('patrol' patrolRef=[PatrolConfig])?
-		//    ('loot' lootRef=[LootTableConfig])?
+		//    ('patrol' patrolRef=[PatrolConfig|ValidID])?
+		//    ('loot' lootRef=[LootTableConfig|ValidID])?
 		//'}'
 		public Group getGroup() { return cGroup; }
 		
 		//'opponent'
 		public Keyword getOpponentKeyword_0() { return cOpponentKeyword_0; }
 		
-		//name=ID
+		//name=ValidID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		//ValidID
+		public RuleCall getNameValidIDParserRuleCall_1_0() { return cNameValidIDParserRuleCall_1_0; }
 		
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -494,35 +494,35 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//CharacterSpecifics
 		public RuleCall getCharacterSpecificsCharacterSpecificsParserRuleCall_11_0() { return cCharacterSpecificsCharacterSpecificsParserRuleCall_11_0; }
 		
-		//('patrol' patrolRef=[PatrolConfig])?
+		//('patrol' patrolRef=[PatrolConfig|ValidID])?
 		public Group getGroup_12() { return cGroup_12; }
 		
 		//'patrol'
 		public Keyword getPatrolKeyword_12_0() { return cPatrolKeyword_12_0; }
 		
-		//patrolRef=[PatrolConfig]
+		//patrolRef=[PatrolConfig|ValidID]
 		public Assignment getPatrolRefAssignment_12_1() { return cPatrolRefAssignment_12_1; }
 		
-		//[PatrolConfig]
+		//[PatrolConfig|ValidID]
 		public CrossReference getPatrolRefPatrolConfigCrossReference_12_1_0() { return cPatrolRefPatrolConfigCrossReference_12_1_0; }
 		
-		//ID
-		public RuleCall getPatrolRefPatrolConfigIDTerminalRuleCall_12_1_0_1() { return cPatrolRefPatrolConfigIDTerminalRuleCall_12_1_0_1; }
+		//ValidID
+		public RuleCall getPatrolRefPatrolConfigValidIDParserRuleCall_12_1_0_1() { return cPatrolRefPatrolConfigValidIDParserRuleCall_12_1_0_1; }
 		
-		//('loot' lootRef=[LootTableConfig])?
+		//('loot' lootRef=[LootTableConfig|ValidID])?
 		public Group getGroup_13() { return cGroup_13; }
 		
 		//'loot'
 		public Keyword getLootKeyword_13_0() { return cLootKeyword_13_0; }
 		
-		//lootRef=[LootTableConfig]
+		//lootRef=[LootTableConfig|ValidID]
 		public Assignment getLootRefAssignment_13_1() { return cLootRefAssignment_13_1; }
 		
-		//[LootTableConfig]
+		//[LootTableConfig|ValidID]
 		public CrossReference getLootRefLootTableConfigCrossReference_13_1_0() { return cLootRefLootTableConfigCrossReference_13_1_0; }
 		
-		//ID
-		public RuleCall getLootRefLootTableConfigIDTerminalRuleCall_13_1_0_1() { return cLootRefLootTableConfigIDTerminalRuleCall_13_1_0_1; }
+		//ValidID
+		public RuleCall getLootRefLootTableConfigValidIDParserRuleCall_13_1_0_1() { return cLootRefLootTableConfigValidIDParserRuleCall_13_1_0_1; }
 		
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_14() { return cRightCurlyBracketKeyword_14; }
@@ -871,7 +871,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cPatrolKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameValidIDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
 		private final Keyword cVisionRangeKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
@@ -894,7 +894,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// * Patrol path configuration
 		// */
 		//PatrolConfig:
-		//    'patrol' name=ID '{'
+		//    'patrol' name=ValidID '{'
 		//        ('visionRange' visionRange=DOUBLE)?
 		//        (zone=PatrolZoneConfig)?
 		//        'path' '['
@@ -904,7 +904,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'patrol' name=ID '{'
+		//'patrol' name=ValidID '{'
 		//    ('visionRange' visionRange=DOUBLE)?
 		//    (zone=PatrolZoneConfig)?
 		//    'path' '['
@@ -916,11 +916,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'patrol'
 		public Keyword getPatrolKeyword_0() { return cPatrolKeyword_0; }
 		
-		//name=ID
+		//name=ValidID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		//ValidID
+		public RuleCall getNameValidIDParserRuleCall_1_0() { return cNameValidIDParserRuleCall_1_0; }
 		
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -1128,7 +1128,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cLootTableKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameValidIDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
 		private final Keyword cCapacityKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
@@ -1142,14 +1142,14 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// * Loot table configuration
 		// */
 		//LootTableConfig:
-		//    'loot-table' name=ID '{'
+		//    'loot-table' name=ValidID '{'
 		//        ('capacity' capacity=INT)?
 		//        items+=LootItemConfig+
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'loot-table' name=ID '{'
+		//'loot-table' name=ValidID '{'
 		//    ('capacity' capacity=INT)?
 		//    items+=LootItemConfig+
 		//'}'
@@ -1158,11 +1158,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'loot-table'
 		public Keyword getLootTableKeyword_0() { return cLootTableKeyword_0; }
 		
-		//name=ID
+		//name=ValidID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		//ValidID
+		public RuleCall getNameValidIDParserRuleCall_1_0() { return cNameValidIDParserRuleCall_1_0; }
 		
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -1193,7 +1193,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cItemKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameValidIDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Keyword cTypeKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cTypeAssignment_4 = (Assignment)cGroup.eContents().get(4);
@@ -1208,7 +1208,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cRightCurlyBracketKeyword_8 = (Keyword)cGroup.eContents().get(8);
 		
 		//LootItemConfig:
-		//    'item' name=ID '{'
+		//    'item' name=ValidID '{'
 		//        'type' type=LootItemTypeEnum
 		//        'value' value=INT
 		//        ('weight' weight=INT)?
@@ -1216,7 +1216,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'item' name=ID '{'
+		//'item' name=ValidID '{'
 		//    'type' type=LootItemTypeEnum
 		//    'value' value=INT
 		//    ('weight' weight=INT)?
@@ -1226,11 +1226,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'item'
 		public Keyword getItemKeyword_0() { return cItemKeyword_0; }
 		
-		//name=ID
+		//name=ValidID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		//ValidID
+		public RuleCall getNameValidIDParserRuleCall_1_0() { return cNameValidIDParserRuleCall_1_0; }
 		
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
@@ -2259,6 +2259,174 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'false'
 		public Keyword getFalseKeyword_1() { return cFalseKeyword_1; }
 	}
+	public class ValidIDElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ValidID");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final Keyword cBasedOnKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cThreatCapacityKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
+		private final Keyword cWallMaterialsKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cInheritWeaponsKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cCascadeDepthKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
+		private final Keyword cRingKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
+		private final Keyword cShareKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cMaterialsKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cSergeantKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cSergeantsKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cSightRangeKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cRoundsKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cRoundDamageKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cRoundIntervalKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cBurstCooldownKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cSpriteKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cFireSoundKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cDropsKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cGatlingKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cPostDistanceKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
+		private final Keyword cMinesKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
+		private final Keyword cCountKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cRingRadiusKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cTriggerRadiusKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
+		private final Keyword cPulseKeyword_25 = (Keyword)cAlternatives.eContents().get(25);
+		private final Keyword cBlastRadiusKeyword_26 = (Keyword)cAlternatives.eContents().get(26);
+		private final Keyword cBlastDamageKeyword_27 = (Keyword)cAlternatives.eContents().get(27);
+		private final Keyword cPlayerDamageKeyword_28 = (Keyword)cAlternatives.eContents().get(28);
+		private final Keyword cHoleRadiusKeyword_29 = (Keyword)cAlternatives.eContents().get(29);
+		private final Keyword cPortalGhostKeyword_30 = (Keyword)cAlternatives.eContents().get(30);
+		private final Keyword cPortalGhostsKeyword_31 = (Keyword)cAlternatives.eContents().get(31);
+		private final Keyword cTeleportKeyword_32 = (Keyword)cAlternatives.eContents().get(32);
+		private final Keyword cCooldownKeyword_33 = (Keyword)cAlternatives.eContents().get(33);
+		private final Keyword cBannerKeyword_34 = (Keyword)cAlternatives.eContents().get(34);
+		private final Keyword cBannerSecondsKeyword_35 = (Keyword)cAlternatives.eContents().get(35);
+		private final Keyword cZapSoundKeyword_36 = (Keyword)cAlternatives.eContents().get(36);
+		private final Keyword cVoiceSoundKeyword_37 = (Keyword)cAlternatives.eContents().get(37);
+		
+		///*
+		// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
+		// * allowed as names and references, so existing files that used them as identifiers keep parsing.
+		// */
+		//ValidID returns ecore::EString:
+		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//'basedOn'
+		public Keyword getBasedOnKeyword_1() { return cBasedOnKeyword_1; }
+		
+		//'threatCapacity'
+		public Keyword getThreatCapacityKeyword_2() { return cThreatCapacityKeyword_2; }
+		
+		//'wallMaterials'
+		public Keyword getWallMaterialsKeyword_3() { return cWallMaterialsKeyword_3; }
+		
+		//'inheritWeapons'
+		public Keyword getInheritWeaponsKeyword_4() { return cInheritWeaponsKeyword_4; }
+		
+		//'cascadeDepth'
+		public Keyword getCascadeDepthKeyword_5() { return cCascadeDepthKeyword_5; }
+		
+		//'ring'
+		public Keyword getRingKeyword_6() { return cRingKeyword_6; }
+		
+		//'share'
+		public Keyword getShareKeyword_7() { return cShareKeyword_7; }
+		
+		//'materials'
+		public Keyword getMaterialsKeyword_8() { return cMaterialsKeyword_8; }
+		
+		//'sergeant'
+		public Keyword getSergeantKeyword_9() { return cSergeantKeyword_9; }
+		
+		//'sergeants'
+		public Keyword getSergeantsKeyword_10() { return cSergeantsKeyword_10; }
+		
+		//'sightRange'
+		public Keyword getSightRangeKeyword_11() { return cSightRangeKeyword_11; }
+		
+		//'rounds'
+		public Keyword getRoundsKeyword_12() { return cRoundsKeyword_12; }
+		
+		//'roundDamage'
+		public Keyword getRoundDamageKeyword_13() { return cRoundDamageKeyword_13; }
+		
+		//'roundInterval'
+		public Keyword getRoundIntervalKeyword_14() { return cRoundIntervalKeyword_14; }
+		
+		//'burstCooldown'
+		public Keyword getBurstCooldownKeyword_15() { return cBurstCooldownKeyword_15; }
+		
+		//'sprite'
+		public Keyword getSpriteKeyword_16() { return cSpriteKeyword_16; }
+		
+		//'fireSound'
+		public Keyword getFireSoundKeyword_17() { return cFireSoundKeyword_17; }
+		
+		//'drops'
+		public Keyword getDropsKeyword_18() { return cDropsKeyword_18; }
+		
+		//'gatling'
+		public Keyword getGatlingKeyword_19() { return cGatlingKeyword_19; }
+		
+		//'postDistance'
+		public Keyword getPostDistanceKeyword_20() { return cPostDistanceKeyword_20; }
+		
+		//'mines'
+		public Keyword getMinesKeyword_21() { return cMinesKeyword_21; }
+		
+		//'count'
+		public Keyword getCountKeyword_22() { return cCountKeyword_22; }
+		
+		//'ringRadius'
+		public Keyword getRingRadiusKeyword_23() { return cRingRadiusKeyword_23; }
+		
+		//'triggerRadius'
+		public Keyword getTriggerRadiusKeyword_24() { return cTriggerRadiusKeyword_24; }
+		
+		//'pulse'
+		public Keyword getPulseKeyword_25() { return cPulseKeyword_25; }
+		
+		//'blastRadius'
+		public Keyword getBlastRadiusKeyword_26() { return cBlastRadiusKeyword_26; }
+		
+		//'blastDamage'
+		public Keyword getBlastDamageKeyword_27() { return cBlastDamageKeyword_27; }
+		
+		//'playerDamage'
+		public Keyword getPlayerDamageKeyword_28() { return cPlayerDamageKeyword_28; }
+		
+		//'holeRadius'
+		public Keyword getHoleRadiusKeyword_29() { return cHoleRadiusKeyword_29; }
+		
+		//'portalGhost'
+		public Keyword getPortalGhostKeyword_30() { return cPortalGhostKeyword_30; }
+		
+		//'portalGhosts'
+		public Keyword getPortalGhostsKeyword_31() { return cPortalGhostsKeyword_31; }
+		
+		//'teleport'
+		public Keyword getTeleportKeyword_32() { return cTeleportKeyword_32; }
+		
+		//'cooldown'
+		public Keyword getCooldownKeyword_33() { return cCooldownKeyword_33; }
+		
+		//'banner'
+		public Keyword getBannerKeyword_34() { return cBannerKeyword_34; }
+		
+		//'bannerSeconds'
+		public Keyword getBannerSecondsKeyword_35() { return cBannerSecondsKeyword_35; }
+		
+		//'zapSound'
+		public Keyword getZapSoundKeyword_36() { return cZapSoundKeyword_36; }
+		
+		//'voiceSound'
+		public Keyword getVoiceSoundKeyword_37() { return cVoiceSoundKeyword_37; }
+	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.DifficultyLevel");
@@ -2544,6 +2712,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final DOUBLE_OBJECTElements pDOUBLE_OBJECT;
 	private final INT_OBJECTElements pINT_OBJECT;
 	private final BOOLEAN_OBJECTElements pBOOLEAN_OBJECT;
+	private final ValidIDElements pValidID;
 	
 	private final Grammar grammar;
 	
@@ -2589,6 +2758,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pDOUBLE_OBJECT = new DOUBLE_OBJECTElements();
 		this.pINT_OBJECT = new INT_OBJECTElements();
 		this.pBOOLEAN_OBJECT = new BOOLEAN_OBJECTElements();
+		this.pValidID = new ValidIDElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -2622,7 +2792,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Root element - A game configuration containing all game elements
 	// */
 	//GameConfiguration:
-	//    'game' name=ID '{'
+	//    'game' name=ValidID '{'
 	//        (imports+=Import)*
 	//        (difficulty=DifficultyConfig)?
 	//        (opponents+=OpponentConfig)*
@@ -2714,7 +2884,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Opponent/Enemy configuration
 	// */
 	//OpponentConfig:
-	//    'opponent' name=ID '{'
+	//    'opponent' name=ValidID '{'
 	//        'type' type=CharacterTypeEnum
 	//        ('displayName' displayName=STRING)?
 	//        ('health' health=SIGNED_INT)?
@@ -2723,8 +2893,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        ('enabled' enabled=BOOLEAN)?
 	//        ('behavior' behavior=BehaviorTypeEnum)?
 	//        (characterSpecifics=CharacterSpecifics)?
-	//        ('patrol' patrolRef=[PatrolConfig])?
-	//        ('loot' lootRef=[LootTableConfig])?
+	//        ('patrol' patrolRef=[PatrolConfig|ValidID])?
+	//        ('loot' lootRef=[LootTableConfig|ValidID])?
 	//    '}'
 	//;
 	public OpponentConfigElements getOpponentConfigAccess() {
@@ -2837,7 +3007,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Patrol path configuration
 	// */
 	//PatrolConfig:
-	//    'patrol' name=ID '{'
+	//    'patrol' name=ValidID '{'
 	//        ('visionRange' visionRange=DOUBLE)?
 	//        (zone=PatrolZoneConfig)?
 	//        'path' '['
@@ -2884,7 +3054,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * Loot table configuration
 	// */
 	//LootTableConfig:
-	//    'loot-table' name=ID '{'
+	//    'loot-table' name=ValidID '{'
 	//        ('capacity' capacity=INT)?
 	//        items+=LootItemConfig+
 	//    '}'
@@ -2898,7 +3068,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//LootItemConfig:
-	//    'item' name=ID '{'
+	//    'item' name=ValidID '{'
 	//        'type' type=LootItemTypeEnum
 	//        'value' value=INT
 	//        ('weight' weight=INT)?
@@ -3145,6 +3315,21 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getBOOLEAN_OBJECTRule() {
 		return getBOOLEAN_OBJECTAccess().getRule();
+	}
+	
+	///*
+	// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
+	// * allowed as names and references, so existing files that used them as identifiers keep parsing.
+	// */
+	//ValidID returns ecore::EString:
+	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound'
+	//;
+	public ValidIDElements getValidIDAccess() {
+		return pValidID;
+	}
+	
+	public ParserRule getValidIDRule() {
+		return getValidIDAccess().getRule();
 	}
 	
 	//terminal ID: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
