@@ -43,6 +43,7 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-gatling.wav", pickupGatling());
         write(dir, "bomb-explosion.wav", bombExplosion());
         write(dir, "teleport.wav", teleport());
+        write(dir, "wall-build.wav", wallBuild());
         write(dir, "rpg-launch.wav", rpgLaunch());
         write(dir, "rpg-explosion.wav", rpgExplosion());
         write(dir, "tower-hit.wav", towerHit());
@@ -240,6 +241,24 @@ public final class SoundEffectGenerator {
             double rumbleLevel = rumble * 9.0 * Math.exp(-t * 2.3) * Math.min(1, t / 0.03);
             double crack = white * Math.exp(-t * 70) * 0.55;
             out[i] = boom + rumbleLevel + crack;
+        }
+        return out;
+    }
+
+    /** A piece of wall going up: two wooden hammer knocks, the second a little softer, with a short rattle of nails. */
+    static double[] wallBuild() {
+        double[] out = buffer(0.5);
+        Random noise = new Random(61);
+        for (int knock = 0; knock < 2; knock++) {
+            int start = (int) ((0.02 + knock * 0.2) * RATE);
+            double level = knock == 0 ? 1.0 : 0.7;
+            for (int i = 0; i < (int) (0.16 * RATE) && start + i < out.length; i++) {
+                double t = i / (double) RATE;
+                double wood = Math.sin(2 * Math.PI * (210 - 90 * t) * t) * Math.exp(-t * 38)
+                        + 0.5 * Math.sin(2 * Math.PI * 560 * t) * Math.exp(-t * 55);
+                double tap = (noise.nextDouble() * 2 - 1) * Math.exp(-t * 160) * 0.7;
+                out[start + i] += level * (wood + tap);
+            }
         }
         return out;
     }

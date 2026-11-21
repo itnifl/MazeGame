@@ -231,6 +231,24 @@ public interface MazeDslFactory extends EFactory
   TowerCountConfig createTowerCountConfig();
 
   /**
+   * Returns a new object of class '<em>Wall Builder Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Wall Builder Config</em>'.
+   * @generated
+   */
+  WallBuilderConfig createWallBuilderConfig();
+
+  /**
+   * Returns a new object of class '<em>Builder Count Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Builder Count Config</em>'.
+   * @generated
+   */
+  BuilderCountConfig createBuilderCountConfig();
+
+  /**
    * Returns a new object of class '<em>Teleport Rules Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

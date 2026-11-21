@@ -92,6 +92,35 @@ A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
 
+## Wall builders
+
+```xml
+<wallBuilder displayName="Wall builder" health="80" speed="55.0" sprite="/main/game/maze/zombie-builder.png"
+    buildSecondsPerCorridor="3.0" startRadiusCells="4" blockRadiusCells="1" spawnRadius="200.0" wallMaterial="WOOD_BASIC"
+    buildSound="/main/game/maze/sounds/wall-build.wav"/>
+<builderCounts difficulty="EASY" count="2"/>
+<builderCounts difficulty="NORMAL" count="5"/>
+<builderCounts difficulty="HARD" count="10"/>
+```
+
+In the DSL: `wallBuilder "Wall builder" { health 80 speed 55.0 sprite "..." buildSeconds 3.0 startRadius 4 blockRadius 1 spawnRadius 200.0 material WOOD_BASIC buildSound "..." }` and `builders easy 2`, `builders normal 5`, `builders hard 10`.
+
+A level with a `<wallBuilder>` needs a `<builderCounts>` for all three difficulties (leave the whole list out to inherit it with `baseLevel`).
+Wall builders are construction worker zombies: the player can kill them, they cannot harm the player and they do not resurrect.
+They start within `spawnRadius` of the heart, one corridor width (60 px) apart from each other. They wander randomly outwards
+through the corridors at `speed` until they are `startRadiusCells` cells from the heart (4 = the first ring, a 9 by 9 block), and
+build there: each takes a corridor that leads into the block inside the ring and is still open, stands on the heart side of it and
+builds a wall of `wallMaterial` (breakable: the player can blast through) across it: a piece every `buildSecondsPerCorridor / 3` seconds, a corridor
+width in `buildSecondsPerCorridor`. When every corridor of the ring is closed they move one corridor width closer and wall up the
+next ring (3, 2, 1 cells), down to `blockRadiusCells`. Two builders never take the same corridor, a broken wall is built again and a killed builder's
+half-built wall is finished by another. Level 5 is level 4 plus this (`baseLevel="4"`).
+
+## Savepoints and restarting
+
+Completing a level saves a savepoint (`data/savepoint.properties`): the next level and the weapons the player takes into it. It is
+kept until a new game is started. Restarting a level (the win screen's *Restart level*, the game-over screen's restart) restores the
+level exactly as it was entered the first time. Level 1 has no savepoint, so restarting it starts a new game.
+
 ## Guard towers
 
 ```xml

@@ -67,6 +67,7 @@ import main.game.maze.game.hazard.TeleportFeedback;
 import main.game.maze.libgdx.helper.GdxHazardSupport;
 import main.game.maze.libgdx.helper.GdxGuardTowerSupport;
 import main.game.maze.libgdx.helper.GdxSergeantSupport;
+import main.game.maze.libgdx.helper.GdxWallBuilderSupport;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.common.controller.state.GameModeRouter;
@@ -177,10 +178,34 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     Viewport viewport;
     final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     /** Which level is being played; the win overlay moves on to the next one. */
-    private final LevelProgress levelProgress = new LevelProgress(LevelCatalogLoader.loadDefault());
+    private final LevelProgress levelProgress = new LevelProgress(LevelCatalogLoader.loadDefault(),
+            new main.game.maze.game.level.FileSavePointStore(java.nio.file.Path.of(
+                    main.game.maze.constants.DataFileConstants.SavePointFilePath)));
     private final GdxSergeantSupport sergeantSupport = new GdxSergeantSupport();
     private final GdxHazardSupport hazardSupport = new GdxHazardSupport();
     private final GdxGuardTowerSupport guardTowerSupport = new GdxGuardTowerSupport();
+    private final GdxWallBuilderSupport wallBuilderSupport = new GdxWallBuilderSupport();
+    /** What the wall builders ask of this screen. */
+    private final GdxWallBuilderSupport.Host wallBuilderHost = new GdxWallBuilderSupport.Host() {
+        @Override public List<Vector2D> walls() {
+            GameMazeWorld world = GdxWallDamageSupport.worldFrom(maze);
+            return world == null ? List.of() : world.getMazeVectors();
+        }
+        @Override public void build(String builderId, Vector2D piece) {
+            GameMazeWorld world = GdxWallDamageSupport.worldFrom(maze);
+            var spec = levelProgress.current().wallBuilder();
+            if (world == null || spec == null) {
+                return;
+            }
+            world.addBuiltWall(piece, main.game.maze.game.level.LevelSpec.wallMaterial(spec.wallMaterial()));
+            if (maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
+                realMaze.invalidateWalls();
+            }
+            if (spec.buildSound() != null) {
+                AudioEngine.get().playRateLimited(spec.buildSound(), "builder.build." + builderId, 250L);
+            }
+        }
+    };
     /** What the guard towers ask of this screen. */
     private final GdxGuardTowerSupport.Host guardTowerHost = new GdxGuardTowerSupport.Host() {
         @Override public int wallsBetween(float fromX, float fromY, float toX, float toY) {
@@ -291,7 +316,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void configureModeRouting() {
-        winOverlayController.setRestartLevelAction(this::startCurrentLevel);
+        winOverlayController.setRestartLevelAction(this::restartCurrentLevel);
         modeRouter
             .register(() -> overlayModeCoordinator.updateHighScores(() -> requestReturnToMenu(false)))
             .register(() -> overlayModeCoordinator.updateWon(
@@ -302,7 +327,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 this::startNextLevel))
             .register(() -> overlayModeCoordinator.updateGameOver(
                 hudCamera,
-                this::startCurrentLevel,   // the level that was lost, not level 1
+                this::restartCurrentLevel,   // the level that was lost, from its savepoint (level 1: a new game)
                 () -> requestReturnToMenu(false)));
     }
 
@@ -526,6 +551,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         tickHazards(dt);
         if (player != null) {
             guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
+            wallBuilderSupport.tick(wallBuilderHost, animatedEnemies, player.x(), player.y(), dt);
         }
         // sergeant rounds and mines hurt the player after the combat frame was read: a lethal hit counts now,
         // so it suppresses a win on the goal in this same frame
@@ -715,6 +741,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 worldModel,
                 gameAudioCoordinator::switchToWinMusic);
         winOverlayController.setNextLevelAvailable(levelProgress.hasNext());
+        // the level is completed: the savepoint for the next one is made now
+        levelProgress.completeLevel(worldModel.arsenal());
     }
 
     private void draw() {
@@ -782,6 +810,12 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     /** A new game: level 1 with the difficulty's own weapons. */
     private void startGameFromSelection() {
         levelProgress.restart();
+        startCurrentLevel();
+    }
+
+    /** Restarts the level exactly as it was entered (its savepoint); on level 1 there is none, so that is a new game. */
+    private void restartCurrentLevel() {
+        levelProgress.restartLevel();
         startCurrentLevel();
     }
 
@@ -864,6 +898,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         }
         sergeantSupport.reset();
         guardTowerSupport.reset(levelProgress.current().guardTower());
+        wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx());
         if (levelProgress.number() > 1) {
             flashStatus("Level " + levelProgress.number() + ": " + levelProgress.current().name(), 2.5f);
         }

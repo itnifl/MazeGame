@@ -23,8 +23,11 @@ public final class LevelPlacement {
     public static final double PORTAL_GHOST_MIN_START_DISTANCE = 200.0;
     /** Guard towers do not stand closer to the player's start than this. */
     public static final double TOWER_MIN_START_DISTANCE = 250.0;
+    /** Wall builders start one corridor width apart from each other. */
+    public static final double BUILDER_SPACING = 60.0;
     private static final long PORTAL_GHOST_SEED = 4242L;
     private static final long TOWER_SEED = 777L;
+    private static final long BUILDER_SEED = 5150L;
 
     private LevelPlacement() {
     }
@@ -82,6 +85,36 @@ public final class LevelPlacement {
             }
             pool.remove(best);
             chosen.add(best);
+        }
+        return List.copyOf(chosen);
+    }
+
+    /**
+     * The spots of the wall builders: as many as the level says for this difficulty, free corridor points in the
+     * area round the heart (within the builder's spawn radius), one corridor width ({@link #BUILDER_SPACING}) apart
+     * from each other, the same ones every time for a given maze. Fewer come back when the area has no room for all of
+     * them.
+     */
+    public static List<Point2D> builderSpots(LevelSpec level, DifficultyTier tier, GameMazeWorld world,
+                                             double heartX, double heartY) {
+        if (level == null || !level.hasBuilders() || world == null) {
+            return List.of();
+        }
+        List<Point2D> near = new ArrayList<>(MazeHazards.freePoints(world));
+        near.removeIf(point -> Math.hypot(point.getX() - heartX, point.getY() - heartY) > level.wallBuilder().spawnRadius());
+        Collections.shuffle(near, new Random(BUILDER_SEED));
+        List<Point2D> chosen = new ArrayList<>();
+        for (Point2D point : near) {
+            if (chosen.size() >= level.builderCount(tier)) {
+                break;
+            }
+            boolean apart = true;
+            for (Point2D other : chosen) {
+                apart &= Math.hypot(point.getX() - other.getX(), point.getY() - other.getY()) >= BUILDER_SPACING;
+            }
+            if (apart) {
+                chosen.add(point);
+            }
         }
         return List.copyOf(chosen);
     }

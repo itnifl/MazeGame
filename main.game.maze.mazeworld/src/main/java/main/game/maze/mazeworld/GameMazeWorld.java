@@ -409,6 +409,20 @@ public class GameMazeWorld {
         return (dx * dx + dy * dy) <= ADJACENCY_EPSILON * ADJACENCY_EPSILON;
     }
 
+    /**
+     * Puts up a new breakable wall (built by a wall builder): it joins the live walls, takes the hit points of
+     * {@code material} and closes every navigation edge it crosses.
+     */
+    public BreakableWall addBuiltWall(Vector2D geometry, WallMaterialSpec material) {
+        BreakableWall wall = new BreakableWall(geometry, material);
+        mazeVectors.add(geometry);
+        breakableWalls.add(wall);
+        if (navigationGraph != null) {
+            MazeNavigationGraphService.removeEdgesCrossing(navigationGraph, geometry);
+        }
+        return wall;
+    }
+
     public MazeNavigationGraph getNavigationGraph() {
         return navigationGraph;
     }

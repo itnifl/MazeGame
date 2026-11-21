@@ -66,6 +66,8 @@ blast frame paints fire at the centre, and that a pumpkin burst frame paints sol
 
 `FxGuardTowerControllerTest` and `GuardTowerSpawnerTest` cover the level 4 guard towers (`FxGuardTowerController`, `GuardTowerSpawner`, `GuardTowerCharacter`): the shared `GuardTowerSession` decides the rpg every 3 seconds and the gatling in between, the walls a tower may shoot over (3) and what hits the player; the controller draws the rockets, plays the sounds (launch, explosion, gatling, hit, destroyed) and starts the blasts. A tower is a zombie-model enemy that never moves, shows its damage and leaves no corpse.
 
+`FxWallBuilderControllerTest` and `WallBuilderSpawnerTest` cover the level 5 wall builders (`FxWallBuilderController`, `WallBuilderSpawner`, `WallBuilderCharacter`): the shared `WallBuilderSession` decides where a builder goes and what it builds; the controller moves the builder, adds the wooden wall to the world and redraws the maze. A builder is a zombie-model enemy with no touch damage and no resurrection.
+
 `FxRemainsLayerTest` covers enemy death remains (`javafx.render.FxRemainsLayer`): remains lie just
 above the maze canvas at the spot where the enemy died, one per enemy (a second death replaces it), cleared
 when the enemy resurrects or the level restarts, capped (oldest removed from the board), nothing for

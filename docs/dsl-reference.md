@@ -592,6 +592,7 @@ level 2 "The Sergeants' Keep" {
     sergeants hard 6
 }
 level 3 "The Minefield" { basedOn 2  mines { ... }  portalGhost "Portal ghost" { ... }  portalGhosts easy 3  ... teleport { ... } }
+level 5 "The Builders" { basedOn 4  wallBuilder "Wall builder" { health 80 speed 55.0 sprite "..." buildSeconds 3.0 startRadius 4 blockRadius 1 spawnRadius 200.0 material WOOD_BASIC }  builders easy 2  builders normal 5  builders hard 10 }
 level 4 "The Guard Towers" { basedOn 3  mines { ... secondRing 118.0 ... }  guardTower "Guard tower" { health 1500 sightRange 650.0 wallsOver 3 rpgInterval 3.0 ... }  towers easy 2  towers normal 3  towers hard 4 }
 ```
 

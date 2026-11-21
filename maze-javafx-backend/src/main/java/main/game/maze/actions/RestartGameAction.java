@@ -80,7 +80,8 @@ public class RestartGameAction extends ActionScreens {
             App.applySizeForCurrentDifficulty(stage);
                         
             if (retryLevel) {
-                // same level, same starting weapons (LevelProgress keeps what it was entered with)
+                // the level as it was entered, from its savepoint; level 1 has none, so that is a new game
+                App.levelProgress.restartLevel();
             } else if (nextLevel && App.arsenalAtWin != null && App.levelProgress.hasNext()) {
                 App.levelProgress.advance(main.game.maze.game.items.PlayerArsenal.restore(App.arsenalAtWin));
             } else {

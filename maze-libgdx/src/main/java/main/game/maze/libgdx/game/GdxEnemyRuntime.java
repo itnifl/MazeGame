@@ -595,9 +595,25 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         return main.game.maze.game.level.GuardTowerSpec.isTowerId(spawn != null ? spawn.id() : null);
     }
 
-    /** Sergeants and guard towers stand where they are put and only shoot. */
+    /** A wall builder: a harmless construction worker zombie the shared builder session walks to its building sites. */
+    public boolean isWallBuilder() {
+        return main.game.maze.game.level.WallBuilderSpec.isBuilderId(spawn != null ? spawn.id() : null);
+    }
+
+    /** Whether touching the player does no harm (portal ghosts teleport, wall builders only build). */
+    public boolean isHarmless() {
+        return isPortalGhost() || isWallBuilder();
+    }
+
+    /** Sergeants, guard towers and wall builders do not walk by the enemy AI: they stand, or the builder session moves them. */
     public boolean isStationary() {
-        return isSergeant() || isGuardTower();
+        return isSergeant() || isGuardTower() || isWallBuilder();
+    }
+
+    /** Puts the enemy at (x, y), centre, screen space: where the builder session says it is. */
+    public void placeAt(float newX, float newY) {
+        this.x = newX;
+        this.y = newY;
     }
 
     /**

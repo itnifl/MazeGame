@@ -95,6 +95,31 @@ class LevelPlacementTest {
     }
 
     @Test
+    @DisplayName("wall builders: 10 / 5 / 2 on hard / normal / easy, on free ground in the area round the heart")
+    void builderSpots() {
+        GameMazeWorld world = freshMaze();
+        List<Point2D> free = MazeHazards.freePoints(world);
+        LevelSpec level = LEVELS.level(5);
+        assertEquals(10, LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332).size());
+        assertEquals(5, LevelPlacement.builderSpots(level, DifficultyTier.NORMAL, world, 400, 332).size());
+        assertEquals(2, LevelPlacement.builderSpots(level, DifficultyTier.EASY, world, 400, 332).size());
+        for (Point2D spot : LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332)) {
+            assertTrue(free.contains(spot));
+            assertTrue(Math.hypot(spot.getX() - 400, spot.getY() - 332) <= level.wallBuilder().spawnRadius());
+        }
+        assertEquals(LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332),
+                LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332), "the same every time");
+        List<Point2D> hard = LevelPlacement.builderSpots(level, DifficultyTier.HARD, world, 400, 332);
+        for (int a = 0; a < hard.size(); a++) {
+            for (int b = a + 1; b < hard.size(); b++) {
+                assertTrue(Math.hypot(hard.get(a).getX() - hard.get(b).getX(), hard.get(a).getY() - hard.get(b).getY())
+                        >= LevelPlacement.BUILDER_SPACING, "builders start one corridor width apart");
+            }
+        }
+        assertTrue(LevelPlacement.builderSpots(LEVELS.level(4), DifficultyTier.HARD, world, 400, 332).isEmpty());
+    }
+
+    @Test
     @DisplayName("spreading picks the points as far apart as it can")
     void spreadOut() {
         List<Point2D> corners = List.of(new Point2D(0, 0), new Point2D(10, 0), new Point2D(0, 10), new Point2D(10, 10),

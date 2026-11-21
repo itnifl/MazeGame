@@ -249,4 +249,12 @@ public class MazeDslValidationTest {
         validationHelper.assertNoIssues(parseHelper.parse(levelWithSecondRing("secondRing 118.0")));
         validationHelper.assertNoIssues(parseHelper.parse(levelWithSecondRing("")));
     }
+
+    @Test
+    public void testMaterialsNamedLikeNewKeywordsStillParse() throws Exception {
+        GameConfiguration result = parseHelper.parse(
+            "game G { level 2 \"Two\" { ring \"R\" materials material, builders } }");
+        validationHelper.assertNoErrors(result);
+        org.junit.jupiter.api.Assertions.assertEquals("material", ((LevelConfig) result.getLevels().get(0)).getZones().get(0).getMaterialIds().get(0));
+    }
 }

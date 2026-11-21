@@ -11,6 +11,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
 import main.game.maze.App;
+import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.common.graphics.config.MazeVisualStyleConfig;
 import main.game.maze.config.model.PlayerConfig;
@@ -24,6 +25,7 @@ import main.game.maze.runtime.opponents.EnemyRegistrar;
 import main.game.maze.runtime.opponents.OpponentRuntimeFactory;
 import main.game.maze.runtime.opponents.PortalGhostSpawner;
 import main.game.maze.runtime.opponents.GuardTowerSpawner;
+import main.game.maze.runtime.opponents.WallBuilderSpawner;
 import main.game.maze.runtime.opponents.SergeantSpawner;
 
 import java.util.function.BiConsumer;
@@ -125,6 +127,13 @@ public final class FxGameSessionBootstrapper {
         PlayerConfig  config    = loadPlayerConfig();
 
         setPlayerBaseImage(playerImageView, config.imageBase());
+        // start close to the original start, on free ground and not under the HUD
+        double half = StageConstants.PlayerCharacterXYSize / 2.0;
+        main.game.maze.mazeworld.Point2D spawn = main.game.maze.game.spawn.PlayerSpawn.find(maze,
+                playerImageView.getLayoutX() + half, playerImageView.getLayoutY() + half,
+                StageConstants.PlayerCharacterXYSize, App.getBoardMaxX(), App.getBoardMaxY());
+        playerImageView.setLayoutX(spawn.getX() - half);
+        playerImageView.setLayoutY(spawn.getY() - half);
 
         PlayerCharacter player = new PlayerCharacter(
                 playerImageView,
@@ -155,6 +164,7 @@ public final class FxGameSessionBootstrapper {
         SergeantSpawner.spawn(enemyRegistrar, level, startDifficulty, maze);
         PortalGhostSpawner.spawn(enemyRegistrar, level, startDifficulty, maze,
                 playerImageView.getLayoutX(), playerImageView.getLayoutY());
+        WallBuilderSpawner.spawn(enemyRegistrar, level, startDifficulty, maze);
         GuardTowerSpawner.spawn(enemyRegistrar, level, startDifficulty, maze,
                 playerImageView.getLayoutX(), playerImageView.getLayoutY());
 

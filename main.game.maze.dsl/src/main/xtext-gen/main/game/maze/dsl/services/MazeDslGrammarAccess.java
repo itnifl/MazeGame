@@ -1315,7 +1315,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cGuardTowerGuardTowerConfigParserRuleCall_16_0 = (RuleCall)cGuardTowerAssignment_16.eContents().get(0);
 		private final Assignment cTowerCountsAssignment_17 = (Assignment)cGroup.eContents().get(17);
 		private final RuleCall cTowerCountsTowerCountConfigParserRuleCall_17_0 = (RuleCall)cTowerCountsAssignment_17.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_18 = (Keyword)cGroup.eContents().get(18);
+		private final Assignment cWallBuilderAssignment_18 = (Assignment)cGroup.eContents().get(18);
+		private final RuleCall cWallBuilderWallBuilderConfigParserRuleCall_18_0 = (RuleCall)cWallBuilderAssignment_18.eContents().get(0);
+		private final Assignment cBuilderCountsAssignment_19 = (Assignment)cGroup.eContents().get(19);
+		private final RuleCall cBuilderCountsBuilderCountConfigParserRuleCall_19_0 = (RuleCall)cBuilderCountsAssignment_19.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_20 = (Keyword)cGroup.eContents().get(20);
 		
 		///*
 		// * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
@@ -1338,6 +1342,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (teleport=TeleportRulesConfig)?
 		//        (guardTower=GuardTowerConfig)?
 		//        (towerCounts+=TowerCountConfig)*
+		//        (wallBuilder=WallBuilderConfig)?
+		//        (builderCounts+=BuilderCountConfig)*
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -1357,6 +1363,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    (teleport=TeleportRulesConfig)?
 		//    (guardTower=GuardTowerConfig)?
 		//    (towerCounts+=TowerCountConfig)*
+		//    (wallBuilder=WallBuilderConfig)?
+		//    (builderCounts+=BuilderCountConfig)*
 		//'}'
 		public Group getGroup() { return cGroup; }
 		
@@ -1492,8 +1500,20 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//TowerCountConfig
 		public RuleCall getTowerCountsTowerCountConfigParserRuleCall_17_0() { return cTowerCountsTowerCountConfigParserRuleCall_17_0; }
 		
+		//(wallBuilder=WallBuilderConfig)?
+		public Assignment getWallBuilderAssignment_18() { return cWallBuilderAssignment_18; }
+		
+		//WallBuilderConfig
+		public RuleCall getWallBuilderWallBuilderConfigParserRuleCall_18_0() { return cWallBuilderWallBuilderConfigParserRuleCall_18_0; }
+		
+		//(builderCounts+=BuilderCountConfig)*
+		public Assignment getBuilderCountsAssignment_19() { return cBuilderCountsAssignment_19; }
+		
+		//BuilderCountConfig
+		public RuleCall getBuilderCountsBuilderCountConfigParserRuleCall_19_0() { return cBuilderCountsBuilderCountConfigParserRuleCall_19_0; }
+		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_18() { return cRightCurlyBracketKeyword_18; }
+		public Keyword getRightCurlyBracketKeyword_20() { return cRightCurlyBracketKeyword_20; }
 	}
 	public class LevelZoneElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LevelZone");
@@ -1507,21 +1527,21 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cBreakableShareDOUBLE_OBJECTParserRuleCall_2_1_0 = (RuleCall)cBreakableShareAssignment_2_1.eContents().get(0);
 		private final Keyword cMaterialsKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cMaterialIdsAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cMaterialIdsIDTerminalRuleCall_4_0 = (RuleCall)cMaterialIdsAssignment_4.eContents().get(0);
+		private final RuleCall cMaterialIdsValidIDParserRuleCall_4_0 = (RuleCall)cMaterialIdsAssignment_4.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
 		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
 		private final Assignment cMaterialIdsAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
-		private final RuleCall cMaterialIdsIDTerminalRuleCall_5_1_0 = (RuleCall)cMaterialIdsAssignment_5_1.eContents().get(0);
+		private final RuleCall cMaterialIdsValidIDParserRuleCall_5_1_0 = (RuleCall)cMaterialIdsAssignment_5_1.eContents().get(0);
 		
 		///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
 		//LevelZone:
 		//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-		//    'materials' materialIds+=ID (',' materialIds+=ID)*
+		//    'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-		//'materials' materialIds+=ID (',' materialIds+=ID)*
+		//'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 		public Group getGroup() { return cGroup; }
 		
 		//'ring'
@@ -1548,23 +1568,23 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'materials'
 		public Keyword getMaterialsKeyword_3() { return cMaterialsKeyword_3; }
 		
-		//materialIds+=ID
+		//materialIds+=ValidID
 		public Assignment getMaterialIdsAssignment_4() { return cMaterialIdsAssignment_4; }
 		
-		//ID
-		public RuleCall getMaterialIdsIDTerminalRuleCall_4_0() { return cMaterialIdsIDTerminalRuleCall_4_0; }
+		//ValidID
+		public RuleCall getMaterialIdsValidIDParserRuleCall_4_0() { return cMaterialIdsValidIDParserRuleCall_4_0; }
 		
-		//(',' materialIds+=ID)*
+		//(',' materialIds+=ValidID)*
 		public Group getGroup_5() { return cGroup_5; }
 		
 		//','
 		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
 		
-		//materialIds+=ID
+		//materialIds+=ValidID
 		public Assignment getMaterialIdsAssignment_5_1() { return cMaterialIdsAssignment_5_1; }
 		
-		//ID
-		public RuleCall getMaterialIdsIDTerminalRuleCall_5_1_0() { return cMaterialIdsIDTerminalRuleCall_5_1_0; }
+		//ValidID
+		public RuleCall getMaterialIdsValidIDParserRuleCall_5_1_0() { return cMaterialIdsValidIDParserRuleCall_5_1_0; }
 	}
 	public class SergeantConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.SergeantConfig");
@@ -2378,6 +2398,202 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//INT
 		public RuleCall getCountINTTerminalRuleCall_2_0() { return cCountINTTerminalRuleCall_2_0; }
 	}
+	public class WallBuilderConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.WallBuilderConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cWallBuilderKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cDisplayNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cHealthKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cHealthAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cHealthINTTerminalRuleCall_4_0 = (RuleCall)cHealthAssignment_4.eContents().get(0);
+		private final Keyword cSpeedKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cSpeedAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cSpeedDOUBLEParserRuleCall_6_0 = (RuleCall)cSpeedAssignment_6.eContents().get(0);
+		private final Keyword cSpriteKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cSpriteAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cSpriteSTRINGTerminalRuleCall_8_0 = (RuleCall)cSpriteAssignment_8.eContents().get(0);
+		private final Keyword cBuildSecondsKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cBuildSecondsPerCorridorAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cBuildSecondsPerCorridorDOUBLEParserRuleCall_10_0 = (RuleCall)cBuildSecondsPerCorridorAssignment_10.eContents().get(0);
+		private final Keyword cStartRadiusKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cStartRadiusCellsAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cStartRadiusCellsINTTerminalRuleCall_12_0 = (RuleCall)cStartRadiusCellsAssignment_12.eContents().get(0);
+		private final Keyword cBlockRadiusKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cBlockRadiusCellsAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cBlockRadiusCellsINTTerminalRuleCall_14_0 = (RuleCall)cBlockRadiusCellsAssignment_14.eContents().get(0);
+		private final Keyword cSpawnRadiusKeyword_15 = (Keyword)cGroup.eContents().get(15);
+		private final Assignment cSpawnRadiusAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cSpawnRadiusDOUBLEParserRuleCall_16_0 = (RuleCall)cSpawnRadiusAssignment_16.eContents().get(0);
+		private final Keyword cMaterialKeyword_17 = (Keyword)cGroup.eContents().get(17);
+		private final Assignment cWallMaterialAssignment_18 = (Assignment)cGroup.eContents().get(18);
+		private final RuleCall cWallMaterialValidIDParserRuleCall_18_0 = (RuleCall)cWallMaterialAssignment_18.eContents().get(0);
+		private final Group cGroup_19 = (Group)cGroup.eContents().get(19);
+		private final Keyword cBuildSoundKeyword_19_0 = (Keyword)cGroup_19.eContents().get(0);
+		private final Assignment cBuildSoundAssignment_19_1 = (Assignment)cGroup_19.eContents().get(1);
+		private final RuleCall cBuildSoundSTRINGTerminalRuleCall_19_1_0 = (RuleCall)cBuildSoundAssignment_19_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_20 = (Keyword)cGroup.eContents().get(20);
+		
+		//WallBuilderConfig:
+		//    'wallBuilder' displayName=STRING '{'
+		//        'health' health=INT
+		//        'speed' speed=DOUBLE
+		//        'sprite' sprite=STRING
+		//        'buildSeconds' buildSecondsPerCorridor=DOUBLE
+		//        'startRadius' startRadiusCells=INT
+		//        'blockRadius' blockRadiusCells=INT
+		//        'spawnRadius' spawnRadius=DOUBLE
+		//        'material' wallMaterial=ValidID
+		//        ('buildSound' buildSound=STRING)?
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'wallBuilder' displayName=STRING '{'
+		//    'health' health=INT
+		//    'speed' speed=DOUBLE
+		//    'sprite' sprite=STRING
+		//    'buildSeconds' buildSecondsPerCorridor=DOUBLE
+		//    'startRadius' startRadiusCells=INT
+		//    'blockRadius' blockRadiusCells=INT
+		//    'spawnRadius' spawnRadius=DOUBLE
+		//    'material' wallMaterial=ValidID
+		//    ('buildSound' buildSound=STRING)?
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'wallBuilder'
+		public Keyword getWallBuilderKeyword_0() { return cWallBuilderKeyword_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_1() { return cDisplayNameAssignment_1; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_1_0() { return cDisplayNameSTRINGTerminalRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//'health'
+		public Keyword getHealthKeyword_3() { return cHealthKeyword_3; }
+		
+		//health=INT
+		public Assignment getHealthAssignment_4() { return cHealthAssignment_4; }
+		
+		//INT
+		public RuleCall getHealthINTTerminalRuleCall_4_0() { return cHealthINTTerminalRuleCall_4_0; }
+		
+		//'speed'
+		public Keyword getSpeedKeyword_5() { return cSpeedKeyword_5; }
+		
+		//speed=DOUBLE
+		public Assignment getSpeedAssignment_6() { return cSpeedAssignment_6; }
+		
+		//DOUBLE
+		public RuleCall getSpeedDOUBLEParserRuleCall_6_0() { return cSpeedDOUBLEParserRuleCall_6_0; }
+		
+		//'sprite'
+		public Keyword getSpriteKeyword_7() { return cSpriteKeyword_7; }
+		
+		//sprite=STRING
+		public Assignment getSpriteAssignment_8() { return cSpriteAssignment_8; }
+		
+		//STRING
+		public RuleCall getSpriteSTRINGTerminalRuleCall_8_0() { return cSpriteSTRINGTerminalRuleCall_8_0; }
+		
+		//'buildSeconds'
+		public Keyword getBuildSecondsKeyword_9() { return cBuildSecondsKeyword_9; }
+		
+		//buildSecondsPerCorridor=DOUBLE
+		public Assignment getBuildSecondsPerCorridorAssignment_10() { return cBuildSecondsPerCorridorAssignment_10; }
+		
+		//DOUBLE
+		public RuleCall getBuildSecondsPerCorridorDOUBLEParserRuleCall_10_0() { return cBuildSecondsPerCorridorDOUBLEParserRuleCall_10_0; }
+		
+		//'startRadius'
+		public Keyword getStartRadiusKeyword_11() { return cStartRadiusKeyword_11; }
+		
+		//startRadiusCells=INT
+		public Assignment getStartRadiusCellsAssignment_12() { return cStartRadiusCellsAssignment_12; }
+		
+		//INT
+		public RuleCall getStartRadiusCellsINTTerminalRuleCall_12_0() { return cStartRadiusCellsINTTerminalRuleCall_12_0; }
+		
+		//'blockRadius'
+		public Keyword getBlockRadiusKeyword_13() { return cBlockRadiusKeyword_13; }
+		
+		//blockRadiusCells=INT
+		public Assignment getBlockRadiusCellsAssignment_14() { return cBlockRadiusCellsAssignment_14; }
+		
+		//INT
+		public RuleCall getBlockRadiusCellsINTTerminalRuleCall_14_0() { return cBlockRadiusCellsINTTerminalRuleCall_14_0; }
+		
+		//'spawnRadius'
+		public Keyword getSpawnRadiusKeyword_15() { return cSpawnRadiusKeyword_15; }
+		
+		//spawnRadius=DOUBLE
+		public Assignment getSpawnRadiusAssignment_16() { return cSpawnRadiusAssignment_16; }
+		
+		//DOUBLE
+		public RuleCall getSpawnRadiusDOUBLEParserRuleCall_16_0() { return cSpawnRadiusDOUBLEParserRuleCall_16_0; }
+		
+		//'material'
+		public Keyword getMaterialKeyword_17() { return cMaterialKeyword_17; }
+		
+		//wallMaterial=ValidID
+		public Assignment getWallMaterialAssignment_18() { return cWallMaterialAssignment_18; }
+		
+		//ValidID
+		public RuleCall getWallMaterialValidIDParserRuleCall_18_0() { return cWallMaterialValidIDParserRuleCall_18_0; }
+		
+		//('buildSound' buildSound=STRING)?
+		public Group getGroup_19() { return cGroup_19; }
+		
+		//'buildSound'
+		public Keyword getBuildSoundKeyword_19_0() { return cBuildSoundKeyword_19_0; }
+		
+		//buildSound=STRING
+		public Assignment getBuildSoundAssignment_19_1() { return cBuildSoundAssignment_19_1; }
+		
+		//STRING
+		public RuleCall getBuildSoundSTRINGTerminalRuleCall_19_1_0() { return cBuildSoundSTRINGTerminalRuleCall_19_1_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_20() { return cRightCurlyBracketKeyword_20; }
+	}
+	public class BuilderCountConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.BuilderCountConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cBuildersKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cDifficultyAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDifficultyDifficultyLevelEnumRuleCall_1_0 = (RuleCall)cDifficultyAssignment_1.eContents().get(0);
+		private final Assignment cCountAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cCountINTTerminalRuleCall_2_0 = (RuleCall)cCountAssignment_2.eContents().get(0);
+		
+		//BuilderCountConfig:
+		//    'builders' difficulty=DifficultyLevel count=INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'builders' difficulty=DifficultyLevel count=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'builders'
+		public Keyword getBuildersKeyword_0() { return cBuildersKeyword_0; }
+		
+		//difficulty=DifficultyLevel
+		public Assignment getDifficultyAssignment_1() { return cDifficultyAssignment_1; }
+		
+		//DifficultyLevel
+		public RuleCall getDifficultyDifficultyLevelEnumRuleCall_1_0() { return cDifficultyDifficultyLevelEnumRuleCall_1_0; }
+		
+		//count=INT
+		public Assignment getCountAssignment_2() { return cCountAssignment_2; }
+		
+		//INT
+		public RuleCall getCountINTTerminalRuleCall_2_0() { return cCountINTTerminalRuleCall_2_0; }
+	}
 	public class TeleportRulesConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.TeleportRulesConfig");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -2694,17 +2910,25 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cGatlingSoundKeyword_53 = (Keyword)cAlternatives.eContents().get(53);
 		private final Keyword cHitSoundKeyword_54 = (Keyword)cAlternatives.eContents().get(54);
 		private final Keyword cDestroyedSoundKeyword_55 = (Keyword)cAlternatives.eContents().get(55);
+		private final Keyword cWallBuilderKeyword_56 = (Keyword)cAlternatives.eContents().get(56);
+		private final Keyword cBuildersKeyword_57 = (Keyword)cAlternatives.eContents().get(57);
+		private final Keyword cBuildSecondsKeyword_58 = (Keyword)cAlternatives.eContents().get(58);
+		private final Keyword cBlockRadiusKeyword_59 = (Keyword)cAlternatives.eContents().get(59);
+		private final Keyword cSpawnRadiusKeyword_60 = (Keyword)cAlternatives.eContents().get(60);
+		private final Keyword cMaterialKeyword_61 = (Keyword)cAlternatives.eContents().get(61);
+		private final Keyword cStartRadiusKeyword_62 = (Keyword)cAlternatives.eContents().get(62);
+		private final Keyword cBuildSoundKeyword_63 = (Keyword)cAlternatives.eContents().get(63);
 		
 		///*
 		// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
 		// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 		// */
 		//ValidID returns ecore::EString:
-		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
+		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'buildSound'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
+		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'buildSound'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -2874,6 +3098,30 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'destroyedSound'
 		public Keyword getDestroyedSoundKeyword_55() { return cDestroyedSoundKeyword_55; }
+		
+		//'wallBuilder'
+		public Keyword getWallBuilderKeyword_56() { return cWallBuilderKeyword_56; }
+		
+		//'builders'
+		public Keyword getBuildersKeyword_57() { return cBuildersKeyword_57; }
+		
+		//'buildSeconds'
+		public Keyword getBuildSecondsKeyword_58() { return cBuildSecondsKeyword_58; }
+		
+		//'blockRadius'
+		public Keyword getBlockRadiusKeyword_59() { return cBlockRadiusKeyword_59; }
+		
+		//'spawnRadius'
+		public Keyword getSpawnRadiusKeyword_60() { return cSpawnRadiusKeyword_60; }
+		
+		//'material'
+		public Keyword getMaterialKeyword_61() { return cMaterialKeyword_61; }
+		
+		//'startRadius'
+		public Keyword getStartRadiusKeyword_62() { return cStartRadiusKeyword_62; }
+		
+		//'buildSound'
+		public Keyword getBuildSoundKeyword_63() { return cBuildSoundKeyword_63; }
 	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
@@ -3155,6 +3403,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final GhostCountConfigElements pGhostCountConfig;
 	private final GuardTowerConfigElements pGuardTowerConfig;
 	private final TowerCountConfigElements pTowerCountConfig;
+	private final WallBuilderConfigElements pWallBuilderConfig;
+	private final BuilderCountConfigElements pBuilderCountConfig;
 	private final TeleportRulesConfigElements pTeleportRulesConfig;
 	private final DOUBLEElements pDOUBLE;
 	private final SIGNED_INTElements pSIGNED_INT;
@@ -3203,6 +3453,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pGhostCountConfig = new GhostCountConfigElements();
 		this.pGuardTowerConfig = new GuardTowerConfigElements();
 		this.pTowerCountConfig = new TowerCountConfigElements();
+		this.pWallBuilderConfig = new WallBuilderConfigElements();
+		this.pBuilderCountConfig = new BuilderCountConfigElements();
 		this.pTeleportRulesConfig = new TeleportRulesConfigElements();
 		this.pDOUBLE = new DOUBLEElements();
 		this.pSIGNED_INT = new SIGNED_INTElements();
@@ -3566,6 +3818,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (teleport=TeleportRulesConfig)?
 	//        (guardTower=GuardTowerConfig)?
 	//        (towerCounts+=TowerCountConfig)*
+	//        (wallBuilder=WallBuilderConfig)?
+	//        (builderCounts+=BuilderCountConfig)*
 	//    '}'
 	//;
 	public LevelConfigElements getLevelConfigAccess() {
@@ -3579,7 +3833,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	///* One concentric zone, outermost first; walls are made of the listed materials (ids of walls.xmi). */
 	//LevelZone:
 	//    'ring' displayName=STRING ('share' breakableShare=DOUBLE_OBJECT)?
-	//    'materials' materialIds+=ID (',' materialIds+=ID)*
+	//    'materials' materialIds+=ValidID (',' materialIds+=ValidID)*
 	//;
 	public LevelZoneElements getLevelZoneAccess() {
 		return pLevelZone;
@@ -3721,6 +3975,38 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getTowerCountConfigAccess().getRule();
 	}
 	
+	//WallBuilderConfig:
+	//    'wallBuilder' displayName=STRING '{'
+	//        'health' health=INT
+	//        'speed' speed=DOUBLE
+	//        'sprite' sprite=STRING
+	//        'buildSeconds' buildSecondsPerCorridor=DOUBLE
+	//        'startRadius' startRadiusCells=INT
+	//        'blockRadius' blockRadiusCells=INT
+	//        'spawnRadius' spawnRadius=DOUBLE
+	//        'material' wallMaterial=ValidID
+	//        ('buildSound' buildSound=STRING)?
+	//    '}'
+	//;
+	public WallBuilderConfigElements getWallBuilderConfigAccess() {
+		return pWallBuilderConfig;
+	}
+	
+	public ParserRule getWallBuilderConfigRule() {
+		return getWallBuilderConfigAccess().getRule();
+	}
+	
+	//BuilderCountConfig:
+	//    'builders' difficulty=DifficultyLevel count=INT
+	//;
+	public BuilderCountConfigElements getBuilderCountConfigAccess() {
+		return pBuilderCountConfig;
+	}
+	
+	public ParserRule getBuilderCountConfigRule() {
+		return getBuilderCountConfigAccess().getRule();
+	}
+	
 	//TeleportRulesConfig:
 	//    'teleport' '{'
 	//        'cooldown' cooldownSeconds=DOUBLE
@@ -3818,7 +4104,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 	// */
 	//ValidID returns ecore::EString:
-	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound'
+	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'buildSound'
 	//;
 	public ValidIDElements getValidIDAccess() {
 		return pValidID;

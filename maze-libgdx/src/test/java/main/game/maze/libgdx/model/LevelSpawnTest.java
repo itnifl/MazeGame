@@ -156,4 +156,33 @@ class LevelSpawnTest {
             assertTrue(edge <= 0.2 * Math.min(WIDTH, HEIGHT), "in the outer band: " + edge);
         }
     }
+
+    private static List<EnemySpawn> builders(RuntimeVisualModel model) {
+        return model.enemies().stream().filter(e -> main.game.maze.game.level.WallBuilderSpec.isBuilderId(e.id())).toList();
+    }
+
+    @Test
+    @DisplayName("level 5: wall builders, 10 on hard, 5 on normal, 2 on easy, besides everything level 4 has")
+    void wallBuildersPerDifficulty() {
+        assertEquals(10, builders(load(5, hard())).size());
+        assertEquals(5, builders(load(5, normal())).size());
+        assertEquals(2, builders(load(5, easy())).size());
+        assertEquals(0, builders(load(4, hard())).size());
+        assertEquals(4, towers(load(5, hard())).size(), "the guard towers of level 4 are still there");
+        assertEquals(10, portalGhosts(load(5, hard())).size());
+        assertEquals(6, sergeants(load(5, hard())).size());
+    }
+
+    @Test
+    @DisplayName("a wall builder is harmless, in the area round the heart, has the level health and stays dead when killed")
+    void wallBuilderValues() {
+        var spec = LEVELS.level(5).wallBuilder();
+        for (EnemySpawn builder : builders(load(5, hard()))) {
+            assertEquals(0, builder.attackDamage(), "cannot harm the player");
+            assertEquals(spec.health(), builder.maxHitPoints());
+            assertEquals(spec.sprite(), builder.imagePath());
+            assertEquals(0, builder.resurrectionTimeMs(), "does not resurrect");
+            assertTrue(Math.hypot(builder.x() - WIDTH / 2, builder.y() - HEIGHT / 2) <= spec.spawnRadius() + 1);
+        }
+    }
 }

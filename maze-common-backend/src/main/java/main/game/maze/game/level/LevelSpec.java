@@ -24,12 +24,15 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param teleport             what a teleport does (cooldown, word, sounds); never null
  * @param guardTower           the guard towers on the outer parts of the map, or null
  * @param towerCounts          guard towers per difficulty tier
+ * @param wallBuilder          the wall builders round the heart, or null
+ * @param builderCounts        wall builders per difficulty tier
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts,
                         MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
-                        TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts) {
+                        TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts,
+                        WallBuilderSpec wallBuilder, Map<DifficultyTier, Integer> builderCounts) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
@@ -49,6 +52,7 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
         ghostCounts = Map.copyOf(ghostCounts);
         teleport = teleport == null ? TeleportRulesSpec.DEFAULT : teleport;
         towerCounts = Map.copyOf(towerCounts);
+        builderCounts = Map.copyOf(builderCounts);
     }
 
     public boolean hasMines() {
@@ -57,6 +61,20 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
 
     public boolean hasTeleportGhosts() {
         return teleportGhost != null;
+    }
+
+    public boolean hasBuilders() {
+        return wallBuilder != null;
+    }
+
+    /** Wall builders on this difficulty (0 without builders). */
+    public int builderCount(DifficultyTier tier) {
+        return wallBuilder == null ? 0 : builderCounts.getOrDefault(tier, 0);
+    }
+
+    /** The wall material with this id (walls.xmi), as the world's walls use it. */
+    public static WallMaterialSpec wallMaterial(String id) {
+        return materialOf(id);
     }
 
     public boolean hasTowers() {

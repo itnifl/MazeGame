@@ -68,6 +68,7 @@ class LevelProgressTest {
         progress.advance(new PlayerArsenal(1));
         progress.advance(new PlayerArsenal(1));
         progress.advance(new PlayerArsenal(1));
+        progress.advance(new PlayerArsenal(1));
         assertFalse(progress.hasNext());
         assertThrows(IllegalStateException.class, () -> progress.advance(new PlayerArsenal(1)));
     }
@@ -123,5 +124,80 @@ class LevelProgressTest {
         // a retry changes nothing in the progress: same level, same starting weapons
         assertEquals(2, progress.number());
         assertEquals(before, progress.inheritedArsenal().count(main.game.maze.game.items.Weapon.BOMB));
+    }
+
+    @Test
+    @DisplayName("completing a level saves the savepoint for the next one; it is kept until a new game")
+    void completingASavesThePoint() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress saved = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        PlayerArsenal arsenal = new PlayerArsenal(3);
+        arsenal.add(Weapon.LASER_RIFLE, 4);
+        saved.completeLevel(arsenal);
+        assertEquals(2, store.load().orElseThrow().level());
+        assertEquals(1, saved.number(), "still on level 1 until the player goes on");
+        saved.advance(new PlayerArsenal(99));   // what is passed now does not matter: the savepoint was made at the completion
+        assertEquals(2, saved.number());
+        assertEquals(4, saved.inheritedArsenal().count(Weapon.LASER_RIFLE));
+        assertEquals(3, saved.inheritedArsenal().count(Weapon.BOMB));
+        saved.restart();
+        assertTrue(store.load().isEmpty(), "a new game removes the savepoint");
+    }
+
+    @Test
+    @DisplayName("restarting a later level restores it exactly as entered; restarting level 1 is a new game")
+    void restartLevelUsesTheSavePoint() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress saved = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        PlayerArsenal entry = new PlayerArsenal(3);
+        entry.add(Weapon.SLEDGEHAMMER, 2);
+        saved.completeLevel(entry);
+        saved.advance(entry);
+        saved.restartLevel();
+        assertEquals(2, saved.number());
+        assertEquals(2, saved.inheritedArsenal().count(Weapon.SLEDGEHAMMER));
+        assertTrue(store.load().isPresent());
+        // level 2 played, completed, level 3 entered, restarted: level 3 with level 2's end state, not level 2's
+        PlayerArsenal end = new PlayerArsenal(1);
+        end.add(Weapon.LASER_RIFLE, 7);
+        saved.completeLevel(end);
+        saved.advance(end);
+        saved.restartLevel();
+        assertEquals(3, saved.number());
+        assertEquals(7, saved.inheritedArsenal().count(Weapon.LASER_RIFLE));
+
+        LevelProgress first = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        first.restartLevel();
+        assertEquals(1, first.number());
+        assertNull(first.inheritedArsenal());
+        assertTrue(store.load().isEmpty(), "level 1 restarts as a new game: no savepoint");
+    }
+
+    @Test
+    @DisplayName("the game can be picked up again from the kept savepoint")
+    void resumeFromSavePoint() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress before = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        PlayerArsenal arsenal = new PlayerArsenal(5);
+        before.completeLevel(arsenal);
+
+        LevelProgress after = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        assertTrue(after.resumeFromSavePoint());
+        assertEquals(2, after.number());
+        assertEquals(5, after.inheritedArsenal().count(Weapon.BOMB));
+        assertFalse(new LevelProgress(LevelCatalogLoader.loadDefault(), new InMemorySavePointStore()).resumeFromSavePoint());
+    }
+
+    @Test
+    @DisplayName("the last level makes no savepoint")
+    void lastLevelHasNoSavepoint() {
+        InMemorySavePointStore store = new InMemorySavePointStore();
+        LevelProgress p = new LevelProgress(LevelCatalogLoader.loadDefault(), store);
+        while (p.hasNext()) {
+            p.advance(new PlayerArsenal(1));
+        }
+        store.clear();
+        p.completeLevel(new PlayerArsenal(1));
+        assertTrue(store.load().isEmpty());
     }
 }

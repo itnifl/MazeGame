@@ -116,3 +116,4 @@ CLAUDE.md
 
 # Pester -CI output (tools/tests)
 testResults.xml
+data/savepoint.properties

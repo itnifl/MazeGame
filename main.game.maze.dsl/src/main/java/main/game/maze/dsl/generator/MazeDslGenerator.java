@@ -526,6 +526,21 @@ public class MazeDslGenerator extends AbstractGenerator {
             for (TowerCountConfig count : level.getTowerCounts()) {
                 x.append("    <towerCounts difficulty=\"").append(count.getDifficulty().name()).append("\" count=\"").append(count.getCount()).append("\"/>\n");
             }
+            WallBuilderConfig b = level.getWallBuilder();
+            if (b != null) {
+                x.append("    <wallBuilder displayName=\"").append(xml(b.getDisplayName())).append("\" health=\"").append(b.getHealth())
+                 .append("\" speed=\"").append(b.getSpeed()).append("\" sprite=\"").append(xml(b.getSprite()))
+                 .append("\" buildSecondsPerCorridor=\"").append(b.getBuildSecondsPerCorridor())
+                 .append("\" startRadiusCells=\"").append(b.getStartRadiusCells())
+                 .append("\" blockRadiusCells=\"").append(b.getBlockRadiusCells())
+                 .append("\" spawnRadius=\"").append(b.getSpawnRadius())
+                 .append("\" wallMaterial=\"").append(xml(b.getWallMaterial())).append('"');
+                optionalText(x, "buildSound", b.getBuildSound());
+                x.append("/>\n");
+            }
+            for (BuilderCountConfig count : level.getBuilderCounts()) {
+                x.append("    <builderCounts difficulty=\"").append(count.getDifficulty().name()).append("\" count=\"").append(count.getCount()).append("\"/>\n");
+            }
             x.append("  </levels>\n");
         }
         x.append("</levels:LevelModel>\n");

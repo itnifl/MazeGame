@@ -285,6 +285,31 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
     });
 
+    /** The wall builders of level 5: they walk to corridors into the block round the heart and wall them up with wood. */
+    private final FxWallBuilderController wallBuilders = new FxWallBuilderController(new FxWallBuilderController.Host() {
+        @Override public PlayerCharacter player() { return playerCharacter; }
+        @Override public List<Vector2D> walls() { return maze != null ? maze.getMazeVectors() : List.of(); }
+        @Override public void build(String builderId, Vector2D piece) {
+            if (maze == null) return;
+            var spec = App.levelProgress.current().wallBuilder();
+            maze.addBuiltWall(piece, main.game.maze.game.level.LevelSpec.wallMaterial(spec.wallMaterial()));
+            if (mazeCanvas != null) mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
+            if (spec.buildSound() != null) {
+                main.game.maze.common.graphics.AudioEngine.get().playRateLimited(spec.buildSound(), "builder.build." + builderId, 250L);
+            }
+        }
+    });
+
+    /** A wall builder has been placed (called by the spawner). */
+    public void registerWallBuilder(String id, main.game.maze.characters.WallBuilderCharacter builder) {
+        wallBuilders.register(id, new FxWallBuilderController.Body() {
+            @Override public double centerX() { return builder.centerX(); }
+            @Override public double centerY() { return builder.centerY(); }
+            @Override public boolean alive() { return builder.isAlive(); }
+            @Override public void moveTo(double x, double y) { builder.placeCentreAt(x, y); }
+        });
+    }
+
     /** A guard tower has been placed (called by the spawner). */
     public void registerGuardTower(String id, main.game.maze.characters.GuardTowerCharacter tower) {
         guardTowers.register(id, new FxGuardTowerController.Body() {
@@ -767,6 +792,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         rocketLayer = new main.game.maze.javafx.render.FxRocketLayer(gameBoard);
         rocketLayer.attach();
         guardTowers.startGame(App.levelProgress.current().guardTower());
+        wallBuilders.startGame(App.levelProgress.current().wallBuilder(), App.getBoardMaxX(), App.getBoardMaxY());
         announceLevel();
 
         winarea = new WinArea(heart);
@@ -833,6 +859,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         weapons.tick(now);
         hazards.tick(now);
         guardTowers.tick(now);
+        wallBuilders.tick(now);
     }
 
     private final FxBannerView banner = new FxBannerView(() -> root);
@@ -945,6 +972,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         clearActivePlayerBombs();
         hazards.dispose();
         guardTowers.dispose();
+        wallBuilders.dispose();
         if (rocketLayer != null) { rocketLayer.detach(); rocketLayer = null; }
         banner.hide();
         if (hazardLayer != null) { hazardLayer.detach(); hazardLayer = null; }
