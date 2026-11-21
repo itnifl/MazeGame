@@ -436,3 +436,7 @@ These requirements have been implemented and verified.
 - **SR-350** *(Observability)*: Log how many tries the lava generator needed and how long it took (it is a search), and count lava deaths per level next to the other statistics (SR-252).
 
 - **SR-351** *(Model-driven)*: The stream shape (amplitude, wavelength, margins) is fixed in `LavaGenerator`; move it into the `LavaStreams` element so level authors can make wider, calmer or wilder rivers.
+
+- **SR-355** *(UX)*: The FINAL LEVEL title shows over a game that is already running (the spawn shield protects the player for its 3 seconds). Freeze the enemies and the clock while the title is on, and offer to skip it; add a replay of the voice line and subtitles.
+
+- **SR-356** *(Accessibility)*: Both dark voices are English only and recorded with a Windows voice (like SR-311); provide text-only mode and re-record per language.

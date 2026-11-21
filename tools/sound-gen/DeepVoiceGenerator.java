@@ -16,9 +16,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * round the word is cut, the pitch drops by a quarter (so the word also comes out slower and heavier), a sub-harmonic
  * layer an octave lower adds weight, the top is rolled off and a short room echo is added. Deterministic.
  *
- * <pre>java tools/sound-gen/DeepVoiceGenerator.java raw-teleported.wav [soundDir]</pre>
+ * <pre>java tools/sound-gen/DeepVoiceGenerator.java raw-teleported.wav [outName] [soundDir] [pitch]</pre>
  *
- * writes {@code teleported.wav} into {@code soundDir} (default: the game's sounds folder).
+ * writes {@code outName} (default {@code teleported.wav}) into {@code soundDir} (default: the game's sounds folder).
+ * {@code pitch} (default 0.75) is how far the voice is lowered: {@code 0.62} makes a darker one, as for
+ * {@code final-level.wav}.
  */
 public final class DeepVoiceGenerator {
 
@@ -35,18 +37,24 @@ public final class DeepVoiceGenerator {
             System.err.println("usage: DeepVoiceGenerator <raw.wav> [soundDir]");
             System.exit(2);
         }
-        Path outDir = Path.of(args.length > 1 ? args[1] : "maze-common-frontend/src/main/resources/main/game/maze/sounds");
+        String outName = args.length > 1 ? args[1] : "teleported.wav";
+        Path outDir = Path.of(args.length > 2 ? args[2] : "maze-common-frontend/src/main/resources/main/game/maze/sounds");
+        double pitch = args.length > 3 ? Double.parseDouble(args[3]) : PITCH;
         Files.createDirectories(outDir);
         AudioInputStream in = AudioSystem.getAudioInputStream(new File(args[0]));
         float rate = in.getFormat().getSampleRate();
         double[] raw = toSamples(in);
-        double[] deep = deepen(trim(raw, rate), rate);
-        write(outDir.resolve("teleported.wav"), deep, (int) rate);
-        System.out.println("wrote teleported.wav (" + deep.length + " samples at " + (int) rate + " Hz)");
+        double[] deep = deepen(trim(raw, rate), rate, pitch);
+        write(outDir.resolve(outName), deep, (int) rate);
+        System.out.println("wrote " + outName + " (" + deep.length + " samples at " + (int) rate + " Hz)");
     }
 
     static double[] deepen(double[] voice, double rate) {
-        double[] low = resample(voice, PITCH);
+        return deepen(voice, rate, PITCH);
+    }
+
+    static double[] deepen(double[] voice, double rate, double pitch) {
+        double[] low = resample(voice, pitch);
         double[] sub = subOctave(low, rate);
         double[] mixed = new double[low.length + (int) (0.3 * rate)];
         for (int i = 0; i < low.length; i++) {

@@ -327,3 +327,6 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-72**: Enemies, builders and everything that is placed (spawns, pickups,
   mines, exits) keep out of lava; the way from the start to the heart always
   crosses the streams on bridges.
+- **GR-73**: The last level starts with the title FINAL LEVEL (about 2.8 s,
+  slam, shake, fade) and a dark voice. Winning it shows GAME WON and a dark
+  voice says "Ultimate victory".

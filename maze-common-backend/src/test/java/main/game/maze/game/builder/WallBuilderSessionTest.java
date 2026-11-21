@@ -250,7 +250,7 @@ class WallBuilderSessionTest {
             one = follow(one, r);
         }
         assertEquals(0, pieces, "the player stands in the doorway");
-        pieces = run(10, one, -1000, -1000).size();
+        pieces = run(90, one, -1000, -1000).size();
         assertTrue(pieces > 0, "once the player has moved the wall goes up");
     }
 

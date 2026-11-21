@@ -973,6 +973,10 @@ public final class FxEnemyCoordinator {
             @Override public double minY() { return 0d; }
             @Override public double maxX() { return App.getBoardMaxX(); }
             @Override public double maxY() { return App.getBoardMaxY(); }
+            @Override public boolean inDeadlyLava(double centerX, double centerY) {
+                GameMazeWorld maze = mazeSupplier.get();
+                return maze != null && maze.getLava() != null && maze.getLava().isDeadly(centerX, centerY);
+            }
             @Override public boolean wouldCollide(double centerX, double centerY, double size) {
                 GameMazeWorld maze = mazeSupplier.get();
                 if (maze == null || maze.getMazeVectors() == null) return false;

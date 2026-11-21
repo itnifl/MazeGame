@@ -46,6 +46,21 @@ public final class FxMazeCanvasRenderer {
         this.wallMaterialLook = materialIds;
     }
 
+    private boolean transparentBackground;
+
+    /**
+     * Levels with lava: the maze canvas leaves the floor out (only the walls are drawn), so the lava canvas beneath it
+     * shows through; the lava layer paints the floor itself ({@link #paintBackground}).
+     */
+    public void setTransparentBackground(boolean transparent) {
+        this.transparentBackground = transparent;
+    }
+
+    /** Paints the floor of the level (the background of the difficulty) over the whole area. */
+    public void paintBackground(GraphicsContext gc, double width, double height) {
+        drawBackground(gc, width, height);
+    }
+
     public Canvas drawCanvas(List<Vector2D> vectors) {
         Canvas canvas = new Canvas(App.getBoardMaxX(), App.getBoardMaxY());
         renderTo(canvas.getGraphicsContext2D(), canvas.getWidth(), canvas.getHeight(), vectors);
@@ -60,7 +75,9 @@ public final class FxMazeCanvasRenderer {
     }
 
     private void renderTo(GraphicsContext gc, double width, double height, List<Vector2D> vectors) {
-        drawBackground(gc, width, height);
+        if (!transparentBackground) {
+            drawBackground(gc, width, height);
+        }
 
         double wallWidth  = StageConstants.WallThicknessPx;
         double wallLength = StageConstants.WallSegmentLengthPx;

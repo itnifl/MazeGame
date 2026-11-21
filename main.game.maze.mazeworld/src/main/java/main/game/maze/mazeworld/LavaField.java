@@ -86,7 +86,9 @@ public final class LavaField {
     /** Whether the straight line between two points runs through deadly lava (a bridge is safe). */
     public boolean crossesDeadly(double x1, double y1, double x2, double y2) {
         double length = Math.hypot(x2 - x1, y2 - y1);
-        int steps = Math.max(1, (int) Math.ceil(length / SAMPLE_STEP));
+        // never step further than half a stream width, so a thin stream cannot be jumped over between two samples
+        double step = Math.max(0.25, Math.min(SAMPLE_STEP, width / 2.0));
+        int steps = Math.max(1, (int) Math.ceil(length / step));
         for (int i = 0; i <= steps; i++) {
             double t = (double) i / steps;
             if (isDeadly(x1 + (x2 - x1) * t, y1 + (y2 - y1) * t)) {

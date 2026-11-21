@@ -42,6 +42,12 @@ public final class MazeHazards {
         return spot -> clearOfWalls(spot, walls);
     }
 
+    /** Where a mine may lie in this world: clear of the walls and out of the lava. */
+    public static Predicate<Point2D> freeSpot(GameMazeWorld world) {
+        Predicate<Point2D> clear = freeSpot(world.getMazeVectors());
+        return spot -> clear.test(spot) && (world.getLava() == null || !world.getLava().isLava(spot.getX(), spot.getY()));
+    }
+
     /** Whether a mine can be seen from its sergeant: no wall between them. */
     public static BiPredicate<Point2D, Point2D> clearLine(List<Vector2D> walls) {
         return (from, to) -> !WallCollisionUtil.wallBetweenVectors(from.getX(), from.getY(), to.getX(), to.getY(), walls);

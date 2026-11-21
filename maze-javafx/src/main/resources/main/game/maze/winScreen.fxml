@@ -26,7 +26,7 @@
                 <VBox alignment="CENTER" maxWidth="520" maxHeight="340" spacing="8"
                       style="-fx-background-color: rgba(0,0,0,0.88); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 22 28 22 28;">
                     <children>
-                        <Label style="-fx-font-size: 44px; -fx-text-fill: #4ade80; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="YOU WIN" />
+                        <Label fx:id="winHeaderLabel" style="-fx-font-size: 44px; -fx-text-fill: #4ade80; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="YOU WIN" />
                         <Label style="-fx-font-size: 14px; -fx-text-fill: #d7fff5; -fx-font-family: 'Consolas';" text="Save your score or return to menu" />
                         <Label style="-fx-font-size: 14px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas';" text="Your score" />
                         <Label fx:id="scoreLabel" style="-fx-font-size: 30px; -fx-text-fill: #ffe56e; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="0" />

@@ -12,6 +12,11 @@ public final class LavaEffects {
     private LavaEffects() {
     }
 
+    /** Whether the world has lava to draw. */
+    public static boolean visible(LavaField lava) {
+        return lava != null && !lava.streams().isEmpty();
+    }
+
     /**
      * @param flipHeight 0 for a y-down screen (JavaFX); the board height for a y-up screen (libGDX)
      * @return the picture, or null when the level has no lava

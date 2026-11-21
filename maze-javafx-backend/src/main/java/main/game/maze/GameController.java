@@ -735,6 +735,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (App.levelProgress.number() > 1) {
             setHudMessage("Level " + App.levelProgress.number() + ": " + App.levelProgress.current().name());
         }
+        // the last level, whichever it is: the words slam onto the screen and a dark voice says them
+        if (main.game.maze.game.status.FinalLevelIntro.applies(App.levelProgress)) {
+            banner.showTitleCard(main.game.maze.game.status.FinalLevelIntro.TEXT, main.game.maze.game.status.FinalLevelIntro.SECONDS);
+            main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.VOICE);
+        }
     }
 
     /** An item dropped on the board, e.g. the gun of a killed sergeant. */
@@ -786,7 +791,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         // lava under the maze: flowing streams with bridges (levels that have them)
         if (lavaLayer != null) lavaLayer.detach();
         lavaLayer = new main.game.maze.javafx.render.FxLavaLayer(gameBoard);
-        lavaLayer.attach(main.game.maze.game.lava.LavaEffects.of(maze.getLava(), App.getBoardMaxX(), App.getBoardMaxY(), 0));
+        lavaLayer.attach(main.game.maze.game.lava.LavaEffects.of(maze.getLava(), App.getBoardMaxX(), App.getBoardMaxY(), 0),
+                (gc, canvas) -> mazeCanvasRenderer.paintBackground(gc, canvas.getWidth(), canvas.getHeight()));
         if (hazardLayer != null) hazardLayer.detach();
         hazardLayer = new FxHazardLayer(gameBoard);
         hazardLayer.attach();
@@ -797,7 +803,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         rocketLayer = new main.game.maze.javafx.render.FxRocketLayer(gameBoard);
         rocketLayer.attach();
         guardTowers.startGame(App.levelProgress.current().guardTower());
-        wallBuilders.startGame(App.levelProgress.current().wallBuilder(), App.getBoardMaxX(), App.getBoardMaxY());
+        wallBuilders.startGame(App.levelProgress.current().wallBuilder(), App.getBoardMaxX(), App.getBoardMaxY(), maze.getLava());
         announceLevel();
 
         winarea = new WinArea(heart);
@@ -862,8 +868,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         rightMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
         weapons.tick(now);
+        tickLava();   // first: lava kills before a hole or anything else can move the player
         hazards.tick(now);
-        tickLava();
         if (lavaLayer != null) lavaLayer.render(now / 1e9);
         guardTowers.tick(now);
         wallBuilders.tick(now);

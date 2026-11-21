@@ -162,6 +162,11 @@ public final class CellGrid {
         return !lava.crossesDeadly(a.getX(), a.getY(), b.getX(), b.getY());
     }
 
+    /** Whether the straight line between two points runs through deadly lava (false without lava). */
+    public boolean lavaBetween(double x1, double y1, double x2, double y2) {
+        return lava != null && lava.crossesDeadly(x1, y1, x2, y2);
+    }
+
     public boolean isOpen(Edge edge) {
         return piecesStanding(edge) == 0;
     }

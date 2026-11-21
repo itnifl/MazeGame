@@ -16,14 +16,16 @@ public final class FxLavaLayer {
     private final Pane board;
     private Canvas canvas;
     private LavaEffect effect;
+    private java.util.function.BiConsumer<GraphicsContext, Canvas> floor = (gc, canvas) -> { };
 
     public FxLavaLayer(Pane board) {
         this.board = board;
     }
 
     /** Puts the canvas at the bottom of the board (index 0: below the maze); null removes the lava. */
-    public void attach(LavaEffect lava) {
+    public void attach(LavaEffect lava, java.util.function.BiConsumer<GraphicsContext, Canvas> floorPainter) {
         detach();
+        this.floor = floorPainter == null ? (gc, canvas) -> { } : floorPainter;
         this.effect = lava;
         if (board == null || lava == null) {
             return;
@@ -48,6 +50,7 @@ public final class FxLavaLayer {
         }
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        floor.accept(gc, canvas);   // the floor under the lava (the maze canvas above it has no background)
         FxExplosionView.paint(gc, effect.puffs(0, clockSeconds), 0, 0);
     }
 }

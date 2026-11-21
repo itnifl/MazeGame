@@ -24,6 +24,9 @@ public class WinGameController extends ActionScreenController implements Initial
     @FXML
     private Button nextLevelButton;
 
+    @FXML
+    private Label winHeaderLabel;
+
     public void showWinBonusLabel(int amount) {
         winBonusNoticeLabel.setText("+ Win bonus: +" + amount);
     }
@@ -36,7 +39,15 @@ public class WinGameController extends ActionScreenController implements Initial
             nextLevelButton.setVisible(moreLevels);
             nextLevelButton.setManaged(moreLevels);
         }
+        // winning the last level wins the game: "GAME WON" and a dark voice says "Ultimate victory"
+        boolean gameWon = !moreLevels;
+        if (winHeaderLabel != null) {
+            winHeaderLabel.setText(main.game.maze.game.status.FinalLevelIntro.winText(gameWon));
+        }
         AudioEngine.get().playLoop(AudioResourceConstants.WinGameSound, AudioChannelConstants.WIN_MUSIC);
+        if (gameWon) {
+            AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
+        }
         AudioEngine.get().play(AudioResourceConstants.WinGameSoundComment);
     }
 

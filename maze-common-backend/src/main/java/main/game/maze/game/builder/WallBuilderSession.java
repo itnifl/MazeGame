@@ -394,7 +394,10 @@ public final class WallBuilderSession {
         }
         Cell from = grid.cellOf(state.x, state.y);
         Cell to = grid.cellOf(next.getX(), next.getY());
-        if (from.equals(to) || Math.abs(from.row() - to.row()) + Math.abs(from.col() - to.col()) != 1) {
+        if (from.equals(to)) {
+            return grid.lavaBetween(state.x, state.y, next.getX(), next.getY());   // off the middle of the cell: the actual line
+        }
+        if (Math.abs(from.row() - to.row()) + Math.abs(from.col() - to.col()) != 1) {
             return false;
         }
         return !grid.canWalk(new Edge(from, to));

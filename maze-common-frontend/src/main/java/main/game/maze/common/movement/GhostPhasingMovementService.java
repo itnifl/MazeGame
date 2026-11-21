@@ -67,7 +67,32 @@ public final class GhostPhasingMovementService {
             newY = Math.max(world.minY() + halfSize, Math.min(world.maxY() - halfSize, newY));
         }
 
+        if (world.inDeadlyLava(newX, newY)) {
+            // a ghost slips through walls but not into lava: turn to a step that stays out of it, or wait
+            int[] turn = directionOutOfLava(state, world);
+            if (turn == null) {
+                return new MovementResult(state.x(), state.y(), -dir[0], -dir[1], true);
+            }
+            dir = turn;
+            directions.put(state.id(), dir);
+            newX = state.x() + dir[0] * state.speed();
+            newY = state.y() + dir[1] * state.speed();
+        }
+
         return new MovementResult(newX, newY, dir[0], dir[1], true);
+    }
+
+    private int[] directionOutOfLava(EnemyState state, WorldView world) {
+        int[][] options = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        java.util.List<int[]> safe = new java.util.ArrayList<>();
+        for (int[] option : options) {
+            double x = state.x() + option[0] * state.speed();
+            double y = state.y() + option[1] * state.speed();
+            if (!world.inDeadlyLava(x, y) && !outOfBounds(x, y, state.size() * 0.5, world)) {
+                safe.add(option);
+            }
+        }
+        return safe.isEmpty() ? null : safe.get(new java.util.Random().nextInt(safe.size()));
     }
 
     /**

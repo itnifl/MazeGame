@@ -148,4 +148,54 @@ class LavaGeneratorTest {
         LevelCatalogLoader.loadDefault().level(6).applyLava(world, W, H);
         assertTrue(world.getLava() != null);
     }
+
+    private static LavaField thinStream() {
+        // a stream 2 px wide running straight down at x = 2
+        return new LavaField(List.of(new LavaField.Stream(List.of(new Point2D(2, -50), new Point2D(2, 50)), List.of())), 2);
+    }
+
+    @Test
+    @DisplayName("a thin stream cannot be jumped over between two samples of a line")
+    void thinStreamIsFound() {
+        LavaField lava = thinStream();
+        assertTrue(lava.crossesDeadly(0, 0, 5, 0), "the line from (0,0) to (5,0) crosses the stream");
+        assertFalse(lava.crossesDeadly(10, 0, 20, 0), "a line that stays dry");
+        assertTrue(lava.crossesDeadly(-30, 10, 40, 10));
+    }
+
+    @Test
+    @DisplayName("a builder off the middle of its cell is checked against lava along its real line")
+    void lavaBetweenForBuilders() {
+        main.game.maze.game.builder.CellGrid grid = new main.game.maze.game.builder.CellGrid(List.of(), 600, 600, thinStream());
+        assertTrue(grid.lavaBetween(-5, 0, 10, 0));
+        assertFalse(grid.lavaBetween(10, 0, 30, 0));
+        assertFalse(new main.game.maze.game.builder.CellGrid(List.of(), 600, 600).lavaBetween(-5, 0, 10, 0), "no lava, no danger");
+    }
+
+    @Test
+    @DisplayName("a lava spec refuses NaN and non-positive values")
+    void specValidation() {
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, Double.NaN, 2, 56, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, 46, 2, Double.NaN, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(0, 46, 2, 56, null));
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> new LavaSpec(2, 46, 0, 56, null));
+    }
+
+    @Test
+    @DisplayName("mines are never laid in lava, on the world path both frontends use")
+    void minesOutOfLava() {
+        for (int attempt = 0; attempt < 10; attempt++) {
+            GameMazeWorld world = maze();
+            Point2D start = PlayerSpawn.find(world, 30, 60, 30, W, H);
+            world.setLava(LavaGenerator.generate(SPEC, world, W, H, start, new Point2D(W / 2.0, H / 2.0), new Random()));
+            main.game.maze.game.hazard.HazardSession session = new main.game.maze.game.hazard.HazardSession(new Random(3));
+            List<Point2D> posts = MazeHazards.freePoints(world).stream().limit(6).toList();
+            session.start(world, LevelCatalogLoader.loadDefault().level(6), posts);
+            if (session.field() != null) {
+                for (var mine : session.field().mines()) {
+                    assertFalse(world.getLava().isLava(mine.x(), mine.y()), "a mine in the lava");
+                }
+            }
+        }
+    }
 }

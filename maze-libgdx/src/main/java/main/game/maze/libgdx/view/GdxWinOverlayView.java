@@ -92,8 +92,9 @@ public final class GdxWinOverlayView {
         // "YOU WIN" header — centred
         font.setColor(Color.GREEN);
         font.getData().setScale(2.0f);
-        gl.setText(font, "YOU WIN");
-        font.draw(batch, "YOU WIN", panelX + (panelW - gl.width) * 0.5f, panelY + panelH - 20f);
+        String header = main.game.maze.game.status.FinalLevelIntro.winText(!context.nextLevelAvailable());
+        gl.setText(font, header);
+        font.draw(batch, header, panelX + (panelW - gl.width) * 0.5f, panelY + panelH - 20f);
         font.getData().setScale(1.0f);
 
         // Description — centred

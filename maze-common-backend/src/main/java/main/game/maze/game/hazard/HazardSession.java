@@ -72,7 +72,7 @@ public final class HazardSession {
             return;
         }
         List<main.game.maze.mazeworld.Vector2D> walls = world.getMazeVectors();
-        start(level, sergeantPosts, MazeHazards.freePoints(world), MazeHazards.freeSpot(walls), MazeHazards.clearLine(walls));
+        start(level, sergeantPosts, MazeHazards.freePoints(world), MazeHazards.freeSpot(world), MazeHazards.clearLine(walls));
     }
 
     /** As {@link #start(GameMazeWorld, LevelSpec, List)} with the maze's geometry given (world space, y-down). */

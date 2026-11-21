@@ -28,9 +28,12 @@ public final class GdxWallBuilderSupport {
     private float heightPx;
 
     /** New level: a crew for this level, or none. */
-    public void reset(WallBuilderSpec spec, float widthPx, float heightPx) {
+    public void reset(WallBuilderSpec spec, float widthPx, float heightPx, main.game.maze.mazeworld.LavaField lava) {
         this.heightPx = heightPx;
         session = spec == null ? null : new WallBuilderSession(spec, Math.round(widthPx), Math.round(heightPx), widthPx / 2.0, heightPx / 2.0);
+        if (session != null) {
+            session.setLava(lava);   // the builders keep out of the lava of the level (world space, y-down)
+        }
     }
 
     /**

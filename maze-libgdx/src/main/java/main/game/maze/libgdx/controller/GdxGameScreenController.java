@@ -548,8 +548,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
+        tickLava();   // first: lava kills before a hole or anything else can move the player
         tickHazards(dt);
-        tickLava();
         if (player != null) {
             guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
             wallBuilderSupport.tick(wallBuilderHost, animatedEnemies, player.x(), player.y(), dt);
@@ -759,6 +759,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 worldModel,
                 gameAudioCoordinator::switchToWinMusic);
         winOverlayController.setNextLevelAvailable(levelProgress.hasNext());
+        if (!levelProgress.hasNext()) {
+            // the last level is won: the game is won ("GAME WON" on the screen) and a dark voice says it
+            AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
+        }
         // the level is completed: the savepoint for the next one is made now
         levelProgress.completeLevel(worldModel.arsenal());
     }
@@ -919,9 +923,17 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         }
         sergeantSupport.reset();
         guardTowerSupport.reset(levelProgress.current().guardTower());
-        wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx());
+        var builderWorld = GdxWallDamageSupport.worldFrom(maze);
+        wallBuilderSupport.reset(levelProgress.current().wallBuilder(), maze.widthPx(), maze.heightPx(),
+                builderWorld == null ? null : builderWorld.getLava());
         if (levelProgress.number() > 1) {
             flashStatus("Level " + levelProgress.number() + ": " + levelProgress.current().name(), 2.5f);
+        }
+        // the last level, whichever it is: the words slam onto the screen and a dark voice says them
+        if (main.game.maze.game.status.FinalLevelIntro.applies(levelProgress)) {
+            statusMessageBus.showTitleCard(main.game.maze.game.status.FinalLevelIntro.TEXT,
+                    main.game.maze.game.status.FinalLevelIntro.SECONDS);
+            AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.VOICE);
         }
         worldModel.pickupField().clear();
         worldModel.shield().reset();

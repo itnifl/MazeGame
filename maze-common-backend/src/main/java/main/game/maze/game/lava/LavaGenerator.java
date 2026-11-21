@@ -25,6 +25,8 @@ public final class LavaGenerator {
 
     private static final Logger LOGGER = Logger.getLogger(LavaGenerator.class.getName());
     private static final int ATTEMPTS = 20000;
+    /** After this many tries a stream is allowed to be shorter than the board. */
+    private static final int SHORTEN_AFTER = 2000;
     private static final double STEP = 12.0;
     /** The start and the heart are kept this far clear of the lava (beyond its half width), a little more than the player. */
     private static final double START_CLEARANCE = 45.0;
@@ -51,6 +53,11 @@ public final class LavaGenerator {
             Stream stream = null;
             for (int attempt = 0; attempt < ATTEMPTS && stream == null; attempt++) {
                 List<Point2D> path = snake(boardWidth, boardHeight, spec.width(), random, i);
+                if (attempt >= SHORTEN_AFTER) {
+                    // a maze whose way to the heart winds a lot crosses a stream that spans the board too often for
+                    // two bridges: try shorter streams (a river that starts and ends inside the map) instead
+                    path = shorten(path, random, attempt);
+                }
                 if (LavaField.distanceToPath(path, start.getX(), start.getY()) < spec.width() / 2.0 + START_CLEARANCE
                         || LavaField.distanceToPath(path, heart.getX(), heart.getY()) < spec.width() / 2.0 + HEART_CLEARANCE) {
                     continue;
@@ -108,6 +115,14 @@ public final class LavaGenerator {
         return path;
     }
 
+    /** A stretch of the stream: 40 to 90 of every 100 points, from a random place (shorter the longer the search goes on). */
+    private static List<Point2D> shorten(List<Point2D> path, Random random, int attempt) {
+        double share = Math.max(0.4, 0.9 - 0.5 * (attempt - SHORTEN_AFTER) / (double) (ATTEMPTS - SHORTEN_AFTER));
+        int length = Math.max(4, (int) (path.size() * (share * (0.7 + 0.3 * random.nextDouble()))));
+        int from = random.nextInt(Math.max(1, path.size() - length + 1));
+        return new ArrayList<>(path.subList(from, Math.min(path.size(), from + length)));
+    }
+
     private static boolean clearOf(List<List<Point2D>> paths, double width, Point2D point, double clearance) {
         for (List<Point2D> path : paths) {
             if (LavaField.distanceToPath(path, point.getX(), point.getY()) < width / 2.0 + clearance) {
@@ -159,14 +174,32 @@ public final class LavaGenerator {
         if (bridges.size() > spec.bridgesPerStream()) {
             return null;
         }
+        // the rest at random places along the stream (every few pixels, not only at its corners) with room for a bridge
         List<Vector2D> walls = world.getMazeVectors();
-        for (int tries = 0; bridges.size() < spec.bridgesPerStream() && tries < 400; tries++) {
-            Point2D candidate = path.get(random.nextInt(path.size()));
-            if (clearOfWalls(candidate, walls) && apart(candidate, bridges)) {
-                bridges.add(bridgeAt(path, candidate, spec));
+        List<Point2D> places = new ArrayList<>();
+        for (int i = 0; i + 1 < path.size(); i++) {
+            Point2D from = path.get(i);
+            Point2D to = path.get(i + 1);
+            double length = Math.hypot(to.getX() - from.getX(), to.getY() - from.getY());
+            for (double d = 0; d < length; d += 4.0) {
+                double t = length == 0 ? 0 : d / length;
+                Point2D place = new Point2D(from.getX() + (to.getX() - from.getX()) * t, from.getY() + (to.getY() - from.getY()) * t);
+                if (clearOfWalls(place, walls)) {
+                    places.add(place);
+                }
             }
         }
-        return bridges;
+        java.util.Collections.shuffle(places, random);
+        for (Point2D place : places) {
+            if (bridges.size() >= spec.bridgesPerStream()) {
+                break;
+            }
+            if (apart(place, bridges)) {
+                bridges.add(bridgeAt(path, place, spec));
+            }
+        }
+        // the configured number of bridges, no fewer: a stream that cannot get them is tried again
+        return bridges.size() == spec.bridgesPerStream() ? bridges : null;
     }
 
     /** Adds a bridge over a stretch of the way that lies in the stream; false when one bridge cannot cover all of it. */

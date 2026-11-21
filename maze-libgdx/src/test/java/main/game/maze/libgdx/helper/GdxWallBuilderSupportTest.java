@@ -47,7 +47,7 @@ class GdxWallBuilderSupportTest {
         world = new GameMazeWorld(new DfsMazeGenerator(new MazeGeneratorConfig((int) W, (int) H,
                 StageConstants.WallSegmentLengthPx, StageConstants.HallwayWidthPx, StageConstants.HallwayWidthPx, 40)));
         support = new GdxWallBuilderSupport();
-        support.reset(SPEC, W, H);
+        support.reset(SPEC, W, H, null);
     }
 
     private static GdxEnemyRuntime builder(int index, float x, float y) {
@@ -99,7 +99,7 @@ class GdxWallBuilderSupportTest {
         run(20, new ArrayList<>(List.of(dead)));
         assertTrue(built.isEmpty());
 
-        support.reset(null, W, H);
+        support.reset(null, W, H, null);
         run(20, new ArrayList<>(List.of(builder(1, W / 2, H / 2))));
         assertTrue(built.isEmpty());
     }
@@ -114,5 +114,20 @@ class GdxWallBuilderSupportTest {
             @Override public double maxY() { return H; }
             @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
         };
+    }
+
+    @Test
+    @DisplayName("the support gives the level's lava to the builders: they never stand in deadly lava (screen y is flipped)")
+    void buildersKeepOutOfLava() {
+        main.game.maze.mazeworld.LavaField lava = main.game.maze.game.lava.LavaGenerator.generate(
+                new main.game.maze.game.level.LavaSpec(2, 46.0, 2, 56.0, null), world, (int) W, (int) H,
+                new main.game.maze.mazeworld.Point2D(30, 90), new main.game.maze.mazeworld.Point2D(W / 2.0, H / 2.0),
+                new java.util.Random());
+        support.reset(SPEC, W, H, lava);
+        List<GdxEnemyRuntime> crew = new ArrayList<>(List.of(builder(0, W / 2, H / 2)));
+        for (int i = 0; i < 3000; i++) {
+            support.tick(host, crew, -500f, -500f, 0.05f);
+            assertFalse(lava.isDeadly(crew.get(0).x(), H - crew.get(0).y()), "in lava");
+        }
     }
 }

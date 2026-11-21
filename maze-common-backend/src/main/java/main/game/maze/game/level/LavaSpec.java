@@ -12,7 +12,7 @@ package main.game.maze.game.level;
 public record LavaSpec(int streamCount, double width, int bridgesPerStream, double bridgeLength, String deathSound) {
 
     public LavaSpec {
-        if (streamCount < 1 || width <= 0 || bridgesPerStream < 1 || bridgeLength <= 0) {
+        if (streamCount < 1 || !(width > 0) || bridgesPerStream < 1 || !(bridgeLength > 0)) {   // (!(x > 0) also rejects NaN)
             throw new IllegalArgumentException("lava values must be positive");
         }
     }
