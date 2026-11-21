@@ -12,6 +12,7 @@ import java.util.Random;
 import main.game.maze.common.graphics.fire.HoleEffect;
 import main.game.maze.common.graphics.fire.MinePulseEffect;
 import main.game.maze.common.movement.WorldView;
+import main.game.maze.game.hazard.HazardSession;
 import main.game.maze.game.level.LevelCatalogLoader;
 import main.game.maze.game.level.LevelSpec;
 import main.game.maze.game.level.TeleportGhostSpec;
@@ -103,7 +104,7 @@ class GdxHazardSupportTest {
         assertEquals(LEVEL.mines().count() - 1, effectsOf(model, MinePulseEffect.class), "the mine's glow is gone");
         assertEquals(1, effectsOf(model, HoleEffect.class), "a hole in the ground");
         assertNotNull(result.teleport(), "the player stands on the hole and falls in");
-        assertEquals(GdxHazardSupport.Cause.HOLE, result.teleport().cause());
+        assertEquals(HazardSession.Cause.HOLE, result.teleport().cause());
         // the mine is in the middle of the board horizontally, so the exit is at a side or the top or bottom
         float x = result.teleport().x();
         float y = result.teleport().y();
@@ -129,7 +130,7 @@ class GdxHazardSupportTest {
 
         player.teleportTo((float) other.x(), HEIGHT - (float) other.y());
         assertNull(hazards.tick(model, player, List.of(), 0.016f, 100.5).teleport(), "still cooling down");
-        assertNotNull(hazards.tick(model, player, List.of(), 0.016f, 100.0 + LEVEL.teleportGhost().cooldownSeconds() + 0.1)
+        assertNotNull(hazards.tick(model, player, List.of(), 0.016f, 100.0 + LEVEL.teleport().cooldownSeconds() + 0.1)
                 .teleport(), "the player is still over a hole: falls once ready");
     }
 
@@ -143,7 +144,7 @@ class GdxHazardSupportTest {
         var result = hazards.tick(model, player, List.of(ghost), 0.016f, 50.0);
 
         assertNotNull(result.teleport());
-        assertEquals(GdxHazardSupport.Cause.PORTAL_GHOST, result.teleport().cause());
+        assertEquals(HazardSession.Cause.PORTAL_GHOST, result.teleport().cause());
         float x = result.teleport().x();
         float y = result.teleport().y();
         assertTrue(x < 100 || x > 700 || y < 100 || y > 500, "an edge of the map: " + x + "," + y);

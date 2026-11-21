@@ -26,11 +26,9 @@ import main.game.maze.generated.WallRegistry;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.mazeworld.generators.WallSegment;
-import main.game.maze.game.items.PickupCatalogLoader;
-import main.game.maze.game.items.PickupField;
 import main.game.maze.game.level.DifficultyTier;
 import main.game.maze.game.level.LevelSpec;
-import main.game.maze.game.level.SergeantPosts;
+import main.game.maze.game.level.LevelPlacement;
 import main.game.maze.game.level.SergeantSpec;
 import main.game.maze.game.level.TeleportGhostSpec;
 import main.game.maze.mazeworld.Point2D;
@@ -73,8 +71,6 @@ public final class RuntimeVisualModelLoader {
     private static final float SERGEANT_THREAT = 5f;
     /** Danger of a portal ghost, for the kill points (it never hurts). */
     private static final float PORTAL_GHOST_THREAT = 3f;
-    private static final float PORTAL_GHOST_MIN_START_DISTANCE = 200f;
-    private static final long PORTAL_GHOST_SEED = 4242L;
     private static final long ENEMY_SPAWN_RANDOM_SEED = 1337L;
     private static final float MIN_THREAT_BUDGET = 1f;
     // MIN_DAMAGE_MULTIPLIER removed: EnemySpawnPlanner.applyDamageMultiplier already clamps to 0.
@@ -282,10 +278,8 @@ public final class RuntimeVisualModelLoader {
         }
         SergeantSpec spec = level.sergeant();
         DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
-        List<Point2D> corridor = new PickupField(PickupCatalogLoader.loadDefault(), new Random())
-                .spawnPointsOf(realMaze.sourceWorld());
-        List<Point2D> posts = SergeantPosts.choose(corridor, widthPx * CENTER_RATIO, heightPx * CENTER_RATIO,
-                spec.postDistanceFromHeart(), level.sergeantCount(tier), StageConstants.ZombieCharacterXYSize * 2.0);
+        List<Point2D> posts = LevelPlacement.sergeantPosts(level, tier, realMaze.sourceWorld(),
+                widthPx * CENTER_RATIO, heightPx * CENTER_RATIO);
         List<EnemySpawn> spawns = new ArrayList<>();
         for (int index = 0; index < posts.size(); index++) {
             Point2D post = posts.get(index);
@@ -312,13 +306,11 @@ public final class RuntimeVisualModelLoader {
         }
         TeleportGhostSpec ghost = level.teleportGhost();
         DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
-        List<Point2D> corridor = new ArrayList<>(new PickupField(PickupCatalogLoader.loadDefault(), new Random())
-                .spawnPointsOf(realMaze.sourceWorld()));
-        corridor.removeIf(point -> Math.hypot(point.getX() - startX, heightPx - point.getY() - startY) < PORTAL_GHOST_MIN_START_DISTANCE);
-        java.util.Collections.shuffle(corridor, new Random(PORTAL_GHOST_SEED));
+        // the shared placement works in world space (y-down); this screen's y axis points up
+        List<Point2D> spots = LevelPlacement.portalGhostSpots(level, tier, realMaze.sourceWorld(), startX, heightPx - startY);
         List<EnemySpawn> spawns = new ArrayList<>();
-        for (int index = 0; index < level.ghostCount(tier) && index < corridor.size(); index++) {
-            Point2D spot = corridor.get(index);
+        for (int index = 0; index < spots.size(); index++) {
+            Point2D spot = spots.get(index);
             spawns.add(new EnemySpawn(TeleportGhostSpec.SPAWN_ID_PREFIX + GENERATED_ENEMY_ID_SEPARATOR + index,
                     ghost.sprite(), (float) spot.getX(), heightPx - (float) spot.getY(),
                     StageConstants.GhostCharacterXYSize, PORTAL_GHOST_THREAT, 0, 0, EMPTY_TEXT,

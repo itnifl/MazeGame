@@ -58,9 +58,6 @@ public final class StatusMessageBus {
 
     // ---- banner: a big word in the middle of the screen (e.g. "Teleported"), apart from the status line ----
 
-    /** Fade-in and fade-out time of a banner, in seconds. */
-    static final float BANNER_FADE_SECONDS = 0.15f;
-
     private String banner = "";
     private float bannerSecondsRemaining;
     private float bannerTotalSeconds;
@@ -88,10 +85,7 @@ public final class StatusMessageBus {
         if (!hasBanner()) {
             return 0f;
         }
-        float elapsed = bannerTotalSeconds - bannerSecondsRemaining;
-        float in = Math.min(1f, elapsed / BANNER_FADE_SECONDS);
-        float out = Math.min(1f, bannerSecondsRemaining / BANNER_FADE_SECONDS);
-        return Math.max(0f, Math.min(in, out));
+        return BannerFade.alpha(bannerTotalSeconds - bannerSecondsRemaining, bannerTotalSeconds);
     }
 
     public void clearBanner() {

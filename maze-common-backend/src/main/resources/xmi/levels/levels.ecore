@@ -35,6 +35,11 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="teleportGhost" eType="#//TeleportGhost" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="teleport" eType="#//TeleportRules" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="What happens when the player is teleported on this level."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="ghostCounts" upperBound="-1"
         eType="#//TierCount" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -129,6 +134,25 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="holeRadius" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="30.0"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TeleportRules">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="What happens when the player is teleported (by a hole or a portal ghost): how long until they can be teleported again, the word that appears on the screen and is spoken, and the sounds. A level without its own rules uses the defaults."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cooldownSeconds" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="2.5">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="After any teleport the player cannot be teleported again for this long, so a second ghost or hole cannot send them straight back."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bannerText" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="Teleported"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bannerSeconds" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1.6"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="zapSound"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/sounds/teleport.wav"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="voiceSound"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" defaultValueLiteral="/main/game/maze/sounds/teleported.wav"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TeleportGhost">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A ghost that does not hurt: when it touches the player, the player is sent to a random spot at the outer edge of the map (never inside a wall)."/>
@@ -141,14 +165,6 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1.6"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="sprite" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="teleportSound"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cooldownSeconds" lowerBound="1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="2.5">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="After any teleport the player cannot be teleported again for this long, so a second ghost cannot bounce them straight back."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SergeantPosts">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="difficulty" lowerBound="1"

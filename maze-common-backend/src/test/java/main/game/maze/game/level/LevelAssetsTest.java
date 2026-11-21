@@ -27,8 +27,9 @@ class LevelAssetsTest {
             }
             if (level.hasTeleportGhosts()) {
                 exists(level.teleportGhost().sprite(), "level " + number + " portal ghost sprite");
-                exists(level.teleportGhost().teleportSound(), "level " + number + " teleport sound");
             }
+            exists(level.teleport().zapSound(), "level " + number + " teleport zap");
+            exists(level.teleport().voiceSound(), "level " + number + " teleport voice");
         }
     }
 

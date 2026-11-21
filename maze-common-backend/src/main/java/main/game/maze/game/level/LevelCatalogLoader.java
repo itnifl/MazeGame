@@ -93,6 +93,9 @@ public final class LevelCatalogLoader {
         }
         requireAllTiers(ghost != null, ghostCounts, number, "teleporting ghost");
 
+        TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
+                : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
+
         double threatCapacityFactor = inherited(level, "threatCapacityFactor", base,
                 DynamicModel.decimal(level, "threatCapacityFactor"), base == null ? 0 : base.threatCapacityFactor());
         if (!(threatCapacityFactor > 0)) {
@@ -105,7 +108,7 @@ public final class LevelCatalogLoader {
         int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
                 DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
         return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
-                zones, sergeant, posts, mines, ghost, ghostCounts);
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport);
     }
 
     /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
@@ -176,8 +179,13 @@ public final class LevelCatalogLoader {
 
     private static TeleportGhostSpec ghostOf(EObject ghost) {
         return new TeleportGhostSpec(DynamicModel.string(ghost, "displayName"), DynamicModel.integer(ghost, "health"),
-                DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"),
-                DynamicModel.string(ghost, "teleportSound"), DynamicModel.decimal(ghost, "cooldownSeconds"));
+                DynamicModel.decimal(ghost, "speed"), DynamicModel.string(ghost, "sprite"));
+    }
+
+    private static TeleportRulesSpec teleportOf(EObject rules) {
+        return new TeleportRulesSpec(DynamicModel.decimal(rules, "cooldownSeconds"),
+                DynamicModel.string(rules, "bannerText"), DynamicModel.decimal(rules, "bannerSeconds"),
+                DynamicModel.string(rules, "zapSound"), DynamicModel.string(rules, "voiceSound"));
     }
 
     private static SergeantSpec sergeantOf(EObject sergeant) {

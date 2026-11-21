@@ -1,36 +1,28 @@
 package main.game.maze.javafx.hud;
 
 import java.util.function.Supplier;
-import javafx.animation.FadeTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.PauseTransition;
+import javafx.animation.AnimationTimer;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
+import main.game.maze.game.status.BannerFade;
 
 /**
- * A big word in the middle of the game screen (for example "Teleported") that fades in, holds and fades out.
- * Use on the JavaFX Application Thread.
+ * A big word in the middle of the game screen (for example "Teleported") that fades in, holds and fades out, with
+ * the same fade as the libGDX banner ({@link BannerFade}). Use on the JavaFX Application Thread.
  */
 public final class FxBannerView {
 
-    private static final double FADE_SECONDS = 0.15;
     /** Height of the text on the screen as a share of the window height. */
     private static final double HEIGHT_SHARE = 0.34;
 
     private final Supplier<AnchorPane> rootSupplier;
     private Label label;
-    private SequentialTransition running;
+    private AnimationTimer timer;
 
     public FxBannerView(Supplier<AnchorPane> rootSupplier) {
         this.rootSupplier = rootSupplier;
-    }
-
-    /** The label currently on the screen, or null (for tests). */
-    Label label() {
-        return label;
     }
 
     /** Shows {@code text} for {@code seconds}, including the fades. */
@@ -40,47 +32,50 @@ public final class FxBannerView {
             return;
         }
         hide();
-        label = new Label(text);
-        label.setStyle("-fx-font-size: 72px; -fx-font-weight: bold; -fx-font-family: 'Consolas'; -fx-text-fill: #b8ebff;");
-        label.setEffect(new DropShadow(10, Color.BLACK));
-        label.setMouseTransparent(true);
-        label.setOpacity(0);
-        label.setAlignment(javafx.geometry.Pos.CENTER);
-        AnchorPane.setLeftAnchor(label, 0.0);
-        AnchorPane.setRightAnchor(label, 0.0);
-        label.layoutYProperty().bind(root.heightProperty().multiply(HEIGHT_SHARE));
-        root.getChildren().add(label);
+        Label shown = new Label(text);
+        shown.setStyle("-fx-font-size: 72px; -fx-font-weight: bold; -fx-font-family: 'Consolas'; -fx-text-fill: #b8ebff;");
+        shown.setEffect(new DropShadow(10, Color.BLACK));
+        shown.setMouseTransparent(true);
+        shown.setOpacity(0);
+        shown.setAlignment(javafx.geometry.Pos.CENTER);
+        AnchorPane.setLeftAnchor(shown, 0.0);
+        AnchorPane.setRightAnchor(shown, 0.0);
+        shown.layoutYProperty().bind(root.heightProperty().multiply(HEIGHT_SHARE));
+        root.getChildren().add(shown);
+        label = shown;
 
-        double hold = Math.max(0, seconds - 2 * FADE_SECONDS);
-        FadeTransition in = new FadeTransition(Duration.seconds(FADE_SECONDS), label);
-        in.setToValue(1);
-        PauseTransition pause = new PauseTransition(Duration.seconds(hold));
-        FadeTransition out = new FadeTransition(Duration.seconds(FADE_SECONDS), label);
-        out.setToValue(0);
-        Label shown = label;
-        running = new SequentialTransition(in, pause, out);
-        running.setOnFinished(event -> remove(shown));
-        running.play();
+        float total = (float) seconds;
+        timer = new AnimationTimer() {
+            private long startNanos = -1;
+
+            @Override
+            public void handle(long now) {
+                if (startNanos < 0) {
+                    startNanos = now;
+                }
+                float elapsed = (now - startNanos) / 1e9f;
+                if (elapsed >= total) {
+                    hide();
+                    return;
+                }
+                shown.setOpacity(BannerFade.alpha(elapsed, total));
+            }
+        };
+        timer.start();
     }
 
     /** Takes the banner off the screen at once. */
     public void hide() {
-        if (running != null) {
-            running.stop();
-            running = null;
+        if (timer != null) {
+            timer.stop();
+            timer = null;
         }
         if (label != null) {
-            remove(label);
-        }
-    }
-
-    private void remove(Label shown) {
-        shown.layoutYProperty().unbind();
-        AnchorPane root = rootSupplier.get();
-        if (root != null) {
-            root.getChildren().remove(shown);
-        }
-        if (label == shown) {
+            label.layoutYProperty().unbind();
+            AnchorPane root = rootSupplier.get();
+            if (root != null) {
+                root.getChildren().remove(label);
+            }
             label = null;
         }
     }

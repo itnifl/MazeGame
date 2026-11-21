@@ -21,11 +21,13 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param mines                the mines in a circle round every sergeant, or null
  * @param teleportGhost        the ghost that teleports the player, or null
  * @param ghostCounts          teleporting ghosts per difficulty tier
+ * @param teleport             what a teleport does (cooldown, word, sounds); never null
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
                         SergeantSpec sergeant, Map<DifficultyTier, Integer> sergeantPosts,
-                        MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts) {
+                        MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
+                        TeleportRulesSpec teleport) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;
@@ -43,6 +45,7 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
         zones = List.copyOf(zones);
         sergeantPosts = Map.copyOf(sergeantPosts);
         ghostCounts = Map.copyOf(ghostCounts);
+        teleport = teleport == null ? TeleportRulesSpec.DEFAULT : teleport;
     }
 
     public boolean hasMines() {

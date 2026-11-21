@@ -1,17 +1,14 @@
 package main.game.maze.runtime.opponents;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import main.game.maze.characters.PortalGhostCharacter;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.game.hazard.MazeHazards;
 import main.game.maze.game.level.DifficultyTier;
+import main.game.maze.game.level.LevelPlacement;
 import main.game.maze.game.level.LevelSpec;
 import main.game.maze.game.level.TeleportGhostSpec;
 import main.game.maze.mazeworld.GameMazeWorld;
@@ -29,9 +26,7 @@ import main.game.maze.opponents.OpponentsFactory;
 public final class PortalGhostSpawner {
 
     private static final Logger LOGGER = Logger.getLogger(PortalGhostSpawner.class.getName());
-    private static final double MIN_START_DISTANCE = 200.0;
     private static final double GHOST_THREAT = 3.0;
-    private static final long SEED = 4242L;
 
     private PortalGhostSpawner() {
     }
@@ -47,13 +42,11 @@ public final class PortalGhostSpawner {
         }
         TeleportGhostSpec spec = level.teleportGhost();
         DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
-        List<Point2D> corridor = new ArrayList<>(MazeHazards.freePoints(world));
-        corridor.removeIf(point -> Math.hypot(point.getX() - startX, point.getY() - startY) < MIN_START_DISTANCE);
-        Collections.shuffle(corridor, new Random(SEED));
-        int count = Math.min(level.ghostCount(tier), corridor.size());
+        List<Point2D> spots = LevelPlacement.portalGhostSpots(level, tier, world, startX, startY);
+        int count = spots.size();
         double half = StageConstants.GhostCharacterXYSize / 2.0;
-        for (int i = 0; i < count; i++) {
-            register(registrar, spec, corridor.get(i).getX() - half, corridor.get(i).getY() - half);
+        for (Point2D spot : spots) {
+            register(registrar, spec, spot.getX() - half, spot.getY() - half);
         }
         LOGGER.log(Level.INFO, "Placed {0} of {1} portal ghosts ({2})", new Object[] {count, level.ghostCount(tier), tier});
         return count;

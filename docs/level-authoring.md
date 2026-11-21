@@ -19,7 +19,8 @@ Both frontends play the same levels: after a win, the win screen offers *Next le
 | `baseLevel` | number of an earlier level this one is built on: whatever the level does not set itself (zones, wall look, cascade depth, weapon inheritance, threat capacity, sergeants, mines, ghosts) is taken from that level. `0` = none | `0` |
 | `inheritWeapons` | start with the weapons the player had at the end of the previous level | `true` |
 | `<zones>` | concentric zones around the heart, outer zone first, **any number**; see below | none = the classic random walls |
-| `<mines>` | a circle of pulsating mines round every sergeant: a touched mine blasts (`blastDamage`, `blastRadius`) and leaves a hole (`holeRadius`) that sends the player to the opposite edge of the map | none |
+| `<mines>` | a circle of anti-personnel mines round every sergeant (`count` of them): a touched mine hurts the player a little (`playerDamage`), walls and enemies a little less (`blastDamage` within `blastRadius`) and leaves a hole (`holeRadius`) that sends the player to the opposite edge of the map | none |
+| `<teleport>` | what a teleport does: `cooldownSeconds`, the word on the screen and in the voice (`bannerText`, `bannerSeconds`) and the sounds (`zapSound`, `voiceSound`); a level without it uses the defaults | defaults |
 | `<teleportGhost>` + `<ghostCounts>` | a ghost that does not hurt but teleports the player to a random spot at the edge of the map; `cooldownSeconds` is the pause before the player can be teleported again | none |
 | `<sergeant>` + `<sergeantPosts>` | stationary zombie sergeants guarding the heart, and how many per difficulty | none |
 
@@ -72,10 +73,11 @@ level 2 and only needs to say what is new. Level 3 is just this:
 
 ```xml
 <levels number="3" name="The Minefield" baseLevel="2">
-  <mines count="8" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
-      blastRadius="300.0" blastDamage="250" holeRadius="30.0"/>
-  <teleportGhost displayName="Portal ghost" health="60" speed="1.6"
-      sprite="/main/game/maze/ghost-portal.png" teleportSound="/main/game/maze/sounds/teleport.wav" cooldownSeconds="2.5"/>
+  <mines count="3" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
+      blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
+  <teleportGhost displayName="Portal ghost" health="60" speed="1.6" sprite="/main/game/maze/ghost-portal.png"/>
+  <teleport cooldownSeconds="2.5" bannerText="Teleported" bannerSeconds="1.6"
+      zapSound="/main/game/maze/sounds/teleport.wav" voiceSound="/main/game/maze/sounds/teleported.wav"/>
   <ghostCounts difficulty="EASY" count="3"/>
   <ghostCounts difficulty="NORMAL" count="6"/>
   <ghostCounts difficulty="HARD" count="10"/>

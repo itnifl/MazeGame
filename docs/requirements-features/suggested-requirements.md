@@ -402,3 +402,7 @@ These requirements have been implemented and verified.
 - **SR-306** *(Model-driven)*: The portal ghost lives in `levels.ecore` like the sergeant (SR-287); move both into `opponents.ecore` once the generated EMF code can be regenerated headlessly, so enemy kinds have one home.
 
 - **SR-307** *(Parity, UX)*: The libGDX screen shake uses the old fixed-envelope shake with the new strength and duration; use the shared decaying `BombImpact.shakeOffset` there too so both frontends shake identically.
+
+- **SR-310** *(MDD, Xtext)*: Author levels in the Xtext DSL (`levels.mazegame`) and generate `levels.xmi` from it in the build, so the DSL is the single source of the level data and a test proves the generated XMI equals the shipped one. Regenerating the Xtext sources works here (`mvn generate-sources -pl main.game.maze.dsl -Dxtext.codegen.skip=false`); the grammar, the XMI generator and the equality test still have to be written.
+
+- **SR-311** *(Accessibility)*: The spoken "Teleported" is English only and recorded with a Windows voice; offer text-only banner and a volume or mute option for voices, and re-record per language.

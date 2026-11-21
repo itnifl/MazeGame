@@ -209,7 +209,7 @@ class LevelCatalogTest {
         assertEquals(0, CATALOG.level(2).ghostCount(DifficultyTier.HARD));
         TeleportGhostSpec ghost = three.teleportGhost();
         assertTrue(TeleportGhostSpec.isPortalGhostId(TeleportGhostSpec.SPAWN_ID_PREFIX + "_3"));
-        assertTrue(ghost.cooldownSeconds() > 0, "no instant bounce-back");
+        assertTrue(three.teleport().cooldownSeconds() > 0, "no instant bounce-back");
     }
 
     @Test

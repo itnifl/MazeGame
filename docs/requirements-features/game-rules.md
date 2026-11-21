@@ -274,10 +274,10 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-55**: A level can be built on an earlier one (`baseLevel`): what it does
   not set itself is taken from that level. Level 3 is level 2 plus mines and
   portal ghosts.
-- **GR-56**: Level 3 puts a circle of mines round every sergeant (`MineField`),
-  only on free ground. A mine that the player touches goes off: a blast of
-  250 damage and 300 px reach (a bomb does 100 and 220) that breaks walls and
-  hurts enemies but not the player, and a hole in the ground that stays.
+- **GR-56**: Level 3 puts three anti-personnel mines round every sergeant
+  (`MineField`), only on free ground. A mine that the player touches goes off:
+  the player takes 20 damage, walls and enemies in the small blast (150 px) take
+  15, and a hole is left in the ground that stays.
 - **GR-57**: A player whose centre is over a hole falls and comes out on free
   ground at the opposite edge of the map (`EdgeTeleport.oppositeEdge`).
 - **GR-58**: A portal ghost does no damage. Touching the player teleports them
@@ -285,3 +285,7 @@ MUST be added to the shared core, not to a single frontend.
   (`EdgeTeleport.randomOuterEdge`). Portal ghosts: 3 easy, 6 normal, 10 hard.
 - **GR-59**: After a teleport the player cannot be teleported again for the
   ghost's cooldown (`TeleportGate`).
+- **GR-60**: A teleported player flashes in at the new place; the screen says
+  the level's banner word ("Teleported") briefly and a deep voice says it. The
+  word, its time, the cooldown and the sounds come from the level's
+  `TeleportRules`.

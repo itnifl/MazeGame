@@ -543,17 +543,20 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             // a small blast at the mine: a little less than the player takes for walls and enemies
             detonateBlast((float) detonation.mine().x(), maze.heightPx() - (float) detonation.mine().y(),
                     mines.blastDamage(), (float) mines.blastRadius(), false, "Mine");
-            // the player, who set it off, takes a little damage (the shield still blocks it)
-            combatState.applyDirectDamage(mines.playerDamage());
+        }
+        if (result.playerDamage() > 0) {
+            // the player, who set the mines off, takes a little damage (the shield still blocks it)
+            combatState.applyDirectDamage(result.playerDamage());
         }
         if (result.teleport() != null) {
             player.teleportTo(result.teleport().x(), result.teleport().y());
             // the player flashes in, the screen says Teleported and a deep voice says it too
             worldModel.effects().add(new GameWorldModel.ActiveEffect(
                     TeleportFeedback.flashAt(result.teleport().x(), result.teleport().y(), true)));
-            AudioEngine.get().play(TeleportFeedback.ZAP_SOUND);
-            AudioEngine.get().play(TeleportFeedback.VOICE_SOUND);
-            statusMessageBus.showBanner(TeleportFeedback.BANNER_TEXT, TeleportFeedback.BANNER_SECONDS);
+            var rules = levelProgress.current().teleport();
+            if (rules.zapSound() != null) AudioEngine.get().play(rules.zapSound());
+            if (rules.voiceSound() != null) AudioEngine.get().play(rules.voiceSound());
+            statusMessageBus.showBanner(rules.bannerText(), (float) rules.bannerSeconds());
         }
     }
 

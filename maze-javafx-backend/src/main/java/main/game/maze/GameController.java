@@ -249,7 +249,7 @@ public class GameController implements Initializable, EnemyRegistrar {
             // the player, who set it off, takes a little damage (the shield still blocks it)
             if (playerCharacter != null) playerCharacter.subtractHitPoints(damage);
         }
-        @Override public void teleportPlayer(double x, double y, FxHazardController.Cause cause) {
+        @Override public void teleportPlayer(double x, double y, main.game.maze.game.hazard.HazardSession.Cause cause) {
             teleportPlayerTo(x, y, cause);
         }
         @Override public void draw(main.game.maze.game.hazard.MineField field) {
@@ -786,16 +786,17 @@ public class GameController implements Initializable, EnemyRegistrar {
     private final FxBannerView banner = new FxBannerView(() -> root);
 
     /** The player is sent to a new place (centre at x, y): move, camera, sound, sparkle and a message. */
-    private void teleportPlayerTo(double x, double y, FxHazardController.Cause cause) {
+    private void teleportPlayerTo(double x, double y, main.game.maze.game.hazard.HazardSession.Cause cause) {
         if (playerCharacter == null) return;
         double half = StageConstants.PlayerCharacterXYSize * 0.5d;
         playerCharacter.teleportTo(x - half, y - half);
         renderCoordinator.updateCameraFollow(playerCharacter);
         // the player flashes in, the screen says Teleported and a deep voice says it too
         weapons.showEffect(main.game.maze.game.hazard.TeleportFeedback.flashAt(x, y, false));
-        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.hazard.TeleportFeedback.ZAP_SOUND);
-        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.game.hazard.TeleportFeedback.VOICE_SOUND);
-        banner.show(main.game.maze.game.hazard.TeleportFeedback.BANNER_TEXT, main.game.maze.game.hazard.TeleportFeedback.BANNER_SECONDS);
+        var rules = App.levelProgress.current().teleport();
+        if (rules.zapSound() != null) main.game.maze.common.graphics.AudioEngine.get().play(rules.zapSound());
+        if (rules.voiceSound() != null) main.game.maze.common.graphics.AudioEngine.get().play(rules.voiceSound());
+        banner.show(rules.bannerText(), rules.bannerSeconds());
     }
 
     /** A portal ghost touched the player (called by the ghost). */

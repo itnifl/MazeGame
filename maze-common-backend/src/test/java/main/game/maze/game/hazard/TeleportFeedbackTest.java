@@ -11,17 +11,29 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import main.game.maze.common.graphics.fire.TeleportFlashEffect;
+import main.game.maze.game.level.LevelCatalogLoader;
+import main.game.maze.game.level.TeleportRulesSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Teleport feedback: flash in, the word on the screen, a deep voice")
+@DisplayName("Teleport feedback: flash in, the word on the screen, a deep voice, all from the level model")
 class TeleportFeedbackTest {
 
+    private static final TeleportRulesSpec RULES = LevelCatalogLoader.loadDefault().level(3).teleport();
+
     @Test
-    @DisplayName("the word on the screen is Teleported, for a short moment")
+    @DisplayName("level 3 says Teleported, for a short moment, with a cooldown")
     void banner() {
-        assertEquals("Teleported", TeleportFeedback.BANNER_TEXT);
-        assertTrue(TeleportFeedback.BANNER_SECONDS >= 1.0f && TeleportFeedback.BANNER_SECONDS <= 3.0f);
+        assertEquals("Teleported", RULES.bannerText());
+        assertTrue(RULES.bannerSeconds() >= 1.0 && RULES.bannerSeconds() <= 3.0);
+        assertTrue(RULES.cooldownSeconds() > 0);
+    }
+
+    @Test
+    @DisplayName("a level without rules of its own gets the defaults, which match the metamodel")
+    void defaults() {
+        assertEquals(RULES, LevelCatalogLoader.loadDefault().level(2).teleport(), "level 2 has none: the defaults");
+        assertEquals(TeleportRulesSpec.DEFAULT, LevelCatalogLoader.loadDefault().level(1).teleport());
     }
 
     @Test
@@ -37,8 +49,8 @@ class TeleportFeedbackTest {
     @Test
     @DisplayName("the zap and the voice exist, and the voice is a real recording: 16-bit mono, about a second or two, not silent")
     void sounds() throws IOException, UnsupportedAudioFileException {
-        assertNotNull(TeleportFeedbackTest.class.getResource(TeleportFeedback.ZAP_SOUND), "zap missing");
-        var url = TeleportFeedbackTest.class.getResource(TeleportFeedback.VOICE_SOUND);
+        assertNotNull(TeleportFeedbackTest.class.getResource(RULES.zapSound()), "zap missing");
+        var url = TeleportFeedbackTest.class.getResource(RULES.voiceSound());
         assertNotNull(url, "voice missing");
         try (AudioInputStream in = AudioSystem.getAudioInputStream(url)) {
             AudioFormat format = in.getFormat();

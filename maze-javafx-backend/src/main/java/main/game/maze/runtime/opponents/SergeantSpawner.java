@@ -8,10 +8,9 @@ import javafx.scene.Node;
 import main.game.maze.App;
 import main.game.maze.characters.SergeantCharacter;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.game.hazard.MazeHazards;
 import main.game.maze.game.level.DifficultyTier;
 import main.game.maze.game.level.LevelSpec;
-import main.game.maze.game.level.SergeantPosts;
+import main.game.maze.game.level.LevelPlacement;
 import main.game.maze.game.level.SergeantSpec;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
@@ -28,8 +27,6 @@ import main.game.maze.opponents.Zombie;
 public final class SergeantSpawner {
 
     private static final Logger LOGGER = Logger.getLogger(SergeantSpawner.class.getName());
-    /** Posts keep at least this far from each other (two sergeant sizes). */
-    private static final double MIN_POST_SPACING = StageConstants.ZombieCharacterXYSize * 2.0;
     /** Danger of a sergeant, for the kill points. */
     private static final double SERGEANT_THREAT = 5.0;
 
@@ -44,10 +41,9 @@ public final class SergeantSpawner {
         if (level == null || !level.hasSergeants() || world == null) {
             return List.of();
         }
-        SergeantSpec spec = level.sergeant();
-        DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
-        return SergeantPosts.choose(MazeHazards.freePoints(world), App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0,
-                spec.postDistanceFromHeart(), level.sergeantCount(tier), MIN_POST_SPACING);
+        return LevelPlacement.sergeantPosts(level, DifficultyTier.fromDifficultyName(
+                difficulty == null ? null : difficulty.eClass().getName()), world,
+                App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0);
     }
 
     public static int spawn(EnemyRegistrar registrar, LevelSpec level, Difficulty difficulty, GameMazeWorld world) {

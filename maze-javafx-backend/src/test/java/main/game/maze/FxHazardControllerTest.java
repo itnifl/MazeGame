@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import main.game.maze.characters.PlayerCharacter;
+import main.game.maze.game.hazard.HazardSession;
 import main.game.maze.game.hazard.MazeHazards;
 import main.game.maze.game.hazard.MineField;
 import main.game.maze.game.level.LevelCatalogLoader;
@@ -35,13 +36,13 @@ class FxHazardControllerTest {
         final List<double[]> blasts = new ArrayList<>();
         final List<double[]> teleports = new ArrayList<>();
         final List<Integer> playerHurts = new ArrayList<>();
-        final List<FxHazardController.Cause> causes = new ArrayList<>();
+        final List<HazardSession.Cause> causes = new ArrayList<>();
         int draws;
 
         @Override public PlayerCharacter player() { return player; }
         @Override public void blast(double x, double y, int damage, double range) { blasts.add(new double[] {x, y, damage, range}); }
         @Override public void hurtPlayer(int damage) { playerHurts.add(damage); }
-        @Override public void teleportPlayer(double x, double y, FxHazardController.Cause cause) {
+        @Override public void teleportPlayer(double x, double y, HazardSession.Cause cause) {
             teleports.add(new double[] {x, y});
             causes.add(cause);
         }
@@ -107,7 +108,7 @@ class FxHazardControllerTest {
         assertEquals(List.of(LEVEL_3.mines().playerDamage()), host.playerHurts, "the player takes a little more");
         assertTrue(LEVEL_3.mines().blastDamage() < LEVEL_3.mines().playerDamage(), "a little less to whatever else it blows up against");
         assertEquals(1, host.teleports.size());
-        assertEquals(FxHazardController.Cause.HOLE, host.causes.get(0));
+        assertEquals(HazardSession.Cause.HOLE, host.causes.get(0));
         double[] exit = host.teleports.get(0);
         assertTrue(free.contains(new Point2D(exit[0], exit[1])), "the exit is free ground, never a wall");
     }
@@ -126,7 +127,7 @@ class FxHazardControllerTest {
         assertEquals(1, host.teleports.size(), "cooling down");
 
         host.player.teleportTo(mine.x() - HALF, mine.y() - HALF);
-        hazards.tick(1_000_000_000L + (long) (LEVEL_3.teleportGhost().cooldownSeconds() * 1e9) + 100_000_000L);
+        hazards.tick(1_000_000_000L + (long) (LEVEL_3.teleport().cooldownSeconds() * 1e9) + 100_000_000L);
         assertEquals(2, host.teleports.size(), "falls in again once ready");
     }
 
@@ -135,7 +136,7 @@ class FxHazardControllerTest {
     void portalGhostTouch() {
         hazards.onPortalGhostTouch(5_000_000_000L);
         assertEquals(1, host.teleports.size());
-        assertEquals(FxHazardController.Cause.PORTAL_GHOST, host.causes.get(0));
+        assertEquals(HazardSession.Cause.PORTAL_GHOST, host.causes.get(0));
         double[] exit = host.teleports.get(0);
         assertTrue(free.contains(new Point2D(exit[0], exit[1])), "free ground");
         double minX = free.stream().mapToDouble(Point2D::getX).min().orElse(0);
