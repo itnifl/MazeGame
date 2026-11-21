@@ -320,3 +320,10 @@ MUST be added to the shared core, not to a single frontend.
   wander outwards until they are 4 cells from the heart, build there, and when
   that ring is closed move in one cell at a time (4, 3, 2, 1), standing on the
   heart side of each corridor they wall up.
+- **GR-70**: Level 6 is level 5 plus two random snaking streams of lava under
+  the walls, 46 px wide, with two bridges (56 px long) over each.
+- **GR-71**: Standing in lava off a bridge kills the player at once, shield or
+  not. A stream can only be crossed on its bridges.
+- **GR-72**: Enemies, builders and everything that is placed (spawns, pickups,
+  mines, exits) keep out of lava; the way from the start to the heart always
+  crosses the streams on bridges.

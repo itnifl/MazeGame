@@ -17,6 +17,7 @@ import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostSpecifics;
 import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
 import main.game.maze.dsl.mazeDsl.Import;
+import main.game.maze.dsl.mazeDsl.LavaConfig;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LevelZone;
 import main.game.maze.dsl.mazeDsl.LootItemConfig;
@@ -229,6 +230,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass builderCountConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass lavaConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1322,6 +1330,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EReference getLevelConfig_Lava()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLevelZone()
   {
     return levelZoneEClass;
@@ -2136,6 +2155,72 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getLavaConfig()
+  {
+    return lavaConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_StreamCount()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_Width()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_BridgesPerStream()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_BridgeLength()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLavaConfig_DeathSound()
+  {
+    return (EAttribute)lavaConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getTeleportRulesConfig()
   {
     return teleportRulesConfigEClass;
@@ -2406,6 +2491,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(levelConfigEClass, LEVEL_CONFIG__TOWER_COUNTS);
     createEReference(levelConfigEClass, LEVEL_CONFIG__WALL_BUILDER);
     createEReference(levelConfigEClass, LEVEL_CONFIG__BUILDER_COUNTS);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__LAVA);
 
     levelZoneEClass = createEClass(LEVEL_ZONE);
     createEAttribute(levelZoneEClass, LEVEL_ZONE__DISPLAY_NAME);
@@ -2490,6 +2576,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     builderCountConfigEClass = createEClass(BUILDER_COUNT_CONFIG);
     createEAttribute(builderCountConfigEClass, BUILDER_COUNT_CONFIG__DIFFICULTY);
     createEAttribute(builderCountConfigEClass, BUILDER_COUNT_CONFIG__COUNT);
+
+    lavaConfigEClass = createEClass(LAVA_CONFIG);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__STREAM_COUNT);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__WIDTH);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__BRIDGES_PER_STREAM);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__BRIDGE_LENGTH);
+    createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
 
     teleportRulesConfigEClass = createEClass(TELEPORT_RULES_CONFIG);
     createEAttribute(teleportRulesConfigEClass, TELEPORT_RULES_CONFIG__COOLDOWN_SECONDS);
@@ -2644,6 +2737,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getLevelConfig_TowerCounts(), this.getTowerCountConfig(), null, "towerCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_WallBuilder(), this.getWallBuilderConfig(), null, "wallBuilder", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_BuilderCounts(), this.getBuilderCountConfig(), null, "builderCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_Lava(), this.getLavaConfig(), null, "lava", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLevelZone_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, LevelZone.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2728,6 +2822,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEClass(builderCountConfigEClass, BuilderCountConfig.class, "BuilderCountConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getBuilderCountConfig_Difficulty(), this.getDifficultyLevel(), "difficulty", null, 0, 1, BuilderCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getBuilderCountConfig_Count(), ecorePackage.getEInt(), "count", null, 0, 1, BuilderCountConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(lavaConfigEClass, LavaConfig.class, "LavaConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLavaConfig_StreamCount(), ecorePackage.getEInt(), "streamCount", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_Width(), ecorePackage.getEDouble(), "width", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_BridgesPerStream(), ecorePackage.getEInt(), "bridgesPerStream", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_BridgeLength(), ecorePackage.getEDouble(), "bridgeLength", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(teleportRulesConfigEClass, TeleportRulesConfig.class, "TeleportRulesConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTeleportRulesConfig_CooldownSeconds(), ecorePackage.getEDouble(), "cooldownSeconds", null, 0, 1, TeleportRulesConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

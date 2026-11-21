@@ -428,3 +428,11 @@ These requirements have been implemented and verified.
 - **SR-338** *(Robustness)*: A builder walks straight lines between corridor middles ignoring enemies and the player; a builder boxed in by other builders or by a closed corridor just waits. Add a nudge or a re-plan after a few seconds without progress.
 
 - **SR-342** *(UX)*: The HUD rectangles in `HudZones` are copied from the layout of the two frontends (JavaFX FXML, libGDX render constants). Derive both layouts from one shared description so they cannot drift, and let the camera start where the player is so the HUD never covers the start.
+
+- **SR-348** *(Gameplay)*: Lava only kills the player today. Let a blast or a hit knock enemies into it (and burn them), let lava burn pickups that fall in it, and let a bridge be broken by a bomb (and rebuilt by the wall builders).
+
+- **SR-349** *(Accessibility)*: Lava is told from the floor by colour and glow only. Add a heat-shimmer or a soft warning sound near it, a distinct pattern for colour-blind players, and show the bridges more clearly (a highlighted rail).
+
+- **SR-350** *(Observability)*: Log how many tries the lava generator needed and how long it took (it is a search), and count lava deaths per level next to the other statistics (SR-252).
+
+- **SR-351** *(Model-driven)*: The stream shape (amplitude, wavelength, margins) is fixed in `LavaGenerator`; move it into the `LavaStreams` element so level authors can make wider, calmer or wilder rivers.

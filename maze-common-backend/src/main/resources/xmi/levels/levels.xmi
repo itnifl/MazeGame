@@ -34,4 +34,7 @@
     <builderCounts difficulty="NORMAL" count="5"/>
     <builderCounts difficulty="HARD" count="10"/>
   </levels>
+  <levels number="6" name="The Lava Streams" baseLevel="5">
+    <lava streamCount="2" width="46.0" bridgesPerStream="2" bridgeLength="56.0" deathSound="/main/game/maze/sounds/lava-death.wav"/>
+  </levels>
 </levels:LevelModel>

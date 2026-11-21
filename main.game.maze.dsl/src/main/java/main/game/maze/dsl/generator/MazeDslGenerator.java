@@ -541,6 +541,13 @@ public class MazeDslGenerator extends AbstractGenerator {
             for (BuilderCountConfig count : level.getBuilderCounts()) {
                 x.append("    <builderCounts difficulty=\"").append(count.getDifficulty().name()).append("\" count=\"").append(count.getCount()).append("\"/>\n");
             }
+            LavaConfig lv = level.getLava();
+            if (lv != null) {
+                x.append("    <lava streamCount=\"").append(lv.getStreamCount()).append("\" width=\"").append(lv.getWidth())
+                 .append("\" bridgesPerStream=\"").append(lv.getBridgesPerStream()).append("\" bridgeLength=\"").append(lv.getBridgeLength()).append('"');
+                optionalText(x, "deathSound", lv.getDeathSound());
+                x.append("/>\n");
+            }
             x.append("  </levels>\n");
         }
         x.append("</levels:LevelModel>\n");

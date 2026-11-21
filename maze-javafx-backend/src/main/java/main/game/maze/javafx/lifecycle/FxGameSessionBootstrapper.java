@@ -124,6 +124,7 @@ public final class FxGameSessionBootstrapper {
         // same generated maze; a level with zones only changes which walls are strong and which weak
         LevelSpec     level     = App.levelProgress.current();
         level.applyWalls(maze, App.getBoardMaxX(), App.getBoardMaxY());
+        level.applyLava(maze, App.getBoardMaxX(), App.getBoardMaxY());   // before anything is placed: nothing stands in lava
         PlayerConfig  config    = loadPlayerConfig();
 
         setPlayerBaseImage(playerImageView, config.imageBase());

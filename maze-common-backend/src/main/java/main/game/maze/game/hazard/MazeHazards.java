@@ -50,6 +50,8 @@ public final class MazeHazards {
     /** A circle of mines round every post, only where a mine is clear of walls and can be seen from its post. */
     public static void placeMines(MineField field, List<Point2D> posts, GameMazeWorld world) {
         List<Vector2D> walls = world.getMazeVectors();
-        field.place(posts, freeSpot(walls), clearLine(walls));
+        Predicate<Point2D> free = freeSpot(walls);
+        field.place(posts, spot -> free.test(spot) && (world.getLava() == null || !world.getLava().isLava(spot.getX(), spot.getY())),
+                clearLine(walls));
     }
 }

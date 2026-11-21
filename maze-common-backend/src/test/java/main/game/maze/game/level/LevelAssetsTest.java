@@ -40,6 +40,9 @@ class LevelAssetsTest {
                 exists(tower.hitSound(), "level " + number + " tower hit sound");
                 exists(tower.destroyedSound(), "level " + number + " tower destroyed sound");
             }
+            if (level.hasLava()) {
+                exists(level.lava().deathSound(), "level " + number + " lava death sound");
+            }
             if (level.hasBuilders()) {
                 exists(level.wallBuilder().sprite(), "level " + number + " wall builder sprite");
                 exists(level.wallBuilder().buildSound(), "level " + number + " wall build sound");

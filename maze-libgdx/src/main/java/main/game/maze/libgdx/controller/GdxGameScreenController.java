@@ -549,6 +549,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
         tickHazards(dt);
+        tickLava();
         if (player != null) {
             guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
             wallBuilderSupport.tick(wallBuilderHost, animatedEnemies, player.x(), player.y(), dt);
@@ -589,6 +590,23 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             } else {
                 activePlayerFireBlasts.remove(i);
             }
+        }
+    }
+
+    /** The player who steps into lava (not on a bridge) dies at once, shield or not. */
+    private void tickLava() {
+        if (maze == null || player == null || combatState.isDead()
+                || !(maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze)) {
+            return;
+        }
+        var lava = realMaze.sourceWorld().getLava();
+        if (lava != null && lava.isDeadly(player.x(), maze.heightPx() - player.y())) {
+            var spec = levelProgress.current().lava();
+            if (spec != null && spec.deathSound() != null) {
+                AudioEngine.get().play(spec.deathSound());
+            }
+            flashStatus("Burned in the lava!", 1.6f);
+            combatState.killOutright();
         }
     }
 
@@ -852,6 +870,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         // same generated maze; a level with zones only changes which walls are strong and which weak
         levelProgress.current().applyWalls(GdxWallDamageSupport.worldFrom(arena),
                 (int) arena.widthPx(), (int) arena.heightPx());
+        // lava under the maze, before anything is placed on it (spawns and free points keep out of the lava)
+        levelProgress.current().applyLava(GdxWallDamageSupport.worldFrom(arena),
+                (int) arena.widthPx(), (int) arena.heightPx());
         if (arena instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
             realMaze.invalidateWalls();   // the walls have new materials
         }
@@ -928,6 +949,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         goalTexture = textures.goalTexture();
         wallTexture = textures.wallTexture();
         gameWorldView.setWallLookTextures(levelProgress.current().showWallMaterials() ? loadWallLookTextures() : null);
+        // the lava of the level, drawn under the walls (the screen is y-up: the picture is flipped over the height)
+        var lavaWorld = GdxWallDamageSupport.worldFrom(maze);
+        gameWorldView.setLava(lavaWorld == null ? null : main.game.maze.game.lava.LavaEffects.of(lavaWorld.getLava(),
+                maze.widthPx(), maze.heightPx(), maze.heightPx()));
         backgroundTexture = textures.backgroundTexture();
     }
 

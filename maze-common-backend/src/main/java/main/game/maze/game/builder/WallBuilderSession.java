@@ -14,6 +14,7 @@ import java.util.Set;
 import main.game.maze.game.builder.CellGrid.Cell;
 import main.game.maze.game.builder.CellGrid.Edge;
 import main.game.maze.game.level.WallBuilderSpec;
+import main.game.maze.mazeworld.LavaField;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 
@@ -85,6 +86,7 @@ public final class WallBuilderSession {
     private final int heightPx;
     private final Cell heart;
     private final Random random;
+    private LavaField lava;
     private final Map<String, State> states = new HashMap<>();
     /**
      * Every corridor a builder has worked on, kept for the whole level: a half-built wall (its builder was killed, or
@@ -109,6 +111,11 @@ public final class WallBuilderSession {
         return spec;
     }
 
+    /** The lava under the maze: the builders keep out of it (null: none). */
+    public void setLava(LavaField lava) {
+        this.lava = lava;
+    }
+
     /**
      * Advances the crew.
      *
@@ -116,7 +123,7 @@ public final class WallBuilderSession {
      */
     public Result tick(double dt, List<Builder> builders, List<Vector2D> walls, double playerX, double playerY) {
         dt = Math.min(Math.max(0, dt), MAX_TICK_SECONDS);
-        CellGrid grid = new CellGrid(walls, widthPx, heightPx);
+        CellGrid grid = new CellGrid(walls, widthPx, heightPx, lava);
         List<Move> moves = new ArrayList<>();
         List<Piece> pieces = new ArrayList<>();
         List<Vector2D> placedNow = new ArrayList<>();
@@ -266,7 +273,7 @@ public final class WallBuilderSession {
                 }
             }
             for (Cell next : grid.neighbours(cell)) {
-                if (!cameFrom.containsKey(next) && grid.isOpen(new Edge(cell, next))) {
+                if (!cameFrom.containsKey(next) && grid.canWalk(new Edge(cell, next))) {
                     cameFrom.put(next, cell);
                     queue.add(next);
                 }
@@ -280,7 +287,7 @@ public final class WallBuilderSession {
         List<Integer> weights = new ArrayList<>();
         int total = 0;
         for (Cell next : grid.neighbours(here)) {
-            if (!grid.isOpen(new Edge(here, next))
+            if (!grid.canWalk(new Edge(here, next))
                     || (next.equals(state.previous) && hasOtherOpening(grid, here, state.previous))) {
                 continue;
             }
@@ -313,7 +320,7 @@ public final class WallBuilderSession {
 
     private static boolean hasOtherOpening(CellGrid grid, Cell cell, Cell except) {
         for (Cell next : grid.neighbours(cell)) {
-            if (!next.equals(except) && grid.isOpen(new Edge(cell, next))) {
+            if (!next.equals(except) && grid.canWalk(new Edge(cell, next))) {
                 return true;
             }
         }
@@ -390,7 +397,7 @@ public final class WallBuilderSession {
         if (from.equals(to) || Math.abs(from.row() - to.row()) + Math.abs(from.col() - to.col()) != 1) {
             return false;
         }
-        return !grid.isOpen(new Edge(from, to));
+        return !grid.canWalk(new Edge(from, to));
     }
 
     private void build(String id, State state, CellGrid grid, double dt, double playerX, double playerY,

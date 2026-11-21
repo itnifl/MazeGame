@@ -73,3 +73,5 @@ JaCoCo 0.8.12 with a **60 % LINE** minimum. The profile is inherited from root
 - [XmiRulesLoaderPlayerConfigTest](src/test/java/main/game/maze/XmiRulesLoaderPlayerConfigTest.java)
 
 `game.level` also holds the savepoint (`SavePoint`, `SavePointStore` with `FileSavePointStore` / `InMemorySavePointStore`, used by `LevelProgress`): made when a level is completed, kept until a new game, restored when a level is restarted.
+
+`game.lava` makes the lava of level 6 (`LavaGenerator`: random snaking streams, bridges over every crossing of the way to the heart and a few at random places, so the maze can always be solved; `LavaEffects` turns the lava into the picture both frontends draw). The geometry itself (`LavaField`: deadly lava, bridges) lives in the maze world (`GameMazeWorld.getLava`).

@@ -201,6 +201,11 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createBuilderCountConfigAdapter();
       }
       @Override
+      public Adapter caseLavaConfig(LavaConfig object)
+      {
+        return createLavaConfigAdapter();
+      }
+      @Override
       public Adapter caseTeleportRulesConfig(TeleportRulesConfig object)
       {
         return createTeleportRulesConfigAdapter();
@@ -598,6 +603,21 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createBuilderCountConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.LavaConfig <em>Lava Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig
+   * @generated
+   */
+  public Adapter createLavaConfigAdapter()
   {
     return null;
   }

@@ -976,6 +976,7 @@ public final class FxEnemyCoordinator {
             @Override public boolean wouldCollide(double centerX, double centerY, double size) {
                 GameMazeWorld maze = mazeSupplier.get();
                 if (maze == null || maze.getMazeVectors() == null) return false;
+                if (maze.getLava() != null && maze.getLava().isDeadly(centerX, centerY)) return true;   // enemies keep out of lava
                 return WallCollisionUtil.wouldCollideVectors(
                         centerX, centerY, size, App.getBoardMaxX(), App.getBoardMaxY(), maze.getMazeVectors());
             }

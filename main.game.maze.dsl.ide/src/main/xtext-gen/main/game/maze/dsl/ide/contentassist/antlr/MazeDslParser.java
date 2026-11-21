@@ -109,6 +109,8 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getGroup(), "rule__WallBuilderConfig__Group__0");
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getGroup_19(), "rule__WallBuilderConfig__Group_19__0");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getGroup(), "rule__BuilderCountConfig__Group__0");
+			builder.put(grammarAccess.getLavaConfigAccess().getGroup(), "rule__LavaConfig__Group__0");
+			builder.put(grammarAccess.getLavaConfigAccess().getGroup_10(), "rule__LavaConfig__Group_10__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup(), "rule__TeleportRulesConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup_8(), "rule__TeleportRulesConfig__Group_8__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup_9(), "rule__TeleportRulesConfig__Group_9__0");
@@ -194,6 +196,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLevelConfigAccess().getTowerCountsAssignment_17(), "rule__LevelConfig__TowerCountsAssignment_17");
 			builder.put(grammarAccess.getLevelConfigAccess().getWallBuilderAssignment_18(), "rule__LevelConfig__WallBuilderAssignment_18");
 			builder.put(grammarAccess.getLevelConfigAccess().getBuilderCountsAssignment_19(), "rule__LevelConfig__BuilderCountsAssignment_19");
+			builder.put(grammarAccess.getLevelConfigAccess().getLavaAssignment_20(), "rule__LevelConfig__LavaAssignment_20");
 			builder.put(grammarAccess.getLevelZoneAccess().getDisplayNameAssignment_1(), "rule__LevelZone__DisplayNameAssignment_1");
 			builder.put(grammarAccess.getLevelZoneAccess().getBreakableShareAssignment_2_1(), "rule__LevelZone__BreakableShareAssignment_2_1");
 			builder.put(grammarAccess.getLevelZoneAccess().getMaterialIdsAssignment_4(), "rule__LevelZone__MaterialIdsAssignment_4");
@@ -259,6 +262,11 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getWallBuilderConfigAccess().getBuildSoundAssignment_19_1(), "rule__WallBuilderConfig__BuildSoundAssignment_19_1");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getDifficultyAssignment_1(), "rule__BuilderCountConfig__DifficultyAssignment_1");
 			builder.put(grammarAccess.getBuilderCountConfigAccess().getCountAssignment_2(), "rule__BuilderCountConfig__CountAssignment_2");
+			builder.put(grammarAccess.getLavaConfigAccess().getStreamCountAssignment_3(), "rule__LavaConfig__StreamCountAssignment_3");
+			builder.put(grammarAccess.getLavaConfigAccess().getWidthAssignment_5(), "rule__LavaConfig__WidthAssignment_5");
+			builder.put(grammarAccess.getLavaConfigAccess().getBridgesPerStreamAssignment_7(), "rule__LavaConfig__BridgesPerStreamAssignment_7");
+			builder.put(grammarAccess.getLavaConfigAccess().getBridgeLengthAssignment_9(), "rule__LavaConfig__BridgeLengthAssignment_9");
+			builder.put(grammarAccess.getLavaConfigAccess().getDeathSoundAssignment_10_1(), "rule__LavaConfig__DeathSoundAssignment_10_1");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsAssignment_3(), "rule__TeleportRulesConfig__CooldownSecondsAssignment_3");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getBannerTextAssignment_5(), "rule__TeleportRulesConfig__BannerTextAssignment_5");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getBannerSecondsAssignment_7(), "rule__TeleportRulesConfig__BannerSecondsAssignment_7");

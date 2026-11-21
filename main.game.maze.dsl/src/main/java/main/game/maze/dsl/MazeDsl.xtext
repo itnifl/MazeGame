@@ -198,6 +198,7 @@ LevelConfig:
         (towerCounts+=TowerCountConfig)*
         (wallBuilder=WallBuilderConfig)?
         (builderCounts+=BuilderCountConfig)*
+        (lava=LavaConfig)?
     '}'
 ;
 
@@ -301,6 +302,16 @@ BuilderCountConfig:
     'builders' difficulty=DifficultyLevel count=INT
 ;
 
+LavaConfig:
+    'lava' '{'
+        'streams' streamCount=INT
+        'width' width=DOUBLE
+        'bridges' bridgesPerStream=INT
+        'bridgeLength' bridgeLength=DOUBLE
+        ('deathSound' deathSound=STRING)?
+    '}'
+;
+
 TeleportRulesConfig:
     'teleport' '{'
         'cooldown' cooldownSeconds=DOUBLE
@@ -349,5 +360,5 @@ BOOLEAN_OBJECT returns ecore::EBooleanObject:
  * allowed as names and references, so existing files that used them as identifiers keep parsing.
  */
 ValidID returns ecore::EString:
-    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'buildSound'
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'deathSound' | 'buildSound'
 ;

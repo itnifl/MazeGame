@@ -92,6 +92,21 @@ A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
 
+## Lava
+
+```xml
+<lava streamCount="2" width="46.0" bridgesPerStream="2" bridgeLength="56.0"
+    deathSound="/main/game/maze/sounds/lava-death.wav"/>
+```
+
+In the DSL: `lava { streams 2 width 46.0 bridges 2 bridgeLength 56.0 deathSound "..." }`. Level 6 is level 5 plus this (`baseLevel="5"`).
+
+The streams are made when the level starts, so every game has different ones: `streamCount` random snaking rivers of lava, `width` pixels
+wide, flowing under the walls (drawn beneath the maze). The player dies at once in lava (the power shield does not help) and can
+cross a stream only on its `bridgesPerStream` bridges, each `bridgeLength` pixels long along the stream. The generator tries streams
+until the way from the start to the heart crosses each one only where a bridge can be put, so the maze can always be solved; the
+remaining bridges are put at random open places. Enemies, the wall builders, spawns, pickups and mines keep out of lava.
+
 ## Wall builders
 
 ```xml

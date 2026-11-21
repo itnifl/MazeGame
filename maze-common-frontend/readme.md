@@ -117,6 +117,8 @@ runtime renderer is JavaFX, libGDX, or something else.
 
 `RocketEffect` (package `common.graphics.fire`) is the rpg rocket in flight (body, flame, smoke trail), drawn each frame by playing a fresh one that lives a moment, so both frontends need no layer of their own. Sprites and sounds of level 4 (`guard-tower*.png`, `rpg-launch.wav`, `rpg-explosion.wav`, `tower-hit.wav`, `tower-destroyed.wav`) come from `tools/sprite-gen/GuardTowerSpriteGenerator.java` and `tools/sound-gen/SoundEffectGenerator.java`.
 
+`LavaEffect` (package `common.graphics.fire`) is the lava of level 6: dark banks, a red-orange river that glows, bright blobs that flow along each stream and the wooden bridges on top, as a chain of circles; both frontends draw it before the maze so the walls lie over it. The sound `lava-death.wav` comes from `tools/sound-gen/SoundEffectGenerator.java`.
+
 ## Default behaviour with no backend installed
 
 The defaults are deliberately inert so tests and library consumers do not

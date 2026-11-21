@@ -29,6 +29,12 @@ public final class GdxGameWorldView {
     private Map<WallLook, Texture> wallLookTextures = Map.of();
 
     private final GdxExplosionRenderer explosionRenderer = new GdxExplosionRenderer();
+    private java.util.List<main.game.maze.libgdx.model.PuffEffectVisual> lavaVisual = java.util.List.of();
+
+    /** The lava of the level (drawn under the walls), or null for none. */
+    public void setLava(main.game.maze.common.graphics.fire.LavaEffect lava) {
+        lavaVisual = lava == null ? java.util.List.of() : java.util.List.of(new main.game.maze.libgdx.model.PuffEffectVisual(lava, 0f));
+    }
 
     public void render(RenderContext context) {
         context.viewport().apply();
@@ -51,6 +57,15 @@ public final class GdxGameWorldView {
         batch.begin();
 
         drawBackground(context, batch, camera, maze);
+        if (!lavaVisual.isEmpty()) {
+            // the lava lies on the floor, under the walls: its own pass between the background and the walls
+            batch.end();
+            shapes.setProjectionMatrix(camera.combined);
+            shapes.begin(ShapeRenderer.ShapeType.Filled);
+            explosionRenderer.draw(shapes, lavaVisual, context.enemyAnimationClock());
+            shapes.end();
+            batch.begin();
+        }
         drawGoalTexture(context, batch);
         drawWallsTexture(context, batch, maze);
         drawEnemies(context, batch, font);

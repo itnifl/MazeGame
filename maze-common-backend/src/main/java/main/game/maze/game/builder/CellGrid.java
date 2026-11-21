@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import main.game.maze.mazeworld.LavaField;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 
@@ -38,7 +39,15 @@ public final class CellGrid {
     private final Set<Long> vertical = new HashSet<>();     // wall pieces along x = const, key (x, top y)
     private final Set<Long> horizontal = new HashSet<>();   // wall pieces along y = const, key (y, left x)
 
+    private final LavaField lava;
+
     public CellGrid(List<Vector2D> walls, int widthPx, int heightPx) {
+        this(walls, widthPx, heightPx, null);
+    }
+
+    /** @param lava the lava under the maze, or null: a builder will not walk where it is deadly */
+    public CellGrid(List<Vector2D> walls, int widthPx, int heightPx, LavaField lava) {
+        this.lava = lava;
         this.cols = Math.max(1, widthPx / CELL);
         this.rows = Math.max(1, heightPx / CELL);
         for (Vector2D wall : walls) {
@@ -138,6 +147,19 @@ public final class CellGrid {
             }
         }
         return count;
+    }
+
+    /** Whether a builder can walk from one cell to its neighbour: the corridor is open and no deadly lava in the way. */
+    public boolean canWalk(Edge edge) {
+        if (!isOpen(edge)) {
+            return false;
+        }
+        if (lava == null) {
+            return true;
+        }
+        Point2D a = centerOf(edge.a());
+        Point2D b = centerOf(edge.b());
+        return !lava.crossesDeadly(a.getX(), a.getY(), b.getX(), b.getY());
     }
 
     public boolean isOpen(Edge edge) {

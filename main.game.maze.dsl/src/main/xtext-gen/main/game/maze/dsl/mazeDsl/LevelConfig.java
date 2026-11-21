@@ -34,6 +34,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getTowerCounts <em>Tower Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts <em>Builder Counts</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLava <em>Lava</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig()
@@ -387,5 +388,27 @@ public interface LevelConfig extends EObject
    * @generated
    */
   EList<BuilderCountConfig> getBuilderCounts();
+
+  /**
+   * Returns the value of the '<em><b>Lava</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lava</em>' containment reference.
+   * @see #setLava(LavaConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_Lava()
+   * @model containment="true"
+   * @generated
+   */
+  LavaConfig getLava();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLava <em>Lava</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lava</em>' containment reference.
+   * @see #getLava()
+   * @generated
+   */
+  void setLava(LavaConfig value);
 
 } // LevelConfig

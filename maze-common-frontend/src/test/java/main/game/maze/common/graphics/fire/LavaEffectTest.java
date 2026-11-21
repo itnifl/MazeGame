@@ -1,0 +1,85 @@
+package main.game.maze.common.graphics.fire;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+@DisplayName("Lava picture: a flowing river of lava with wooden bridges, drawn under the walls")
+class LavaEffectTest {
+
+    private static LavaEffect lava(double flip) {
+        List<LavaEffect.Point> path = new ArrayList<>();
+        for (int x = 0; x <= 400; x += 12) {
+            path.add(new LavaEffect.Point(x, 200 + 40 * Math.sin(x / 60.0)));
+        }
+        return new LavaEffect(List.of(new LavaEffect.Stream(path, List.of(new LavaEffect.Bridge(200, 200, 0.2, 56)))),
+                46, 10, 800, 400, flip);
+    }
+
+    @Test
+    @DisplayName("it lasts as long as the level and draws banks, a river, flowing blobs and the bridge")
+    void drawsTheStream() {
+        LavaEffect effect = lava(0);
+        assertTrue(effect.lifetimeSeconds() > 3600);
+        List<FirePuff> puffs = effect.puffs(0, 1.0);
+        assertFalse(puffs.isEmpty());
+        assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.SMOKE), "banks and river");
+        assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.INNER), "flowing blobs");
+        assertTrue(puffs.stream().anyMatch(p -> p.layer() == FirePuff.Layer.DEBRIS), "the bridge, on top of the lava");
+        assertTrue(effect.puffs(1.0, 1.0).isEmpty(), "nothing once over");
+    }
+
+    @Test
+    @DisplayName("the lava flows: the blobs are in other places a moment later")
+    void flows() {
+        LavaEffect effect = lava(0);
+        double a = effect.puffs(0, 1.0).stream().filter(p -> p.layer() == FirePuff.Layer.INNER).mapToDouble(FirePuff::x).sum();
+        double b = effect.puffs(0, 2.5).stream().filter(p -> p.layer() == FirePuff.Layer.INNER).mapToDouble(FirePuff::x).sum();
+        assertTrue(a != b);
+    }
+
+    @Test
+    @DisplayName("the bridge is drawn after (over) every lava puff, so it lies on the lava")
+    void bridgeOnTop() {
+        List<FirePuff> puffs = lava(0).puffs(0, 1.0);
+        int firstBridge = -1;
+        int lastLava = -1;
+        for (int i = 0; i < puffs.size(); i++) {
+            if (puffs.get(i).layer() == FirePuff.Layer.DEBRIS && firstBridge < 0) {
+                firstBridge = i;
+            }
+            if (puffs.get(i).layer() != FirePuff.Layer.DEBRIS) {
+                lastLava = i;
+            }
+        }
+        assertTrue(firstBridge > lastLava);
+    }
+
+    @Test
+    @DisplayName("for a y-up screen the picture is turned over the board height")
+    void flipped() {
+        // the sparks jitter a little in a direction of their own, so they are left out of the comparison
+        // (and the order inside a layer may differ, so both are sorted by place)
+        java.util.Comparator<FirePuff> byPlace = java.util.Comparator.comparing(FirePuff::layer)
+                .thenComparingDouble(FirePuff::x).thenComparingDouble(FirePuff::radius);
+        List<FirePuff> down = lava(0).puffs(0, 1.0).stream().filter(p -> p.layer() != FirePuff.Layer.EMBER).sorted(byPlace.thenComparingDouble(FirePuff::y)).toList();
+        List<FirePuff> up = lava(400).puffs(0, 1.0).stream().filter(p -> p.layer() != FirePuff.Layer.EMBER)
+                .sorted(byPlace.thenComparingDouble(p -> -p.y())).toList();
+        assertEquals(down.size(), up.size());
+        for (int i = 0; i < down.size(); i++) {
+            assertEquals(400 - down.get(i).y(), up.get(i).y(), 1e-6, "layer " + down.get(i).layer() + " index " + i + " x " + down.get(i).x());
+            assertEquals(down.get(i).x(), up.get(i).x(), 1e-6);
+        }
+    }
+
+    @Test
+    @DisplayName("without streams there is nothing to draw")
+    void empty() {
+        assertTrue(new LavaEffect(List.of(), 46, 10, 800, 400, 0).puffs(0, 1).isEmpty());
+    }
+}

@@ -123,6 +123,16 @@ public final class PlayerCombatStateService {
                 PLAYER_SOUND_COOLDOWN_MS);
     }
 
+    /** Dies at once, whatever the shield says (lava). */
+    public void killOutright() {
+        if (dead) {
+            return;
+        }
+        currentHitPoints = 0f;
+        dead = true;
+        startFlash(1f, 0.45f, 0.1f);
+    }
+
     private void tickTimers(float dt) {
         contactCooldownRemaining = Math.max(0f, contactCooldownRemaining - dt);
         if (flashRemaining > 0f) {

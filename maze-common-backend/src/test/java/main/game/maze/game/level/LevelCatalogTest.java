@@ -22,7 +22,7 @@ class LevelCatalogTest {
     @Test
     @DisplayName("the shipped model has the classic first level and a second level")
     void shippedLevels() {
-        assertEquals(5, CATALOG.count());
+        assertEquals(6, CATALOG.count());
         LevelSpec first = CATALOG.level(1);
         assertFalse(first.hasZones(), "level 1 keeps the classic random walls");
         assertFalse(first.hasSergeants());
@@ -31,7 +31,8 @@ class LevelCatalogTest {
         assertTrue(CATALOG.hasNext(2));
         assertTrue(CATALOG.hasNext(3));
         assertTrue(CATALOG.hasNext(4));
-        assertFalse(CATALOG.hasNext(5), "level 5 is the last one for now");
+        assertTrue(CATALOG.hasNext(5));
+        assertFalse(CATALOG.hasNext(6), "level 6 is the last one for now");
     }
 
     @Test
@@ -94,7 +95,7 @@ class LevelCatalogTest {
     @DisplayName("an unknown level number is rejected")
     void unknownLevel() {
         assertThrows(IllegalArgumentException.class, () -> CATALOG.level(0));
-        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(6));
+        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(7));
     }
 
     @Test

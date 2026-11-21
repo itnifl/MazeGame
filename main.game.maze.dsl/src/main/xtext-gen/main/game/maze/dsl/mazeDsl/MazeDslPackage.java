@@ -1019,13 +1019,22 @@ public interface MazeDslPackage extends EPackage
   int LEVEL_CONFIG__BUILDER_COUNTS = 17;
 
   /**
+   * The feature id for the '<em><b>Lava</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__LAVA = 18;
+
+  /**
    * The number of structural features of the '<em>Level Config</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG_FEATURE_COUNT = 18;
+  int LEVEL_CONFIG_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
@@ -1794,6 +1803,70 @@ public interface MazeDslPackage extends EPackage
   int BUILDER_COUNT_CONFIG_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl <em>Lava Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLavaConfig()
+   * @generated
+   */
+  int LAVA_CONFIG = 25;
+
+  /**
+   * The feature id for the '<em><b>Stream Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__STREAM_COUNT = 0;
+
+  /**
+   * The feature id for the '<em><b>Width</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__WIDTH = 1;
+
+  /**
+   * The feature id for the '<em><b>Bridges Per Stream</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__BRIDGES_PER_STREAM = 2;
+
+  /**
+   * The feature id for the '<em><b>Bridge Length</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__BRIDGE_LENGTH = 3;
+
+  /**
+   * The feature id for the '<em><b>Death Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG__DEATH_SOUND = 4;
+
+  /**
+   * The number of structural features of the '<em>Lava Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LAVA_CONFIG_FEATURE_COUNT = 5;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1801,7 +1874,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 25;
+  int TELEPORT_RULES_CONFIG = 26;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -1865,7 +1938,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 26;
+  int DIFFICULTY_LEVEL = 27;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -1875,7 +1948,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 27;
+  int ENEMY_TYPE = 28;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -1885,7 +1958,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 28;
+  int CHARACTER_TYPE_ENUM = 29;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -1895,7 +1968,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 29;
+  int BEHAVIOR_TYPE_ENUM = 30;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -1905,7 +1978,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 30;
+  int PROJECTILE_TYPE_ENUM = 31;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -1915,7 +1988,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 31;
+  int LOOT_ITEM_TYPE_ENUM = 32;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -1925,7 +1998,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 32;
+  int DROP_WEAPON_ENUM = 33;
 
 
   /**
@@ -2882,6 +2955,17 @@ public interface MazeDslPackage extends EPackage
   EReference getLevelConfig_BuilderCounts();
 
   /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLava <em>Lava</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Lava</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getLava()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_Lava();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LevelZone <em>Level Zone</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3684,6 +3768,71 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EAttribute getBuilderCountConfig_Count();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LavaConfig <em>Lava Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Lava Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig
+   * @generated
+   */
+  EClass getLavaConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getStreamCount <em>Stream Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Stream Count</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getStreamCount()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_StreamCount();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getWidth <em>Width</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Width</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getWidth()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_Width();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getBridgesPerStream <em>Bridges Per Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Bridges Per Stream</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getBridgesPerStream()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_BridgesPerStream();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getBridgeLength <em>Bridge Length</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Bridge Length</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getBridgeLength()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_BridgeLength();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.LavaConfig#getDeathSound <em>Death Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Death Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LavaConfig#getDeathSound()
+   * @see #getLavaConfig()
+   * @generated
+   */
+  EAttribute getLavaConfig_DeathSound();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.TeleportRulesConfig <em>Teleport Rules Config</em>}'.
@@ -4578,6 +4727,14 @@ public interface MazeDslPackage extends EPackage
     EReference LEVEL_CONFIG__BUILDER_COUNTS = eINSTANCE.getLevelConfig_BuilderCounts();
 
     /**
+     * The meta object literal for the '<em><b>Lava</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__LAVA = eINSTANCE.getLevelConfig_Lava();
+
+    /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5188,6 +5345,56 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute BUILDER_COUNT_CONFIG__COUNT = eINSTANCE.getBuilderCountConfig_Count();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl <em>Lava Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.LavaConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLavaConfig()
+     * @generated
+     */
+    EClass LAVA_CONFIG = eINSTANCE.getLavaConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Stream Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__STREAM_COUNT = eINSTANCE.getLavaConfig_StreamCount();
+
+    /**
+     * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__WIDTH = eINSTANCE.getLavaConfig_Width();
+
+    /**
+     * The meta object literal for the '<em><b>Bridges Per Stream</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__BRIDGES_PER_STREAM = eINSTANCE.getLavaConfig_BridgesPerStream();
+
+    /**
+     * The meta object literal for the '<em><b>Bridge Length</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__BRIDGE_LENGTH = eINSTANCE.getLavaConfig_BridgeLength();
+
+    /**
+     * The meta object literal for the '<em><b>Death Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LAVA_CONFIG__DEATH_SOUND = eINSTANCE.getLavaConfig_DeathSound();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.TeleportRulesConfigImpl <em>Teleport Rules Config</em>}' class.

@@ -16,6 +16,8 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
 
 public class GameMazeWorld {
 
+    private LavaField lava;
+
     /**
      * Default breakable materials in ascending durability order, mirroring
      * {@code walls.xmi}. Approximately 50 % of walls are made breakable;
@@ -336,6 +338,9 @@ public class GameMazeWorld {
             }
             if (navigationGraph != null) {
                 MazeNavigationGraphService.rewireAfterWallRemoval(navigationGraph, mazeVectors);
+                if (lava != null) {
+                    MazeNavigationGraphService.removeEdgesThroughLava(navigationGraph, lava);
+                }
             }
             List<BreakableWall> collapsed = List.copyOf(toCollapse);
             for (WallCollapseListener listener : collapseListeners) {
@@ -421,6 +426,22 @@ public class GameMazeWorld {
             MazeNavigationGraphService.removeEdgesCrossing(navigationGraph, geometry);
         }
         return wall;
+    }
+
+    /** The streams of lava under this maze, or null when it has none. */
+    public LavaField getLava() {
+        return lava;
+    }
+
+    /**
+     * Puts lava under the maze: enemies avoid it, so every navigation edge that runs through deadly lava is closed
+     * (the bridges stay open).
+     */
+    public void setLava(LavaField field) {
+        this.lava = field;
+        if (field != null && navigationGraph != null) {
+            MazeNavigationGraphService.removeEdgesThroughLava(navigationGraph, field);
+        }
     }
 
     public MazeNavigationGraph getNavigationGraph() {

@@ -8,6 +8,7 @@ import java.util.Collection;
 import main.game.maze.dsl.mazeDsl.BuilderCountConfig;
 import main.game.maze.dsl.mazeDsl.GhostCountConfig;
 import main.game.maze.dsl.mazeDsl.GuardTowerConfig;
+import main.game.maze.dsl.mazeDsl.LavaConfig;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LevelZone;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
@@ -59,6 +60,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getTowerCounts <em>Tower Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getWallBuilder <em>Wall Builder</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getBuilderCounts <em>Builder Counts</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getLava <em>Lava</em>}</li>
  * </ul>
  *
  * @generated
@@ -314,6 +316,16 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @ordered
    */
   protected EList<BuilderCountConfig> builderCounts;
+
+  /**
+   * The cached value of the '{@link #getLava() <em>Lava</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLava()
+   * @generated
+   * @ordered
+   */
+  protected LavaConfig lava;
 
   /**
    * <!-- begin-user-doc -->
@@ -892,6 +904,56 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @generated
    */
   @Override
+  public LavaConfig getLava()
+  {
+    return lava;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLava(LavaConfig newLava, NotificationChain msgs)
+  {
+    LavaConfig oldLava = lava;
+    lava = newLava;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__LAVA, oldLava, newLava);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLava(LavaConfig newLava)
+  {
+    if (newLava != lava)
+    {
+      NotificationChain msgs = null;
+      if (lava != null)
+        msgs = ((InternalEObject)lava).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__LAVA, null, msgs);
+      if (newLava != null)
+        msgs = ((InternalEObject)newLava).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__LAVA, null, msgs);
+      msgs = basicSetLava(newLava, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__LAVA, newLava, newLava));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -918,6 +980,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return basicSetWallBuilder(null, msgs);
       case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
         return ((InternalEList<?>)getBuilderCounts()).basicRemove(otherEnd, msgs);
+      case MazeDslPackage.LEVEL_CONFIG__LAVA:
+        return basicSetLava(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -968,6 +1032,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return getWallBuilder();
       case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
         return getBuilderCounts();
+      case MazeDslPackage.LEVEL_CONFIG__LAVA:
+        return getLava();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -1042,6 +1108,9 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         getBuilderCounts().clear();
         getBuilderCounts().addAll((Collection<? extends BuilderCountConfig>)newValue);
         return;
+      case MazeDslPackage.LEVEL_CONFIG__LAVA:
+        setLava((LavaConfig)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -1110,6 +1179,9 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
       case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
         getBuilderCounts().clear();
         return;
+      case MazeDslPackage.LEVEL_CONFIG__LAVA:
+        setLava((LavaConfig)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -1160,6 +1232,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return wallBuilder != null;
       case MazeDslPackage.LEVEL_CONFIG__BUILDER_COUNTS:
         return builderCounts != null && !builderCounts.isEmpty();
+      case MazeDslPackage.LEVEL_CONFIG__LAVA:
+        return lava != null;
     }
     return super.eIsSet(featureID);
   }

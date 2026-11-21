@@ -118,4 +118,15 @@ game MazeGameLevels {
         builders normal 5
         builders hard 10
     }
+
+    level 6 "The Lava Streams" {
+        basedOn 5
+        lava {
+            streams 2
+            width 46.0
+            bridges 2
+            bridgeLength 56.0
+            deathSound "/main/game/maze/sounds/lava-death.wav"
+        }
+    }
 }

@@ -63,6 +63,10 @@ public final class GdxWorldView implements WorldView {
 
     @Override
     public boolean wouldCollide(double centerX, double centerY, double size) {
+        if (maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze && realMaze.sourceWorld().getLava() != null
+                && realMaze.sourceWorld().getLava().isDeadly(centerX, maze.heightPx() - centerY)) {
+            return true;   // enemies keep out of lava (the world is y-down, the screen y-up)
+        }
         return WallCollisionUtil.wouldCollide(centerX, centerY, size,
                 maze.widthPx(), maze.heightPx(), maze.walls());
     }

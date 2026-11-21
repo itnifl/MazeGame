@@ -44,6 +44,7 @@ public final class SoundEffectGenerator {
         write(dir, "bomb-explosion.wav", bombExplosion());
         write(dir, "teleport.wav", teleport());
         write(dir, "wall-build.wav", wallBuild());
+        write(dir, "lava-death.wav", lavaDeath());
         write(dir, "rpg-launch.wav", rpgLaunch());
         write(dir, "rpg-explosion.wav", rpgExplosion());
         write(dir, "tower-hit.wav", towerHit());
@@ -241,6 +242,36 @@ public final class SoundEffectGenerator {
             double rumbleLevel = rumble * 9.0 * Math.exp(-t * 2.3) * Math.min(1, t / 0.03);
             double crack = white * Math.exp(-t * 70) * 0.55;
             out[i] = boom + rumbleLevel + crack;
+        }
+        return out;
+    }
+
+    /**
+     * Falling into lava: a hissing sizzle that rises and dies away, over a low bubbling gurgle with a few heavy pops and
+     * a short falling wail at the start.
+     */
+    static double[] lavaDeath() {
+        double[] out = buffer(1.6);
+        Random noise = new Random(67);
+        double hiss = 0;
+        double wailPhase = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double white = noise.nextDouble() * 2 - 1;
+            hiss += 0.6 * (white - hiss);   // keeps the high part of the noise: a sizzle
+            double sizzle = (white - hiss) * 0.9 * Math.min(1, t / 0.08) * Math.exp(-t * 1.6)
+                    * (0.6 + 0.4 * Math.sin(2 * Math.PI * 23 * t));
+            double bubbles = Math.sin(2 * Math.PI * (60 + 25 * Math.sin(2 * Math.PI * 4.5 * t)) * t) * 0.35 * Math.exp(-t * 1.1);
+            wailPhase += 2 * Math.PI * (900 * Math.exp(-t * 3.2) + 140) / RATE;
+            double wail = t < 0.7 ? Math.sin(wailPhase) * 0.5 * Math.exp(-t * 3.5) : 0;
+            out[i] = sizzle + bubbles + wail;
+        }
+        for (double at : new double[] {0.25, 0.55, 0.9, 1.2}) {
+            int start = (int) (at * RATE);
+            for (int i = 0; i < (int) (0.12 * RATE) && start + i < out.length; i++) {
+                double t = i / (double) RATE;
+                out[start + i] += Math.sin(2 * Math.PI * (130 - 400 * t) * t) * Math.exp(-t * 35) * 0.8;
+            }
         }
         return out;
     }
