@@ -63,6 +63,15 @@ Deterministic: change `WOODS_SEED`, `SEED` or the `patches` list in the tool for
 "$JAVA_HOME/bin/java" tools/sprite-gen/BackgroundGenerator.java
 ```
 
+## PortalGhostSpriteGenerator
+
+Draws `ghost-portal.png`, the ghost that teleports the player, from `ghost1.png`: a shimmering violet and cyan body, glowing
+magenta eyes and a spinning portal swirl with sparkles.
+
+```
+"$JAVA_HOME/bin/java" tools/sprite-gen/PortalGhostSpriteGenerator.java
+```
+
 ## SergeantSpriteGenerator
 
 Draws `zombie-sergeant.png` (the zombie sprite with a cap, stripes and a gatling gun) from `zombie1-down.png`:

@@ -16,8 +16,11 @@ Both frontends play the same levels: after a win, the win screen offers *Next le
 | `threatCapacityFactor` | multiplies the difficulty's maximum threat: how many / how dangerous enemies may be | `1.0` |
 | `showWallMaterials` | draw every wall with the sprite of its material (glass, dirt, wood, stone, steel) | `false` |
 | `maxCascadeDepth` | how far a collapse spreads: breakable walls that touch a broken wall fall with it, up to this many steps away. `0` = only the wall hit; `-1` = no limit (the classic rule) | `-1` |
+| `baseLevel` | number of an earlier level this one is built on: whatever the level does not set itself (zones, wall look, cascade depth, weapon inheritance, threat capacity, sergeants, mines, ghosts) is taken from that level. `0` = none | `0` |
 | `inheritWeapons` | start with the weapons the player had at the end of the previous level | `true` |
 | `<zones>` | concentric zones around the heart, outer zone first, **any number**; see below | none = the classic random walls |
+| `<mines>` | a circle of pulsating mines round every sergeant: a touched mine blasts (`blastDamage`, `blastRadius`) and leaves a hole (`holeRadius`) that sends the player to the opposite edge of the map | none |
+| `<teleportGhost>` + `<ghostCounts>` | a ghost that does not hurt but teleports the player to a random spot at the edge of the map; `cooldownSeconds` is the pause before the player can be teleported again | none |
 | `<sergeant>` + `<sergeantPosts>` | stationary zombie sergeants guarding the heart, and how many per difficulty | none |
 
 The maze is always generated as usual. A level only changes which walls are strong and how they look.
@@ -61,6 +64,26 @@ as there are elements, scaled to the board, with the heart in the middle.
 A level with a `<sergeant>` needs a `<sergeantPosts>` for all three difficulties. Sergeants never move, fire a burst
 at a player they can see (in `sightRange`, no wall between), rest for `burstCooldownSeconds`, and drop `dropWeapon` when
 killed. The sprite and sound paths are classpath paths; `tools/sprite-gen` and `tools/sound-gen` make the shipped ones.
+
+## Building on another level
+
+`baseLevel="2"` makes a level "level 2 plus": it takes the zones, wall look, cascade limit, sergeants and the rest from
+level 2 and only needs to say what is new. Level 3 is just this:
+
+```xml
+<levels number="3" name="The Minefield" baseLevel="2">
+  <mines count="8" ringRadius="62.0" triggerRadius="22.0" pulseSeconds="0.9"
+      blastRadius="300.0" blastDamage="250" holeRadius="30.0"/>
+  <teleportGhost displayName="Portal ghost" health="60" speed="1.6"
+      sprite="/main/game/maze/ghost-portal.png" teleportSound="/main/game/maze/sounds/teleport.wav" cooldownSeconds="2.5"/>
+  <ghostCounts difficulty="EASY" count="3"/>
+  <ghostCounts difficulty="NORMAL" count="6"/>
+  <ghostCounts difficulty="HARD" count="10"/>
+</levels>
+```
+
+A level can also override what it takes (`threatCapacityFactor`, `showWallMaterials`, `maxCascadeDepth`, `inheritWeapons`,
+zones, sergeants). The base level must be an earlier one.
 
 ## Checking a new level
 

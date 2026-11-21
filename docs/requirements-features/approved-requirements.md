@@ -79,3 +79,9 @@
 - SR-294: A level can limit how far a wall collapse spreads (`maxCascadeDepth` in the levels model; level 2: two steps), so walls cascade a little but a broken wall never brings down much of the maze, while every wall can still be broken by a bomb.
 - SR-295: The background of the normal difficulty is a lush meadow with patches of burning grass (scorched earth, flames, embers, smoke), in both frontends; it tiles without a seam. The easy and hard backgrounds are unchanged.
 - SR-296: The background of the easy difficulty is friendly light woods: a bright, dappled forest floor with moss, ferns, fallen leaves, twigs, tiny mushrooms and flowers, nothing dark or burning; both frontends; it tiles without a seam.
+- SR-297: When the player's bomb goes off it makes a deep explosion sound and shakes the screen (strongly, for about 0.7 seconds, dying away); both frontends.
+- SR-298: Level 3 is level 2 plus new hazards: its zones, wall look, cascade limit, sergeants and threat capacity are taken from level 2 (`baseLevel` in the levels model).
+- SR-299: In level 3 a circle of pulsating mines surrounds every sergeant. Mines only lie on free ground (clear of walls, visible from their sergeant).
+- SR-300: A player who touches a mine sets it off with great force (a blast larger and stronger than a bomb that breaks walls and hurts enemies, never the player) and it leaves a hole in the ground that stays. A player who falls into the hole is teleported to the opposite edge of the map, onto free ground.
+- SR-301: Level 3 has a new ghost, the portal ghost: it does not hurt the player; when it touches them they are teleported to a random spot at the outer edge of the map, never inside a wall. There are 10 on hard, 6 on normal (medium) and 3 on easy, in addition to everything level 2 has.
+- SR-302: After any teleport the player cannot be teleported again for 2.5 seconds, so a second ghost or hole cannot send them straight back.

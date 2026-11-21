@@ -8,8 +8,7 @@ import javafx.scene.Node;
 import main.game.maze.App;
 import main.game.maze.characters.SergeantCharacter;
 import main.game.maze.difficulties.Difficulty;
-import main.game.maze.game.items.PickupCatalogLoader;
-import main.game.maze.game.items.PickupField;
+import main.game.maze.game.hazard.MazeHazards;
 import main.game.maze.game.level.DifficultyTier;
 import main.game.maze.game.level.LevelSpec;
 import main.game.maze.game.level.SergeantPosts;
@@ -37,15 +36,27 @@ public final class SergeantSpawner {
     private SergeantSpawner() {
     }
 
+    /**
+     * Where this level's sergeants stand on this difficulty: free corridor points near the heart (world space,
+     * the centres). The same every time for a maze, so the mines round them can find them again.
+     */
+    public static List<Point2D> postsFor(LevelSpec level, Difficulty difficulty, GameMazeWorld world) {
+        if (level == null || !level.hasSergeants() || world == null) {
+            return List.of();
+        }
+        SergeantSpec spec = level.sergeant();
+        DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
+        return SergeantPosts.choose(MazeHazards.freePoints(world), App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0,
+                spec.postDistanceFromHeart(), level.sergeantCount(tier), MIN_POST_SPACING);
+    }
+
     public static int spawn(EnemyRegistrar registrar, LevelSpec level, Difficulty difficulty, GameMazeWorld world) {
         if (registrar == null || level == null || !level.hasSergeants() || world == null) {
             return 0;
         }
         SergeantSpec spec = level.sergeant();
         DifficultyTier tier = DifficultyTier.fromDifficultyName(difficulty == null ? null : difficulty.eClass().getName());
-        List<Point2D> corridor = new PickupField(PickupCatalogLoader.loadDefault(), new java.util.Random()).spawnPointsOf(world);
-        List<Point2D> posts = SergeantPosts.choose(corridor, App.getBoardMaxX() / 2.0, App.getBoardMaxY() / 2.0,
-                spec.postDistanceFromHeart(), level.sergeantCount(tier), MIN_POST_SPACING);
+        List<Point2D> posts = postsFor(level, difficulty, world);
         double half = StageConstants.ZombieCharacterXYSize / 2.0;
         for (Point2D post : posts) {
             register(registrar, spec, post.getX() - half, post.getY() - half);

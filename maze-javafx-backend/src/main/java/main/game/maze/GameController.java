@@ -13,6 +13,7 @@ import main.game.maze.interfaces.IDeathSubscriber;
 import main.game.maze.javafx.render.FxWeaponHudView;
 import main.game.maze.javafx.lifecycle.FxResurrectionScheduler;
 import main.game.maze.javafx.render.FxExplosionView;
+import main.game.maze.javafx.render.FxHazardLayer;
 import main.game.maze.javafx.render.FxRemainsLayer;
 import java.net.URL;
 import java.util.ArrayList;
@@ -235,6 +236,21 @@ public class GameController implements Initializable, EnemyRegistrar {
     private FxPathHintCoordinator     pathHintCoordinator;
     private FxMazeCanvasRenderer      mazeCanvasRenderer;
     private FxGameSessionBootstrapper bootstrapper;
+    private FxHazardLayer hazardLayer;
+    /** Mines, the holes they leave and the teleports of the level. */
+    private final FxHazardController hazards = new FxHazardController(new FxHazardController.Host() {
+        @Override public PlayerCharacter player()                  { return playerCharacter; }
+        @Override public void blast(double x, double y, int damage, double range) {
+            // a great blast at the mine; it never hurts the player, who is sent away through the hole instead
+            blastAt(x, y, damage, range, false, "Mine");
+        }
+        @Override public void teleportPlayer(double x, double y, FxHazardController.Cause cause) {
+            teleportPlayerTo(x, y, cause);
+        }
+        @Override public void draw(main.game.maze.game.hazard.MineField field) {
+            if (hazardLayer != null) hazardLayer.render(field);
+        }
+    });
 
     public GameController() {
         inputCommandContext = new JavaFxInputCommandContext(actionSink);
@@ -368,32 +384,41 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (gameBoard != null) {
             gameBoard.getChildren().remove(bomb.marker());
         }
+        blastAt(bomb.x(), bomb.y(),
+                playerCharacter != null ? playerCharacter.getFlameAttackDamage() : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION,
+                PLAYER_BOMB_RANGE, true, "Bomb");
+    }
 
+    /**
+     * A blast at (x, y): flame corridors that break walls and hurt enemies, the visual, the deep boom and the
+     * screen shake. Only the player's own bomb hurts the player.
+     */
+    private void blastAt(double x, double y, int damage, double range, boolean hurtsPlayer, String label) {
         List<Vector2D> walls = maze != null ? maze.getMazeVectors() : List.of();
 
-        double playerCx = playerCharacter != null
+        double playerCx = hurtsPlayer && playerCharacter != null
                 ? playerCharacter.getCharacterPosition().getX() + StageConstants.PlayerCharacterXYSize * 0.5d
                 : Double.NaN;
-        double playerCy = playerCharacter != null
+        double playerCy = hurtsPlayer && playerCharacter != null
                 ? playerCharacter.getCharacterPosition().getY() + StageConstants.PlayerCharacterXYSize * 0.5d
                 : Double.NaN;
 
         int enemyDamage = enemyCoordinator.applyPlayerFlameExplosion(
-                bomb.x(),
-                bomb.y(),
-                playerCharacter != null ? playerCharacter.getFlameAttackDamage() : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION,
-                PLAYER_BOMB_RANGE,
+                x,
+                y,
+                damage,
+                range,
                 walls,
                 playerCx,
                 playerCy,
-                dmg -> { if (playerCharacter != null) playerCharacter.subtractHitPoints(dmg); },
+                dmg -> { if (hurtsPlayer && playerCharacter != null) playerCharacter.subtractHitPoints(dmg); },
                 PlayerIds.LOCAL_PLAYER);
         if (mazeCanvas != null && maze != null) {
             mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
         }
         // Pass surviving walls (destroyed ones already removed) so visual stops at solid walls.
         List<Vector2D> survivingWalls = maze != null ? maze.getMazeVectors() : List.of();
-        showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE, survivingWalls);
+        showFlameExplosionVisual(x, y, range, survivingWalls);
         // a deep boom and a heavy shake of the whole screen
         main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.common.graphics.fire.BombImpact.SOUND);
         if (gameBoard != null) {
@@ -401,9 +426,9 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
 
         if (enemyDamage > 0) {
-            setHudMessage("Bomb exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));
+            setHudMessage(label + " exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));
         } else {
-            setHudMessage("Bomb exploded", Duration.seconds(1.0));
+            setHudMessage(label + " exploded", Duration.seconds(1.0));
         }
     }
 
@@ -680,6 +705,12 @@ public class GameController implements Initializable, EnemyRegistrar {
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
+        // mines round the sergeants (level 3 and on), and the free ground the teleports come out on
+        if (hazardLayer != null) hazardLayer.detach();
+        hazardLayer = new FxHazardLayer(gameBoard);
+        hazardLayer.attach();
+        hazards.startGame(maze, App.levelProgress.current(),
+                main.game.maze.runtime.opponents.SergeantSpawner.postsFor(App.levelProgress.current(), startDifficulty, maze));
         announceLevel();
 
         winarea = new WinArea(heart);
@@ -744,6 +775,27 @@ public class GameController implements Initializable, EnemyRegistrar {
         rightMouseClicked = false;
         playingModeController.update(currentInputFrame, now);
         weapons.tick(now);
+        hazards.tick(now);
+    }
+
+    private static final String TELEPORT_SOUND = "/main/game/maze/sounds/teleport.wav";
+
+    /** The player is sent to a new place (centre at x, y): move, camera, sound, sparkle and a message. */
+    private void teleportPlayerTo(double x, double y, FxHazardController.Cause cause) {
+        if (playerCharacter == null) return;
+        double half = StageConstants.PlayerCharacterXYSize * 0.5d;
+        playerCharacter.teleportTo(x - half, y - half);
+        renderCoordinator.updateCameraFollow(playerCharacter);
+        main.game.maze.common.graphics.AudioEngine.get().play(TELEPORT_SOUND);
+        weapons.showEffect(new main.game.maze.common.graphics.fire.PickupSparkleEffect(x, y, 0.55f, 0.85f, 1.0f));
+        setHudMessage(cause == FxHazardController.Cause.HOLE
+                ? "You fell through the hole - out at the other edge of the map"
+                : "A portal ghost sent you to the edge of the map", Duration.seconds(2.0));
+    }
+
+    /** A portal ghost touched the player (called by the ghost). */
+    public void onPortalGhostTouch() {
+        hazards.onPortalGhostTouch(System.nanoTime());
     }
 
     /**
@@ -833,6 +885,8 @@ public class GameController implements Initializable, EnemyRegistrar {
 
     public void dispose() {
         clearActivePlayerBombs();
+        hazards.dispose();
+        if (hazardLayer != null) { hazardLayer.detach(); hazardLayer = null; }
         weapons.dispose();
         weaponHud.clear();
         lifeController.dispose();
