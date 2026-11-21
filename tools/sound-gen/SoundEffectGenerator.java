@@ -41,6 +41,7 @@ public final class SoundEffectGenerator {
         write(dir, "pickup-heart.wav", pickupHeart());
         write(dir, "pickup-extra-life.wav", pickupExtraLife());
         write(dir, "pickup-gatling.wav", pickupGatling());
+        write(dir, "bomb-explosion.wav", bombExplosion());
         write(dir, "laser-fire.wav", laserFire());
         write(dir, "gatling-burst.wav", gatlingBurst());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
@@ -211,6 +212,29 @@ public final class SoundEffectGenerator {
                 out[start + i] += (noise.nextDouble() * 2 - 1) * Math.exp(-t * 130) * 0.9
                         + Math.sin(2 * Math.PI * (110 - 600 * t) * t) * Math.exp(-t * 70) * 0.6;
             }
+        }
+        return out;
+    }
+
+    /**
+     * A deep bomb: a sharp crack, a sub-bass boom sliding down from 90 to 28 Hz, and a long low rumble of
+     * filtered noise that dies away over a second and a half.
+     */
+    static double[] bombExplosion() {
+        double[] out = buffer(1.6);
+        Random noise = new Random(21);
+        double boomPhase = 0;
+        double rumble = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double freq = 28 + 62 * Math.exp(-t * 3.2);
+            boomPhase += 2 * Math.PI * freq / RATE;
+            double boom = Math.sin(boomPhase) * Math.exp(-t * 1.9) * 1.0 + Math.sin(boomPhase * 2) * Math.exp(-t * 3.5) * 0.35;
+            double white = noise.nextDouble() * 2 - 1;
+            rumble += 0.035 * (white - rumble);   // low-pass: only the deep part of the noise
+            double rumbleLevel = rumble * 9.0 * Math.exp(-t * 2.3) * Math.min(1, t / 0.03);
+            double crack = white * Math.exp(-t * 70) * 0.55;
+            out[i] = boom + rumbleLevel + crack;
         }
         return out;
     }

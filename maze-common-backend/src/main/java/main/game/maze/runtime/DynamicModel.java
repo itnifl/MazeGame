@@ -81,6 +81,11 @@ public final class DynamicModel {
         return List.copyOf((List<String>) owner.eGet(owner.eClass().getEStructuralFeature(feature)));
     }
 
+    /** Whether the model sets this feature itself (an attribute left at its default is not set). */
+    public static boolean isSet(EObject owner, String feature) {
+        return owner.eIsSet(owner.eClass().getEStructuralFeature(feature));
+    }
+
     public static Object value(EObject owner, String feature) {
         return owner.eGet(owner.eClass().getEStructuralFeature(feature));
     }

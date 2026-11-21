@@ -22,13 +22,14 @@ class LevelCatalogTest {
     @Test
     @DisplayName("the shipped model has the classic first level and a second level")
     void shippedLevels() {
-        assertEquals(2, CATALOG.count());
+        assertEquals(3, CATALOG.count());
         LevelSpec first = CATALOG.level(1);
         assertFalse(first.hasZones(), "level 1 keeps the classic random walls");
         assertFalse(first.hasSergeants());
         assertEquals(1.0, first.threatCapacityFactor(), 1e-9);
         assertTrue(CATALOG.hasNext(1));
-        assertFalse(CATALOG.hasNext(2), "level 2 is the last one for now");
+        assertTrue(CATALOG.hasNext(2));
+        assertFalse(CATALOG.hasNext(3), "level 3 is the last one for now");
     }
 
     @Test
@@ -91,7 +92,7 @@ class LevelCatalogTest {
     @DisplayName("an unknown level number is rejected")
     void unknownLevel() {
         assertThrows(IllegalArgumentException.class, () -> CATALOG.level(0));
-        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(3));
+        assertThrows(IllegalArgumentException.class, () -> CATALOG.level(4));
     }
 
     @Test
@@ -165,5 +166,73 @@ class LevelCatalogTest {
                 assertEquals("STEEL_BASIC", wall.material.id(), "the outer zone is steel");
             }
         }
+    }
+
+    @Test
+    @DisplayName("level 3 is level 2 plus: the zones, sergeants, wall look and cascade limit come from level 2")
+    void levelThreeBuildsOnLevelTwo() {
+        LevelSpec two = CATALOG.level(2);
+        LevelSpec three = CATALOG.level(3);
+        assertEquals(two.zones(), three.zones());
+        assertEquals(two.sergeant(), three.sergeant());
+        assertEquals(two.sergeantPosts(), three.sergeantPosts());
+        assertEquals(two.showWallMaterials(), three.showWallMaterials());
+        assertEquals(two.maxCascadeDepth(), three.maxCascadeDepth());
+        assertEquals(two.threatCapacityFactor(), three.threatCapacityFactor(), 1e-9);
+        assertEquals(two.sergeantCount(DifficultyTier.HARD), three.sergeantCount(DifficultyTier.HARD));
+    }
+
+    @Test
+    @DisplayName("level 3 adds pulsating mines in a circle round the sergeants; levels 1 and 2 have none")
+    void levelThreeHasMines() {
+        assertFalse(CATALOG.level(1).hasMines());
+        assertFalse(CATALOG.level(2).hasMines());
+        LevelSpec three = CATALOG.level(3);
+        assertTrue(three.hasMines());
+        MineSpec mines = three.mines();
+        assertTrue(mines.count() >= 6, "a circle of mines");
+        assertTrue(mines.blastDamage() > 100, "a great blast: more than a bomb");
+        assertTrue(mines.blastRadius() > 120, "a great blast: wider than a bomb");
+        assertTrue(mines.triggerRadius() < mines.ringRadius(), "the ring is wider than the trigger");
+    }
+
+    @Test
+    @DisplayName("level 3 adds the teleporting ghost: 3 on easy, 6 on normal, 10 on hard")
+    void levelThreeHasTeleportGhosts() {
+        assertFalse(CATALOG.level(2).hasTeleportGhosts());
+        LevelSpec three = CATALOG.level(3);
+        assertTrue(three.hasTeleportGhosts());
+        assertEquals(3, three.ghostCount(DifficultyTier.EASY));
+        assertEquals(6, three.ghostCount(DifficultyTier.NORMAL));
+        assertEquals(10, three.ghostCount(DifficultyTier.HARD));
+        assertEquals(0, CATALOG.level(2).ghostCount(DifficultyTier.HARD));
+        TeleportGhostSpec ghost = three.teleportGhost();
+        assertTrue(TeleportGhostSpec.isPortalGhostId(TeleportGhostSpec.SPAWN_ID_PREFIX + "_3"));
+        assertTrue(ghost.cooldownSeconds() > 0, "no instant bounce-back");
+    }
+
+    @Test
+    @DisplayName("a level can override what it takes from its base level")
+    void overridesTheBase() {
+        LevelCatalog custom = test("based.xmi");
+        LevelSpec three = custom.level(3);
+        assertEquals(custom.level(2).zones(), three.zones(), "zones come from the base");
+        assertEquals(0.5, three.threatCapacityFactor(), 1e-9, "its own factor wins");
+        assertFalse(three.showWallMaterials(), "its own look wins");
+        assertEquals(3, three.maxCascadeDepth(), "its own cascade limit wins");
+    }
+
+    @Test
+    @DisplayName("a base level must be an earlier level")
+    void baseMustBeEarlier() {
+        IllegalStateException error = assertThrows(IllegalStateException.class, () -> test("base-later.xmi"));
+        assertTrue(error.getMessage().contains("earlier"), error.getMessage());
+    }
+
+    @Test
+    @DisplayName("a ghost needs a count for every difficulty")
+    void ghostNeedsAllTiers() {
+        IllegalStateException error = assertThrows(IllegalStateException.class, () -> test("ghost-missing-tier.xmi"));
+        assertTrue(error.getMessage().contains("HARD"), error.getMessage());
     }
 }

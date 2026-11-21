@@ -43,7 +43,7 @@ class LevelProgressTest {
         progress.advance(arsenal);
 
         assertEquals(2, progress.number());
-        assertFalse(progress.hasNext(), "level 2 is the last level for now");
+        assertTrue(progress.hasNext(), "level 3 follows level 2");
         PlayerArsenal inherited = progress.inheritedArsenal();
         assertEquals(3, inherited.count(Weapon.BOMB));
         assertEquals(3, inherited.count(Weapon.LASER_RIFLE));
@@ -66,6 +66,8 @@ class LevelProgressTest {
     @DisplayName("there is no level after the last one")
     void cannotAdvancePastTheLastLevel() {
         progress.advance(new PlayerArsenal(1));
+        progress.advance(new PlayerArsenal(1));
+        assertFalse(progress.hasNext());
         assertThrows(IllegalStateException.class, () -> progress.advance(new PlayerArsenal(1)));
     }
 

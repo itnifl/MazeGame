@@ -394,6 +394,11 @@ public class GameController implements Initializable, EnemyRegistrar {
         // Pass surviving walls (destroyed ones already removed) so visual stops at solid walls.
         List<Vector2D> survivingWalls = maze != null ? maze.getMazeVectors() : List.of();
         showFlameExplosionVisual(bomb.x(), bomb.y(), PLAYER_BOMB_RANGE, survivingWalls);
+        // a deep boom and a heavy shake of the whole screen
+        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.common.graphics.fire.BombImpact.SOUND);
+        if (gameBoard != null) {
+            main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent());
+        }
 
         if (enemyDamage > 0) {
             setHudMessage("Bomb exploded, enemy damage " + enemyDamage, Duration.seconds(1.4));

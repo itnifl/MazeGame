@@ -17,25 +17,43 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="threatCapacityFactor" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="threatCapacityFactor" unsettable="true"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1.0">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Multiplies the difficulty's maxThreat: the threat budget the level may fill with enemies."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="showWallMaterials" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="baseLevel" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Number of an earlier level this level is built on (0 = none): whatever this level does not set itself (zones, wall look, cascade depth, weapon inheritance, threat capacity, sergeants, mines, ghosts) is taken from that level."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mines" eType="#//MineRing" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Pulsating mines in a circle round every sergeant."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="teleportGhost" eType="#//TeleportGhost" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ghostCounts" upperBound="-1"
+        eType="#//TierCount" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="How many teleporting ghosts per difficulty; needed for every difficulty when the level has a teleporting ghost."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="showWallMaterials" unsettable="true"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Draw each wall with the sprite of its material (glass, dirt, wood, stone, steel) so the player can see what is strong and what is weak. Off: every wall looks the same."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxCascadeDepth" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxCascadeDepth" unsettable="true"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="-1">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="How far a collapse spreads: breakable walls that touch a destroyed wall fall with it, up to this many steps away. 0 = only the wall that was hit. -1 = no limit (the classic rule, which can bring down a whole connected part of the maze)."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritWeapons" lowerBound="1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritWeapons" unsettable="true"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="The player starts this level with the weapons they had at the end of the previous level. Off: they start with the difficulty's own bombs only."/>
@@ -75,6 +93,52 @@
     <eLiterals name="EASY"/>
     <eLiterals name="NORMAL" value="1"/>
     <eLiterals name="HARD" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TierCount">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="difficulty" lowerBound="1"
+        eType="#//DifficultyTier"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="count" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MineRing">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Pulsating mines in a circle round each sergeant. A player who touches one sets it off: a great blast that breaks walls and hurts enemies (not the player) and leaves a hole in the ground; a player who falls into the hole comes out at the opposite edge of the map."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="count" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="8"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ringRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="62.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="triggerRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="22.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pulseSeconds" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.9"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="160.0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastDamage" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="250"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="holeRadius" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="30.0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TeleportGhost">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A ghost that does not hurt: when it touches the player, the player is sent to a random spot at the outer edge of the map (never inside a wall)."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="health" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="60"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="speed" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="1.6"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sprite" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="teleportSound"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cooldownSeconds" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="2.5">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="After any teleport the player cannot be teleported again for this long, so a second ghost cannot bounce them straight back."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SergeantPosts">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="difficulty" lowerBound="1"

@@ -60,6 +60,7 @@ import main.game.maze.libgdx.helper.GdxTerminalCommandSupport;
 import main.game.maze.libgdx.helper.GdxWallCollapseSupport;
 import main.game.maze.libgdx.helper.GdxWallDamageSupport;
 import main.game.maze.libgdx.helper.GdxVisualStyleSupport;
+import main.game.maze.common.graphics.fire.BombImpact;
 import main.game.maze.game.level.LevelCatalogLoader;
 import main.game.maze.game.level.LevelProgress;
 import main.game.maze.libgdx.helper.GdxSergeantSupport;
@@ -105,7 +106,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
     private static final float PLAYER_FLAME_RANGE = 220.0f;
     private static final float PLAYER_FLAME_VISUAL_SECONDS = (float) FireBlast.DEFAULT_LIFETIME_SECONDS;
-    private static final float PLAYER_FLAME_SHAKE_INTENSITY = 7.0f;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
     private static final float ENEMY_LABEL_SECONDS = 20f;
@@ -565,8 +565,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 FireBlast.seedFor(x, y));
         activePlayerFireBlasts.add(new ActivePlayerFireBlast(blast, PLAYER_FLAME_VISUAL_SECONDS));
 
-        worldModel.setExplosionShakeRemainingSeconds(0.20f);
-        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), PLAYER_FLAME_SHAKE_INTENSITY));
+        // a deep boom and a heavy shake of the whole screen
+        AudioEngine.get().play(BombImpact.SOUND);
+        worldModel.setExplosionShakeRemainingSeconds((float) BombImpact.SHAKE_SECONDS);
+        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), (float) BombImpact.SHAKE_STRENGTH));
 
         int flamedKilled = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
                 animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(),
