@@ -148,44 +148,28 @@ public class Character  {
         directionX = 0;
         directionY = -speed;
         updateDirection(speed);
-        if(moveCharacterUp(speed, force)) {
-            updatePosition();
-            return true;
-        }
-        return false;
+        return moveCharacterUp(speed, force);
     }
 
     public boolean moveDown(double speed, boolean force) {
         directionX = 0;
         directionY = speed;
         updateDirection(speed);
-        if(moveCharacterDown(speed, force)) {
-            updatePosition();
-            return true;
-        }
-        return false;
+        return moveCharacterDown(speed, force);
     }
 
     public boolean moveLeft(double speed, boolean force) {
         directionX = -speed;
         directionY = 0;
         updateDirection(speed);
-        if(moveCharacterLeft(speed, force)) {
-            updatePosition();
-            return true;
-        }
-        return false;
+        return moveCharacterLeft(speed, force);
     }
 
     public boolean moveRight(double speed, boolean force) {
         directionX = speed;
         directionY = 0;
         updateDirection(speed);
-        if(moveCharacterRight(speed, force)) {
-            updatePosition();
-            return true;
-        }
-        return false;
+        return moveCharacterRight(speed, force);
     }
 
     protected void updateDirection(double factor) {
@@ -212,6 +196,7 @@ public class Character  {
                     final Node gfx = characterGraphics;
                     UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
                 }
+                updatePosition();
                 doNotifyMovement();
                 return true;
             }
@@ -232,6 +217,7 @@ public class Character  {
                     final Node gfx = characterGraphics;
                     UiScheduler.get().runOnUiThread(() -> gfx.setLayoutX(newX));
                 }
+                updatePosition();
                 doNotifyMovement();
                 return true;
             }
@@ -252,6 +238,7 @@ public class Character  {
                     final Node gfx = characterGraphics;
                     UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
                 }
+                updatePosition();
                 doNotifyMovement();
                 return true;
             }
@@ -272,6 +259,7 @@ public class Character  {
                     final Node gfx = characterGraphics;
                     UiScheduler.get().runOnUiThread(() -> gfx.setLayoutY(newY));
                 }
+                updatePosition();
                 doNotifyMovement();
                 return true;
             }

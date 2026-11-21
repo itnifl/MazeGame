@@ -20,6 +20,9 @@ public record HoleEffect(double x, double y, double radius) implements PuffEffec
 
     @Override
     public List<FirePuff> puffs(double progress, double clock) {
+        if (progress >= 1.0) {
+            return List.of();
+        }
         PuffFrame frame = new PuffFrame();
         // the ground, back to front: churned earth, a rim, then the pit that gets darker towards the middle
         frame.add(FirePuff.Layer.SMOKE, x, y, radius * 1.3, 0.16f, 0.1f, 0.06f, 0.55);

@@ -306,7 +306,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             maxShake = Math.max(maxShake, enemy.impactShake());
         }
         if (maxShake > 0f) {
-            worldModel.setExplosionShakeRemainingSeconds(EXPLOSION_SHAKE_DURATION_SECONDS);
+            worldModel.setExplosionShakeRemainingSeconds(
+                    Math.max(worldModel.explosionShakeRemainingSeconds(), EXPLOSION_SHAKE_DURATION_SECONDS));
             worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(), maxShake));
         }
         return totalDamage;

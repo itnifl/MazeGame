@@ -44,6 +44,7 @@ public final class GdxHazardSupport {
 
     private final HazardSession session;
     private final Map<Integer, GameWorldModel.ActiveEffect> mineEffects = new HashMap<>();
+    private final List<GameWorldModel.ActiveEffect> holeEffects = new ArrayList<>();
     private float heightPx;
 
     public GdxHazardSupport() {
@@ -67,8 +68,10 @@ public final class GdxHazardSupport {
     public void reset(GameWorldModel model) {
         if (model != null) {
             model.effects().removeAll(mineEffects.values());
+            model.effects().removeAll(holeEffects);
         }
         mineEffects.clear();
+        holeEffects.clear();
         session.clear();
     }
 
@@ -132,8 +135,10 @@ public final class GdxHazardSupport {
             if (gone != null) {
                 model.effects().remove(gone);
             }
-            model.effects().add(new GameWorldModel.ActiveEffect(new HoleEffect(
-                    detonation.hole().x(), heightPx - detonation.hole().y(), detonation.hole().radius())));
+            GameWorldModel.ActiveEffect hole = new GameWorldModel.ActiveEffect(new HoleEffect(
+                    detonation.hole().x(), heightPx - detonation.hole().y(), detonation.hole().radius()));
+            holeEffects.add(hole);
+            model.effects().add(hole);
         }
         HazardSession.Teleport teleport = result.teleport();
         if (teleport == null && touchedByPortalGhost(player, enemies)) {

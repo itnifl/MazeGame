@@ -60,6 +60,50 @@ class GdxGameCombatAndEnemyFlowSupportTest {
     }
 
     @Test
+    void updateCombat_preservesLongerActiveBombShake() {
+        GameWorldModel worldModel = new GameWorldModel();
+        MazeArena maze = openMaze();
+        main.game.maze.mazeworld.generators.PlayerState player =
+                new main.game.maze.mazeworld.generators.PlayerState(200f, 40f, 24f);
+        worldModel.setMaze(maze);
+        worldModel.setPlayer(player);
+
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(
+                rangedSpawn(ProjectileType.LOB, 70f, 80f, 160f),
+                0,
+                openWorld(),
+                60f,
+                8);
+
+        PlayerCombatStateService combatState = new PlayerCombatStateService();
+        combatState.reset(100);
+        combatState.setMaze(maze);
+
+        for (int i = 0; i < 240 && runtime.impactShake() == 0f; i++) {
+            GdxGameCombatAndEnemyFlowSupport.updateCombat(
+                    1f / 60f,
+                    player,
+                    combatState,
+                    List.of(runtime),
+                    worldModel);
+        }
+        assertTrue(runtime.impactShake() > 0f, "Lob must have impacted");
+
+        // An active bomb shake is currently running with 0.50 seconds remaining
+        worldModel.setExplosionShakeRemainingSeconds(0.50f);
+        GdxGameCombatAndEnemyFlowSupport.updateCombat(
+                1f / 60f,
+                player,
+                combatState,
+                List.of(runtime),
+                worldModel);
+
+        assertTrue(worldModel.explosionShakeRemainingSeconds() > 0.40f,
+                "Projectile impact must not truncate a longer active shake duration: "
+                        + worldModel.explosionShakeRemainingSeconds());
+    }
+
+    @Test
     void deadShootersPumpkinKeepsFlyingAndExplodes() {
         GameWorldModel worldModel = new GameWorldModel();
         MazeArena maze = openMaze();

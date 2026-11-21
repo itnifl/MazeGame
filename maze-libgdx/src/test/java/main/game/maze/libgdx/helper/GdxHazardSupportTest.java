@@ -174,8 +174,10 @@ class GdxHazardSupportTest {
     void reset() {
         var mine = hazards.field().mines().get(0);
         hazards.tick(model, new PlayerState((float) mine.x(), HEIGHT - (float) mine.y(), 30), List.of(), 0.016f, 1.0);
+        assertTrue(effectsOf(model, HoleEffect.class) > 0, "a hole was created");
         hazards.reset(model);
         assertNull(hazards.mineSpec());
         assertEquals(0, effectsOf(model, MinePulseEffect.class));
+        assertEquals(0, effectsOf(model, HoleEffect.class));
     }
 }

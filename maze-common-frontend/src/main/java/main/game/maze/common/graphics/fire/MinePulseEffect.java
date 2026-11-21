@@ -31,6 +31,9 @@ public record MinePulseEffect(double x, double y, double phase, double pulseSeco
 
     @Override
     public List<FirePuff> puffs(double progress, double clock) {
+        if (progress >= 1.0) {
+            return List.of();
+        }
         double glow = 0.5 + 0.5 * Math.sin(2 * Math.PI * (clock / pulseSeconds + phase));
         PuffFrame frame = new PuffFrame();
         // the body, on the back layer: shadow, dark rim, olive disc, ridged rings, pressure plate and button

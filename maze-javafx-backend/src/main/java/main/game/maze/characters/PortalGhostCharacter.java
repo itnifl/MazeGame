@@ -31,23 +31,36 @@ public class PortalGhostCharacter extends GhostCharacter {
         return 0;
     }
 
-    @Override
-    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+    public void handlePlayerContact(PositionBounds playerBounds, PlayerCharacter player) {
         var graphics = getCharacterGraphics();
-        if (nodeBounds == null || graphics == null || !(entity instanceof PlayerCharacter) || !isAlive()) {
+        if (player == null || graphics == null || !isAlive()) {
             return;
         }
+        if (playerBounds == null) {
+            var playerGraphics = player.getCharacterGraphics();
+            if (playerGraphics == null) {
+                return;
+            }
+            playerBounds = new FxPositionBounds(playerGraphics.getBoundsInParent());
+        }
         var myBounds = new FxPositionBounds(graphics.getBoundsInParent());
-        if (!nodeBounds.intersects(myBounds)) {
+        if (!playerBounds.intersects(myBounds)) {
             return;
         }
         if (App.gameController != null
                 && App.gameController.isWallBetween(myBounds.getCenterX(), myBounds.getCenterY(),
-                        nodeBounds.getCenterX(), nodeBounds.getCenterY())) {
+                        playerBounds.getCenterX(), playerBounds.getCenterY())) {
             return;
         }
         if (App.gameController != null) {
             App.gameController.onPortalGhostTouch();
+        }
+    }
+
+    @Override
+    public void doPositionEvaluation(PositionBounds nodeBounds, ICanSubscribeAndNotifyPosition entity) {
+        if (entity instanceof PlayerCharacter player) {
+            handlePlayerContact(nodeBounds, player);
         }
     }
 }

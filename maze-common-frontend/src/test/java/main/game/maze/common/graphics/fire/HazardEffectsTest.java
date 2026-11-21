@@ -25,6 +25,17 @@ class HazardEffectsTest {
     }
 
     @Test
+    @DisplayName("when completed (progress >= 1), an empty puff list is returned")
+    void completedReturnsEmptyList() {
+        MinePulseEffect mine = new MinePulseEffect(100, 100, 0.0, 0.9);
+        HoleEffect hole = new HoleEffect(100, 100, 30);
+        assertTrue(mine.puffs(1.0, 0.5).isEmpty());
+        assertTrue(mine.puffs(1.2, 0.5).isEmpty());
+        assertTrue(hole.puffs(1.0, 0.5).isEmpty());
+        assertTrue(hole.puffs(1.5, 0.5).isEmpty());
+    }
+
+    @Test
     @DisplayName("a mine pulses: its glow swells and fades once per beat, and repeats every beat")
     void minePulses() {
         MinePulseEffect mine = new MinePulseEffect(100, 100, 0.0, 0.9);
