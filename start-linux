@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Check the Linux setup and launch the libGDX game.
+set -Eeuo pipefail
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+PROFILE_FILE=/etc/profile.d/mazegame.sh
+
+if [[ "$(uname -s)" != Linux ]]; then
+  echo "This launcher is intended for Linux." >&2
+  exit 1
+fi
+if [[ $EUID -eq 0 ]]; then
+  echo "Run this launcher as your normal user, not with sudo." >&2
+  exit 1
+fi
+
+setup_needed=false
+if [[ ! -r "$PROFILE_FILE" || ! -f "$SCRIPT_DIR/.vscode/maze.launch.env" ]]; then
+  setup_needed=true
+else
+  # This file is created by the installer and sets JAVA_HOME, Maven and JavaFX.
+  # shellcheck disable=SC1090
+  source "$PROFILE_FILE"
+  if [[ ! -x "${JAVA_HOME:-}/bin/javac" ]] || \
+     [[ "$("${JAVA_HOME:-}/bin/javac" -version 2>&1)" != javac\ 21.* ]] || \
+     ! command -v mvn >/dev/null 2>&1 || ! command -v pwsh >/dev/null 2>&1 || \
+     [[ ! -f "${PATH_TO_FX:-}/lib/javafx.controls.jar" ]]; then
+    setup_needed=true
+  fi
+fi
+
+if [[ "$setup_needed" == true ]]; then
+  echo "MazeGame setup is missing or incomplete. Running the Linux installer (sudo may ask for your password)."
+  sudo "$SCRIPT_DIR/install-linux.sh"
+  # shellcheck disable=SC1090
+  source "$PROFILE_FILE"
+fi
+
+cd "$SCRIPT_DIR"
+exec pwsh -NoLogo -NoProfile -File "$SCRIPT_DIR/make-libgdx.ps1" -Target run

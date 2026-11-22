@@ -66,7 +66,15 @@ Both frontends share the identical game rules, scoring engine, maze generation, 
 
 ### Ubuntu 24.04 and 26.04 x86_64
 
-From the repository root, run the native installer:
+To check setup and start the libGDX game, run from the repository root:
+
+```bash
+./start-linux
+```
+
+The launcher runs the installer with `sudo` if setup is missing or incomplete, then builds the game if needed and starts it. Run it from a graphical desktop session. The first build may download Maven dependencies.
+
+To install prerequisites separately, run:
 
 ```bash
 sudo ./install-linux.sh
@@ -572,6 +580,7 @@ Helper scripts for installing prerequisites, packaging the source, and running r
 | Script | Purpose |
 |---|---|
 | ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 and 26.04 x86_64; reuses `install.ps1` for user setup |
+| 🎮 [start-linux](start-linux) | Check setup and launch the libGDX game on Linux |
 | ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
 | 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
 | 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |
