@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install MazeGame build and runtime prerequisites on Ubuntu 24.04.
+# Install MazeGame build and runtime prerequisites on Ubuntu 24.04 and 26.04.
 #
 # Usage:
 #   sudo ./install-linux.sh
@@ -269,11 +269,18 @@ fi
 
 # shellcheck disable=SC1091
 source /etc/os-release
-if [[ "${ID:-}" != "ubuntu" || "${VERSION_ID:-}" != "24.04" ]]; then
-  echo "This script is tested on Ubuntu 24.04; detected ${PRETTY_NAME:-unknown}." >&2
-  echo "Refusing to guess package names on a different distribution." >&2
+if [[ "${ID:-}" != "ubuntu" ]]; then
+  echo "This script supports Ubuntu 24.04 and 26.04; detected ${PRETTY_NAME:-unknown}." >&2
   exit 1
 fi
+case "${VERSION_ID:-}" in
+  24.04) ICU_PACKAGE=libicu74 ;;
+  26.04) ICU_PACKAGE=libicu78 ;;
+  *)
+    echo "This script supports Ubuntu 24.04 and 26.04; detected ${PRETTY_NAME:-unknown}." >&2
+    exit 1
+    ;;
+esac
 
 step "Installing Ubuntu packages"
 export DEBIAN_FRONTEND=noninteractive
@@ -294,7 +301,7 @@ apt-get install --yes --no-install-recommends \
   libgtk-3-0t64 \
   libgstreamer1.0-0 \
   gstreamer1.0-plugins-base \
-  libicu74 \
+  "$ICU_PACKAGE" \
   libssl3t64 \
   libx11-6 \
   libxcursor1 \

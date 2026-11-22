@@ -25,7 +25,7 @@
 * 🎨 [maze-javafx](maze-javafx/readme.md) — JavaFX backend adapters
 * 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX OpenGL game runtime and desktop UI
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
-* ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 x86_64 prerequisite installer
+* ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 and 26.04 x86_64 prerequisite installer
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
   * 📄 [Maze Generation Rules](docs/requirements-features/maze-generation-rules.md) (MGR-1..19)
@@ -64,7 +64,7 @@ Both frontends share the identical game rules, scoring engine, maze generation, 
 
 ## Quick start
 
-### Ubuntu 24.04 x86_64
+### Ubuntu 24.04 and 26.04 x86_64
 
 From the repository root, run the native installer:
 
@@ -223,7 +223,7 @@ Check those terms before redistributing them.
 ## Prerequisites and setup
 
 > **Quick setup:** Automated installers are provided for all platforms — see the [Quick start](#quick-start) section above:
-> - **Ubuntu 24.04:** `sudo ./install-linux.sh`
+> - **Ubuntu 24.04 and 26.04:** `sudo ./install-linux.sh`
 > - **Windows / macOS / Linux:** `pwsh -File ./install.ps1 -JavaFX`
 >
 > The instructions below are for manual configuration or reference.
@@ -571,7 +571,7 @@ Helper scripts for installing prerequisites, packaging the source, and running r
 
 | Script | Purpose |
 |---|---|
-| ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 x86_64; reuses `install.ps1` for user setup |
+| ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 and 26.04 x86_64; reuses `install.ps1` for user setup |
 | ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
 | 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
 | 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |
