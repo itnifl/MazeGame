@@ -15,9 +15,10 @@ need local compile and test feedback.
 | JavaFX (full game + Tycho Eclipse plugins) | [make-javafx.ps1](make-javafx.ps1) | [make-javafx](make-javafx) | [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) |
 | libGDX (LWJGL3 launcher + headless gameplay core) | [make-libgdx.ps1](make-libgdx.ps1) | [make-libgdx](make-libgdx) | [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) |
 
-The libGDX chain is plain Maven (no Tycho, no p2 mirror) and only builds
-`maze-common-frontend` and `maze-libgdx`. The JavaFX chain drives the full
-reactor including the Eclipse-plugin and Xtext modules.
+The libGDX chain builds `maze-common-frontend`, `maze-libgdx`, and their
+reactor dependencies. Its Eclipse-plugin modules use the local p2 mirror, which
+the build prepares when missing. The JavaFX chain drives the full reactor
+including the Eclipse-plugin and Xtext modules.
 
 ## VS Code launch environment file
 

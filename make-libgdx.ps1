@@ -37,7 +37,7 @@ function Show-LibgdxUsage {
     Write-Host "run             : after prepare-run, launch the libGDX backend (GdxAppLauncher)."
     Write-Host ""
     Write-Host "If generated Xtext or FreeMarker sources are missing, this script regenerates them automatically." -ForegroundColor Yellow
-    Write-Host "Note: the libGDX backend is a plain Maven build. No Tycho mirror or p2 cache is involved." -ForegroundColor Yellow
+    Write-Host "Note: the libGDX build prepares the local Eclipse mirror when it is missing." -ForegroundColor Yellow
     Write-Host "=========================================" -ForegroundColor Cyan
 }
 
@@ -82,6 +82,11 @@ function Ensure-XtextGeneratedSources {
 }
 
 function Ensure-GeneratedSources {
+    # The model modules and Xtext generator use Tycho's local target platform.
+    if (-not (Test-Path (Join-Path $LocalP2Dir '.mirror.stamp'))) {
+        Write-Host 'The local Eclipse repository is missing; preparing it before the build...' -ForegroundColor Yellow
+        Invoke-Mirror
+    }
     Ensure-XtextGeneratedSources
 
     if (Test-GeneratedSourcesPresent) {
