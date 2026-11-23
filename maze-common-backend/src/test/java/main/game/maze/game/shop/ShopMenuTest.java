@@ -22,7 +22,7 @@ class ShopMenuTest {
     void setUp() {
         progress = new LevelProgress(LevelCatalogLoader.loadDefault());
         menu = new ShopMenu(new LevelShop(ShopCatalogLoader.loadDefault(), progress));
-        progress.completeLevel(new PlayerArsenal(1), 1500, "Easy");
+        progress.completeLevel(new PlayerArsenal(1), 4500, "Easy");
     }
 
     @Test
@@ -50,8 +50,8 @@ class ShopMenuTest {
         assertEquals(LevelShop.Result.BOUGHT, menu.buySelected());
         assertTrue(menu.status().startsWith("Bought Grenades"));
         assertEquals("have 5", menu.rows().get(grenades).ownedText());
-        assertEquals(900, menu.credits());
-        assertEquals("Score to spend: 900", menu.creditsText());
+        assertEquals(2500, menu.credits());
+        assertEquals("Score to spend: 2500", menu.creditsText());
 
         int nuke = indexOf(ShopItemKind.NUKE_GRENADE);
         assertFalse(menu.rows().get(nuke).affordable());

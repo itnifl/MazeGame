@@ -34,14 +34,16 @@ class ShopCatalogTest {
     }
 
     @Test
-    @DisplayName("every cheap item costs less than every medium one, and every medium one less than every expensive one")
+    @DisplayName("each item has the fixed price of its tier")
     void pricesFollowTheTiers() {
-        int maxCheap = SHOP.tier(ShopTier.CHEAP).stream().mapToInt(ShopItem::price).max().orElseThrow();
-        int minMedium = SHOP.tier(ShopTier.MEDIUM).stream().mapToInt(ShopItem::price).min().orElseThrow();
-        int maxMedium = SHOP.tier(ShopTier.MEDIUM).stream().mapToInt(ShopItem::price).max().orElseThrow();
-        int minExpensive = SHOP.tier(ShopTier.EXPENSIVE).stream().mapToInt(ShopItem::price).min().orElseThrow();
-        assertTrue(maxCheap < minMedium);
-        assertTrue(maxMedium < minExpensive);
+        for (ShopItem item : SHOP.items()) {
+            int expected = switch (item.tier()) {
+                case CHEAP -> 2_000;
+                case MEDIUM -> 10_000;
+                case EXPENSIVE -> 40_000;
+            };
+            assertEquals(expected, item.price(), item.kind().toString());
+        }
     }
 
     @Test

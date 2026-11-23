@@ -236,9 +236,9 @@ What the shop sells (issue #164) is written in the same DSL, in its own file
 ```
 game MazeGameShop {
     shop {
-        item GRENADE "Grenades" tier CHEAP price 600 amount 5
+        item GRENADE "Grenades" tier CHEAP price 2000 amount 5
             description "Thrown ahead of you, they go off after a moment"
-        item SHIELD_BOOST "Extra long shield" tier CHEAP price 800 factor 3.0
+        item SHIELD_BOOST "Extra long shield" tier CHEAP price 2000 factor 3.0
         ...
     }
 }

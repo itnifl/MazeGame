@@ -53,7 +53,7 @@ class GdxShopOverlayControllerTest {
         shop.handleKeys(Set.of(Input.Keys.S)::contains);
         assertEquals(2, menu.selectedIndex());
         shop.handleKeys(Set.of(Input.Keys.ENTER)::contains);
-        assertEquals(9_400, menu.credits(), "grenades cost 600");
+        assertEquals(8_000, menu.credits(), "grenades cost 2000");
         progress.advance(new PlayerArsenal(0));
         assertEquals(5, progress.inheritedArsenal().count(Weapon.GRENADE));
     }
@@ -61,17 +61,17 @@ class GdxShopOverlayControllerTest {
     @Test
     @DisplayName("a click selects a row, a click on the selected row buys it, Done closes")
     void clicks() {
-        ShopMenu menu = new ShopMenu(new LevelShop(ShopCatalogLoader.loadDefault(), betweenLevels(10_000)));
+        ShopMenu menu = new ShopMenu(new LevelShop(ShopCatalogLoader.loadDefault(), betweenLevels(30_000)));
         var shop = new GdxShopOverlayController(menu);
         shop.open();
         shop.onRendered(layout(menu.rows().size()));
         shop.handleClick(50, 500 - 3 * 40 + 5);   // row 3: plasma grenades
         assertEquals(3, menu.selectedIndex());
-        assertEquals(10_000, menu.credits(), "selecting is not buying");
+        assertEquals(30_000, menu.credits(), "selecting is not buying");
         shop.handleClick(50, 500 - 3 * 40 + 5);
-        assertEquals(8_000, menu.credits(), "plasma grenades cost 2000");
+        assertEquals(20_000, menu.credits(), "plasma grenades cost 10000");
         shop.handleClick(150, 20);                 // Buy
-        assertEquals(6_000, menu.credits());
+        assertEquals(10_000, menu.credits());
         shop.handleClick(250, 20);                 // Done
         assertFalse(shop.isOpen());
     }

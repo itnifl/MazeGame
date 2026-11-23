@@ -84,6 +84,23 @@ class LevelShopTest {
     }
 
     @Test
+    @DisplayName("each repeated weapon purchase charges its tier price")
+    void repeatedPurchasesChargeTierPrice() {
+        winLevel(5, 110_000);
+        ShopItem[] items = {CATALOG.item(ShopItemKind.GRENADE),
+                CATALOG.item(ShopItemKind.PLASMA_GRENADE), CATALOG.item(ShopItemKind.NUKE_GRENADE)};
+        int[] prices = {2_000, 10_000, 40_000};
+        int balance = 110_000;
+        for (int i = 0; i < items.length; i++) {
+            for (int purchase = 0; purchase < 2; purchase++) {
+                assertEquals(LevelShop.Result.BOUGHT, shop.buy(items[i]));
+                balance -= prices[i];
+                assertEquals(balance, shop.credits());
+            }
+        }
+    }
+
+    @Test
     @DisplayName("the extra life gives three refills of the health bar")
     void extraLifeIsThreeRefills() {
         winLevel(3, 20_000);   // medium items are sold from the shop after level 3

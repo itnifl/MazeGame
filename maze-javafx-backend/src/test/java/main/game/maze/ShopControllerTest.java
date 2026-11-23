@@ -88,11 +88,11 @@ class ShopControllerTest {
                     "a header and three cheap, four medium, three expensive cards");
             assertEquals("Score to spend: 5000", credits.getText());
 
-            // the first row is the shield boost (800); Down moves to the flame boost (1000), Down again to grenades (600)
+            // Down moves from the shield boost to the flame boost, then to grenades (2000).
             controller.handleKeyPressed(key(KeyCode.DOWN));
             controller.handleKeyPressed(key(KeyCode.DOWN));
             controller.handleKeyPressed(key(KeyCode.ENTER));
-            assertEquals("Score to spend: 4400", credits.getText());
+            assertEquals("Score to spend: 3000", credits.getText());
             assertTrue(((Label) root.lookup("#statusLabel")).getText().startsWith("Bought Grenades"));
 
             controller.handleKeyPressed(key(KeyCode.ESCAPE));

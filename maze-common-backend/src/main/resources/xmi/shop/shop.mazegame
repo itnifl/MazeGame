@@ -18,29 +18,29 @@ game MazeGameShop {
         unlock EXPENSIVE fromLevel 6
 
         // cheap
-        item SHIELD_BOOST "Extra long shield" tier CHEAP price 800 factor 3.0
+        item SHIELD_BOOST "Extra long shield" tier CHEAP price 2000 factor 3.0
             description "Next level: every shield you pick up lasts three times as long"
-        item FLAME_BOOST "Extra long flames" tier CHEAP price 1000 factor 1.6
+        item FLAME_BOOST "Extra long flames" tier CHEAP price 2000 factor 1.6
             description "Next level: your bombs reach further and do more damage"
-        item GRENADE "Grenades" tier CHEAP price 600 amount 5
+        item GRENADE "Grenades" tier CHEAP price 2000 amount 5
             description "Thrown ahead of you, they go off after a moment"
 
         // medium
-        item PLASMA_GRENADE "Plasma grenades" tier MEDIUM price 2000 amount 3
+        item PLASMA_GRENADE "Plasma grenades" tier MEDIUM price 10000 amount 3
             description "Thrown ahead of you: a wider, much stronger blast"
-        item BUNKER_BUSTER "Bunker buster rockets" tier MEDIUM price 2500 amount 3
+        item BUNKER_BUSTER "Bunker buster rockets" tier MEDIUM price 10000 amount 3
             description "Goes through several walls, wrecks walls and towers"
-        item FAT_BOMB "Fat bomb" tier MEDIUM price 2200 amount 1
+        item FAT_BOMB "Fat bomb" tier MEDIUM price 10000 amount 1
             description "A planted bomb with huge flames - run!"
-        item EXTRA_LIFE "Extra life" tier MEDIUM price 3000 amount 3
+        item EXTRA_LIFE "Extra life" tier MEDIUM price 10000 amount 3
             description "Use it like a weapon to fill your health bar; three of them"
 
         // expensive
-        item NUKE_GRENADE "Small nuclear grenades" tier EXPENSIVE price 6000 amount 2
+        item NUKE_GRENADE "Small nuclear grenades" tier EXPENSIVE price 40000 amount 2
             description "A nuclear blast through walls, shown as a mushroom cloud"
-        item AIRSTRIKE "Airstrike" tier EXPENSIVE price 7500 amount 1
+        item AIRSTRIKE "Airstrike" tier EXPENSIVE price 40000 amount 1
             description "Bombers carpet bomb the centre of the maze"
-        item INFANTRY_STRIKE "Infantry strike" tier EXPENSIVE price 9000 amount 1
+        item INFANTRY_STRIKE "Infantry strike" tier EXPENSIVE price 40000 amount 1
             description "Ten soldiers land and hunt down every enemy"
     }
 }

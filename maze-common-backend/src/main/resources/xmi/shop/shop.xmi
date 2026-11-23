@@ -5,14 +5,14 @@
   <unlocks tier="CHEAP" fromLevel="2"/>
   <unlocks tier="MEDIUM" fromLevel="4"/>
   <unlocks tier="EXPENSIVE" fromLevel="6"/>
-  <items kind="SHIELD_BOOST" displayName="Extra long shield" tier="CHEAP" price="800" factor="3" description="Next level: every shield you pick up lasts three times as long"/>
-  <items kind="FLAME_BOOST" displayName="Extra long flames" tier="CHEAP" price="1000" factor="1.6" description="Next level: your bombs reach further and do more damage"/>
-  <items kind="GRENADE" displayName="Grenades" tier="CHEAP" price="600" amount="5" description="Thrown ahead of you, they go off after a moment"/>
-  <items kind="PLASMA_GRENADE" displayName="Plasma grenades" tier="MEDIUM" price="2000" amount="3" description="Thrown ahead of you: a wider, much stronger blast"/>
-  <items kind="BUNKER_BUSTER" displayName="Bunker buster rockets" tier="MEDIUM" price="2500" amount="3" description="Goes through several walls, wrecks walls and towers"/>
-  <items kind="FAT_BOMB" displayName="Fat bomb" tier="MEDIUM" price="2200" amount="1" description="A planted bomb with huge flames - run!"/>
-  <items kind="EXTRA_LIFE" displayName="Extra life" tier="MEDIUM" price="3000" amount="3" description="Use it like a weapon to fill your health bar; three of them"/>
-  <items kind="NUKE_GRENADE" displayName="Small nuclear grenades" tier="EXPENSIVE" price="6000" amount="2" description="A nuclear blast through walls, shown as a mushroom cloud"/>
-  <items kind="AIRSTRIKE" displayName="Airstrike" tier="EXPENSIVE" price="7500" amount="1" description="Bombers carpet bomb the centre of the maze"/>
-  <items kind="INFANTRY_STRIKE" displayName="Infantry strike" tier="EXPENSIVE" price="9000" amount="1" description="Ten soldiers land and hunt down every enemy"/>
+  <items kind="SHIELD_BOOST" displayName="Extra long shield" tier="CHEAP" price="2000" factor="3" description="Next level: every shield you pick up lasts three times as long"/>
+  <items kind="FLAME_BOOST" displayName="Extra long flames" tier="CHEAP" price="2000" factor="1.6" description="Next level: your bombs reach further and do more damage"/>
+  <items kind="GRENADE" displayName="Grenades" tier="CHEAP" price="2000" amount="5" description="Thrown ahead of you, they go off after a moment"/>
+  <items kind="PLASMA_GRENADE" displayName="Plasma grenades" tier="MEDIUM" price="10000" amount="3" description="Thrown ahead of you: a wider, much stronger blast"/>
+  <items kind="BUNKER_BUSTER" displayName="Bunker buster rockets" tier="MEDIUM" price="10000" amount="3" description="Goes through several walls, wrecks walls and towers"/>
+  <items kind="FAT_BOMB" displayName="Fat bomb" tier="MEDIUM" price="10000" amount="1" description="A planted bomb with huge flames - run!"/>
+  <items kind="EXTRA_LIFE" displayName="Extra life" tier="MEDIUM" price="10000" amount="3" description="Use it like a weapon to fill your health bar; three of them"/>
+  <items kind="NUKE_GRENADE" displayName="Small nuclear grenades" tier="EXPENSIVE" price="40000" amount="2" description="A nuclear blast through walls, shown as a mushroom cloud"/>
+  <items kind="AIRSTRIKE" displayName="Airstrike" tier="EXPENSIVE" price="40000" amount="1" description="Bombers carpet bomb the centre of the maze"/>
+  <items kind="INFANTRY_STRIKE" displayName="Infantry strike" tier="EXPENSIVE" price="40000" amount="1" description="Ten soldiers land and hunt down every enemy"/>
 </shop:ShopModel>
