@@ -31,7 +31,13 @@ fi
 
 if [[ "$setup_needed" == true ]]; then
   echo "MazeGame setup is missing or incomplete. Running the Linux installer (sudo may ask for your password)."
-  sudo env "MAZEGAME_PROFILE_FILE=$PROFILE_FILE" "$SCRIPT_DIR/install-linux.sh"
+  install_env=("MAZEGAME_PROFILE_FILE=$PROFILE_FILE")
+  for name in MAZEGAME_INSTALL_ROOT MAZEGAME_BIN_DIR MAZEGAME_CACHE_DIR; do
+    if [[ -n "${!name:-}" ]]; then
+      install_env+=("$name=${!name}")
+    fi
+  done
+  sudo env "${install_env[@]}" "$SCRIPT_DIR/install-linux.sh"
   # shellcheck disable=SC1090
   source "$PROFILE_FILE"
 fi
