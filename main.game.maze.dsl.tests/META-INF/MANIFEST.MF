@@ -8,6 +8,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"
 Require-Bundle: main.game.maze.dsl,
  main.game.maze.dsl.ide,
  org.eclipse.xtext.testing,

@@ -37,7 +37,7 @@ function Show-LibgdxUsage {
     Write-Host "run             : after prepare-run, launch the libGDX backend (GdxAppLauncher)."
     Write-Host ""
     Write-Host "If generated Xtext or FreeMarker sources are missing, this script regenerates them automatically." -ForegroundColor Yellow
-    Write-Host "Note: the libGDX backend is a plain Maven build. No Tycho mirror or p2 cache is involved." -ForegroundColor Yellow
+    Write-Host "Note: libGDX builds refresh the local Eclipse mirror when it is missing or out of date." -ForegroundColor Yellow
     Write-Host "=========================================" -ForegroundColor Cyan
 }
 
@@ -68,6 +68,7 @@ function Ensure-XtextGeneratedSources {
     }
 
     Write-Host 'Generated Xtext sources are missing, regenerating...' -ForegroundColor Yellow
+    Invoke-Mirror
     & $Mvn -pl main.game.maze.dsl -am generate-sources
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
@@ -111,6 +112,7 @@ function Ensure-GeneratedSources {
 
 function Invoke-LibgdxFullBuild {
     Ensure-GeneratedSources
+    Invoke-Mirror
     $cmd = "$Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install"
     Write-Host "=== Running libGDX full build: $cmd ===" -ForegroundColor Cyan
     & $Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install
@@ -124,6 +126,7 @@ function Invoke-LibgdxFullBuild {
 function Invoke-LibgdxQuickBuild {
     param([switch]$SkipTests)
     Ensure-GeneratedSources
+    Invoke-Mirror
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
     Write-Host "=== Running libGDX quick build (skipTests=$skipValue) ===" -ForegroundColor Cyan
     # install, so the local Maven repository (single-module builds, the IDE) matches the sources
@@ -154,6 +157,7 @@ function Ensure-LibgdxLaunchClasses {
         Write-Host "libGDX launch artifacts are stale: $($staleCheck.Reason)" -ForegroundColor Yellow
     }
 
+    Invoke-Mirror
     Write-Host 'Building and installing the libGDX runtime (jars + dependencies)...' -ForegroundColor Yellow
     & $Mvn -pl $LibgdxModules -am -DskipTests=true install
     $exit = $LASTEXITCODE

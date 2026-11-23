@@ -4,6 +4,7 @@ Bundle-SymbolicName: maze-generator.freemarker-runner
 Bundle-Name: maze-generator.freemarker-runner
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.app,

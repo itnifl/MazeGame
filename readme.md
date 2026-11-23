@@ -25,7 +25,7 @@
 * 🎨 [maze-javafx](maze-javafx/readme.md) — JavaFX backend adapters
 * 🎮 [maze-libgdx](maze-libgdx/readme.md) — libGDX OpenGL game runtime and desktop UI
 * 🛠️ [Build tool readme](build-tool-readme.md) - **Fast build paths and no mirror rebuild commands**
-* ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 x86_64 prerequisite installer
+* ⚙️ [install-linux.sh](install-linux.sh) — complete Ubuntu 24.04 and 26.04 x86_64 prerequisite installer
 * 📋 [Requirements & Features](docs/requirements-features/) - **Game rules, maze generation rules, and feature backlog**
   * 📄 [Game Rules](docs/requirements-features/game-rules.md) (GR-1..26)
   * 📄 [Maze Generation Rules](docs/requirements-features/maze-generation-rules.md) (MGR-1..19)
@@ -64,9 +64,27 @@ Both frontends share the identical game rules, scoring engine, maze generation, 
 
 ## Quick start
 
-### Ubuntu 24.04 x86_64
+### Windows
 
-From the repository root, run the native installer:
+From the repository root in PowerShell 7+:
+
+```powershell
+./start-windows.ps1
+```
+
+The launcher runs `install.ps1` if setup is missing or incomplete, then builds and starts the libGDX game.
+
+### Ubuntu 24.04 and 26.04 x86_64
+
+To check setup and start the libGDX game, run from the repository root:
+
+```bash
+./start-linux
+```
+
+The launcher runs the installer with `sudo` if setup is missing or incomplete, then builds the game if needed and starts it. Run it from a graphical desktop session. The first build may download Maven dependencies.
+
+To install prerequisites separately, run:
 
 ```bash
 sudo ./install-linux.sh
@@ -107,6 +125,9 @@ sudo env \
   MAZEGAME_PROFILE_FILE=/path/to/profile.d/mazegame.sh \
   ./install-linux.sh
 ```
+
+If you set `MAZEGAME_PROFILE_FILE` during installation, set it to the same
+path when running `./start-linux`.
 
 After installation, run the `source` command printed by the installer, or log
 out and back in, then continue as your normal user rather than with `sudo`.
@@ -223,7 +244,7 @@ Check those terms before redistributing them.
 ## Prerequisites and setup
 
 > **Quick setup:** Automated installers are provided for all platforms — see the [Quick start](#quick-start) section above:
-> - **Ubuntu 24.04:** `sudo ./install-linux.sh`
+> - **Ubuntu 24.04 and 26.04:** `sudo ./install-linux.sh`
 > - **Windows / macOS / Linux:** `pwsh -File ./install.ps1 -JavaFX`
 >
 > The instructions below are for manual configuration or reference.
@@ -571,7 +592,9 @@ Helper scripts for installing prerequisites, packaging the source, and running r
 
 | Script | Purpose |
 |---|---|
-| ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 x86_64; reuses `install.ps1` for user setup |
+| ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 and 26.04 x86_64; reuses `install.ps1` for user setup |
+| 🎮 [start-linux](start-linux) | Check setup and launch the libGDX game on Linux |
+| 🎮 [start-windows.ps1](start-windows.ps1) | Check setup and launch the libGDX game on Windows |
 | ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
 | 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
 | 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |

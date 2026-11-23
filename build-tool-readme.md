@@ -15,9 +15,10 @@ need local compile and test feedback.
 | JavaFX (full game + Tycho Eclipse plugins) | [make-javafx.ps1](make-javafx.ps1) | [make-javafx](make-javafx) | [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) |
 | libGDX (LWJGL3 launcher + headless gameplay core) | [make-libgdx.ps1](make-libgdx.ps1) | [make-libgdx](make-libgdx) | [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) |
 
-The libGDX chain is plain Maven (no Tycho, no p2 mirror) and only builds
-`maze-common-frontend` and `maze-libgdx`. The JavaFX chain drives the full
-reactor including the Eclipse-plugin and Xtext modules.
+The libGDX chain builds `maze-common-frontend`, `maze-libgdx`, and their
+reactor dependencies. Its Eclipse-plugin modules use the local p2 mirror, which
+the build refreshes when missing or its inputs change. The JavaFX chain drives the full reactor
+including the Eclipse-plugin and Xtext modules.
 
 ## VS Code launch environment file
 
@@ -167,10 +168,11 @@ Windows for every pull request.
 
 1. Java 21 is required for all reactor workflows.
 2. Fast paths use `verify` instead of `clean verify` for speed.
-3. Mirror rebuild (JavaFX chain only) is expensive. Use it when target
-   platform inputs changed, or when dependencies look stale.
-4. The libGDX scripts do not touch Tycho or the p2 mirror; they only need
-   Maven Central reachability for the libGDX 1.12.1 dependencies.
+3. Both build chains use the local Eclipse p2 mirror. Building it can take
+   time and requires access to the Eclipse repositories configured in
+   `releng/mirror/pom.xml`; Maven dependencies also require Maven Central.
+4. An up-to-date libGDX launch does not rebuild the mirror or need network
+   access. Builds refresh the mirror when it is missing or its inputs change.
 
 ### Interrupted or slow p2 mirror downloads
 
