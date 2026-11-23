@@ -9,6 +9,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-Activator: main.game.maze.dsl.ui.internal.DslActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"
 Export-Package: main.game.maze.dsl.ui,
  main.game.maze.dsl.ui.contentassist,
  main.game.maze.dsl.ui.highlighting,

@@ -8,6 +8,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=21))"
 Eclipse-ExtensibleAPI: true
 Eclipse-RegisterBuddy: org.eclipse.emf.ecore
 Export-Package: main.game.maze.behaviour,
