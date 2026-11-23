@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
  *   <li>{@code gameBackGround2.png}, normal: a lush meadow (layered noise, thousands of grass blades, shaded
  *       clumps, clover and flowers) with patches of burning grass: scorched earth, a charred rim, glowing
  *       embers, flame tongues and drifting smoke.</li>
+ *   <li>{@code gameBackGround3.png}, hard: a volcanic wasteland, cracked black basalt veined with glowing lava,
+ *       slabs of rock, drifting ash, bleached bones, dead twigs and rising embers.</li>
  * </ul>
  * Deterministic.
  *
@@ -30,6 +32,7 @@ public final class BackgroundGenerator {
     static final int SIZE = 1024;
     private static final long SEED = 2024L;
     private static final long WOODS_SEED = 7L;
+    private static final long WASTELAND_SEED = 666L;
 
     private BackgroundGenerator() {
     }
@@ -41,6 +44,194 @@ public final class BackgroundGenerator {
         System.out.println("wrote gameBackGround1.png");
         ImageIO.write(meadow(), "png", dir.resolve("gameBackGround2.png").toFile());
         System.out.println("wrote gameBackGround2.png");
+        ImageIO.write(wasteland(), "png", dir.resolve("gameBackGround3.png").toFile());
+        System.out.println("wrote gameBackGround3.png");
+    }
+
+    // --- hard: volcanic wasteland -----------------------------------------------------------------
+
+    static BufferedImage wasteland() {
+        BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_RGB);
+        Random random = new Random(WASTELAND_SEED);
+        paintGround(image, random, new Color(0x14, 0x10, 0x14), new Color(0x4a, 0x3c, 0x3a));
+        Graphics2D g = image.createGraphics();
+        try {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // cooled slabs of basalt, each with a lit top edge and a dark underside
+            for (int i = 0; i < 130; i++) {
+                slab(g, random, random.nextDouble() * SIZE, random.nextDouble() * SIZE, 18 + random.nextDouble() * 38);
+            }
+            // heat haze under the cracks, then the cracks themselves
+            for (int i = 0; i < 14; i++) {
+                lavaCrack(g, random, random.nextDouble() * SIZE, random.nextDouble() * SIZE, 5 + random.nextInt(4));
+            }
+            for (int i = 0; i < 2600; i++) {
+                double x = random.nextDouble() * SIZE;
+                double y = random.nextDouble() * SIZE;
+                double r = 0.8 + random.nextDouble() * 1.6;
+                int shade = 20 + random.nextInt(60);
+                g.setColor(new Color(shade + 12, shade + 6, shade + 6, 150));
+                wrapped(x, y, r, (px, py) -> g.fill(new Ellipse2D.Double(px - r, py - r, r * 2, r * 2)));
+            }
+            for (int i = 0; i < 34; i++) {
+                deadTwig(g, random, random.nextDouble() * SIZE, random.nextDouble() * SIZE);
+            }
+            for (int i = 0; i < 9; i++) {
+                bone(g, random, random.nextDouble() * SIZE, random.nextDouble() * SIZE);
+            }
+            for (int i = 0; i < 5; i++) {
+                skull(g, random.nextDouble() * SIZE, random.nextDouble() * SIZE, 7 + random.nextDouble() * 3);
+            }
+            // drifting ash, then embers glowing and floating above everything
+            for (int i = 0; i < 40; i++) {
+                blob(g, random.nextDouble() * SIZE, random.nextDouble() * SIZE, 40 + random.nextDouble() * 70,
+                        new Color(0x70, 0x68, 0x68, 22));
+            }
+            for (int i = 0; i < 160; i++) {
+                double r = 1.0 + random.nextDouble() * 1.8;
+                glow(g, random.nextDouble() * SIZE, random.nextDouble() * SIZE, r * 3,
+                        random.nextBoolean() ? new Color(0xff, 0x6a, 0x10, 200) : new Color(0xff, 0xc0, 0x40, 200));
+            }
+        } finally {
+            g.dispose();
+        }
+        return image;
+    }
+
+    private static void slab(Graphics2D g, Random random, double x, double y, double size) {
+        int corners = 6 + random.nextInt(3);
+        double[] radius = new double[corners];
+        for (int i = 0; i < corners; i++) {
+            radius[i] = size * (0.7 + random.nextDouble() * 0.4);
+        }
+        double tilt = random.nextDouble() * Math.PI;
+        wrapped(x, y, size * 1.3, (px, py) -> {
+            Path2D shape = new Path2D.Double();
+            for (int i = 0; i < corners; i++) {
+                double a = tilt + Math.PI * 2 * i / corners;
+                double sx = px + Math.cos(a) * radius[i];
+                double sy = py + Math.sin(a) * radius[i] * 0.75;
+                if (i == 0) {
+                    shape.moveTo(sx, sy);
+                } else {
+                    shape.lineTo(sx, sy);
+                }
+            }
+            shape.closePath();
+            g.setColor(new Color(0x05, 0x04, 0x06, 90));
+            g.translate(2.5, 3.5);
+            g.fill(shape);
+            g.translate(-2.5, -3.5);
+            g.setColor(new Color(0x24, 0x1e, 0x22, 235));
+            g.fill(shape);
+            g.setColor(new Color(0x4a, 0x3e, 0x40, 170));
+            g.setStroke(new BasicStroke(1.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.draw(shape);
+        });
+    }
+
+    /** A jagged crack that wanders from (x, y) and forks now and then, glowing from deep red to yellow-white. */
+    private static void lavaCrack(Graphics2D g, Random random, double x, double y, int forks) {
+        double heading = random.nextDouble() * Math.PI * 2;
+        java.util.List<double[]> branches = new java.util.ArrayList<>();
+        branches.add(new double[] {x, y, heading, 26});
+        for (int b = 0; b < branches.size() && b < forks + 1; b++) {
+            double[] branch = branches.get(b);
+            double cx = branch[0];
+            double cy = branch[1];
+            double h = branch[2];
+            int steps = (int) branch[3];
+            java.util.List<double[]> points = new java.util.ArrayList<>();
+            points.add(new double[] {cx, cy});
+            for (int i = 0; i < steps; i++) {
+                h += (random.nextDouble() - 0.5) * 0.6;
+                double step = 6 + random.nextDouble() * 9;
+                cx += Math.cos(h) * step;
+                cy += Math.sin(h) * step;
+                points.add(new double[] {cx, cy});
+                if (random.nextInt(14) == 0 && branches.size() < forks + 1) {
+                    branches.add(new double[] {cx, cy, h + (random.nextBoolean() ? 0.6 : -0.6), steps / 2.0});
+                }
+            }
+            float[] widths = {11f, 6f, 3.2f, 1.4f};
+            Color[] colours = {new Color(0xff, 0x4a, 0x08, 34), new Color(0xd0, 0x28, 0x06, 120),
+                new Color(0xff, 0x7a, 0x14, 230), new Color(0xff, 0xe2, 0x80, 245)};
+            for (int layer = 0; layer < widths.length; layer++) {
+                g.setStroke(new BasicStroke(widths[layer], BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g.setColor(colours[layer]);
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        Path2D path = new Path2D.Double();
+                        for (int i = 0; i < points.size(); i++) {
+                            double px = points.get(i)[0] + dx * SIZE;
+                            double py = points.get(i)[1] + dy * SIZE;
+                            if (i == 0) {
+                                path.moveTo(px, py);
+                            } else {
+                                path.lineTo(px, py);
+                            }
+                        }
+                        g.draw(path);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void deadTwig(Graphics2D g, Random random, double x, double y) {
+        double angle = random.nextDouble() * Math.PI * 2;
+        double length = 14 + random.nextDouble() * 18;
+        wrapped(x, y, length, (px, py) -> {
+            g.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.setColor(new Color(0x16, 0x10, 0x0e, 240));
+            double ex = px + Math.cos(angle) * length;
+            double ey = py + Math.sin(angle) * length;
+            g.draw(new java.awt.geom.Line2D.Double(px, py, ex, ey));
+            for (int k = 1; k <= 2; k++) {
+                double mx = px + (ex - px) * k / 3.0;
+                double my = py + (ey - py) * k / 3.0;
+                double a = angle + (k == 1 ? 0.7 : -0.7);
+                g.draw(new java.awt.geom.Line2D.Double(mx, my, mx + Math.cos(a) * length * 0.3, my + Math.sin(a) * length * 0.3));
+            }
+        });
+    }
+
+    private static void bone(Graphics2D g, Random random, double x, double y) {
+        double angle = random.nextDouble() * Math.PI * 2;
+        double length = 14 + random.nextDouble() * 8;
+        wrapped(x, y, length, (px, py) -> {
+            double dx = Math.cos(angle) * length / 2;
+            double dy = Math.sin(angle) * length / 2;
+            g.setColor(new Color(0x00, 0x00, 0x00, 70));
+            g.setStroke(new BasicStroke(3.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.draw(new java.awt.geom.Line2D.Double(px - dx + 1, py - dy + 2, px + dx + 1, py + dy + 2));
+            g.setColor(new Color(0xd8, 0xd0, 0xbc));
+            g.draw(new java.awt.geom.Line2D.Double(px - dx, py - dy, px + dx, py + dy));
+            for (int end = -1; end <= 1; end += 2) {
+                double ex = px + dx * end;
+                double ey = py + dy * end;
+                g.fill(new Ellipse2D.Double(ex - 2.4, ey - 2.4, 3.2, 3.2));
+                g.fill(new Ellipse2D.Double(ex - 0.8 + Math.sin(angle) * 1.6, ey - 0.8 - Math.cos(angle) * 1.6, 3.2, 3.2));
+            }
+        });
+    }
+
+    private static void skull(Graphics2D g, double x, double y, double size) {
+        wrapped(x, y, size * 1.5, (px, py) -> {
+            g.setColor(new Color(0x00, 0x00, 0x00, 70));
+            g.fill(new Ellipse2D.Double(px - size * 0.9, py - size * 0.5, size * 2, size * 1.8));
+            g.setColor(new Color(0xdc, 0xd4, 0xc0));
+            g.fill(new Ellipse2D.Double(px - size, py - size * 0.9, size * 2, size * 1.7));
+            g.fill(new java.awt.geom.RoundRectangle2D.Double(px - size * 0.55, py + size * 0.4, size * 1.1, size * 0.8, 3, 3));
+            g.setColor(new Color(0x14, 0x0c, 0x0c));
+            g.fill(new Ellipse2D.Double(px - size * 0.72, py - size * 0.25, size * 0.6, size * 0.7));
+            g.fill(new Ellipse2D.Double(px + size * 0.12, py - size * 0.25, size * 0.6, size * 0.7));
+            g.fill(new Ellipse2D.Double(px - size * 0.12, py + size * 0.35, size * 0.24, size * 0.3));
+            // a faint ember glow still in the sockets
+            g.setColor(new Color(0xff, 0x5a, 0x10, 200));
+            g.fill(new Ellipse2D.Double(px - size * 0.5, py + size * 0.05, size * 0.2, size * 0.2));
+            g.fill(new Ellipse2D.Double(px + size * 0.3, py + size * 0.05, size * 0.2, size * 0.2));
+        });
     }
 
     static BufferedImage meadow() {
