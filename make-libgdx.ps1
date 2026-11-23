@@ -158,8 +158,9 @@ function Ensure-LibgdxLaunchClasses {
     }
 
     Invoke-Mirror
-    Write-Host 'Building and installing the libGDX runtime (jars + dependencies)...' -ForegroundColor Yellow
-    & $Mvn -pl $LibgdxModules -am -DskipTests=true install
+    Write-Host 'Clean-building and installing the libGDX runtime (jars + dependencies)...' -ForegroundColor Yellow
+    # Discard classes compiled by another JDK (for example, by the IDE).
+    & $Mvn -pl $LibgdxModules -am -DskipTests=true clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX prepare-run build failed with exit code $exit."
