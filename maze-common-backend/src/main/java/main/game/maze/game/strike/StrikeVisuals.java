@@ -1,6 +1,7 @@
 package main.game.maze.game.strike;
 
 import main.game.maze.game.items.PickupCatalog;
+import main.game.maze.game.items.PickupKind;
 
 /**
  * How the strike weapons look and sound, the same in both frontends: the animated soldier sprites, the grenade lying on
@@ -23,6 +24,19 @@ public final class StrikeVisuals {
     /** A grenade lying on the floor is drawn this many times the item size; the nuclear one larger, so it is seen. */
     public static final double LYING_SIZE_FACTOR = 0.7;
     public static final double LYING_NUCLEAR_SIZE_FACTOR = 1.1;
+    /** The bomb an airstrike drops, falling nose down, and the shadow it casts. */
+    public static final String AERIAL_BOMB_SPRITE = "/main/game/maze/strike/aerial-bomb.png";
+    public static final String BOMB_SHADOW_SPRITE = "/main/game/maze/strike/bomb-shadow.png";
+    /** An airstrike bomb is seen for this long before it hits, falling from {@link #FALL_HEIGHT_PX} above its target. */
+    public static final double FALL_SECONDS = 0.7;
+    public static final double FALL_HEIGHT_PX = 260.0;
+
+    /**
+     * An airstrike bomb on its way down: {@code height} pixels above the point it will hit (drawn that far "up" the
+     * screen), its size, and how dark and big its shadow on the floor is (0 to 1, growing as it comes down).
+     */
+    public record Falling(double x, double y, double height, double size, double shadow) {
+    }
     /** The soldiers' gunfire, rate limited so ten soldiers do not play ten sounds at once. */
     public static final String SOLDIER_FIRE_SOUND = "/main/game/maze/sounds/gatling-burst.wav";
     public static final String SOLDIER_FIRE_SOUND_KEY = "infantry.fire";
@@ -61,6 +75,19 @@ public final class StrikeVisuals {
     /** The sprite of the weapon a blast lies on the floor as (the grenade itself), or null to draw only the fuse glow. */
     public static String lyingSprite(ScheduledBlast blast, PickupCatalog items) {
         return blast.showsFuse() && blast.source() != null ? items.spec(blast.source()).sprite() : null;
+    }
+
+    /**
+     * The airstrike bomb as it is seen falling, or null while it is still too high (or for anything that is not dropped
+     * from the air).
+     */
+    public static Falling fallingBomb(ScheduledBlast blast, PickupCatalog items) {
+        if (blast.source() != PickupKind.AIRSTRIKE || blast.showsFuse() || blast.secondsLeft() > FALL_SECONDS) {
+            return null;
+        }
+        double left = blast.secondsLeft() / FALL_SECONDS;     // 1 when it comes into view, 0 when it hits
+        double height = FALL_HEIGHT_PX * left * left;            // it speeds up as it falls
+        return new Falling(blast.x(), blast.y(), height, items.itemSize() * LYING_SIZE_FACTOR, 1 - left);
     }
 
     /** Size of the lying weapon's sprite. */

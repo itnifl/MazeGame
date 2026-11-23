@@ -492,3 +492,11 @@ These requirements have been implemented and verified.
 - **SR-411** *(UX)*: Show the soldiers' health over their heads while the squad is in the maze, and flash a soldier that is hit by a ranged enemy, so the player can see the squad being shot down.
 
 - **SR-412** *(Testing)*: Keep the rendered snapshots of the screens between levels (`target/menu-snapshots`) as approved images and compare against them in CI with a small tolerance, in both frontends (libGDX through an offscreen frame buffer), so a broken style or layout is caught without looking.
+
+### Dropped weapons and main menu follow-ons (SR-413, SR-414)
+
+- **SR-415** *(UX)*: Show the aircraft of an airstrike flying over the target (a shadow crossing the maze and the drone of engines) before the bombs fall, and let the bomb's fuse spark animate (two frames) while it burns.
+
+- **SR-416** *(Code quality)*: In libGDX the falling airstrike bombs are floor sprites, drawn with the enemies; give the world view a layer above the characters for things in the air (falling bombs, the mushroom cloud's cap), as JavaFX has with its view order.
+
+- **SR-417** *(12-factor)*: The main menu reads the savepoint for its Load button from a fixed location; take it from the same configurable location as SR-371 so a test or a portable install can point the menu at its own savepoint.

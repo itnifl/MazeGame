@@ -39,7 +39,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -98,8 +97,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_STYLE         = "-fx-background-color: rgba(255,229,110,0.90); -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(232,197,79,0.95); -fx-text-fill: #251700; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
-    private static final double PLAYER_BOMB_FUSE_SECONDS = 3.0;
-    private static final double PLAYER_BOMB_RANGE = 220.0;
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
     private static final double PLAYER_FLAME_VISUAL_SECONDS = FireBlast.DEFAULT_LIFETIME_SECONDS;
     /** Full corridor width: 85 %³ of one maze hallway (≈ 37 px) for a snug fit. */
@@ -219,7 +216,6 @@ public class GameController implements Initializable, EnemyRegistrar {
                                            String label) {
             nuclearBlastAt(x, y, damage, radius, hurtsPlayer, label);
         }
-        @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
         @Override public void impactShake() {
@@ -238,10 +234,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     /** Rubble draws in front of the board like the other explosions. */
     private static final double RUBBLE_VIEW_ORDER = -9;
 
-    private final List<ActivePlayerBomb> activePlayerBombs = new ArrayList<>();
 
-    private record ActivePlayerBomb(double x, double y, Circle marker, PauseTransition fuse) {
-    }
 
     // Extracted coordinators
     private final FxEnemyCoordinator  enemyCoordinator;
@@ -440,40 +433,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     /** Points the local player earned for kills this game. */
     public int localKillPoints() {
         return weapons.localKillPoints();
-    }
-
-    private void plantPlayerBomb(double centerX, double centerY) {
-        if (gameBoard == null) {
-            return;
-        }
-        Circle marker = new Circle(centerX, centerY, 8.0);
-        marker.setFill(Color.rgb(40, 40, 40, 0.9));
-        marker.setStroke(Color.rgb(255, 191, 71, 0.95));
-        marker.setStrokeWidth(2.2);
-        marker.setViewOrder(-8);
-        gameBoard.getChildren().add(marker);
-
-        PauseTransition fuse = new PauseTransition(Duration.seconds(PLAYER_BOMB_FUSE_SECONDS));
-        ActivePlayerBomb bomb = new ActivePlayerBomb(centerX, centerY, marker, fuse);
-        activePlayerBombs.add(bomb);
-        setHudMessage("Bomb planted", Duration.seconds(1.2));
-        fuse.setOnFinished(evt -> detonatePlayerBomb(bomb));
-        fuse.playFromStart();
-    }
-
-    private void detonatePlayerBomb(ActivePlayerBomb bomb) {
-        if (!activePlayerBombs.remove(bomb)) {
-            return;
-        }
-        if (gameBoard != null) {
-            gameBoard.getChildren().remove(bomb.marker());
-        }
-        // the "extra long flames" bought in the shop make the bomb reach further and hit harder this level
-        var boosts = weapons.boosts();
-        blastAt(bomb.x(), bomb.y(),
-                boosts.boostedBombDamage(playerCharacter != null ? playerCharacter.getFlameAttackDamage()
-                        : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION),
-                boosts.boostedBombRange(PLAYER_BOMB_RANGE), true, "Bomb");
     }
 
     /**
@@ -810,7 +769,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void setupGame() {
-        clearActivePlayerBombs();
         resurrections.cancelAll();
         remainsLayer.clearAll();
         hpBar.setProgress(1.0);
@@ -1066,7 +1024,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void dispose() {
-        clearActivePlayerBombs();
         hazards.dispose();
         guardTowers.dispose();
         wallBuilders.dispose();
@@ -1091,15 +1048,5 @@ public class GameController implements Initializable, EnemyRegistrar {
             playerCharacter.dispose();
             playerCharacter = null;
         }
-    }
-
-    private void clearActivePlayerBombs() {
-        for (ActivePlayerBomb bomb : activePlayerBombs) {
-            bomb.fuse().stop();
-            if (gameBoard != null) {
-                gameBoard.getChildren().remove(bomb.marker());
-            }
-        }
-        activePlayerBombs.clear();
     }
 }

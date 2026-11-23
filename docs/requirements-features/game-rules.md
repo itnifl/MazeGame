@@ -374,3 +374,5 @@ MUST be added to the shared core, not to a single frontend.
   soldier as they would the player; a rocket's blast hurts the player and the soldiers in it.
 - **GR-91**: The shop stands its items on a shelf per tier; Left and Right move between the
   shelves, Up and Down along one.
+- **GR-92**: The planted bomb lies as a bomb with a burning fuse and goes off after 3 s (flames
+  220 px); an airstrike's bombs are seen falling onto their shadows in the 0.7 s before they hit.

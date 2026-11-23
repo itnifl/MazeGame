@@ -45,6 +45,48 @@
     -fx-effect: dropshadow(gaussian, ${colour.SHADOW}, 3, 0.9, 0, 2);
 }
 
+.menu-banner-text.menu-title {
+    -fx-font-size: 46px;
+    -fx-padding: 2 18 2 18;
+}
+
+.menu-combo {
+<@plate "CARD" 7/>
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+.menu-combo:hover, .menu-combo:showing {
+<@plate "CARD_SELECTED" 7/>
+}
+.menu-combo .list-cell {
+    -fx-text-fill: ${colour.TEXT};
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+    -fx-padding: 4 10 4 10;
+}
+.menu-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+.menu-combo .arrow {
+    -fx-background-color: ${colour.PRICE};
+}
+.combo-box-popup .list-view {
+    -fx-background-color: rgba(16,20,16,0.97);
+    -fx-border-color: ${colour.PRICE};
+    -fx-border-width: 1;
+}
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: ${colour.TEXT};
+    -fx-font-family: "${font}";
+    -fx-font-size: 15px;
+    -fx-padding: 5 10 5 10;
+}
+.combo-box-popup .list-cell:filled:hover, .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: rgba(85,94,38,0.9);
+    -fx-text-fill: ${colour.TITLE};
+}
+
 .menu-heading {
     -fx-text-fill: ${colour.TITLE};
     -fx-font-size: 15px;

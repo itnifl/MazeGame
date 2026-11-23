@@ -185,7 +185,11 @@ public final class GdxStrikeSupport {
         }
     }
 
-    /** Each grenade or bomb lying on the floor, drawn as the weapon itself (the nuclear grenade larger), in screen space. */
+    /**
+     * Each bomb or grenade lying on the floor, drawn as the weapon itself (the nuclear grenade larger), and each airstrike
+     * bomb in the moment before it hits: its shadow on the floor and the bomb falling towards it (up is +y on screen).
+     * Screen space.
+     */
     public static List<SpriteVisual> lyingSprites(GameWorldModel model, MazeArena maze) {
         if (maze == null) {
             return List.of();
@@ -198,6 +202,15 @@ public final class GdxStrikeSupport {
             if (sprite != null) {
                 sprites.add(new SpriteVisual((float) blast.x(), height - (float) blast.y(),
                         (float) StrikeVisuals.lyingSize(blast, items), 0f, false, sprite));
+            }
+            StrikeVisuals.Falling drop = StrikeVisuals.fallingBomb(blast, items);
+            if (drop != null) {
+                float x = (float) drop.x();
+                float y = height - (float) drop.y();
+                sprites.add(new SpriteVisual(x, y, (float) (drop.size() * (0.4 + 0.6 * drop.shadow())), 0f, false,
+                        StrikeVisuals.BOMB_SHADOW_SPRITE));
+                sprites.add(new SpriteVisual(x, y + (float) drop.height(), (float) drop.size(), 0f, false,
+                        StrikeVisuals.AERIAL_BOMB_SPRITE));
             }
         }
         return sprites;

@@ -52,6 +52,11 @@ public final class PickupSpriteGenerator {
         write(dir, "airstrike.png", airstrike());
         write(dir, "infantry-strike.png", infantryStrike());
         write(dir, "life-refill.png", lifeRefill());
+        // what an airstrike drops: the bomb falling nose down, and the shadow it casts on the floor
+        Path strike = dir.resolveSibling("strike");
+        Files.createDirectories(strike);
+        write(strike, "aerial-bomb.png", aerialBomb());
+        write(strike, "bomb-shadow.png", bombShadow());
     }
 
     /** A pineapple hand grenade: a ridged egg body, the lever and the ring; an optional glow (plasma). */
@@ -218,6 +223,41 @@ public final class PickupSpriteGenerator {
             g.setColor(new Color(0xd8, 0x20, 0x30));
             g.fillRect(14, 11, 4, 12);
             g.fillRect(10, 15, 12, 4);
+        });
+    }
+
+    /** An aircraft bomb falling nose down: olive drab body with a yellow band, tail fins at the top. */
+    static BufferedImage aerialBomb() {
+        return draw(g -> {
+            // tail fins
+            g.setColor(OUTLINE);
+            g.fillRect(9, 1, 14, 7);
+            g.setColor(new Color(0x5a, 0x63, 0x4a));
+            g.fillRect(10, 2, 12, 5);
+            g.setColor(OUTLINE);
+            g.fillRect(15, 1, 2, 7);
+            // body
+            g.setColor(OUTLINE);
+            g.fill(new Ellipse2D.Double(9, 5, 14, 26));
+            g.setColor(new Color(0x4b, 0x55, 0x2e));
+            g.fill(new Ellipse2D.Double(10, 6, 12, 24));
+            g.setColor(new Color(0x6e, 0x7c, 0x45));
+            g.fillRect(12, 9, 3, 15);
+            // yellow band and nose fuze
+            g.setColor(new Color(0xe8, 0xb9, 0x23));
+            g.fillRect(10, 11, 12, 3);
+            g.setColor(new Color(0x9a, 0x9e, 0xae));
+            g.fillRect(15, 29, 2, 2);
+        });
+    }
+
+    /** The soft dark ellipse a falling bomb casts on the floor. */
+    static BufferedImage bombShadow() {
+        return draw(g -> {
+            g.setColor(new Color(0, 0, 0, 60));
+            g.fill(new Ellipse2D.Double(4, 10, 24, 12));
+            g.setColor(new Color(0, 0, 0, 90));
+            g.fill(new Ellipse2D.Double(8, 12, 16, 8));
         });
     }
 
@@ -526,6 +566,6 @@ public final class PickupSpriteGenerator {
 
     private static void write(Path dir, String name, BufferedImage image) throws IOException {
         ImageIO.write(image, "png", dir.resolve(name).toFile());
-        System.out.println("wrote pickups/" + name);
+        System.out.println("wrote " + dir.getFileName() + "/" + name);
     }
 }

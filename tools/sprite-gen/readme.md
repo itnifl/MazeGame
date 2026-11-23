@@ -189,6 +189,8 @@ weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma
 over crossed rifles), `life-refill.png` (a medkit). The single `soldier.png` of the first version (helmet, green
 uniform, rifle) was replaced by the animated soldier of `SoldierSpriteGenerator` (below). The existing sprites come out unchanged.
 
+`PickupSpriteGenerator` also draws what an airstrike drops into `strike/`: `aerial-bomb.png` (an aircraft bomb falling nose down) and `bomb-shadow.png` (the shadow it casts).
+
 ## MenuThemeSpriteGenerator
 
 Draws the textures of the screens between levels (win screen and shop) into `ui/`: a riveted gunmetal `panel.png` (9-slice 30), the olive-drab title plate `banner.png` (14), the tiling `hazard-strip.png`, the ammo-crate item cards `card.png`, `card-selected.png` (amber glow) and `card-locked.png` (12), the icon well `slot.png` (10), the metal-plate buttons `button-go.png`, `button-buy.png`, `button-steel.png`, `button-danger.png` (10), the rank chevrons `tier-cheap.png`, `tier-medium.png`, `tier-expensive.png`, the skull coin `token.png`, the padlock `lock.png` and the edge-darkening `vignette.png`. Icons are drawn at twice the size they are shown at. Where each is used is the menu theme model (`menutheme.mazegame`).

@@ -100,4 +100,38 @@ class StrikePlannerTest {
         assertEquals(buster.damage(), impact.damage());
         assertTrue(buster.piercePower() > ITEMS.spec(PickupKind.LASER_RIFLE).damage() * 10, "it goes through walls");
     }
+
+    @Test
+    @DisplayName("the player's bomb lies at their feet as the bomb, fuse burning, and goes off like before (3 s, 220 px)")
+    void plantedBomb() {
+        ScheduledBlast bomb = StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 40, 50, 90, LevelBoosts.NONE);
+        assertEquals(PickupKind.BOMB, bomb.source());
+        assertTrue(bomb.showsFuse() && bomb.hurtsPlayer());
+        assertEquals(StrikePlanner.BOMB_FUSE_SECONDS, bomb.secondsLeft(), 1e-9);
+        assertEquals(90, bomb.damage());
+        assertEquals(StrikePlanner.BOMB_RANGE, bomb.radius(), 1e-9);
+        assertEquals(ITEMS.spec(PickupKind.BOMB).sprite(), StrikeVisuals.lyingSprite(bomb, ITEMS), "drawn as the bomb");
+        ScheduledBlast boosted = StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 0, 0, 90, new LevelBoosts(1.0, 2.0));
+        assertEquals(180, boosted.damage(), "the shop's flame boost");
+        assertEquals(2 * StrikePlanner.BOMB_RANGE, boosted.radius(), 1e-9);
+    }
+
+    @Test
+    @DisplayName("airstrike bombs are seen falling onto their target in the last moment before they hit")
+    void fallingAirstrikeBombs() {
+        ScheduledBlast bomb = StrikePlanner.airstrike(ITEMS.spec(PickupKind.AIRSTRIKE), 800, 600, new Random(1)).get(0);
+        assertEquals(PickupKind.AIRSTRIKE, bomb.source());
+        assertEquals(null, StrikeVisuals.fallingBomb(bomb, ITEMS), "still too high to be seen");
+        assertEquals(null, StrikeVisuals.lyingSprite(bomb, ITEMS), "it never lies on the floor");
+        ScheduledBlast coming = bomb.after(bomb.secondsLeft() - StrikeVisuals.FALL_SECONDS);
+        StrikeVisuals.Falling top = StrikeVisuals.fallingBomb(coming, ITEMS);
+        assertEquals(StrikeVisuals.FALL_HEIGHT_PX, top.height(), 1e-6);
+        assertEquals(0.0, top.shadow(), 1e-6);
+        StrikeVisuals.Falling low = StrikeVisuals.fallingBomb(coming.after(StrikeVisuals.FALL_SECONDS * 0.9), ITEMS);
+        assertTrue(low.height() < top.height() / 10, "it speeds up as it falls: " + low.height());
+        assertTrue(low.shadow() > 0.8, "the shadow darkens as it comes down");
+        assertEquals(bomb.x(), low.x(), 1e-9);
+        assertEquals(null, StrikeVisuals.fallingBomb(StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 0, 0, 1, null), ITEMS),
+                "only what is dropped from the air falls");
+    }
 }

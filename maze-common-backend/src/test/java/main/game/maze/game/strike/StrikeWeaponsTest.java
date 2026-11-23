@@ -91,4 +91,17 @@ class StrikeWeaponsTest {
         private InfantrySquadTestTerrain() {
         }
     }
+
+    @Test
+    @DisplayName("a planted bomb lies with the grenades and goes off after its fuse")
+    void plantedBombGoesOff() {
+        StrikeWeapons strikes = new StrikeWeapons(ITEMS, new Random(1));
+        strikes.plantBomb(30, 40, 75, LevelBoosts.NONE);
+        assertEquals(1, strikes.pendingBlasts().size());
+        assertTrue(strikes.tick(StrikePlanner.BOMB_FUSE_SECONDS - 0.1, List.of(), null).blasts().isEmpty());
+        List<ScheduledBlast> due = strikes.tick(0.2, List.of(), null).blasts();
+        assertEquals(1, due.size());
+        assertEquals(75, due.get(0).damage());
+        assertTrue(strikes.pendingBlasts().isEmpty());
+    }
 }

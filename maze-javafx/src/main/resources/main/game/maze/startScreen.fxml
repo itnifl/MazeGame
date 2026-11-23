@@ -1,36 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="main.game.maze.StartController"
-            style="-fx-background-color: linear-gradient(to bottom, #1d0d2f 0%, #0e1a2f 45%, #12241b 100%);">
+<!-- The main menu. View only: the texts are the shared StartMenuText and the look (textures, colours, the buttons'
+     plates) is the menu theme model, applied by StartController through FxMenuTheme, as on the libGDX main menu. -->
+<AnchorPane fx:id="screenRoot" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.game.maze.StartController">
 
-    <VBox alignment="CENTER" spacing="18" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
-        <Label text="MAZE GAME" style="-fx-font-size: 52px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffe56e; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0.4, 0, 3);" />
-        <Label text="Retro Challenge Mode" style="-fx-font-size: 20px; -fx-font-family: 'Consolas'; -fx-text-fill: #8fffe0; -fx-font-weight: bold;" />
+    <ImageView fx:id="backdrop" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+               preserveRatio="false" fitWidth="${screenRoot.width}" fitHeight="${screenRoot.height}" />
+    <Pane styleClass="menu-vignette" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" />
 
-        <VBox alignment="CENTER" spacing="10" maxWidth="560" style="-fx-background-color: rgba(0,0,0,0.44); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 24; -fx-background-radius: 10; -fx-border-radius: 10;">
-            <Label text="Select Difficulty" style="-fx-font-size: 22px; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-text-fill: #ffffff;" />
-            <ComboBox fx:id="difficultyCombo" prefWidth="320" style="-fx-font-size: 16px; -fx-font-family: 'Consolas'; -fx-background-color: #102238; -fx-border-color: #8fffe0; -fx-text-fill: #f2f8ff;" />
+    <VBox alignment="CENTER" spacing="10" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+        <StackPane styleClass="menu-banner" maxWidth="-Infinity">
+            <Label fx:id="titleLabel" styleClass="menu-banner-text, menu-title" />
+        </StackPane>
+        <Label fx:id="subtitleLabel" styleClass="menu-credits" />
+
+        <VBox styleClass="menu-panel" alignment="CENTER" spacing="10" maxWidth="560" maxHeight="-Infinity">
+            <Region styleClass="menu-hazard" maxWidth="Infinity" />
+            <Label fx:id="selectLabel" styleClass="menu-heading" />
+            <ComboBox fx:id="difficultyCombo" styleClass="menu-combo" prefWidth="340" />
 
             <HBox alignment="CENTER" spacing="14">
-                <Button text="Start Mission" onAction="#onStart" prefWidth="170" style="-fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
-                <Button text="High Scores" onAction="#onHighScores" prefWidth="170" style="-fx-background-color: #8fffe0; -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                <Button fx:id="startButton" onAction="#onStart" prefWidth="170" />
+                <Button fx:id="highScoresButton" onAction="#onHighScores" prefWidth="170" />
             </HBox>
+            <Button fx:id="loadButton" onAction="#onLoad" prefWidth="354" />
 
-            <Button fx:id="loadButton" text="Load" onAction="#onLoad" prefWidth="354" style="-fx-background-color: #99c7ff; -fx-text-fill: #0d2145; -fx-font-family: 'Consolas'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand;" />
-
-            <Label text="Arrow keys to move, P path hint, O spanning tree, H high score, ESC restart menu" style="-fx-font-size: 13px; -fx-font-family: 'Consolas'; -fx-text-fill: #d7fff5;" wrapText="true" maxWidth="520" />
-            <Label fx:id="error" textFill="orangered" style="-fx-font-family: 'Consolas'; -fx-font-size: 14px; -fx-font-weight: bold;" />
+            <Label fx:id="controlsLabel" styleClass="menu-muted" wrapText="true" maxWidth="480" />
+            <Label fx:id="error" styleClass="menu-bad" />
+            <Region styleClass="menu-hazard" maxWidth="Infinity" />
         </VBox>
 
-        <Label text="Collect the heart, avoid enemies, and maximize your score" style="-fx-font-size: 14px; -fx-font-family: 'Consolas'; -fx-text-fill: #ffe56e;" />
+        <Label fx:id="taglineLabel" styleClass="menu-price" />
     </VBox>
 </AnchorPane>

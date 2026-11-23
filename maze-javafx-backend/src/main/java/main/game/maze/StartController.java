@@ -34,6 +34,15 @@ public class StartController implements Initializable {
     @FXML private ComboBox<Difficulty> difficultyCombo;
     @FXML private Label error;
     @FXML private Button loadButton;
+    @FXML private AnchorPane screenRoot;
+    @FXML private javafx.scene.image.ImageView backdrop;
+    @FXML private Label titleLabel;
+    @FXML private Label subtitleLabel;
+    @FXML private Label selectLabel;
+    @FXML private Label controlsLabel;
+    @FXML private Label taglineLabel;
+    @FXML private Button startButton;
+    @FXML private Button highScoresButton;
 
     /** The last level entered, as it was entered: what the Load button loads (empty: nothing saved yet). */
     private Optional<SavePoint> savedGame = Optional.empty();
@@ -45,6 +54,7 @@ public class StartController implements Initializable {
     public void setStage(Stage s) { this.stage = s; }
 
     @Override public void initialize(URL url, ResourceBundle rb) {
+        applyTheme();
         var diffs = FXCollections.observableArrayList(svc.list());
         difficultyCombo.setItems(diffs);
         difficultyCombo.setConverter(new StringConverter<>() {
@@ -72,6 +82,23 @@ public class StartController implements Initializable {
         });
 
             AudioEngine.get().playLoop(resolveMenuMusicPath(), AudioChannelConstants.MENU_MUSIC);
+    }
+
+    /** The look of the main menu (the menu theme model) and its texts, the same as the libGDX main menu. */
+    private void applyTheme() {
+        if (screenRoot == null) {
+            return;   // an older layout without the themed nodes
+        }
+        main.game.maze.javafx.menu.FxMenuTheme.apply(screenRoot);
+        backdrop.setImage(main.game.maze.javafx.menu.FxMenuTheme.image(main.game.maze.game.theme.MenuTheme.Art.BACKDROP));
+        titleLabel.setText(main.game.maze.game.theme.StartMenuText.TITLE);
+        subtitleLabel.setText(main.game.maze.game.theme.StartMenuText.SUBTITLE);
+        selectLabel.setText(main.game.maze.game.theme.StartMenuText.SELECT_DIFFICULTY);
+        controlsLabel.setText(main.game.maze.game.theme.StartMenuText.controls(false));
+        taglineLabel.setText(main.game.maze.game.theme.StartMenuText.TAGLINE);
+        main.game.maze.javafx.menu.FxMenuTheme.style(startButton, main.game.maze.game.theme.MenuButton.START_MISSION);
+        main.game.maze.javafx.menu.FxMenuTheme.style(highScoresButton, main.game.maze.game.theme.MenuButton.HIGH_SCORES);
+        main.game.maze.javafx.menu.FxMenuTheme.style(loadButton, main.game.maze.game.theme.MenuButton.LOAD);
     }
 
     @FXML private void onStart() throws IOException {

@@ -173,21 +173,44 @@ public final class GdxMenuSkin {
 
     /** The olive title plate with {@code title} on it, centred under {@code top}; returns the y of its bottom. */
     public float banner(SpriteBatch batch, BitmapFont font, GlyphLayout layout, String title, float centreX, float top) {
-        font.getData().setScale(1.7f);
+        return banner(batch, font, layout, title, 1.7f, BANNER_H, centreX, top);
+    }
+
+    /** As above, with the text drawn at {@code scale} on a plate {@code height} tall (the main menu's big title). */
+    public float banner(SpriteBatch batch, BitmapFont font, GlyphLayout layout, String title, float scale, float height,
+                        float centreX, float top) {
+        font.getData().setScale(scale);
         layout.setText(font, title);
-        float width = layout.width + 70f;
-        plate(batch, MenuTheme.Art.BANNER, centreX - width / 2f, top - BANNER_H, width, BANNER_H);
-        centred(batch, font, layout, title, colour(MenuTheme.Swatch.TITLE), centreX, top - (BANNER_H - layout.height) / 2f);
+        float width = layout.width + 40f + 18f * scale;
+        plate(batch, MenuTheme.Art.BANNER, centreX - width / 2f, top - height, width, height);
+        centred(batch, font, layout, title, colour(MenuTheme.Swatch.TITLE), centreX, top - (height - layout.height) / 2f);
         font.getData().setScale(1f);
-        return top - BANNER_H;
+        return top - height;
+    }
+
+    /** Text wrapped to {@code width}, centred in it, its first line's top at y, with the drop shadow. */
+    public void wrapped(SpriteBatch batch, BitmapFont font, String text, Color colour, float x, float y, float width) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        font.setColor(colour(MenuTheme.Swatch.SHADOW));
+        font.draw(batch, text, x + 1f, y - 1.5f, width, com.badlogic.gdx.utils.Align.center, true);
+        font.setColor(colour);
+        font.draw(batch, text, x, y, width, com.badlogic.gdx.utils.Align.center, true);
     }
 
     /** A button: its metal plate and its label, centred. {@code enabled} false draws it dimmed. */
     public void button(SpriteBatch batch, BitmapFont font, GlyphLayout layout, MenuButton kind, float x, float y, float w,
                        float h, boolean enabled) {
+        button(batch, font, layout, kind, kind.label(), x, y, w, h, enabled);
+    }
+
+    /** As above, with another label on the plate (e.g. the Load button saying what it loads). */
+    public void button(SpriteBatch batch, BitmapFont font, GlyphLayout layout, MenuButton kind, String label, float x,
+                       float y, float w, float h, boolean enabled) {
         plate(batch, kind.art(), x, y, w, h, enabled ? Color.WHITE : DIMMED);
-        layout.setText(font, kind.label());
-        text(batch, font, kind.label(), colour(MenuTheme.Swatch.BUTTON_TEXT), x + (w - layout.width) / 2f,
-                y + (h + layout.height) / 2f);
+        layout.setText(font, label);
+        text(batch, font, label, enabled ? colour(MenuTheme.Swatch.BUTTON_TEXT) : colour(MenuTheme.Swatch.MUTED),
+                x + (w - layout.width) / 2f, y + (h + layout.height) / 2f);
     }
 }

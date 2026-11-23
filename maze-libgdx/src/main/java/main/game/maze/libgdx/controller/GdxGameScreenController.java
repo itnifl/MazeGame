@@ -11,7 +11,6 @@ import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.ArsenalHud;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.common.graphics.fire.FireBlast;
-import main.game.maze.libgdx.model.BombFuseGlow;
 import main.game.maze.libgdx.model.FireBlastVisual;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -109,8 +108,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     static final float GOAL_SIZE = 50f;
     static final int MAX_ENEMY_TICKS_PER_FRAME = 4;
-    private static final float PLAYER_BOMB_FUSE_SECONDS = 3.0f;
-    private static final float PLAYER_FLAME_RANGE = 220.0f;
     private static final float PLAYER_FLAME_VISUAL_SECONDS = (float) FireBlast.DEFAULT_LIFETIME_SECONDS;
     private static final long SEED = 1L;
     private static final float ROUTE_HINT_PENALTY_PER_SEC = 50f;
@@ -163,7 +160,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     /** Where the player respawns after losing a life (the level start). */
     private float playerStartX;
     private float playerStartY;
-    private final List<PendingPlayerBomb> pendingPlayerBombs = new ArrayList<>();
     private final List<ActivePlayerFireBlast> activePlayerFireBlasts = new ArrayList<>();
     private static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
     private final GameSessionStartFlowCoordinator gameSessionStartFlowCoordinator = new GameSessionStartFlowCoordinator();
@@ -260,9 +256,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     final GdxGameOverOverlayView gameOverOverlayView = new GdxGameOverOverlayView();
     final GdxInfectionOverlayView infectionOverlayView = new GdxInfectionOverlayView();
     HudLayout hudLayout = HudLayout.zero();
-
-    private record PendingPlayerBomb(float x, float y, float fuseSecondsRemaining) {
-    }
 
     private record ActivePlayerFireBlast(FireBlast blast, float ttlSecondsRemaining) {
     }
@@ -591,7 +584,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private void useClassicWeapon(Weapon used, PickupCatalog catalog) {
         switch (used) {
             case BOMB -> {
-                pendingPlayerBombs.add(new PendingPlayerBomb(player.x(), player.y(), PLAYER_BOMB_FUSE_SECONDS));
+                // it lies at the player's feet as a bomb with a burning fuse; the strike tick sets it off (setOff)
+                worldModel.strikes().plantBomb(player.x(), maze.heightPx() - player.y(), playerBombDamage,
+                        worldModel.boosts());
                 flashStatus("Bomb planted", 1.2f);
             }
             case LASER_RIFLE -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
@@ -716,17 +711,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             return;
         }
 
-        for (int i = pendingPlayerBombs.size() - 1; i >= 0; i--) {
-            PendingPlayerBomb bomb = pendingPlayerBombs.get(i);
-            float remainingFuse = bomb.fuseSecondsRemaining() - dt;
-            if (remainingFuse > 0f) {
-                pendingPlayerBombs.set(i, new PendingPlayerBomb(bomb.x(), bomb.y(), remainingFuse));
-                continue;
-            }
-            pendingPlayerBombs.remove(i);
-            detonatePlayerBomb(bomb.x(), bomb.y());
-        }
-
         for (int i = activePlayerFireBlasts.size() - 1; i >= 0; i--) {
             ActivePlayerFireBlast active = activePlayerFireBlasts.get(i);
             float ttl = active.ttlSecondsRemaining() - dt;
@@ -778,13 +762,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             if (rules.voiceSound() != null) AudioEngine.get().play(rules.voiceSound());
             statusMessageBus.showBanner(rules.bannerText(), (float) rules.bannerSeconds());
         }
-    }
-
-    private void detonatePlayerBomb(float x, float y) {
-        // the "extra long flames" bought in the shop make the bomb reach further and hit harder this level
-        var boosts = worldModel.boosts();
-        detonateBlast(x, y, boosts.boostedBombDamage(playerBombDamage), (float) boosts.boostedBombRange(PLAYER_FLAME_RANGE),
-                true, "Bomb");
     }
 
     /**
@@ -856,10 +833,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private void emitPlayerFlameVisuals() {
         worldModel.bombFuseGlows().clear();
-        for (PendingPlayerBomb bomb : pendingPlayerBombs) {
-            float alpha = Math.max(0.35f, Math.min(1f, bomb.fuseSecondsRemaining() / PLAYER_BOMB_FUSE_SECONDS));
-            worldModel.bombFuseGlows().add(new BombFuseGlow(bomb.x(), bomb.y(), 8f, alpha));
-        }
         GdxStrikeSupport.addFuseGlows(worldModel, maze, enemyAnimationClock);
 
         worldModel.fireBlasts().clear();
@@ -1125,7 +1098,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         combatState.setShield(() -> worldModel.shield().isActive());
         pickupSpawnPoints = worldModel.pickupField().spawnPointsOf(GdxWallDamageSupport.worldFrom(maze));
         playerBombDamage = Math.max(1, startFlow.startState().runtimeModel().playerBombDamage());
-        pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();
         worldModel.enemyBursts().clear();
@@ -1201,7 +1173,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     public void dispose() {
         watchWallCollapses(null);
         worldModel.retiredShooters().clear();
-        pendingPlayerBombs.clear();
         activePlayerFireBlasts.clear();
         worldModel.fireBlasts().clear();
         worldModel.enemyBursts().clear();

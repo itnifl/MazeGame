@@ -99,6 +99,16 @@ public final class StrikeWeapons {
         schedule.add(blast);
     }
 
+    /**
+     * Plants the player's bomb at (x, y) (world space) with the player's bomb damage; it lies there as a bomb with a
+     * burning fuse and {@link #tick} sets it off, like the grenades and the fat bomb.
+     */
+    public ScheduledBlast plantBomb(double x, double y, int damage, LevelBoosts boosts) {
+        ScheduledBlast bomb = StrikePlanner.plantedBomb(catalog.spec(Weapon.BOMB.pickup()), x, y, damage, boosts);
+        schedule.add(bomb);
+        return bomb;
+    }
+
     /** One frame of the fuses and of the soldiers. */
     public Frame tick(double dt, List<FlameTarget> enemies, InfantrySquad.Terrain terrain) {
         List<ScheduledBlast> due = schedule.tick(dt);

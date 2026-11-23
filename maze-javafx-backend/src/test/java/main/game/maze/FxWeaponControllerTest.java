@@ -15,6 +15,7 @@ import main.game.maze.game.items.Pickup;
 import main.game.maze.game.items.PickupCatalogLoader;
 import main.game.maze.game.items.PickupField;
 import main.game.maze.game.items.PickupKind;
+import main.game.maze.game.strike.ScheduledBlast;
 import main.game.maze.game.items.PowerShield;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
@@ -39,7 +40,6 @@ class FxWeaponControllerTest {
     /** Records what the controller asks the game screen to do. */
     private static final class RecordingHost implements FxWeaponController.Host {
         PlayerCharacter player = new PlayerCharacter(null, 0, 0, null);
-        final List<double[]> bombs = new ArrayList<>();
         final List<String> messages = new ArrayList<>();
         final List<String> blasts = new ArrayList<>();
         int arsenalChanges;
@@ -49,7 +49,6 @@ class FxWeaponControllerTest {
         @Override public Pane board() { return null; }
         @Override public FxEnemyCoordinator enemies() { return null; }
         @Override public int boardWidth() { return 800; }
-        @Override public void plantBomb(double x, double y) { bombs.add(new double[] {x, y}); }
         @Override public void redrawMaze() { }
         @Override public void showMessage(String text) { messages.add(text); }
         @Override public void arsenalChanged() { arsenalChanges++; }
@@ -107,14 +106,18 @@ class FxWeaponControllerTest {
         for (int i = 0; i < bombs; i++) {
             weapons.useWeapon();
         }
-        assertEquals(bombs, host.bombs.size());
-        assertEquals(100 + HALF, host.bombs.get(0)[0], 1e-9);
-        assertEquals(200 + HALF, host.bombs.get(0)[1], 1e-9);
-        assertTrue(host.messages.isEmpty());
+        List<ScheduledBlast> planted = weapons.pendingBlasts();
+        assertEquals(bombs, planted.size());
+        assertEquals(100 + HALF, planted.get(0).x(), 1e-9);
+        assertEquals(200 + HALF, planted.get(0).y(), 1e-9);
+        assertEquals(PickupKind.BOMB, planted.get(0).source(), "it lies there as the bomb, fuse burning");
+        assertTrue(planted.get(0).showsFuse());
+        assertEquals(host.player.getFlameAttackDamage(), planted.get(0).damage());
+        assertEquals(bombs, host.messages.size());
 
         weapons.useWeapon();
-        assertEquals(bombs, host.bombs.size(), "no bomb without stock");
-        assertEquals(List.of(FxWeaponController.OUT_OF_AMMO_MESSAGE), host.messages);
+        assertEquals(bombs, weapons.pendingBlasts().size(), "no bomb without stock");
+        assertEquals(FxWeaponController.OUT_OF_AMMO_MESSAGE, host.messages.get(host.messages.size() - 1));
     }
 
     @Test

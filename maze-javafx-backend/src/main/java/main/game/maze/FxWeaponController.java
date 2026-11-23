@@ -69,9 +69,6 @@ public final class FxWeaponController {
         /** Board width, which decides the item cap (small / medium / large maps). */
         int boardWidth();
 
-        /** Plants a bomb at the given board point. */
-        void plantBomb(double x, double y);
-
         /** Redraws the maze after the laser damaged a wall. */
         void redrawMaze();
 
@@ -103,6 +100,7 @@ public final class FxWeaponController {
 
 
     static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
+    static final String BOMB_PLANTED_MESSAGE = "Bomb planted";
     static final String OUT_OF_AMMO_MESSAGE = "Out of ammo - pick up weapons in the maze";
     /** Effects are drawn in front of the characters. */
     private static final int EFFECT_VIEW_ORDER = -9;
@@ -206,7 +204,7 @@ public final class FxWeaponController {
             return;
         }
         switch (used) {
-            case BOMB -> host.plantBomb(center[0], center[1]);
+            case BOMB -> plantBomb(player, center);
             case LASER_RIFLE, GATLING_GUN -> fireLaser(player, center, catalog.spec(used.pickup()));
             case SLEDGEHAMMER -> swingSledgehammer(player, center, catalog.spec(PickupKind.SLEDGEHAMMER));
             case PULSE_CANNON -> firePulseBeam(player, center, catalog.spec(PickupKind.PULSE_CANNON));
@@ -214,6 +212,12 @@ public final class FxWeaponController {
             case LIFE_REFILL -> refillLife(player, catalog.spec(PickupKind.LIFE_REFILL));
             default -> throw new IllegalStateException("no use defined for " + used);
         }
+    }
+
+    /** The bomb: it lies at the player's feet as a bomb with a burning fuse, and goes off like the grenades. */
+    private void plantBomb(PlayerCharacter player, double[] center) {
+        strikes.plantBomb(center[0], center[1], player.getFlameAttackDamage(), boosts);
+        host.showMessage(BOMB_PLANTED_MESSAGE);
     }
 
     /** Grenades, the fat bomb and the strikes: the shared {@link StrikeWeapons} plans them, {@link #tick} sets them off. */
@@ -464,6 +468,7 @@ public final class FxWeaponController {
         }
         strikeLayer.showSoldiers(strikes.soldiers(), StageConstants.PlayerCharacterXYSize * StrikeVisuals.SOLDIER_SIZE_FACTOR);
         strikeLayer.showFuses(strikes.pendingBlasts(), pickupField.catalog(), clockSeconds);
+        strikeLayer.showFalling(strikes.pendingBlasts(), pickupField.catalog());
     }
 
     /**
@@ -474,6 +479,11 @@ public final class FxWeaponController {
         SoldierTargets squad = strikes.soldierTargets();
         return SoldierTargets.of(squad::positions,
                 (soldier, damage) -> javafx.application.Platform.runLater(() -> squad.hit(soldier, damage)));
+    }
+
+    /** The bombs and grenades lying on the floor and the airstrike bombs on their way. */
+    public List<ScheduledBlast> pendingBlasts() {
+        return strikes.pendingBlasts();
     }
 
     /** Enemies this close to a soldier go for it instead of the player (items model). */

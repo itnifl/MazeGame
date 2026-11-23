@@ -18,7 +18,8 @@ import main.game.maze.game.strike.StrikeVisuals;
 /**
  * JavaFX view of the strike weapons (the model is the shared {@code StrikeWeapons}): the animated soldiers of the
  * infantry strike (sprite chosen by {@link StrikeVisuals#soldierSprite}) and each grenade or fat bomb lying on the floor,
- * drawn as itself with a flickering fuse ring (radioactive green round the nuclear grenade). Board coordinates are y-down,
+ * drawn as itself with a flickering fuse ring (radioactive green round the nuclear grenade), and the bombs of an airstrike
+ * falling in the moment before they hit. Board coordinates are y-down,
  * the same as the shared world. Views are pooled and reused frame by frame. Use on the JavaFX Application Thread.
  */
 public final class FxStrikeLayer {
@@ -26,11 +27,15 @@ public final class FxStrikeLayer {
     /** Soldiers are drawn with the characters; what lies on the floor, under them. */
     private static final double SOLDIER_VIEW_ORDER = -4;
     private static final double LYING_VIEW_ORDER = -3;
+    /** A falling airstrike bomb is drawn over everything; its shadow lies on the floor. */
+    private static final double FALLING_VIEW_ORDER = -12;
 
     private final Supplier<Pane> board;
     private final List<ImageView> soldierViews = new ArrayList<>();
     private final List<Circle> fuseViews = new ArrayList<>();
     private final List<ImageView> lyingViews = new ArrayList<>();
+    private final List<ImageView> fallingViews = new ArrayList<>();
+    private final List<ImageView> shadowViews = new ArrayList<>();
     private final Map<String, Image> images = new HashMap<>();
 
     public FxStrikeLayer(Supplier<Pane> board) {
@@ -100,6 +105,37 @@ public final class FxStrikeLayer {
         }
     }
 
+    /**
+     * The bombs of an airstrike in the last moment before they hit: each falling nose down towards its target, its
+     * shadow on the floor growing and darkening as it comes down ({@link StrikeVisuals#fallingBomb}).
+     */
+    public void showFalling(List<ScheduledBlast> blasts, PickupCatalog items) {
+        Pane pane = board.get();
+        if (pane == null) {
+            return;
+        }
+        List<StrikeVisuals.Falling> falling = blasts.stream().map(blast -> StrikeVisuals.fallingBomb(blast, items))
+                .filter(java.util.Objects::nonNull).toList();
+        grow(fallingViews, falling.size(), FALLING_VIEW_ORDER);
+        grow(shadowViews, falling.size(), LYING_VIEW_ORDER + 0.7);
+        for (int i = 0; i < fallingViews.size(); i++) {
+            ImageView bomb = fallingViews.get(i);
+            ImageView shadow = shadowViews.get(i);
+            if (i >= falling.size()) {
+                pane.getChildren().removeAll(bomb, shadow);
+                continue;
+            }
+            StrikeVisuals.Falling drop = falling.get(i);
+            attach(pane, shadow);
+            shadow.setImage(image(StrikeVisuals.BOMB_SHADOW_SPRITE));
+            place(shadow, drop.x(), drop.y(), drop.size() * (0.4 + 0.6 * drop.shadow()));
+            shadow.setOpacity(0.3 + 0.7 * drop.shadow());
+            attach(pane, bomb);
+            bomb.setImage(image(StrikeVisuals.AERIAL_BOMB_SPRITE));
+            place(bomb, drop.x(), drop.y() - drop.height(), drop.size());   // y-down: up the screen is minus
+        }
+    }
+
     /** Level teardown: removes every soldier, weapon and marker. */
     public void clear() {
         Pane pane = board.get();
@@ -107,7 +143,11 @@ public final class FxStrikeLayer {
             pane.getChildren().removeAll(soldierViews);
             pane.getChildren().removeAll(fuseViews);
             pane.getChildren().removeAll(lyingViews);
+            pane.getChildren().removeAll(fallingViews);
+            pane.getChildren().removeAll(shadowViews);
         }
+        fallingViews.clear();
+        shadowViews.clear();
         soldierViews.clear();
         fuseViews.clear();
         lyingViews.clear();

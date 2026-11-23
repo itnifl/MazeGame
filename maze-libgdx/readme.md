@@ -215,3 +215,4 @@ Unit tests in `maze-libgdx` verify rendering logic, physics, entity lifecycles, 
 - **GhostTangibilityParityTest**: Verifies F25 ghost phasing mechanics, `visibilityLevel` capping, and cross-frontend opacity parity with JavaFX `GhostNonTangibilityService`.
 - **SampleMazeTest & RealMazeTest**: Validates deterministic maze generation, axis-aligned walls, and dynamic synchronization with breakable wall state.
 - **PlayerStateTest & GdxCameraFollowTest**: Headless validation of player border clamping, goal proximity detection, and camera follow math.
+- **Dropped things and the main menu (SR-413, SR-414)** — the bomb is planted with `worldModel.strikes().plantBomb(..)` and drawn as the bomb by `GdxStrikeSupport.lyingSprites`, which also draws the airstrike bombs falling onto their shadows; `GdxStartMenuView` draws the main menu with `GdxMenuSkin` (title plate, panel, crate-card picker and list, metal-plate buttons).

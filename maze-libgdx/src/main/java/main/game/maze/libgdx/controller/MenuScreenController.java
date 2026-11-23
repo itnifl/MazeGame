@@ -5,11 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import java.util.ArrayList;
@@ -72,12 +70,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     private String loadingStatusText = "";
 
     private SpriteBatch batch;
-    private ShapeRenderer shapes;
     private BitmapFont font;
     private GlyphLayout glyphLayout;
     private OrthographicCamera hudCamera;
     private MenuLayout menuLayout = MenuLayout.zero();
-    private Texture menuIconTexture;
 
     public MenuScreenController(GdxGameContext context, Consumer<Difficulty> startGameAction, Runnable openLegacyMenuAction) {
         this(context, startGameAction, openLegacyMenuAction, null);
@@ -94,13 +90,11 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        shapes = new ShapeRenderer();
         font = new BitmapFont();
         glyphLayout = new GlyphLayout();
         hudCamera = new OrthographicCamera();
         font.setColor(Color.WHITE);
 
-        menuIconTexture = context().assets().getTexture(visualStyle.menuIconImagePath());
 
         savedGame = loadGameAction == null ? Optional.empty() : LoadGameMenu.latest(savePointStore);
         difficulties.clear();
@@ -158,7 +152,6 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     public void dispose() {
         audioCoordinator.stopAll();
         if (batch != null) batch.dispose();
-        if (shapes != null) shapes.dispose();
         if (font != null) font.dispose();
     }
 
@@ -258,7 +251,6 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     }
 
     private void queueMenuAndGameplayAssets(Difficulty selected) {
-        context().assets().queueTexture(visualStyle.menuIconImagePath());
         // the textures of the screens between levels (win screen, shop): the menu theme model
         main.game.maze.game.theme.MenuTheme theme = main.game.maze.game.theme.MenuThemeLoader.loadDefault();
         theme.images().values().forEach(image -> context().assets().queueTexture(image.path()));
@@ -331,11 +323,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
 
         menuLayout = startMenuView.render(new GdxStartMenuView.RenderContext(
                 batch,
-                shapes,
                 font,
                 glyphLayout,
                 hudCamera,
-                menuIconTexture,
+                path -> context().assets().getTexture(path),
                 difficultyNames,
                 selectedDifficultyIndex,
                 startMenuDropdownOpen,

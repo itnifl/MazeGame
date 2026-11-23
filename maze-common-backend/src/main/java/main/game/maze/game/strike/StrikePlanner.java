@@ -48,6 +48,22 @@ public final class StrikePlanner {
                 grenade.kind(), grenade.nuclear());
     }
 
+    /** Seconds the player's bomb burns before it goes off (both frontends). */
+    public static final double BOMB_FUSE_SECONDS = 3.0;
+    /** How far the flames of the player's bomb reach before the "extra long flames" boost. */
+    public static final double BOMB_RANGE = 220.0;
+
+    /**
+     * The player's bomb planted at their feet: it lies there as the bomb (its sprite in the items model, the fuse burning)
+     * and goes off after {@link #BOMB_FUSE_SECONDS} with flames that reach {@link #BOMB_RANGE}; it hurts the player too.
+     * {@code damage} is the player's bomb damage (the frontend's player model); the shop's flame boost makes both stronger.
+     */
+    public static ScheduledBlast plantedBomb(PickupSpec bomb, double x, double y, int damage, LevelBoosts boosts) {
+        LevelBoosts active = boosts == null ? LevelBoosts.NONE : boosts;
+        return new ScheduledBlast(BOMB_FUSE_SECONDS, BOMB_FUSE_SECONDS, x, y, active.boostedBombDamage(damage),
+                active.boostedBombRange(BOMB_RANGE), true, true, bomb.displayName(), bomb.kind(), false);
+    }
+
     /** A fat bomb planted at the player's feet; the "extra long flames" boost makes it stronger, like the bomb. */
     public static ScheduledBlast fatBomb(PickupSpec fatBomb, double x, double y, LevelBoosts boosts) {
         LevelBoosts active = boosts == null ? LevelBoosts.NONE : boosts;
@@ -85,8 +101,9 @@ public final class StrikePlanner {
             double x = clamp(aimX + Math.cos(angle) * distance, 0, boardWidth);
             double y = clamp(aimY + Math.sin(angle) * distance, 0, boardHeight);
             double delay = airstrike.fuseSeconds() + i * step;
+            // the bombs are not lying on the floor (no fuse marker); they are seen falling just before they hit
             plan.add(new ScheduledBlast(delay, delay, x, y, airstrike.damage(), airstrike.blastRadius(), false, false,
-                    airstrike.displayName()));
+                    airstrike.displayName(), airstrike.kind(), false));
         }
         return plan;
     }

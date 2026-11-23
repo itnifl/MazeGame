@@ -161,4 +161,29 @@ class GdxStrikeSupportTest {
         var sprites = GdxStrikeSupport.soldierSprites(world, openMaze(), 24f);
         assertTrue(sprites.get(0).spritePath().startsWith(main.game.maze.game.strike.StrikeVisuals.SOLDIER_DIR));
     }
+
+    @Test
+    @DisplayName("what the player drops looks like what it is: the bomb as a bomb, airstrike bombs falling onto their shadow")
+    void droppedThingsLookLikeThemselves() {
+        var maze = openMaze();
+        world.strikes().plantBomb(100, maze.heightPx() - 200, 50, null);
+        List<main.game.maze.libgdx.model.SpriteVisual> sprites = GdxStrikeSupport.lyingSprites(world, maze);
+        assertEquals(1, sprites.size());
+        assertEquals(world.pickupField().catalog().spec(PickupKind.BOMB).sprite(), sprites.get(0).spritePath());
+        assertEquals(200, sprites.get(0).y(), 1e-3, "screen space");
+
+        GdxStrikeSupport.use(world, maze, facingRight(), Weapon.AIRSTRIKE, List.of());
+        double fuse = world.pickupField().catalog().spec(PickupKind.AIRSTRIKE).fuseSeconds();
+        // the first bomb comes into view a moment before it hits; the planted bomb goes off on the way (3 s fuse)
+        GdxStrikeSupport.tick(world, List.of(), maze,
+                (float) (fuse - main.game.maze.game.strike.StrikeVisuals.FALL_SECONDS / 2), PlayerIds.LOCAL_PLAYER);
+        List<main.game.maze.libgdx.model.SpriteVisual> falling = GdxStrikeSupport.lyingSprites(world, maze);
+        assertTrue(falling.stream().anyMatch(v -> v.spritePath().equals(main.game.maze.game.strike.StrikeVisuals.AERIAL_BOMB_SPRITE)));
+        var shadow = falling.stream().filter(v -> v.spritePath().equals(main.game.maze.game.strike.StrikeVisuals.BOMB_SHADOW_SPRITE))
+                .findFirst().orElseThrow();
+        var bomb = falling.stream().filter(v -> v.spritePath().equals(main.game.maze.game.strike.StrikeVisuals.AERIAL_BOMB_SPRITE))
+                .findFirst().orElseThrow();
+        assertEquals(shadow.x(), bomb.x(), 1e-3);
+        assertTrue(bomb.y() > shadow.y(), "the bomb is still above its shadow (up is +y)");
+    }
 }

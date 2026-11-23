@@ -132,6 +132,24 @@ class BetweenLevelScreensTest {
         });
     }
 
+    @Test
+    @DisplayName("the main menu is themed too: the title plate, the riveted panel and metal-plate buttons")
+    void mainMenuRenders() throws Exception {
+        Path out = Path.of("target", "menu-snapshots");
+        Files.createDirectories(out);
+        onFx(() -> {
+            FXMLLoader loader = new FXMLLoader(StartController.class.getResource(ScreenNameFXMLConstants.StartScreen));
+            AnchorPane menu = loader.load();
+            assertTrue(menu.getStylesheets().contains(FxMenuTheme.stylesheet()));
+            assertEquals(main.game.maze.game.theme.StartMenuText.TITLE, ((Label) menu.lookup("#titleLabel")).getText());
+            Button start = (Button) menu.lookup("#startButton");
+            assertEquals("Start Mission", start.getText());
+            assertTrue(start.getStyleClass().contains("start-mission"));
+            assertTrue(menu.lookup("#difficultyCombo").getStyleClass().contains("menu-combo"));
+            assertDarkPlate(snapshot(menu, out.resolve("start.png")));
+        });
+    }
+
     private static void assertDarkPlate(BufferedImage image) {
         int rgb = image.getRGB(image.getWidth() / 2, image.getHeight() / 2 + 40);
         int brightness = ((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + (rgb & 0xff);
