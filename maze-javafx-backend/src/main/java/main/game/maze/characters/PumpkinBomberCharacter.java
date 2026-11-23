@@ -30,6 +30,7 @@ import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.constants.StageConstants;
 import main.game.maze.opponents.PumpkinBomber;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.opponents.ProjectileType;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.graphics.fire.FireBlast;
@@ -51,6 +52,8 @@ public class PumpkinBomberCharacter extends ComputerCharacter
     // ranged state
     private long lastShotMs = 0L;
     private final List<PumpkinProjectile> projectiles = new ArrayList<>();
+    /** The soldiers of the infantry strike (top-left corners, like the positions the bomber aims by); hit by its shots. */
+    private volatile SoldierTargets soldiers = SoldierTargets.NONE;
     private long burstCount;
     private Pane boardPane;
 
@@ -134,6 +137,27 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
     // ranged attack API (uses arcHeight instead of gravity)
 
+    /** The soldiers its shots can hit (set by the enemy coordinator every AI step). */
+    public void setSoldiers(SoldierTargets soldiers) {
+        this.soldiers = soldiers == null ? SoldierTargets.NONE : soldiers;
+    }
+
+    /**
+     * Whether a shot from here can hit (x, y): within the attack range and, unless it lobs its pumpkins over the walls, with
+     * no wall in between. Used to pick a soldier to shoot at ({@code RangedTargeting}).
+     */
+    public boolean canHit(double x, double y) {
+        double range = defaultIfNull(model.getAttackRange(), 350.0);
+        double sx = getCharacterPosition().getX();
+        double sy = getCharacterPosition().getY();
+        if (Math.hypot(x - sx, y - sy) > range) {
+            return false;
+        }
+        return model.getProjectileType() == ProjectileType.LOB
+                || App.gameController == null
+                || !App.gameController.isWallBetween(sx, sy, x, y);
+    }
+
     /**
      * Attempts to fire at the given target position.
      * Accepts logical coordinates (not node layout positions) so this can be
@@ -166,9 +190,13 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             if (blocked) {
                 LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] BEAM blocked by wall — target=(%.0f,%.0f)", sx, sy, tx, ty));
             } else {
-                ICanDie victim = resolveVictimNearPosition(tx, ty);
-                if (victim != null) {
-                    victim.subtractHitPoints(Math.max(1, defaultIfNull(model.getAttackDamage(), 5)));
+                int beamDamage = Math.max(1, defaultIfNull(model.getAttackDamage(), 5));
+                main.game.maze.mazeworld.Point2D soldier = soldiers.touching(tx, ty, 0);
+                ICanDie victim = soldier == null ? resolveVictimNearPosition(tx, ty) : null;
+                if (soldier != null) {
+                    soldiers.hit(soldier, beamDamage);
+                } else if (victim != null) {
+                    victim.subtractHitPoints(beamDamage);
                 }
                 LOG.fine(() -> String.format("[PumpkinBomber@(%.0f,%.0f)] BEAM fired — target=(%.0f,%.0f)", sx, sy, tx, ty));
             }
@@ -230,7 +258,15 @@ public class PumpkinBomberCharacter extends ComputerCharacter
 
             // early collision while flying — skip if the projectile already crossed a wall this tick
             boolean hitNow = false;
-            if (!blockedByWall) {
+            if (!blockedByWall && p.type == ProjectileType.STRAIGHT) {
+                // a soldier in the way takes the shot
+                main.game.maze.mazeworld.Point2D soldier = soldiers.touching(p.computedX, p.computedY, 0);
+                if (soldier != null) {
+                    soldiers.hit(soldier, p.damage);
+                    hitNow = true;
+                }
+            }
+            if (!blockedByWall && !hitNow) {
                 FxPositionBounds pb = new FxPositionBounds(p.node.getBoundsInParent());
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (p.type == ProjectileType.LOB) {
@@ -270,6 +306,9 @@ public class PumpkinBomberCharacter extends ComputerCharacter
             if (blockedByWall || hitNow || arrived || outOfBounds) {
                 // hitNow is always false for LOB (guarded by the continue above); kept for clarity.
                 boolean shouldApplySplash = p.type == ProjectileType.LOB && (arrived || outOfBounds);
+                if (shouldApplySplash) {
+                    soldiers.splash(p.computedX, p.computedY, p.splashRadius, p.damage);
+                }
                 for (ICanSubscribeAndNotifyPosition s : touchTargets) {
                     if (!(s instanceof ICanDie victim)) continue;
                     Node n = characterGraphicsOf(s);

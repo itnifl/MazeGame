@@ -95,6 +95,10 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.SHOP_CONFIG: return createShopConfig();
       case MazeDslPackage.SHOP_UNLOCK_CONFIG: return createShopUnlockConfig();
       case MazeDslPackage.SHOP_ITEM_CONFIG: return createShopItemConfig();
+      case MazeDslPackage.MENU_THEME_CONFIG: return createMenuThemeConfig();
+      case MazeDslPackage.THEME_SWATCH_CONFIG: return createThemeSwatchConfig();
+      case MazeDslPackage.THEME_IMAGE_CONFIG: return createThemeImageConfig();
+      case MazeDslPackage.THEME_BADGE_CONFIG: return createThemeBadgeConfig();
       case MazeDslPackage.LAST_LIFE_GIFT_CONFIG: return createLastLifeGiftConfig();
       case MazeDslPackage.TELEPORT_RULES_CONFIG: return createTeleportRulesConfig();
       default:
@@ -506,6 +510,54 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
   {
     ShopItemConfigImpl shopItemConfig = new ShopItemConfigImpl();
     return shopItemConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public MenuThemeConfig createMenuThemeConfig()
+  {
+    MenuThemeConfigImpl menuThemeConfig = new MenuThemeConfigImpl();
+    return menuThemeConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeSwatchConfig createThemeSwatchConfig()
+  {
+    ThemeSwatchConfigImpl themeSwatchConfig = new ThemeSwatchConfigImpl();
+    return themeSwatchConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeImageConfig createThemeImageConfig()
+  {
+    ThemeImageConfigImpl themeImageConfig = new ThemeImageConfigImpl();
+    return themeImageConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeBadgeConfig createThemeBadgeConfig()
+  {
+    ThemeBadgeConfigImpl themeBadgeConfig = new ThemeBadgeConfigImpl();
+    return themeBadgeConfig;
   }
 
   /**

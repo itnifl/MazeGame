@@ -259,7 +259,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
 
     private void queueMenuAndGameplayAssets(Difficulty selected) {
         context().assets().queueTexture(visualStyle.menuIconImagePath());
-        context().assets().queueTexture(ImageResourceConstants.WinOverlayBackdropImage);
+        // the textures of the screens between levels (win screen, shop): the menu theme model
+        main.game.maze.game.theme.MenuTheme theme = main.game.maze.game.theme.MenuThemeLoader.loadDefault();
+        theme.images().values().forEach(image -> context().assets().queueTexture(image.path()));
+        theme.badges().values().forEach(badge -> context().assets().queueTexture(badge.image()));
         context().assets().queueTexture(ImageResourceConstants.GameOverOverlayBackdropImage);
 
         if (selected == null) {

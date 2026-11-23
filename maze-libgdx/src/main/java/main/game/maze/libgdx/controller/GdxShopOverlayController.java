@@ -12,8 +12,8 @@ import main.game.maze.libgdx.view.GdxShopOverlayView;
 
 /**
  * Input of the shop between levels (#164) in libGDX, opened from the win overlay; the counterpart of the JavaFX
- * {@code ShopController}. The model is the shared {@link ShopMenu}. Up/Down (or W/S) choose, Enter or Space buy, Esc or
- * Done closes; a click selects a row, a click on the selected row (or on Buy) buys it.
+ * {@code ShopController}. The model is the shared {@link ShopMenu}. The arrows (or W/A/S/D) choose, Enter or Space buy,
+ * Esc or Done closes; a click selects a card, a click on the selected card (or on Buy) buys it.
  */
 public final class GdxShopOverlayController {
 
@@ -70,6 +70,12 @@ public final class GdxShopOverlayController {
         }
         if (justPressed.test(Input.Keys.DOWN) || justPressed.test(Input.Keys.S)) {
             menu.moveDown();
+        }
+        if (justPressed.test(Input.Keys.LEFT) || justPressed.test(Input.Keys.A)) {
+            menu.moveLeft();
+        }
+        if (justPressed.test(Input.Keys.RIGHT) || justPressed.test(Input.Keys.D)) {
+            menu.moveRight();
         }
         if (justPressed.test(Input.Keys.ENTER) || justPressed.test(Input.Keys.SPACE)) {
             buy();

@@ -92,6 +92,14 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     }
 
     public static final String INVALID_SHOP_ITEM = "invalidShopItem";
+    public static final String INVALID_THEME = "invalidTheme";
+
+    /** The literals of {@code Swatch} and {@code Art} in {@code xmi/theme/menutheme.ecore}. */
+    public static final java.util.List<String> THEME_SWATCHES = java.util.List.of("TITLE", "TEXT", "MUTED", "ACCENT", "PRICE",
+            "TOO_DEAR", "GOOD", "BAD", "BUTTON_TEXT", "SHADOW");
+    public static final java.util.List<String> THEME_ART = java.util.List.of("BACKDROP", "VIGNETTE", "HAZARD_STRIP", "PANEL",
+            "BANNER", "CARD", "CARD_SELECTED", "CARD_LOCKED", "SLOT", "BUTTON_GO", "BUTTON_BUY", "BUTTON_STEEL",
+            "BUTTON_DANGER", "TOKEN", "LOCK");
 
     /** The literals of {@code ShopItemKind} in {@code xmi/shop/shop.ecore}; the boosts are the first two. */
     public static final java.util.List<String> SHOP_ITEM_KINDS = java.util.List.of("SHIELD_BOOST", "FLAME_BOOST", "GRENADE",
@@ -108,6 +116,70 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
      * shop.xmi is written: an unknown kind or tier, a price that is not positive, a weapon without uses, a boost that does
      * not boost.
      */
+    @Check
+    public void checkThemeSwatch(ThemeSwatchConfig swatch) {
+        if (!THEME_SWATCHES.contains(swatch.getRole())) {
+            error("Unknown colour " + swatch.getRole() + "; one of " + THEME_SWATCHES,
+                  MazeDslPackage.Literals.THEME_SWATCH_CONFIG__ROLE, INVALID_THEME);
+        }
+        checkColour(swatch.getColour(), MazeDslPackage.Literals.THEME_SWATCH_CONFIG__COLOUR);
+    }
+
+    @Check
+    public void checkThemeImage(ThemeImageConfig image) {
+        if (!THEME_ART.contains(image.getRole())) {
+            error("Unknown image " + image.getRole() + "; one of " + THEME_ART,
+                  MazeDslPackage.Literals.THEME_IMAGE_CONFIG__ROLE, INVALID_THEME);
+        }
+        if (image.getPath() == null || !image.getPath().startsWith("/")) {
+            error("An image is a classpath path starting with /", MazeDslPackage.Literals.THEME_IMAGE_CONFIG__PATH,
+                  INVALID_THEME);
+        }
+        if (image.getSlice() != null && image.getSlice() < 0) {
+            error("A slice is 0 or more pixels", MazeDslPackage.Literals.THEME_IMAGE_CONFIG__SLICE, INVALID_THEME);
+        }
+    }
+
+    @Check
+    public void checkThemeBadge(ThemeBadgeConfig badge) {
+        if (!SHOP_TIERS.contains(badge.getTier())) {
+            error("Unknown tier " + badge.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.THEME_BADGE_CONFIG__TIER, INVALID_THEME);
+        }
+        checkColour(badge.getColour(), MazeDslPackage.Literals.THEME_BADGE_CONFIG__COLOUR);
+    }
+
+    private void checkColour(String colour, org.eclipse.emf.ecore.EAttribute feature) {
+        if (colour == null || !colour.matches("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})")) {
+            error("A colour is #rrggbb or #rrggbbaa, not " + colour, feature, INVALID_THEME);
+        }
+    }
+
+    /** The theme is complete: every colour, image and tier badge, each once (the game cannot draw a missing one). */
+    @Check
+    public void checkThemeIsComplete(MenuThemeConfig theme) {
+        checkEachOnce(theme.getSwatches().stream().map(ThemeSwatchConfig::getRole).toList(), THEME_SWATCHES, "colour",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__SWATCHES);
+        checkEachOnce(theme.getImages().stream().map(ThemeImageConfig::getRole).toList(), THEME_ART, "image",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__IMAGES);
+        checkEachOnce(theme.getBadges().stream().map(ThemeBadgeConfig::getTier).toList(), SHOP_TIERS, "tier badge",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__BADGES);
+    }
+
+    private void checkEachOnce(java.util.List<String> written, java.util.List<String> all, String what,
+                               org.eclipse.emf.ecore.EReference feature) {
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 0; i < written.size(); i++) {
+            if (!seen.add(written.get(i))) {
+                error("The theme has the " + what + " " + written.get(i) + " twice", feature, i, INVALID_THEME);
+            }
+        }
+        java.util.List<String> missing = all.stream().filter(name -> !seen.contains(name)).toList();
+        if (!missing.isEmpty()) {
+            error("The theme has no " + what + " for " + missing, feature, INVALID_THEME);
+        }
+    }
+
     @Check
     public void checkShopItem(ShopItemConfig item) {
         if (!SHOP_ITEM_KINDS.contains(item.getKind())) {

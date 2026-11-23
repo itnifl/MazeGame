@@ -26,6 +26,7 @@ import main.game.maze.dsl.mazeDsl.LootItemTypeEnum;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslFactory;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
+import main.game.maze.dsl.mazeDsl.MenuThemeConfig;
 import main.game.maze.dsl.mazeDsl.MineRingConfig;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
@@ -38,6 +39,9 @@ import main.game.maze.dsl.mazeDsl.ShopConfig;
 import main.game.maze.dsl.mazeDsl.ShopItemConfig;
 import main.game.maze.dsl.mazeDsl.ShopUnlockConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
+import main.game.maze.dsl.mazeDsl.ThemeBadgeConfig;
+import main.game.maze.dsl.mazeDsl.ThemeImageConfig;
+import main.game.maze.dsl.mazeDsl.ThemeSwatchConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
 import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
@@ -268,6 +272,34 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass menuThemeConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass themeSwatchConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass themeImageConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass themeBadgeConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass lastLifeGiftConfigEClass = null;
 
   /**
@@ -485,6 +517,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
   public EReference getGameConfiguration_Shop()
   {
     return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getGameConfiguration_Theme()
+  {
+    return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -2484,6 +2527,182 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getMenuThemeConfig()
+  {
+    return menuThemeConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMenuThemeConfig_Font()
+  {
+    return (EAttribute)menuThemeConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMenuThemeConfig_Swatches()
+  {
+    return (EReference)menuThemeConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMenuThemeConfig_Images()
+  {
+    return (EReference)menuThemeConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMenuThemeConfig_Badges()
+  {
+    return (EReference)menuThemeConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getThemeSwatchConfig()
+  {
+    return themeSwatchConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeSwatchConfig_Role()
+  {
+    return (EAttribute)themeSwatchConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeSwatchConfig_Colour()
+  {
+    return (EAttribute)themeSwatchConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getThemeImageConfig()
+  {
+    return themeImageConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeImageConfig_Role()
+  {
+    return (EAttribute)themeImageConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeImageConfig_Path()
+  {
+    return (EAttribute)themeImageConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeImageConfig_Slice()
+  {
+    return (EAttribute)themeImageConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getThemeBadgeConfig()
+  {
+    return themeBadgeConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeBadgeConfig_Tier()
+  {
+    return (EAttribute)themeBadgeConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeBadgeConfig_Image()
+  {
+    return (EAttribute)themeBadgeConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getThemeBadgeConfig_Colour()
+  {
+    return (EAttribute)themeBadgeConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLastLifeGiftConfig()
   {
     return lastLifeGiftConfigEClass;
@@ -2694,6 +2913,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LOOT_TABLES);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LEVELS);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__SHOP);
+    createEReference(gameConfigurationEClass, GAME_CONFIGURATION__THEME);
 
     importEClass = createEClass(IMPORT);
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
@@ -2904,6 +3124,26 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__FACTOR);
     createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__DESCRIPTION);
 
+    menuThemeConfigEClass = createEClass(MENU_THEME_CONFIG);
+    createEAttribute(menuThemeConfigEClass, MENU_THEME_CONFIG__FONT);
+    createEReference(menuThemeConfigEClass, MENU_THEME_CONFIG__SWATCHES);
+    createEReference(menuThemeConfigEClass, MENU_THEME_CONFIG__IMAGES);
+    createEReference(menuThemeConfigEClass, MENU_THEME_CONFIG__BADGES);
+
+    themeSwatchConfigEClass = createEClass(THEME_SWATCH_CONFIG);
+    createEAttribute(themeSwatchConfigEClass, THEME_SWATCH_CONFIG__ROLE);
+    createEAttribute(themeSwatchConfigEClass, THEME_SWATCH_CONFIG__COLOUR);
+
+    themeImageConfigEClass = createEClass(THEME_IMAGE_CONFIG);
+    createEAttribute(themeImageConfigEClass, THEME_IMAGE_CONFIG__ROLE);
+    createEAttribute(themeImageConfigEClass, THEME_IMAGE_CONFIG__PATH);
+    createEAttribute(themeImageConfigEClass, THEME_IMAGE_CONFIG__SLICE);
+
+    themeBadgeConfigEClass = createEClass(THEME_BADGE_CONFIG);
+    createEAttribute(themeBadgeConfigEClass, THEME_BADGE_CONFIG__TIER);
+    createEAttribute(themeBadgeConfigEClass, THEME_BADGE_CONFIG__IMAGE);
+    createEAttribute(themeBadgeConfigEClass, THEME_BADGE_CONFIG__COLOUR);
+
     lastLifeGiftConfigEClass = createEClass(LAST_LIFE_GIFT_CONFIG);
     createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__WEAPON);
     createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__SHOTS);
@@ -2968,6 +3208,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getGameConfiguration_LootTables(), this.getLootTableConfig(), null, "lootTables", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_Levels(), this.getLevelConfig(), null, "levels", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_Shop(), this.getShopConfig(), null, "shop", null, 0, 1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getGameConfiguration_Theme(), this.getMenuThemeConfig(), null, "theme", null, 0, 1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3177,6 +3418,26 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getShopItemConfig_Amount(), ecorePackage.getEIntegerObject(), "amount", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getShopItemConfig_Factor(), ecorePackage.getEDoubleObject(), "factor", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getShopItemConfig_Description(), ecorePackage.getEString(), "description", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(menuThemeConfigEClass, MenuThemeConfig.class, "MenuThemeConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMenuThemeConfig_Font(), ecorePackage.getEString(), "font", null, 0, 1, MenuThemeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMenuThemeConfig_Swatches(), this.getThemeSwatchConfig(), null, "swatches", null, 0, -1, MenuThemeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMenuThemeConfig_Images(), this.getThemeImageConfig(), null, "images", null, 0, -1, MenuThemeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMenuThemeConfig_Badges(), this.getThemeBadgeConfig(), null, "badges", null, 0, -1, MenuThemeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(themeSwatchConfigEClass, ThemeSwatchConfig.class, "ThemeSwatchConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getThemeSwatchConfig_Role(), ecorePackage.getEString(), "role", null, 0, 1, ThemeSwatchConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getThemeSwatchConfig_Colour(), ecorePackage.getEString(), "colour", null, 0, 1, ThemeSwatchConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(themeImageConfigEClass, ThemeImageConfig.class, "ThemeImageConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getThemeImageConfig_Role(), ecorePackage.getEString(), "role", null, 0, 1, ThemeImageConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getThemeImageConfig_Path(), ecorePackage.getEString(), "path", null, 0, 1, ThemeImageConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getThemeImageConfig_Slice(), ecorePackage.getEIntegerObject(), "slice", null, 0, 1, ThemeImageConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(themeBadgeConfigEClass, ThemeBadgeConfig.class, "ThemeBadgeConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getThemeBadgeConfig_Tier(), ecorePackage.getEString(), "tier", null, 0, 1, ThemeBadgeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getThemeBadgeConfig_Image(), ecorePackage.getEString(), "image", null, 0, 1, ThemeBadgeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getThemeBadgeConfig_Colour(), ecorePackage.getEString(), "colour", null, 0, 1, ThemeBadgeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lastLifeGiftConfigEClass, LastLifeGiftConfig.class, "LastLifeGiftConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLastLifeGiftConfig_Weapon(), ecorePackage.getEString(), "weapon", null, 0, 1, LastLifeGiftConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

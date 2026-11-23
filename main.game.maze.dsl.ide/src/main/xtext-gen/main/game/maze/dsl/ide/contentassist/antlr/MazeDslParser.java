@@ -122,6 +122,11 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_7(), "rule__ShopItemConfig__Group_7__0");
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_8(), "rule__ShopItemConfig__Group_8__0");
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_9(), "rule__ShopItemConfig__Group_9__0");
+			builder.put(grammarAccess.getMenuThemeConfigAccess().getGroup(), "rule__MenuThemeConfig__Group__0");
+			builder.put(grammarAccess.getThemeSwatchConfigAccess().getGroup(), "rule__ThemeSwatchConfig__Group__0");
+			builder.put(grammarAccess.getThemeImageConfigAccess().getGroup(), "rule__ThemeImageConfig__Group__0");
+			builder.put(grammarAccess.getThemeImageConfigAccess().getGroup_3(), "rule__ThemeImageConfig__Group_3__0");
+			builder.put(grammarAccess.getThemeBadgeConfigAccess().getGroup(), "rule__ThemeBadgeConfig__Group__0");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getGroup(), "rule__LastLifeGiftConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup(), "rule__TeleportRulesConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup_8(), "rule__TeleportRulesConfig__Group_8__0");
@@ -140,6 +145,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getGameConfigurationAccess().getLootTablesAssignment_7(), "rule__GameConfiguration__LootTablesAssignment_7");
 			builder.put(grammarAccess.getGameConfigurationAccess().getLevelsAssignment_8(), "rule__GameConfiguration__LevelsAssignment_8");
 			builder.put(grammarAccess.getGameConfigurationAccess().getShopAssignment_9(), "rule__GameConfiguration__ShopAssignment_9");
+			builder.put(grammarAccess.getGameConfigurationAccess().getThemeAssignment_10(), "rule__GameConfiguration__ThemeAssignment_10");
 			builder.put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
 			builder.put(grammarAccess.getDifficultyConfigAccess().getLevelAssignment_3(), "rule__DifficultyConfig__LevelAssignment_3");
 			builder.put(grammarAccess.getDifficultyConfigAccess().getInstantDeathAssignment_4_1(), "rule__DifficultyConfig__InstantDeathAssignment_4_1");
@@ -297,6 +303,18 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getShopItemConfigAccess().getAmountAssignment_7_1(), "rule__ShopItemConfig__AmountAssignment_7_1");
 			builder.put(grammarAccess.getShopItemConfigAccess().getFactorAssignment_8_1(), "rule__ShopItemConfig__FactorAssignment_8_1");
 			builder.put(grammarAccess.getShopItemConfigAccess().getDescriptionAssignment_9_1(), "rule__ShopItemConfig__DescriptionAssignment_9_1");
+			builder.put(grammarAccess.getMenuThemeConfigAccess().getFontAssignment_3(), "rule__MenuThemeConfig__FontAssignment_3");
+			builder.put(grammarAccess.getMenuThemeConfigAccess().getSwatchesAssignment_4(), "rule__MenuThemeConfig__SwatchesAssignment_4");
+			builder.put(grammarAccess.getMenuThemeConfigAccess().getImagesAssignment_5(), "rule__MenuThemeConfig__ImagesAssignment_5");
+			builder.put(grammarAccess.getMenuThemeConfigAccess().getBadgesAssignment_6(), "rule__MenuThemeConfig__BadgesAssignment_6");
+			builder.put(grammarAccess.getThemeSwatchConfigAccess().getRoleAssignment_1(), "rule__ThemeSwatchConfig__RoleAssignment_1");
+			builder.put(grammarAccess.getThemeSwatchConfigAccess().getColourAssignment_2(), "rule__ThemeSwatchConfig__ColourAssignment_2");
+			builder.put(grammarAccess.getThemeImageConfigAccess().getRoleAssignment_1(), "rule__ThemeImageConfig__RoleAssignment_1");
+			builder.put(grammarAccess.getThemeImageConfigAccess().getPathAssignment_2(), "rule__ThemeImageConfig__PathAssignment_2");
+			builder.put(grammarAccess.getThemeImageConfigAccess().getSliceAssignment_3_1(), "rule__ThemeImageConfig__SliceAssignment_3_1");
+			builder.put(grammarAccess.getThemeBadgeConfigAccess().getTierAssignment_1(), "rule__ThemeBadgeConfig__TierAssignment_1");
+			builder.put(grammarAccess.getThemeBadgeConfigAccess().getImageAssignment_2(), "rule__ThemeBadgeConfig__ImageAssignment_2");
+			builder.put(grammarAccess.getThemeBadgeConfigAccess().getColourAssignment_4(), "rule__ThemeBadgeConfig__ColourAssignment_4");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getWeaponAssignment_1(), "rule__LastLifeGiftConfig__WeaponAssignment_1");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getShotsAssignment_3(), "rule__LastLifeGiftConfig__ShotsAssignment_3");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsAssignment_3(), "rule__TeleportRulesConfig__CooldownSecondsAssignment_3");

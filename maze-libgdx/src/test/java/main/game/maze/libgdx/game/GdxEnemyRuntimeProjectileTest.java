@@ -517,4 +517,53 @@ class GdxEnemyRuntimeProjectileTest {
 
         assertEquals("H:0 S:1", runtime.projectileStats());
     }
+
+    /** Records the damage each soldier takes; the soldiers stand where {@code at} says. */
+    private static final class Soldiers {
+        final java.util.List<Integer> hits = new java.util.ArrayList<>();
+        final main.game.maze.game.targeting.SoldierTargets targets;
+
+        Soldiers(main.game.maze.mazeworld.Point2D... at) {
+            targets = main.game.maze.game.targeting.SoldierTargets.of(() -> List.of(at), (soldier, damage) -> hits.add(damage));
+        }
+    }
+
+    @Test
+    void straightShotGoesForASoldierBeforeThePlayer() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(rangedSpawn(ProjectileType.STRAIGHT, 0f, 0f), 0, openWorld(), 60f, 8);
+        Soldiers soldiers = new Soldiers(new main.game.maze.mazeworld.Point2D(120, 40));
+        int playerDamage = 0;
+        for (int i = 0; i < 60; i++) {
+            playerDamage += runtime.updateRangedAttacks(1f / 60f, openMaze(), 200f, 40f, 12f, null, soldiers.targets);
+        }
+        assertFalse(soldiers.hits.isEmpty(), "the soldier was shot");
+        assertEquals(0, playerDamage, "the player behind the soldier was not");
+    }
+
+    @Test
+    void beamAndLobHitTheSoldierTheyAimAt() {
+        GdxEnemyRuntime beam = GdxEnemyRuntime.fromSpawn(rangedSpawn(ProjectileType.BEAM, 0f, 0f), 0, openWorld(), 60f, 8);
+        Soldiers beamed = new Soldiers(new main.game.maze.mazeworld.Point2D(100, 100));
+        assertEquals(0, beam.updateRangedAttacks(1f / 60f, openMaze(), 120f, 40f, 12f, null, beamed.targets));
+        assertEquals(List.of(10), beamed.hits);
+
+        GdxEnemyRuntime lob = GdxEnemyRuntime.fromSpawn(rangedSpawn(ProjectileType.LOB, 70f, 80f, 160f), 0, openWorld(), 60f, 8);
+        Soldiers lobbed = new Soldiers(new main.game.maze.mazeworld.Point2D(120, 40));
+        for (int i = 0; i < 60 && lobbed.hits.isEmpty(); i++) {
+            lob.updateRangedAttacks(1f / 60f, wallMaze(), 300f, 300f, 12f, null, lobbed.targets);
+        }
+        assertEquals(10, lobbed.hits.get(0), "the pumpkin landed on the soldier");
+    }
+
+    @Test
+    void aSoldierBehindAWallIsPassedOverForThePlayer() {
+        GdxEnemyRuntime runtime = GdxEnemyRuntime.fromSpawn(rangedSpawn(ProjectileType.STRAIGHT, 0f, 0f), 0, openWorld(), 60f, 8);
+        Soldiers soldiers = new Soldiers(new main.game.maze.mazeworld.Point2D(160, 40));
+        int playerDamage = 0;
+        for (int i = 0; i < 120; i++) {
+            playerDamage += runtime.updateRangedAttacks(1f / 60f, wallMaze(), 40f, 200f, 12f, null, soldiers.targets);
+        }
+        assertTrue(soldiers.hits.isEmpty());
+        assertTrue(playerDamage > 0);
+    }
 }

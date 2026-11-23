@@ -75,4 +75,19 @@ class GdxShopOverlayControllerTest {
         shop.handleClick(250, 20);                 // Done
         assertFalse(shop.isOpen());
     }
+
+    @Test
+    @DisplayName("Left and Right (or A and D) move across the tier shelves")
+    void acrossTheShelves() {
+        ShopMenu menu = new ShopMenu(new LevelShop(ShopCatalogLoader.loadDefault(), betweenLevels(10_000)));
+        var shop = new GdxShopOverlayController(menu);
+        shop.open();
+        shop.handleKeys(Set.of(Input.Keys.RIGHT)::contains);
+        assertEquals(3, menu.selectedIndex(), "the first medium item");
+        shop.handleKeys(Set.of(Input.Keys.D)::contains);
+        assertEquals(7, menu.selectedIndex(), "the first expensive item");
+        shop.handleKeys(Set.of(Input.Keys.A)::contains);
+        shop.handleKeys(Set.of(Input.Keys.LEFT)::contains);
+        assertEquals(0, menu.selectedIndex(), "back on the cheap shelf");
+    }
 }

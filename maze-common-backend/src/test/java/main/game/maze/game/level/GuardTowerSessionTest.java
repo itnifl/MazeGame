@@ -159,4 +159,46 @@ class GuardTowerSessionTest {
         session.reset();
         assertTrue(session.rockets().isEmpty());
     }
+
+    @Test
+    @DisplayName("a tower shoots a soldier it sees before the player, and its rocket splashes the soldiers it lands among")
+    void shootsSoldiersFirst() {
+        main.game.maze.mazeworld.Point2D soldier = new main.game.maze.mazeworld.Point2D(200, 0);
+        List<main.game.maze.mazeworld.Point2D> soldiers = List.of(soldier);
+        List<Tower> towers = List.of(tower(SPEC.health()));
+        Result first = session.tick(0.0, towers, 300, 0, soldiers, (a, b, c, d) -> 0);
+        assertEquals(200, first.launches().get(0).toX(), 1e-9, "the rocket flies at the soldier");
+        int playerRoundDamage = 0;
+        int roundsAtSoldier = 0;
+        int splashes = 0;
+        for (int i = 0; i < 100; i++) {
+            Result r = session.tick(0.02, towers, 300, 0, soldiers, (a, b, c, d) -> 0);
+            if (r.impacts().isEmpty()) {
+                playerRoundDamage += r.playerDamage();
+            }
+            for (GuardTowerSession.Round round : r.rounds()) {
+                assertEquals(200, round.toX(), 1e-9);
+            }
+            roundsAtSoldier += r.rounds().size();
+            for (GuardTowerSession.SoldierHit hit : r.soldierHits()) {
+                assertEquals(soldier, hit.soldier());
+                if (hit.damage() == SPEC.rpgPlayerDamage() && !r.impacts().isEmpty()) {
+                    splashes++;
+                }
+            }
+        }
+        assertTrue(roundsAtSoldier > 0, "the gatling fired at the soldier");
+        assertEquals(0, playerRoundDamage, "no round went to the player");
+        assertEquals(1, splashes, "the rocket landed on the soldier");
+    }
+
+    @Test
+    @DisplayName("a soldier behind too many walls is passed over for the player")
+    void soldierOutOfSight() {
+        List<main.game.maze.mazeworld.Point2D> soldiers = List.of(new main.game.maze.mazeworld.Point2D(0, 200));
+        GuardTowerSession.WallCounter wallsToSoldier = (fx, fy, tx, ty) -> ty == 200 ? 9 : 0;
+        Result first = session.tick(0.0, List.of(tower(SPEC.health())), 300, 0, soldiers, wallsToSoldier);
+        assertEquals(300, first.launches().get(0).toX(), 1e-9, "at the player");
+        assertTrue(first.soldierHits().isEmpty());
+    }
 }

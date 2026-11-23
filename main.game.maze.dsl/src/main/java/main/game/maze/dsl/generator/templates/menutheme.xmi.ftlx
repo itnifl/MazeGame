@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from ${source}.mazegame by MazeDslGenerator (FreeMarker template menutheme.xmi.ftlx). DO NOT EDIT. -->
+<!-- The look of the screens between levels (win screen and shop), drawn by both frontends. See menutheme.ecore. -->
+<menutheme:MenuThemeModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:menutheme="http://main.game.maze/menutheme" font="${font}">
+<#list swatches as swatch>
+  <swatches role="${swatch.role}" colour="${swatch.colour}"/>
+</#list>
+<#list images as image>
+  <images role="${image.role}" path="${image.path}"<#if image.slice??> slice="${image.slice?c}"</#if>/>
+</#list>
+<#list badges as badge>
+  <badges tier="${badge.tier}" image="${badge.image}" colour="${badge.colour}"/>
+</#list>
+</menutheme:MenuThemeModel>

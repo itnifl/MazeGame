@@ -53,6 +53,11 @@ public class MazeDslGenerator extends AbstractGenerator {
                     fsa.generateFile("xmi/" + baseName + "-shop.xmi", shopXmi(game));
                 }
 
+                // Generate the menu theme instance (xmi/theme/menutheme.xmi, see menutheme.ecore) with its template
+                if (game.getTheme() != null) {
+                    fsa.generateFile("xmi/" + baseName + "-menutheme.xmi", menuThemeXmi(game));
+                }
+
                 // Generate difficulty configuration
                 if (game.getDifficulty() != null) {
                     fsa.generateFile(
@@ -496,6 +501,45 @@ public class MazeDslGenerator extends AbstractGenerator {
             return out.toString();
         } catch (java.io.IOException | freemarker.template.TemplateException e) {
             throw new IllegalStateException("could not render shop.xmi from its template", e);
+        }
+    }
+
+    /**
+     * The menu theme instance ({@code xmi/theme/menutheme.xmi}, an instance of {@code menutheme.ecore}) for the game's
+     * {@code theme} section, rendered with the FreeMarker template {@code templates/menutheme.xmi.ftlx}. An image without
+     * a slice is written without one (the model's default, 0).
+     */
+    public static String menuThemeXmi(GameConfiguration game) {
+        java.util.List<java.util.Map<String, Object>> swatches = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> images = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> badges = new java.util.ArrayList<>();
+        String font = "";
+        MenuThemeConfig theme = game.getTheme();
+        if (theme != null) {
+            font = theme.getFont();
+            for (ThemeSwatchConfig swatch : theme.getSwatches()) {
+                swatches.add(java.util.Map.of("role", swatch.getRole(), "colour", swatch.getColour()));
+            }
+            for (ThemeImageConfig image : theme.getImages()) {
+                java.util.Map<String, Object> row = new java.util.HashMap<>();
+                row.put("role", image.getRole());
+                row.put("path", image.getPath());
+                if (image.getSlice() != null) {
+                    row.put("slice", image.getSlice());
+                }
+                images.add(row);
+            }
+            for (ThemeBadgeConfig badge : theme.getBadges()) {
+                badges.add(java.util.Map.of("tier", badge.getTier(), "image", badge.getImage(), "colour", badge.getColour()));
+            }
+        }
+        try {
+            java.io.StringWriter out = new java.io.StringWriter();
+            TEMPLATES.getTemplate("menutheme.xmi.ftlx").process(java.util.Map.of("source", game.getName(), "font", font,
+                    "swatches", swatches, "images", images, "badges", badges), out);
+            return out.toString();
+        } catch (java.io.IOException | freemarker.template.TemplateException e) {
+            throw new IllegalStateException("could not render menutheme.xmi from its template", e);
         }
     }
 

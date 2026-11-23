@@ -809,4 +809,41 @@ class PumpkinBomberCharacterTest {
                 "small splash radii still get a visible burst");
         assertEquals(18.0, PumpkinBomberCharacter.burstRadius(ProjectileType.STRAIGHT, 52.0), 1e-9);
     }
+
+    @Test
+    void canHit_isTheAttackRangeWithoutAWorld() {
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        assertTrue(pbc.canHit(299, 0));
+        assertFalse(pbc.canHit(301, 0), "out of range");
+    }
+
+    @Test
+    void straightShot_hitsASoldierInTheWay() {
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, basicPumpkin());
+        List<Integer> soldierHits = new java.util.ArrayList<>();
+        main.game.maze.mazeworld.Point2D soldier = new main.game.maze.mazeworld.Point2D(80, 0);
+        pbc.setSoldiers(main.game.maze.game.targeting.SoldierTargets.of(() -> List.of(soldier),
+                (at, damage) -> soldierHits.add(damage)));
+        pbc.tryShootAt(200, 0, Long.MAX_VALUE);
+        for (int i = 0; i < 20 && soldierHits.isEmpty(); i++) {
+            pbc.updateProjectiles(0.05);
+        }
+        assertEquals(List.of(4), soldierHits, "the pumpkin hit the soldier for its attack damage");
+    }
+
+    @Test
+    void lobbedPumpkin_splashesTheSoldiersWhereItLands() throws Exception {
+        PumpkinBomber model = basicPumpkin();
+        model.setProjectileType(ProjectileType.LOB);
+        PumpkinBomberCharacter pbc = new PumpkinBomberCharacter(new Rectangle(16, 16), 0, 0, model);
+        List<Integer> soldierHits = new java.util.ArrayList<>();
+        main.game.maze.mazeworld.Point2D soldier = new main.game.maze.mazeworld.Point2D(150, 0);
+        pbc.setSoldiers(main.game.maze.game.targeting.SoldierTargets.of(() -> List.of(soldier),
+                (at, damage) -> soldierHits.add(damage)));
+        pbc.tryShootAt(150, 0, Long.MAX_VALUE);
+        for (int i = 0; i < 40 && !projectiles(pbc).isEmpty(); i++) {
+            pbc.updateProjectiles(0.05);
+        }
+        assertEquals(List.of(4), soldierHits);
+    }
 }

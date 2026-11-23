@@ -6,6 +6,7 @@ import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.level.LevelBoosts;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
 import main.game.maze.mazeworld.flame.FlameTarget;
@@ -120,6 +121,14 @@ public final class StrikeWeapons {
      */
     public List<Point2D> soldierPositions() {
         return squad.livingPositions();
+    }
+
+    /**
+     * The soldiers for the ranged enemies to shoot at (world space). Hitting one is game-loop work: a frontend whose
+     * enemies shoot from another thread passes the hits on to the game loop ({@link SoldierTargets#of}).
+     */
+    public SoldierTargets soldierTargets() {
+        return SoldierTargets.of(squad::livingPositions, (soldier, damage) -> squad.hit(soldier.getX(), soldier.getY(), damage));
     }
 
     /** Enemies this close to a soldier go for it instead of the player (from the items model). */

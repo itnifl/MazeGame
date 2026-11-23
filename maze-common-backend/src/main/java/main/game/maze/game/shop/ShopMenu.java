@@ -38,6 +38,29 @@ public final class ShopMenu {
         }
     }
 
+    /** A row on a shelf, with its place in {@link #rows()} (what {@link #select} takes). */
+    public record ShelfItem(int index, Row row) {
+    }
+
+    /**
+     * The items of one tier, as both shop screens show them side by side: the tier, the level whose shop first sells it
+     * ({@code lockedUntil}: 0 when it is sold now) and its items, in menu order.
+     */
+    public record Shelf(ShopTier tier, int lockedUntil, List<ShelfItem> items) {
+        public Shelf {
+            items = List.copyOf(items);
+        }
+
+        public boolean locked() {
+            return lockedUntil > 0;
+        }
+
+        /** e.g. {@code "after level 3"} for a tier not sold yet, else empty. */
+        public String lockedText() {
+            return locked() ? afterLevelText(lockedUntil) : "";
+        }
+    }
+
     /**
      * The icon of a shop item, the same in both shop screens: a weapon's own sprite from the items model; the shield boost
      * shows the shield cube and the flame boost the bomb.
@@ -59,12 +82,15 @@ public final class ShopMenu {
         return result == LevelShop.Result.BOUGHT ? BUY_SOUND : REFUSED_SOUND;
     }
 
-    public static final String TITLE = "SHOP - pay with your score";
-    public static final String HELP = "Up/Down choose, Enter or Space buy, Esc close";
+    /** The banner of the shop screen; {@link #SUBTITLE} under it. */
+    public static final String TITLE = "SUPPLY DEPOT";
+    public static final String SUBTITLE = "Pay with your score - what you buy is yours for the next level";
+    public static final String HELP = "Arrows choose, Enter or Space buy, Esc close";
 
     private final LevelShop shop;
     private int selected;
     private String status = "";
+    private LevelShop.Result lastResult;
 
     public ShopMenu(LevelShop shop) {
         this.shop = shop;
@@ -74,6 +100,7 @@ public final class ShopMenu {
     public void reset() {
         selected = 0;
         status = "";
+        lastResult = null;
     }
 
     public List<Row> rows() {
@@ -86,6 +113,48 @@ public final class ShopMenu {
                     i == selected, lockedUntil));
         }
         return rows;
+    }
+
+    /** The rows grouped by tier, cheapest tier first; a tier without items has no shelf. */
+    public List<Shelf> shelves() {
+        List<Row> rows = rows();
+        List<Shelf> shelves = new ArrayList<>();
+        for (ShopTier tier : ShopTier.values()) {
+            List<ShelfItem> items = new ArrayList<>();
+            for (int i = 0; i < rows.size(); i++) {
+                if (rows.get(i).item().tier() == tier) {
+                    items.add(new ShelfItem(i, rows.get(i)));
+                }
+            }
+            if (!items.isEmpty()) {
+                shelves.add(new Shelf(tier, items.get(0).row().lockedUntil(), items));
+            }
+        }
+        return shelves;
+    }
+
+    /** Left: the item at the same height on the shelf to the left (the lowest one when that shelf is shorter). */
+    public void moveLeft() {
+        moveAcross(-1);
+    }
+
+    /** Right: the item at the same height on the shelf to the right. */
+    public void moveRight() {
+        moveAcross(1);
+    }
+
+    private void moveAcross(int step) {
+        List<Shelf> shelves = shelves();
+        for (int s = 0; s < shelves.size(); s++) {
+            List<ShelfItem> items = shelves.get(s).items();
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).index() == selected) {
+                    List<ShelfItem> next = shelves.get(Math.floorMod(s + step, shelves.size())).items();
+                    selected = next.get(Math.min(i, next.size() - 1)).index();
+                    return;
+                }
+            }
+        }
     }
 
     public int selectedIndex() {
@@ -117,7 +186,22 @@ public final class ShopMenu {
         ShopItem item = items.get(selected);
         LevelShop.Result result = shop.buy(item);
         status = message(result, item);
+        lastResult = result;
         return result;
+    }
+
+    /** Whether the last purchase went through (the views show {@link #status()} as good news), false before any. */
+    public boolean statusIsGood() {
+        return lastResult == LevelShop.Result.BOUGHT;
+    }
+
+    /** What the selected item does (its description in the shop model), or empty. */
+    public String briefing() {
+        List<ShopItem> items = shop.catalog().items();
+        if (items.isEmpty() || items.get(selected).description() == null) {
+            return "";
+        }
+        return items.get(selected).description();
     }
 
     /** The score the player can spend. */

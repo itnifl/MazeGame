@@ -6,6 +6,8 @@ import java.util.Map;
 import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.game.level.SergeantGunner;
 import main.game.maze.game.level.SergeantSpec;
+import main.game.maze.game.targeting.RangedTargeting;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 import main.game.maze.libgdx.game.PlayerCombatStateService;
 import main.game.maze.libgdx.model.GameWorldModel;
@@ -15,7 +17,7 @@ import main.game.maze.mazeworld.generators.PlayerState;
 
 /**
  * libGDX side of the zombie sergeants. The firing rules are the shared {@link SergeantGunner}; this
- * class only feeds it the frame (sight, walls), hurts the player, shows the tracers and, when a
+ * class only feeds it the frame (sight, walls, the soldiers it shoots first), hurts the player or the soldier, shows the tracers and, when a
  * sergeant has been killed, drops its gatling gun where it fell. Screen space is y-up, the shared
  * pickup world is y-down.
  */
@@ -37,6 +39,15 @@ public final class GdxSergeantSupport {
      */
     public int tick(GameWorldModel model, List<GdxEnemyRuntime> enemies, MazeArena maze, PlayerState player,
                     PlayerCombatStateService combat, SergeantSpec spec, float dt) {
+        return tick(model, enemies, maze, player, combat, spec, dt, SoldierTargets.NONE);
+    }
+
+    /**
+     * As {@link #tick(GameWorldModel, List, MazeArena, PlayerState, PlayerCombatStateService, SergeantSpec, float)}, with
+     * the soldiers of the infantry strike (screen space), whom the sergeants shoot before the player.
+     */
+    public int tick(GameWorldModel model, List<GdxEnemyRuntime> enemies, MazeArena maze, PlayerState player,
+                    PlayerCombatStateService combat, SergeantSpec spec, float dt, SoldierTargets soldiers) {
         if (maze == null || player == null || spec == null) {
             return 0;
         }
@@ -47,13 +58,19 @@ public final class GdxSergeantSupport {
                 continue;
             }
             SergeantGunner gunner = gunners.computeIfAbsent(enemy, ignored -> new SergeantGunner(spec));
-            boolean wall = WallCollisionUtil.wallBetween(enemy.x(), enemy.y(), player.x(), player.y(), maze.walls());
-            boolean sees = gunner.canSee(enemy.x(), enemy.y(), player.x(), player.y(), wall);
-            int rounds = gunner.tick(dt, sees);
+            SergeantGunner.Volley volley = gunner.fire(dt, enemy.x(), enemy.y(), player.x(), player.y(), soldiers,
+                    (fromX, fromY, toX, toY) -> WallCollisionUtil.wallBetween((float) fromX, (float) fromY,
+                            (float) toX, (float) toY, maze.walls()));
+            int rounds = volley.rounds();
+            RangedTargeting.Target target = volley.target();
             for (int round = 0; round < rounds; round++) {
-                model.effects().add(new GameWorldModel.ActiveEffect(
-                        main.game.maze.game.items.ShotEffects.enemyRound(enemy.x(), enemy.y(), player.x(), player.y())));
-                combat.applyDirectDamage(spec.roundDamage());
+                model.effects().add(new GameWorldModel.ActiveEffect(main.game.maze.game.items.ShotEffects.enemyRound(
+                        enemy.x(), enemy.y(), target.x(), target.y())));
+                if (target.isSoldier()) {
+                    soldiers.hit(target.soldier(), spec.roundDamage());
+                } else {
+                    combat.applyDirectDamage(spec.roundDamage());
+                }
             }
             if (rounds > 0 && spec.fireSound() != null) {
                 AudioEngine.get().playRateLimited(spec.fireSound(),

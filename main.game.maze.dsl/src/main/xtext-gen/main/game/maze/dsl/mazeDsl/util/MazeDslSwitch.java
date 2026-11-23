@@ -279,6 +279,34 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.MENU_THEME_CONFIG:
+      {
+        MenuThemeConfig menuThemeConfig = (MenuThemeConfig)theEObject;
+        T result = caseMenuThemeConfig(menuThemeConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.THEME_SWATCH_CONFIG:
+      {
+        ThemeSwatchConfig themeSwatchConfig = (ThemeSwatchConfig)theEObject;
+        T result = caseThemeSwatchConfig(themeSwatchConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.THEME_IMAGE_CONFIG:
+      {
+        ThemeImageConfig themeImageConfig = (ThemeImageConfig)theEObject;
+        T result = caseThemeImageConfig(themeImageConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MazeDslPackage.THEME_BADGE_CONFIG:
+      {
+        ThemeBadgeConfig themeBadgeConfig = (ThemeBadgeConfig)theEObject;
+        T result = caseThemeBadgeConfig(themeBadgeConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.LAST_LIFE_GIFT_CONFIG:
       {
         LastLifeGiftConfig lastLifeGiftConfig = (LastLifeGiftConfig)theEObject;
@@ -757,6 +785,70 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseShopItemConfig(ShopItemConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Menu Theme Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Menu Theme Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMenuThemeConfig(MenuThemeConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Theme Swatch Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Theme Swatch Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseThemeSwatchConfig(ThemeSwatchConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Theme Image Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Theme Image Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseThemeImageConfig(ThemeImageConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Theme Badge Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Theme Badge Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseThemeBadgeConfig(ThemeBadgeConfig object)
   {
     return null;
   }

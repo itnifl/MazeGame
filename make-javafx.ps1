@@ -12,6 +12,7 @@ $Mvn            = 'mvn'   # change to 'mvnw' if you prefer wrapper
 $LocalP2Dir     = 'releng\local-p2'
 $MirrorStamp    = Join-Path $LocalP2Dir '.mirror.stamp'
 $MirrorInputStateFile = Join-Path $LocalP2Dir '.mirror.inputs'
+$PreviousMirrorDir = "$LocalP2Dir.previous"   # a completed mirror, kept while it is rebuilt
 $MirrorInputs   = @(
     'releng\mirror\pom.xml'
     # add more files here if you want them to trigger a mirror rebuild
@@ -269,6 +270,56 @@ function Assert-JavaVersion {
     Write-Host "Java version check passed: Java $currentMajor" -ForegroundColor Green
 }
 
+<#
+.SYNOPSIS
+    Tells whether failed Maven output shows a remote repository that could not be reached.
+.DESCRIPTION
+    Only [ERROR] lines count: Maven logs an unreachable repository as a [WARNING] when it can carry
+    on with the local repository, and such a warning does not explain a failure.
+.PARAMETER Lines
+    The Maven output lines.
+#>
+function Test-MavenNetworkFailure([string[]]$Lines) {
+    $pattern = 'Could not transfer|status code: 5\d\d|Service (Temporarily )?Unavailable|Connect(ion)? (refused|reset|timed out)|' +
+        'connect timed out|Read timed out|Unknown ?Host|No such host|Network is unreachable|Remote host terminated|' +
+        'Failed to load p2 repository|Failed to fetch'
+    return $null -ne ($Lines | Where-Object { $_ -match '\[ERROR\]' -and $_ -match $pattern } | Select-Object -First 1)
+}
+
+<#
+.SYNOPSIS
+    Runs Maven; if it fails because a remote repository is down, runs it again offline.
+.DESCRIPTION
+    A repository outage (repo.eclipse.org answering 503, no network) should not stop a build whose
+    dependencies are all in the local Maven repository already, so the second run passes -o and drops
+    -U. Other failures (a compile error, a failing test) are not retried. Sets $LASTEXITCODE to the
+    exit code of the last run, so callers check it as after a plain mvn call.
+.PARAMETER MavenArgs
+    The Maven arguments.
+#>
+function Invoke-Maven {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$MavenArgs)
+
+    $output = [System.Collections.Generic.List[string]]::new()
+    & $Mvn @MavenArgs 2>&1 | ForEach-Object {
+        $line = "$_"
+        $output.Add($line)
+        Write-Host $line
+    }
+    $exit = $LASTEXITCODE
+    $alreadyOffline = ($MavenArgs -contains '-o') -or ($MavenArgs -contains '--offline')
+    if ($exit -ne 0 -and -not $alreadyOffline -and (Test-MavenNetworkFailure $output)) {
+        Write-Host 'A remote Maven repository could not be reached. Retrying offline with the local Maven repository...' -ForegroundColor Yellow
+        $offlineArgs = @('-o') + @($MavenArgs | Where-Object { $_ -ne '-U' })
+        & $Mvn @offlineArgs | Out-Host
+        $exit = $LASTEXITCODE
+        if ($exit -ne 0) {
+            Write-Host 'The offline retry failed as well: the local Maven repository is missing an artifact. Try again when the repository is back.' -ForegroundColor Yellow
+        }
+    }
+    $global:LASTEXITCODE = $exit
+}
+
 function Show-ToolchainInfo {
     Write-Host "=== Toolchain versions ==="
     try {
@@ -354,7 +405,7 @@ function Ensure-LaunchBytecodeLevel {
     }
 
     Write-Host "Detected stale or incompatible bytecode (major=$major). Rebuilding JavaFX runtime dependency graph with Java 21..." -ForegroundColor Yellow
-    & $Mvn -pl maze-javafx-backend -am -DskipTests=true clean compile
+    Invoke-Maven -pl maze-javafx-backend -am -DskipTests=true clean compile
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to prepare launch classes with Java 21. Maven exited with code $exit."
@@ -415,7 +466,7 @@ function Ensure-LaunchJavaFxLibs {
     }
 
     Write-Host ("Missing JavaFX launch libs ({0}). Restoring runtime dependencies..." -f ($missing -join ', ')) -ForegroundColor Yellow
-    & $Mvn -pl maze-javafx-backend '-DskipTests=true' dependency:copy-dependencies '-DincludeScope=runtime' '-DoutputDirectory=target/libs' '-DexcludeGroupIds=p2.osgi.bundle' '-DexcludeArtifactIds=com.sun.jna'
+    Invoke-Maven -pl maze-javafx-backend '-DskipTests=true' dependency:copy-dependencies '-DincludeScope=runtime' '-DoutputDirectory=target/libs' '-DexcludeGroupIds=p2.osgi.bundle' '-DexcludeArtifactIds=com.sun.jna'
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Failed to restore JavaFX runtime dependencies for launch. Maven exited with code $exit."
@@ -604,7 +655,7 @@ function Ensure-RuntimeModulesCompiled {
     $plArg = ($rebuildList -join ',')
 
     Write-Host "=== Rebuilding stale modules: $plArg ===" -ForegroundColor Cyan
-    & $Mvn -pl $plArg -am -DskipTests=true clean install
+    Invoke-Maven -pl $plArg -am -DskipTests=true clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Auto-rebuild of stale modules failed. Maven exited with code $exit."
@@ -753,17 +804,16 @@ function Invoke-Mirror([switch]$Force) {
         Write-Host "=== Rebuilding local p2 mirror (inputs changed or missing) ==="
     }
 
-    $hasMirrorDirectory = Test-Path $LocalP2Dir
     $currentInputState = Get-MirrorInputState
 
     # Tycho's mirror goal cannot safely append an IU set to a partially written
-    # destination. Reuse only completed mirrors; restart interrupted runs cleanly.
-    if ($hasMirrorDirectory) {
-        Write-Host "Removing $LocalP2Dir"
-        Remove-Item -Recurse -Force $LocalP2Dir
-    }
+    # destination, so it always writes into an empty directory. A completed mirror is
+    # set aside first and put back if the download fails (a repository outage must not
+    # leave the build without any mirror); an interrupted one is simply removed.
+    $previousMirror = Save-PreviousMirror
 
     if (-not (Test-Path $LocalP2Dir)) {
+
         New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null
     }
     Set-Content -NoNewline -Path $MirrorInputStateFile -Value $currentInputState
@@ -779,15 +829,71 @@ function Invoke-Mirror([switch]$Force) {
     $mirrorArgs += 'verify'
 
     Write-Host "Running: $Mvn $($mirrorArgs -join ' ')"
-    & $Mvn @mirrorArgs
+    Invoke-Maven @mirrorArgs
     $exit = $LASTEXITCODE
 
     if ($exit -ne 0) {
+        if (Restore-PreviousMirror $previousMirror) {
+            Write-Warning "Mirror build failed with exit code $exit; the previous mirror in $LocalP2Dir is kept and will be refreshed on the next build."
+            return
+        }
         throw "Mirror build failed with exit code $exit."
     }
 
+    if ($previousMirror) {
+        Remove-Item -Recurse -Force $previousMirror
+    }
     New-Item -ItemType File -Path $MirrorStamp -Force | Out-Null
     Write-Host "=== Mirror built and stamp updated: $MirrorStamp ==="
+}
+
+
+<#
+.SYNOPSIS
+    Sets a completed mirror aside before a rebuild and removes an interrupted one.
+.OUTPUTS
+    The path of the set-aside mirror, or $null when there was no completed mirror.
+#>
+function Save-PreviousMirror {
+    if (Test-Path $PreviousMirrorDir) {
+        Remove-Item -Recurse -Force $PreviousMirrorDir
+    }
+    if (-not (Test-Path $LocalP2Dir)) {
+        return $null
+    }
+    if (-not (Test-Path $MirrorStamp)) {
+        Write-Host "Removing the interrupted mirror in $LocalP2Dir"
+        Remove-Item -Recurse -Force $LocalP2Dir
+        return $null
+    }
+    Write-Host "Setting the current mirror aside in $PreviousMirrorDir"
+    Move-Item -Path $LocalP2Dir -Destination $PreviousMirrorDir
+    return $PreviousMirrorDir
+}
+
+<#
+.SYNOPSIS
+    Puts a set-aside mirror back after a failed rebuild.
+.DESCRIPTION
+    The restored mirror keeps its stamp but its input fingerprint is cleared, so the next
+    build tries the refresh again.
+.PARAMETER Path
+    What Save-PreviousMirror returned.
+.OUTPUTS
+    $true when a mirror was put back.
+#>
+function Restore-PreviousMirror([string]$Path) {
+    if (-not $Path -or -not (Test-Path $Path)) {
+        return $false
+    }
+    if (Test-Path $LocalP2Dir) {
+        Remove-Item -Recurse -Force $LocalP2Dir
+    }
+    Move-Item -Path $Path -Destination $LocalP2Dir
+    if (Test-Path $MirrorInputStateFile) {
+        Remove-Item -Force $MirrorInputStateFile
+    }
+    return $true
 }
 
 function Clear-TychoCache {
@@ -812,7 +918,7 @@ function Invoke-Build {
     $reactorWithoutMirror = '!releng/mirror'
     $cmd = "$Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean install"
     Write-Host "=== Running full build: $cmd ==="
-    & $Mvn -pl $reactorWithoutMirror -U -DskipTests=false clean install
+    Invoke-Maven -pl $reactorWithoutMirror -U -DskipTests=false clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Build failed with exit code $exit."
@@ -836,7 +942,7 @@ function Invoke-QuickBuild {
     $reactorWithoutMirror = '!releng/mirror'
     $cmd = "$Mvn -pl $reactorWithoutMirror -DskipTests=$skipValue install"
     Write-Host "=== Running quick build without mirror rebuild: $cmd ==="
-    & $Mvn -pl $reactorWithoutMirror "-DskipTests=$skipValue" install
+    Invoke-Maven -pl $reactorWithoutMirror "-DskipTests=$skipValue" install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Quick build failed with exit code $exit."

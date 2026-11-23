@@ -159,4 +159,27 @@ class InfantrySquadTest {
         assertTrue(StrikeVisuals.soldierSprite(soldier).contains("soldier-side-walk"));
         assertFalse(StrikeVisuals.soldierFlipX(soldier), "walking right");
     }
+
+    @Test
+    @DisplayName("a ranged shot hurts the soldier it hits, who falls at the next frame when its health is gone")
+    void shotSoldiersFall() {
+        InfantrySquad squad = new InfantrySquad(new Random(3));
+        squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 60, 0, 0, 50));
+        assertFalse(squad.hit(100, 0, 60), "nobody stands there");
+        assertTrue(squad.hit(5, 0, 30));
+        assertTrue(squad.tick(0.1, List.of(), BLIND).fallen().isEmpty(), "20 health left");
+        assertTrue(squad.hit(0, 0, 30));
+        assertEquals(1, squad.tick(0.1, List.of(), BLIND).fallen().size());
+        assertFalse(squad.hit(0, 0, 30), "a fallen soldier is not hit again");
+        assertTrue(squad.livingPositions().isEmpty());
+    }
+
+    @Test
+    @DisplayName("soldiers that cannot be hurt are not hit by shots either")
+    void unhurtByShots() {
+        InfantrySquad squad = new InfantrySquad(new Random(3));
+        squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 60, 0, 0));
+        assertFalse(squad.hit(0, 0, 1000));
+        assertTrue(squad.tick(0.1, List.of(), BLIND).fallen().isEmpty());
+    }
 }

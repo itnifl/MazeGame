@@ -364,7 +364,7 @@ class FxWeaponControllerTest {
     @Test
     @DisplayName("no squad: the enemies see no soldiers; the lure radius comes from the items model")
     void soldiersForTheEnemies() {
-        assertTrue(weapons.soldierPositionsForEnemies().isEmpty());
+        assertTrue(weapons.soldierTargets().positions().isEmpty());
         assertEquals(PickupCatalogLoader.loadDefault().spec(PickupKind.INFANTRY_STRIKE).lureRadius(),
                 weapons.soldierLureRadius(), 1e-9);
         assertTrue(weapons.soldierLureRadius() > 0);

@@ -80,10 +80,12 @@ class ShopControllerTest {
             controller.setMenu(new ShopMenu(new LevelShop(ShopCatalogLoader.loadDefault(), progress)));
             controller.setOnClose(closed::incrementAndGet);
 
-            VBox rows = (VBox) root.lookup("#itemsBox");
+            javafx.scene.layout.HBox shelves = (javafx.scene.layout.HBox) root.lookup("#shelvesBox");
             Label credits = (Label) root.lookup("#creditsLabel");
-            assertNotNull(rows);
-            assertEquals(10, rows.getChildren().size(), "three cheap, four medium, three expensive");
+            assertNotNull(shelves);
+            assertEquals(java.util.List.of(4, 5, 4), shelves.getChildren().stream()
+                    .map(shelf -> ((VBox) shelf).getChildren().size()).toList(),
+                    "a header and three cheap, four medium, three expensive cards");
             assertEquals("Score to spend: 5000", credits.getText());
 
             // the first row is the shield boost (800); Down moves to the flame boost (1000), Down again to grenades (600)

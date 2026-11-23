@@ -363,9 +363,14 @@ MUST be added to the shared core, not to a single frontend.
   shopping.
 - **GR-87**: Soldiers have 120 health. An enemy within 240 px of a soldier goes for the
   nearest soldier instead of the player; touching a soldier takes 25 health a second. A soldier
-  with no health left falls and is gone after 4 s. Ranged enemies still shoot only the player.
+  with no health left falls and is gone after 4 s. Ranged enemies shoot soldiers first (GR-90).
 - **GR-88**: The small nuclear grenade is a round blast through walls: full damage within 35 %
   of its 420 px radius, falling to a quarter at the edge, to enemies, the player and breakable
   walls alike, but never the player who threw it; it is shown as a mushroom cloud.
 - **GR-89**: The shop sells only cheap items after levels 1 and 2, medium items too from the
   shop after level 3, and expensive items too from the shop after level 5.
+- **GR-90**: A sergeant, a guard tower or a pumpkin bomber shoots the nearest soldier it can
+  hit (its own range and wall rule) before the player. Its rounds, rockets and pumpkins hurt the
+  soldier as they would the player; a rocket's blast hurts the player and the soldiers in it.
+- **GR-91**: The shop stands its items on a shelf per tier; Left and Right move between the
+  shelves, Up and Down along one.

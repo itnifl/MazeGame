@@ -473,8 +473,22 @@ These requirements have been implemented and verified.
 
 - **SR-394** *(Testing)*: Add a headless parity test that drives the same grenade, airstrike seed and squad seed through both frontends and compares the blasts and kills, like the movement parity tests (SR-1).
 
-- **SR-400** *(Gameplay)*: Only melee enemies go for the soldiers (SR-396). Let the sergeants, guard towers and pumpkin bombers aim at a soldier in range too, with their rounds, rockets and pumpkins hurting the soldier instead of the player; give soldiers a health bar.
+- **SR-400** *(Gameplay)*: Done (approved SR-400): ranged enemies shoot the soldiers first. Still open from it: give soldiers a health bar.
 
 - **SR-401** *(Model-driven)*: The touch damage to soldiers (25/s), the touch distance and how long a fallen soldier lies are constants in `InfantrySquad`; move them into `items.ecore` next to `unitHealth` and `lureRadius`. Let the nuclear core and edge shares (`NuclearBlastEngine`) be values of the item too.
 
 - **SR-402** *(UX)*: Tell the player when a tier opens (a banner "Medium items are now in the shop" on the win screen of level 3) and show the next unlock in the shop header.
+
+### Ranged targeting, menu theme and build resilience follow-ons (SR-400, SR-403..SR-406)
+
+- **SR-407** *(DDD)*: `RangedTargeting`, `SoldierTargets` and `DecoyTargeting` together are a targeting bounded context: who an enemy goes for and shoots at. Give it its own module with a ubiquitous language ("threat", "decoy", "line of fire") and let the enemies depend on it instead of on the strike package; the squad then only publishes its soldiers as decoys.
+
+- **SR-408** *(12-factor)*: The menu theme is a backing resource baked into the jar. Let an environment variable (for example `MAZEGAME_MENU_THEME`) point at another `menutheme.xmi`, so a theme can be tried or swapped (high contrast, colour-blind palette) without a rebuild; `MenuThemeLoader.load` already takes the paths.
+
+- **SR-409** *(Observability)*: Count and log (structured) what the ranged enemies shoot: rounds and rockets at soldiers and at the player per level, soldiers lost to each enemy type; and log each Maven offline retry and mirror restore of the build scripts with the failure that caused it, so an outage shows up in the build summary.
+
+- **SR-410** *(Accessibility)*: Add a high-contrast and a colour-blind-safe menu theme (the tier colours bronze/silver/gold and the green/red price and outcome colours are the only cues today besides the chevrons and the padlock), selectable in the settings, both written in the DSL.
+
+- **SR-411** *(UX)*: Show the soldiers' health over their heads while the squad is in the maze, and flash a soldier that is hit by a ranged enemy, so the player can see the squad being shot down.
+
+- **SR-412** *(Testing)*: Keep the rendered snapshots of the screens between levels (`target/menu-snapshots`) as approved images and compare against them in CI with a small tolerance, in both frontends (libGDX through an offscreen frame buffer), so a broken style or layout is caught without looking.

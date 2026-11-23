@@ -237,9 +237,28 @@ ruleGameConfiguration returns [EObject current=null]
 				}
 			)
 		)?
-		otherlv_10='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGameConfigurationAccess().getThemeMenuThemeConfigParserRuleCall_10_0());
+				}
+				lv_theme_10_0=ruleMenuThemeConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGameConfigurationRule());
+					}
+					set(
+						$current,
+						"theme",
+						lv_theme_10_0,
+						"main.game.maze.dsl.MazeDsl.MenuThemeConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_11='}'
 		{
-			newLeafNode(otherlv_10, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_10());
+			newLeafNode(otherlv_11, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_11());
 		}
 	)
 ;
@@ -4561,6 +4580,343 @@ ruleShopItemConfig returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleMenuThemeConfig
+entryRuleMenuThemeConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMenuThemeConfigRule()); }
+	iv_ruleMenuThemeConfig=ruleMenuThemeConfig
+	{ $current=$iv_ruleMenuThemeConfig.current; }
+	EOF;
+
+// Rule MenuThemeConfig
+ruleMenuThemeConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='theme'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getMenuThemeConfigAccess().getThemeKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getMenuThemeConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		otherlv_2='font'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getMenuThemeConfigAccess().getFontKeyword_2());
+		}
+		(
+			(
+				lv_font_3_0=RULE_STRING
+				{
+					newLeafNode(lv_font_3_0, grammarAccess.getMenuThemeConfigAccess().getFontSTRINGTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMenuThemeConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"font",
+						lv_font_3_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMenuThemeConfigAccess().getSwatchesThemeSwatchConfigParserRuleCall_4_0());
+				}
+				lv_swatches_4_0=ruleThemeSwatchConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMenuThemeConfigRule());
+					}
+					add(
+						$current,
+						"swatches",
+						lv_swatches_4_0,
+						"main.game.maze.dsl.MazeDsl.ThemeSwatchConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMenuThemeConfigAccess().getImagesThemeImageConfigParserRuleCall_5_0());
+				}
+				lv_images_5_0=ruleThemeImageConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMenuThemeConfigRule());
+					}
+					add(
+						$current,
+						"images",
+						lv_images_5_0,
+						"main.game.maze.dsl.MazeDsl.ThemeImageConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMenuThemeConfigAccess().getBadgesThemeBadgeConfigParserRuleCall_6_0());
+				}
+				lv_badges_6_0=ruleThemeBadgeConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMenuThemeConfigRule());
+					}
+					add(
+						$current,
+						"badges",
+						lv_badges_6_0,
+						"main.game.maze.dsl.MazeDsl.ThemeBadgeConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_7='}'
+		{
+			newLeafNode(otherlv_7, grammarAccess.getMenuThemeConfigAccess().getRightCurlyBracketKeyword_7());
+		}
+	)
+;
+
+// Entry rule entryRuleThemeSwatchConfig
+entryRuleThemeSwatchConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getThemeSwatchConfigRule()); }
+	iv_ruleThemeSwatchConfig=ruleThemeSwatchConfig
+	{ $current=$iv_ruleThemeSwatchConfig.current; }
+	EOF;
+
+// Rule ThemeSwatchConfig
+ruleThemeSwatchConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='colour'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getThemeSwatchConfigAccess().getColourKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getThemeSwatchConfigAccess().getRoleValidIDParserRuleCall_1_0());
+				}
+				lv_role_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getThemeSwatchConfigRule());
+					}
+					set(
+						$current,
+						"role",
+						lv_role_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_colour_2_0=RULE_STRING
+				{
+					newLeafNode(lv_colour_2_0, grammarAccess.getThemeSwatchConfigAccess().getColourSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getThemeSwatchConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"colour",
+						lv_colour_2_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleThemeImageConfig
+entryRuleThemeImageConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getThemeImageConfigRule()); }
+	iv_ruleThemeImageConfig=ruleThemeImageConfig
+	{ $current=$iv_ruleThemeImageConfig.current; }
+	EOF;
+
+// Rule ThemeImageConfig
+ruleThemeImageConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='image'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getThemeImageConfigAccess().getImageKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getThemeImageConfigAccess().getRoleValidIDParserRuleCall_1_0());
+				}
+				lv_role_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getThemeImageConfigRule());
+					}
+					set(
+						$current,
+						"role",
+						lv_role_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_path_2_0=RULE_STRING
+				{
+					newLeafNode(lv_path_2_0, grammarAccess.getThemeImageConfigAccess().getPathSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getThemeImageConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"path",
+						lv_path_2_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			otherlv_3='slice'
+			{
+				newLeafNode(otherlv_3, grammarAccess.getThemeImageConfigAccess().getSliceKeyword_3_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getThemeImageConfigAccess().getSliceINT_OBJECTParserRuleCall_3_1_0());
+					}
+					lv_slice_4_0=ruleINT_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getThemeImageConfigRule());
+						}
+						set(
+							$current,
+							"slice",
+							lv_slice_4_0,
+							"main.game.maze.dsl.MazeDsl.INT_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+	)
+;
+
+// Entry rule entryRuleThemeBadgeConfig
+entryRuleThemeBadgeConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getThemeBadgeConfigRule()); }
+	iv_ruleThemeBadgeConfig=ruleThemeBadgeConfig
+	{ $current=$iv_ruleThemeBadgeConfig.current; }
+	EOF;
+
+// Rule ThemeBadgeConfig
+ruleThemeBadgeConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='badge'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getThemeBadgeConfigAccess().getBadgeKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getThemeBadgeConfigAccess().getTierValidIDParserRuleCall_1_0());
+				}
+				lv_tier_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getThemeBadgeConfigRule());
+					}
+					set(
+						$current,
+						"tier",
+						lv_tier_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_image_2_0=RULE_STRING
+				{
+					newLeafNode(lv_image_2_0, grammarAccess.getThemeBadgeConfigAccess().getImageSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getThemeBadgeConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"image",
+						lv_image_2_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_3='colour'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getThemeBadgeConfigAccess().getColourKeyword_3());
+		}
+		(
+			(
+				lv_colour_4_0=RULE_STRING
+				{
+					newLeafNode(lv_colour_4_0, grammarAccess.getThemeBadgeConfigAccess().getColourSTRINGTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getThemeBadgeConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"colour",
+						lv_colour_4_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+	)
+;
+
 // Entry rule entryRuleLastLifeGiftConfig
 entryRuleLastLifeGiftConfig returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getLastLifeGiftConfigRule()); }
@@ -5518,6 +5874,42 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getFromLevelKeyword_84());
+		}
+		    |
+		kw='theme'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getThemeKeyword_85());
+		}
+		    |
+		kw='font'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFontKeyword_86());
+		}
+		    |
+		kw='colour'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getColourKeyword_87());
+		}
+		    |
+		kw='image'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getImageKeyword_88());
+		}
+		    |
+		kw='slice'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSliceKeyword_89());
+		}
+		    |
+		kw='badge'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBadgeKeyword_90());
 		}
 	)
 ;

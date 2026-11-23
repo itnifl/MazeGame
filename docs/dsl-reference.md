@@ -596,6 +596,7 @@ level 6 "The Lava Streams" { basedOn 5  lastLifeWeapon PULSE_CANNON shots 6  lav
 level 5 "The Builders" { basedOn 4  wallBuilder "Wall builder" { health 80 speed 55.0 sprite "..." buildSeconds 3.0 startRadius 4 blockRadius 1 spawnRadius 200.0 material WOOD_BASIC }  builders easy 2  builders normal 5  builders hard 10 }
 level 4 "The Guard Towers" { basedOn 3  mines { ... secondRing 118.0 ... }  guardTower "Guard tower" { health 1500 sightRange 650.0 wallsOver 3 rpgInterval 3.0 ... }  towers easy 2  towers normal 3  towers hard 4 }
 shop { item GRENADE "Grenades" tier CHEAP price 600 amount 5 description "..."  item SHIELD_BOOST "Extra long shield" tier CHEAP price 800 factor 3.0 }   // in shop.mazegame, rendered with FreeMarker into shop.xmi
+theme { font "Consolas"  colour TITLE "#f2d98c"  image PANEL "/main/game/maze/ui/panel.png" slice 30  badge CHEAP "/main/game/maze/ui/tier-cheap.png" colour "#cd8c4e" }   // in menutheme.mazegame: every Swatch, Art and tier once; rendered with FreeMarker into menutheme.xmi
 ```
 
 Values you leave out are "not set": a level built `basedOn` another takes them from it, otherwise the model's defaults apply.

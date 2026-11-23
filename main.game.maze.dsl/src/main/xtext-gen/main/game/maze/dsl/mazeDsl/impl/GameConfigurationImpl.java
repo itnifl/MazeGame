@@ -11,6 +11,7 @@ import main.game.maze.dsl.mazeDsl.Import;
 import main.game.maze.dsl.mazeDsl.LevelConfig;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
+import main.game.maze.dsl.mazeDsl.MenuThemeConfig;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
 import main.game.maze.dsl.mazeDsl.ShopConfig;
@@ -45,6 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLootTables <em>Loot Tables</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLevels <em>Levels</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getShop <em>Shop</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getTheme <em>Theme</em>}</li>
  * </ul>
  *
  * @generated
@@ -140,6 +142,16 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected ShopConfig shop;
+
+  /**
+   * The cached value of the '{@link #getTheme() <em>Theme</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTheme()
+   * @generated
+   * @ordered
+   */
+  protected MenuThemeConfig theme;
 
   /**
    * <!-- begin-user-doc -->
@@ -368,6 +380,56 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @generated
    */
   @Override
+  public MenuThemeConfig getTheme()
+  {
+    return theme;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetTheme(MenuThemeConfig newTheme, NotificationChain msgs)
+  {
+    MenuThemeConfig oldTheme = theme;
+    theme = newTheme;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MazeDslPackage.GAME_CONFIGURATION__THEME, oldTheme, newTheme);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTheme(MenuThemeConfig newTheme)
+  {
+    if (newTheme != theme)
+    {
+      NotificationChain msgs = null;
+      if (theme != null)
+        msgs = ((InternalEObject)theme).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.GAME_CONFIGURATION__THEME, null, msgs);
+      if (newTheme != null)
+        msgs = ((InternalEObject)newTheme).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.GAME_CONFIGURATION__THEME, null, msgs);
+      msgs = basicSetTheme(newTheme, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.GAME_CONFIGURATION__THEME, newTheme, newTheme));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -386,6 +448,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return ((InternalEList<?>)getLevels()).basicRemove(otherEnd, msgs);
       case MazeDslPackage.GAME_CONFIGURATION__SHOP:
         return basicSetShop(null, msgs);
+      case MazeDslPackage.GAME_CONFIGURATION__THEME:
+        return basicSetTheme(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -416,6 +480,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return getLevels();
       case MazeDslPackage.GAME_CONFIGURATION__SHOP:
         return getShop();
+      case MazeDslPackage.GAME_CONFIGURATION__THEME:
+        return getTheme();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -460,6 +526,9 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
       case MazeDslPackage.GAME_CONFIGURATION__SHOP:
         setShop((ShopConfig)newValue);
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__THEME:
+        setTheme((MenuThemeConfig)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -498,6 +567,9 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
       case MazeDslPackage.GAME_CONFIGURATION__SHOP:
         setShop((ShopConfig)null);
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__THEME:
+        setTheme((MenuThemeConfig)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -528,6 +600,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return levels != null && !levels.isEmpty();
       case MazeDslPackage.GAME_CONFIGURATION__SHOP:
         return shop != null;
+      case MazeDslPackage.GAME_CONFIGURATION__THEME:
+        return theme != null;
     }
     return super.eIsSet(featureID);
   }

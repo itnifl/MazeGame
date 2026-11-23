@@ -34,6 +34,7 @@ import main.game.maze.game.strike.ScheduledBlast;
 import main.game.maze.game.strike.StrikePlanner;
 import main.game.maze.game.strike.StrikeVisuals;
 import main.game.maze.game.strike.StrikeWeapons;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.javafx.render.FxStrikeLayer;
 import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.game.session.PlayerLives;
@@ -466,15 +467,13 @@ public final class FxWeaponController {
     }
 
     /**
-     * Where the soldiers are, as the enemy AI sees positions (top-left corners, like the player position). Safe to call
-     * from the AI thread.
+     * The soldiers of the infantry strike for the enemies (centres, board space). Safe to use from the AI thread: the
+     * positions are a snapshot, and a hit is passed on to the FX thread, where the squad lives.
      */
-    public List<Point2D> soldierPositionsForEnemies() {
-        List<Point2D> positions = new java.util.ArrayList<>();
-        for (Point2D soldier : strikes.soldierPositions()) {
-            positions.add(new Point2D(soldier.getX() - HALF_PLAYER, soldier.getY() - HALF_PLAYER));
-        }
-        return positions;
+    public SoldierTargets soldierTargets() {
+        SoldierTargets squad = strikes.soldierTargets();
+        return SoldierTargets.of(squad::positions,
+                (soldier, damage) -> javafx.application.Platform.runLater(() -> squad.hit(soldier, damage)));
     }
 
     /** Enemies this close to a soldier go for it instead of the player (items model). */

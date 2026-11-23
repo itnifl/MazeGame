@@ -8,6 +8,7 @@ import main.game.maze.characters.PlayerCharacter;
 import main.game.maze.common.graphics.fire.RocketEffect;
 import main.game.maze.game.level.GuardTowerSession;
 import main.game.maze.game.level.GuardTowerSpec;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.mazeworld.constants.StageConstants;
 
 /**
@@ -40,6 +41,11 @@ public final class FxGuardTowerController {
 
         /** Plays a sound, at most once per {@code coolDownMillis} for the same key. */
         void play(String path, String key, long coolDownMillis);
+
+        /** The soldiers of the infantry strike (centres), shot before the player; none by default. */
+        default SoldierTargets soldiers() {
+            return SoldierTargets.NONE;
+        }
     }
 
     /** A tower as the controller needs it: where it stands and how healthy it is (0 when destroyed). */
@@ -80,7 +86,7 @@ public final class FxGuardTowerController {
         return towers.size();
     }
 
-    /** Per frame: the towers look for the player, shoot, the rockets fly and land. */
+    /** Per frame: the towers look for a soldier or the player, shoot, the rockets fly and land. */
     public void tick(long nowNanos) {
         double dt = lastNanos < 0 ? 0 : (nowNanos - lastNanos) / 1e9;
         lastNanos = nowNanos;
@@ -95,9 +101,11 @@ public final class FxGuardTowerController {
             Body tower = entry.getValue();
             views.add(new GuardTowerSession.Tower(entry.getKey(), tower.centerX(), tower.centerY(), tower.health()));
         }
-        GuardTowerSession.Result result = session.tick(dt, views, px, py, host::wallsBetween);
+        SoldierTargets soldiers = host.soldiers();
+        GuardTowerSession.Result result = session.tick(dt, views, px, py, soldiers.positions(), host::wallsBetween);
         GuardTowerSpec spec = session.spec();
         apply(result, spec);
+        result.hitSoldiers(soldiers);
         List<RocketEffect> rockets = new ArrayList<>();
         for (GuardTowerSession.Rocket rocket : session.rockets()) {
             rockets.add(new RocketEffect(rocket.x(), rocket.y(), rocket.angleRadians()));

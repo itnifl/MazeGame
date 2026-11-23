@@ -189,6 +189,14 @@ weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma
 over crossed rifles), `life-refill.png` (a medkit). The single `soldier.png` of the first version (helmet, green
 uniform, rifle) was replaced by the animated soldier of `SoldierSpriteGenerator` (below). The existing sprites come out unchanged.
 
+## MenuThemeSpriteGenerator
+
+Draws the textures of the screens between levels (win screen and shop) into `ui/`: a riveted gunmetal `panel.png` (9-slice 30), the olive-drab title plate `banner.png` (14), the tiling `hazard-strip.png`, the ammo-crate item cards `card.png`, `card-selected.png` (amber glow) and `card-locked.png` (12), the icon well `slot.png` (10), the metal-plate buttons `button-go.png`, `button-buy.png`, `button-steel.png`, `button-danger.png` (10), the rank chevrons `tier-cheap.png`, `tier-medium.png`, `tier-expensive.png`, the skull coin `token.png`, the padlock `lock.png` and the edge-darkening `vignette.png`. Icons are drawn at twice the size they are shown at. Where each is used is the menu theme model (`menutheme.mazegame`).
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/MenuThemeSpriteGenerator.java
+```
+
 ## SoldierSpriteGenerator
 
 Draws the soldier of the infantry strike into `soldier/`: `soldier-side-*` (facing right; mirrored in the game for left), `soldier-down-*` (front) and `soldier-up-*` (back, with the backpack), each `stand`, `walk1`, `walk2` and `fire` (muzzle flash), and `soldier-fallen.png`. Camouflage uniform, webbing and pouches, boots, a helmet with a net and a rifle, a soft shadow; 32x32 grid scaled 2x. Replaces the single `pickups/soldier.png`.

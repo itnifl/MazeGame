@@ -174,6 +174,17 @@ Windows for every pull request.
 4. An up-to-date libGDX launch does not rebuild the mirror or need network
    access. Builds refresh the mirror when it is missing or its inputs change.
 
+### A Maven repository is down (503) or there is no network
+
+Every Maven call of `make-javafx.ps1` and `make-libgdx.ps1` (and so the VS Code tasks "Ensure Java 21" and "Ensure Java 21
+(libGDX)") goes through `Invoke-Maven`: when Maven fails and an `[ERROR]` line shows an unreachable repository (for example
+`repo.eclipse.org` answering `503 Service Temporarily Unavailable`), the same build is run again offline (`-o`, without
+`-U`) from the local Maven repository. A failure of anything else (a compile error, a failing test) is not retried. If the
+offline run fails too, an artifact is missing locally: run the build again when the repository is back. The Eclipse
+release repository is not asked for metadata every day (`updatePolicy never`; releases never change), so a cached build
+does not contact it at all. When the local p2 mirror has to be refreshed and the download fails, the previous mirror is
+put back (`releng/local-p2.previous` while it is rebuilt) and the refresh is tried again on the next build.
+
 ### Interrupted or slow p2 mirror downloads
 
 The JavaFX mirror target reuses a completed `releng/local-p2` repository until

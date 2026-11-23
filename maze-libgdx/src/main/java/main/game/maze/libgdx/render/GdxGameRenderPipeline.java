@@ -244,11 +244,10 @@ public final class GdxGameRenderPipeline {
         GdxWinOverlayView.WinButtons winButtons = state.winOverlayView().render(
                 new GdxWinOverlayView.WinOverlayContext(
                         state.batch(),
-                        state.shapes(),
                         state.font(),
                         state.glyphLayout(),
                         state.hudCamera(),
-                        state.winBackgroundTexture(),
+                        state.enemyTextureLoader(),
                         state.session().winScoreSaved(),
                         state.winOverlayController().winScoreStatusText(),
                         state.winOverlayController().winNameInputText(),
@@ -259,7 +258,7 @@ public final class GdxGameRenderPipeline {
         var shop = state.winOverlayController().shop();
         if (shop != null && shop.isOpen()) {
             // the shop between levels, over the win screen
-            shop.onRendered(shopView.render(new GdxShopOverlayView.RenderContext(state.batch(), state.shapes(), state.font(),
+            shop.onRendered(shopView.render(new GdxShopOverlayView.RenderContext(state.batch(), state.font(),
                     state.glyphLayout(), state.hudCamera(), state.enemyTextureLoader(),
                     main.game.maze.game.items.PickupCatalogLoader.loadDefault()), shop.menu()));
         }
@@ -342,7 +341,6 @@ public final class GdxGameRenderPipeline {
             Texture wallTexture,
             Texture playerTexture,
             Texture playerDeathTexture,
-            Texture winBackgroundTexture,
             Texture gameOverBackgroundTexture,
             float activeGoalX,
             float activeGoalY,

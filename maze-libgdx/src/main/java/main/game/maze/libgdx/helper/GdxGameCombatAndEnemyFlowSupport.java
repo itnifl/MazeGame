@@ -320,6 +320,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         // living enemies, plus dead ones whose pumpkins are still in the air (they start no new attacks)
         List<GdxEnemyRuntime> shooters = new ArrayList<>(animatedEnemies);
         shooters.addAll(worldModel.retiredShooters().active());
+        // the soldiers of the infantry strike are shot before the player
+        var soldiers = GdxStrikeSupport.soldierTargets(worldModel, worldModel.maze());
         for (GdxEnemyRuntime enemy : shooters) {
             totalDamage += enemy.updateRangedAttacks(
                     dt,
@@ -327,7 +329,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     player.x(),
                     player.y(),
                     player.halfSize(),
-                    GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()));
+                    GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()),
+                    soldiers);
             worldModel.enemyProjectiles().addAll(enemy.projectileVisuals());
             worldModel.enemyBeams().addAll(enemy.beamVisuals());
             worldModel.enemyBursts().addAll(enemy.explosionVisuals());

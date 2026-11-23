@@ -274,6 +274,9 @@ public class GameController implements Initializable, EnemyRegistrar {
     /** The guard towers of level 4: they shoot rpgs and a gatling gun, decided by the shared tower session. */
     private final FxGuardTowerController guardTowers = new FxGuardTowerController(new FxGuardTowerController.Host() {
         @Override public PlayerCharacter player() { return playerCharacter; }
+        @Override public main.game.maze.game.targeting.SoldierTargets soldiers() {
+            return weapons.soldierTargets();
+        }
         @Override public int wallsBetween(double fromX, double fromY, double toX, double toY) {
             return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countVectors(fromX, fromY, toX, toY, maze.getMazeVectors());
         }
@@ -842,7 +845,7 @@ public class GameController implements Initializable, EnemyRegistrar {
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.setBoosts(App.levelProgress.boosts());   // what was bought in the shop for this level
         // enemies near a soldier of the infantry strike go for the soldier first
-        enemyCoordinator.setSoldiers(weapons::soldierPositionsForEnemies, weapons.soldierLureRadius());
+        enemyCoordinator.setSoldiers(weapons.soldierTargets(), weapons.soldierLureRadius());
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
         if (lives.remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once

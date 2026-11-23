@@ -11,6 +11,7 @@ import main.game.maze.game.items.ShotEffects;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.strike.InfantrySquad;
 import main.game.maze.game.strike.ScheduledBlast;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.game.strike.StrikePlanner;
 import main.game.maze.game.strike.StrikeVisuals;
 import main.game.maze.game.strike.StrikeWeapons;
@@ -207,15 +208,20 @@ public final class GdxStrikeSupport {
      * one to go for it ({@code DecoyTargeting}).
      */
     public static List<Point2D> soldierPositionsOnScreen(GameWorldModel model, MazeArena maze) {
+        return soldierTargets(model, maze).positions();
+    }
+
+    /**
+     * The soldiers for the ranged enemies to shoot at (sergeants, towers, pumpkin bombers), in screen space (y up,
+     * centres). Hitting one hurts it at once: libGDX runs the enemies and the squad on the render thread.
+     */
+    public static SoldierTargets soldierTargets(GameWorldModel model, MazeArena maze) {
         if (maze == null) {
-            return List.of();
+            return SoldierTargets.NONE;
         }
         float height = maze.heightPx();
-        List<Point2D> positions = new ArrayList<>();
-        for (Point2D soldier : model.strikes().soldierPositions()) {
-            positions.add(new Point2D(soldier.getX(), height - soldier.getY()));
-        }
-        return positions;
+        java.util.function.UnaryOperator<Point2D> flip = p -> new Point2D(p.getX(), height - p.getY());
+        return model.strikes().soldierTargets().mapped(flip, flip);
     }
 
     static Blast toScreen(ScheduledBlast blast, float height) {

@@ -69,7 +69,7 @@ function Ensure-XtextGeneratedSources {
 
     Write-Host 'Generated Xtext sources are missing, regenerating...' -ForegroundColor Yellow
     Invoke-Mirror
-    & $Mvn -pl main.game.maze.dsl -am generate-sources
+    Invoke-Maven -pl main.game.maze.dsl -am generate-sources
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "Xtext generated source recovery failed with exit code $exit."
@@ -115,7 +115,7 @@ function Invoke-LibgdxFullBuild {
     Invoke-Mirror
     $cmd = "$Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install"
     Write-Host "=== Running libGDX full build: $cmd ===" -ForegroundColor Cyan
-    & $Mvn -pl $LibgdxModules -am -U -DskipTests=false clean install
+    Invoke-Maven -pl $LibgdxModules -am -U -DskipTests=false clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX full build failed with exit code $exit."
@@ -130,7 +130,7 @@ function Invoke-LibgdxQuickBuild {
     $skipValue = if ($SkipTests) { 'true' } else { 'false' }
     Write-Host "=== Running libGDX quick build (skipTests=$skipValue) ===" -ForegroundColor Cyan
     # install, so the local Maven repository (single-module builds, the IDE) matches the sources
-    & $Mvn -pl $LibgdxModules -am "-DskipTests=$skipValue" install
+    Invoke-Maven -pl $LibgdxModules -am "-DskipTests=$skipValue" install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX quick build failed with exit code $exit."
@@ -160,7 +160,7 @@ function Ensure-LibgdxLaunchClasses {
     Invoke-Mirror
     Write-Host 'Clean-building and installing the libGDX runtime (jars + dependencies)...' -ForegroundColor Yellow
     # Discard classes compiled by another JDK (for example, by the IDE).
-    & $Mvn -pl $LibgdxModules -am -DskipTests=true clean install
+    Invoke-Maven -pl $LibgdxModules -am -DskipTests=true clean install
     $exit = $LASTEXITCODE
     if ($exit -ne 0) {
         throw "libGDX prepare-run build failed with exit code $exit."

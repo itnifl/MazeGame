@@ -15,6 +15,9 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.constants.AudioChannelConstants;
 import main.game.maze.common.constants.AudioResourceConstants;
 import main.game.maze.constants.DataFileConstants;
+import main.game.maze.game.theme.MenuButton;
+import main.game.maze.game.theme.MenuTheme;
+import main.game.maze.javafx.menu.FxMenuTheme;
 
 public class WinGameController extends ActionScreenController implements Initializable {
 
@@ -31,12 +34,25 @@ public class WinGameController extends ActionScreenController implements Initial
     @FXML
     private Button shopButton;
 
+    @FXML
+    private Button saveButton;
+
+    @FXML
+    private Button restartButton;
+
+    @FXML
+    private javafx.scene.image.ImageView backdrop;
+
+    @FXML
+    private javafx.scene.image.ImageView tokenIcon;
+
     public void showWinBonusLabel(int amount) {
         winBonusNoticeLabel.setText("+ Win bonus: +" + amount);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        applyTheme();
         // the next level is offered only while there is one
         boolean moreLevels = main.game.maze.App.levelProgress.hasNext();
         if (nextLevelButton != null) {
@@ -57,6 +73,30 @@ public class WinGameController extends ActionScreenController implements Initial
             AudioEngine.get().play(main.game.maze.game.status.FinalLevelIntro.WIN_VOICE);
         }
         AudioEngine.get().play(AudioResourceConstants.WinGameSoundComment);
+    }
+
+    /** The look of the screens between levels (the menu theme model), the same as the libGDX win screen. */
+    private void applyTheme() {
+        if (screenRoot == null) {
+            return;
+        }
+        FxMenuTheme.apply(screenRoot);
+        if (backdrop != null) {
+            backdrop.setImage(FxMenuTheme.image(MenuTheme.Art.BACKDROP));
+        }
+        if (tokenIcon != null) {
+            tokenIcon.setImage(FxMenuTheme.image(MenuTheme.Art.TOKEN));
+        }
+        styleButton(saveButton, MenuButton.SAVE_SCORE);
+        styleButton(shopButton, MenuButton.SHOP);
+        styleButton(nextLevelButton, MenuButton.NEXT_LEVEL);
+        styleButton(restartButton, MenuButton.RESTART_LEVEL);
+    }
+
+    private static void styleButton(Button button, MenuButton kind) {
+        if (button != null) {
+            FxMenuTheme.style(button, kind);
+        }
     }
 
     /** Goes on to the next level with the weapons the player has now. */

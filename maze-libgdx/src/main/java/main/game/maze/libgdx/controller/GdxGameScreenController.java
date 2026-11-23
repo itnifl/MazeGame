@@ -249,7 +249,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     private Texture goalTexture;
     private Texture wallTexture;
     private Texture backgroundTexture;
-    private Texture winBackgroundTexture;
     private Texture gameOverBackgroundTexture;
     
     final List<Point2D> activePathPoints = worldModel.activePathPoints();
@@ -358,7 +357,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         var overlayResources = GdxGameLifecycleSupport.createOverlayResources(this::loadTexture);
         camera = overlayResources.camera();
         hudCamera = overlayResources.hudCamera();
-        winBackgroundTexture = overlayResources.winBackgroundTexture();
         gameOverBackgroundTexture = overlayResources.gameOverBackgroundTexture();
 
         resizeToCurrentWindow();
@@ -690,12 +688,15 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         GdxStrikeSupport.tick(worldModel, animatedEnemies, maze, dt, PlayerIds.LOCAL_PLAYER).forEach(this::setOff);
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
-        sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
+        // the ranged enemies shoot the soldiers of the infantry strike before the player
+        var soldiers = GdxStrikeSupport.soldierTargets(worldModel, maze);
+        sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt,
+                soldiers);
         tickLava();   // first: lava kills before a hole or anything else can move the player
         tickPulseCharge(dt);
         tickHazards(dt);
         if (player != null) {
-            guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt);
+            guardTowerSupport.tick(guardTowerHost, animatedEnemies, player.x(), player.y(), dt, soldiers);
             wallBuilderSupport.tick(wallBuilderHost, animatedEnemies, player.x(), player.y(), dt);
         }
         // sergeant rounds and mines hurt the player after the combat frame was read: a lethal hit counts now,
@@ -949,7 +950,6 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 wallTexture,
                 playerTexture,
                 playerDeathTexture,
-                winBackgroundTexture,
                 gameOverBackgroundTexture,
                 combatState.isDead(),
                 enemyAnimationClock,

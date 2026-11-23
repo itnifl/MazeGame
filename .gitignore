@@ -73,6 +73,7 @@ out/
 *.orig
 *.rej
 /releng/local-p2/binary
+/releng/local-p2.previous/
 releng/local-p2/.mirror.stamp
 releng/local-p2/.mirror.inputs
 # Note: src-gen is committed to allow CI builds without running generators

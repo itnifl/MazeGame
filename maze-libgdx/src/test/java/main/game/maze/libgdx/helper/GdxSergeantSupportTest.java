@@ -177,4 +177,20 @@ class GdxSergeantSupportTest {
             @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
         };
     }
+
+    @Test
+    @DisplayName("fires at a soldier of the infantry strike in sight before the player (SR-400)")
+    void soldiersFirst() {
+        PlayerState player = new PlayerState(300, 200, 24);
+        int before = combat.currentHitPointsAsInt();
+        List<Integer> soldierHits = new java.util.ArrayList<>();
+        main.game.maze.game.targeting.SoldierTargets soldiers = main.game.maze.game.targeting.SoldierTargets.of(
+                () -> List.of(new main.game.maze.mazeworld.Point2D(250, 200)), (at, damage) -> soldierHits.add(damage));
+
+        int rounds = support.tick(world, List.of(sergeant(200, 200)), openMaze(), player, combat, SPEC, 0f, soldiers);
+
+        assertEquals(1, rounds);
+        assertEquals(List.of(SPEC.roundDamage()), soldierHits);
+        assertEquals(before, combat.currentHitPointsAsInt(), "the player was not hit");
+    }
 }

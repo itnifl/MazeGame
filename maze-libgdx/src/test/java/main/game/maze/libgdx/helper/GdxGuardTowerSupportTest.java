@@ -171,4 +171,18 @@ class GdxGuardTowerSupportTest {
             @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
         };
     }
+
+    @Test
+    @DisplayName("a soldier in sight draws the rocket and the gatling away from the player (SR-400)")
+    void soldiersFirst() {
+        List<Integer> soldierHits = new ArrayList<>();
+        main.game.maze.game.targeting.SoldierTargets soldiers = main.game.maze.game.targeting.SoldierTargets.of(
+                () -> List.of(new main.game.maze.mazeworld.Point2D(100, 400)), (at, damage) -> soldierHits.add(damage));
+        for (int i = 0; i < 125; i++) {
+            support.tick(host, enemies, 350, 200, 0.02f, soldiers);
+        }
+        assertTrue(host.hurts.isEmpty(), "the player was not shot");
+        assertTrue(soldierHits.contains(SPEC.rpgPlayerDamage()), "the rocket landed on the soldier");
+        assertTrue(soldierHits.contains(SPEC.gatlingDamage()), "the gatling fired at the soldier");
+    }
 }

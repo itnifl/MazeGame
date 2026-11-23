@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import main.game.maze.mazeworld.GameMazeWorld;
 import main.game.maze.mazeworld.Point2D;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.mazeworld.service.MazeNavigationGraphService;
@@ -269,7 +270,34 @@ public final class InfantrySquad {
     }
 
     /**
-     * Enemies touching the soldier hurt it (when the soldiers can be hurt at all).
+     * A shot of a ranged enemy hits the living soldier nearest to (x, y), when one stands within
+     * {@link SoldierTargets#BODY_RADIUS} of it; it falls at the next {@link #tick} when its health is gone.
+     *
+     * @return whether a soldier was hit
+     */
+    public boolean hit(double x, double y, int damage) {
+        if (orders.health() <= 0 || damage <= 0) {
+            return false;
+        }
+        Soldier nearest = null;
+        double best = SoldierTargets.BODY_RADIUS;
+        for (Soldier soldier : squad) {
+            double distance = Math.hypot(soldier.x - x, soldier.y - y);
+            if (soldier.alive() && distance <= best) {
+                best = distance;
+                nearest = soldier;
+            }
+        }
+        if (nearest == null) {
+            return false;
+        }
+        nearest.health -= damage;
+        return true;
+    }
+
+    /**
+     * Enemies touching the soldier hurt it (when the soldiers can be hurt at all); a soldier without health left (from
+     * touches or from shots since the last frame) falls.
      *
      * @return true when it fell now
      */

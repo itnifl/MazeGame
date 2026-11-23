@@ -135,6 +135,9 @@
     <repository>
       <id>eclipse-releases</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <!-- releases never change: no daily metadata check, so an outage of repo.eclipse.org does not touch cached builds -->
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
     
     <repository>

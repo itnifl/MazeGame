@@ -261,3 +261,21 @@ radius, fuse, units, pierce power, sprite, sounds) is in `xmi/items/items.xmi`.
 Which tier is sold from which level is in the same file: `unlock MEDIUM fromLevel 4` sells the medium items from the shop
 before level 4 (between levels 3 and 4) on. A tier without an `unlock` is always sold. The validator reports an unknown
 tier, a level below 2 and a tier unlocked twice.
+
+## The look of the screens between levels
+
+The win screen and the shop are drawn from the menu theme, written in the same DSL in
+`maze-common-backend/src/main/resources/xmi/theme/menutheme.mazegame`:
+
+```
+theme {
+    font "Consolas"
+    colour TITLE "#f2d98c"                                  // one colour per Swatch: TITLE, TEXT, MUTED, ACCENT, ...
+    image PANEL "/main/game/maze/ui/panel.png" slice 30     // one texture per Art; slice: edge pixels kept unstretched
+    badge CHEAP "/main/game/maze/ui/tier-cheap.png" colour "#cd8c4e"   // one rank badge per shop tier
+}
+```
+
+Every colour, texture and tier badge must be given exactly once (the validator says which are missing). Regenerate the
+model the game loads with `MAZE_THEME_REGENERATE=true mvn -o verify -pl main.game.maze.dsl.tests`; both frontends then
+draw the new look. New textures are drawn with `tools/sprite-gen/MenuThemeSpriteGenerator.java`.
