@@ -64,6 +64,16 @@ Both frontends share the identical game rules, scoring engine, maze generation, 
 
 ## Quick start
 
+### Windows
+
+From the repository root in PowerShell 7+:
+
+```powershell
+./start-windows.ps1
+```
+
+The launcher runs `install.ps1` if setup is missing or incomplete, then builds and starts the libGDX game.
+
 ### Ubuntu 24.04 and 26.04 x86_64
 
 To check setup and start the libGDX game, run from the repository root:
@@ -584,6 +594,7 @@ Helper scripts for installing prerequisites, packaging the source, and running r
 |---|---|
 | ⚙️ [install-linux.sh](install-linux.sh) | Audit and install all prerequisites on Ubuntu 24.04 and 26.04 x86_64; reuses `install.ps1` for user setup |
 | 🎮 [start-linux](start-linux) | Check setup and launch the libGDX game on Linux |
+| 🎮 [start-windows.ps1](start-windows.ps1) | Check setup and launch the libGDX game on Windows |
 | ⚙️ [install.ps1](install.ps1) | Install JDK 21, Maven, and optionally JavaFX SDK (Windows / macOS / Linux) |
 | 🧪 [Run-P2AndBuildCheck-javafx.ps1](Run-P2AndBuildCheck-javafx.ps1) | Full build with p2 mirror validation and diagnostics (JavaFX) |
 | 🧪 [Run-P2AndBuildCheck-libgdx.ps1](Run-P2AndBuildCheck-libgdx.ps1) | Full build with p2 mirror validation and diagnostics (libGDX) |
