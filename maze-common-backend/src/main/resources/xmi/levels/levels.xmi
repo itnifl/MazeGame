@@ -38,4 +38,18 @@
     <lava streamCount="2" width="46.0" bridgesPerStream="2" bridgeLength="56.0" meander="95.0" wavelength="340.0" flowSpeed="34.0" glow="0.65" crust="0.45" deathSound="/main/game/maze/sounds/lava-death.wav"/>
     <lastLifeGift weapon="PULSE_CANNON" shots="6"/>
   </levels>
+  <levels number="7" name="The Haunted Crypt" baseLevel="6" threatCapacityFactor="2.2">
+    <mines count="4" ringRadius="62.0" secondRingRadius="118.0" triggerRadius="22.0" pulseSeconds="0.9" blastRadius="150.0" blastDamage="15" playerDamage="20" holeRadius="30.0"/>
+    <ghostCounts difficulty="EASY" count="6"/>
+    <ghostCounts difficulty="NORMAL" count="12"/>
+    <ghostCounts difficulty="HARD" count="20"/>
+    <teleport cooldownSeconds="1.2" bannerText="The crypt claims you" bannerSeconds="1.6" zapSound="/main/game/maze/sounds/teleport.wav" voiceSound="/main/game/maze/sounds/teleported.wav"/>
+    <sergeantPosts difficulty="EASY" count="2"/>
+    <sergeantPosts difficulty="NORMAL" count="6"/>
+    <sergeantPosts difficulty="HARD" count="9"/>
+    <towerCounts difficulty="EASY" count="3"/>
+    <towerCounts difficulty="NORMAL" count="4"/>
+    <towerCounts difficulty="HARD" count="6"/>
+    <lava streamCount="3" width="46.0" bridgesPerStream="2" bridgeLength="56.0" meander="95.0" wavelength="340.0" flowSpeed="40.0" glow="0.8" crust="0.35" deathSound="/main/game/maze/sounds/lava-death.wav"/>
+  </levels>
 </levels:LevelModel>

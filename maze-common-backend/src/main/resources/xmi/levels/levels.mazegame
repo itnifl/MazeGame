@@ -135,4 +135,50 @@ game MazeGameLevels {
         }
         lastLifeWeapon PULSE_CANNON shots 6
     }
+
+    level 7 "The Haunted Crypt" {
+        basedOn 6
+        threatCapacity 2.2
+        // the dead do not stay put: a swarm of portal ghosts keeps zapping the player about, in the middle of
+        // the lava and the guns; a second ring of mines and more sergeants and towers make every landing deadly
+        mines {
+            count 4
+            ringRadius 62.0
+            secondRing 118.0
+            triggerRadius 22.0
+            pulse 0.9
+            blastRadius 150.0
+            blastDamage 15
+            playerDamage 20
+            holeRadius 30.0
+        }
+        portalGhosts easy 6
+        portalGhosts normal 12
+        portalGhosts hard 20
+        teleport {
+            cooldown 1.2
+            banner "The crypt claims you"
+            bannerSeconds 1.6
+            zapSound "/main/game/maze/sounds/teleport.wav"
+            voiceSound "/main/game/maze/sounds/teleported.wav"
+        }
+        sergeants easy 2
+        sergeants normal 6
+        sergeants hard 9
+        towers easy 3
+        towers normal 4
+        towers hard 6
+        lava {
+            streams 3
+            width 46.0
+            bridges 2
+            bridgeLength 56.0
+            meander 95.0
+            wavelength 340.0
+            flowSpeed 40.0
+            glow 0.8
+            crust 0.35
+            deathSound "/main/game/maze/sounds/lava-death.wav"
+        }
+    }
 }

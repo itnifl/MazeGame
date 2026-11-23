@@ -342,10 +342,10 @@ MUST be added to the shared core, not to a single frontend.
   the score and the difficulty it was entered with.
 - **GR-78**: Between levels the win screen offers a Shop. Prices are paid from the score
   carried into the next level; what is bought goes into the next level (and its savepoint).
-  Cheap: extra long shield (800, shields x3), extra long flames (1000, bombs x1.6), 5 grenades
-  (600). Medium: 3 plasma grenades (2000), 3 bunker buster rockets (2500), a fat bomb (2200),
-  3 extra lives (3000). Expensive: 2 small nuclear grenades (6000), an airstrike (7500), an
-  infantry strike (9000).
+  Cheap: extra long shield (2000, shields x3), extra long flames (2000, bombs x1.6), 5 grenades
+  (2000). Medium: 3 plasma grenades, 3 bunker buster rockets, a fat bomb and 3 extra lives
+  (10000 each). Expensive: 2 small nuclear grenades (40000), an airstrike (60000), an
+  infantry strike (40000).
 - **GR-79**: The boosts last for the next level only; buying one that is already on is refused.
 - **GR-80**: Grenades are thrown up to 240 px (plasma 260, nuke 300) along the facing, stop short
   of a wall and go off after 1.2 s (nuke 2 s): grenade 160 damage / 120 px flames, plasma 420 /
