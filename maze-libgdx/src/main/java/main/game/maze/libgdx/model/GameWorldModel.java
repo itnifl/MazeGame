@@ -62,6 +62,9 @@ public final class GameWorldModel {
     private final RetiredShooters<GdxEnemyRuntime> retiredShooters = new RetiredShooters<>(GdxEnemyRuntime::hasShotsInFlight);
     private final PickupField pickupField = new PickupField(PickupCatalogLoader.loadDefault(), new java.util.Random());
     private final PowerShield shield = new PowerShield();
+    private final main.game.maze.game.strike.StrikeWeapons strikes =
+            new main.game.maze.game.strike.StrikeWeapons(pickupField.catalog(), new java.util.Random());
+    private main.game.maze.game.level.LevelBoosts boosts = main.game.maze.game.level.LevelBoosts.NONE;
     private final KillLedger killLedger = new KillLedger();
     private final List<ActiveEffect> effects = new ArrayList<>();
     private final HealFeedback healFeedback = new HealFeedback();
@@ -290,6 +293,20 @@ public final class GameWorldModel {
     /** New level: the weapons handed on from the previous level instead of a fresh arsenal. */
     public void inheritArsenal(PlayerArsenal inherited) {
         arsenal = inherited;
+    }
+
+    /** Grenades, fat bombs, airstrikes and the infantry strike on their way (shared rules). */
+    public main.game.maze.game.strike.StrikeWeapons strikes() {
+        return strikes;
+    }
+
+    /** The boosts bought in the shop for the level being played (longer shields, stronger bombs). */
+    public main.game.maze.game.level.LevelBoosts boosts() {
+        return boosts;
+    }
+
+    public void setBoosts(main.game.maze.game.level.LevelBoosts boosts) {
+        this.boosts = boosts == null ? main.game.maze.game.level.LevelBoosts.NONE : boosts;
     }
 
     public PowerShield shield() {

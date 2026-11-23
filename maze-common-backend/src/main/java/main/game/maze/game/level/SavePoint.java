@@ -6,9 +6,10 @@ import main.game.maze.game.items.ArsenalSnapshot;
  * The state a level is entered with, saved when the level before it is completed: which level, and the weapons
  * the player carries into it (null when that level starts from scratch), and the score carried forward: the score the
  * level before it ended with, which the next level adds its own starting score to, and the name of the difficulty the game
- * was played on (empty when it is not known). Restarting the level, or loading the savepoint from the main menu, restores exactly this.
+ * was played on (empty when it is not known), and the boosts bought in the shop for that level. Restarting the level, or
+ * loading the savepoint from the main menu, restores exactly this.
  */
-public record SavePoint(int level, ArsenalSnapshot arsenal, int score, String difficulty) {
+public record SavePoint(int level, ArsenalSnapshot arsenal, int score, String difficulty, LevelBoosts boosts) {
 
     /** A savepoint with no score carried and no difficulty. */
     public SavePoint(int level, ArsenalSnapshot arsenal) {
@@ -20,10 +21,21 @@ public record SavePoint(int level, ArsenalSnapshot arsenal, int score, String di
         this(level, arsenal, score, "");
     }
 
+    /** A savepoint with no boosts bought. */
+    public SavePoint(int level, ArsenalSnapshot arsenal, int score, String difficulty) {
+        this(level, arsenal, score, difficulty, LevelBoosts.NONE);
+    }
+
     public SavePoint {
         difficulty = difficulty == null ? "" : difficulty.trim();
+        boosts = boosts == null ? LevelBoosts.NONE : boosts;
         if (level < 2) {
             throw new IllegalArgumentException("a savepoint is made when a level is completed, so it is for level 2 or later: " + level);
         }
+    }
+
+    /** This savepoint after a purchase in the shop: what the player now carries, the score left and the boosts. */
+    public SavePoint afterPurchase(ArsenalSnapshot newArsenal, int newScore, LevelBoosts newBoosts) {
+        return new SavePoint(level, newArsenal, Math.max(0, newScore), difficulty, newBoosts);
     }
 }

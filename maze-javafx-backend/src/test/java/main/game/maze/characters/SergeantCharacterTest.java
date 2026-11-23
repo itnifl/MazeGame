@@ -39,7 +39,7 @@ class SergeantCharacterTest {
     }
 
     /** A range with an optional wall, recording rounds and tracers. */
-    private static final class RecordingRange implements SergeantCharacter.Range {
+    private static class RecordingRange implements SergeantCharacter.Range {
         boolean wall;
         final List<Integer> hits = new ArrayList<>();
         int tracers;
@@ -125,5 +125,25 @@ class SergeantCharacterTest {
         sergeant.subtractHitPoints(SPEC.health() + 10);
         RecordingRange range = new RecordingRange();
         assertEquals(0, sergeant.tickGun(300, 200, 1_000_000_000L, range));
+    }
+
+    @Test
+    @DisplayName("fires at a soldier of the infantry strike in sight before the player (SR-400)")
+    void firesAtSoldiersFirst() {
+        SergeantCharacter sergeant = sergeant();
+        List<Integer> soldierHits = new ArrayList<>();
+        main.game.maze.mazeworld.Point2D soldier = new main.game.maze.mazeworld.Point2D(260, 200);
+        RecordingRange range = new RecordingRange() {
+            @Override public main.game.maze.game.targeting.SoldierTargets soldiers() {
+                return main.game.maze.game.targeting.SoldierTargets.of(() -> List.of(soldier),
+                        (at, damage) -> soldierHits.add(damage));
+            }
+        };
+
+        int rounds = sergeant.tickGun(300, 200, 1_000_000_000L, range);
+
+        assertEquals(1, rounds);
+        assertEquals(List.of(SPEC.roundDamage()), soldierHits, "the soldier took the round");
+        assertTrue(range.hits.isEmpty(), "not the player");
     }
 }

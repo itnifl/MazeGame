@@ -20,6 +20,8 @@ GameConfiguration:
         (patrols+=PatrolConfig)*
         (lootTables+=LootTableConfig)*
         (levels+=LevelConfig)*
+        (shop=ShopConfig)?
+        (theme=MenuThemeConfig)?
     '}'
 ;
 
@@ -318,6 +320,60 @@ LavaConfig:
     '}'
 ;
 
+/*
+ * The shop between levels (the source of xmi/shop/shop.xmi; see shop.ecore). The player pays with their score.
+ * kind is a ShopItemKind of shop.ecore (GRENADE, AIRSTRIKE, SHIELD_BOOST, ...), tier one of CHEAP, MEDIUM, EXPENSIVE.
+ * Weapons give `amount` uses per purchase; boosts make the next level's shields or bombs `factor` times stronger.
+ */
+ShopConfig:
+    'shop' '{'
+        (unlocks+=ShopUnlockConfig)*
+        (items+=ShopItemConfig)*
+    '}'
+;
+
+/* The items of a tier are sold from the shop before level `fromLevel` on (the shop before level 4 comes after level 3). */
+ShopUnlockConfig:
+    'unlock' tier=ValidID 'fromLevel' level=INT
+;
+
+ShopItemConfig:
+    'item' kind=ValidID displayName=STRING
+        'tier' tier=ValidID
+        'price' price=INT
+        ('amount' amount=INT_OBJECT)?
+        ('factor' factor=DOUBLE_OBJECT)?
+        ('description' description=STRING)?
+;
+
+/*
+ * The look of the screens between levels, the win screen and the shop (the source of xmi/theme/menutheme.xmi; see
+ * menutheme.ecore): the JavaFX font, a colour for every Swatch (TITLE, TEXT, ...), a texture for every Art (PANEL, CARD,
+ * BUTTON_GO, ...) with the pixels of each edge kept unstretched when it is drawn larger (slice), and the badge of every
+ * shop tier. Both frontends draw from it.
+ */
+MenuThemeConfig:
+    'theme' '{'
+        'font' font=STRING
+        (swatches+=ThemeSwatchConfig)*
+        (images+=ThemeImageConfig)*
+        (badges+=ThemeBadgeConfig)*
+    '}'
+;
+
+/* colour is #rrggbb or #rrggbbaa */
+ThemeSwatchConfig:
+    'colour' role=ValidID colour=STRING
+;
+
+ThemeImageConfig:
+    'image' role=ValidID path=STRING ('slice' slice=INT_OBJECT)?
+;
+
+ThemeBadgeConfig:
+    'badge' tier=ValidID image=STRING 'colour' colour=STRING
+;
+
 LastLifeGiftConfig:
     'lastLifeWeapon' weapon=ValidID 'shots' shots=INT
 ;
@@ -370,5 +426,5 @@ BOOLEAN_OBJECT returns ecore::EBooleanObject:
  * allowed as names and references, so existing files that used them as identifiers keep parsing.
  */
 ValidID returns ecore::EString:
-    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound'
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 ;

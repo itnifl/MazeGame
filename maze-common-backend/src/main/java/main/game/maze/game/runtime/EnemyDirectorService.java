@@ -44,6 +44,23 @@ public final class EnemyDirectorService {
         }
     }
 
+    /**
+     * As {@link #advanceAll(List, WorldView, float)}, with each enemy moving by its own view (e.g. one that has it chase a
+     * soldier of the infantry strike instead of the player, {@code DecoyTargeting}).
+     */
+    public <E extends EnemyRuntime> void advanceAll(List<E> enemies, float dt,
+                                                    java.util.function.Function<? super E, WorldView> worldFor) {
+        if (enemies == null || enemies.isEmpty() || worldFor == null) {
+            return;
+        }
+        for (E enemy : enemies) {
+            WorldView world = worldFor.apply(enemy);
+            if (world != null) {
+                enemy.advance(world, wanderService, patrolService, adaptiveService, phasingService, dt);
+            }
+        }
+    }
+
     public void reset() {
         wanderService.reset();
         adaptiveService.reset();

@@ -9,6 +9,7 @@ import main.game.maze.common.graphics.fire.RocketEffect;
 import main.game.maze.game.items.ShotEffects;
 import main.game.maze.game.level.GuardTowerSession;
 import main.game.maze.game.level.GuardTowerSpec;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.libgdx.game.GdxEnemyRuntime;
 
 /**
@@ -56,6 +57,12 @@ public final class GdxGuardTowerSupport {
      * @param enemies the enemies in play; a tower that has left the list (killed) is still reported, once, as destroyed
      */
     public void tick(Host host, List<GdxEnemyRuntime> enemies, float playerX, float playerY, float dt) {
+        tick(host, enemies, playerX, playerY, dt, SoldierTargets.NONE);
+    }
+
+    /** As {@link #tick(Host, List, float, float, float)}, with the soldiers (screen space) the towers shoot first. */
+    public void tick(Host host, List<GdxEnemyRuntime> enemies, float playerX, float playerY, float dt,
+                     SoldierTargets soldiers) {
         if (session == null) {
             return;
         }
@@ -74,9 +81,10 @@ public final class GdxGuardTowerSupport {
             views.add(new GuardTowerSession.Tower(entry.getValue(), tower.x(), tower.y(),
                     standing ? Math.max(1, tower.getHitPoints()) : 0));
         }
-        GuardTowerSession.Result result = session.tick(dt, views, playerX, playerY,
+        GuardTowerSession.Result result = session.tick(dt, views, playerX, playerY, soldiers.positions(),
                 (fromX, fromY, toX, toY) -> host.wallsBetween((float) fromX, (float) fromY, (float) toX, (float) toY));
         apply(host, result, session.spec());
+        result.hitSoldiers(soldiers);
         for (GuardTowerSession.Rocket rocket : session.rockets()) {
             host.showEffect(new RocketEffect(rocket.x(), rocket.y(), rocket.angleRadians()));
         }

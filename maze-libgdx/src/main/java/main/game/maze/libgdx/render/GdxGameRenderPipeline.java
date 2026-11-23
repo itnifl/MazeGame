@@ -34,6 +34,7 @@ import main.game.maze.libgdx.view.GdxHighScoresOverlayView;
 import main.game.maze.libgdx.view.GdxHudView;
 import main.game.maze.libgdx.view.GdxInfectionOverlayView;
 import main.game.maze.libgdx.view.GdxBannerView;
+import main.game.maze.libgdx.view.GdxShopOverlayView;
 import main.game.maze.libgdx.view.GdxWinOverlayView;
 import main.game.maze.libgdx.view.layout.HudLayout;
 import main.game.maze.mazeworld.Point2D;
@@ -243,11 +244,10 @@ public final class GdxGameRenderPipeline {
         GdxWinOverlayView.WinButtons winButtons = state.winOverlayView().render(
                 new GdxWinOverlayView.WinOverlayContext(
                         state.batch(),
-                        state.shapes(),
                         state.font(),
                         state.glyphLayout(),
                         state.hudCamera(),
-                        state.winBackgroundTexture(),
+                        state.enemyTextureLoader(),
                         state.session().winScoreSaved(),
                         state.winOverlayController().winScoreStatusText(),
                         state.winOverlayController().winNameInputText(),
@@ -255,7 +255,17 @@ public final class GdxGameRenderPipeline {
                         state.scoreBreakdown(),
                         state.winOverlayController().nextLevelAvailable()));
         state.winOverlayController().onOverlayRendered(winButtons);
+        var shop = state.winOverlayController().shop();
+        if (shop != null && shop.isOpen()) {
+            // the shop between levels, over the win screen
+            shop.onRendered(shopView.render(new GdxShopOverlayView.RenderContext(state.batch(), state.font(),
+                    state.glyphLayout(), state.hudCamera(), state.enemyTextureLoader(),
+                    main.game.maze.game.items.PickupCatalogLoader.loadDefault()), shop.menu()));
+        }
     }
+
+    /** The shop view: stateless, drawn while the shop is open. */
+    private final GdxShopOverlayView shopView = new GdxShopOverlayView();
 
     private void drawGameOverOverlayIfNeeded(RenderState state) {
         if (state.session().mode() != GameMode.GAME_OVER) {
@@ -331,7 +341,6 @@ public final class GdxGameRenderPipeline {
             Texture wallTexture,
             Texture playerTexture,
             Texture playerDeathTexture,
-            Texture winBackgroundTexture,
             Texture gameOverBackgroundTexture,
             float activeGoalX,
             float activeGoalY,

@@ -21,7 +21,7 @@ class FxGuardTowerControllerTest {
     private static final double HALF = StageConstants.PlayerCharacterXYSize * 0.5d;
     private static final long TICK = 20_000_000L;   // 20 ms
 
-    private static final class Recording implements FxGuardTowerController.Host {
+    private static class Recording implements FxGuardTowerController.Host {
         final PlayerCharacter player = new PlayerCharacter(null, 0, 0, null);
         int walls;
         final List<String> sounds = new ArrayList<>();
@@ -131,5 +131,33 @@ class FxGuardTowerControllerTest {
         towers.startGame(null);
         runSeconds(4);
         assertTrue(host.effects.isEmpty() && host.hurts.isEmpty());
+    }
+
+    @Test
+    @DisplayName("a soldier in sight draws the gatling and the rocket away from the player (SR-400)")
+    void soldiersAreShotFirst() {
+        List<Integer> soldierHits = new ArrayList<>();
+        main.game.maze.mazeworld.Point2D soldier = new main.game.maze.mazeworld.Point2D(300, 300);
+        Recording withSoldier = new Recording() {
+            @Override public main.game.maze.game.targeting.SoldierTargets soldiers() {
+                return main.game.maze.game.targeting.SoldierTargets.of(() -> List.of(soldier),
+                        (at, damage) -> soldierHits.add(damage));
+            }
+        };
+        withSoldier.player.teleportTo(300 + 250 - HALF, 200 - HALF);
+        FxGuardTowerController shooting = new FxGuardTowerController(withSoldier);
+        shooting.startGame(SPEC);
+        shooting.register("tower_0", new FakeTower());
+        long clock = 1_000_000_000L;
+        for (int i = 0; i < 125; i++) {   // 2.5 s: the rocket lands and a gatling burst follows
+            clock += TICK;
+            shooting.tick(clock);
+        }
+        assertTrue(withSoldier.hurts.isEmpty(), "the player was not shot");
+        assertTrue(soldierHits.contains(SPEC.rpgPlayerDamage()), "the rocket landed on the soldier");
+        assertTrue(soldierHits.contains(SPEC.gatlingDamage()), "the gatling fired at the soldier");
+        for (double[] tracer : withSoldier.tracers) {
+            assertEquals(300, tracer[3], 1e-9, "every round flies at the soldier");
+        }
     }
 }

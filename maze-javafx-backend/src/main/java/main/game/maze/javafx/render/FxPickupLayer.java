@@ -91,7 +91,7 @@ public final class FxPickupLayer {
         if (pane == null) {
             return;
         }
-        if (weapon == Weapon.BOMB || stock <= 0) {
+        if (!weapon.heldInHands() || stock <= 0) {
             hide(heldView);
             return;
         }

@@ -1,0 +1,46 @@
+/*
+ * The look of the screens between levels, the win screen and the shop, written in the MazeGame DSL (Xtext). This is the
+ * source of menutheme.xmi: MazeDslGenerator.menuThemeXmi renders it with the FreeMarker template menutheme.xmi.ftlx into
+ * the instance of menutheme.ecore that both frontends load (MenuThemeLoader), and MazeDslThemeTest checks that the
+ * shipped menutheme.xmi says the same. The textures come from tools/sprite-gen/MenuThemeSpriteGenerator.java.
+ *
+ * The look: a military supply depot in the zombie maze. Riveted gunmetal plates, an olive-drab title plate, hazard
+ * stripes, ammo-crate item cards, rank chevrons for the shop tiers and a skull coin for the score.
+ */
+game MazeGameMenuTheme {
+
+    theme {
+        font "Consolas"
+
+        colour TITLE "#f2d98c"
+        colour TEXT "#e8eadf"
+        colour MUTED "#8e978a"
+        colour ACCENT "#8fffe0"
+        colour PRICE "#ffd166"
+        colour TOO_DEAR "#ff6b5e"
+        colour GOOD "#7ddc4a"
+        colour BAD "#ff3025"
+        colour BUTTON_TEXT "#fbf6e4"
+        colour SHADOW "#000000c0"
+
+        image BACKDROP "/main/game/maze/zombieGameOverBackground1.png"
+        image VIGNETTE "/main/game/maze/ui/vignette.png"
+        image HAZARD_STRIP "/main/game/maze/ui/hazard-strip.png"
+        image PANEL "/main/game/maze/ui/panel.png" slice 30
+        image BANNER "/main/game/maze/ui/banner.png" slice 14
+        image CARD "/main/game/maze/ui/card.png" slice 12
+        image CARD_SELECTED "/main/game/maze/ui/card-selected.png" slice 12
+        image CARD_LOCKED "/main/game/maze/ui/card-locked.png" slice 12
+        image SLOT "/main/game/maze/ui/slot.png" slice 10
+        image BUTTON_GO "/main/game/maze/ui/button-go.png" slice 10
+        image BUTTON_BUY "/main/game/maze/ui/button-buy.png" slice 10
+        image BUTTON_STEEL "/main/game/maze/ui/button-steel.png" slice 10
+        image BUTTON_DANGER "/main/game/maze/ui/button-danger.png" slice 10
+        image TOKEN "/main/game/maze/ui/token.png"
+        image LOCK "/main/game/maze/ui/lock.png"
+
+        badge CHEAP "/main/game/maze/ui/tier-cheap.png" colour "#cd8c4e"
+        badge MEDIUM "/main/game/maze/ui/tier-medium.png" colour "#cfd6dd"
+        badge EXPENSIVE "/main/game/maze/ui/tier-expensive.png" colour "#f4c845"
+    }
+}

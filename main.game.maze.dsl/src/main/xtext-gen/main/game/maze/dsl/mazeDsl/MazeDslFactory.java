@@ -258,6 +258,69 @@ public interface MazeDslFactory extends EFactory
   LavaConfig createLavaConfig();
 
   /**
+   * Returns a new object of class '<em>Shop Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Shop Config</em>'.
+   * @generated
+   */
+  ShopConfig createShopConfig();
+
+  /**
+   * Returns a new object of class '<em>Shop Unlock Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Shop Unlock Config</em>'.
+   * @generated
+   */
+  ShopUnlockConfig createShopUnlockConfig();
+
+  /**
+   * Returns a new object of class '<em>Shop Item Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Shop Item Config</em>'.
+   * @generated
+   */
+  ShopItemConfig createShopItemConfig();
+
+  /**
+   * Returns a new object of class '<em>Menu Theme Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Menu Theme Config</em>'.
+   * @generated
+   */
+  MenuThemeConfig createMenuThemeConfig();
+
+  /**
+   * Returns a new object of class '<em>Theme Swatch Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Theme Swatch Config</em>'.
+   * @generated
+   */
+  ThemeSwatchConfig createThemeSwatchConfig();
+
+  /**
+   * Returns a new object of class '<em>Theme Image Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Theme Image Config</em>'.
+   * @generated
+   */
+  ThemeImageConfig createThemeImageConfig();
+
+  /**
+   * Returns a new object of class '<em>Theme Badge Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Theme Badge Config</em>'.
+   * @generated
+   */
+  ThemeBadgeConfig createThemeBadgeConfig();
+
+  /**
    * Returns a new object of class '<em>Last Life Gift Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

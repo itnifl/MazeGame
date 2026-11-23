@@ -6,11 +6,13 @@ import main.game.maze.common.graphics.AudioEngine;
 import main.game.maze.common.remains.DeathCause;
 import main.game.maze.game.level.SergeantGunner;
 import main.game.maze.game.level.SergeantSpec;
+import main.game.maze.game.targeting.RangedTargeting;
+import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.opponents.Zombie;
 
 /**
- * The zombie sergeant (JavaFX): a zombie that never moves and fires its gatling gun at the player on
- * sight. The firing rules are the shared {@link SergeantGunner}; killing, remains and kill points come
+ * The zombie sergeant (JavaFX): a zombie that never moves and fires its gatling gun on sight, at the
+ * soldiers of the infantry strike first and at the player otherwise. The firing rules are the shared {@link SergeantGunner}; killing, remains and kill points come
  * from {@link ComputerCharacter} as for every enemy. A killed sergeant drops its gun where it fell and
  * never comes back.
  */
@@ -25,6 +27,11 @@ public class SergeantCharacter extends ZombieCharacter {
 
         /** Draws the tracer of one round (on the JavaFX thread). */
         void tracer(double fromX, double fromY, double toX, double toY);
+
+        /** The soldiers of the infantry strike, shot before the player (centres; none by default). */
+        default SoldierTargets soldiers() {
+            return SoldierTargets.NONE;
+        }
     }
 
     private static final long FIRE_SOUND_COOLDOWN_MS = 500L;
@@ -61,12 +68,17 @@ public class SergeantCharacter extends ZombieCharacter {
             return 0;
         }
         double[] at = centerPoint();
-        boolean sees = gunner.canSee(at[0], at[1], playerX, playerY,
-                range.wallBetween(at[0], at[1], playerX, playerY));
-        int rounds = gunner.tick(dt, sees);
+        SoldierTargets soldiers = range.soldiers();
+        SergeantGunner.Volley volley = gunner.fire(dt, at[0], at[1], playerX, playerY, soldiers, range::wallBetween);
+        int rounds = volley.rounds();
+        RangedTargeting.Target target = volley.target();
         for (int round = 0; round < rounds; round++) {
-            range.tracer(at[0], at[1], playerX, playerY);
-            range.hitPlayer(spec.roundDamage());
+            range.tracer(at[0], at[1], target.x(), target.y());
+            if (target.isSoldier()) {
+                soldiers.hit(target.soldier(), spec.roundDamage());
+            } else {
+                range.hitPlayer(spec.roundDamage());
+            }
         }
         if (rounds > 0 && spec.fireSound() != null) {
             AudioEngine.get().playRateLimited(spec.fireSound(), "sergeant.fire." + System.identityHashCode(this),

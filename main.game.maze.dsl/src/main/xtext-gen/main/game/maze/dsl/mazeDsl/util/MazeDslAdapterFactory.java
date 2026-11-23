@@ -206,6 +206,41 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createLavaConfigAdapter();
       }
       @Override
+      public Adapter caseShopConfig(ShopConfig object)
+      {
+        return createShopConfigAdapter();
+      }
+      @Override
+      public Adapter caseShopUnlockConfig(ShopUnlockConfig object)
+      {
+        return createShopUnlockConfigAdapter();
+      }
+      @Override
+      public Adapter caseShopItemConfig(ShopItemConfig object)
+      {
+        return createShopItemConfigAdapter();
+      }
+      @Override
+      public Adapter caseMenuThemeConfig(MenuThemeConfig object)
+      {
+        return createMenuThemeConfigAdapter();
+      }
+      @Override
+      public Adapter caseThemeSwatchConfig(ThemeSwatchConfig object)
+      {
+        return createThemeSwatchConfigAdapter();
+      }
+      @Override
+      public Adapter caseThemeImageConfig(ThemeImageConfig object)
+      {
+        return createThemeImageConfigAdapter();
+      }
+      @Override
+      public Adapter caseThemeBadgeConfig(ThemeBadgeConfig object)
+      {
+        return createThemeBadgeConfigAdapter();
+      }
+      @Override
       public Adapter caseLastLifeGiftConfig(LastLifeGiftConfig object)
       {
         return createLastLifeGiftConfigAdapter();
@@ -623,6 +658,111 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createLavaConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ShopConfig <em>Shop Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig
+   * @generated
+   */
+  public Adapter createShopConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig <em>Shop Unlock Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig
+   * @generated
+   */
+  public Adapter createShopUnlockConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig <em>Shop Item Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig
+   * @generated
+   */
+  public Adapter createShopItemConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig <em>Menu Theme Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig
+   * @generated
+   */
+  public Adapter createMenuThemeConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ThemeSwatchConfig <em>Theme Swatch Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ThemeSwatchConfig
+   * @generated
+   */
+  public Adapter createThemeSwatchConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ThemeImageConfig <em>Theme Image Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ThemeImageConfig
+   * @generated
+   */
+  public Adapter createThemeImageConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ThemeBadgeConfig <em>Theme Badge Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ThemeBadgeConfig
+   * @generated
+   */
+  public Adapter createThemeBadgeConfigAdapter()
   {
     return null;
   }

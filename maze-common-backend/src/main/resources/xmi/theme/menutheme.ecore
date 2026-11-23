@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="menutheme" nsURI="http://main.game.maze/menutheme" nsPrefix="menutheme">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="documentation" value="The look of the screens between levels (the win screen and the shop): colours, textures with their 9-slice insets and the tier badges. Loaded with dynamic EMF by MenuThemeLoader; the JavaFX and libGDX screens draw from the same theme."/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuThemeModel">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="font" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Font family of the JavaFX screens (libGDX draws with its bitmap font)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="swatches" upperBound="-1"
+        eType="#//SwatchEntry" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="images" upperBound="-1"
+        eType="#//ImageEntry" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="badges" upperBound="-1"
+        eType="#//TierBadge" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Swatch">
+    <eLiterals name="TITLE"/>
+    <eLiterals name="TEXT" value="1"/>
+    <eLiterals name="MUTED" value="2"/>
+    <eLiterals name="ACCENT" value="3"/>
+    <eLiterals name="PRICE" value="4"/>
+    <eLiterals name="TOO_DEAR" value="5"/>
+    <eLiterals name="GOOD" value="6"/>
+    <eLiterals name="BAD" value="7"/>
+    <eLiterals name="BUTTON_TEXT" value="8"/>
+    <eLiterals name="SHADOW" value="9"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Art">
+    <eLiterals name="BACKDROP"/>
+    <eLiterals name="VIGNETTE" value="1"/>
+    <eLiterals name="HAZARD_STRIP" value="2"/>
+    <eLiterals name="PANEL" value="3"/>
+    <eLiterals name="BANNER" value="4"/>
+    <eLiterals name="CARD" value="5"/>
+    <eLiterals name="CARD_SELECTED" value="6"/>
+    <eLiterals name="CARD_LOCKED" value="7"/>
+    <eLiterals name="SLOT" value="8"/>
+    <eLiterals name="BUTTON_GO" value="9"/>
+    <eLiterals name="BUTTON_BUY" value="10"/>
+    <eLiterals name="BUTTON_STEEL" value="11"/>
+    <eLiterals name="BUTTON_DANGER" value="12"/>
+    <eLiterals name="TOKEN" value="13"/>
+    <eLiterals name="LOCK" value="14"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BadgeTier">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The tiers of the shop (ShopTier of shop.ecore)."/>
+    </eAnnotations>
+    <eLiterals name="CHEAP"/>
+    <eLiterals name="MEDIUM" value="1"/>
+    <eLiterals name="EXPENSIVE" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SwatchEntry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="role" lowerBound="1" eType="#//Swatch"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colour" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="#rrggbb or #rrggbbaa."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImageEntry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="role" lowerBound="1" eType="#//Art"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="slice"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Pixels of each edge kept unstretched when the image is drawn larger (9-slice); 0 for an image drawn as it is."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TierBadge">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tier" lowerBound="1" eType="#//BadgeTier"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="image" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colour" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

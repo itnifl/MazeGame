@@ -127,7 +127,6 @@ public final class GdxGameRenderCoordinator {
                 input.wallTexture(),
                 input.playerTexture(),
                 input.playerDeathTexture(),
-                input.winBackgroundTexture(),
                 input.gameOverBackgroundTexture(),
                 worldModel.activeGoalX(),
                 worldModel.activeGoalY(),
@@ -207,6 +206,11 @@ public final class GdxGameRenderCoordinator {
             floor.add(new SpriteVisual(remains.x(), remains.y(), remains.size(), 0f, false, remains.spritePath()));
         }
         floor.addAll(GdxWeaponSupport.pickupSprites(worldModel, input.maze(), input.enemyAnimationClock()));
+        floor.addAll(main.game.maze.libgdx.helper.GdxStrikeSupport.lyingSprites(worldModel, input.maze()));   // thrown grenades
+        if (input.player() != null) {
+            floor.addAll(main.game.maze.libgdx.helper.GdxStrikeSupport.soldierSprites(worldModel, input.maze(),
+                    input.player().halfSize() * 2f));   // the infantry strike's soldiers
+        }
         return floor;
     }
 
@@ -274,7 +278,6 @@ public final class GdxGameRenderCoordinator {
             Texture wallTexture,
             Texture playerTexture,
             Texture playerDeathTexture,
-            Texture winBackgroundTexture,
             Texture gameOverBackgroundTexture,
             boolean combatDead,
             float enemyAnimationClock,

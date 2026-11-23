@@ -63,4 +63,66 @@
       useSound="/main/game/maze/sounds/pulse-fire.wav"
       chargeSound="/main/game/maze/sounds/pulse-charge.wav"
       spawnWeight="0" amount="6" damage="12000" range="1200.0" chargeSeconds="2.0"/>
+
+  <!-- The shop weapons (xmi/shop/shop.xmi): never lying about the maze (spawnWeight 0), bought between levels and used
+       like the other weapons (Tab selects, Space uses). The shop decides how many one purchase gives. -->
+
+  <!-- thrown along the facing up to `range` (they land short of a wall), go off after `fuseSeconds` -->
+  <items kind="GRENADE" displayName="Grenade"
+      sprite="/main/game/maze/pickups/grenade.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/grenade-throw.wav"
+      spawnWeight="0" amount="4" damage="160" range="240.0" blastRadius="120.0" fuseSeconds="1.2"/>
+
+  <items kind="PLASMA_GRENADE" displayName="Plasma grenade"
+      sprite="/main/game/maze/pickups/plasma-grenade.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/grenade-throw.wav"
+      spawnWeight="0" amount="3" damage="420" range="260.0" blastRadius="180.0" fuseSeconds="1.2"/>
+
+  <!-- the strongest thrown blast, and a different one: NUCLEAR is a round blast through walls, strongest at the centre,
+       drawn as a mushroom cloud; it spares the player who threw it (it would always reach them) -->
+  <items kind="NUKE_GRENADE" displayName="Small nuclear grenade"
+      sprite="/main/game/maze/pickups/nuke-grenade.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/grenade-throw.wav"
+      spawnWeight="0" amount="2" damage="2400" range="300.0" blastRadius="420.0" fuseSeconds="2.0" blastShape="NUCLEAR"/>
+
+  <!-- a rocket along the facing: piercePower goes through walls (and towers) in the way, then a blast at the end -->
+  <items kind="BUNKER_BUSTER" displayName="Bunker buster rocket"
+      sprite="/main/game/maze/pickups/bunker-buster.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/rpg-launch.wav"
+      spawnWeight="0" amount="3" damage="500" range="900.0" blastRadius="140.0" piercePower="9000"/>
+
+  <!-- planted like the bomb: much longer flames and much more damage -->
+  <items kind="FAT_BOMB" displayName="Fat bomb"
+      sprite="/main/game/maze/pickups/fat-bomb.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      spawnWeight="0" amount="2" damage="700" blastRadius="520.0" fuseSeconds="3.0"/>
+
+  <!-- `units` bombs fall at random within `range` of the approximate centre of the maze, over `durationSeconds`,
+       starting `fuseSeconds` after the call; they never hurt the player who called them in -->
+  <items kind="AIRSTRIKE" displayName="Airstrike"
+      sprite="/main/game/maze/pickups/airstrike.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/airstrike-siren.wav"
+      spawnWeight="0" amount="1" damage="600" range="280.0" blastRadius="170.0" fuseSeconds="2.5"
+      durationSeconds="3.5" units="16"/>
+
+  <!-- `units` soldiers (each with `unitHealth`; enemies near a soldier go for it first) arrive in a random area and hunt
+       every enemy for `durationSeconds`; each round does `damage`
+       to an enemy in sight within `range` -->
+  <items kind="INFANTRY_STRIKE" displayName="Infantry strike"
+      sprite="/main/game/maze/pickups/infantry-strike.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/infantry-whistle.wav"
+      spawnWeight="0" amount="1" damage="45" range="320.0" durationSeconds="45.0" units="10" unitHealth="120" lureRadius="240.0"/>
+
+  <!-- "Extra life" in the shop: used like a weapon, it fills the health bar -->
+  <items kind="LIFE_REFILL" displayName="Extra life (full health)"
+      sprite="/main/game/maze/pickups/life-refill.png"
+      pickupSound="/main/game/maze/sounds/shop-buy.wav"
+      useSound="/main/game/maze/sounds/pickup-heart.wav"
+      spawnWeight="0" amount="3"/>
 </items:PickupModel>

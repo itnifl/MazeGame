@@ -92,6 +92,13 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.WALL_BUILDER_CONFIG: return createWallBuilderConfig();
       case MazeDslPackage.BUILDER_COUNT_CONFIG: return createBuilderCountConfig();
       case MazeDslPackage.LAVA_CONFIG: return createLavaConfig();
+      case MazeDslPackage.SHOP_CONFIG: return createShopConfig();
+      case MazeDslPackage.SHOP_UNLOCK_CONFIG: return createShopUnlockConfig();
+      case MazeDslPackage.SHOP_ITEM_CONFIG: return createShopItemConfig();
+      case MazeDslPackage.MENU_THEME_CONFIG: return createMenuThemeConfig();
+      case MazeDslPackage.THEME_SWATCH_CONFIG: return createThemeSwatchConfig();
+      case MazeDslPackage.THEME_IMAGE_CONFIG: return createThemeImageConfig();
+      case MazeDslPackage.THEME_BADGE_CONFIG: return createThemeBadgeConfig();
       case MazeDslPackage.LAST_LIFE_GIFT_CONFIG: return createLastLifeGiftConfig();
       case MazeDslPackage.TELEPORT_RULES_CONFIG: return createTeleportRulesConfig();
       default:
@@ -467,6 +474,90 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
   {
     LavaConfigImpl lavaConfig = new LavaConfigImpl();
     return lavaConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ShopConfig createShopConfig()
+  {
+    ShopConfigImpl shopConfig = new ShopConfigImpl();
+    return shopConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ShopUnlockConfig createShopUnlockConfig()
+  {
+    ShopUnlockConfigImpl shopUnlockConfig = new ShopUnlockConfigImpl();
+    return shopUnlockConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ShopItemConfig createShopItemConfig()
+  {
+    ShopItemConfigImpl shopItemConfig = new ShopItemConfigImpl();
+    return shopItemConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public MenuThemeConfig createMenuThemeConfig()
+  {
+    MenuThemeConfigImpl menuThemeConfig = new MenuThemeConfigImpl();
+    return menuThemeConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeSwatchConfig createThemeSwatchConfig()
+  {
+    ThemeSwatchConfigImpl themeSwatchConfig = new ThemeSwatchConfigImpl();
+    return themeSwatchConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeImageConfig createThemeImageConfig()
+  {
+    ThemeImageConfigImpl themeImageConfig = new ThemeImageConfigImpl();
+    return themeImageConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ThemeBadgeConfig createThemeBadgeConfig()
+  {
+    ThemeBadgeConfigImpl themeBadgeConfig = new ThemeBadgeConfigImpl();
+    return themeBadgeConfig;
   }
 
   /**

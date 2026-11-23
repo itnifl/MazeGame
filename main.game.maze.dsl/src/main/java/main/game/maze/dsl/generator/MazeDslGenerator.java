@@ -48,6 +48,16 @@ public class MazeDslGenerator extends AbstractGenerator {
                     );
                 }
 
+                // Generate the shop model instance (xmi/shop/shop.xmi, see shop.ecore) with its FreeMarker template
+                if (game.getShop() != null) {
+                    fsa.generateFile("xmi/" + baseName + "-shop.xmi", shopXmi(game));
+                }
+
+                // Generate the menu theme instance (xmi/theme/menutheme.xmi, see menutheme.ecore) with its template
+                if (game.getTheme() != null) {
+                    fsa.generateFile("xmi/" + baseName + "-menutheme.xmi", menuThemeXmi(game));
+                }
+
                 // Generate difficulty configuration
                 if (game.getDifficulty() != null) {
                     fsa.generateFile(
@@ -440,6 +450,99 @@ public class MazeDslGenerator extends AbstractGenerator {
      * {@code levels.xmi}. A value the source leaves out is left out here too, so the model's defaults and a level's
      * {@code basedOn} apply exactly as if the XMI had been written by hand.
      */
+    /** FreeMarker setup for the model-to-text templates next to this class; .ftlx templates escape XML on their own. */
+    private static final freemarker.template.Configuration TEMPLATES = templates();
+
+    private static freemarker.template.Configuration templates() {
+        var configuration = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
+        configuration.setClassForTemplateLoading(MazeDslGenerator.class, "templates");
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setLocale(Locale.ROOT);
+        configuration.setRecognizeStandardFileExtensions(true);   // .ftlx: XML output format, values escaped
+        configuration.setTemplateExceptionHandler(freemarker.template.TemplateExceptionHandler.RETHROW_HANDLER);
+        configuration.setLogTemplateExceptions(false);
+        return configuration;
+    }
+
+    /**
+     * The shop model instance ({@code xmi/shop/shop.xmi}, an instance of {@code shop.ecore}) for the game's {@code shop}
+     * section, rendered with the FreeMarker template {@code templates/shop.xmi.ftlx}. A value that is not written in the DSL
+     * (amount, factor, description) is left out, so the model's default applies.
+     */
+    public static String shopXmi(GameConfiguration game) {
+        java.util.List<java.util.Map<String, Object>> unlocks = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> items = new java.util.ArrayList<>();
+        if (game.getShop() != null) {
+            for (ShopUnlockConfig unlock : game.getShop().getUnlocks()) {
+                unlocks.add(java.util.Map.of("tier", unlock.getTier(), "level", unlock.getLevel()));
+            }
+            for (ShopItemConfig item : game.getShop().getItems()) {
+                java.util.Map<String, Object> row = new java.util.HashMap<>();
+                row.put("kind", item.getKind());
+                row.put("displayName", item.getDisplayName());
+                row.put("tier", item.getTier());
+                row.put("price", item.getPrice());
+                if (item.getAmount() != null) {
+                    row.put("amount", item.getAmount());
+                }
+                if (item.getFactor() != null) {
+                    row.put("factor", item.getFactor());
+                }
+                if (item.getDescription() != null) {
+                    row.put("description", item.getDescription());
+                }
+                items.add(row);
+            }
+        }
+        try {
+            java.io.StringWriter out = new java.io.StringWriter();
+            TEMPLATES.getTemplate("shop.xmi.ftlx").process(
+                    java.util.Map.of("source", game.getName(), "unlocks", unlocks, "items", items), out);
+            return out.toString();
+        } catch (java.io.IOException | freemarker.template.TemplateException e) {
+            throw new IllegalStateException("could not render shop.xmi from its template", e);
+        }
+    }
+
+    /**
+     * The menu theme instance ({@code xmi/theme/menutheme.xmi}, an instance of {@code menutheme.ecore}) for the game's
+     * {@code theme} section, rendered with the FreeMarker template {@code templates/menutheme.xmi.ftlx}. An image without
+     * a slice is written without one (the model's default, 0).
+     */
+    public static String menuThemeXmi(GameConfiguration game) {
+        java.util.List<java.util.Map<String, Object>> swatches = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> images = new java.util.ArrayList<>();
+        java.util.List<java.util.Map<String, Object>> badges = new java.util.ArrayList<>();
+        String font = "";
+        MenuThemeConfig theme = game.getTheme();
+        if (theme != null) {
+            font = theme.getFont();
+            for (ThemeSwatchConfig swatch : theme.getSwatches()) {
+                swatches.add(java.util.Map.of("role", swatch.getRole(), "colour", swatch.getColour()));
+            }
+            for (ThemeImageConfig image : theme.getImages()) {
+                java.util.Map<String, Object> row = new java.util.HashMap<>();
+                row.put("role", image.getRole());
+                row.put("path", image.getPath());
+                if (image.getSlice() != null) {
+                    row.put("slice", image.getSlice());
+                }
+                images.add(row);
+            }
+            for (ThemeBadgeConfig badge : theme.getBadges()) {
+                badges.add(java.util.Map.of("tier", badge.getTier(), "image", badge.getImage(), "colour", badge.getColour()));
+            }
+        }
+        try {
+            java.io.StringWriter out = new java.io.StringWriter();
+            TEMPLATES.getTemplate("menutheme.xmi.ftlx").process(java.util.Map.of("source", game.getName(), "font", font,
+                    "swatches", swatches, "images", images, "badges", badges), out);
+            return out.toString();
+        } catch (java.io.IOException | freemarker.template.TemplateException e) {
+            throw new IllegalStateException("could not render menutheme.xmi from its template", e);
+        }
+    }
+
     public static String levelsXmi(GameConfiguration game) {
         StringBuilder x = new StringBuilder();
         x.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

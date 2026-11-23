@@ -179,3 +179,30 @@ vest with reflective stripes and a hammer.
 ## Pulse beam cannon pickup
 
 `PickupSpriteGenerator` also draws `pickups/pulse-cannon.png` (the weapon HUD icon and the weapon in hand): a dark-steel barrel with glowing blue coils and a charged blue-white muzzle.
+
+## Shop weapons and the soldier
+
+`PickupSpriteGenerator` also draws the icons of the weapons sold in the shop between levels (#164), used in the shop, the
+weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma-grenade.png` (purple with a glow),
+`nuke-grenade.png` (a yellow canister with the radiation sign), `bunker-buster.png` (an olive rocket with a steel nose),
+`fat-bomb.png` (a big bomb with a red band), `airstrike.png` (a bomber dropping bombs), `infantry-strike.png` (a helmet
+over crossed rifles), `life-refill.png` (a medkit). The single `soldier.png` of the first version (helmet, green
+uniform, rifle) was replaced by the animated soldier of `SoldierSpriteGenerator` (below). The existing sprites come out unchanged.
+
+`PickupSpriteGenerator` also draws what an airstrike drops into `strike/`: `aerial-bomb.png` (an aircraft bomb falling nose down) and `bomb-shadow.png` (the shadow it casts).
+
+## MenuThemeSpriteGenerator
+
+Draws the textures of the screens between levels (win screen and shop) into `ui/`: a riveted gunmetal `panel.png` (9-slice 30), the olive-drab title plate `banner.png` (14), the tiling `hazard-strip.png`, the ammo-crate item cards `card.png`, `card-selected.png` (amber glow) and `card-locked.png` (12), the icon well `slot.png` (10), the metal-plate buttons `button-go.png`, `button-buy.png`, `button-steel.png`, `button-danger.png` (10), the rank chevrons `tier-cheap.png`, `tier-medium.png`, `tier-expensive.png`, the skull coin `token.png`, the padlock `lock.png` and the edge-darkening `vignette.png`. Icons are drawn at twice the size they are shown at. Where each is used is the menu theme model (`menutheme.mazegame`).
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/MenuThemeSpriteGenerator.java
+```
+
+## SoldierSpriteGenerator
+
+Draws the soldier of the infantry strike into `soldier/`: `soldier-side-*` (facing right; mirrored in the game for left), `soldier-down-*` (front) and `soldier-up-*` (back, with the backpack), each `stand`, `walk1`, `walk2` and `fire` (muzzle flash), and `soldier-fallen.png`. Camouflage uniform, webbing and pouches, boots, a helmet with a net and a rifle, a soft shadow; 32x32 grid scaled 2x. Replaces the single `pickups/soldier.png`.
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/SoldierSpriteGenerator.java
+```

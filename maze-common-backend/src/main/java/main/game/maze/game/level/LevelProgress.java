@@ -27,6 +27,8 @@ public final class LevelProgress {
     private ArsenalSnapshot inherited;
     /** The score the current level was entered with (what the levels before it ended with). */
     private int carriedScore;
+    /** The boosts bought in the shop for the current level (none on level 1). */
+    private LevelBoosts boosts = LevelBoosts.NONE;
     /** Saved when the current level was completed; becomes the entry state of the next level. */
     private SavePoint pending;
 
@@ -97,7 +99,35 @@ public final class LevelProgress {
         // a level can choose to start from scratch instead of keeping the weapons
         inherited = pending.arsenal();
         carriedScore = pending.score();
+        boosts = pending.boosts();
         pending = null;
+    }
+
+    /** The boosts bought in the shop for the current level ({@link LevelBoosts#NONE} when none were bought). */
+    public synchronized LevelBoosts boosts() {
+        return boosts;
+    }
+
+    /**
+     * The savepoint made when the current level was completed and not yet entered: what the shop sells against
+     * (between levels). Empty while the level is being played, and on the last level.
+     */
+    public synchronized Optional<SavePoint> pendingSavePoint() {
+        return Optional.ofNullable(pending);
+    }
+
+    /**
+     * Replaces the pending savepoint with one changed by a purchase in the shop (same level), and keeps it in the store, so
+     * the next level is entered with what was bought.
+     *
+     * @throws IllegalStateException when there is no pending savepoint, or {@code updated} is for another level
+     */
+    public synchronized void updatePendingSavePoint(SavePoint updated) {
+        if (pending == null || updated == null || updated.level() != pending.level()) {
+            throw new IllegalStateException("the shop is open only between levels, for the level that comes next");
+        }
+        pending = updated;
+        store.save(pending);
     }
 
     /** The score the current level is entered with: what the levels before it ended with (0 on level 1). */
@@ -115,6 +145,7 @@ public final class LevelProgress {
         number = 1;
         inherited = null;
         carriedScore = 0;
+        boosts = LevelBoosts.NONE;
         pending = null;
         store.clear();
     }
@@ -148,6 +179,7 @@ public final class LevelProgress {
         number = saved.get().level();
         inherited = saved.get().arsenal();
         carriedScore = saved.get().score();
+        boosts = saved.get().boosts();
         pending = null;
         return true;
     }

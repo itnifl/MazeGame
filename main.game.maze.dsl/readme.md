@@ -607,3 +607,21 @@ This is the **true MDE approach**: models drive code generation, not the other w
 | [DSL IDE Module](../main.game.maze.dsl.ide/readme.md) | Language server support for LSP-compatible editors |
 | [DSL UI Module](../main.game.maze.dsl.ui/readme.md) | Eclipse-specific editor integration |
 | [DSL Tests Module](../main.game.maze.dsl.tests/readme.md) | Automated test suite |
+
+## Shop (issue #164)
+
+`GameConfiguration` may end with a `shop { item KIND "Name" tier TIER price N [amount N] [factor D] [description "..."] }`
+section. `MazeDslValidator` checks the kind and tier against `shop.ecore`, prices, amounts, factors and duplicates;
+`MazeDslGenerator.shopXmi` renders it with the FreeMarker template `generator/templates/shop.xmi.ftlx` (XML output format,
+so text is escaped) into an instance of `shop.ecore`. FreeMarker comes from the `maze-generator.freemarker` bundle, which
+exports `freemarker.template`, `freemarker.cache` and `freemarker.core` for this. The shipped source is
+`maze-common-backend/src/main/resources/xmi/shop/shop.mazegame`; `MazeDslShopTest` keeps it and `shop.xmi` in step.
+
+## Menu theme (SR-404)
+
+The look of the screens between levels is written the same way (`theme { font ... colour ... image ... slice ... badge ... }`
+in `maze-common-backend/src/main/resources/xmi/theme/menutheme.mazegame`): `MazeDslValidator` checks the names (the `Swatch`
+and `Art` literals of `menutheme.ecore`, the shop tiers), the colours (`#rrggbb` or `#rrggbbaa`), the paths (classpath,
+starting with `/`) and that every colour, image and tier badge is given exactly once; `MazeDslGenerator.menuThemeXmi`
+renders it with `generator/templates/menutheme.xmi.ftlx` into `menutheme.xmi`. `MazeDslThemeTest` keeps the two in step;
+`MAZE_THEME_REGENERATE=true mvn -o verify -pl main.game.maze.dsl.tests` rewrites `menutheme.xmi`.

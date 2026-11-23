@@ -132,13 +132,31 @@ public interface MazeDslPackage extends EPackage
   int GAME_CONFIGURATION__LEVELS = 6;
 
   /**
+   * The feature id for the '<em><b>Shop</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAME_CONFIGURATION__SHOP = 7;
+
+  /**
+   * The feature id for the '<em><b>Theme</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAME_CONFIGURATION__THEME = 8;
+
+  /**
    * The number of structural features of the '<em>Game Configuration</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GAME_CONFIGURATION_FEATURE_COUNT = 7;
+  int GAME_CONFIGURATION_FEATURE_COUNT = 9;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -1921,6 +1939,346 @@ public interface MazeDslPackage extends EPackage
   int LAVA_CONFIG_FEATURE_COUNT = 10;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopConfig()
+   * @generated
+   */
+  int SHOP_CONFIG = 26;
+
+  /**
+   * The feature id for the '<em><b>Unlocks</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG__UNLOCKS = 0;
+
+  /**
+   * The feature id for the '<em><b>Items</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG__ITEMS = 1;
+
+  /**
+   * The number of structural features of the '<em>Shop Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl <em>Shop Unlock Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopUnlockConfig()
+   * @generated
+   */
+  int SHOP_UNLOCK_CONFIG = 27;
+
+  /**
+   * The feature id for the '<em><b>Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG__TIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG__LEVEL = 1;
+
+  /**
+   * The number of structural features of the '<em>Shop Unlock Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
+   * @generated
+   */
+  int SHOP_ITEM_CONFIG = 28;
+
+  /**
+   * The feature id for the '<em><b>Kind</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__KIND = 0;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__DISPLAY_NAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__TIER = 2;
+
+  /**
+   * The feature id for the '<em><b>Price</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__PRICE = 3;
+
+  /**
+   * The feature id for the '<em><b>Amount</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__AMOUNT = 4;
+
+  /**
+   * The feature id for the '<em><b>Factor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__FACTOR = 5;
+
+  /**
+   * The feature id for the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__DESCRIPTION = 6;
+
+  /**
+   * The number of structural features of the '<em>Shop Item Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG_FEATURE_COUNT = 7;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.MenuThemeConfigImpl <em>Menu Theme Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.MenuThemeConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getMenuThemeConfig()
+   * @generated
+   */
+  int MENU_THEME_CONFIG = 29;
+
+  /**
+   * The feature id for the '<em><b>Font</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MENU_THEME_CONFIG__FONT = 0;
+
+  /**
+   * The feature id for the '<em><b>Swatches</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MENU_THEME_CONFIG__SWATCHES = 1;
+
+  /**
+   * The feature id for the '<em><b>Images</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MENU_THEME_CONFIG__IMAGES = 2;
+
+  /**
+   * The feature id for the '<em><b>Badges</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MENU_THEME_CONFIG__BADGES = 3;
+
+  /**
+   * The number of structural features of the '<em>Menu Theme Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MENU_THEME_CONFIG_FEATURE_COUNT = 4;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeSwatchConfigImpl <em>Theme Swatch Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ThemeSwatchConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeSwatchConfig()
+   * @generated
+   */
+  int THEME_SWATCH_CONFIG = 30;
+
+  /**
+   * The feature id for the '<em><b>Role</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_SWATCH_CONFIG__ROLE = 0;
+
+  /**
+   * The feature id for the '<em><b>Colour</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_SWATCH_CONFIG__COLOUR = 1;
+
+  /**
+   * The number of structural features of the '<em>Theme Swatch Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_SWATCH_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeImageConfigImpl <em>Theme Image Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ThemeImageConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeImageConfig()
+   * @generated
+   */
+  int THEME_IMAGE_CONFIG = 31;
+
+  /**
+   * The feature id for the '<em><b>Role</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_IMAGE_CONFIG__ROLE = 0;
+
+  /**
+   * The feature id for the '<em><b>Path</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_IMAGE_CONFIG__PATH = 1;
+
+  /**
+   * The feature id for the '<em><b>Slice</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_IMAGE_CONFIG__SLICE = 2;
+
+  /**
+   * The number of structural features of the '<em>Theme Image Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_IMAGE_CONFIG_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeBadgeConfigImpl <em>Theme Badge Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ThemeBadgeConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeBadgeConfig()
+   * @generated
+   */
+  int THEME_BADGE_CONFIG = 32;
+
+  /**
+   * The feature id for the '<em><b>Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_BADGE_CONFIG__TIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Image</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_BADGE_CONFIG__IMAGE = 1;
+
+  /**
+   * The feature id for the '<em><b>Colour</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_BADGE_CONFIG__COLOUR = 2;
+
+  /**
+   * The number of structural features of the '<em>Theme Badge Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int THEME_BADGE_CONFIG_FEATURE_COUNT = 3;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1928,7 +2286,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
    * @generated
    */
-  int LAST_LIFE_GIFT_CONFIG = 26;
+  int LAST_LIFE_GIFT_CONFIG = 33;
 
   /**
    * The feature id for the '<em><b>Weapon</b></em>' attribute.
@@ -1965,7 +2323,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 27;
+  int TELEPORT_RULES_CONFIG = 34;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -2029,7 +2387,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 28;
+  int DIFFICULTY_LEVEL = 35;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -2039,7 +2397,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 29;
+  int ENEMY_TYPE = 36;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -2049,7 +2407,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 30;
+  int CHARACTER_TYPE_ENUM = 37;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -2059,7 +2417,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 31;
+  int BEHAVIOR_TYPE_ENUM = 38;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -2069,7 +2427,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 32;
+  int PROJECTILE_TYPE_ENUM = 39;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -2079,7 +2437,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 33;
+  int LOOT_ITEM_TYPE_ENUM = 40;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -2089,7 +2447,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 34;
+  int DROP_WEAPON_ENUM = 41;
 
 
   /**
@@ -2178,6 +2536,28 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EReference getGameConfiguration_Levels();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getShop <em>Shop</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Shop</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GameConfiguration#getShop()
+   * @see #getGameConfiguration()
+   * @generated
+   */
+  EReference getGameConfiguration_Shop();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getTheme <em>Theme</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Theme</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GameConfiguration#getTheme()
+   * @see #getGameConfiguration()
+   * @generated
+   */
+  EReference getGameConfiguration_Theme();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.Import <em>Import</em>}'.
@@ -3992,6 +4372,329 @@ public interface MazeDslPackage extends EPackage
   EAttribute getLavaConfig_DeathSound();
 
   /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopConfig <em>Shop Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig
+   * @generated
+   */
+  EClass getShopConfig();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.ShopConfig#getUnlocks <em>Unlocks</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Unlocks</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig#getUnlocks()
+   * @see #getShopConfig()
+   * @generated
+   */
+  EReference getShopConfig_Unlocks();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.ShopConfig#getItems <em>Items</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Items</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig#getItems()
+   * @see #getShopConfig()
+   * @generated
+   */
+  EReference getShopConfig_Items();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig <em>Shop Unlock Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Unlock Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig
+   * @generated
+   */
+  EClass getShopUnlockConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getTier <em>Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getTier()
+   * @see #getShopUnlockConfig()
+   * @generated
+   */
+  EAttribute getShopUnlockConfig_Tier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getLevel <em>Level</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Level</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getLevel()
+   * @see #getShopUnlockConfig()
+   * @generated
+   */
+  EAttribute getShopUnlockConfig_Level();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig <em>Shop Item Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Item Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig
+   * @generated
+   */
+  EClass getShopItemConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getKind <em>Kind</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Kind</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getKind()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Kind();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getDisplayName()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getTier <em>Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getTier()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Tier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getPrice <em>Price</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Price</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getPrice()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Price();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getAmount <em>Amount</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Amount</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getAmount()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Amount();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getFactor <em>Factor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Factor</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getFactor()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Factor();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getDescription <em>Description</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Description</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getDescription()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Description();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig <em>Menu Theme Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Menu Theme Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig
+   * @generated
+   */
+  EClass getMenuThemeConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig#getFont <em>Font</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Font</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig#getFont()
+   * @see #getMenuThemeConfig()
+   * @generated
+   */
+  EAttribute getMenuThemeConfig_Font();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig#getSwatches <em>Swatches</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Swatches</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig#getSwatches()
+   * @see #getMenuThemeConfig()
+   * @generated
+   */
+  EReference getMenuThemeConfig_Swatches();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig#getImages <em>Images</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Images</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig#getImages()
+   * @see #getMenuThemeConfig()
+   * @generated
+   */
+  EReference getMenuThemeConfig_Images();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.MenuThemeConfig#getBadges <em>Badges</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Badges</em>'.
+   * @see main.game.maze.dsl.mazeDsl.MenuThemeConfig#getBadges()
+   * @see #getMenuThemeConfig()
+   * @generated
+   */
+  EReference getMenuThemeConfig_Badges();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ThemeSwatchConfig <em>Theme Swatch Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Theme Swatch Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeSwatchConfig
+   * @generated
+   */
+  EClass getThemeSwatchConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeSwatchConfig#getRole <em>Role</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Role</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeSwatchConfig#getRole()
+   * @see #getThemeSwatchConfig()
+   * @generated
+   */
+  EAttribute getThemeSwatchConfig_Role();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeSwatchConfig#getColour <em>Colour</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Colour</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeSwatchConfig#getColour()
+   * @see #getThemeSwatchConfig()
+   * @generated
+   */
+  EAttribute getThemeSwatchConfig_Colour();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ThemeImageConfig <em>Theme Image Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Theme Image Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeImageConfig
+   * @generated
+   */
+  EClass getThemeImageConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeImageConfig#getRole <em>Role</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Role</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeImageConfig#getRole()
+   * @see #getThemeImageConfig()
+   * @generated
+   */
+  EAttribute getThemeImageConfig_Role();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeImageConfig#getPath <em>Path</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Path</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeImageConfig#getPath()
+   * @see #getThemeImageConfig()
+   * @generated
+   */
+  EAttribute getThemeImageConfig_Path();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeImageConfig#getSlice <em>Slice</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Slice</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeImageConfig#getSlice()
+   * @see #getThemeImageConfig()
+   * @generated
+   */
+  EAttribute getThemeImageConfig_Slice();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ThemeBadgeConfig <em>Theme Badge Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Theme Badge Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeBadgeConfig
+   * @generated
+   */
+  EClass getThemeBadgeConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getTier <em>Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getTier()
+   * @see #getThemeBadgeConfig()
+   * @generated
+   */
+  EAttribute getThemeBadgeConfig_Tier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getImage <em>Image</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Image</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getImage()
+   * @see #getThemeBadgeConfig()
+   * @generated
+   */
+  EAttribute getThemeBadgeConfig_Image();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getColour <em>Colour</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Colour</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ThemeBadgeConfig#getColour()
+   * @see #getThemeBadgeConfig()
+   * @generated
+   */
+  EAttribute getThemeBadgeConfig_Colour();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LastLifeGiftConfig <em>Last Life Gift Config</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4246,6 +4949,22 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EReference GAME_CONFIGURATION__LEVELS = eINSTANCE.getGameConfiguration_Levels();
+
+    /**
+     * The meta object literal for the '<em><b>Shop</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GAME_CONFIGURATION__SHOP = eINSTANCE.getGameConfiguration_Shop();
+
+    /**
+     * The meta object literal for the '<em><b>Theme</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GAME_CONFIGURATION__THEME = eINSTANCE.getGameConfiguration_Theme();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -5632,6 +6351,260 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute LAVA_CONFIG__DEATH_SOUND = eINSTANCE.getLavaConfig_DeathSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopConfig()
+     * @generated
+     */
+    EClass SHOP_CONFIG = eINSTANCE.getShopConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Unlocks</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SHOP_CONFIG__UNLOCKS = eINSTANCE.getShopConfig_Unlocks();
+
+    /**
+     * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SHOP_CONFIG__ITEMS = eINSTANCE.getShopConfig_Items();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl <em>Shop Unlock Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopUnlockConfig()
+     * @generated
+     */
+    EClass SHOP_UNLOCK_CONFIG = eINSTANCE.getShopUnlockConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_UNLOCK_CONFIG__TIER = eINSTANCE.getShopUnlockConfig_Tier();
+
+    /**
+     * The meta object literal for the '<em><b>Level</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_UNLOCK_CONFIG__LEVEL = eINSTANCE.getShopUnlockConfig_Level();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
+     * @generated
+     */
+    EClass SHOP_ITEM_CONFIG = eINSTANCE.getShopItemConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Kind</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__KIND = eINSTANCE.getShopItemConfig_Kind();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__DISPLAY_NAME = eINSTANCE.getShopItemConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__TIER = eINSTANCE.getShopItemConfig_Tier();
+
+    /**
+     * The meta object literal for the '<em><b>Price</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__PRICE = eINSTANCE.getShopItemConfig_Price();
+
+    /**
+     * The meta object literal for the '<em><b>Amount</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__AMOUNT = eINSTANCE.getShopItemConfig_Amount();
+
+    /**
+     * The meta object literal for the '<em><b>Factor</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__FACTOR = eINSTANCE.getShopItemConfig_Factor();
+
+    /**
+     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__DESCRIPTION = eINSTANCE.getShopItemConfig_Description();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.MenuThemeConfigImpl <em>Menu Theme Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.MenuThemeConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getMenuThemeConfig()
+     * @generated
+     */
+    EClass MENU_THEME_CONFIG = eINSTANCE.getMenuThemeConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Font</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MENU_THEME_CONFIG__FONT = eINSTANCE.getMenuThemeConfig_Font();
+
+    /**
+     * The meta object literal for the '<em><b>Swatches</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MENU_THEME_CONFIG__SWATCHES = eINSTANCE.getMenuThemeConfig_Swatches();
+
+    /**
+     * The meta object literal for the '<em><b>Images</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MENU_THEME_CONFIG__IMAGES = eINSTANCE.getMenuThemeConfig_Images();
+
+    /**
+     * The meta object literal for the '<em><b>Badges</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MENU_THEME_CONFIG__BADGES = eINSTANCE.getMenuThemeConfig_Badges();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeSwatchConfigImpl <em>Theme Swatch Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ThemeSwatchConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeSwatchConfig()
+     * @generated
+     */
+    EClass THEME_SWATCH_CONFIG = eINSTANCE.getThemeSwatchConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Role</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_SWATCH_CONFIG__ROLE = eINSTANCE.getThemeSwatchConfig_Role();
+
+    /**
+     * The meta object literal for the '<em><b>Colour</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_SWATCH_CONFIG__COLOUR = eINSTANCE.getThemeSwatchConfig_Colour();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeImageConfigImpl <em>Theme Image Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ThemeImageConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeImageConfig()
+     * @generated
+     */
+    EClass THEME_IMAGE_CONFIG = eINSTANCE.getThemeImageConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Role</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_IMAGE_CONFIG__ROLE = eINSTANCE.getThemeImageConfig_Role();
+
+    /**
+     * The meta object literal for the '<em><b>Path</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_IMAGE_CONFIG__PATH = eINSTANCE.getThemeImageConfig_Path();
+
+    /**
+     * The meta object literal for the '<em><b>Slice</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_IMAGE_CONFIG__SLICE = eINSTANCE.getThemeImageConfig_Slice();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ThemeBadgeConfigImpl <em>Theme Badge Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ThemeBadgeConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeBadgeConfig()
+     * @generated
+     */
+    EClass THEME_BADGE_CONFIG = eINSTANCE.getThemeBadgeConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_BADGE_CONFIG__TIER = eINSTANCE.getThemeBadgeConfig_Tier();
+
+    /**
+     * The meta object literal for the '<em><b>Image</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_BADGE_CONFIG__IMAGE = eINSTANCE.getThemeBadgeConfig_Image();
+
+    /**
+     * The meta object literal for the '<em><b>Colour</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute THEME_BADGE_CONFIG__COLOUR = eINSTANCE.getThemeBadgeConfig_Colour();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.

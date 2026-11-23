@@ -34,6 +34,9 @@
     <repository>
       <id>eclipse-releases</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <!-- releases never change: no daily metadata check, so an outage of repo.eclipse.org does not touch cached builds -->
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
   </repositories>
 
@@ -41,6 +44,9 @@
     <pluginRepository>
       <id>eclipse-releases</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <!-- releases never change: no daily metadata check, so an outage of repo.eclipse.org does not touch cached builds -->
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </pluginRepository>
     <pluginRepository>
       <id>openjfx-repo</id>
@@ -157,6 +163,13 @@
       <groupId>org.eclipse.emf</groupId>
       <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
       <version>${emf.version}</version>
+    </dependency>
+
+    <!-- FreeMarker: renders the stylesheet of the screens between levels from the menu theme model -->
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${freemarker.version}</version>
     </dependency>
 
     <!-- JavaFX -->

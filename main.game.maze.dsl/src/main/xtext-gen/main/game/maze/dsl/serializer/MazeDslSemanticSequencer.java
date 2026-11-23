@@ -20,6 +20,7 @@ import main.game.maze.dsl.mazeDsl.LevelZone;
 import main.game.maze.dsl.mazeDsl.LootItemConfig;
 import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
+import main.game.maze.dsl.mazeDsl.MenuThemeConfig;
 import main.game.maze.dsl.mazeDsl.MineRingConfig;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
@@ -27,7 +28,13 @@ import main.game.maze.dsl.mazeDsl.PatrolZoneConfig;
 import main.game.maze.dsl.mazeDsl.PortalGhostConfig;
 import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
+import main.game.maze.dsl.mazeDsl.ShopConfig;
+import main.game.maze.dsl.mazeDsl.ShopItemConfig;
+import main.game.maze.dsl.mazeDsl.ShopUnlockConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
+import main.game.maze.dsl.mazeDsl.ThemeBadgeConfig;
+import main.game.maze.dsl.mazeDsl.ThemeImageConfig;
+import main.game.maze.dsl.mazeDsl.ThemeSwatchConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
 import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
@@ -100,6 +107,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case MazeDslPackage.LOOT_TABLE_CONFIG:
 				sequence_LootTableConfig(context, (LootTableConfig) semanticObject); 
 				return; 
+			case MazeDslPackage.MENU_THEME_CONFIG:
+				sequence_MenuThemeConfig(context, (MenuThemeConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.MINE_RING_CONFIG:
 				sequence_MineRingConfig(context, (MineRingConfig) semanticObject); 
 				return; 
@@ -121,8 +131,26 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 			case MazeDslPackage.SERGEANT_CONFIG:
 				sequence_SergeantConfig(context, (SergeantConfig) semanticObject); 
 				return; 
+			case MazeDslPackage.SHOP_CONFIG:
+				sequence_ShopConfig(context, (ShopConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.SHOP_ITEM_CONFIG:
+				sequence_ShopItemConfig(context, (ShopItemConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.SHOP_UNLOCK_CONFIG:
+				sequence_ShopUnlockConfig(context, (ShopUnlockConfig) semanticObject); 
+				return; 
 			case MazeDslPackage.TELEPORT_RULES_CONFIG:
 				sequence_TeleportRulesConfig(context, (TeleportRulesConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.THEME_BADGE_CONFIG:
+				sequence_ThemeBadgeConfig(context, (ThemeBadgeConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.THEME_IMAGE_CONFIG:
+				sequence_ThemeImageConfig(context, (ThemeImageConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.THEME_SWATCH_CONFIG:
+				sequence_ThemeSwatchConfig(context, (ThemeSwatchConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.TIER_COUNT_CONFIG:
 				sequence_TierCountConfig(context, (TierCountConfig) semanticObject); 
@@ -224,7 +252,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         opponents+=OpponentConfig* 
 	 *         patrols+=PatrolConfig* 
 	 *         lootTables+=LootTableConfig* 
-	 *         levels+=LevelConfig*
+	 *         levels+=LevelConfig* 
+	 *         shop=ShopConfig? 
+	 *         theme=MenuThemeConfig?
 	 *     )
 	 * </pre>
 	 */
@@ -453,6 +483,20 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     MenuThemeConfig returns MenuThemeConfig
+	 *
+	 * Constraint:
+	 *     (font=STRING swatches+=ThemeSwatchConfig* images+=ThemeImageConfig* badges+=ThemeBadgeConfig*)
+	 * </pre>
+	 */
+	protected void sequence_MenuThemeConfig(ISerializationContext context, MenuThemeConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     MineRingConfig returns MineRingConfig
 	 *
 	 * Constraint:
@@ -623,6 +667,65 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     ShopConfig returns ShopConfig
+	 *
+	 * Constraint:
+	 *     ((unlocks+=ShopUnlockConfig+ items+=ShopItemConfig+) | items+=ShopItemConfig+)?
+	 * </pre>
+	 */
+	protected void sequence_ShopConfig(ISerializationContext context, ShopConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ShopItemConfig returns ShopItemConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         kind=ValidID 
+	 *         displayName=STRING 
+	 *         tier=ValidID 
+	 *         price=INT 
+	 *         amount=INT_OBJECT? 
+	 *         factor=DOUBLE_OBJECT? 
+	 *         description=STRING?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_ShopItemConfig(ISerializationContext context, ShopItemConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ShopUnlockConfig returns ShopUnlockConfig
+	 *
+	 * Constraint:
+	 *     (tier=ValidID level=INT)
+	 * </pre>
+	 */
+	protected void sequence_ShopUnlockConfig(ISerializationContext context, ShopUnlockConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getShopUnlockConfigAccess().getTierValidIDParserRuleCall_1_0(), semanticObject.getTier());
+		feeder.accept(grammarAccess.getShopUnlockConfigAccess().getLevelINTTerminalRuleCall_3_0(), semanticObject.getLevel());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     TeleportRulesConfig returns TeleportRulesConfig
 	 *
 	 * Constraint:
@@ -631,6 +734,69 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 */
 	protected void sequence_TeleportRulesConfig(ISerializationContext context, TeleportRulesConfig semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ThemeBadgeConfig returns ThemeBadgeConfig
+	 *
+	 * Constraint:
+	 *     (tier=ValidID image=STRING colour=STRING)
+	 * </pre>
+	 */
+	protected void sequence_ThemeBadgeConfig(ISerializationContext context, ThemeBadgeConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__TIER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__TIER));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__IMAGE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__IMAGE));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__COLOUR) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.THEME_BADGE_CONFIG__COLOUR));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getThemeBadgeConfigAccess().getTierValidIDParserRuleCall_1_0(), semanticObject.getTier());
+		feeder.accept(grammarAccess.getThemeBadgeConfigAccess().getImageSTRINGTerminalRuleCall_2_0(), semanticObject.getImage());
+		feeder.accept(grammarAccess.getThemeBadgeConfigAccess().getColourSTRINGTerminalRuleCall_4_0(), semanticObject.getColour());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ThemeImageConfig returns ThemeImageConfig
+	 *
+	 * Constraint:
+	 *     (role=ValidID path=STRING slice=INT_OBJECT?)
+	 * </pre>
+	 */
+	protected void sequence_ThemeImageConfig(ISerializationContext context, ThemeImageConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ThemeSwatchConfig returns ThemeSwatchConfig
+	 *
+	 * Constraint:
+	 *     (role=ValidID colour=STRING)
+	 * </pre>
+	 */
+	protected void sequence_ThemeSwatchConfig(ISerializationContext context, ThemeSwatchConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.THEME_SWATCH_CONFIG__ROLE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.THEME_SWATCH_CONFIG__ROLE));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.THEME_SWATCH_CONFIG__COLOUR) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.THEME_SWATCH_CONFIG__COLOUR));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getThemeSwatchConfigAccess().getRoleValidIDParserRuleCall_1_0(), semanticObject.getRole());
+		feeder.accept(grammarAccess.getThemeSwatchConfigAccess().getColourSTRINGTerminalRuleCall_2_0(), semanticObject.getColour());
+		feeder.finish();
 	}
 	
 	

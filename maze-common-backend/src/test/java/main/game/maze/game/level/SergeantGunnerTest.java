@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+import main.game.maze.game.targeting.SoldierTargets;
+import main.game.maze.mazeworld.Point2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,5 +89,24 @@ class SergeantGunnerTest {
         gunner.tick(0.0, true);
         gunner.reset();
         assertEquals(1, gunner.tick(0.0, true), "no cooldown left after a reset");
+    }
+
+    @Test
+    @DisplayName("fires at a soldier it sees before the player, and at the player when no soldier is in sight")
+    void firesAtSoldiersFirst() {
+        Point2D soldier = new Point2D(160, 100);
+        SoldierTargets soldiers = SoldierTargets.of(() -> List.of(soldier), (at, damage) -> { });
+        SergeantGunner.Volley volley = gunner.fire(0.0, 100, 100, 200, 100, soldiers, (a, b, c, d) -> false);
+        assertTrue(volley.rounds() > 0);
+        assertTrue(volley.target().isSoldier());
+        assertEquals(160, volley.target().x(), 1e-9);
+
+        SergeantGunner other = new SergeantGunner(spec);
+        SergeantGunner.Volley atPlayer = other.fire(0.0, 100, 100, 200, 100, soldiers,
+                (fromX, fromY, toX, toY) -> toX == 160);
+        assertFalse(atPlayer.target().isSoldier(), "the soldier stands behind a wall");
+        assertTrue(atPlayer.rounds() > 0);
+        assertEquals(0, new SergeantGunner(spec).fire(0.0, 100, 100, 200, 100, SoldierTargets.NONE,
+                (a, b, c, d) -> true).rounds(), "nobody in sight");
     }
 }

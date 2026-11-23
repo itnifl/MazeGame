@@ -61,11 +61,31 @@ public final class GdxGameCombatAndEnemyFlowSupport {
             PlayerState player,
             EnemyDirectorService enemyDirectorService,
             float dt) {
+        advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt, List.of(), 0);
+    }
+
+    /**
+     * As above; an enemy within {@code lureRadius} of one of the {@code soldiers} (screen space) goes for the nearest such
+     * soldier instead of the player.
+     */
+    public static void advanceEnemies(
+            List<GdxEnemyRuntime> animatedEnemies,
+            MazeArena maze,
+            PlayerState player,
+            EnemyDirectorService enemyDirectorService,
+            float dt,
+            List<main.game.maze.mazeworld.Point2D> soldiers,
+            double lureRadius) {
         if (animatedEnemies.isEmpty() || maze == null || player == null) {
             return;
         }
         WorldView world = new GdxWorldView(maze, player);
-        enemyDirectorService.advanceAll(animatedEnemies, world, dt);
+        if (soldiers == null || soldiers.isEmpty()) {
+            enemyDirectorService.advanceAll(animatedEnemies, world, dt);
+        } else {
+            enemyDirectorService.advanceAll(animatedEnemies, dt, enemy -> main.game.maze.game.strike.DecoyTargeting.viewFor(
+                    world, soldiers, enemy.x(), enemy.y(), lureRadius));
+        }
         for (GdxEnemyRuntime enemy : animatedEnemies) {
             enemy.tickInvulnerability(dt);
         }
@@ -300,6 +320,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         // living enemies, plus dead ones whose pumpkins are still in the air (they start no new attacks)
         List<GdxEnemyRuntime> shooters = new ArrayList<>(animatedEnemies);
         shooters.addAll(worldModel.retiredShooters().active());
+        // the soldiers of the infantry strike are shot before the player
+        var soldiers = GdxStrikeSupport.soldierTargets(worldModel, worldModel.maze());
         for (GdxEnemyRuntime enemy : shooters) {
             totalDamage += enemy.updateRangedAttacks(
                     dt,
@@ -307,7 +329,8 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                     player.x(),
                     player.y(),
                     player.halfSize(),
-                    GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()));
+                    GdxWallDamageSupport.wallHitCallback(worldModel.maze(), enemy.attackDamage()),
+                    soldiers);
             worldModel.enemyProjectiles().addAll(enemy.projectileVisuals());
             worldModel.enemyBeams().addAll(enemy.beamVisuals());
             worldModel.enemyBursts().addAll(enemy.explosionVisuals());

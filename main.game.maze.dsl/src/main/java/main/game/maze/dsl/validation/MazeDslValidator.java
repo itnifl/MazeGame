@@ -91,6 +91,151 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
         }
     }
 
+    public static final String INVALID_SHOP_ITEM = "invalidShopItem";
+    public static final String INVALID_THEME = "invalidTheme";
+
+    /** The literals of {@code Swatch} and {@code Art} in {@code xmi/theme/menutheme.ecore}. */
+    public static final java.util.List<String> THEME_SWATCHES = java.util.List.of("TITLE", "TEXT", "MUTED", "ACCENT", "PRICE",
+            "TOO_DEAR", "GOOD", "BAD", "BUTTON_TEXT", "SHADOW");
+    public static final java.util.List<String> THEME_ART = java.util.List.of("BACKDROP", "VIGNETTE", "HAZARD_STRIP", "PANEL",
+            "BANNER", "CARD", "CARD_SELECTED", "CARD_LOCKED", "SLOT", "BUTTON_GO", "BUTTON_BUY", "BUTTON_STEEL",
+            "BUTTON_DANGER", "TOKEN", "LOCK");
+
+    /** The literals of {@code ShopItemKind} in {@code xmi/shop/shop.ecore}; the boosts are the first two. */
+    public static final java.util.List<String> SHOP_ITEM_KINDS = java.util.List.of("SHIELD_BOOST", "FLAME_BOOST", "GRENADE",
+            "PLASMA_GRENADE", "NUKE_GRENADE", "BUNKER_BUSTER", "FAT_BOMB", "AIRSTRIKE", "INFANTRY_STRIKE", "EXTRA_LIFE");
+    /** The literals of {@code ShopTier} in {@code xmi/shop/shop.ecore}. */
+    public static final java.util.List<String> SHOP_TIERS = java.util.List.of("CHEAP", "MEDIUM", "EXPENSIVE");
+
+    private static boolean isBoost(String kind) {
+        return "SHIELD_BOOST".equals(kind) || "FLAME_BOOST".equals(kind);
+    }
+
+    /**
+     * A shop item the game would refuse to load (see {@code ShopItem}) is an error in the DSL, so it is found before
+     * shop.xmi is written: an unknown kind or tier, a price that is not positive, a weapon without uses, a boost that does
+     * not boost.
+     */
+    @Check
+    public void checkThemeSwatch(ThemeSwatchConfig swatch) {
+        if (!THEME_SWATCHES.contains(swatch.getRole())) {
+            error("Unknown colour " + swatch.getRole() + "; one of " + THEME_SWATCHES,
+                  MazeDslPackage.Literals.THEME_SWATCH_CONFIG__ROLE, INVALID_THEME);
+        }
+        checkColour(swatch.getColour(), MazeDslPackage.Literals.THEME_SWATCH_CONFIG__COLOUR);
+    }
+
+    @Check
+    public void checkThemeImage(ThemeImageConfig image) {
+        if (!THEME_ART.contains(image.getRole())) {
+            error("Unknown image " + image.getRole() + "; one of " + THEME_ART,
+                  MazeDslPackage.Literals.THEME_IMAGE_CONFIG__ROLE, INVALID_THEME);
+        }
+        if (image.getPath() == null || !image.getPath().startsWith("/")) {
+            error("An image is a classpath path starting with /", MazeDslPackage.Literals.THEME_IMAGE_CONFIG__PATH,
+                  INVALID_THEME);
+        }
+        if (image.getSlice() != null && image.getSlice() < 0) {
+            error("A slice is 0 or more pixels", MazeDslPackage.Literals.THEME_IMAGE_CONFIG__SLICE, INVALID_THEME);
+        }
+    }
+
+    @Check
+    public void checkThemeBadge(ThemeBadgeConfig badge) {
+        if (!SHOP_TIERS.contains(badge.getTier())) {
+            error("Unknown tier " + badge.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.THEME_BADGE_CONFIG__TIER, INVALID_THEME);
+        }
+        checkColour(badge.getColour(), MazeDslPackage.Literals.THEME_BADGE_CONFIG__COLOUR);
+    }
+
+    private void checkColour(String colour, org.eclipse.emf.ecore.EAttribute feature) {
+        if (colour == null || !colour.matches("#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})")) {
+            error("A colour is #rrggbb or #rrggbbaa, not " + colour, feature, INVALID_THEME);
+        }
+    }
+
+    /** The theme is complete: every colour, image and tier badge, each once (the game cannot draw a missing one). */
+    @Check
+    public void checkThemeIsComplete(MenuThemeConfig theme) {
+        checkEachOnce(theme.getSwatches().stream().map(ThemeSwatchConfig::getRole).toList(), THEME_SWATCHES, "colour",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__SWATCHES);
+        checkEachOnce(theme.getImages().stream().map(ThemeImageConfig::getRole).toList(), THEME_ART, "image",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__IMAGES);
+        checkEachOnce(theme.getBadges().stream().map(ThemeBadgeConfig::getTier).toList(), SHOP_TIERS, "tier badge",
+                MazeDslPackage.Literals.MENU_THEME_CONFIG__BADGES);
+    }
+
+    private void checkEachOnce(java.util.List<String> written, java.util.List<String> all, String what,
+                               org.eclipse.emf.ecore.EReference feature) {
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 0; i < written.size(); i++) {
+            if (!seen.add(written.get(i))) {
+                error("The theme has the " + what + " " + written.get(i) + " twice", feature, i, INVALID_THEME);
+            }
+        }
+        java.util.List<String> missing = all.stream().filter(name -> !seen.contains(name)).toList();
+        if (!missing.isEmpty()) {
+            error("The theme has no " + what + " for " + missing, feature, INVALID_THEME);
+        }
+    }
+
+    @Check
+    public void checkShopItem(ShopItemConfig item) {
+        if (!SHOP_ITEM_KINDS.contains(item.getKind())) {
+            error("Unknown shop item " + item.getKind() + "; one of " + SHOP_ITEM_KINDS,
+                  MazeDslPackage.Literals.SHOP_ITEM_CONFIG__KIND, INVALID_SHOP_ITEM);
+        }
+        if (!SHOP_TIERS.contains(item.getTier())) {
+            error("Unknown tier " + item.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.SHOP_ITEM_CONFIG__TIER, INVALID_SHOP_ITEM);
+        }
+        if (item.getPrice() <= 0) {
+            error("A shop item must cost something", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__PRICE, INVALID_SHOP_ITEM);
+        }
+        if (isBoost(item.getKind())) {
+            if (item.getFactor() == null || item.getFactor() <= 1.0) {
+                error("A boost needs a factor above 1", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__FACTOR, INVALID_SHOP_ITEM);
+            }
+        } else if (item.getAmount() == null || item.getAmount() < 1) {
+            error("A weapon in the shop needs an amount of at least 1", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__AMOUNT,
+                  INVALID_SHOP_ITEM);
+        }
+    }
+
+    /** A tier opens from a real level (the first shop is the one before level 2), and with a known tier. */
+    @Check
+    public void checkShopUnlock(ShopUnlockConfig unlock) {
+        if (!SHOP_TIERS.contains(unlock.getTier())) {
+            error("Unknown tier " + unlock.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER, INVALID_SHOP_ITEM);
+        }
+        if (unlock.getLevel() < 2) {
+            error("The first shop is the one before level 2, so a tier opens from level 2 or later",
+                  MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL, INVALID_SHOP_ITEM);
+        }
+    }
+
+    /** Each item is sold once, and each tier is unlocked once. */
+    @Check
+    public void checkShopHasNoDuplicates(ShopConfig shop) {
+        java.util.Set<String> tiers = new java.util.HashSet<>();
+        for (int i = 0; i < shop.getUnlocks().size(); i++) {
+            if (!tiers.add(shop.getUnlocks().get(i).getTier())) {
+                error("The tier " + shop.getUnlocks().get(i).getTier() + " is unlocked twice",
+                      MazeDslPackage.Literals.SHOP_CONFIG__UNLOCKS, i, INVALID_SHOP_ITEM);
+            }
+        }
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 0; i < shop.getItems().size(); i++) {
+            ShopItemConfig item = shop.getItems().get(i);
+            if (!seen.add(item.getKind())) {
+                error("The shop sells " + item.getKind() + " twice", MazeDslPackage.Literals.SHOP_CONFIG__ITEMS, i,
+                      INVALID_SHOP_ITEM);
+            }
+        }
+    }
+
     /** 0 (or leaving it out) is the only way to say "no second ring"; a negative radius is a mistake, not a silent 0. */
     @Check
     public void checkSecondRing(MineRingConfig mines) {

@@ -39,7 +39,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import main.game.maze.actions.GameOverAction;
 import main.game.maze.actions.HighscoreAction;
@@ -98,8 +97,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     private static final String COMMANDS_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(115,215,189,0.95); -fx-text-fill: #0a2924; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_STYLE         = "-fx-background-color: rgba(255,229,110,0.90); -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
     private static final String TERMINAL_BUTTON_PRESSED_STYLE = "-fx-background-color: rgba(232,197,79,0.95); -fx-text-fill: #251700; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;";
-    private static final double PLAYER_BOMB_FUSE_SECONDS = 3.0;
-    private static final double PLAYER_BOMB_RANGE = 220.0;
     private static final double PLAYER_FLAME_DAMAGE_PER_DIRECTION = 100.0;
     private static final double PLAYER_FLAME_VISUAL_SECONDS = FireBlast.DEFAULT_LIFETIME_SECONDS;
     /** Full corridor width: 85 %³ of one maze hallway (≈ 37 px) for a snug fit. */
@@ -211,7 +208,14 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public Pane board()                         { return gameBoard; }
         @Override public FxEnemyCoordinator enemies()         { return enemyCoordinator; }
         @Override public int boardWidth()                     { return App.getBoardMaxX(); }
-        @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
+        @Override public int boardHeight()                    { return App.getBoardMaxY(); }
+        @Override public void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
+            blastAt(x, y, damage, radius, hurtsPlayer, label);
+        }
+        @Override public void nuclearBlast(double x, double y, int damage, double radius, boolean hurtsPlayer,
+                                           String label) {
+            nuclearBlastAt(x, y, damage, radius, hurtsPlayer, label);
+        }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
         @Override public void impactShake() {
@@ -230,10 +234,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     /** Rubble draws in front of the board like the other explosions. */
     private static final double RUBBLE_VIEW_ORDER = -9;
 
-    private final List<ActivePlayerBomb> activePlayerBombs = new ArrayList<>();
 
-    private record ActivePlayerBomb(double x, double y, Circle marker, PauseTransition fuse) {
-    }
 
     // Extracted coordinators
     private final FxEnemyCoordinator  enemyCoordinator;
@@ -266,6 +267,9 @@ public class GameController implements Initializable, EnemyRegistrar {
     /** The guard towers of level 4: they shoot rpgs and a gatling gun, decided by the shared tower session. */
     private final FxGuardTowerController guardTowers = new FxGuardTowerController(new FxGuardTowerController.Host() {
         @Override public PlayerCharacter player() { return playerCharacter; }
+        @Override public main.game.maze.game.targeting.SoldierTargets soldiers() {
+            return weapons.soldierTargets();
+        }
         @Override public int wallsBetween(double fromX, double fromY, double toX, double toY) {
             return maze == null ? 0 : main.game.maze.game.hazard.WallCrossing.countVectors(fromX, fromY, toX, toY, maze.getMazeVectors());
         }
@@ -431,37 +435,6 @@ public class GameController implements Initializable, EnemyRegistrar {
         return weapons.localKillPoints();
     }
 
-    private void plantPlayerBomb(double centerX, double centerY) {
-        if (gameBoard == null) {
-            return;
-        }
-        Circle marker = new Circle(centerX, centerY, 8.0);
-        marker.setFill(Color.rgb(40, 40, 40, 0.9));
-        marker.setStroke(Color.rgb(255, 191, 71, 0.95));
-        marker.setStrokeWidth(2.2);
-        marker.setViewOrder(-8);
-        gameBoard.getChildren().add(marker);
-
-        PauseTransition fuse = new PauseTransition(Duration.seconds(PLAYER_BOMB_FUSE_SECONDS));
-        ActivePlayerBomb bomb = new ActivePlayerBomb(centerX, centerY, marker, fuse);
-        activePlayerBombs.add(bomb);
-        setHudMessage("Bomb planted", Duration.seconds(1.2));
-        fuse.setOnFinished(evt -> detonatePlayerBomb(bomb));
-        fuse.playFromStart();
-    }
-
-    private void detonatePlayerBomb(ActivePlayerBomb bomb) {
-        if (!activePlayerBombs.remove(bomb)) {
-            return;
-        }
-        if (gameBoard != null) {
-            gameBoard.getChildren().remove(bomb.marker());
-        }
-        blastAt(bomb.x(), bomb.y(),
-                playerCharacter != null ? playerCharacter.getFlameAttackDamage() : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION,
-                PLAYER_BOMB_RANGE, true, "Bomb");
-    }
-
     /**
      * A blast at (x, y): flame corridors that break walls and hurt enemies, the visual, the deep boom and the
      * screen shake. Only the player's own bomb hurts the player.
@@ -512,6 +485,44 @@ public class GameController implements Initializable, EnemyRegistrar {
         } else {
             setHudMessage(label + " exploded", Duration.seconds(1.0));
         }
+    }
+
+    /**
+     * The small nuclear grenade: a round blast through walls (shared {@code NuclearBlastEngine}) that burns the enemies and
+     * breaks the walls in reach, the player too when {@code hurtsPlayer}; drawn as a mushroom cloud with a deep roar and a
+     * long heavy shake.
+     */
+    private void nuclearBlastAt(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
+        List<main.game.maze.mazeworld.flame.FlameTarget> targets = new ArrayList<>(
+                enemyCoordinator.livingTargets(PlayerIds.LOCAL_PLAYER, main.game.maze.common.remains.DeathCause.FIRE));
+        PlayerCharacter player = playerCharacter;
+        if (hurtsPlayer && player != null) {
+            double half = StageConstants.PlayerCharacterXYSize * 0.5d;
+            double px = player.getCharacterPosition().getX() + half;
+            double py = player.getCharacterPosition().getY() + half;
+            targets.add(new main.game.maze.mazeworld.flame.FlameTarget() {
+                @Override public double centerX() { return px; }
+                @Override public double centerY() { return py; }
+                @Override public int hitPoints() { return player.getHitPoints(); }
+                @Override public void applyDamage(int amount) { player.subtractHitPoints(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
+        }
+        int[] dealt = new int[1];
+        GameMazeWorld.attributeDamageTo(PlayerIds.LOCAL_PLAYER, () -> dealt[0] =
+                main.game.maze.mazeworld.flame.NuclearBlastEngine.apply(targets, maze, x, y, radius, damage));
+        if (mazeCanvas != null && maze != null) {
+            mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
+        }
+        if (gameBoard != null) {
+            var cloud = new main.game.maze.common.graphics.fire.MushroomCloudEffect(x, y, radius, -1);   // JavaFX is y-down
+            FxExplosionView.of(cloud).play(gameBoard, cloud.lifetimeSeconds(), -9);
+            main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent(),
+                    main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_SECONDS,
+                    main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_STRENGTH);
+        }
+        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.common.graphics.fire.MushroomCloudEffect.SOUND);
+        setHudMessage(label + " - nuclear blast, enemy damage " + dealt[0], Duration.seconds(2.0));
     }
 
     private void showFlameExplosionVisual(double centerX, double centerY, double range,
@@ -758,7 +769,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void setupGame() {
-        clearActivePlayerBombs();
         resurrections.cancelAll();
         remainsLayer.clearAll();
         hpBar.setProgress(1.0);
@@ -791,6 +801,9 @@ public class GameController implements Initializable, EnemyRegistrar {
 
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
+        weapons.setBoosts(App.levelProgress.boosts());   // what was bought in the shop for this level
+        // enemies near a soldier of the infantry strike go for the soldier first
+        enemyCoordinator.setSoldiers(weapons.soldierTargets(), weapons.soldierLureRadius());
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
         if (lives.remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once
@@ -1011,7 +1024,6 @@ public class GameController implements Initializable, EnemyRegistrar {
     }
 
     public void dispose() {
-        clearActivePlayerBombs();
         hazards.dispose();
         guardTowers.dispose();
         wallBuilders.dispose();
@@ -1036,15 +1048,5 @@ public class GameController implements Initializable, EnemyRegistrar {
             playerCharacter.dispose();
             playerCharacter = null;
         }
-    }
-
-    private void clearActivePlayerBombs() {
-        for (ActivePlayerBomb bomb : activePlayerBombs) {
-            bomb.fuse().stop();
-            if (gameBoard != null) {
-                gameBoard.getChildren().remove(bomb.marker());
-            }
-        }
-        activePlayerBombs.clear();
     }
 }

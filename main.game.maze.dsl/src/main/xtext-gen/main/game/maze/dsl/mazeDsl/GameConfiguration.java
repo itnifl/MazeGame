@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getPatrols <em>Patrols</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getLootTables <em>Loot Tables</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getLevels <em>Levels</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getShop <em>Shop</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getTheme <em>Theme</em>}</li>
  * </ul>
  *
  * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getGameConfiguration()
@@ -134,5 +136,49 @@ public interface GameConfiguration extends EObject
    * @generated
    */
   EList<LevelConfig> getLevels();
+
+  /**
+   * Returns the value of the '<em><b>Shop</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Shop</em>' containment reference.
+   * @see #setShop(ShopConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getGameConfiguration_Shop()
+   * @model containment="true"
+   * @generated
+   */
+  ShopConfig getShop();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getShop <em>Shop</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Shop</em>' containment reference.
+   * @see #getShop()
+   * @generated
+   */
+  void setShop(ShopConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Theme</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Theme</em>' containment reference.
+   * @see #setTheme(MenuThemeConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getGameConfiguration_Theme()
+   * @model containment="true"
+   * @generated
+   */
+  MenuThemeConfig getTheme();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getTheme <em>Theme</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Theme</em>' containment reference.
+   * @see #getTheme()
+   * @generated
+   */
+  void setTheme(MenuThemeConfig value);
 
 } // GameConfiguration

@@ -340,3 +340,39 @@ MUST be added to the shared core, not to a single frontend.
   enough to break (wall hit points are taken from its power); steel and solid walls stop it.
 - **GR-77**: The main menu's Load button goes back to the last level entered, with the weapons,
   the score and the difficulty it was entered with.
+- **GR-78**: Between levels the win screen offers a Shop. Prices are paid from the score
+  carried into the next level; what is bought goes into the next level (and its savepoint).
+  Cheap: extra long shield (800, shields x3), extra long flames (1000, bombs x1.6), 5 grenades
+  (600). Medium: 3 plasma grenades (2000), 3 bunker buster rockets (2500), a fat bomb (2200),
+  3 extra lives (3000). Expensive: 2 small nuclear grenades (6000), an airstrike (7500), an
+  infantry strike (9000).
+- **GR-79**: The boosts last for the next level only; buying one that is already on is refused.
+- **GR-80**: Grenades are thrown up to 240 px (plasma 260, nuke 300) along the facing, stop short
+  of a wall and go off after 1.2 s (nuke 2 s): grenade 160 damage / 120 px flames, plasma 420 /
+  180 px, nuke 2400 / 420 px. Grenades can hurt the thrower, the nuke does not (GR-88).
+- **GR-81**: The bunker buster flies up to 900 px with 9000 power through breakable walls and
+  towers, then blows up (500 damage, 140 px flames).
+- **GR-82**: The fat bomb goes off 3 s after it is planted: 700 damage, 520 px flames.
+- **GR-83**: The airstrike drops 16 bombs (600 damage, 170 px flames each) within 280 px of the
+  approximate centre, starting 2.5 s after the call, over 3.5 s; they never hurt the player.
+- **GR-84**: The infantry strike lands 10 soldiers together in a random area for 45 s. They
+  shoot every enemy they see within 320 px (45 damage a round, every 0.55 s), walk the maze
+  towards the nearest enemy otherwise, and never shoot the player (their health: GR-87).
+- **GR-85**: The extra life fills the health bar when used (Space); at full health it is kept.
+- **GR-86**: The score on the win screen, and the score saved from it, is what is left after
+  shopping.
+- **GR-87**: Soldiers have 120 health. An enemy within 240 px of a soldier goes for the
+  nearest soldier instead of the player; touching a soldier takes 25 health a second. A soldier
+  with no health left falls and is gone after 4 s. Ranged enemies shoot soldiers first (GR-90).
+- **GR-88**: The small nuclear grenade is a round blast through walls: full damage within 35 %
+  of its 420 px radius, falling to a quarter at the edge, to enemies, the player and breakable
+  walls alike, but never the player who threw it; it is shown as a mushroom cloud.
+- **GR-89**: The shop sells only cheap items after levels 1 and 2, medium items too from the
+  shop after level 3, and expensive items too from the shop after level 5.
+- **GR-90**: A sergeant, a guard tower or a pumpkin bomber shoots the nearest soldier it can
+  hit (its own range and wall rule) before the player. Its rounds, rockets and pumpkins hurt the
+  soldier as they would the player; a rocket's blast hurts the player and the soldiers in it.
+- **GR-91**: The shop stands its items on a shelf per tier; Left and Right move between the
+  shelves, Up and Down along one.
+- **GR-92**: The planted bomb lies as a bomb with a burning fuse and goes off after 3 s (flames
+  220 px); an airstrike's bombs are seen falling onto their shadows in the 0.7 s before they hit.

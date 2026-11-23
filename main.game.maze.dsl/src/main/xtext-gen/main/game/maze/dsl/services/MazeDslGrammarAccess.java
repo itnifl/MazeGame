@@ -45,7 +45,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cLootTablesLootTableConfigParserRuleCall_7_0 = (RuleCall)cLootTablesAssignment_7.eContents().get(0);
 		private final Assignment cLevelsAssignment_8 = (Assignment)cGroup.eContents().get(8);
 		private final RuleCall cLevelsLevelConfigParserRuleCall_8_0 = (RuleCall)cLevelsAssignment_8.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cShopAssignment_9 = (Assignment)cGroup.eContents().get(9);
+		private final RuleCall cShopShopConfigParserRuleCall_9_0 = (RuleCall)cShopAssignment_9.eContents().get(0);
+		private final Assignment cThemeAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cThemeMenuThemeConfigParserRuleCall_10_0 = (RuleCall)cThemeAssignment_10.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_11 = (Keyword)cGroup.eContents().get(11);
 		
 		///*
 		// * Root element - A game configuration containing all game elements
@@ -58,6 +62,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (patrols+=PatrolConfig)*
 		//        (lootTables+=LootTableConfig)*
 		//        (levels+=LevelConfig)*
+		//        (shop=ShopConfig)?
+		//        (theme=MenuThemeConfig)?
 		//    '}'
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -69,6 +75,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    (patrols+=PatrolConfig)*
 		//    (lootTables+=LootTableConfig)*
 		//    (levels+=LevelConfig)*
+		//    (shop=ShopConfig)?
+		//    (theme=MenuThemeConfig)?
 		//'}'
 		public Group getGroup() { return cGroup; }
 		
@@ -120,8 +128,20 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//LevelConfig
 		public RuleCall getLevelsLevelConfigParserRuleCall_8_0() { return cLevelsLevelConfigParserRuleCall_8_0; }
 		
+		//(shop=ShopConfig)?
+		public Assignment getShopAssignment_9() { return cShopAssignment_9; }
+		
+		//ShopConfig
+		public RuleCall getShopShopConfigParserRuleCall_9_0() { return cShopShopConfigParserRuleCall_9_0; }
+		
+		//(theme=MenuThemeConfig)?
+		public Assignment getThemeAssignment_10() { return cThemeAssignment_10; }
+		
+		//MenuThemeConfig
+		public RuleCall getThemeMenuThemeConfigParserRuleCall_10_0() { return cThemeMenuThemeConfigParserRuleCall_10_0; }
+		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_9() { return cRightCurlyBracketKeyword_9; }
+		public Keyword getRightCurlyBracketKeyword_11() { return cRightCurlyBracketKeyword_11; }
 	}
 	public class ImportElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.Import");
@@ -2804,6 +2824,409 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_16() { return cRightCurlyBracketKeyword_16; }
 	}
+	public class ShopConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ShopConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cShopKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cUnlocksAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cUnlocksShopUnlockConfigParserRuleCall_2_0 = (RuleCall)cUnlocksAssignment_2.eContents().get(0);
+		private final Assignment cItemsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cItemsShopItemConfigParserRuleCall_3_0 = (RuleCall)cItemsAssignment_3.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		
+		///*
+		// * The shop between levels (the source of xmi/shop/shop.xmi; see shop.ecore). The player pays with their score.
+		// * kind is a ShopItemKind of shop.ecore (GRENADE, AIRSTRIKE, SHIELD_BOOST, ...), tier one of CHEAP, MEDIUM, EXPENSIVE.
+		// * Weapons give `amount` uses per purchase; boosts make the next level's shields or bombs `factor` times stronger.
+		// */
+		//ShopConfig:
+		//    'shop' '{'
+		//        (unlocks+=ShopUnlockConfig)*
+		//        (items+=ShopItemConfig)*
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'shop' '{'
+		//    (unlocks+=ShopUnlockConfig)*
+		//    (items+=ShopItemConfig)*
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'shop'
+		public Keyword getShopKeyword_0() { return cShopKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//(unlocks+=ShopUnlockConfig)*
+		public Assignment getUnlocksAssignment_2() { return cUnlocksAssignment_2; }
+		
+		//ShopUnlockConfig
+		public RuleCall getUnlocksShopUnlockConfigParserRuleCall_2_0() { return cUnlocksShopUnlockConfigParserRuleCall_2_0; }
+		
+		//(items+=ShopItemConfig)*
+		public Assignment getItemsAssignment_3() { return cItemsAssignment_3; }
+		
+		//ShopItemConfig
+		public RuleCall getItemsShopItemConfigParserRuleCall_3_0() { return cItemsShopItemConfigParserRuleCall_3_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
+	}
+	public class ShopUnlockConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ShopUnlockConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cUnlockKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cTierAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cTierValidIDParserRuleCall_1_0 = (RuleCall)cTierAssignment_1.eContents().get(0);
+		private final Keyword cFromLevelKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cLevelAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cLevelINTTerminalRuleCall_3_0 = (RuleCall)cLevelAssignment_3.eContents().get(0);
+		
+		///* The items of a tier are sold from the shop before level `fromLevel` on (the shop before level 4 comes after level 3). */
+		//ShopUnlockConfig:
+		//    'unlock' tier=ValidID 'fromLevel' level=INT
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'unlock' tier=ValidID 'fromLevel' level=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'unlock'
+		public Keyword getUnlockKeyword_0() { return cUnlockKeyword_0; }
+		
+		//tier=ValidID
+		public Assignment getTierAssignment_1() { return cTierAssignment_1; }
+		
+		//ValidID
+		public RuleCall getTierValidIDParserRuleCall_1_0() { return cTierValidIDParserRuleCall_1_0; }
+		
+		//'fromLevel'
+		public Keyword getFromLevelKeyword_2() { return cFromLevelKeyword_2; }
+		
+		//level=INT
+		public Assignment getLevelAssignment_3() { return cLevelAssignment_3; }
+		
+		//INT
+		public RuleCall getLevelINTTerminalRuleCall_3_0() { return cLevelINTTerminalRuleCall_3_0; }
+	}
+	public class ShopItemConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ShopItemConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cItemKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cKindAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cKindValidIDParserRuleCall_1_0 = (RuleCall)cKindAssignment_1.eContents().get(0);
+		private final Assignment cDisplayNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cDisplayNameSTRINGTerminalRuleCall_2_0 = (RuleCall)cDisplayNameAssignment_2.eContents().get(0);
+		private final Keyword cTierKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cTierAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cTierValidIDParserRuleCall_4_0 = (RuleCall)cTierAssignment_4.eContents().get(0);
+		private final Keyword cPriceKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cPriceAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cPriceINTTerminalRuleCall_6_0 = (RuleCall)cPriceAssignment_6.eContents().get(0);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cAmountKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final Assignment cAmountAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
+		private final RuleCall cAmountINT_OBJECTParserRuleCall_7_1_0 = (RuleCall)cAmountAssignment_7_1.eContents().get(0);
+		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
+		private final Keyword cFactorKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
+		private final Assignment cFactorAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
+		private final RuleCall cFactorDOUBLE_OBJECTParserRuleCall_8_1_0 = (RuleCall)cFactorAssignment_8_1.eContents().get(0);
+		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
+		private final Keyword cDescriptionKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
+		private final Assignment cDescriptionAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
+		private final RuleCall cDescriptionSTRINGTerminalRuleCall_9_1_0 = (RuleCall)cDescriptionAssignment_9_1.eContents().get(0);
+		
+		//ShopItemConfig:
+		//    'item' kind=ValidID displayName=STRING
+		//        'tier' tier=ValidID
+		//        'price' price=INT
+		//        ('amount' amount=INT_OBJECT)?
+		//        ('factor' factor=DOUBLE_OBJECT)?
+		//        ('description' description=STRING)?
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'item' kind=ValidID displayName=STRING
+		//    'tier' tier=ValidID
+		//    'price' price=INT
+		//    ('amount' amount=INT_OBJECT)?
+		//    ('factor' factor=DOUBLE_OBJECT)?
+		//    ('description' description=STRING)?
+		public Group getGroup() { return cGroup; }
+		
+		//'item'
+		public Keyword getItemKeyword_0() { return cItemKeyword_0; }
+		
+		//kind=ValidID
+		public Assignment getKindAssignment_1() { return cKindAssignment_1; }
+		
+		//ValidID
+		public RuleCall getKindValidIDParserRuleCall_1_0() { return cKindValidIDParserRuleCall_1_0; }
+		
+		//displayName=STRING
+		public Assignment getDisplayNameAssignment_2() { return cDisplayNameAssignment_2; }
+		
+		//STRING
+		public RuleCall getDisplayNameSTRINGTerminalRuleCall_2_0() { return cDisplayNameSTRINGTerminalRuleCall_2_0; }
+		
+		//'tier'
+		public Keyword getTierKeyword_3() { return cTierKeyword_3; }
+		
+		//tier=ValidID
+		public Assignment getTierAssignment_4() { return cTierAssignment_4; }
+		
+		//ValidID
+		public RuleCall getTierValidIDParserRuleCall_4_0() { return cTierValidIDParserRuleCall_4_0; }
+		
+		//'price'
+		public Keyword getPriceKeyword_5() { return cPriceKeyword_5; }
+		
+		//price=INT
+		public Assignment getPriceAssignment_6() { return cPriceAssignment_6; }
+		
+		//INT
+		public RuleCall getPriceINTTerminalRuleCall_6_0() { return cPriceINTTerminalRuleCall_6_0; }
+		
+		//('amount' amount=INT_OBJECT)?
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//'amount'
+		public Keyword getAmountKeyword_7_0() { return cAmountKeyword_7_0; }
+		
+		//amount=INT_OBJECT
+		public Assignment getAmountAssignment_7_1() { return cAmountAssignment_7_1; }
+		
+		//INT_OBJECT
+		public RuleCall getAmountINT_OBJECTParserRuleCall_7_1_0() { return cAmountINT_OBJECTParserRuleCall_7_1_0; }
+		
+		//('factor' factor=DOUBLE_OBJECT)?
+		public Group getGroup_8() { return cGroup_8; }
+		
+		//'factor'
+		public Keyword getFactorKeyword_8_0() { return cFactorKeyword_8_0; }
+		
+		//factor=DOUBLE_OBJECT
+		public Assignment getFactorAssignment_8_1() { return cFactorAssignment_8_1; }
+		
+		//DOUBLE_OBJECT
+		public RuleCall getFactorDOUBLE_OBJECTParserRuleCall_8_1_0() { return cFactorDOUBLE_OBJECTParserRuleCall_8_1_0; }
+		
+		//('description' description=STRING)?
+		public Group getGroup_9() { return cGroup_9; }
+		
+		//'description'
+		public Keyword getDescriptionKeyword_9_0() { return cDescriptionKeyword_9_0; }
+		
+		//description=STRING
+		public Assignment getDescriptionAssignment_9_1() { return cDescriptionAssignment_9_1; }
+		
+		//STRING
+		public RuleCall getDescriptionSTRINGTerminalRuleCall_9_1_0() { return cDescriptionSTRINGTerminalRuleCall_9_1_0; }
+	}
+	public class MenuThemeConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.MenuThemeConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cThemeKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Keyword cFontKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cFontAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cFontSTRINGTerminalRuleCall_3_0 = (RuleCall)cFontAssignment_3.eContents().get(0);
+		private final Assignment cSwatchesAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cSwatchesThemeSwatchConfigParserRuleCall_4_0 = (RuleCall)cSwatchesAssignment_4.eContents().get(0);
+		private final Assignment cImagesAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cImagesThemeImageConfigParserRuleCall_5_0 = (RuleCall)cImagesAssignment_5.eContents().get(0);
+		private final Assignment cBadgesAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cBadgesThemeBadgeConfigParserRuleCall_6_0 = (RuleCall)cBadgesAssignment_6.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		
+		///*
+		// * The look of the screens between levels, the win screen and the shop (the source of xmi/theme/menutheme.xmi; see
+		// * menutheme.ecore): the JavaFX font, a colour for every Swatch (TITLE, TEXT, ...), a texture for every Art (PANEL, CARD,
+		// * BUTTON_GO, ...) with the pixels of each edge kept unstretched when it is drawn larger (slice), and the badge of every
+		// * shop tier. Both frontends draw from it.
+		// */
+		//MenuThemeConfig:
+		//    'theme' '{'
+		//        'font' font=STRING
+		//        (swatches+=ThemeSwatchConfig)*
+		//        (images+=ThemeImageConfig)*
+		//        (badges+=ThemeBadgeConfig)*
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'theme' '{'
+		//    'font' font=STRING
+		//    (swatches+=ThemeSwatchConfig)*
+		//    (images+=ThemeImageConfig)*
+		//    (badges+=ThemeBadgeConfig)*
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'theme'
+		public Keyword getThemeKeyword_0() { return cThemeKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//'font'
+		public Keyword getFontKeyword_2() { return cFontKeyword_2; }
+		
+		//font=STRING
+		public Assignment getFontAssignment_3() { return cFontAssignment_3; }
+		
+		//STRING
+		public RuleCall getFontSTRINGTerminalRuleCall_3_0() { return cFontSTRINGTerminalRuleCall_3_0; }
+		
+		//(swatches+=ThemeSwatchConfig)*
+		public Assignment getSwatchesAssignment_4() { return cSwatchesAssignment_4; }
+		
+		//ThemeSwatchConfig
+		public RuleCall getSwatchesThemeSwatchConfigParserRuleCall_4_0() { return cSwatchesThemeSwatchConfigParserRuleCall_4_0; }
+		
+		//(images+=ThemeImageConfig)*
+		public Assignment getImagesAssignment_5() { return cImagesAssignment_5; }
+		
+		//ThemeImageConfig
+		public RuleCall getImagesThemeImageConfigParserRuleCall_5_0() { return cImagesThemeImageConfigParserRuleCall_5_0; }
+		
+		//(badges+=ThemeBadgeConfig)*
+		public Assignment getBadgesAssignment_6() { return cBadgesAssignment_6; }
+		
+		//ThemeBadgeConfig
+		public RuleCall getBadgesThemeBadgeConfigParserRuleCall_6_0() { return cBadgesThemeBadgeConfigParserRuleCall_6_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_7() { return cRightCurlyBracketKeyword_7; }
+	}
+	public class ThemeSwatchConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ThemeSwatchConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cColourKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cRoleAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cRoleValidIDParserRuleCall_1_0 = (RuleCall)cRoleAssignment_1.eContents().get(0);
+		private final Assignment cColourAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cColourSTRINGTerminalRuleCall_2_0 = (RuleCall)cColourAssignment_2.eContents().get(0);
+		
+		///* colour is #rrggbb or #rrggbbaa */
+		//ThemeSwatchConfig:
+		//    'colour' role=ValidID colour=STRING
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'colour' role=ValidID colour=STRING
+		public Group getGroup() { return cGroup; }
+		
+		//'colour'
+		public Keyword getColourKeyword_0() { return cColourKeyword_0; }
+		
+		//role=ValidID
+		public Assignment getRoleAssignment_1() { return cRoleAssignment_1; }
+		
+		//ValidID
+		public RuleCall getRoleValidIDParserRuleCall_1_0() { return cRoleValidIDParserRuleCall_1_0; }
+		
+		//colour=STRING
+		public Assignment getColourAssignment_2() { return cColourAssignment_2; }
+		
+		//STRING
+		public RuleCall getColourSTRINGTerminalRuleCall_2_0() { return cColourSTRINGTerminalRuleCall_2_0; }
+	}
+	public class ThemeImageConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ThemeImageConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cImageKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cRoleAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cRoleValidIDParserRuleCall_1_0 = (RuleCall)cRoleAssignment_1.eContents().get(0);
+		private final Assignment cPathAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cPathSTRINGTerminalRuleCall_2_0 = (RuleCall)cPathAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cSliceKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cSliceAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cSliceINT_OBJECTParserRuleCall_3_1_0 = (RuleCall)cSliceAssignment_3_1.eContents().get(0);
+		
+		//ThemeImageConfig:
+		//    'image' role=ValidID path=STRING ('slice' slice=INT_OBJECT)?
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'image' role=ValidID path=STRING ('slice' slice=INT_OBJECT)?
+		public Group getGroup() { return cGroup; }
+		
+		//'image'
+		public Keyword getImageKeyword_0() { return cImageKeyword_0; }
+		
+		//role=ValidID
+		public Assignment getRoleAssignment_1() { return cRoleAssignment_1; }
+		
+		//ValidID
+		public RuleCall getRoleValidIDParserRuleCall_1_0() { return cRoleValidIDParserRuleCall_1_0; }
+		
+		//path=STRING
+		public Assignment getPathAssignment_2() { return cPathAssignment_2; }
+		
+		//STRING
+		public RuleCall getPathSTRINGTerminalRuleCall_2_0() { return cPathSTRINGTerminalRuleCall_2_0; }
+		
+		//('slice' slice=INT_OBJECT)?
+		public Group getGroup_3() { return cGroup_3; }
+		
+		//'slice'
+		public Keyword getSliceKeyword_3_0() { return cSliceKeyword_3_0; }
+		
+		//slice=INT_OBJECT
+		public Assignment getSliceAssignment_3_1() { return cSliceAssignment_3_1; }
+		
+		//INT_OBJECT
+		public RuleCall getSliceINT_OBJECTParserRuleCall_3_1_0() { return cSliceINT_OBJECTParserRuleCall_3_1_0; }
+	}
+	public class ThemeBadgeConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ThemeBadgeConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cBadgeKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cTierAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cTierValidIDParserRuleCall_1_0 = (RuleCall)cTierAssignment_1.eContents().get(0);
+		private final Assignment cImageAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cImageSTRINGTerminalRuleCall_2_0 = (RuleCall)cImageAssignment_2.eContents().get(0);
+		private final Keyword cColourKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cColourAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cColourSTRINGTerminalRuleCall_4_0 = (RuleCall)cColourAssignment_4.eContents().get(0);
+		
+		//ThemeBadgeConfig:
+		//    'badge' tier=ValidID image=STRING 'colour' colour=STRING
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'badge' tier=ValidID image=STRING 'colour' colour=STRING
+		public Group getGroup() { return cGroup; }
+		
+		//'badge'
+		public Keyword getBadgeKeyword_0() { return cBadgeKeyword_0; }
+		
+		//tier=ValidID
+		public Assignment getTierAssignment_1() { return cTierAssignment_1; }
+		
+		//ValidID
+		public RuleCall getTierValidIDParserRuleCall_1_0() { return cTierValidIDParserRuleCall_1_0; }
+		
+		//image=STRING
+		public Assignment getImageAssignment_2() { return cImageAssignment_2; }
+		
+		//STRING
+		public RuleCall getImageSTRINGTerminalRuleCall_2_0() { return cImageSTRINGTerminalRuleCall_2_0; }
+		
+		//'colour'
+		public Keyword getColourKeyword_3() { return cColourKeyword_3; }
+		
+		//colour=STRING
+		public Assignment getColourAssignment_4() { return cColourAssignment_4; }
+		
+		//STRING
+		public RuleCall getColourSTRINGTerminalRuleCall_4_0() { return cColourSTRINGTerminalRuleCall_4_0; }
+	}
 	public class LastLifeGiftConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LastLifeGiftConfig");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -3177,17 +3600,31 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cCrustKeyword_74 = (Keyword)cAlternatives.eContents().get(74);
 		private final Keyword cDeathSoundKeyword_75 = (Keyword)cAlternatives.eContents().get(75);
 		private final Keyword cBuildSoundKeyword_76 = (Keyword)cAlternatives.eContents().get(76);
+		private final Keyword cShopKeyword_77 = (Keyword)cAlternatives.eContents().get(77);
+		private final Keyword cTierKeyword_78 = (Keyword)cAlternatives.eContents().get(78);
+		private final Keyword cPriceKeyword_79 = (Keyword)cAlternatives.eContents().get(79);
+		private final Keyword cAmountKeyword_80 = (Keyword)cAlternatives.eContents().get(80);
+		private final Keyword cFactorKeyword_81 = (Keyword)cAlternatives.eContents().get(81);
+		private final Keyword cDescriptionKeyword_82 = (Keyword)cAlternatives.eContents().get(82);
+		private final Keyword cUnlockKeyword_83 = (Keyword)cAlternatives.eContents().get(83);
+		private final Keyword cFromLevelKeyword_84 = (Keyword)cAlternatives.eContents().get(84);
+		private final Keyword cThemeKeyword_85 = (Keyword)cAlternatives.eContents().get(85);
+		private final Keyword cFontKeyword_86 = (Keyword)cAlternatives.eContents().get(86);
+		private final Keyword cColourKeyword_87 = (Keyword)cAlternatives.eContents().get(87);
+		private final Keyword cImageKeyword_88 = (Keyword)cAlternatives.eContents().get(88);
+		private final Keyword cSliceKeyword_89 = (Keyword)cAlternatives.eContents().get(89);
+		private final Keyword cBadgeKeyword_90 = (Keyword)cAlternatives.eContents().get(90);
 		
 		///*
 		// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
 		// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 		// */
 		//ValidID returns ecore::EString:
-		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound'
+		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound'
+		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -3420,6 +3857,48 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//'buildSound'
 		public Keyword getBuildSoundKeyword_76() { return cBuildSoundKeyword_76; }
+		
+		//'shop'
+		public Keyword getShopKeyword_77() { return cShopKeyword_77; }
+		
+		//'tier'
+		public Keyword getTierKeyword_78() { return cTierKeyword_78; }
+		
+		//'price'
+		public Keyword getPriceKeyword_79() { return cPriceKeyword_79; }
+		
+		//'amount'
+		public Keyword getAmountKeyword_80() { return cAmountKeyword_80; }
+		
+		//'factor'
+		public Keyword getFactorKeyword_81() { return cFactorKeyword_81; }
+		
+		//'description'
+		public Keyword getDescriptionKeyword_82() { return cDescriptionKeyword_82; }
+		
+		//'unlock'
+		public Keyword getUnlockKeyword_83() { return cUnlockKeyword_83; }
+		
+		//'fromLevel'
+		public Keyword getFromLevelKeyword_84() { return cFromLevelKeyword_84; }
+		
+		//'theme'
+		public Keyword getThemeKeyword_85() { return cThemeKeyword_85; }
+		
+		//'font'
+		public Keyword getFontKeyword_86() { return cFontKeyword_86; }
+		
+		//'colour'
+		public Keyword getColourKeyword_87() { return cColourKeyword_87; }
+		
+		//'image'
+		public Keyword getImageKeyword_88() { return cImageKeyword_88; }
+		
+		//'slice'
+		public Keyword getSliceKeyword_89() { return cSliceKeyword_89; }
+		
+		//'badge'
+		public Keyword getBadgeKeyword_90() { return cBadgeKeyword_90; }
 	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
@@ -3704,6 +4183,13 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final WallBuilderConfigElements pWallBuilderConfig;
 	private final BuilderCountConfigElements pBuilderCountConfig;
 	private final LavaConfigElements pLavaConfig;
+	private final ShopConfigElements pShopConfig;
+	private final ShopUnlockConfigElements pShopUnlockConfig;
+	private final ShopItemConfigElements pShopItemConfig;
+	private final MenuThemeConfigElements pMenuThemeConfig;
+	private final ThemeSwatchConfigElements pThemeSwatchConfig;
+	private final ThemeImageConfigElements pThemeImageConfig;
+	private final ThemeBadgeConfigElements pThemeBadgeConfig;
 	private final LastLifeGiftConfigElements pLastLifeGiftConfig;
 	private final TeleportRulesConfigElements pTeleportRulesConfig;
 	private final DOUBLEElements pDOUBLE;
@@ -3756,6 +4242,13 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pWallBuilderConfig = new WallBuilderConfigElements();
 		this.pBuilderCountConfig = new BuilderCountConfigElements();
 		this.pLavaConfig = new LavaConfigElements();
+		this.pShopConfig = new ShopConfigElements();
+		this.pShopUnlockConfig = new ShopUnlockConfigElements();
+		this.pShopItemConfig = new ShopItemConfigElements();
+		this.pMenuThemeConfig = new MenuThemeConfigElements();
+		this.pThemeSwatchConfig = new ThemeSwatchConfigElements();
+		this.pThemeImageConfig = new ThemeImageConfigElements();
+		this.pThemeBadgeConfig = new ThemeBadgeConfigElements();
 		this.pLastLifeGiftConfig = new LastLifeGiftConfigElements();
 		this.pTeleportRulesConfig = new TeleportRulesConfigElements();
 		this.pDOUBLE = new DOUBLEElements();
@@ -3805,6 +4298,8 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (patrols+=PatrolConfig)*
 	//        (lootTables+=LootTableConfig)*
 	//        (levels+=LevelConfig)*
+	//        (shop=ShopConfig)?
+	//        (theme=MenuThemeConfig)?
 	//    '}'
 	//;
 	public GameConfigurationElements getGameConfigurationAccess() {
@@ -4333,6 +4828,109 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getLavaConfigAccess().getRule();
 	}
 	
+	///*
+	// * The shop between levels (the source of xmi/shop/shop.xmi; see shop.ecore). The player pays with their score.
+	// * kind is a ShopItemKind of shop.ecore (GRENADE, AIRSTRIKE, SHIELD_BOOST, ...), tier one of CHEAP, MEDIUM, EXPENSIVE.
+	// * Weapons give `amount` uses per purchase; boosts make the next level's shields or bombs `factor` times stronger.
+	// */
+	//ShopConfig:
+	//    'shop' '{'
+	//        (unlocks+=ShopUnlockConfig)*
+	//        (items+=ShopItemConfig)*
+	//    '}'
+	//;
+	public ShopConfigElements getShopConfigAccess() {
+		return pShopConfig;
+	}
+	
+	public ParserRule getShopConfigRule() {
+		return getShopConfigAccess().getRule();
+	}
+	
+	///* The items of a tier are sold from the shop before level `fromLevel` on (the shop before level 4 comes after level 3). */
+	//ShopUnlockConfig:
+	//    'unlock' tier=ValidID 'fromLevel' level=INT
+	//;
+	public ShopUnlockConfigElements getShopUnlockConfigAccess() {
+		return pShopUnlockConfig;
+	}
+	
+	public ParserRule getShopUnlockConfigRule() {
+		return getShopUnlockConfigAccess().getRule();
+	}
+	
+	//ShopItemConfig:
+	//    'item' kind=ValidID displayName=STRING
+	//        'tier' tier=ValidID
+	//        'price' price=INT
+	//        ('amount' amount=INT_OBJECT)?
+	//        ('factor' factor=DOUBLE_OBJECT)?
+	//        ('description' description=STRING)?
+	//;
+	public ShopItemConfigElements getShopItemConfigAccess() {
+		return pShopItemConfig;
+	}
+	
+	public ParserRule getShopItemConfigRule() {
+		return getShopItemConfigAccess().getRule();
+	}
+	
+	///*
+	// * The look of the screens between levels, the win screen and the shop (the source of xmi/theme/menutheme.xmi; see
+	// * menutheme.ecore): the JavaFX font, a colour for every Swatch (TITLE, TEXT, ...), a texture for every Art (PANEL, CARD,
+	// * BUTTON_GO, ...) with the pixels of each edge kept unstretched when it is drawn larger (slice), and the badge of every
+	// * shop tier. Both frontends draw from it.
+	// */
+	//MenuThemeConfig:
+	//    'theme' '{'
+	//        'font' font=STRING
+	//        (swatches+=ThemeSwatchConfig)*
+	//        (images+=ThemeImageConfig)*
+	//        (badges+=ThemeBadgeConfig)*
+	//    '}'
+	//;
+	public MenuThemeConfigElements getMenuThemeConfigAccess() {
+		return pMenuThemeConfig;
+	}
+	
+	public ParserRule getMenuThemeConfigRule() {
+		return getMenuThemeConfigAccess().getRule();
+	}
+	
+	///* colour is #rrggbb or #rrggbbaa */
+	//ThemeSwatchConfig:
+	//    'colour' role=ValidID colour=STRING
+	//;
+	public ThemeSwatchConfigElements getThemeSwatchConfigAccess() {
+		return pThemeSwatchConfig;
+	}
+	
+	public ParserRule getThemeSwatchConfigRule() {
+		return getThemeSwatchConfigAccess().getRule();
+	}
+	
+	//ThemeImageConfig:
+	//    'image' role=ValidID path=STRING ('slice' slice=INT_OBJECT)?
+	//;
+	public ThemeImageConfigElements getThemeImageConfigAccess() {
+		return pThemeImageConfig;
+	}
+	
+	public ParserRule getThemeImageConfigRule() {
+		return getThemeImageConfigAccess().getRule();
+	}
+	
+	//ThemeBadgeConfig:
+	//    'badge' tier=ValidID image=STRING 'colour' colour=STRING
+	//;
+	public ThemeBadgeConfigElements getThemeBadgeConfigAccess() {
+		return pThemeBadgeConfig;
+	}
+	
+	public ParserRule getThemeBadgeConfigRule() {
+		return getThemeBadgeConfigAccess().getRule();
+	}
+	
 	//LastLifeGiftConfig:
 	//    'lastLifeWeapon' weapon=ValidID 'shots' shots=INT
 	//;
@@ -4441,7 +5039,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 	// */
 	//ValidID returns ecore::EString:
-	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound'
+	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 	//;
 	public ValidIDElements getValidIDAccess() {
 		return pValidID;

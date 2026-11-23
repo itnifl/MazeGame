@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import main.game.maze.game.targeting.RangedTargeting;
+import main.game.maze.game.targeting.SoldierTargets;
+import main.game.maze.mazeworld.Point2D;
 
 /**
  * Everything the guard towers of one level do, decided once for both frontends. The frontend keeps the tower
  * enemies (their health, sprites and the damage they take from bullets and blasts) and calls {@link #tick} every
  * frame with where they stand and how healthy they are; the session answers with what happened: gatling rounds that
  * hit the player, rockets that took off and rockets that landed, and towers that were hit or blown up (for the
- * sounds and the destruction). A rocket flies at {@link GuardTowerSpec#rpgSpeed()} to where the player was when it
- * was fired, and explodes there. Coordinates are one world space (the frontend converts when it draws in another).
+ * sounds and the destruction). A tower shoots at the nearest soldier of the infantry strike it sees, else at the player
+ * ({@link RangedTargeting}). A rocket flies at {@link GuardTowerSpec#rpgSpeed()} to where its target was when it was
+ * fired, and explodes there, hurting the player and the soldiers within its blast that no wall shields. Coordinates are one world space (the frontend converts when it draws in another).
  */
 public final class GuardTowerSession {
 
@@ -40,17 +44,37 @@ public final class GuardTowerSession {
     public record TowerEvent(String towerId, double x, double y, Event event) {
     }
 
-    /** A burst round: fired at the player, who takes {@link GuardTowerSpec#gatlingDamage()} for each. */
+    /**
+     * A burst round fired at the player, who takes {@link GuardTowerSpec#gatlingDamage()} for each, or at a soldier
+     * (then also listed in {@link Result#soldierHits()}).
+     */
     public record Round(String towerId, double fromX, double fromY, double toX, double toY) {
+    }
+
+    /** A soldier hit by a round or a rocket: the frontend hurts the soldier standing at {@code soldier}. */
+    public record SoldierHit(Point2D soldier, int damage) {
     }
 
     /** What happened during one tick. */
     public record Result(List<Round> rounds, List<Rocket> launches, List<Impact> impacts, List<TowerEvent> events,
-                         int playerDamage) {
-        public static final Result NOTHING = new Result(List.of(), List.of(), List.of(), List.of(), 0);
+                         int playerDamage, List<SoldierHit> soldierHits) {
+        public static final Result NOTHING = new Result(List.of(), List.of(), List.of(), List.of(), 0, List.of());
+
+        public Result(List<Round> rounds, List<Rocket> launches, List<Impact> impacts, List<TowerEvent> events,
+                      int playerDamage) {
+            this(rounds, launches, impacts, events, playerDamage, List.of());
+        }
 
         public boolean isEmpty() {
-            return rounds.isEmpty() && launches.isEmpty() && impacts.isEmpty() && events.isEmpty() && playerDamage == 0;
+            return rounds.isEmpty() && launches.isEmpty() && impacts.isEmpty() && events.isEmpty() && playerDamage == 0
+                    && soldierHits.isEmpty();
+        }
+
+        /** Hurts the soldiers this tick hit (the frontend's view of them, in the space the towers were given). */
+        public void hitSoldiers(SoldierTargets soldiers) {
+            for (SoldierHit hit : soldierHits) {
+                soldiers.hit(hit.soldier(), hit.damage());
+            }
         }
     }
 
@@ -89,38 +113,66 @@ public final class GuardTowerSession {
      * @param walls    counts the walls between a tower and the player
      */
     public Result tick(double dt, List<Tower> towers, double playerX, double playerY, WallCounter walls) {
+        return tick(dt, towers, playerX, playerY, List.of(), walls);
+    }
+
+    /**
+     * Advances the towers, with the soldiers of the infantry strike in the maze.
+     *
+     * @param soldiers where the living soldiers stand (same space as the towers)
+     */
+    public Result tick(double dt, List<Tower> towers, double playerX, double playerY, List<Point2D> soldiers,
+                       WallCounter walls) {
         dt = Math.min(Math.max(0, dt), MAX_TICK_SECONDS);
+        List<Point2D> standing = soldiers == null ? List.of() : soldiers;
         List<Round> rounds = new ArrayList<>();
         List<Rocket> launches = new ArrayList<>();
         List<TowerEvent> events = new ArrayList<>();
+        List<SoldierHit> soldierHits = new ArrayList<>();
         int damage = 0;
         // rockets already in the air fly first, so one launched in this tick does not fly for time before its launch
         List<Impact> impacts = fly(dt);
         for (Impact impact : impacts) {
-            boolean shielded = walls.between(impact.x(), impact.y(), playerX, playerY) > 0;
-            if (!shielded && Math.hypot(playerX - impact.x(), playerY - impact.y()) <= spec.rpgBlastRadius()) {
+            if (inBlast(impact, playerX, playerY, walls)) {
                 damage += spec.rpgPlayerDamage();
+            }
+            for (Point2D soldier : standing) {
+                if (inBlast(impact, soldier.getX(), soldier.getY(), walls)) {
+                    soldierHits.add(new SoldierHit(soldier, spec.rpgPlayerDamage()));
+                }
             }
         }
         for (Tower tower : towers) {
             events.addAll(healthEvents(tower));
             GuardTowerGun gun = guns.computeIfAbsent(tower.id(), id -> new GuardTowerGun(spec));
             boolean alive = tower.health() > 0;
-            boolean sees = alive && gun.canSee(tower.x(), tower.y(), playerX, playerY,
-                    walls.between(tower.x(), tower.y(), playerX, playerY));
-            GuardTowerGun.Shots shots = gun.tick(dt, sees);
+            RangedTargeting.Target target = RangedTargeting.choose(standing, tower.x(), tower.y(), playerX, playerY,
+                    (x, y) -> gun.canSee(tower.x(), tower.y(), x, y, walls.between(tower.x(), tower.y(), x, y)));
+            GuardTowerGun.Shots shots = gun.tick(dt, alive && target.inSight());
             for (int i = 0; i < shots.gatlingRounds(); i++) {
-                rounds.add(new Round(tower.id(), tower.x(), tower.y(), playerX, playerY));
-                damage += spec.gatlingDamage();
+                rounds.add(new Round(tower.id(), tower.x(), tower.y(), target.x(), target.y()));
+                if (target.isSoldier()) {
+                    soldierHits.add(new SoldierHit(target.soldier(), spec.gatlingDamage()));
+                } else {
+                    damage += spec.gatlingDamage();
+                }
             }
             for (int i = 0; i < shots.rpgs(); i++) {
-                launches.add(launch(tower, playerX, playerY));
+                launches.add(launch(tower, target.x(), target.y()));
             }
         }
-        if (rounds.isEmpty() && launches.isEmpty() && impacts.isEmpty() && events.isEmpty() && damage == 0) {
+        if (rounds.isEmpty() && launches.isEmpty() && impacts.isEmpty() && events.isEmpty() && damage == 0
+                && soldierHits.isEmpty()) {
             return Result.NOTHING;
         }
-        return new Result(List.copyOf(rounds), List.copyOf(launches), List.copyOf(impacts), List.copyOf(events), damage);
+        return new Result(List.copyOf(rounds), List.copyOf(launches), List.copyOf(impacts), List.copyOf(events), damage,
+                List.copyOf(soldierHits));
+    }
+
+    /** Whether (x, y) is within the blast of a rocket that landed, with no wall between to shield it. */
+    private boolean inBlast(Impact impact, double x, double y, WallCounter walls) {
+        return Math.hypot(x - impact.x(), y - impact.y()) <= spec.rpgBlastRadius()
+                && walls.between(impact.x(), impact.y(), x, y) == 0;
     }
 
     private List<TowerEvent> healthEvents(Tower tower) {

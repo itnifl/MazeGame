@@ -158,3 +158,87 @@ Describe 'Test-MirrorUnits' {
         $missing.HasArtifact | Should -BeFalse
     }
 }
+
+Describe 'Test-MavenNetworkFailure' {
+    It 'sees an unreachable repository in an error line' {
+        Test-MavenNetworkFailure @('[ERROR] Failed to execute goal: Could not transfer artifact x from/to eclipse-releases: status code: 503, reason phrase: Service Temporarily Unavailable (503)') |
+            Should -BeTrue
+    }
+
+    It 'ignores the same message logged as a warning' {
+        Test-MavenNetworkFailure @('[WARNING] Could not transfer metadata org.osgi:x/maven-metadata.xml from/to eclipse-releases: status code: 503') |
+            Should -BeFalse
+    }
+
+    It 'does not take a compile error for a network failure' {
+        Test-MavenNetworkFailure @('[ERROR] /src/A.java:[3,1] cannot find symbol') | Should -BeFalse
+    }
+}
+
+Describe 'Invoke-Maven' {
+    # A fake mvn that logs its arguments; it fails with $env:FAKE_MVN_FAILURE while it is online.
+    BeforeEach {
+        $fakeLog = Join-Path $TestDrive "calls-$([guid]::NewGuid().ToString('N')).txt"
+        $env:FAKE_MVN_LOG = $fakeLog
+        $Mvn = Join-Path $TestDrive 'fake-mvn.ps1'
+        Set-Content -Path $Mvn -Value @'
+Add-Content -Path $env:FAKE_MVN_LOG -Value ($args -join ' ')
+if ($args -notcontains '-o' -and $env:FAKE_MVN_FAILURE) { Write-Output $env:FAKE_MVN_FAILURE; exit 1 }
+exit 0
+'@
+    }
+    AfterEach {
+        Remove-Item Env:FAKE_MVN_LOG, Env:FAKE_MVN_FAILURE -ErrorAction SilentlyContinue
+    }
+
+    It 'runs Maven once when it succeeds' {
+        Invoke-Maven -pl a -U install *> $null
+        $LASTEXITCODE | Should -Be 0
+        Get-Content $fakeLog | Should -Be @('-pl a -U install')
+    }
+
+    It 'retries offline without -U when a repository is down' {
+        $env:FAKE_MVN_FAILURE = '[ERROR] Could not transfer artifact x from/to eclipse-releases: status code: 503'
+        Invoke-Maven -pl a -U install *> $null
+        $LASTEXITCODE | Should -Be 0
+        Get-Content $fakeLog | Should -Be @('-pl a -U install', '-o -pl a install')
+    }
+
+    It 'does not retry other failures' {
+        $env:FAKE_MVN_FAILURE = '[ERROR] There are test failures.'
+        Invoke-Maven -pl a install *> $null
+        $LASTEXITCODE | Should -Be 1
+        @(Get-Content $fakeLog) | Should -HaveCount 1
+    }
+}
+
+Describe 'Save-PreviousMirror and Restore-PreviousMirror' {
+    BeforeEach {
+        $root = Join-Path $TestDrive ([guid]::NewGuid().ToString('N'))
+        $LocalP2Dir = Join-Path $root 'local-p2'
+        $MirrorStamp = Join-Path $LocalP2Dir '.mirror.stamp'
+        $MirrorInputStateFile = Join-Path $LocalP2Dir '.mirror.inputs'
+        $PreviousMirrorDir = "$LocalP2Dir.previous"
+        New-Item -ItemType Directory -Force -Path (Join-Path $LocalP2Dir 'plugins') | Out-Null
+        Set-Content -Path (Join-Path $LocalP2Dir 'plugins/a.jar') -Value 'jar'
+        Set-Content -Path $MirrorInputStateFile -Value 'inputs'
+    }
+
+    It 'puts a completed mirror back after a failed rebuild, to be refreshed next time' {
+        New-Item -ItemType File -Path $MirrorStamp | Out-Null
+        $saved = Save-PreviousMirror 6> $null
+        Test-Path $LocalP2Dir | Should -BeFalse
+        New-Item -ItemType Directory -Path $LocalP2Dir | Out-Null    # what the failed download left
+        Restore-PreviousMirror $saved | Should -BeTrue
+        Test-Path (Join-Path $LocalP2Dir 'plugins/a.jar') | Should -BeTrue
+        Test-Path $MirrorInputStateFile | Should -BeFalse
+        Test-Path $PreviousMirrorDir | Should -BeFalse
+    }
+
+    It 'removes an interrupted mirror and has nothing to put back' {
+        $saved = Save-PreviousMirror 6> $null
+        $saved | Should -BeNullOrEmpty
+        Test-Path $LocalP2Dir | Should -BeFalse
+        Restore-PreviousMirror $saved | Should -BeFalse
+    }
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated from MazeGameMenuTheme.mazegame by MazeDslGenerator (FreeMarker template menutheme.xmi.ftlx). DO NOT EDIT. -->
+<!-- The look of the screens between levels (win screen and shop), drawn by both frontends. See menutheme.ecore. -->
+<menutheme:MenuThemeModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:menutheme="http://main.game.maze/menutheme" font="Consolas">
+  <swatches role="TITLE" colour="#f2d98c"/>
+  <swatches role="TEXT" colour="#e8eadf"/>
+  <swatches role="MUTED" colour="#8e978a"/>
+  <swatches role="ACCENT" colour="#8fffe0"/>
+  <swatches role="PRICE" colour="#ffd166"/>
+  <swatches role="TOO_DEAR" colour="#ff6b5e"/>
+  <swatches role="GOOD" colour="#7ddc4a"/>
+  <swatches role="BAD" colour="#ff3025"/>
+  <swatches role="BUTTON_TEXT" colour="#fbf6e4"/>
+  <swatches role="SHADOW" colour="#000000c0"/>
+  <images role="BACKDROP" path="/main/game/maze/zombieGameOverBackground1.png"/>
+  <images role="VIGNETTE" path="/main/game/maze/ui/vignette.png"/>
+  <images role="HAZARD_STRIP" path="/main/game/maze/ui/hazard-strip.png"/>
+  <images role="PANEL" path="/main/game/maze/ui/panel.png" slice="30"/>
+  <images role="BANNER" path="/main/game/maze/ui/banner.png" slice="14"/>
+  <images role="CARD" path="/main/game/maze/ui/card.png" slice="12"/>
+  <images role="CARD_SELECTED" path="/main/game/maze/ui/card-selected.png" slice="12"/>
+  <images role="CARD_LOCKED" path="/main/game/maze/ui/card-locked.png" slice="12"/>
+  <images role="SLOT" path="/main/game/maze/ui/slot.png" slice="10"/>
+  <images role="BUTTON_GO" path="/main/game/maze/ui/button-go.png" slice="10"/>
+  <images role="BUTTON_BUY" path="/main/game/maze/ui/button-buy.png" slice="10"/>
+  <images role="BUTTON_STEEL" path="/main/game/maze/ui/button-steel.png" slice="10"/>
+  <images role="BUTTON_DANGER" path="/main/game/maze/ui/button-danger.png" slice="10"/>
+  <images role="TOKEN" path="/main/game/maze/ui/token.png"/>
+  <images role="LOCK" path="/main/game/maze/ui/lock.png"/>
+  <badges tier="CHEAP" image="/main/game/maze/ui/tier-cheap.png" colour="#cd8c4e"/>
+  <badges tier="MEDIUM" image="/main/game/maze/ui/tier-medium.png" colour="#cfd6dd"/>
+  <badges tier="EXPENSIVE" image="/main/game/maze/ui/tier-expensive.png" colour="#f4c845"/>
+</menutheme:MenuThemeModel>

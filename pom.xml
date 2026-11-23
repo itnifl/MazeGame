@@ -17,6 +17,8 @@
     <javafx.version>21.0.9</javafx.version>
     <javafx.platform>win</javafx.platform> <!-- Fallback; OS profiles override this. -->
     <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
+    <!-- FreeMarker: the DSL generator bundle (lib/freemarker.jar) and the JavaFX menu stylesheet; 2.3.35 fixes the template loading path traversal of 2.3.32 -->
+    <freemarker.version>2.3.35</freemarker.version>
   </properties>
 
   <profiles>
@@ -135,6 +137,9 @@
     <repository>
       <id>eclipse-releases</id>
       <url>https://repo.eclipse.org/content/repositories/releases/</url>
+      <!-- releases never change: no daily metadata check, so an outage of repo.eclipse.org does not touch cached builds -->
+      <releases><updatePolicy>never</updatePolicy></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
     
     <repository>

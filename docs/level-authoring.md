@@ -227,3 +227,55 @@ To try a variation without touching the shipped file, copy it under `src/test/re
 
 Add the attribute to `levels.ecore` (with a default and a `documentation` annotation), read it in `LevelCatalogLoader`,
 put it on `LevelSpec`, and use it from the shared code both frontends call. Keep per-frontend code to wiring.
+
+## The shop between levels
+
+What the shop sells (issue #164) is written in the same DSL, in its own file
+`maze-common-backend/src/main/resources/xmi/shop/shop.mazegame`:
+
+```
+game MazeGameShop {
+    shop {
+        item GRENADE "Grenades" tier CHEAP price 2000 amount 5
+            description "Thrown ahead of you, they go off after a moment"
+        item SHIELD_BOOST "Extra long shield" tier CHEAP price 2000 factor 3.0
+        ...
+    }
+}
+```
+
+`kind` is a `ShopItemKind` of `shop.ecore` (`SHIELD_BOOST`, `FLAME_BOOST`, `GRENADE`, `PLASMA_GRENADE`, `NUKE_GRENADE`,
+`BUNKER_BUSTER`, `FAT_BOMB`, `AIRSTRIKE`, `INFANTRY_STRIKE`, `EXTRA_LIFE`), `tier` is `CHEAP`, `MEDIUM` or `EXPENSIVE`.
+Weapons need an `amount` (uses per purchase), boosts a `factor` above 1. The validator reports an unknown kind or tier,
+a price that is not positive and an item sold twice. The generator renders the file with the FreeMarker template
+`main.game.maze.dsl/.../generator/templates/shop.xmi.ftlx` into `shop.xmi`; regenerate it with
+
+```
+MAZE_SHOP_REGENERATE=true mvn -o install -pl main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.tests -am
+```
+
+(`MazeDslShopTest` fails when `shop.xmi` and `shop.mazegame` say different things). After a grammar change add
+`-Dxtext.codegen.skip=false` to regenerate the Xtext sources. The strength of each shop weapon (damage, range, blast
+radius, fuse, units, pierce power, sprite, sounds) is in `xmi/items/items.xmi`.
+
+Which tier is sold from which level is in the same file: `unlock MEDIUM fromLevel 4` sells the medium items from the shop
+before level 4 (between levels 3 and 4) on. A tier without an `unlock` is always sold. The validator reports an unknown
+tier, a level below 2 and a tier unlocked twice.
+
+## The look of the screens between levels
+
+The win screen and the shop are drawn from the menu theme, written in the same DSL in
+`maze-common-backend/src/main/resources/xmi/theme/menutheme.mazegame`:
+
+```
+theme {
+    font "Consolas"
+    colour TITLE "#f2d98c"                                  // one colour per Swatch: TITLE, TEXT, MUTED, ACCENT, ...
+    image PANEL "/main/game/maze/ui/panel.png" slice 30     // one texture per Art; slice: edge pixels kept unstretched
+    badge CHEAP "/main/game/maze/ui/tier-cheap.png" colour "#cd8c4e"   // one rank badge per shop tier
+}
+```
+
+Every colour, texture and tier badge must be given exactly once (the validator says which are missing). Regenerate the
+model the game loads with `MAZE_THEME_REGENERATE=true mvn -o verify -pl main.game.maze.dsl.tests`; both frontends then
+draw the new look. New textures are drawn with `tools/sprite-gen/MenuThemeSpriteGenerator.java`.

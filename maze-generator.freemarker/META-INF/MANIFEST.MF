@@ -15,5 +15,8 @@ Require-Bundle: org.eclipse.core.runtime,
  main.game.maze.difficulties,
  main.game.maze.opponents,
  main.game.maze.walls
-Export-Package: main.game.maze.gen
+Export-Package: main.game.maze.gen,
+ freemarker.cache,
+ freemarker.core,
+ freemarker.template
 

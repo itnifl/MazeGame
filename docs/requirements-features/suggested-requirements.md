@@ -454,3 +454,49 @@ These requirements have been implemented and verified.
 - **SR-371** *(Observability, 12-factor)*: Log when a savepoint is written, loaded or found unreadable (structured, with level and difficulty), and keep the savepoint path configurable by an environment variable rather than only the relative `data/` folder.
 
 - **SR-372** *(Model-driven)*: Let the level model say how far a beam goes through walls (a `pierce` factor on the pickup in `items.ecore`) so other weapons can pierce too, and let the heart clearance of mines be a value of `MineSpec`.
+
+- **SR-386** *(Gameplay)*: Partly done in SR-396 (soldiers have health, melee enemies go for them; ranged enemies are SR-400). Still open: let the player give the squad simple orders (follow me / hold / attack the heart area).
+
+- **SR-387** *(Balance, observability)*: The prices and strengths are first guesses. Count purchases, uses and kills per item, level and difficulty (SR-252) and tune them; consider prices that scale with the difficulty's starting score, since easy (5 000) can buy far less than hard (30 000).
+
+- **SR-388** *(UX)*: Show a trajectory line for grenades, a target circle for the airstrike before it is called in, and a countdown in the HUD for the airstrike and the squad's time left; draw the bombers' shadows crossing the maze. The libGDX shop overlay layout has only been checked in tests, not by eye on every window size.
+
+- **SR-389** *(Model-driven)*: The squad's speed, fire interval and re-plan time, the throw landing margin and the airstrike's aim scatter are constants in code (`InfantrySquad`, `StrikePlanner`); move them into `items.ecore` so authors can tune them in the model. Also let the shop open only after chosen levels (a level attribute), and generate the DSL validator's shop literal lists from `shop.ecore` instead of keeping a copy.
+
+- **SR-390** *(MDD, FreeMarker)*: `shop.xmi` is rendered with FreeMarker but `levels.xmi` is still built with a StringBuilder in `MazeDslGenerator.levelsXmi`; move it to a `levels.xmi.ftlx` template too, and run the generation in the build (SR-310) instead of on demand.
+
+- **SR-391** *(DDD)*: The shop is a bounded context of its own (catalogue, purchase, wallet). Give the score that can be spent a value object (`Credits`) instead of an `int` in `SavePoint`, raise a domain event (`ItemPurchased`) that the HUD, sounds and statistics subscribe to, and keep `LevelShop` as the aggregate that guards the rules (one boost of a kind, no negative credits).
+
+- **SR-392** *(12-factor)*: The shop prices and strike numbers are baked into resources; allow an override file or environment variable for balancing on a test server without a rebuild, and keep the savepoint (with its purchases) in a configurable location (SR-371).
+
+- **SR-393** *(Observability)*: Log every purchase and every strike call (structured: item, price, credits before and after, level, difficulty) and expose counters for blasts, soldier rounds and kills by weapon, so balancing and bug reports can see what happened.
+
+- **SR-394** *(Testing)*: Add a headless parity test that drives the same grenade, airstrike seed and squad seed through both frontends and compares the blasts and kills, like the movement parity tests (SR-1).
+
+- **SR-400** *(Gameplay)*: Done (approved SR-400): ranged enemies shoot the soldiers first. Still open from it: give soldiers a health bar.
+
+- **SR-401** *(Model-driven)*: The touch damage to soldiers (25/s), the touch distance and how long a fallen soldier lies are constants in `InfantrySquad`; move them into `items.ecore` next to `unitHealth` and `lureRadius`. Let the nuclear core and edge shares (`NuclearBlastEngine`) be values of the item too.
+
+- **SR-402** *(UX)*: Tell the player when a tier opens (a banner "Medium items are now in the shop" on the win screen of level 3) and show the next unlock in the shop header.
+
+### Ranged targeting, menu theme and build resilience follow-ons (SR-400, SR-403..SR-406)
+
+- **SR-407** *(DDD)*: `RangedTargeting`, `SoldierTargets` and `DecoyTargeting` together are a targeting bounded context: who an enemy goes for and shoots at. Give it its own module with a ubiquitous language ("threat", "decoy", "line of fire") and let the enemies depend on it instead of on the strike package; the squad then only publishes its soldiers as decoys.
+
+- **SR-408** *(12-factor)*: The menu theme is a backing resource baked into the jar. Let an environment variable (for example `MAZEGAME_MENU_THEME`) point at another `menutheme.xmi`, so a theme can be tried or swapped (high contrast, colour-blind palette) without a rebuild; `MenuThemeLoader.load` already takes the paths.
+
+- **SR-409** *(Observability)*: Count and log (structured) what the ranged enemies shoot: rounds and rockets at soldiers and at the player per level, soldiers lost to each enemy type; and log each Maven offline retry and mirror restore of the build scripts with the failure that caused it, so an outage shows up in the build summary.
+
+- **SR-410** *(Accessibility)*: Add a high-contrast and a colour-blind-safe menu theme (the tier colours bronze/silver/gold and the green/red price and outcome colours are the only cues today besides the chevrons and the padlock), selectable in the settings, both written in the DSL.
+
+- **SR-411** *(UX)*: Show the soldiers' health over their heads while the squad is in the maze, and flash a soldier that is hit by a ranged enemy, so the player can see the squad being shot down.
+
+- **SR-412** *(Testing)*: Keep the rendered snapshots of the screens between levels (`target/menu-snapshots`) as approved images and compare against them in CI with a small tolerance, in both frontends (libGDX through an offscreen frame buffer), so a broken style or layout is caught without looking.
+
+### Dropped weapons and main menu follow-ons (SR-413, SR-414)
+
+- **SR-415** *(UX)*: Show the aircraft of an airstrike flying over the target (a shadow crossing the maze and the drone of engines) before the bombs fall, and let the bomb's fuse spark animate (two frames) while it burns.
+
+- **SR-416** *(Code quality)*: In libGDX the falling airstrike bombs are floor sprites, drawn with the enemies; give the world view a layer above the characters for things in the air (falling bombs, the mushroom cloud's cap), as JavaFX has with its view order.
+
+- **SR-417** *(12-factor)*: The main menu reads the savepoint for its Load button from a fixed location; take it from the same configurable location as SR-371 so a test or a portable install can point the menu at its own savepoint.

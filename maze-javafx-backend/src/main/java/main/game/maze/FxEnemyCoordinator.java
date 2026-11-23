@@ -68,6 +68,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
+import main.game.maze.game.targeting.RangedTargeting;
+import main.game.maze.game.targeting.SoldierTargets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -108,6 +110,13 @@ public final class FxEnemyCoordinator {
     private final FxGameWorldModel model;
     private final Supplier<GameMazeWorld> mazeSupplier;
     private final Supplier<PlayerCharacter> playerSupplier;
+    /** The soldiers of the infantry strike, centres in board space (sergeants aim from and at centres). */
+    private volatile SoldierTargets soldierCentres = SoldierTargets.NONE;
+    /** The same soldiers as top-left corners, the space of the enemy and player positions the AI moves and aims by. */
+    private volatile SoldierTargets soldierCorners = SoldierTargets.NONE;
+    private volatile double lureRadius;
+    /** The soldier the enemy being moved on this (AI) thread goes for instead of the player, or null. */
+    private final ThreadLocal<main.game.maze.mazeworld.Point2D> chasedSoldier = new ThreadLocal<>();
     private final Runnable pathCanvasRefreshCallback;
 
     private final List<IMovingComputerCharacter> allComputerCharacters  = new CopyOnWriteArrayList<>();
@@ -136,6 +145,10 @@ public final class FxEnemyCoordinator {
 
         @Override public void tracer(double fromX, double fromY, double toX, double toY) {
             Platform.runLater(() -> tracerSink.tracer(fromX, fromY, toX, toY));
+        }
+
+        @Override public SoldierTargets soldiers() {
+            return soldierCentres;
         }
     };
 
@@ -265,11 +278,24 @@ public final class FxEnemyCoordinator {
                     continue;
                 }
                 if (computerCharacter instanceof ComputerCharacter cc) {
-                    movementDispatch
-                            .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
-                            .accept(computerCharacter);
+                    // an enemy near a soldier of the infantry strike goes for the soldier instead of the player
+                    chasedSoldier.set(main.game.maze.game.strike.DecoyTargeting.nearestWithin(soldierCorners.positions(),
+                            cc.getCharacterPosition().getX(), cc.getCharacterPosition().getY(), lureRadius));
+                    try {
+                        movementDispatch
+                                .getOrDefault(cc.getCharacterBehaviour(), this::doWanderMove)
+                                .accept(computerCharacter);
+                    } finally {
+                        chasedSoldier.remove();   // the bombers below still aim at the player
+                    }
                     if (cc instanceof PumpkinBomberCharacter pumpkinBomber && playerCharacter != null) {
-                        pumpkinBomber.tryShootAt(worldView.playerX(), worldView.playerY(), nowMs);
+                        // a soldier the bomber can hit is shot before the player (shared rule with libGDX)
+                        SoldierTargets corners = soldierCorners;
+                        pumpkinBomber.setSoldiers(corners);
+                        RangedTargeting.Target target = RangedTargeting.choose(corners.positions(),
+                                cc.getCharacterPosition().getX(), cc.getCharacterPosition().getY(),
+                                worldView.playerX(), worldView.playerY(), pumpkinBomber::canHit);
+                        pumpkinBomber.tryShootAt(target.x(), target.y(), nowMs);
                         // updateProjectiles is done on the FX thread below to avoid concurrent
                         // list mutation between the AI background thread and the FX render thread.
                     }
@@ -371,9 +397,50 @@ public final class FxEnemyCoordinator {
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
-                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
-                        laser.damage(), laser.range(), halfWidth));
+                main.game.maze.game.items.ShotEffects.pierces(laser), targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
+                        main.game.maze.game.items.ShotEffects.shotPower(laser), laser.range(), halfWidth));
         return new LaserHit(shot[0], hit[0], dealt[0]);
+    }
+
+    /**
+     * The living enemies as targets for the infantry strike's soldiers: each round they fire is credited to
+     * {@code attackerId} as a shot, and the enemy reacts as if it was shot.
+     */
+    public List<FlameTarget> livingTargets(String attackerId) {
+        return livingTargets(attackerId, DeathCause.SHOT);
+    }
+
+    /**
+     * Where the soldiers of the infantry strike are (board space: top-left corners, like the player's position, read on
+     * the AI thread) and how close an enemy must be to go for one instead of the player.
+     */
+    public void setSoldiers(SoldierTargets soldiers, double lureRadius) {
+        SoldierTargets centres = soldiers == null ? SoldierTargets.NONE : soldiers;
+        double half = StageConstants.PlayerCharacterXYSize / 2.0;
+        this.soldierCentres = centres;
+        this.soldierCorners = centres.shifted(-half, -half);
+        this.lureRadius = lureRadius;
+    }
+
+    /** As {@link #livingTargets(String)}, with the cause of death the damage is credited as (the nuclear blast burns). */
+    public List<FlameTarget> livingTargets(String attackerId, DeathCause cause) {
+        List<FlameTarget> targets = new ArrayList<>();
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof ComputerCharacter cc) || !cc.isAlive() || cc.isInvulnerable()) {
+                continue;
+            }
+            double[] center = centerOf(cc);
+            targets.add(new FlameTarget() {
+                @Override public double centerX() { return center[0]; }
+                @Override public double centerY() { return center[1]; }
+                @Override public int hitPoints() { return cc.getHitPoints(); }
+                @Override public void applyDamage(int amount) {
+                    cc.subtractHitPoints(amount, cause, attackerId);
+                }
+                @Override public boolean isPassThrough() { return false; }
+            });
+        }
+        return targets;
     }
 
     /**
@@ -962,10 +1029,18 @@ public final class FxEnemyCoordinator {
     private WorldView buildWorldView() {
         return new WorldView() {
             @Override public double playerX() {
+                main.game.maze.mazeworld.Point2D soldier = chasedSoldier.get();
+                if (soldier != null) {
+                    return soldier.getX();   // this enemy goes for a soldier of the infantry strike
+                }
                 PlayerCharacter p = playerSupplier.get();
                 return p != null ? p.getCharacterPosition().getX() : 0d;
             }
             @Override public double playerY() {
+                main.game.maze.mazeworld.Point2D soldier = chasedSoldier.get();
+                if (soldier != null) {
+                    return soldier.getY();
+                }
                 PlayerCharacter p = playerSupplier.get();
                 return p != null ? p.getCharacterPosition().getY() : 0d;
             }

@@ -35,6 +35,26 @@ public final class GdxWinOverlayController {
     private float winRestartButtonH;
     private boolean nextLevelAvailable;
     private Runnable restartLevelAction;
+    private float winShopButtonX;
+    private float winShopButtonY;
+    private float winShopButtonW;
+    private float winShopButtonH;
+    /** The shop between levels, opened with the Shop button while a next level follows (null: no shop). */
+    private GdxShopOverlayController shop;
+
+    public void setShop(GdxShopOverlayController shop) {
+        this.shop = shop;
+    }
+
+    /** The shop, or null. */
+    public GdxShopOverlayController shop() {
+        return shop;
+    }
+
+    /** Whether the shop is open over the win screen now. */
+    public boolean shopOpen() {
+        return shop != null && shop.isOpen();
+    }
 
     /** What the Restart Level button does: plays the level that was just won again, from its start. */
     public void setRestartLevelAction(Runnable action) {
@@ -52,6 +72,9 @@ public final class GdxWinOverlayController {
 
     public void reset(GameSession session) {
         nextLevelAvailable = false;
+        if (shop != null) {
+            shop.close();
+        }
         winNameInput.setLength(0);
         session.setWinScoreSaved(false);
         winScoreStatus = "";
@@ -66,7 +89,7 @@ public final class GdxWinOverlayController {
     }
 
     public boolean onKeyTyped(char character, int maxNameChars) {
-        if (character < 32 || character == 127) {
+        if (character < 32 || character == 127 || shopOpen()) {   // the shop's keys are not typed into the name
             return false;
         }
         return GdxWinScoreSupport.appendCharacter(winNameInput, character, maxNameChars);
@@ -89,6 +112,10 @@ public final class GdxWinOverlayController {
         winRestartButtonY = buttons.restartY();
         winRestartButtonW = buttons.restartW();
         winRestartButtonH = buttons.restartH();
+        winShopButtonX = buttons.shopX();
+        winShopButtonY = buttons.shopY();
+        winShopButtonW = buttons.shopW();
+        winShopButtonH = buttons.shopH();
     }
 
     public boolean update(
@@ -114,6 +141,10 @@ public final class GdxWinOverlayController {
             Runnable nextLevelAction) {
         if (session.mode() != GameMode.WON) {
             return false;
+        }
+        if (shopOpen()) {
+            shop.update(modeInputController, hudCamera);   // the shop has the keys and the mouse while it is open
+            return true;
         }
 
         if (!session.winScoreSaved()) {
@@ -159,6 +190,11 @@ public final class GdxWinOverlayController {
         float my = hudCamera.viewportHeight - Gdx.input.getY();
         if (!session.winScoreSaved() && contains(mx, my, winSaveButtonX, winSaveButtonY, winSaveButtonW, winSaveButtonH)) {
             submitWinScore("Type a name first.", highScoreRepository, score, session, openHighScoresAction);
+            return;
+        }
+        if (nextLevelAvailable && shop != null
+                && contains(mx, my, winShopButtonX, winShopButtonY, winShopButtonW, winShopButtonH)) {
+            shop.open();
             return;
         }
         if (nextLevelAvailable && nextLevelAction != null

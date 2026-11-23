@@ -36,6 +36,9 @@ import main.game.maze.mazeworld.WallCollisionUtil;
 import main.game.maze.mazeworld.generators.MazeArena;
 import main.game.maze.opponents.BehaviorType;
 import main.game.maze.opponents.ProjectileType;
+import main.game.maze.game.targeting.RangedTargeting;
+import main.game.maze.game.targeting.SoldierTargets;
+import main.game.maze.mazeworld.Point2D;
 
 public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
     private static final Logger LOG = Logger.getLogger(GdxEnemyRuntime.class.getName());
@@ -280,6 +283,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
 
     public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius,
                                    Consumer<float[]> onProjectileHitWall) {
+        return updateRangedAttacks(dt, maze, playerX, playerY, playerRadius, onProjectileHitWall, SoldierTargets.NONE);
+    }
+
+    /**
+     * Advances the shots in flight and fires a new one when the cooldown allows: at the nearest soldier of the infantry
+     * strike it can hit, else at the player (shared rule {@link RangedTargeting}, as in JavaFX). A shot that hits a
+     * soldier hurts it through {@code soldiers}.
+     *
+     * @param soldiers the soldiers, screen space (centres, like the enemy and player positions)
+     * @return the damage the player took
+     */
+    public int updateRangedAttacks(float dt, MazeArena maze, float playerX, float playerY, float playerRadius,
+                                   Consumer<float[]> onProjectileHitWall, SoldierTargets soldiers) {
         if (dt <= 0f) {
             return 0;
         }
@@ -312,6 +328,19 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
                 continue;
             }
 
+            Point2D soldierHit = projectile.type == ProjectileType.STRAIGHT
+                    ? soldiers.touching(projectile.x, projectile.y, projectile.radius())
+                    : null;
+            if (soldierHit != null) {
+                // a soldier in the way takes the shot
+                soldiers.hit(soldierHit, Math.max(0, spawn.attackDamage()));
+                lifetimeHits++;
+                emitImpact(projectile.x, projectile.y, (float) PumpkinBurst.STRAIGHT_SHOT_RADIUS, 5f);
+                playExplosionSound();
+                activeProjectiles.remove(i);
+                continue;
+            }
+
             boolean hitPlayer = distanceSquared(projectile.x, projectile.y, playerX, playerY)
                     <= squared(playerRadius + projectile.radius());
             if (projectile.type == ProjectileType.STRAIGHT && hitPlayer) {
@@ -335,6 +364,10 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
                     dealtDamage += Math.max(0, spawn.attackDamage());
                     lifetimeHits++;
                     LOG.fine(() -> String.format("[%s] LOB splash hit player at target (%.0f,%.0f)", runtimeEnemyId, projectile.targetX, projectile.targetY));
+                }
+                if (projectile.type == ProjectileType.LOB) {
+                    lifetimeHits += soldiers.splash(projectile.targetX, projectile.targetY,
+                            Math.max(0f, spawn.splashRadius()), Math.max(0, spawn.attackDamage()));
                 }
                 if (projectile.type == ProjectileType.LOB || projectile.type == ProjectileType.STRAIGHT) {
                     float impactRadius = (float) (projectile.type == ProjectileType.LOB
@@ -363,32 +396,41 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
         }
 
         float range = Math.max(0f, spawn.attackRange());
-        if (distanceSquared(x, y, playerX, playerY) > squared(range)) {
-            return dealtDamage;
-        }
-
         ProjectileType projectileType = spawn.projectileType() == null
                 ? ProjectileType.STRAIGHT
                 : spawn.projectileType();
+        RangedTargeting.Target target = RangedTargeting.choose(soldiers.positions(), x, y, playerX, playerY,
+                (tx, ty) -> distanceSquared(x, y, (float) tx, (float) ty) <= squared(range)
+                        && (projectileType == ProjectileType.LOB || maze == null
+                        || !WallCollisionUtil.wallBetween(x, y, (float) tx, (float) ty, maze.walls())));
+        float aimX = (float) target.x();
+        float aimY = (float) target.y();
+        if (distanceSquared(x, y, aimX, aimY) > squared(range)) {
+            return dealtDamage;
+        }
 
         if (projectileType == ProjectileType.BEAM) {
-            boolean blocked = maze != null && WallCollisionUtil.wallBetween(x, y, playerX, playerY, maze.walls());
+            boolean blocked = maze != null && WallCollisionUtil.wallBetween(x, y, aimX, aimY, maze.walls());
             lifetimeShots++;
             if (!blocked) {
-                dealtDamage += Math.max(0, spawn.attackDamage());
+                if (target.isSoldier()) {
+                    soldiers.hit(target.soldier(), Math.max(0, spawn.attackDamage()));
+                } else {
+                    dealtDamage += Math.max(0, spawn.attackDamage());
+                }
                 lifetimeHits++;
-                LOG.fine(() -> String.format("[%s] BEAM fired — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
+                LOG.fine(() -> String.format("[%s] BEAM fired — target=(%.0f,%.0f)", runtimeEnemyId, aimX, aimY));
             } else {
-                LOG.fine(() -> String.format("[%s] BEAM blocked by wall — target=(%.0f,%.0f)", runtimeEnemyId, playerX, playerY));
+                LOG.fine(() -> String.format("[%s] BEAM blocked by wall — target=(%.0f,%.0f)", runtimeEnemyId, aimX, aimY));
             }
             playThrowSound();
-            activeBeams.add(new BeamEffect(x, y, playerX, playerY, blocked, 0.14f));
+            activeBeams.add(new BeamEffect(x, y, aimX, aimY, blocked, 0.14f));
             shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
             return dealtDamage;
         }
 
         float speedValue = Math.max(1f, spawn.projectileSpeed());
-        float distance = (float) Math.sqrt(distanceSquared(x, y, playerX, playerY));
+        float distance = (float) Math.sqrt(distanceSquared(x, y, aimX, aimY));
         if (distance < 0.001f) {
             return dealtDamage;
         }
@@ -400,12 +442,12 @@ public final class GdxEnemyRuntime implements EnemyRuntime, ICanDie {
                 projectileType,
                 x,
                 y,
-                playerX,
-                playerY,
+                aimX,
+                aimY,
                 duration,
                 Math.max(0f, spawn.arcHeight())));
         lifetimeShots++;
-        LOG.fine(() -> String.format("[%s] %s fired — target=(%.0f,%.0f)", runtimeEnemyId, projectileType, playerX, playerY));
+        LOG.fine(() -> String.format("[%s] %s fired — target=(%.0f,%.0f)", runtimeEnemyId, projectileType, aimX, aimY));
         playThrowSound();
         shotCooldownRemaining = spawn.attackCooldownMs() / 1000f;
         return dealtDamage;

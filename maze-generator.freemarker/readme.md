@@ -1345,3 +1345,4 @@ Here's the complete workflow for making model-driven changes:
 | [Model-Driven Code Generation Plan](../docs/mdd-code-generation.md) | Architecture for generating code from models |
 | [DSL Reference Guide](../docs/dsl-reference.md) | MazeGame DSL syntax documentation |
 | [FreeMarker Runner](../maze-generator.freemarker-runner/readme.md) | Headless runner for Maven builds |
+The DSL bundle (`main.game.maze.dsl`) also uses FreeMarker: this bundle exports `freemarker.template`, `freemarker.cache` and `freemarker.core` from `lib/freemarker.jar`, and `MazeDslGenerator.shopXmi` renders `shop.xmi` from the template `shop.xmi.ftlx` (issue #164).

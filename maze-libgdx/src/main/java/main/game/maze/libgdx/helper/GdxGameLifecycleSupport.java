@@ -32,7 +32,6 @@ public final class GdxGameLifecycleSupport {
         return new OverlayResources(
                 new OrthographicCamera(),
                 new OrthographicCamera(),
-                textureLoader.apply(ImageResourceConstants.WinOverlayBackdropImage),
                 textureLoader.apply(ImageResourceConstants.GameOverOverlayBackdropImage));
     }
 
@@ -61,7 +60,6 @@ public final class GdxGameLifecycleSupport {
     public record OverlayResources(
             OrthographicCamera camera,
             OrthographicCamera hudCamera,
-            Texture winBackgroundTexture,
             Texture gameOverBackgroundTexture) {
     }
 }
