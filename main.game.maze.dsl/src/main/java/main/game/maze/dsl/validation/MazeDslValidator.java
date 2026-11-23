@@ -131,9 +131,29 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
         }
     }
 
-    /** Each item is sold once. */
+    /** A tier opens from a real level (the first shop is the one before level 2), and with a known tier. */
+    @Check
+    public void checkShopUnlock(ShopUnlockConfig unlock) {
+        if (!SHOP_TIERS.contains(unlock.getTier())) {
+            error("Unknown tier " + unlock.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER, INVALID_SHOP_ITEM);
+        }
+        if (unlock.getLevel() < 2) {
+            error("The first shop is the one before level 2, so a tier opens from level 2 or later",
+                  MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL, INVALID_SHOP_ITEM);
+        }
+    }
+
+    /** Each item is sold once, and each tier is unlocked once. */
     @Check
     public void checkShopHasNoDuplicates(ShopConfig shop) {
+        java.util.Set<String> tiers = new java.util.HashSet<>();
+        for (int i = 0; i < shop.getUnlocks().size(); i++) {
+            if (!tiers.add(shop.getUnlocks().get(i).getTier())) {
+                error("The tier " + shop.getUnlocks().get(i).getTier() + " is unlocked twice",
+                      MazeDslPackage.Literals.SHOP_CONFIG__UNLOCKS, i, INVALID_SHOP_ITEM);
+            }
+        }
         java.util.Set<String> seen = new java.util.HashSet<>();
         for (int i = 0; i < shop.getItems().size(); i++) {
             ShopItemConfig item = shop.getItems().get(i);

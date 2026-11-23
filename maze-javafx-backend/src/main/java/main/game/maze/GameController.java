@@ -215,6 +215,10 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
             blastAt(x, y, damage, radius, hurtsPlayer, label);
         }
+        @Override public void nuclearBlast(double x, double y, int damage, double radius, boolean hurtsPlayer,
+                                           String label) {
+            nuclearBlastAt(x, y, damage, radius, hurtsPlayer, label);
+        }
         @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
@@ -521,6 +525,44 @@ public class GameController implements Initializable, EnemyRegistrar {
         }
     }
 
+    /**
+     * The small nuclear grenade: a round blast through walls (shared {@code NuclearBlastEngine}) that burns the enemies and
+     * breaks the walls in reach, the player too when {@code hurtsPlayer}; drawn as a mushroom cloud with a deep roar and a
+     * long heavy shake.
+     */
+    private void nuclearBlastAt(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
+        List<main.game.maze.mazeworld.flame.FlameTarget> targets = new ArrayList<>(
+                enemyCoordinator.livingTargets(PlayerIds.LOCAL_PLAYER, main.game.maze.common.remains.DeathCause.FIRE));
+        PlayerCharacter player = playerCharacter;
+        if (hurtsPlayer && player != null) {
+            double half = StageConstants.PlayerCharacterXYSize * 0.5d;
+            double px = player.getCharacterPosition().getX() + half;
+            double py = player.getCharacterPosition().getY() + half;
+            targets.add(new main.game.maze.mazeworld.flame.FlameTarget() {
+                @Override public double centerX() { return px; }
+                @Override public double centerY() { return py; }
+                @Override public int hitPoints() { return player.getHitPoints(); }
+                @Override public void applyDamage(int amount) { player.subtractHitPoints(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
+        }
+        int[] dealt = new int[1];
+        GameMazeWorld.attributeDamageTo(PlayerIds.LOCAL_PLAYER, () -> dealt[0] =
+                main.game.maze.mazeworld.flame.NuclearBlastEngine.apply(targets, maze, x, y, radius, damage));
+        if (mazeCanvas != null && maze != null) {
+            mazeCanvasRenderer.redrawInPlace(mazeCanvas, maze.getMazeVectors());
+        }
+        if (gameBoard != null) {
+            var cloud = new main.game.maze.common.graphics.fire.MushroomCloudEffect(x, y, radius, -1);   // JavaFX is y-down
+            FxExplosionView.of(cloud).play(gameBoard, cloud.lifetimeSeconds(), -9);
+            main.game.maze.javafx.render.FxScreenShake.play(gameBoard.getParent(),
+                    main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_SECONDS,
+                    main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_STRENGTH);
+        }
+        main.game.maze.common.graphics.AudioEngine.get().play(main.game.maze.common.graphics.fire.MushroomCloudEffect.SOUND);
+        setHudMessage(label + " - nuclear blast, enemy damage " + dealt[0], Duration.seconds(2.0));
+    }
+
     private void showFlameExplosionVisual(double centerX, double centerY, double range,
                                           List<Vector2D> survivingWalls) {
         if (gameBoard == null) {
@@ -799,6 +841,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.setBoosts(App.levelProgress.boosts());   // what was bought in the shop for this level
+        // enemies near a soldier of the infantry strike go for the soldier first
+        enemyCoordinator.setSoldiers(weapons::soldierPositionsForEnemies, weapons.soldierLureRadius());
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
         if (lives.remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once

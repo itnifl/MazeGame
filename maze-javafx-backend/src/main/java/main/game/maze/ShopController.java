@@ -133,8 +133,9 @@ public class ShopController implements Initializable {
         Label title = label(row.title(), colour, 230);
         title.setTooltip(new javafx.scene.control.Tooltip(row.item().description()));
         Label tier = label(row.item().tier().label(), "#9aa4b0", 80);
-        Label price = label(Integer.toString(row.item().price()), row.affordable() ? "#ffe56e" : "#ff6b5e", 60);
-        Label owned = label(row.ownedText(), "#8fffe0", 70);
+        Label price = label(Integer.toString(row.item().price()),
+                row.locked() ? "#7d8590" : row.affordable() ? "#ffe56e" : "#ff6b5e", 60);
+        Label owned = label(row.ownedText(), row.locked() ? "#9aa4b0" : "#8fffe0", 90);
         Region gap = new Region();
         HBox.setHgrow(gap, Priority.ALWAYS);
         HBox box = new HBox(8, icon, title, tier, gap, price, owned);

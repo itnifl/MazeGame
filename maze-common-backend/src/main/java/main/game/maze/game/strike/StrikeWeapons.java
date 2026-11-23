@@ -35,11 +35,13 @@ public final class StrikeWeapons {
     public record Use(PickupSpec spec, String message) {
     }
 
-    /** One frame: the blasts that go off now and the rounds the soldiers fired. */
-    public record Frame(List<ScheduledBlast> blasts, List<InfantrySquad.Round> rounds) {
+    /** One frame: the blasts that go off now, the rounds the soldiers fired and the soldiers who fell. */
+    public record Frame(List<ScheduledBlast> blasts, List<InfantrySquad.Round> rounds,
+                        List<InfantrySquad.SoldierView> fallen) {
         public Frame {
             blasts = List.copyOf(blasts);
             rounds = List.copyOf(rounds);
+            fallen = List.copyOf(fallen);
         }
     }
 
@@ -82,7 +84,8 @@ public final class StrikeWeapons {
             }
             case INFANTRY_STRIKE -> {
                 boolean arrived = squad.deploy(launch.openGround(),
-                        new InfantrySquad.Orders(spec.units(), spec.durationSeconds(), spec.damage(), spec.range()));
+                        new InfantrySquad.Orders(spec.units(), spec.durationSeconds(), spec.damage(), spec.range(),
+                                spec.unitHealth()));
                 yield new Use(spec, arrived ? spec.units() + " soldiers have arrived and are hunting the enemy"
                         : "The soldiers found nowhere to land");
             }
@@ -98,8 +101,8 @@ public final class StrikeWeapons {
     /** One frame of the fuses and of the soldiers. */
     public Frame tick(double dt, List<FlameTarget> enemies, InfantrySquad.Terrain terrain) {
         List<ScheduledBlast> due = schedule.tick(dt);
-        List<InfantrySquad.Round> rounds = terrain == null ? List.of() : squad.tick(dt, enemies, terrain);
-        return new Frame(due, rounds);
+        InfantrySquad.Report squadFrame = terrain == null ? InfantrySquad.Report.NOTHING : squad.tick(dt, enemies, terrain);
+        return new Frame(due, squadFrame.rounds(), squadFrame.fallen());
     }
 
     /** The grenades and bombs lying on the floor and the bombs on their way, for drawing. */
@@ -109,6 +112,19 @@ public final class StrikeWeapons {
 
     public List<InfantrySquad.SoldierView> soldiers() {
         return squad.soldiers();
+    }
+
+    /**
+     * Where the living soldiers are (world space), safe to read from the enemy AI thread: enemies within
+     * {@link #lureRadius()} of one go for it ({@link DecoyTargeting}).
+     */
+    public List<Point2D> soldierPositions() {
+        return squad.livingPositions();
+    }
+
+    /** Enemies this close to a soldier go for it instead of the player (from the items model). */
+    public double lureRadius() {
+        return catalog.spec(Weapon.INFANTRY_STRIKE.pickup()).lureRadius();
     }
 
     /** Whether the infantry squad is in the maze now. */

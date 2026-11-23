@@ -35,8 +35,8 @@ import main.game.maze.mazeworld.generators.PlayerState;
 public final class GdxStrikeSupport {
 
 
-    /** A blast of a shop weapon, in screen space, for the game screen to set off with its own flames. */
-    public record Blast(float x, float y, int damage, float radius, boolean hurtsPlayer, String label) {
+    /** A blast of a shop weapon, in screen space, for the game screen to set off: flames, or a nuclear blast. */
+    public record Blast(float x, float y, int damage, float radius, boolean hurtsPlayer, String label, boolean nuclear) {
     }
 
     private GdxStrikeSupport() {
@@ -105,6 +105,9 @@ public final class GdxStrikeSupport {
                 ? InfantrySquad.Terrain.of(world) : null;
         List<FlameTarget> targets = model.strikes().squadActive() ? livingTargets(enemies, height, attackerId) : List.of();
         StrikeWeapons.Frame frame = model.strikes().tick(dt, targets, terrain);
+        if (!frame.fallen().isEmpty()) {
+            AudioEngine.get().play(StrikeVisuals.SOLDIER_DOWN_SOUND);
+        }
         for (InfantrySquad.Round round : frame.rounds()) {
             model.effects().add(new GameWorldModel.ActiveEffect(ShotEffects.enemyRound(
                     round.fromX(), height - round.fromY(), round.toX(), height - round.toY())));
@@ -120,6 +123,12 @@ public final class GdxStrikeSupport {
 
     /** The living enemies as targets for the soldiers, in world space; each round is a shot credited to the attacker. */
     static List<FlameTarget> livingTargets(List<GdxEnemyRuntime> enemies, float height, String attackerId) {
+        return livingTargets(enemies, height, attackerId, DeathCause.SHOT);
+    }
+
+    /** As above, with the cause of death the damage is credited as (the nuclear blast burns). */
+    public static List<FlameTarget> livingTargets(List<GdxEnemyRuntime> enemies, float height, String attackerId,
+                                                  DeathCause cause) {
         List<FlameTarget> targets = new ArrayList<>();
         for (GdxEnemyRuntime enemy : enemies) {
             if (!enemy.isAlive() || enemy.isInvulnerable()) {
@@ -130,7 +139,7 @@ public final class GdxStrikeSupport {
                 @Override public double centerY() { return height - enemy.y(); }
                 @Override public int hitPoints() { return enemy.getHitPoints(); }
                 @Override public void applyDamage(int amount) {
-                    enemy.subtractHitPoints(amount, DeathCause.SHOT, attackerId);
+                    enemy.subtractHitPoints(amount, cause, attackerId);
                 }
                 @Override public boolean isPassThrough() { return false; }
             });
@@ -148,7 +157,7 @@ public final class GdxStrikeSupport {
         List<SpriteVisual> sprites = new ArrayList<>();
         for (InfantrySquad.SoldierView soldier : model.strikes().soldiers()) {
             sprites.add(new SpriteVisual((float) soldier.x(), height - (float) soldier.y(), size, 0f,
-                    soldier.facingX() < 0, StrikeVisuals.SOLDIER_SPRITE));
+                    StrikeVisuals.soldierFlipX(soldier), StrikeVisuals.soldierSprite(soldier)));
         }
         return sprites;
     }
@@ -159,17 +168,59 @@ public final class GdxStrikeSupport {
             return;
         }
         float height = maze.heightPx();
+        var items = model.pickupField().catalog();
         for (ScheduledBlast blast : model.strikes().pendingBlasts()) {
-            if (blast.showsFuse()) {
-                model.bombFuseGlows().add(new BombFuseGlow((float) blast.x(), height - (float) blast.y(),
-                        (float) StrikeVisuals.fuseRadius(blast), (float) StrikeVisuals.fuseAlpha(blast, clockSeconds)));
+            if (!blast.showsFuse()) {
+                continue;
+            }
+            float[] colour = StrikeVisuals.fuseColour(blast);
+            boolean drawnAsSprite = StrikeVisuals.lyingSprite(blast, items) != null;
+            // a grenade drawn as itself gets a halo round it; a bomb without a sprite the glow with its hot core
+            double radius = drawnAsSprite
+                    ? Math.max(StrikeVisuals.fuseRadius(blast), StrikeVisuals.lyingSize(blast, items) * 0.65)
+                    : StrikeVisuals.fuseRadius(blast);
+            model.bombFuseGlows().add(new BombFuseGlow((float) blast.x(), height - (float) blast.y(), (float) radius,
+                    (float) StrikeVisuals.fuseAlpha(blast, clockSeconds), colour[0], colour[1], colour[2], drawnAsSprite));
+        }
+    }
+
+    /** Each grenade or bomb lying on the floor, drawn as the weapon itself (the nuclear grenade larger), in screen space. */
+    public static List<SpriteVisual> lyingSprites(GameWorldModel model, MazeArena maze) {
+        if (maze == null) {
+            return List.of();
+        }
+        float height = maze.heightPx();
+        var items = model.pickupField().catalog();
+        List<SpriteVisual> sprites = new ArrayList<>();
+        for (ScheduledBlast blast : model.strikes().pendingBlasts()) {
+            String sprite = StrikeVisuals.lyingSprite(blast, items);
+            if (sprite != null) {
+                sprites.add(new SpriteVisual((float) blast.x(), height - (float) blast.y(),
+                        (float) StrikeVisuals.lyingSize(blast, items), 0f, false, sprite));
             }
         }
+        return sprites;
+    }
+
+    /**
+     * Where the living soldiers are, in screen space (y up, centres, like the enemies' positions), for the enemies near
+     * one to go for it ({@code DecoyTargeting}).
+     */
+    public static List<Point2D> soldierPositionsOnScreen(GameWorldModel model, MazeArena maze) {
+        if (maze == null) {
+            return List.of();
+        }
+        float height = maze.heightPx();
+        List<Point2D> positions = new ArrayList<>();
+        for (Point2D soldier : model.strikes().soldierPositions()) {
+            positions.add(new Point2D(soldier.getX(), height - soldier.getY()));
+        }
+        return positions;
     }
 
     static Blast toScreen(ScheduledBlast blast, float height) {
         return new Blast((float) blast.x(), height - (float) blast.y(), blast.damage(), (float) blast.radius(),
-                blast.hurtsPlayer(), blast.label());
+                blast.hurtsPlayer(), blast.label(), blast.nuclear());
     }
 
     private static void playUseSound(PickupSpec spec) {

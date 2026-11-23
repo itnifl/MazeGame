@@ -267,6 +267,15 @@ public interface MazeDslFactory extends EFactory
   ShopConfig createShopConfig();
 
   /**
+   * Returns a new object of class '<em>Shop Unlock Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Shop Unlock Config</em>'.
+   * @generated
+   */
+  ShopUnlockConfig createShopUnlockConfig();
+
+  /**
    * Returns a new object of class '<em>Shop Item Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

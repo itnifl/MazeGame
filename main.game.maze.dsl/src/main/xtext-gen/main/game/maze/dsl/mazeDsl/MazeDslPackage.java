@@ -1940,13 +1940,22 @@ public interface MazeDslPackage extends EPackage
   int SHOP_CONFIG = 26;
 
   /**
+   * The feature id for the '<em><b>Unlocks</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG__UNLOCKS = 0;
+
+  /**
    * The feature id for the '<em><b>Items</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SHOP_CONFIG__ITEMS = 0;
+  int SHOP_CONFIG__ITEMS = 1;
 
   /**
    * The number of structural features of the '<em>Shop Config</em>' class.
@@ -1955,7 +1964,44 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SHOP_CONFIG_FEATURE_COUNT = 1;
+  int SHOP_CONFIG_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl <em>Shop Unlock Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopUnlockConfig()
+   * @generated
+   */
+  int SHOP_UNLOCK_CONFIG = 27;
+
+  /**
+   * The feature id for the '<em><b>Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG__TIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG__LEVEL = 1;
+
+  /**
+   * The number of structural features of the '<em>Shop Unlock Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_UNLOCK_CONFIG_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.
@@ -1965,7 +2011,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
    * @generated
    */
-  int SHOP_ITEM_CONFIG = 27;
+  int SHOP_ITEM_CONFIG = 28;
 
   /**
    * The feature id for the '<em><b>Kind</b></em>' attribute.
@@ -2047,7 +2093,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
    * @generated
    */
-  int LAST_LIFE_GIFT_CONFIG = 28;
+  int LAST_LIFE_GIFT_CONFIG = 29;
 
   /**
    * The feature id for the '<em><b>Weapon</b></em>' attribute.
@@ -2084,7 +2130,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 29;
+  int TELEPORT_RULES_CONFIG = 30;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -2148,7 +2194,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 30;
+  int DIFFICULTY_LEVEL = 31;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -2158,7 +2204,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 31;
+  int ENEMY_TYPE = 32;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -2168,7 +2214,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 32;
+  int CHARACTER_TYPE_ENUM = 33;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -2178,7 +2224,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 33;
+  int BEHAVIOR_TYPE_ENUM = 34;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -2188,7 +2234,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 34;
+  int PROJECTILE_TYPE_ENUM = 35;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -2198,7 +2244,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 35;
+  int LOOT_ITEM_TYPE_ENUM = 36;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -2208,7 +2254,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 36;
+  int DROP_WEAPON_ENUM = 37;
 
 
   /**
@@ -4132,6 +4178,17 @@ public interface MazeDslPackage extends EPackage
   EClass getShopConfig();
 
   /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.ShopConfig#getUnlocks <em>Unlocks</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Unlocks</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig#getUnlocks()
+   * @see #getShopConfig()
+   * @generated
+   */
+  EReference getShopConfig_Unlocks();
+
+  /**
    * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.ShopConfig#getItems <em>Items</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4141,6 +4198,38 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EReference getShopConfig_Items();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig <em>Shop Unlock Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Unlock Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig
+   * @generated
+   */
+  EClass getShopUnlockConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getTier <em>Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getTier()
+   * @see #getShopUnlockConfig()
+   * @generated
+   */
+  EAttribute getShopUnlockConfig_Tier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getLevel <em>Level</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Level</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig#getLevel()
+   * @see #getShopUnlockConfig()
+   * @generated
+   */
+  EAttribute getShopUnlockConfig_Level();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig <em>Shop Item Config</em>}'.
@@ -5890,12 +5979,46 @@ public interface MazeDslPackage extends EPackage
     EClass SHOP_CONFIG = eINSTANCE.getShopConfig();
 
     /**
+     * The meta object literal for the '<em><b>Unlocks</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SHOP_CONFIG__UNLOCKS = eINSTANCE.getShopConfig_Unlocks();
+
+    /**
      * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference SHOP_CONFIG__ITEMS = eINSTANCE.getShopConfig_Items();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl <em>Shop Unlock Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopUnlockConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopUnlockConfig()
+     * @generated
+     */
+    EClass SHOP_UNLOCK_CONFIG = eINSTANCE.getShopUnlockConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_UNLOCK_CONFIG__TIER = eINSTANCE.getShopUnlockConfig_Tier();
+
+    /**
+     * The meta object literal for the '<em><b>Level</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_UNLOCK_CONFIG__LEVEL = eINSTANCE.getShopUnlockConfig_Level();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.

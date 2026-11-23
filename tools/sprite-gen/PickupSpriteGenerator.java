@@ -42,7 +42,7 @@ public final class PickupSpriteGenerator {
         write(dir, "extra-life.png", extraLife());
         write(dir, "gatling-gun.png", gatlingGun());
         write(dir, "pulse-cannon.png", pulseCannon());
-        // the shop weapons (#164) and the soldier of the infantry strike
+        // the shop weapons (#164); the soldiers of the infantry strike are drawn by SoldierSpriteGenerator
         write(dir, "grenade.png", grenade(new Color(0x4a, 0x5e, 0x2c), new Color(0x7a, 0x96, 0x48), null));
         write(dir, "plasma-grenade.png", grenade(new Color(0x4a, 0x20, 0x78), new Color(0x9a, 0x5a, 0xe8),
                 new Color(0xd8, 0xa8, 0xff)));
@@ -52,7 +52,6 @@ public final class PickupSpriteGenerator {
         write(dir, "airstrike.png", airstrike());
         write(dir, "infantry-strike.png", infantryStrike());
         write(dir, "life-refill.png", lifeRefill());
-        write(dir, "soldier.png", soldier());
     }
 
     /** A pineapple hand grenade: a ridged egg body, the lever and the ring; an optional glow (plasma). */
@@ -219,45 +218,6 @@ public final class PickupSpriteGenerator {
             g.setColor(new Color(0xd8, 0x20, 0x30));
             g.fillRect(14, 11, 4, 12);
             g.fillRect(10, 15, 12, 4);
-        });
-    }
-
-    /** A soldier of the infantry strike, seen from the side facing right: helmet, green uniform and a rifle. */
-    static BufferedImage soldier() {
-        return draw(g -> {
-            Color uniform = new Color(0x4a, 0x5e, 0x2c);
-            Color skin = new Color(0xd8, 0xa8, 0x80);
-            // legs and boots
-            g.setColor(OUTLINE);
-            g.fillRect(10, 21, 5, 10);
-            g.fillRect(17, 21, 5, 10);
-            g.setColor(new Color(0x3c, 0x4c, 0x24));
-            g.fillRect(11, 21, 3, 8);
-            g.fillRect(18, 21, 3, 8);
-            // body
-            g.setColor(OUTLINE);
-            g.fillRect(8, 11, 16, 12);
-            g.setColor(uniform);
-            g.fillRect(9, 12, 14, 10);
-            g.setColor(new Color(0x6a, 0x4a, 0x2a));
-            g.fillRect(9, 18, 14, 2);
-            // head and helmet
-            g.setColor(OUTLINE);
-            g.fillRect(11, 4, 10, 8);
-            g.setColor(skin);
-            g.fillRect(12, 6, 8, 5);
-            g.setColor(OUTLINE);
-            g.fillRect(18, 7, 1, 1);
-            g.fillArc(9, 0, 14, 10, 0, 180);
-            g.setColor(uniform);
-            g.fillArc(10, 1, 12, 8, 0, 180);
-            // rifle, pointing right
-            g.setColor(OUTLINE);
-            g.fillRect(14, 14, 17, 3);
-            g.setColor(new Color(0x3a, 0x3e, 0x46));
-            g.fillRect(15, 15, 15, 1);
-            g.setColor(new Color(0x6a, 0x4a, 0x2a));
-            g.fillRect(12, 15, 4, 4);
         });
     }
 

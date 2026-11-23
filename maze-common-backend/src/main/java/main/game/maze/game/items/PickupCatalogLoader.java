@@ -55,7 +55,8 @@ public final class PickupCatalogLoader {
                     DynamicModel.decimal(item, "range"), DynamicModel.decimal(item, "chargeSeconds"),
                     DynamicModel.string(item, "chargeSound"), DynamicModel.decimal(item, "blastRadius"),
                     DynamicModel.decimal(item, "fuseSeconds"), DynamicModel.integer(item, "units"),
-                    DynamicModel.integer(item, "piercePower")));
+                    DynamicModel.integer(item, "piercePower"), BlastShape.valueOf(DynamicModel.literalName(item, "blastShape")),
+                    DynamicModel.integer(item, "unitHealth"), DynamicModel.decimal(item, "lureRadius")));
         }
         double itemSize = DynamicModel.decimal(root, "itemSizeFactor") * StageConstants.PlayerCharacterXYSize;
         return new PickupCatalog(DynamicModel.decimal(root, "spawnIntervalSeconds"), itemSize,

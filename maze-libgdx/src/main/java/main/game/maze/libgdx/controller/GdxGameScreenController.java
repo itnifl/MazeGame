@@ -539,7 +539,54 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     /** A blast of a shop weapon (screen space), with the flames, boom and shake of the bomb, credited to the player. */
     private void setOff(GdxStrikeSupport.Blast blast) {
+        if (blast.nuclear()) {
+            nuclearBlast(blast);
+            return;
+        }
         detonateBlast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+    }
+
+    /**
+     * The small nuclear grenade: a round blast through walls (shared {@code NuclearBlastEngine}) that burns the enemies and
+     * breaks the walls in reach, the player too when it hurts the player; a mushroom cloud, a deep roar, a long heavy shake.
+     */
+    private void nuclearBlast(GdxStrikeSupport.Blast blast) {
+        if (maze == null) {
+            return;
+        }
+        float height = maze.heightPx();
+        List<main.game.maze.mazeworld.flame.FlameTarget> targets = new ArrayList<>(GdxStrikeSupport.livingTargets(
+                animatedEnemies, height, PlayerIds.LOCAL_PLAYER, main.game.maze.common.remains.DeathCause.FIRE));
+        if (blast.hurtsPlayer() && player != null) {
+            float px = player.x();
+            float py = height - player.y();
+            targets.add(new main.game.maze.mazeworld.flame.FlameTarget() {
+                @Override public double centerX() { return px; }
+                @Override public double centerY() { return py; }
+                @Override public int hitPoints() { return combatState.currentHitPointsAsInt(); }
+                @Override public void applyDamage(int amount) { combatState.applyDirectDamage(amount); }
+                @Override public boolean isPassThrough() { return true; }
+            });
+        }
+        GameMazeWorld world = GdxWallDamageSupport.worldFrom(maze);
+        int[] dealt = new int[1];
+        GameMazeWorld.attributeDamageTo(PlayerIds.LOCAL_PLAYER, () -> dealt[0] =
+                main.game.maze.mazeworld.flame.NuclearBlastEngine.apply(targets, world, blast.x(), height - blast.y(),
+                        blast.radius(), blast.damage()));
+        if (maze instanceof main.game.maze.mazeworld.generators.RealMaze realMaze) {
+            realMaze.invalidateWalls();   // walls in reach are gone
+        }
+        // libGDX is y-up: the cloud rises in +y
+        worldModel.effects().add(new GameWorldModel.ActiveEffect(
+                new main.game.maze.common.graphics.fire.MushroomCloudEffect(blast.x(), blast.y(), blast.radius(), 1)));
+        AudioEngine.get().play(main.game.maze.common.graphics.fire.MushroomCloudEffect.SOUND);
+        worldModel.setExplosionShakeRemainingSeconds((float) main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_SECONDS);
+        worldModel.setExplosionShakeIntensity(Math.max(worldModel.explosionShakeIntensity(),
+                (float) main.game.maze.common.graphics.fire.MushroomCloudEffect.SHAKE_STRENGTH));
+        int killed = GdxGameCombatAndEnemyFlowSupport.processKilledEnemies(
+                animatedEnemies, worldModel.deadEnemies(), worldModel.dyingEnemies(), worldModel.remains(),
+                worldModel.retiredShooters(), worldModel.killLedger());
+        flashStatus(blast.label() + " - nuclear blast" + (killed > 0 ? ", " + killed + " killed" : ", damage " + dealt[0]), 2.0f);
     }
 
     /** The weapons from before the shop: bomb, laser, sledgehammer, gatling gun and pulse beam cannon. */
@@ -620,7 +667,9 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     void advanceEnemies(float dt) {
-        GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt);
+        // enemies near a soldier of the infantry strike go for the soldier first
+        GdxGameCombatAndEnemyFlowSupport.advanceEnemies(animatedEnemies, maze, player, enemyDirectorService, dt,
+                GdxStrikeSupport.soldierPositionsOnScreen(worldModel, maze), worldModel.strikes().lureRadius());
         GdxGameCombatAndEnemyFlowSupport.tickDeathAnimations(worldModel.dyingEnemies(), dt);
         if (maze != null && player != null) {
             GdxGameCombatAndEnemyFlowSupport.tickResurrections(

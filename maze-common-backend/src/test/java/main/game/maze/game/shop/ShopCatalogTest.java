@@ -65,6 +65,11 @@ class ShopCatalogTest {
     @Test
     @DisplayName("the extra life is three refills; the infantry strike is ten soldiers")
     void issueNumbers() {
+        assertEquals(2, SHOP.unlockLevel(ShopTier.CHEAP), "weak items from the first shop");
+        assertEquals(4, SHOP.unlockLevel(ShopTier.MEDIUM), "medium items from the shop between levels 3 and 4");
+        assertEquals(6, SHOP.unlockLevel(ShopTier.EXPENSIVE), "strong items from the shop between levels 5 and 6");
+        assertTrue(SHOP.sold(ShopTier.MEDIUM, 4) && !SHOP.sold(ShopTier.MEDIUM, 3));
+        assertTrue(new ShopCatalog(SHOP.items()).sold(ShopTier.EXPENSIVE, 2), "a tier without an unlock is always sold");
         assertEquals(3, SHOP.item(ShopItemKind.EXTRA_LIFE).amount());
         assertEquals(Weapon.LIFE_REFILL, ShopItemKind.EXTRA_LIFE.weapon());
         assertEquals(10, ITEMS.spec(Weapon.INFANTRY_STRIKE.pickup()).units());

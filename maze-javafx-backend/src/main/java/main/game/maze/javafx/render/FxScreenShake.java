@@ -19,6 +19,8 @@ public final class FxScreenShake {
         private final double baseX;
         private final double baseY;
         private long startNanos = -1;
+        private double seconds = BombImpact.SHAKE_SECONDS;
+        private double scale = 1.0;
 
         ActiveShake(Node target, double baseX, double baseY) {
             this.target = target;
@@ -26,7 +28,9 @@ public final class FxScreenShake {
             this.baseY = baseY;
         }
 
-        void restart() {
+        void restart(double seconds, double scale) {
+            this.seconds = Math.max(this.seconds, seconds);
+            this.scale = Math.max(this.scale, scale);
             startNanos = -1;
         }
 
@@ -44,30 +48,37 @@ public final class FxScreenShake {
                 startNanos = now;
             }
             double elapsed = (now - startNanos) / 1e9;
-            if (elapsed >= BombImpact.SHAKE_SECONDS) {
+            if (elapsed >= seconds) {
                 stop();
                 target.setTranslateX(baseX);
                 target.setTranslateY(baseY);
                 ACTIVE_SHAKES.remove(target);
                 return;
             }
-            double[] offset = BombImpact.shakeOffset(elapsed);
-            target.setTranslateX(baseX + offset[0]);
-            target.setTranslateY(baseY + offset[1]);
+            // the shared offsets, stretched over the length of this shake and scaled to its strength
+            double[] offset = BombImpact.shakeOffset(elapsed * BombImpact.SHAKE_SECONDS / seconds);
+            target.setTranslateX(baseX + offset[0] * scale);
+            target.setTranslateY(baseY + offset[1] * scale);
         }
     }
 
     /** Shakes {@code target} for {@link BombImpact#SHAKE_SECONDS}; must be called on the JavaFX thread. */
     public static void play(Node target) {
+        play(target, BombImpact.SHAKE_SECONDS, BombImpact.SHAKE_STRENGTH);
+    }
+
+    /** Shakes {@code target} for {@code seconds} with offsets of up to about {@code strength} px (the nuclear blast). */
+    public static void play(Node target, double seconds, double strength) {
         if (target == null) {
             return;
         }
         ActiveShake active = ACTIVE_SHAKES.get(target);
         if (active != null) {
-            active.restart();
+            active.restart(seconds, strength / BombImpact.SHAKE_STRENGTH);
             return;
         }
         ActiveShake shake = new ActiveShake(target, target.getTranslateX(), target.getTranslateY());
+        shake.restart(seconds, strength / BombImpact.SHAKE_STRENGTH);
         ACTIVE_SHAKES.put(target, shake);
         shake.start();
     }

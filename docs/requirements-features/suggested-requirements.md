@@ -455,7 +455,7 @@ These requirements have been implemented and verified.
 
 - **SR-372** *(Model-driven)*: Let the level model say how far a beam goes through walls (a `pierce` factor on the pickup in `items.ecore`) so other weapons can pierce too, and let the heart clearance of mines be a value of `MineSpec`.
 
-- **SR-386** *(Gameplay)*: Enemies ignore the soldiers of the infantry strike and the soldiers cannot be hurt. Let enemies fight back (soldiers with health, the sergeant and the towers targeting them), and let the player give simple orders (follow me / hold / attack the heart area).
+- **SR-386** *(Gameplay)*: Partly done in SR-396 (soldiers have health, melee enemies go for them; ranged enemies are SR-400). Still open: let the player give the squad simple orders (follow me / hold / attack the heart area).
 
 - **SR-387** *(Balance, observability)*: The prices and strengths are first guesses. Count purchases, uses and kills per item, level and difficulty (SR-252) and tune them; consider prices that scale with the difficulty's starting score, since easy (5 000) can buy far less than hard (30 000).
 
@@ -472,3 +472,9 @@ These requirements have been implemented and verified.
 - **SR-393** *(Observability)*: Log every purchase and every strike call (structured: item, price, credits before and after, level, difficulty) and expose counters for blasts, soldier rounds and kills by weapon, so balancing and bug reports can see what happened.
 
 - **SR-394** *(Testing)*: Add a headless parity test that drives the same grenade, airstrike seed and squad seed through both frontends and compares the blasts and kills, like the movement parity tests (SR-1).
+
+- **SR-400** *(Gameplay)*: Only melee enemies go for the soldiers (SR-396). Let the sergeants, guard towers and pumpkin bombers aim at a soldier in range too, with their rounds, rockets and pumpkins hurting the soldier instead of the player; give soldiers a health bar.
+
+- **SR-401** *(Model-driven)*: The touch damage to soldiers (25/s), the touch distance and how long a fallen soldier lies are constants in `InfantrySquad`; move them into `items.ecore` next to `unitHealth` and `lureRadius`. Let the nuclear core and edge shares (`NuclearBlastEngine`) be values of the item too.
+
+- **SR-402** *(UX)*: Tell the player when a tier opens (a banner "Medium items are now in the shop" on the win screen of level 3) and show the next unlock in the shop header.

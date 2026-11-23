@@ -36,6 +36,7 @@ import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.ShopConfig;
 import main.game.maze.dsl.mazeDsl.ShopItemConfig;
+import main.game.maze.dsl.mazeDsl.ShopUnlockConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
@@ -247,6 +248,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass shopConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass shopUnlockConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -2333,9 +2341,53 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EReference getShopConfig_Items()
+  public EReference getShopConfig_Unlocks()
   {
     return (EReference)shopConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getShopConfig_Items()
+  {
+    return (EReference)shopConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getShopUnlockConfig()
+  {
+    return shopUnlockConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopUnlockConfig_Tier()
+  {
+    return (EAttribute)shopUnlockConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopUnlockConfig_Level()
+  {
+    return (EAttribute)shopUnlockConfigEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2836,7 +2888,12 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
 
     shopConfigEClass = createEClass(SHOP_CONFIG);
+    createEReference(shopConfigEClass, SHOP_CONFIG__UNLOCKS);
     createEReference(shopConfigEClass, SHOP_CONFIG__ITEMS);
+
+    shopUnlockConfigEClass = createEClass(SHOP_UNLOCK_CONFIG);
+    createEAttribute(shopUnlockConfigEClass, SHOP_UNLOCK_CONFIG__TIER);
+    createEAttribute(shopUnlockConfigEClass, SHOP_UNLOCK_CONFIG__LEVEL);
 
     shopItemConfigEClass = createEClass(SHOP_ITEM_CONFIG);
     createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__KIND);
@@ -3105,7 +3162,12 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(shopConfigEClass, ShopConfig.class, "ShopConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getShopConfig_Unlocks(), this.getShopUnlockConfig(), null, "unlocks", null, 0, -1, ShopConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getShopConfig_Items(), this.getShopItemConfig(), null, "items", null, 0, -1, ShopConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(shopUnlockConfigEClass, ShopUnlockConfig.class, "ShopUnlockConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getShopUnlockConfig_Tier(), ecorePackage.getEString(), "tier", null, 0, 1, ShopUnlockConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopUnlockConfig_Level(), ecorePackage.getEInt(), "level", null, 0, 1, ShopUnlockConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(shopItemConfigEClass, ShopItemConfig.class, "ShopItemConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getShopItemConfig_Kind(), ecorePackage.getEString(), "kind", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

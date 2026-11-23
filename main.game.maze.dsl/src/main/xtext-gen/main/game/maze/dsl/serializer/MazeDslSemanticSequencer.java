@@ -29,6 +29,7 @@ import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.ShopConfig;
 import main.game.maze.dsl.mazeDsl.ShopItemConfig;
+import main.game.maze.dsl.mazeDsl.ShopUnlockConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
@@ -128,6 +129,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case MazeDslPackage.SHOP_ITEM_CONFIG:
 				sequence_ShopItemConfig(context, (ShopItemConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.SHOP_UNLOCK_CONFIG:
+				sequence_ShopUnlockConfig(context, (ShopUnlockConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.TELEPORT_RULES_CONFIG:
 				sequence_TeleportRulesConfig(context, (TeleportRulesConfig) semanticObject); 
@@ -635,7 +639,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     ShopConfig returns ShopConfig
 	 *
 	 * Constraint:
-	 *     items+=ShopItemConfig+
+	 *     ((unlocks+=ShopUnlockConfig+ items+=ShopItemConfig+) | items+=ShopItemConfig+)?
 	 * </pre>
 	 */
 	protected void sequence_ShopConfig(ISerializationContext context, ShopConfig semanticObject) {
@@ -662,6 +666,29 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 */
 	protected void sequence_ShopItemConfig(ISerializationContext context, ShopItemConfig semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ShopUnlockConfig returns ShopUnlockConfig
+	 *
+	 * Constraint:
+	 *     (tier=ValidID level=INT)
+	 * </pre>
+	 */
+	protected void sequence_ShopUnlockConfig(ISerializationContext context, ShopUnlockConfig semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__TIER));
+			if (transientValues.isValueTransient(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG__LEVEL));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getShopUnlockConfigAccess().getTierValidIDParserRuleCall_1_0(), semanticObject.getTier());
+		feeder.accept(grammarAccess.getShopUnlockConfigAccess().getLevelINTTerminalRuleCall_3_0(), semanticObject.getLevel());
+		feeder.finish();
 	}
 	
 	

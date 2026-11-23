@@ -121,9 +121,9 @@ public final class GdxShopOverlayView {
         font.draw(context.batch(), row.title(), r.x() + ICON + 14f, textY);
         font.setColor(GREY);
         font.draw(context.batch(), row.item().tier().label(), r.x() + r.w() * 0.55f, textY);
-        font.setColor(row.affordable() ? GOLD : RED);
+        font.setColor(row.locked() ? GREY : row.affordable() ? GOLD : RED);
         font.draw(context.batch(), Integer.toString(row.item().price()), r.x() + r.w() * 0.72f, textY);
-        font.setColor(CYAN);
+        font.setColor(row.locked() ? GREY : CYAN);
         font.draw(context.batch(), row.ownedText(), r.x() + r.w() * 0.84f, textY);
     }
 

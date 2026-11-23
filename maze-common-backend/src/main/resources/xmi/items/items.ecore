@@ -47,6 +47,10 @@
     <eLiterals name="INFANTRY_STRIKE" value="14"/>
     <eLiterals name="LIFE_REFILL" value="15"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="BlastShape">
+    <eLiterals name="FLAMES"/>
+    <eLiterals name="NUCLEAR" value="1"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PickupSpec">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//PickupKind"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="displayName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -91,6 +95,23 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="How many: bombs dropped by one airstrike, soldiers in one infantry strike."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="blastShape" eType="#//BlastShape">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="How the weapon's blast spreads: FLAMES along the corridors like the bomb, or NUCLEAR: a round blast through walls, strongest at the centre, drawn as a mushroom cloud (small nuclear grenade)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unitHealth"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Hit points of each unit of the weapon (a soldier of the infantry strike): enemies near a soldier attack it, and it falls when they are gone."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lureRadius"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Enemies this close (px) to a unit of the weapon (a soldier of the infantry strike) go for the nearest such unit instead of the player; 0 = they ignore the units."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="piercePower"

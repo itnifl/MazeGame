@@ -24,6 +24,10 @@ class GdxShopOverlayControllerTest {
 
     private static LevelProgress betweenLevels(int score) {
         LevelProgress progress = new LevelProgress(LevelCatalogLoader.loadDefault());
+        for (int level = 1; level < 3; level++) {   // medium items (plasma grenades) are sold after level 3
+            progress.completeLevel(new PlayerArsenal(0), 0, "Hard");
+            progress.advance(new PlayerArsenal(0));
+        }
         progress.completeLevel(new PlayerArsenal(1), score, "Hard");
         return progress;
     }

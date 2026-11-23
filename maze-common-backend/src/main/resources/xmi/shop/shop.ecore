@@ -5,8 +5,18 @@
     <details key="documentation" value="The shop between levels: what the player can buy with their score for the next level. Loaded with dynamic EMF by ShopCatalogLoader; both frontends use the same shop. The weapons it sells are defined (sprite, sounds, damage) in the items model."/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="ShopModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="unlocks" upperBound="-1"
+        eType="#//TierUnlock" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
         eType="#//ShopItem" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TierUnlock">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The items of a tier are sold only in the shop before level fromLevel and every level after it (the shop before level 4 is the one between levels 3 and 4). A tier without an unlock is always sold."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tier" lowerBound="1" eType="#//ShopTier"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fromLevel" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ShopTier">
     <eLiterals name="CHEAP"/>

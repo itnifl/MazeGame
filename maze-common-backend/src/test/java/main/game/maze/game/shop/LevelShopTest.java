@@ -35,6 +35,15 @@ class LevelShopTest {
         shop = new LevelShop(CATALOG, progress);
     }
 
+    /** Plays through to {@code level} and wins it with {@code score} (and a laser rifle in hand): the shop before the next. */
+    private void winLevel(int level, int score) {
+        for (int number = 1; number < level; number++) {
+            progress.completeLevel(new PlayerArsenal(0), 0, "Hard");
+            progress.advance(new PlayerArsenal(0));
+        }
+        winLevelOneWith(score);
+    }
+
     private void winLevelOneWith(int score) {
         PlayerArsenal arsenal = new PlayerArsenal(2);
         arsenal.add(Weapon.LASER_RIFLE, 4);
@@ -77,7 +86,7 @@ class LevelShopTest {
     @Test
     @DisplayName("the extra life gives three refills of the health bar")
     void extraLifeIsThreeRefills() {
-        winLevelOneWith(20_000);
+        winLevel(3, 20_000);   // medium items are sold from the shop after level 3
         ShopItem life = CATALOG.item(ShopItemKind.EXTRA_LIFE);
         shop.buy(life);
         progress.advance(new PlayerArsenal(0));
@@ -88,7 +97,7 @@ class LevelShopTest {
     @DisplayName("not enough score: nothing changes")
     void notEnoughScore() {
         ShopItem infantry = CATALOG.item(ShopItemKind.INFANTRY_STRIKE);
-        winLevelOneWith(infantry.price() - 1);
+        winLevel(5, infantry.price() - 1);   // strong items are sold from the shop after level 5
         assertFalse(shop.canAfford(infantry));
         assertEquals(LevelShop.Result.NOT_ENOUGH_SCORE, shop.buy(infantry));
         assertEquals(infantry.price() - 1, shop.credits());
@@ -121,7 +130,7 @@ class LevelShopTest {
     @Test
     @DisplayName("what was bought is in the savepoint: loading it later, or restarting the level, keeps it")
     void keptInTheSavepoint() {
-        winLevelOneWith(20_000);
+        winLevel(3, 20_000);
         shop.buy(CATALOG.item(ShopItemKind.BUNKER_BUSTER));
         shop.buy(CATALOG.item(ShopItemKind.FLAME_BOOST));
 
@@ -142,5 +151,28 @@ class LevelShopTest {
         assertThrows(IllegalStateException.class, () -> progress.updatePendingSavePoint(new SavePoint(2, null)));
         winLevelOneWith(100);
         assertThrows(IllegalStateException.class, () -> progress.updatePendingSavePoint(new SavePoint(3, null)));
+    }
+
+    @Test
+    @DisplayName("only weak items until level 3; medium items from the shop after level 3, strong ones after level 5")
+    void tiersOpenByLevel() {
+        ShopItem cheap = CATALOG.item(ShopItemKind.GRENADE);
+        ShopItem medium = CATALOG.item(ShopItemKind.PLASMA_GRENADE);
+        ShopItem strong = CATALOG.item(ShopItemKind.AIRSTRIKE);
+        int[][] expected = {
+                // level won, cheap, medium, strong
+                {1, 1, 0, 0}, {2, 1, 0, 0}, {3, 1, 1, 0}, {4, 1, 1, 0}, {5, 1, 1, 1}};
+        for (int[] row : expected) {
+            setUp();
+            winLevel(row[0], 100_000);
+            assertEquals(row[1] == 1, shop.isSold(cheap), "cheap after level " + row[0]);
+            assertEquals(row[2] == 1, shop.isSold(medium), "medium after level " + row[0]);
+            assertEquals(row[3] == 1, shop.isSold(strong), "strong after level " + row[0]);
+        }
+        setUp();
+        winLevel(2, 100_000);
+        assertEquals(LevelShop.Result.LOCKED, shop.buy(medium));
+        assertEquals(100_000, shop.credits(), "a locked item costs nothing");
+        assertEquals(0, shop.stock(medium));
     }
 }

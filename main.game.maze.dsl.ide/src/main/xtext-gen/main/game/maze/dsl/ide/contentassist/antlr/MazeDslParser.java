@@ -117,6 +117,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLavaConfigAccess().getGroup_14(), "rule__LavaConfig__Group_14__0");
 			builder.put(grammarAccess.getLavaConfigAccess().getGroup_15(), "rule__LavaConfig__Group_15__0");
 			builder.put(grammarAccess.getShopConfigAccess().getGroup(), "rule__ShopConfig__Group__0");
+			builder.put(grammarAccess.getShopUnlockConfigAccess().getGroup(), "rule__ShopUnlockConfig__Group__0");
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup(), "rule__ShopItemConfig__Group__0");
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_7(), "rule__ShopItemConfig__Group_7__0");
 			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_8(), "rule__ShopItemConfig__Group_8__0");
@@ -285,7 +286,10 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLavaConfigAccess().getGlowAssignment_13_1(), "rule__LavaConfig__GlowAssignment_13_1");
 			builder.put(grammarAccess.getLavaConfigAccess().getCrustAssignment_14_1(), "rule__LavaConfig__CrustAssignment_14_1");
 			builder.put(grammarAccess.getLavaConfigAccess().getDeathSoundAssignment_15_1(), "rule__LavaConfig__DeathSoundAssignment_15_1");
-			builder.put(grammarAccess.getShopConfigAccess().getItemsAssignment_2(), "rule__ShopConfig__ItemsAssignment_2");
+			builder.put(grammarAccess.getShopConfigAccess().getUnlocksAssignment_2(), "rule__ShopConfig__UnlocksAssignment_2");
+			builder.put(grammarAccess.getShopConfigAccess().getItemsAssignment_3(), "rule__ShopConfig__ItemsAssignment_3");
+			builder.put(grammarAccess.getShopUnlockConfigAccess().getTierAssignment_1(), "rule__ShopUnlockConfig__TierAssignment_1");
+			builder.put(grammarAccess.getShopUnlockConfigAccess().getLevelAssignment_3(), "rule__ShopUnlockConfig__LevelAssignment_3");
 			builder.put(grammarAccess.getShopItemConfigAccess().getKindAssignment_1(), "rule__ShopItemConfig__KindAssignment_1");
 			builder.put(grammarAccess.getShopItemConfigAccess().getDisplayNameAssignment_2(), "rule__ShopItemConfig__DisplayNameAssignment_2");
 			builder.put(grammarAccess.getShopItemConfigAccess().getTierAssignment_4(), "rule__ShopItemConfig__TierAssignment_4");

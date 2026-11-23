@@ -308,6 +308,12 @@ public final class GdxGameWorldView {
             if (alpha <= 0f) {
                 continue;
             }
+            if (glow.haloOnly()) {
+                // a halo round a grenade drawn as a sprite (amber, or radioactive green round the nuclear grenade)
+                shapes.setColor(glow.red(), glow.green(), glow.blue(), 0.35f * alpha);
+                shapes.circle(glow.x(), glow.y(), glow.radius(), 28);
+                continue;
+            }
             // Outer orange glow
             shapes.setColor(1f, 0.44f, 0.06f, 0.28f * alpha);
             shapes.circle(glow.x(), glow.y(), glow.radius(), 28);

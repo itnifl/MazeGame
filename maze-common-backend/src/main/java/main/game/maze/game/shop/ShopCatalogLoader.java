@@ -48,6 +48,11 @@ public final class ShopCatalogLoader {
                     DynamicModel.integer(item, "amount"),
                     DynamicModel.decimal(item, "factor")));
         }
-        return new ShopCatalog(items);
+        java.util.Map<ShopTier, Integer> unlocks = new java.util.EnumMap<>(ShopTier.class);
+        for (EObject unlock : DynamicModel.list(root, "unlocks")) {
+            unlocks.put(ShopTier.valueOf(DynamicModel.literalName(unlock, "tier")),
+                    DynamicModel.integer(unlock, "fromLevel"));
+        }
+        return new ShopCatalog(items, unlocks);
     }
 }

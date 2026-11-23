@@ -91,6 +91,13 @@ public final class FxWeaponController {
          * to the player; it hurts the player too when {@code hurtsPlayer}.
          */
         void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label);
+
+        /**
+         * A nuclear blast of a shop weapon at (x, y) (the small nuclear grenade): a round blast through walls
+         * ({@code NuclearBlastEngine}) drawn as a mushroom cloud, credited to the player; it hurts the player too when
+         * {@code hurtsPlayer}.
+         */
+        void nuclearBlast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label);
     }
 
 
@@ -440,7 +447,14 @@ public final class FxWeaponController {
         List<FlameTarget> enemies = strikes.squadActive() ? host.enemies().livingTargets(PlayerIds.LOCAL_PLAYER) : List.of();
         StrikeWeapons.Frame frame = strikes.tick(dt, enemies, terrain);
         for (ScheduledBlast blast : frame.blasts()) {
-            host.blast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+            if (blast.nuclear()) {
+                host.nuclearBlast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+            } else {
+                host.blast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+            }
+        }
+        if (!frame.fallen().isEmpty()) {
+            AudioEngine.get().play(StrikeVisuals.SOLDIER_DOWN_SOUND);
         }
         for (InfantrySquad.Round round : frame.rounds()) {
             playEffect(ShotEffects.enemyRound(round.fromX(), round.fromY(), round.toX(), round.toY()));
@@ -448,7 +462,24 @@ public final class FxWeaponController {
                     StrikeVisuals.SOLDIER_FIRE_COOLDOWN_MILLIS);
         }
         strikeLayer.showSoldiers(strikes.soldiers(), StageConstants.PlayerCharacterXYSize * StrikeVisuals.SOLDIER_SIZE_FACTOR);
-        strikeLayer.showFuses(strikes.pendingBlasts(), clockSeconds);
+        strikeLayer.showFuses(strikes.pendingBlasts(), pickupField.catalog(), clockSeconds);
+    }
+
+    /**
+     * Where the soldiers are, as the enemy AI sees positions (top-left corners, like the player position). Safe to call
+     * from the AI thread.
+     */
+    public List<Point2D> soldierPositionsForEnemies() {
+        List<Point2D> positions = new java.util.ArrayList<>();
+        for (Point2D soldier : strikes.soldierPositions()) {
+            positions.add(new Point2D(soldier.getX() - HALF_PLAYER, soldier.getY() - HALF_PLAYER));
+        }
+        return positions;
+    }
+
+    /** Enemies this close to a soldier go for it instead of the player (items model). */
+    public double soldierLureRadius() {
+        return strikes.lureRadius();
     }
 
     /** Whether the infantry strike's soldiers are in the maze now. */

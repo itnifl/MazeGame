@@ -25,6 +25,8 @@ No external tools or samples; output is deterministic (seeded noise) and overwri
 | `grenade-throw.wav` | a grenade thrown: a short whoosh of air and the metallic clink of the lever |
 | `airstrike-siren.wav` | the airstrike called in: an air-raid siren winding up and down over the drone of the bombers |
 | `infantry-whistle.wav` | the infantry strike called in: a sergeant's two-tone whistle, the second note trilled |
+| `nuke-explosion.wav` | the small nuclear grenade: a sharp crack, then a huge rolling roar over a sub-bass rumble dying away over four seconds |
+| `soldier-down.wav` | a soldier of the infantry strike falls: a short grunt dropping in pitch and the thud of the body |
 | `wall-build.wav` | two wooden hammer knocks with a rattle of nails; played when a wall builder puts up a piece of wall |
 | `rpg-launch.wav` | an rpg leaving its tube: a hollow thump, then a rocket motor that ignites with a roaring hiss and fades as the rocket flies away; played when a guard tower fires |
 | `rpg-explosion.wav` | a rocket going off: a sharp crack, a short punchy boom and a fast-dying rumble (quicker and lighter than the bomb); played where a rocket lands |

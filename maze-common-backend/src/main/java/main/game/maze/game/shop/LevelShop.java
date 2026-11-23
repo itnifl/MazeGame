@@ -25,6 +25,8 @@ public final class LevelShop {
         NOT_ENOUGH_SCORE,
         /** A boost that is already on for the next level (buying it again would do nothing). */
         ALREADY_ACTIVE,
+        /** The item's tier is not sold yet: it opens before a later level ({@link ShopCatalog#unlockLevel}). */
+        LOCKED,
         /** Not between levels (no next level to buy for). */
         CLOSED
     }
@@ -71,6 +73,11 @@ public final class LevelShop {
         };
     }
 
+    /** Whether the item is sold in this shop: its tier is open for the level that comes next. */
+    public boolean isSold(ShopItem item) {
+        return progress.pendingSavePoint().map(next -> catalog.sold(item.tier(), next.level())).orElse(false);
+    }
+
     public boolean canAfford(ShopItem item) {
         return credits() >= item.price();
     }
@@ -80,6 +87,9 @@ public final class LevelShop {
         Optional<SavePoint> open = progress.pendingSavePoint();
         if (open.isEmpty()) {
             return Result.CLOSED;
+        }
+        if (!catalog.sold(item.tier(), open.get().level())) {
+            return Result.LOCKED;
         }
         if (isActive(item)) {
             return Result.ALREADY_ACTIVE;

@@ -56,8 +56,11 @@ class ShopMenuTest {
         int nuke = indexOf(ShopItemKind.NUKE_GRENADE);
         assertFalse(menu.rows().get(nuke).affordable());
         menu.select(nuke);
-        assertEquals(LevelShop.Result.NOT_ENOUGH_SCORE, menu.buySelected());
-        assertTrue(menu.status().startsWith("Not enough score"));
+        assertEquals(LevelShop.Result.LOCKED, menu.buySelected(), "strong items are not sold after level 1");
+        assertEquals("Expensive items are sold after level 5", menu.status());
+        assertTrue(menu.rows().get(nuke).locked());
+        assertEquals("after level 5", menu.rows().get(nuke).ownedText());
+        assertFalse(menu.rows().get(grenades).locked());
 
         menu.select(indexOf(ShopItemKind.SHIELD_BOOST));
         menu.buySelected();

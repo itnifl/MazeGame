@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.ShopConfig#getUnlocks <em>Unlocks</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.ShopConfig#getItems <em>Items</em>}</li>
  * </ul>
  *
@@ -25,6 +26,18 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ShopConfig extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Unlocks</b></em>' containment reference list.
+   * The list contents are of type {@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Unlocks</em>' containment reference list.
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getShopConfig_Unlocks()
+   * @model containment="true"
+   * @generated
+   */
+  EList<ShopUnlockConfig> getUnlocks();
+
   /**
    * Returns the value of the '<em><b>Items</b></em>' containment reference list.
    * The list contents are of type {@link main.game.maze.dsl.mazeDsl.ShopItemConfig}.

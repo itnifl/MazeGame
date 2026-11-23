@@ -257,3 +257,7 @@ MAZE_SHOP_REGENERATE=true mvn -o install -pl main.game.maze.dsl,main.game.maze.d
 (`MazeDslShopTest` fails when `shop.xmi` and `shop.mazegame` say different things). After a grammar change add
 `-Dxtext.codegen.skip=false` to regenerate the Xtext sources. The strength of each shop weapon (damage, range, blast
 radius, fuse, units, pierce power, sprite, sounds) is in `xmi/items/items.xmi`.
+
+Which tier is sold from which level is in the same file: `unlock MEDIUM fromLevel 4` sells the medium items from the shop
+before level 4 (between levels 3 and 4) on. A tier without an `unlock` is always sold. The validator reports an unknown
+tier, a level below 2 and a tier unlocked twice.

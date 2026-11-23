@@ -211,6 +211,11 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createShopConfigAdapter();
       }
       @Override
+      public Adapter caseShopUnlockConfig(ShopUnlockConfig object)
+      {
+        return createShopUnlockConfigAdapter();
+      }
+      @Override
       public Adapter caseShopItemConfig(ShopItemConfig object)
       {
         return createShopItemConfigAdapter();
@@ -648,6 +653,21 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createShopConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.ShopUnlockConfig <em>Shop Unlock Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.ShopUnlockConfig
+   * @generated
+   */
+  public Adapter createShopUnlockConfigAdapter()
   {
     return null;
   }

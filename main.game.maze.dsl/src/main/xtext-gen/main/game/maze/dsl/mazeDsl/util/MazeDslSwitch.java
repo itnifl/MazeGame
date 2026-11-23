@@ -265,6 +265,13 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.SHOP_UNLOCK_CONFIG:
+      {
+        ShopUnlockConfig shopUnlockConfig = (ShopUnlockConfig)theEObject;
+        T result = caseShopUnlockConfig(shopUnlockConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.SHOP_ITEM_CONFIG:
       {
         ShopItemConfig shopItemConfig = (ShopItemConfig)theEObject;
@@ -718,6 +725,22 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseShopConfig(ShopConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Shop Unlock Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Shop Unlock Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseShopUnlockConfig(ShopUnlockConfig object)
   {
     return null;
   }

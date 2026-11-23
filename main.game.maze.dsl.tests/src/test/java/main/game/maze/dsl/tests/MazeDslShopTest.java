@@ -117,4 +117,19 @@ public class MazeDslShopTest {
         assertEquals("shop", game.getName());
         assertEquals("price", game.getOpponents().get(0).getName());
     }
+
+    @Test
+    public void tierUnlocksAreWrittenAndChecked() throws Exception {
+        String xmi = MazeDslGenerator.shopXmi(parse(
+            "game s { shop { unlock MEDIUM fromLevel 4 item GRENADE \"G\" tier CHEAP price 10 amount 1 } }"));
+        assertTrue(xmi.contains("<unlocks tier=\"MEDIUM\" fromLevel=\"4\"/>"), xmi);
+        GameConfiguration bad = parse(
+            "game s { shop { unlock CHEAPISH fromLevel 1 unlock MEDIUM fromLevel 4 unlock MEDIUM fromLevel 5 } }");
+        validationHelper.assertError(bad, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG, MazeDslValidator.INVALID_SHOP_ITEM,
+                "Unknown tier CHEAPISH");
+        validationHelper.assertError(bad, MazeDslPackage.Literals.SHOP_UNLOCK_CONFIG, MazeDslValidator.INVALID_SHOP_ITEM,
+                "level 2 or later");
+        validationHelper.assertError(bad, MazeDslPackage.Literals.SHOP_CONFIG, MazeDslValidator.INVALID_SHOP_ITEM,
+                "unlocked twice");
+    }
 }

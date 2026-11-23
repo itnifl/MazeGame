@@ -14,7 +14,9 @@ import main.game.maze.mazeworld.service.MazeNavigationGraphService;
  * The infantry strike, shared by both frontends: a squad of soldiers arrives in a random area of the maze and, for as long
  * as it stays, hunts everything that is not the player who called it in. A soldier who sees an enemy within its sight
  * (no wall between) stops and fires at it; otherwise it walks the maze's navigation graph towards the nearest enemy, or
- * wanders when there are none. The soldiers cannot be hurt and leave when their time is up.
+ * wanders when there are none. Enemies go for the soldiers first ({@link DecoyTargeting}); an enemy touching a soldier
+ * hurts it ({@link #ENEMY_TOUCH_DPS}), and a soldier whose health is gone falls and lies a while. The squad leaves when its
+ * time is up.
  *
  * <p>World space (y down). The frontend passes the living enemies each frame as {@link FlameTarget}s (whose damage it
  * credits to the player), draws the soldiers ({@link #soldiers()}) and the rounds {@link #tick} returns. Not thread-safe.
@@ -58,13 +60,38 @@ public final class InfantrySquad {
     public record Round(double fromX, double fromY, double toX, double toY, boolean killed) {
     }
 
-    /** A soldier as it is drawn: where, which way it faces (-1, 0, 1 on each axis) and whether its gun flashes. */
-    public record SoldierView(double x, double y, double facingX, double facingY, boolean firing) {
+    /**
+     * A soldier as it is drawn: where, which way it faces (-1, 0, 1 on each axis), whether its gun flashes, whether it is
+     * walking and how far it has walked (for the stride), and whether it has fallen.
+     */
+    public record SoldierView(double x, double y, double facingX, double facingY, boolean firing, boolean walking,
+                              double walked, boolean fallen) {
     }
 
-    /** How the squad fights: from the items model's infantry strike. */
-    public record Orders(int soldiers, double seconds, int damage, double sight) {
+    /** How the squad fights: from the items model's infantry strike. {@code health} 0 = the soldiers cannot be hurt. */
+    public record Orders(int soldiers, double seconds, int damage, double sight, int health) {
+
+        public Orders(int soldiers, double seconds, int damage, double sight) {
+            this(soldiers, seconds, damage, sight, 0);
+        }
     }
+
+    /** One frame of the squad: the rounds fired and the soldiers who fell. */
+    public record Report(List<Round> rounds, List<SoldierView> fallen) {
+        public Report {
+            rounds = List.copyOf(rounds);
+            fallen = List.copyOf(fallen);
+        }
+
+        static final Report NOTHING = new Report(List.of(), List.of());
+    }
+
+    /** Damage per second an enemy does to a soldier it touches. */
+    public static final double ENEMY_TOUCH_DPS = 25.0;
+    /** An enemy whose centre is this close to a soldier's touches it. */
+    public static final double TOUCH_DISTANCE = 26.0;
+    /** How long a fallen soldier lies before it is gone. */
+    public static final double FALLEN_SECONDS = 4.0;
 
     private static final class Soldier {
         double x;
@@ -76,6 +103,16 @@ public final class InfantrySquad {
         double repathIn;
         double reloadIn;
         double flash;
+        double health;
+        double walked;
+        boolean walking;
+        boolean fallen;
+        /** Seconds the body of a fallen soldier still lies. */
+        double bodyLeft;
+
+        boolean alive() {
+            return !fallen;
+        }
 
         Soldier(double x, double y, double repathIn, double reloadIn) {
             this.x = x;
@@ -90,6 +127,8 @@ public final class InfantrySquad {
     private List<Point2D> openGround = List.of();
     private Orders orders = new Orders(0, 0, 0, 0);
     private double timeLeft;
+    /** Where the living soldiers are, published for the enemy AI (which may run on another thread). */
+    private volatile List<Point2D> livingPositions = List.of();
 
     public InfantrySquad(Random random) {
         this.random = random;
@@ -115,11 +154,32 @@ public final class InfantrySquad {
         for (int i = 0; i < orders.soldiers(); i++) {
             Point2D at = nearest.get(i % nearest.size());
             // staggered timers, so the squad does not plan and fire all in the same frame
-            squad.add(new Soldier(at.getX(), at.getY(), random.nextDouble() * REPATH_SECONDS,
-                    random.nextDouble() * FIRE_INTERVAL));
+            Soldier soldier = new Soldier(at.getX(), at.getY(), random.nextDouble() * REPATH_SECONDS,
+                    random.nextDouble() * FIRE_INTERVAL);
+            soldier.health = orders.health();
+            squad.add(soldier);
         }
         timeLeft = Math.max(0.0, orders.seconds());
+        publishPositions();
         return true;
+    }
+
+    /**
+     * Where the living soldiers are now (world space), safe to read from any thread: enemies near them go for them
+     * ({@link DecoyTargeting}).
+     */
+    public List<Point2D> livingPositions() {
+        return livingPositions;
+    }
+
+    private void publishPositions() {
+        List<Point2D> positions = new ArrayList<>();
+        for (Soldier soldier : squad) {
+            if (soldier.alive()) {
+                positions.add(new Point2D(soldier.x, soldier.y));
+            }
+        }
+        livingPositions = List.copyOf(positions);
     }
 
     /** Whether the squad is in the maze now. */
@@ -136,30 +196,37 @@ public final class InfantrySquad {
     public void dismiss() {
         squad.clear();
         timeLeft = 0;
+        livingPositions = List.of();
     }
 
     public List<SoldierView> soldiers() {
         List<SoldierView> views = new ArrayList<>(squad.size());
         for (Soldier soldier : squad) {
-            views.add(new SoldierView(soldier.x, soldier.y, soldier.facingX, soldier.facingY, soldier.flash > 0));
+            views.add(view(soldier));
         }
         return views;
     }
 
+    private static SoldierView view(Soldier soldier) {
+        return new SoldierView(soldier.x, soldier.y, soldier.facingX, soldier.facingY, soldier.alive() && soldier.flash > 0,
+                soldier.alive() && soldier.walking, soldier.walked, !soldier.alive());
+    }
+
     /**
-     * One frame: every soldier fires at an enemy it sees, or walks towards one.
+     * One frame: enemies touching a soldier hurt it; every living soldier fires at an enemy it sees, or walks towards one;
+     * fallen soldiers lie a while and are gone.
      *
      * @param enemies the living enemies (pass-through targets, i.e. the player, are never fired at)
-     * @return the rounds fired this frame
+     * @return the rounds fired and the soldiers who fell this frame
      */
-    public List<Round> tick(double dt, List<FlameTarget> enemies, Terrain terrain) {
+    public Report tick(double dt, List<FlameTarget> enemies, Terrain terrain) {
         if (!active() || dt <= 0) {
-            return List.of();
+            return Report.NOTHING;
         }
         timeLeft -= dt;
         if (timeLeft <= 0) {
             dismiss();
-            return List.of();
+            return Report.NOTHING;
         }
         List<FlameTarget> living = new ArrayList<>();
         for (FlameTarget enemy : enemies) {
@@ -168,10 +235,20 @@ public final class InfantrySquad {
             }
         }
         List<Round> rounds = new ArrayList<>();
+        List<SoldierView> fallen = new ArrayList<>();
         for (Soldier soldier : squad) {
+            if (!soldier.alive()) {
+                soldier.bodyLeft -= dt;
+                continue;
+            }
+            if (takeTouchDamage(soldier, living, dt)) {
+                fallen.add(view(soldier));
+                continue;
+            }
             soldier.reloadIn -= dt;
             soldier.repathIn -= dt;
             soldier.flash -= dt;
+            soldier.walking = false;
             FlameTarget inSight = targetInSight(soldier, living, terrain);
             if (inSight != null) {
                 face(soldier, inSight.centerX() - soldier.x, inSight.centerY() - soldier.y);
@@ -182,7 +259,36 @@ public final class InfantrySquad {
             }
             walk(soldier, dt, living, terrain);
         }
-        return rounds;
+        // a fallen soldier's body is gone after a while; the squad is gone when nobody is left
+        squad.removeIf(soldier -> !soldier.alive() && soldier.bodyLeft <= 0);
+        if (squad.isEmpty()) {
+            dismiss();
+        }
+        publishPositions();
+        return new Report(rounds, fallen);
+    }
+
+    /**
+     * Enemies touching the soldier hurt it (when the soldiers can be hurt at all).
+     *
+     * @return true when it fell now
+     */
+    private boolean takeTouchDamage(Soldier soldier, List<FlameTarget> living, double dt) {
+        if (orders.health() <= 0) {
+            return false;
+        }
+        for (FlameTarget enemy : living) {
+            if (Math.hypot(enemy.centerX() - soldier.x, enemy.centerY() - soldier.y) <= TOUCH_DISTANCE) {
+                soldier.health -= ENEMY_TOUCH_DPS * dt;
+            }
+        }
+        if (soldier.health <= 0) {
+            soldier.fallen = true;
+            soldier.bodyLeft = FALLEN_SECONDS;
+            soldier.walking = false;
+            return true;
+        }
+        return false;
     }
 
     private Round fire(Soldier soldier, FlameTarget enemy) {
@@ -215,6 +321,7 @@ public final class InfantrySquad {
             plan(soldier, living, terrain);
         }
         double budget = SPEED * dt;
+        double start = budget;
         while (budget > 0 && soldier.next < soldier.route.size()) {
             Point2D waypoint = soldier.route.get(soldier.next);
             double dx = waypoint.getX() - soldier.x;
@@ -232,6 +339,9 @@ public final class InfantrySquad {
             }
             face(soldier, dx, dy);
         }
+        double moved = start - budget;
+        soldier.walking = moved > 0;
+        soldier.walked += moved;
     }
 
     /** A new route: to the nearest living enemy, or to a random open point when there are none. */

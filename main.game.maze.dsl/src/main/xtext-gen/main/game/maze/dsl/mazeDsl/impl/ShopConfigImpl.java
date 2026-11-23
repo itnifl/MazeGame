@@ -8,6 +8,7 @@ import java.util.Collection;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
 import main.game.maze.dsl.mazeDsl.ShopConfig;
 import main.game.maze.dsl.mazeDsl.ShopItemConfig;
+import main.game.maze.dsl.mazeDsl.ShopUnlockConfig;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -29,6 +30,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl#getUnlocks <em>Unlocks</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl#getItems <em>Items</em>}</li>
  * </ul>
  *
@@ -36,6 +38,16 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ShopConfigImpl extends MinimalEObjectImpl.Container implements ShopConfig
 {
+  /**
+   * The cached value of the '{@link #getUnlocks() <em>Unlocks</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUnlocks()
+   * @generated
+   * @ordered
+   */
+  protected EList<ShopUnlockConfig> unlocks;
+
   /**
    * The cached value of the '{@link #getItems() <em>Items</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -73,6 +85,21 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
    * @generated
    */
   @Override
+  public EList<ShopUnlockConfig> getUnlocks()
+  {
+    if (unlocks == null)
+    {
+      unlocks = new EObjectContainmentEList<ShopUnlockConfig>(ShopUnlockConfig.class, this, MazeDslPackage.SHOP_CONFIG__UNLOCKS);
+    }
+    return unlocks;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ShopItemConfig> getItems()
   {
     if (items == null)
@@ -92,6 +119,8 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
   {
     switch (featureID)
     {
+      case MazeDslPackage.SHOP_CONFIG__UNLOCKS:
+        return ((InternalEList<?>)getUnlocks()).basicRemove(otherEnd, msgs);
       case MazeDslPackage.SHOP_CONFIG__ITEMS:
         return ((InternalEList<?>)getItems()).basicRemove(otherEnd, msgs);
     }
@@ -108,6 +137,8 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
   {
     switch (featureID)
     {
+      case MazeDslPackage.SHOP_CONFIG__UNLOCKS:
+        return getUnlocks();
       case MazeDslPackage.SHOP_CONFIG__ITEMS:
         return getItems();
     }
@@ -125,6 +156,10 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
   {
     switch (featureID)
     {
+      case MazeDslPackage.SHOP_CONFIG__UNLOCKS:
+        getUnlocks().clear();
+        getUnlocks().addAll((Collection<? extends ShopUnlockConfig>)newValue);
+        return;
       case MazeDslPackage.SHOP_CONFIG__ITEMS:
         getItems().clear();
         getItems().addAll((Collection<? extends ShopItemConfig>)newValue);
@@ -143,6 +178,9 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
   {
     switch (featureID)
     {
+      case MazeDslPackage.SHOP_CONFIG__UNLOCKS:
+        getUnlocks().clear();
+        return;
       case MazeDslPackage.SHOP_CONFIG__ITEMS:
         getItems().clear();
         return;
@@ -160,6 +198,8 @@ public class ShopConfigImpl extends MinimalEObjectImpl.Container implements Shop
   {
     switch (featureID)
     {
+      case MazeDslPackage.SHOP_CONFIG__UNLOCKS:
+        return unlocks != null && !unlocks.isEmpty();
       case MazeDslPackage.SHOP_CONFIG__ITEMS:
         return items != null && !items.isEmpty();
     }

@@ -43,7 +43,9 @@ public final class StrikePlanner {
     public static ScheduledBlast thrownGrenade(PickupSpec grenade, double x, double y, int dirX, int dirY, List<Vector2D> walls) {
         double distance = throwDistance(x, y, dirX, dirY, grenade.range(), walls);
         return new ScheduledBlast(grenade.fuseSeconds(), grenade.fuseSeconds(), x + dirX * distance, y + dirY * distance,
-                grenade.damage(), grenade.blastRadius(), true, true, grenade.displayName());
+                // a nuclear blast goes through walls and reaches further than it is thrown: the player's own nuke spares them
+                grenade.damage(), grenade.blastRadius(), !grenade.nuclear(), true, grenade.displayName(),
+                grenade.kind(), grenade.nuclear());
     }
 
     /** A fat bomb planted at the player's feet; the "extra long flames" boost makes it stronger, like the bomb. */
@@ -51,7 +53,7 @@ public final class StrikePlanner {
         LevelBoosts active = boosts == null ? LevelBoosts.NONE : boosts;
         return new ScheduledBlast(fatBomb.fuseSeconds(), fatBomb.fuseSeconds(), x, y,
                 active.boostedBombDamage(fatBomb.damage()), active.boostedBombRange(fatBomb.blastRadius()), true, true,
-                fatBomb.displayName());
+                fatBomb.displayName(), fatBomb.kind(), fatBomb.nuclear());
     }
 
     /**

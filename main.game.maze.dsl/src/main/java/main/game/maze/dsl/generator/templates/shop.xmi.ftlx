@@ -2,6 +2,9 @@
 <!-- Generated from ${source}.mazegame by MazeDslGenerator (FreeMarker template shop.xmi.ftlx). DO NOT EDIT. -->
 <!-- The shop between levels: what the player can buy with their score. See shop.ecore and docs/level-authoring.md. -->
 <shop:ShopModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:shop="http://main.game.maze/shop">
+<#list unlocks as unlock>
+  <unlocks tier="${unlock.tier}" fromLevel="${unlock.level?c}"/>
+</#list>
 <#list items as item>
   <items kind="${item.kind}" displayName="${item.displayName}" tier="${item.tier}" price="${item.price?c}"<#if item.amount??> amount="${item.amount?c}"</#if><#if item.factor??> factor="${item.factor?c}"</#if><#if item.description??> description="${item.description}"</#if>/>
 </#list>

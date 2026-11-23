@@ -186,5 +186,13 @@ vest with reflective stripes and a hammer.
 weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma-grenade.png` (purple with a glow),
 `nuke-grenade.png` (a yellow canister with the radiation sign), `bunker-buster.png` (an olive rocket with a steel nose),
 `fat-bomb.png` (a big bomb with a red band), `airstrike.png` (a bomber dropping bombs), `infantry-strike.png` (a helmet
-over crossed rifles), `life-refill.png` (a medkit), and `soldier.png`, the soldier of the infantry strike (helmet, green
-uniform, rifle, facing right; mirrored when it faces left). The existing sprites come out unchanged.
+over crossed rifles), `life-refill.png` (a medkit). The single `soldier.png` of the first version (helmet, green
+uniform, rifle) was replaced by the animated soldier of `SoldierSpriteGenerator` (below). The existing sprites come out unchanged.
+
+## SoldierSpriteGenerator
+
+Draws the soldier of the infantry strike into `soldier/`: `soldier-side-*` (facing right; mirrored in the game for left), `soldier-down-*` (front) and `soldier-up-*` (back, with the backpack), each `stand`, `walk1`, `walk2` and `fire` (muzzle flash), and `soldier-fallen.png`. Camouflage uniform, webbing and pouches, boots, a helmet with a net and a rifle, a soft shadow; 32x32 grid scaled 2x. Replaces the single `pickups/soldier.png`.
+
+```sh
+"$JAVA_HOME/bin/java" tools/sprite-gen/SoldierSpriteGenerator.java
+```

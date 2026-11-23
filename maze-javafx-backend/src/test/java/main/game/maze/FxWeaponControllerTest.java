@@ -57,6 +57,10 @@ class FxWeaponControllerTest {
         @Override public void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
             blasts.add(label);
         }
+        @Override public void nuclearBlast(double x, double y, int damage, double radius, boolean hurtsPlayer,
+                                           String label) {
+            blasts.add("NUCLEAR " + label);
+        }
     }
 
     /** killCredit animates a dying enemy, which needs the JavaFX toolkit; the test must not rely on another test starting it. */
@@ -344,5 +348,25 @@ class FxWeaponControllerTest {
         assertEquals(3.0, weapons.boosts().shieldDurationFactor(), 1e-9);
         weapons.setBoosts(null);
         assertEquals(main.game.maze.game.level.LevelBoosts.NONE, weapons.boosts());
+    }
+
+    @Test
+    @DisplayName("the small nuclear grenade goes off through the game screen's nuclear blast, not the bomb's flames")
+    void nukeGoesOffAsANuclearBlast() {
+        weapons.arsenal().add(Weapon.NUKE_GRENADE, 1);
+        weapons.arsenal().select(Weapon.NUKE_GRENADE);
+        weapons.useWeapon();
+        weapons.tick(1_000_000_000L);
+        weapons.tick(4_000_000_000L);   // past the 2 s fuse
+        assertEquals(List.of("NUCLEAR Small nuclear grenade"), host.blasts);
+    }
+
+    @Test
+    @DisplayName("no squad: the enemies see no soldiers; the lure radius comes from the items model")
+    void soldiersForTheEnemies() {
+        assertTrue(weapons.soldierPositionsForEnemies().isEmpty());
+        assertEquals(PickupCatalogLoader.loadDefault().spec(PickupKind.INFANTRY_STRIKE).lureRadius(),
+                weapons.soldierLureRadius(), 1e-9);
+        assertTrue(weapons.soldierLureRadius() > 0);
     }
 }

@@ -349,7 +349,7 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-79**: The boosts last for the next level only; buying one that is already on is refused.
 - **GR-80**: Grenades are thrown up to 240 px (plasma 260, nuke 300) along the facing, stop short
   of a wall and go off after 1.2 s (nuke 2 s): grenade 160 damage / 120 px flames, plasma 420 /
-  180 px, nuke 2400 / 420 px. Grenades can hurt the thrower.
+  180 px, nuke 2400 / 420 px. Grenades can hurt the thrower, the nuke does not (GR-88).
 - **GR-81**: The bunker buster flies up to 900 px with 9000 power through breakable walls and
   towers, then blows up (500 damage, 140 px flames).
 - **GR-82**: The fat bomb goes off 3 s after it is planted: 700 damage, 520 px flames.
@@ -357,7 +357,15 @@ MUST be added to the shared core, not to a single frontend.
   approximate centre, starting 2.5 s after the call, over 3.5 s; they never hurt the player.
 - **GR-84**: The infantry strike lands 10 soldiers together in a random area for 45 s. They
   shoot every enemy they see within 320 px (45 damage a round, every 0.55 s), walk the maze
-  towards the nearest enemy otherwise, cannot be hurt and never shoot the player.
+  towards the nearest enemy otherwise, and never shoot the player (their health: GR-87).
 - **GR-85**: The extra life fills the health bar when used (Space); at full health it is kept.
 - **GR-86**: The score on the win screen, and the score saved from it, is what is left after
   shopping.
+- **GR-87**: Soldiers have 120 health. An enemy within 240 px of a soldier goes for the
+  nearest soldier instead of the player; touching a soldier takes 25 health a second. A soldier
+  with no health left falls and is gone after 4 s. Ranged enemies still shoot only the player.
+- **GR-88**: The small nuclear grenade is a round blast through walls: full damage within 35 %
+  of its 420 px radius, falling to a quarter at the edge, to enemies, the player and breakable
+  walls alike, but never the player who threw it; it is shown as a mushroom cloud.
+- **GR-89**: The shop sells only cheap items after levels 1 and 2, medium items too from the
+  shop after level 3, and expensive items too from the shop after level 5.

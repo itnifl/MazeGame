@@ -80,12 +80,13 @@
       useSound="/main/game/maze/sounds/grenade-throw.wav"
       spawnWeight="0" amount="3" damage="420" range="260.0" blastRadius="180.0" fuseSeconds="1.2"/>
 
-  <!-- the strongest and widest thrown blast: it reaches back to the thrower, so throw it far -->
+  <!-- the strongest thrown blast, and a different one: NUCLEAR is a round blast through walls, strongest at the centre,
+       drawn as a mushroom cloud; it spares the player who threw it (it would always reach them) -->
   <items kind="NUKE_GRENADE" displayName="Small nuclear grenade"
       sprite="/main/game/maze/pickups/nuke-grenade.png"
       pickupSound="/main/game/maze/sounds/shop-buy.wav"
       useSound="/main/game/maze/sounds/grenade-throw.wav"
-      spawnWeight="0" amount="2" damage="2400" range="300.0" blastRadius="420.0" fuseSeconds="2.0"/>
+      spawnWeight="0" amount="2" damage="2400" range="300.0" blastRadius="420.0" fuseSeconds="2.0" blastShape="NUCLEAR"/>
 
   <!-- a rocket along the facing: piercePower goes through walls (and towers) in the way, then a blast at the end -->
   <items kind="BUNKER_BUSTER" displayName="Bunker buster rocket"
@@ -109,13 +110,14 @@
       spawnWeight="0" amount="1" damage="600" range="280.0" blastRadius="170.0" fuseSeconds="2.5"
       durationSeconds="3.5" units="16"/>
 
-  <!-- `units` soldiers arrive in a random area and hunt every enemy for `durationSeconds`; each round does `damage`
+  <!-- `units` soldiers (each with `unitHealth`; enemies near a soldier go for it first) arrive in a random area and hunt
+       every enemy for `durationSeconds`; each round does `damage`
        to an enemy in sight within `range` -->
   <items kind="INFANTRY_STRIKE" displayName="Infantry strike"
       sprite="/main/game/maze/pickups/infantry-strike.png"
       pickupSound="/main/game/maze/sounds/shop-buy.wav"
       useSound="/main/game/maze/sounds/infantry-whistle.wav"
-      spawnWeight="0" amount="1" damage="45" range="320.0" durationSeconds="45.0" units="10"/>
+      spawnWeight="0" amount="1" damage="45" range="320.0" durationSeconds="45.0" units="10" unitHealth="120" lureRadius="240.0"/>
 
   <!-- "Extra life" in the shop: used like a weapon, it fills the health bar -->
   <items kind="LIFE_REFILL" displayName="Extra life (full health)"

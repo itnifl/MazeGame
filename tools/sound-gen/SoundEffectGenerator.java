@@ -61,6 +61,50 @@ public final class SoundEffectGenerator {
         write(dir, "grenade-throw.wav", grenadeThrow());
         write(dir, "airstrike-siren.wav", airstrikeSiren());
         write(dir, "infantry-whistle.wav", infantryWhistle());
+        write(dir, "nuke-explosion.wav", nukeExplosion());
+        write(dir, "soldier-down.wav", soldierDown());
+    }
+
+    /** A soldier of the infantry strike falls: a short low grunt that drops in pitch, and the thud of the body. */
+    static double[] soldierDown() {
+        double seconds = 0.6;
+        double[] out = buffer(seconds);
+        Random noise = new Random(31);
+        double phase = 0;
+        double low = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            phase += (190 - 90 * Math.min(1, t / 0.3)) / RATE;
+            double grunt = (triangle(phase) * 0.7 + Math.sin(2 * Math.PI * phase * 2) * 0.3) * envelope(t, 0.01, 0.32);
+            low += 0.08 * ((noise.nextDouble() * 2 - 1) - low);
+            double thud = (low * 3 + Math.sin(2 * Math.PI * 70 * t)) * envelope(t - 0.3, 0.003, 0.25);
+            out[i] = 0.5 * grunt + 0.6 * thud;
+        }
+        return out;
+    }
+
+    /**
+     * The small nuclear grenade: a sharp crack, then a huge, long rolling roar (deep filtered noise with a slow swell)
+     * over a sub-bass rumble that dies away over four seconds.
+     */
+    static double[] nukeExplosion() {
+        double seconds = 4.2;
+        double[] out = buffer(seconds);
+        Random noise = new Random(21);
+        double low = 0;
+        double lower = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double white = noise.nextDouble() * 2 - 1;
+            low += 0.06 * (white - low);       // roar
+            lower += 0.012 * (low - lower);    // rumble
+            double crack = white * envelope(t, 0.001, 0.12);
+            double swell = Math.min(1, t / 0.35) * Math.pow(1 - t / seconds, 1.3);
+            double roar = low * 3.2 * swell * (1 + 0.25 * Math.sin(2 * Math.PI * 3.1 * t));
+            double rumble = lower * 9.0 * swell + Math.sin(2 * Math.PI * 34 * t) * 0.35 * swell;
+            out[i] = 0.5 * crack + roar + rumble;
+        }
+        return out;
     }
 
     /** A purchase in the shop: a cash-register "ka-ching", a short thud and two bright bell notes. */

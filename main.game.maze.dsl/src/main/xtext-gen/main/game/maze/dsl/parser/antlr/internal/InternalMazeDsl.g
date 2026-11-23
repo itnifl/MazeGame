@@ -4276,9 +4276,28 @@ ruleShopConfig returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getShopConfigAccess().getItemsShopItemConfigParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getShopConfigAccess().getUnlocksShopUnlockConfigParserRuleCall_2_0());
 				}
-				lv_items_2_0=ruleShopItemConfig
+				lv_unlocks_2_0=ruleShopUnlockConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getShopConfigRule());
+					}
+					add(
+						$current,
+						"unlocks",
+						lv_unlocks_2_0,
+						"main.game.maze.dsl.MazeDsl.ShopUnlockConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getShopConfigAccess().getItemsShopItemConfigParserRuleCall_3_0());
+				}
+				lv_items_3_0=ruleShopItemConfig
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getShopConfigRule());
@@ -4286,16 +4305,80 @@ ruleShopConfig returns [EObject current=null]
 					add(
 						$current,
 						"items",
-						lv_items_2_0,
+						lv_items_3_0,
 						"main.game.maze.dsl.MazeDsl.ShopItemConfig");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)*
-		otherlv_3='}'
+		otherlv_4='}'
 		{
-			newLeafNode(otherlv_3, grammarAccess.getShopConfigAccess().getRightCurlyBracketKeyword_3());
+			newLeafNode(otherlv_4, grammarAccess.getShopConfigAccess().getRightCurlyBracketKeyword_4());
 		}
+	)
+;
+
+// Entry rule entryRuleShopUnlockConfig
+entryRuleShopUnlockConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getShopUnlockConfigRule()); }
+	iv_ruleShopUnlockConfig=ruleShopUnlockConfig
+	{ $current=$iv_ruleShopUnlockConfig.current; }
+	EOF;
+
+// Rule ShopUnlockConfig
+ruleShopUnlockConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='unlock'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getShopUnlockConfigAccess().getUnlockKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getShopUnlockConfigAccess().getTierValidIDParserRuleCall_1_0());
+				}
+				lv_tier_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getShopUnlockConfigRule());
+					}
+					set(
+						$current,
+						"tier",
+						lv_tier_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_2='fromLevel'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getShopUnlockConfigAccess().getFromLevelKeyword_2());
+		}
+		(
+			(
+				lv_level_3_0=RULE_INT
+				{
+					newLeafNode(lv_level_3_0, grammarAccess.getShopUnlockConfigAccess().getLevelINTTerminalRuleCall_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getShopUnlockConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"level",
+						lv_level_3_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
 	)
 ;
 
@@ -5423,6 +5506,18 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getDescriptionKeyword_82());
+		}
+		    |
+		kw='unlock'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUnlockKeyword_83());
+		}
+		    |
+		kw='fromLevel'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFromLevelKeyword_84());
 		}
 	)
 ;

@@ -465,8 +465,12 @@ public class MazeDslGenerator extends AbstractGenerator {
      * (amount, factor, description) is left out, so the model's default applies.
      */
     public static String shopXmi(GameConfiguration game) {
+        java.util.List<java.util.Map<String, Object>> unlocks = new java.util.ArrayList<>();
         java.util.List<java.util.Map<String, Object>> items = new java.util.ArrayList<>();
         if (game.getShop() != null) {
+            for (ShopUnlockConfig unlock : game.getShop().getUnlocks()) {
+                unlocks.add(java.util.Map.of("tier", unlock.getTier(), "level", unlock.getLevel()));
+            }
             for (ShopItemConfig item : game.getShop().getItems()) {
                 java.util.Map<String, Object> row = new java.util.HashMap<>();
                 row.put("kind", item.getKind());
@@ -487,7 +491,8 @@ public class MazeDslGenerator extends AbstractGenerator {
         }
         try {
             java.io.StringWriter out = new java.io.StringWriter();
-            TEMPLATES.getTemplate("shop.xmi.ftlx").process(java.util.Map.of("source", game.getName(), "items", items), out);
+            TEMPLATES.getTemplate("shop.xmi.ftlx").process(
+                    java.util.Map.of("source", game.getName(), "unlocks", unlocks, "items", items), out);
             return out.toString();
         } catch (java.io.IOException | freemarker.template.TemplateException e) {
             throw new IllegalStateException("could not render shop.xmi from its template", e);

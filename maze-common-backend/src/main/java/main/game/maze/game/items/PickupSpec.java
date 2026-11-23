@@ -16,9 +16,22 @@ package main.game.maze.game.items;
  * @param fuseSeconds     seconds from use to the blast; for the airstrike, the delay before the first bomb falls
  * @param units           how many: bombs dropped by the airstrike, soldiers in the infantry strike
  * @param piercePower     bunker buster: the power its rocket carries through the walls and towers in its way
+ * @param blastShape      how the blast spreads: flames along the corridors, or a nuclear round blast through walls
+ * @param unitHealth      hit points of each unit (a soldier of the infantry strike)
+ * @param lureRadius      enemies this close to a unit go for it instead of the player (0 = they ignore the units)
  */
 public record PickupSpec(PickupKind kind, String displayName, String sprite, String pickupSound,
                          String useSound, int spawnWeight, int amount, double durationSeconds,
                          int damage, double range, double chargeSeconds, String chargeSound,
-                         double blastRadius, double fuseSeconds, int units, int piercePower) {
+                         double blastRadius, double fuseSeconds, int units, int piercePower, BlastShape blastShape,
+                         int unitHealth, double lureRadius) {
+
+    public PickupSpec {
+        blastShape = blastShape == null ? BlastShape.FLAMES : blastShape;
+    }
+
+    /** Whether the weapon goes off as a nuclear blast (round, through walls, a mushroom cloud). */
+    public boolean nuclear() {
+        return blastShape == BlastShape.NUCLEAR;
+    }
 }

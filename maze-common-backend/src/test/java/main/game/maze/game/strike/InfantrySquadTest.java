@@ -70,7 +70,7 @@ class InfantrySquadTest {
         };
         List<InfantrySquad.Round> rounds = new ArrayList<>();
         for (int i = 0; i < 100 && enemy.hp > 0; i++) {
-            rounds.addAll(squad.tick(0.1, List.of(enemy, player), OPEN));
+            rounds.addAll(squad.tick(0.1, List.of(enemy, player), OPEN).rounds());
         }
         assertTrue(enemy.hp <= 0, "killed");
         assertEquals(3, rounds.size(), "three rounds of 40 kill 100 hit points");
@@ -86,7 +86,7 @@ class InfantrySquadTest {
         squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 30, 40, 300));
         Dummy enemy = new Dummy(200, 0, 100);
         for (int i = 0; i < 10; i++) {
-            assertTrue(squad.tick(0.1, List.of(enemy), BLIND).isEmpty());
+            assertTrue(squad.tick(0.1, List.of(enemy), BLIND).rounds().isEmpty());
         }
         assertEquals(100, enemy.hp);
         InfantrySquad.SoldierView soldier = squad.soldiers().get(0);
@@ -100,7 +100,7 @@ class InfantrySquadTest {
         InfantrySquad squad = new InfantrySquad(new Random(3));
         squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 30, 40, 50));
         Dummy far = new Dummy(400, 0, 100);
-        assertTrue(squad.tick(0.1, List.of(far), OPEN).isEmpty());
+        assertTrue(squad.tick(0.1, List.of(far), OPEN).rounds().isEmpty());
         assertEquals(100, far.hp);
     }
 
@@ -117,5 +117,46 @@ class InfantrySquadTest {
         assertFalse(squad.active());
         assertTrue(squad.soldiers().isEmpty());
         assertEquals(0, squad.timeLeft(), 1e-9);
+    }
+
+    @Test
+    @DisplayName("an enemy touching a soldier hurts it; the soldier falls, lies a while and is gone")
+    void soldiersCanFall() {
+        InfantrySquad squad = new InfantrySquad(new Random(3));
+        squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 60, 0, 0, 50));
+        assertEquals(1, squad.livingPositions().size());
+        Dummy zombie = new Dummy(10, 0, 100);   // touching
+        InfantrySquad.Report fell = InfantrySquad.Report.NOTHING;
+        for (int i = 0; i < 40 && fell.fallen().isEmpty(); i++) {
+            fell = squad.tick(0.1, List.of(zombie), BLIND);
+        }
+        assertEquals(1, fell.fallen().size(), "50 health at 25 a second: down in about two seconds");
+        assertTrue(squad.soldiers().get(0).fallen());
+        assertTrue(squad.livingPositions().isEmpty(), "a fallen soldier lures nobody");
+        squad.tick(InfantrySquad.FALLEN_SECONDS + 0.1, List.of(), BLIND);
+        assertFalse(squad.active(), "the body is gone and nobody is left");
+    }
+
+    @Test
+    @DisplayName("soldiers that cannot be hurt (no health in the model) never fall")
+    void noHealthMeansUnhurt() {
+        InfantrySquad squad = new InfantrySquad(new Random(3));
+        squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 60, 0, 0));
+        for (int i = 0; i < 100; i++) {
+            assertTrue(squad.tick(0.1, List.of(new Dummy(5, 0, 100)), BLIND).fallen().isEmpty());
+        }
+    }
+
+    @Test
+    @DisplayName("a walking soldier counts its stride for the animation")
+    void walkingIsAnimated() {
+        InfantrySquad squad = new InfantrySquad(new Random(3));
+        squad.deploy(List.of(new Point2D(0, 0)), new InfantrySquad.Orders(1, 30, 40, 300));
+        squad.tick(0.5, List.of(new Dummy(400, 0, 100)), BLIND);
+        InfantrySquad.SoldierView soldier = squad.soldiers().get(0);
+        assertTrue(soldier.walking());
+        assertEquals(InfantrySquad.SPEED * 0.5, soldier.walked(), 1e-6);
+        assertTrue(StrikeVisuals.soldierSprite(soldier).contains("soldier-side-walk"));
+        assertFalse(StrikeVisuals.soldierFlipX(soldier), "walking right");
     }
 }

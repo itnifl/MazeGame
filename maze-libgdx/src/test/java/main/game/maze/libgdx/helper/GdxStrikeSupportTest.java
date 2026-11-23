@@ -129,4 +129,36 @@ class GdxStrikeSupportTest {
             @Override public boolean wouldCollide(double cx, double cy, double size) { return false; }
         };
     }
+
+    @Test
+    @DisplayName("the nuclear grenade lies on the floor as itself with a green halo, and goes off as a nuclear blast")
+    void nuke() {
+        PlayerState player = facingRight();
+        GdxStrikeSupport.use(world, openMaze(), player, Weapon.NUKE_GRENADE, List.of());
+        List<main.game.maze.libgdx.model.SpriteVisual> lying = GdxStrikeSupport.lyingSprites(world, openMaze());
+        assertEquals(1, lying.size());
+        assertEquals(world.pickupField().catalog().spec(PickupKind.NUKE_GRENADE).sprite(), lying.get(0).spritePath());
+        world.bombFuseGlows().clear();
+        GdxStrikeSupport.addFuseGlows(world, openMaze(), 0.0);
+        var halo = world.bombFuseGlows().get(0);
+        assertTrue(halo.haloOnly() && halo.green() > halo.red(), "a green halo round the sprite");
+        List<GdxStrikeSupport.Blast> due = GdxStrikeSupport.tick(world, List.of(), openMaze(), 3.0f, PlayerIds.LOCAL_PLAYER);
+        assertEquals(1, due.size());
+        assertTrue(due.get(0).nuclear());
+    }
+
+    @Test
+    @DisplayName("the soldiers are handed to the enemy AI in screen space (y up)")
+    void soldiersOnScreen() {
+        List<main.game.maze.mazeworld.Point2D> ground = new java.util.ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            ground.add(new main.game.maze.mazeworld.Point2D(50 + i * 30, 100));
+        }
+        GdxStrikeSupport.use(world, openMaze(), facingRight(), Weapon.INFANTRY_STRIKE, ground);
+        var onScreen = GdxStrikeSupport.soldierPositionsOnScreen(world, openMaze());
+        assertEquals(10, onScreen.size());
+        onScreen.forEach(p -> assertEquals(HEIGHT - 100, p.getY(), 1e-6));
+        var sprites = GdxStrikeSupport.soldierSprites(world, openMaze(), 24f);
+        assertTrue(sprites.get(0).spritePath().startsWith(main.game.maze.game.strike.StrikeVisuals.SOLDIER_DIR));
+    }
 }

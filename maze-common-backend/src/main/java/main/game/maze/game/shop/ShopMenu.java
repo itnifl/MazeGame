@@ -10,8 +10,15 @@ import java.util.List;
  */
 public final class ShopMenu {
 
-    /** One line of the shop: the item, what the player has of it, and whether it can be bought now. */
-    public record Row(ShopItem item, int stock, boolean active, boolean affordable, boolean selected) {
+    /**
+     * One line of the shop: the item, what the player has of it, whether it can be bought now, and the level whose shop
+     * first sells it ({@code lockedUntil}: 0 when it is sold now).
+     */
+    public record Row(ShopItem item, int stock, boolean active, boolean affordable, boolean selected, int lockedUntil) {
+
+        public boolean locked() {
+            return lockedUntil > 0;
+        }
 
         /** e.g. {@code "Grenades x5 - 600"}. */
         public String title() {
@@ -19,8 +26,11 @@ public final class ShopMenu {
             return item.displayName() + amount;
         }
 
-        /** e.g. {@code "have 3"}, {@code "ACTIVE"} or {@code ""}. */
+        /** e.g. {@code "have 3"}, {@code "ACTIVE"}, {@code "after level 3"} (not sold yet) or {@code ""}. */
         public String ownedText() {
+            if (locked()) {
+                return afterLevelText(lockedUntil);
+            }
             if (active) {
                 return "ACTIVE";
             }
@@ -71,7 +81,9 @@ public final class ShopMenu {
         List<Row> rows = new ArrayList<>(items.size());
         for (int i = 0; i < items.size(); i++) {
             ShopItem item = items.get(i);
-            rows.add(new Row(item, shop.stock(item), shop.isActive(item), shop.canAfford(item), i == selected));
+            int lockedUntil = shop.isSold(item) ? 0 : shop.catalog().unlockLevel(item.tier());
+            rows.add(new Row(item, shop.stock(item), shop.isActive(item), lockedUntil == 0 && shop.canAfford(item),
+                    i == selected, lockedUntil));
         }
         return rows;
     }
@@ -123,11 +135,17 @@ public final class ShopMenu {
         return status;
     }
 
-    static String message(LevelShop.Result result, ShopItem item) {
+    /** The shop before level {@code level} is the one after level {@code level - 1}: {@code "after level 3"}. */
+    static String afterLevelText(int level) {
+        return "after level " + (level - 1);
+    }
+
+    String message(LevelShop.Result result, ShopItem item) {
         return switch (result) {
             case BOUGHT -> "Bought " + item.displayName() + " for " + item.price();
             case NOT_ENOUGH_SCORE -> "Not enough score for " + item.displayName() + " (" + item.price() + ")";
             case ALREADY_ACTIVE -> item.displayName() + " is already on for the next level";
+            case LOCKED -> item.tier().label() + " items are sold " + afterLevelText(shop.catalog().unlockLevel(item.tier()));
             case CLOSED -> "The shop is open only between levels";
         };
     }
