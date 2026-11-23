@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-PROFILE_FILE=/etc/profile.d/mazegame.sh
+PROFILE_FILE="${MAZEGAME_PROFILE_FILE:-/etc/profile.d/mazegame.sh}"
 
 if [[ "$(uname -s)" != Linux ]]; then
   echo "This launcher is intended for Linux." >&2
@@ -31,7 +31,7 @@ fi
 
 if [[ "$setup_needed" == true ]]; then
   echo "MazeGame setup is missing or incomplete. Running the Linux installer (sudo may ask for your password)."
-  sudo "$SCRIPT_DIR/install-linux.sh"
+  sudo env "MAZEGAME_PROFILE_FILE=$PROFILE_FILE" "$SCRIPT_DIR/install-linux.sh"
   # shellcheck disable=SC1090
   source "$PROFILE_FILE"
 fi

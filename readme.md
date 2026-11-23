@@ -116,6 +116,9 @@ sudo env \
   ./install-linux.sh
 ```
 
+If you set `MAZEGAME_PROFILE_FILE` during installation, set it to the same
+path when running `./start-linux`.
+
 After installation, run the `source` command printed by the installer, or log
 out and back in, then continue as your normal user rather than with `sudo`.
 Opening another non-login terminal alone may not load the system profile. The
