@@ -21,6 +21,10 @@ No external tools or samples; output is deterministic (seeded noise) and overwri
 | `final-level.wav` | a dark, slow spoken "Final level" (recorded with `RecordVoice.ps1 -Text "Final level" -Rate -4`, then `java tools/sound-gen/DeepVoiceGenerator.java raw.wav final-level.wav <soundDir> 0.62`: the pitch argument 0.62 is darker than the default 0.75); played before the last level starts |
 | `ultimate-victory.wav` | the same for "Ultimate victory"; played when the last level is won |
 | `lava-death.wav` | falling into lava: a falling wail, a hissing sizzle that dies away and a low bubbling gurgle with a few heavy pops; played when the player dies in lava |
+| `shop-buy.wav` | a purchase in the shop between levels: a short thud and two bright bell notes ("ka-ching") |
+| `grenade-throw.wav` | a grenade thrown: a short whoosh of air and the metallic clink of the lever |
+| `airstrike-siren.wav` | the airstrike called in: an air-raid siren winding up and down over the drone of the bombers |
+| `infantry-whistle.wav` | the infantry strike called in: a sergeant's two-tone whistle, the second note trilled |
 | `wall-build.wav` | two wooden hammer knocks with a rattle of nails; played when a wall builder puts up a piece of wall |
 | `rpg-launch.wav` | an rpg leaving its tube: a hollow thump, then a rocket motor that ignites with a roaring hiss and fades as the rocket flies away; played when a guard tower fires |
 | `rpg-explosion.wav` | a rocket going off: a sharp crack, a short punchy boom and a fast-dying rumble (quicker and lighter than the bomb); played where a rocket lands |

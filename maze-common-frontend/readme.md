@@ -173,3 +173,5 @@ singletons.
 - `CapturingUiScheduler` — `IUiScheduler` test double with two modes:
   - **inline** (default, `new CapturingUiScheduler()`) — actions run immediately on the calling thread; both `runLater` and `runOnUiThread` execute and are tracked by `callCount()`.
   - **deferred** (`new CapturingUiScheduler(false)`) — actions are captured but not run until `flush()` is called; `flush()` is idempotent (each call drains only newly-added actions). Inspect all submitted actions via `capturedActions()` and total count via `callCount()`.
+
+`RocketFlightEffect` (package `common.graphics.fire`) is the bunker buster rocket of the shop (#164) flying from the muzzle to where it stops: the `RocketEffect` drawn where the rocket is at each moment. The shop weapon icons, the soldier sprite (`pickups/grenade.png`, `plasma-grenade.png`, `nuke-grenade.png`, `bunker-buster.png`, `fat-bomb.png`, `airstrike.png`, `infantry-strike.png`, `life-refill.png`, `soldier.png`) and the sounds `shop-buy.wav`, `grenade-throw.wav`, `airstrike-siren.wav`, `infantry-whistle.wav` come from `tools/sprite-gen/PickupSpriteGenerator.java` and `tools/sound-gen/SoundEffectGenerator.java`.

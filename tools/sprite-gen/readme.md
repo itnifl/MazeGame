@@ -179,3 +179,12 @@ vest with reflective stripes and a hammer.
 ## Pulse beam cannon pickup
 
 `PickupSpriteGenerator` also draws `pickups/pulse-cannon.png` (the weapon HUD icon and the weapon in hand): a dark-steel barrel with glowing blue coils and a charged blue-white muzzle.
+
+## Shop weapons and the soldier
+
+`PickupSpriteGenerator` also draws the icons of the weapons sold in the shop between levels (#164), used in the shop, the
+weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma-grenade.png` (purple with a glow),
+`nuke-grenade.png` (a yellow canister with the radiation sign), `bunker-buster.png` (an olive rocket with a steel nose),
+`fat-bomb.png` (a big bomb with a red band), `airstrike.png` (a bomber dropping bombs), `infantry-strike.png` (a helmet
+over crossed rifles), `life-refill.png` (a medkit), and `soldier.png`, the soldier of the infantry strike (helmet, green
+uniform, rifle, facing right; mirrored when it faces left). The existing sprites come out unchanged.

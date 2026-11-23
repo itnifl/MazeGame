@@ -63,7 +63,8 @@ public final class GdxWeaponSupport {
         PickupCatalog catalog = model.pickupField().catalog();
         for (Pickup pickup : taken) {
             PickupSpec spec = catalog.spec(pickup.kind());
-            PickupEffects.apply(spec, model.arsenal(), model.shield(), combat::heal, combat.maxHitPoints(), model.lives());
+            PickupEffects.apply(spec, model.arsenal(), model.shield(), combat::heal, combat.maxHitPoints(), model.lives(),
+                    model.boosts());
             AudioEngine.get().play(spec.pickupSound());
             if (pickup.kind() == PickupKind.HEART) {
                 model.healFeedback().trigger();   // flash + arrow over the head (healFlash, healArrow)
@@ -119,8 +120,8 @@ public final class GdxWeaponSupport {
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
-                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),
-                        dirX, dirY, laser.damage(), laser.range(), LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH));
+                main.game.maze.game.items.ShotEffects.pierces(laser), targets, world, world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),
+                        dirX, dirY, main.game.maze.game.items.ShotEffects.shotPower(laser), laser.range(), LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH));
 
         float endX = (float) (player.x() + player.facingX() * shot[0].reach());
         float endY = (float) (player.y() + player.facingY() * shot[0].reach());
@@ -223,7 +224,7 @@ public final class GdxWeaponSupport {
     /** The weapon in the player's hands, held towards the facing; null for bombs (planted, not held). */
     public static SpriteVisual heldWeapon(GameWorldModel model, PlayerState player) {
         Weapon weapon = model.arsenal().selected();
-        if (player == null || weapon == Weapon.BOMB || model.arsenal().count(weapon) <= 0) {
+        if (player == null || !weapon.heldInHands() || model.arsenal().count(weapon) <= 0) {
             return null;
         }
         PickupKind kind = weapon.pickup();

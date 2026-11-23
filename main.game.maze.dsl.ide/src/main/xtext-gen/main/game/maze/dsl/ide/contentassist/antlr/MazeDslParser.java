@@ -116,6 +116,11 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLavaConfigAccess().getGroup_13(), "rule__LavaConfig__Group_13__0");
 			builder.put(grammarAccess.getLavaConfigAccess().getGroup_14(), "rule__LavaConfig__Group_14__0");
 			builder.put(grammarAccess.getLavaConfigAccess().getGroup_15(), "rule__LavaConfig__Group_15__0");
+			builder.put(grammarAccess.getShopConfigAccess().getGroup(), "rule__ShopConfig__Group__0");
+			builder.put(grammarAccess.getShopItemConfigAccess().getGroup(), "rule__ShopItemConfig__Group__0");
+			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_7(), "rule__ShopItemConfig__Group_7__0");
+			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_8(), "rule__ShopItemConfig__Group_8__0");
+			builder.put(grammarAccess.getShopItemConfigAccess().getGroup_9(), "rule__ShopItemConfig__Group_9__0");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getGroup(), "rule__LastLifeGiftConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup(), "rule__TeleportRulesConfig__Group__0");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getGroup_8(), "rule__TeleportRulesConfig__Group_8__0");
@@ -133,6 +138,7 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getGameConfigurationAccess().getPatrolsAssignment_6(), "rule__GameConfiguration__PatrolsAssignment_6");
 			builder.put(grammarAccess.getGameConfigurationAccess().getLootTablesAssignment_7(), "rule__GameConfiguration__LootTablesAssignment_7");
 			builder.put(grammarAccess.getGameConfigurationAccess().getLevelsAssignment_8(), "rule__GameConfiguration__LevelsAssignment_8");
+			builder.put(grammarAccess.getGameConfigurationAccess().getShopAssignment_9(), "rule__GameConfiguration__ShopAssignment_9");
 			builder.put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
 			builder.put(grammarAccess.getDifficultyConfigAccess().getLevelAssignment_3(), "rule__DifficultyConfig__LevelAssignment_3");
 			builder.put(grammarAccess.getDifficultyConfigAccess().getInstantDeathAssignment_4_1(), "rule__DifficultyConfig__InstantDeathAssignment_4_1");
@@ -279,6 +285,14 @@ public class MazeDslParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLavaConfigAccess().getGlowAssignment_13_1(), "rule__LavaConfig__GlowAssignment_13_1");
 			builder.put(grammarAccess.getLavaConfigAccess().getCrustAssignment_14_1(), "rule__LavaConfig__CrustAssignment_14_1");
 			builder.put(grammarAccess.getLavaConfigAccess().getDeathSoundAssignment_15_1(), "rule__LavaConfig__DeathSoundAssignment_15_1");
+			builder.put(grammarAccess.getShopConfigAccess().getItemsAssignment_2(), "rule__ShopConfig__ItemsAssignment_2");
+			builder.put(grammarAccess.getShopItemConfigAccess().getKindAssignment_1(), "rule__ShopItemConfig__KindAssignment_1");
+			builder.put(grammarAccess.getShopItemConfigAccess().getDisplayNameAssignment_2(), "rule__ShopItemConfig__DisplayNameAssignment_2");
+			builder.put(grammarAccess.getShopItemConfigAccess().getTierAssignment_4(), "rule__ShopItemConfig__TierAssignment_4");
+			builder.put(grammarAccess.getShopItemConfigAccess().getPriceAssignment_6(), "rule__ShopItemConfig__PriceAssignment_6");
+			builder.put(grammarAccess.getShopItemConfigAccess().getAmountAssignment_7_1(), "rule__ShopItemConfig__AmountAssignment_7_1");
+			builder.put(grammarAccess.getShopItemConfigAccess().getFactorAssignment_8_1(), "rule__ShopItemConfig__FactorAssignment_8_1");
+			builder.put(grammarAccess.getShopItemConfigAccess().getDescriptionAssignment_9_1(), "rule__ShopItemConfig__DescriptionAssignment_9_1");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getWeaponAssignment_1(), "rule__LastLifeGiftConfig__WeaponAssignment_1");
 			builder.put(grammarAccess.getLastLifeGiftConfigAccess().getShotsAssignment_3(), "rule__LastLifeGiftConfig__ShotsAssignment_3");
 			builder.put(grammarAccess.getTeleportRulesConfigAccess().getCooldownSecondsAssignment_3(), "rule__TeleportRulesConfig__CooldownSecondsAssignment_3");

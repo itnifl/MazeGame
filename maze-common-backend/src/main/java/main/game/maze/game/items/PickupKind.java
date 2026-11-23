@@ -12,17 +12,27 @@ public enum PickupKind {
     /** Never spawns on its own: the gun a killed zombie sergeant drops. */
     GATLING_GUN,
     /** Never spawns: the pulse beam cannon, the gift of the last life. */
-    PULSE_CANNON;
+    PULSE_CANNON,
+    /** Never spawns: the shop weapons below are bought between levels ({@code xmi/shop/shop.xmi}). */
+    GRENADE,
+    PLASMA_GRENADE,
+    NUKE_GRENADE,
+    BUNKER_BUSTER,
+    FAT_BOMB,
+    AIRSTRIKE,
+    INFANTRY_STRIKE,
+    LIFE_REFILL;
 
-    /** The weapon this pickup refills, or null for shield / heart / extra life. */
+    /** Whether it is only sold in the shop between levels (never lying in the maze, never dropped). */
+    public boolean shopOnly() {
+        return ordinal() >= GRENADE.ordinal();
+    }
+
+    /** The weapon this pickup refills (the weapon of the same name), or null for shield / heart / extra life. */
     public Weapon weapon() {
         return switch (this) {
-            case BOMB -> Weapon.BOMB;
-            case LASER_RIFLE -> Weapon.LASER_RIFLE;
-            case SLEDGEHAMMER -> Weapon.SLEDGEHAMMER;
-            case GATLING_GUN -> Weapon.GATLING_GUN;
-            case PULSE_CANNON -> Weapon.PULSE_CANNON;
-            default -> null;
+            case SHIELD, HEART, EXTRA_LIFE -> null;
+            default -> Weapon.valueOf(name());
         };
     }
 }

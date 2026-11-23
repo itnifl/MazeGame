@@ -92,6 +92,8 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.WALL_BUILDER_CONFIG: return createWallBuilderConfig();
       case MazeDslPackage.BUILDER_COUNT_CONFIG: return createBuilderCountConfig();
       case MazeDslPackage.LAVA_CONFIG: return createLavaConfig();
+      case MazeDslPackage.SHOP_CONFIG: return createShopConfig();
+      case MazeDslPackage.SHOP_ITEM_CONFIG: return createShopItemConfig();
       case MazeDslPackage.LAST_LIFE_GIFT_CONFIG: return createLastLifeGiftConfig();
       case MazeDslPackage.TELEPORT_RULES_CONFIG: return createTeleportRulesConfig();
       default:
@@ -467,6 +469,30 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
   {
     LavaConfigImpl lavaConfig = new LavaConfigImpl();
     return lavaConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ShopConfig createShopConfig()
+  {
+    ShopConfigImpl shopConfig = new ShopConfigImpl();
+    return shopConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ShopItemConfig createShopItemConfig()
+  {
+    ShopItemConfigImpl shopItemConfig = new ShopItemConfigImpl();
+    return shopItemConfig;
   }
 
   /**

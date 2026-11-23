@@ -62,6 +62,11 @@ public final class GdxWinOverlayView {
         float nextBtnX = saveBtnX + saveBtnW + btnGap;
         float restartBtnX = context.nextLevelAvailable() ? nextBtnX + nextBtnW + btnGap : saveBtnX + saveBtnW + btnGap;
         float backBtnX = restartBtnX + restartBtnW + btnGap;
+        // the shop between levels: above the button row, while a next level follows
+        float shopBtnW = context.nextLevelAvailable() ? btnW : 0f;
+        float shopBtnH = 32f;
+        float shopBtnX = panelX + (panelW - shopBtnW) * 0.5f;
+        float shopBtnY = btnRowY + saveBtnH + 10f;
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(0f, 0f, 0f, 0.88f);
@@ -79,6 +84,8 @@ public final class GdxWinOverlayView {
         if (context.nextLevelAvailable()) {
             shapes.setColor(0.29f, 0.87f, 0.50f, 1f);
             shapes.rect(nextBtnX, btnRowY, nextBtnW, nextBtnH);
+            shapes.setColor(1f, 0.70f, 0.28f, 1f);
+            shapes.rect(shopBtnX, shopBtnY, shopBtnW, shopBtnH);
         }
         shapes.end();
 
@@ -147,6 +154,9 @@ public final class GdxWinOverlayView {
             font.setColor(new Color(0.02f, 0.19f, 0.06f, 1f));
             gl.setText(font, "Next Level");
             font.draw(batch, "Next Level", nextBtnX + (nextBtnW - gl.width) * 0.5f, btnRowY + 24f);
+            font.setColor(new Color(0.18f, 0.09f, 0f, 1f));
+            gl.setText(font, "Shop");
+            font.draw(batch, "Shop", shopBtnX + (shopBtnW - gl.width) * 0.5f, shopBtnY + 22f);
         }
         font.setColor(new Color(0.02f, 0.12f, 0.22f, 1f));
         gl.setText(font, "Restart Level");
@@ -157,7 +167,8 @@ public final class GdxWinOverlayView {
         batch.end();
 
         return new WinButtons(saveBtnX, btnRowY, saveBtnW, saveBtnH, backBtnX, btnRowY, backBtnW, backBtnH,
-                nextBtnX, btnRowY, nextBtnW, nextBtnH, restartBtnX, btnRowY, restartBtnW, restartBtnH);
+                nextBtnX, btnRowY, nextBtnW, nextBtnH, restartBtnX, btnRowY, restartBtnW, restartBtnH,
+                shopBtnX, shopBtnY, shopBtnW, shopBtnH);
     }
 
     private static int countBreakdownLines(ScoreBreakdown bd) {
@@ -229,6 +240,10 @@ public final class GdxWinOverlayView {
             float restartX,
             float restartY,
             float restartW,
-            float restartH) {
+            float restartH,
+            float shopX,
+            float shopY,
+            float shopW,
+            float shopH) {
     }
 }

@@ -218,9 +218,28 @@ ruleGameConfiguration returns [EObject current=null]
 				}
 			)
 		)*
-		otherlv_9='}'
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getGameConfigurationAccess().getShopShopConfigParserRuleCall_9_0());
+				}
+				lv_shop_9_0=ruleShopConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getGameConfigurationRule());
+					}
+					set(
+						$current,
+						"shop",
+						lv_shop_9_0,
+						"main.game.maze.dsl.MazeDsl.ShopConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		otherlv_10='}'
 		{
-			newLeafNode(otherlv_9, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_9());
+			newLeafNode(otherlv_10, grammarAccess.getGameConfigurationAccess().getRightCurlyBracketKeyword_10());
 		}
 	)
 ;
@@ -4230,6 +4249,235 @@ ruleLavaConfig returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleShopConfig
+entryRuleShopConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getShopConfigRule()); }
+	iv_ruleShopConfig=ruleShopConfig
+	{ $current=$iv_ruleShopConfig.current; }
+	EOF;
+
+// Rule ShopConfig
+ruleShopConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='shop'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getShopConfigAccess().getShopKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getShopConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getShopConfigAccess().getItemsShopItemConfigParserRuleCall_2_0());
+				}
+				lv_items_2_0=ruleShopItemConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getShopConfigRule());
+					}
+					add(
+						$current,
+						"items",
+						lv_items_2_0,
+						"main.game.maze.dsl.MazeDsl.ShopItemConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_3='}'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getShopConfigAccess().getRightCurlyBracketKeyword_3());
+		}
+	)
+;
+
+// Entry rule entryRuleShopItemConfig
+entryRuleShopItemConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getShopItemConfigRule()); }
+	iv_ruleShopItemConfig=ruleShopItemConfig
+	{ $current=$iv_ruleShopItemConfig.current; }
+	EOF;
+
+// Rule ShopItemConfig
+ruleShopItemConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='item'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getShopItemConfigAccess().getItemKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getShopItemConfigAccess().getKindValidIDParserRuleCall_1_0());
+				}
+				lv_kind_1_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getShopItemConfigRule());
+					}
+					set(
+						$current,
+						"kind",
+						lv_kind_1_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_displayName_2_0=RULE_STRING
+				{
+					newLeafNode(lv_displayName_2_0, grammarAccess.getShopItemConfigAccess().getDisplayNameSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getShopItemConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"displayName",
+						lv_displayName_2_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_3='tier'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getShopItemConfigAccess().getTierKeyword_3());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getShopItemConfigAccess().getTierValidIDParserRuleCall_4_0());
+				}
+				lv_tier_4_0=ruleValidID
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getShopItemConfigRule());
+					}
+					set(
+						$current,
+						"tier",
+						lv_tier_4_0,
+						"main.game.maze.dsl.MazeDsl.ValidID");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_5='price'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getShopItemConfigAccess().getPriceKeyword_5());
+		}
+		(
+			(
+				lv_price_6_0=RULE_INT
+				{
+					newLeafNode(lv_price_6_0, grammarAccess.getShopItemConfigAccess().getPriceINTTerminalRuleCall_6_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getShopItemConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"price",
+						lv_price_6_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		(
+			otherlv_7='amount'
+			{
+				newLeafNode(otherlv_7, grammarAccess.getShopItemConfigAccess().getAmountKeyword_7_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getShopItemConfigAccess().getAmountINT_OBJECTParserRuleCall_7_1_0());
+					}
+					lv_amount_8_0=ruleINT_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getShopItemConfigRule());
+						}
+						set(
+							$current,
+							"amount",
+							lv_amount_8_0,
+							"main.game.maze.dsl.MazeDsl.INT_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_9='factor'
+			{
+				newLeafNode(otherlv_9, grammarAccess.getShopItemConfigAccess().getFactorKeyword_8_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getShopItemConfigAccess().getFactorDOUBLE_OBJECTParserRuleCall_8_1_0());
+					}
+					lv_factor_10_0=ruleDOUBLE_OBJECT
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getShopItemConfigRule());
+						}
+						set(
+							$current,
+							"factor",
+							lv_factor_10_0,
+							"main.game.maze.dsl.MazeDsl.DOUBLE_OBJECT");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
+			otherlv_11='description'
+			{
+				newLeafNode(otherlv_11, grammarAccess.getShopItemConfigAccess().getDescriptionKeyword_9_0());
+			}
+			(
+				(
+					lv_description_12_0=RULE_STRING
+					{
+						newLeafNode(lv_description_12_0, grammarAccess.getShopItemConfigAccess().getDescriptionSTRINGTerminalRuleCall_9_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getShopItemConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"description",
+							lv_description_12_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+	)
+;
+
 // Entry rule entryRuleLastLifeGiftConfig
 entryRuleLastLifeGiftConfig returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getLastLifeGiftConfigRule()); }
@@ -5139,6 +5387,42 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_76());
+		}
+		    |
+		kw='shop'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getShopKeyword_77());
+		}
+		    |
+		kw='tier'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTierKeyword_78());
+		}
+		    |
+		kw='price'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPriceKeyword_79());
+		}
+		    |
+		kw='amount'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getAmountKeyword_80());
+		}
+		    |
+		kw='factor'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFactorKeyword_81());
+		}
+		    |
+		kw='description'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDescriptionKeyword_82());
 		}
 	)
 ;

@@ -454,3 +454,21 @@ These requirements have been implemented and verified.
 - **SR-371** *(Observability, 12-factor)*: Log when a savepoint is written, loaded or found unreadable (structured, with level and difficulty), and keep the savepoint path configurable by an environment variable rather than only the relative `data/` folder.
 
 - **SR-372** *(Model-driven)*: Let the level model say how far a beam goes through walls (a `pierce` factor on the pickup in `items.ecore`) so other weapons can pierce too, and let the heart clearance of mines be a value of `MineSpec`.
+
+- **SR-386** *(Gameplay)*: Enemies ignore the soldiers of the infantry strike and the soldiers cannot be hurt. Let enemies fight back (soldiers with health, the sergeant and the towers targeting them), and let the player give simple orders (follow me / hold / attack the heart area).
+
+- **SR-387** *(Balance, observability)*: The prices and strengths are first guesses. Count purchases, uses and kills per item, level and difficulty (SR-252) and tune them; consider prices that scale with the difficulty's starting score, since easy (5 000) can buy far less than hard (30 000).
+
+- **SR-388** *(UX)*: Show a trajectory line for grenades, a target circle for the airstrike before it is called in, and a countdown in the HUD for the airstrike and the squad's time left; draw the bombers' shadows crossing the maze. The libGDX shop overlay layout has only been checked in tests, not by eye on every window size.
+
+- **SR-389** *(Model-driven)*: The squad's speed, fire interval and re-plan time, the throw landing margin and the airstrike's aim scatter are constants in code (`InfantrySquad`, `StrikePlanner`); move them into `items.ecore` so authors can tune them in the model. Also let the shop open only after chosen levels (a level attribute), and generate the DSL validator's shop literal lists from `shop.ecore` instead of keeping a copy.
+
+- **SR-390** *(MDD, FreeMarker)*: `shop.xmi` is rendered with FreeMarker but `levels.xmi` is still built with a StringBuilder in `MazeDslGenerator.levelsXmi`; move it to a `levels.xmi.ftlx` template too, and run the generation in the build (SR-310) instead of on demand.
+
+- **SR-391** *(DDD)*: The shop is a bounded context of its own (catalogue, purchase, wallet). Give the score that can be spent a value object (`Credits`) instead of an `int` in `SavePoint`, raise a domain event (`ItemPurchased`) that the HUD, sounds and statistics subscribe to, and keep `LevelShop` as the aggregate that guards the rules (one boost of a kind, no negative credits).
+
+- **SR-392** *(12-factor)*: The shop prices and strike numbers are baked into resources; allow an override file or environment variable for balancing on a test server without a rebuild, and keep the savepoint (with its purchases) in a configurable location (SR-371).
+
+- **SR-393** *(Observability)*: Log every purchase and every strike call (structured: item, price, credits before and after, level, difficulty) and expose counters for blasts, soldier rounds and kills by weapon, so balancing and bug reports can see what happened.
+
+- **SR-394** *(Testing)*: Add a headless parity test that drives the same grenade, airstrike seed and squad seed through both frontends and compares the blasts and kills, like the movement parity tests (SR-1).

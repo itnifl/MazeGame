@@ -13,6 +13,7 @@ import main.game.maze.dsl.mazeDsl.LootTableConfig;
 import main.game.maze.dsl.mazeDsl.MazeDslPackage;
 import main.game.maze.dsl.mazeDsl.OpponentConfig;
 import main.game.maze.dsl.mazeDsl.PatrolConfig;
+import main.game.maze.dsl.mazeDsl.ShopConfig;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -43,6 +44,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getPatrols <em>Patrols</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLootTables <em>Loot Tables</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getLevels <em>Levels</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.GameConfigurationImpl#getShop <em>Shop</em>}</li>
  * </ul>
  *
  * @generated
@@ -128,6 +130,16 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected EList<LevelConfig> levels;
+
+  /**
+   * The cached value of the '{@link #getShop() <em>Shop</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getShop()
+   * @generated
+   * @ordered
+   */
+  protected ShopConfig shop;
 
   /**
    * <!-- begin-user-doc -->
@@ -306,6 +318,56 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
    * @generated
    */
   @Override
+  public ShopConfig getShop()
+  {
+    return shop;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetShop(ShopConfig newShop, NotificationChain msgs)
+  {
+    ShopConfig oldShop = shop;
+    shop = newShop;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MazeDslPackage.GAME_CONFIGURATION__SHOP, oldShop, newShop);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setShop(ShopConfig newShop)
+  {
+    if (newShop != shop)
+    {
+      NotificationChain msgs = null;
+      if (shop != null)
+        msgs = ((InternalEObject)shop).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.GAME_CONFIGURATION__SHOP, null, msgs);
+      if (newShop != null)
+        msgs = ((InternalEObject)newShop).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.GAME_CONFIGURATION__SHOP, null, msgs);
+      msgs = basicSetShop(newShop, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.GAME_CONFIGURATION__SHOP, newShop, newShop));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -322,6 +384,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return ((InternalEList<?>)getLootTables()).basicRemove(otherEnd, msgs);
       case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
         return ((InternalEList<?>)getLevels()).basicRemove(otherEnd, msgs);
+      case MazeDslPackage.GAME_CONFIGURATION__SHOP:
+        return basicSetShop(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -350,6 +414,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return getLootTables();
       case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
         return getLevels();
+      case MazeDslPackage.GAME_CONFIGURATION__SHOP:
+        return getShop();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -391,6 +457,9 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         getLevels().clear();
         getLevels().addAll((Collection<? extends LevelConfig>)newValue);
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__SHOP:
+        setShop((ShopConfig)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -426,6 +495,9 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
       case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
         getLevels().clear();
         return;
+      case MazeDslPackage.GAME_CONFIGURATION__SHOP:
+        setShop((ShopConfig)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -454,6 +526,8 @@ public class GameConfigurationImpl extends MinimalEObjectImpl.Container implemen
         return lootTables != null && !lootTables.isEmpty();
       case MazeDslPackage.GAME_CONFIGURATION__LEVELS:
         return levels != null && !levels.isEmpty();
+      case MazeDslPackage.GAME_CONFIGURATION__SHOP:
+        return shop != null;
     }
     return super.eIsSet(featureID);
   }

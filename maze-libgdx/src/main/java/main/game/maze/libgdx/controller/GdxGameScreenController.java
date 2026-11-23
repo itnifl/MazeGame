@@ -1,6 +1,7 @@
 package main.game.maze.libgdx.controller;
 
 import main.game.maze.libgdx.helper.GdxWeaponSupport;
+import main.game.maze.libgdx.helper.GdxStrikeSupport;
 import main.game.maze.game.score.PlayerIds;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
@@ -320,11 +321,14 @@ public final class GdxGameScreenController extends ApplicationAdapter {
 
     private void configureModeRouting() {
         winOverlayController.setRestartLevelAction(this::restartCurrentLevel);
+        // the shop between levels sells against the savepoint of the next level (paid with the score carried into it)
+        winOverlayController.setShop(new GdxShopOverlayController(new main.game.maze.game.shop.ShopMenu(
+                new main.game.maze.game.shop.LevelShop(main.game.maze.game.shop.ShopCatalogLoader.loadDefault(), levelProgress))));
         modeRouter
             .register(() -> overlayModeCoordinator.updateHighScores(() -> requestReturnToMenu(false)))
             .register(() -> overlayModeCoordinator.updateWon(
                 hudCamera,
-                this::currentScore,
+                this::displayedScore,
                 () -> requestReturnToMenu(false),
                 this::openHighScoresFromWin,
                 this::startNextLevel))
@@ -505,6 +509,11 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             startPulseCharge();   // it takes two seconds to energy up before the beam leaves; nothing is spent yet
             return;
         }
+        if (worldModel.arsenal().selected() == Weapon.LIFE_REFILL && worldModel.arsenal().count(Weapon.LIFE_REFILL) > 0
+                && !GdxStrikeSupport.canRefillLife(combatState)) {
+            flashStatus(main.game.maze.game.items.PickupEffects.HEALTH_ALREADY_FULL, 1.6f);   // kept for when it is needed
+            return;
+        }
         Weapon used = worldModel.arsenal().use();
         if (used == null) {
             AudioEngine.get().play(WEAPON_SWITCH_SOUND);
@@ -512,6 +521,29 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             return;
         }
         PickupCatalog catalog = worldModel.pickupField().catalog();
+        if (main.game.maze.game.strike.StrikeWeapons.handles(used)) {
+            // grenades, the fat bomb and the strikes: planned by the shared rules, set off in updateCombat
+            flashStatus(GdxStrikeSupport.use(worldModel, maze, player, used, pickupSpawnPoints), 2.0f);
+            return;
+        }
+        switch (used) {
+            case BUNKER_BUSTER -> setOff(GdxStrikeSupport.fireBunkerBuster(worldModel, animatedEnemies, maze, player,
+                    catalog.spec(PickupKind.BUNKER_BUSTER), PlayerIds.LOCAL_PLAYER));
+            case LIFE_REFILL -> {
+                GdxStrikeSupport.refillLife(worldModel, combatState);
+                flashStatus("Health filled up", 1.2f);
+            }
+            default -> useClassicWeapon(used, catalog);
+        }
+    }
+
+    /** A blast of a shop weapon (screen space), with the flames, boom and shake of the bomb, credited to the player. */
+    private void setOff(GdxStrikeSupport.Blast blast) {
+        detonateBlast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+    }
+
+    /** The weapons from before the shop: bomb, laser, sledgehammer, gatling gun and pulse beam cannon. */
+    private void useClassicWeapon(Weapon used, PickupCatalog catalog) {
         switch (used) {
             case BOMB -> {
                 pendingPlayerBombs.add(new PendingPlayerBomb(player.x(), player.y(), PLAYER_BOMB_FUSE_SECONDS));
@@ -524,6 +556,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             case GATLING_GUN -> GdxWeaponSupport.fireLaser(worldModel, animatedEnemies, maze, player,
                     catalog.spec(PickupKind.GATLING_GUN), PlayerIds.LOCAL_PLAYER);
             case PULSE_CANNON -> firePulseBeam();
+            default -> throw new IllegalStateException("no use defined for " + used);
         }
     }
 
@@ -604,6 +637,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     void updateCombat(float dt) {
         combatFrameDead = GdxGameCombatAndEnemyFlowSupport.updateCombat(dt, player, combatState, animatedEnemies, worldModel);
         tickPlayerBombs(dt);
+        // grenades, fat bombs and airstrike bombs whose fuse is out; the soldiers of the infantry strike fire
+        GdxStrikeSupport.tick(worldModel, animatedEnemies, maze, dt, PlayerIds.LOCAL_PLAYER).forEach(this::setOff);
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         sergeantSupport.tick(worldModel, animatedEnemies, maze, player, combatState, levelProgress.current().sergeant(), dt);
@@ -696,7 +731,10 @@ public final class GdxGameScreenController extends ApplicationAdapter {
     }
 
     private void detonatePlayerBomb(float x, float y) {
-        detonateBlast(x, y, playerBombDamage, PLAYER_FLAME_RANGE, true, "Bomb");
+        // the "extra long flames" bought in the shop make the bomb reach further and hit harder this level
+        var boosts = worldModel.boosts();
+        detonateBlast(x, y, boosts.boostedBombDamage(playerBombDamage), (float) boosts.boostedBombRange(PLAYER_FLAME_RANGE),
+                true, "Bomb");
     }
 
     /**
@@ -772,6 +810,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
             float alpha = Math.max(0.35f, Math.min(1f, bomb.fuseSecondsRemaining() / PLAYER_BOMB_FUSE_SECONDS));
             worldModel.bombFuseGlows().add(new BombFuseGlow(bomb.x(), bomb.y(), 8f, alpha));
         }
+        GdxStrikeSupport.addFuseGlows(worldModel, maze, enemyAnimationClock);
 
         worldModel.fireBlasts().clear();
         for (ActivePlayerFireBlast active : activePlayerFireBlasts) {
@@ -816,6 +855,20 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         return GdxGameCombatAndEnemyFlowSupport.shouldTriggerWin(session, combatFrameDead, player, worldModel);
     }
 
+    /**
+     * The score on the screen: on the win screen of a level with a next one, the score carried into it, which is what is
+     * left after shopping (it is also what Save Score saves); otherwise the live score.
+     */
+    int displayedScore() {
+        if (session.mode() == GameMode.WON) {
+            var next = levelProgress.pendingSavePoint();
+            if (next.isPresent()) {
+                return next.get().score();
+            }
+        }
+        return currentScore();
+    }
+
     void triggerWin() {
         GdxGameCombatAndEnemyFlowSupport.triggerWin(
                 session,
@@ -857,7 +910,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 showHintInfo,
                 pathHintRemainingSeconds(),
                 showSpanningTreeInfo,
-                currentScore(),
+                displayedScore(),
                 currentBreakdown(),
                 hudLayout));
     }
@@ -994,6 +1047,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         }
         sergeantSupport.reset();
         pulseCharge.cancel();
+        worldModel.strikes().reset();
+        worldModel.setBoosts(levelProgress.boosts());   // what was bought in the shop for this level
         if (worldModel.lives().remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once
         }

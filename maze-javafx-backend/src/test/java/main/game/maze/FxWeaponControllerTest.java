@@ -41,6 +41,7 @@ class FxWeaponControllerTest {
         PlayerCharacter player = new PlayerCharacter(null, 0, 0, null);
         final List<double[]> bombs = new ArrayList<>();
         final List<String> messages = new ArrayList<>();
+        final List<String> blasts = new ArrayList<>();
         int arsenalChanges;
 
 
@@ -52,6 +53,22 @@ class FxWeaponControllerTest {
         @Override public void redrawMaze() { }
         @Override public void showMessage(String text) { messages.add(text); }
         @Override public void arsenalChanged() { arsenalChanges++; }
+        @Override public int boardHeight() { return 600; }
+        @Override public void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
+            blasts.add(label);
+        }
+    }
+
+    /** killCredit animates a dying enemy, which needs the JavaFX toolkit; the test must not rely on another test starting it. */
+    @org.junit.jupiter.api.BeforeAll
+    static void initFx() throws Exception {
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+        try {
+            javafx.application.Platform.startup(latch::countDown);
+        } catch (IllegalStateException alreadyStarted) {
+            latch.countDown();
+        }
+        assertTrue(latch.await(5, java.util.concurrent.TimeUnit.SECONDS), "JavaFX startup timed out");
     }
 
     private RecordingHost host;
@@ -274,5 +291,58 @@ class FxWeaponControllerTest {
         int before = weapons.arsenal().count(Weapon.PULSE_CANNON);
         weapons.grantLastLifeGift(null);
         assertEquals(before, weapons.arsenal().count(Weapon.PULSE_CANNON));
+    }
+
+    @Test
+    @DisplayName("shop weapons: a thrown grenade goes off after its fuse through the game screen's blast")
+    void thrownGrenadeGoesOff() {
+        weapons.arsenal().add(Weapon.GRENADE, 2);
+        weapons.arsenal().select(Weapon.GRENADE);
+        weapons.useWeapon();
+        assertEquals(1, weapons.arsenal().count(Weapon.GRENADE));
+        assertTrue(host.blasts.isEmpty(), "not yet: the fuse burns");
+        weapons.tick(1_000_000_000L);
+        weapons.tick(4_000_000_000L);   // three seconds later: past the 1.2 s fuse
+        assertEquals(List.of("Grenade"), host.blasts);
+        assertTrue(host.messages.contains("Grenade thrown"));
+    }
+
+    @Test
+    @DisplayName("shop weapons: the airstrike drops all its bombs, the fat bomb goes off once")
+    void airstrikeAndFatBomb() {
+        weapons.arsenal().add(Weapon.AIRSTRIKE, 1);
+        weapons.arsenal().add(Weapon.FAT_BOMB, 1);
+        weapons.arsenal().select(Weapon.AIRSTRIKE);
+        weapons.useWeapon();
+        weapons.arsenal().select(Weapon.FAT_BOMB);
+        weapons.useWeapon();
+        weapons.tick(1_000_000_000L);
+        weapons.tick(11_000_000_000L);
+        int bombs = PickupCatalogLoader.loadDefault().spec(PickupKind.AIRSTRIKE).units();
+        assertEquals(bombs, host.blasts.stream().filter("Airstrike"::equals).count());
+        assertEquals(1, host.blasts.stream().filter("Fat bomb"::equals).count());
+    }
+
+    @Test
+    @DisplayName("shop weapons: the extra life fills the health bar, and is kept when health is already full")
+    void lifeRefill() {
+        weapons.arsenal().add(Weapon.LIFE_REFILL, 3);
+        weapons.arsenal().select(Weapon.LIFE_REFILL);
+        weapons.useWeapon();
+        assertEquals(3, weapons.arsenal().count(Weapon.LIFE_REFILL), "full health: not spent");
+        assertTrue(host.messages.contains(main.game.maze.game.items.PickupEffects.HEALTH_ALREADY_FULL));
+        host.player.setHitPoints(1);
+        weapons.useWeapon();
+        assertEquals(2, weapons.arsenal().count(Weapon.LIFE_REFILL));
+        assertEquals(host.player.getMaxHitPoints(), host.player.getHitPoints(), "the bar is full");
+    }
+
+    @Test
+    @DisplayName("the shop's extra long shield makes a shield cube last longer this level")
+    void shieldBoost() {
+        weapons.setBoosts(main.game.maze.game.level.LevelBoosts.NONE.withShield(3));
+        assertEquals(3.0, weapons.boosts().shieldDurationFactor(), 1e-9);
+        weapons.setBoosts(null);
+        assertEquals(main.game.maze.game.level.LevelBoosts.NONE, weapons.boosts());
     }
 }

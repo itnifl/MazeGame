@@ -27,6 +27,8 @@ import main.game.maze.dsl.mazeDsl.PatrolZoneConfig;
 import main.game.maze.dsl.mazeDsl.PortalGhostConfig;
 import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
+import main.game.maze.dsl.mazeDsl.ShopConfig;
+import main.game.maze.dsl.mazeDsl.ShopItemConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
@@ -120,6 +122,12 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case MazeDslPackage.SERGEANT_CONFIG:
 				sequence_SergeantConfig(context, (SergeantConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.SHOP_CONFIG:
+				sequence_ShopConfig(context, (ShopConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.SHOP_ITEM_CONFIG:
+				sequence_ShopItemConfig(context, (ShopItemConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.TELEPORT_RULES_CONFIG:
 				sequence_TeleportRulesConfig(context, (TeleportRulesConfig) semanticObject); 
@@ -224,7 +232,8 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         opponents+=OpponentConfig* 
 	 *         patrols+=PatrolConfig* 
 	 *         lootTables+=LootTableConfig* 
-	 *         levels+=LevelConfig*
+	 *         levels+=LevelConfig* 
+	 *         shop=ShopConfig?
 	 *     )
 	 * </pre>
 	 */
@@ -616,6 +625,42 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * </pre>
 	 */
 	protected void sequence_SergeantConfig(ISerializationContext context, SergeantConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ShopConfig returns ShopConfig
+	 *
+	 * Constraint:
+	 *     items+=ShopItemConfig+
+	 * </pre>
+	 */
+	protected void sequence_ShopConfig(ISerializationContext context, ShopConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ShopItemConfig returns ShopItemConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         kind=ValidID 
+	 *         displayName=STRING 
+	 *         tier=ValidID 
+	 *         price=INT 
+	 *         amount=INT_OBJECT? 
+	 *         factor=DOUBLE_OBJECT? 
+	 *         description=STRING?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_ShopItemConfig(ISerializationContext context, ShopItemConfig semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

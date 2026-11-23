@@ -34,6 +34,12 @@
       <artifactId>main.game.maze.opponents</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- FreeMarker (exported by the generator bundle): MazeDslGenerator renders shop.xmi from a template -->
+    <dependency>
+      <groupId>main.game.maze</groupId>
+      <artifactId>maze-generator.freemarker</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

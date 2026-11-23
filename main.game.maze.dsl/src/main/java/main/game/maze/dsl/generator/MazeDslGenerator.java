@@ -48,6 +48,11 @@ public class MazeDslGenerator extends AbstractGenerator {
                     );
                 }
 
+                // Generate the shop model instance (xmi/shop/shop.xmi, see shop.ecore) with its FreeMarker template
+                if (game.getShop() != null) {
+                    fsa.generateFile("xmi/" + baseName + "-shop.xmi", shopXmi(game));
+                }
+
                 // Generate difficulty configuration
                 if (game.getDifficulty() != null) {
                     fsa.generateFile(
@@ -440,6 +445,55 @@ public class MazeDslGenerator extends AbstractGenerator {
      * {@code levels.xmi}. A value the source leaves out is left out here too, so the model's defaults and a level's
      * {@code basedOn} apply exactly as if the XMI had been written by hand.
      */
+    /** FreeMarker setup for the model-to-text templates next to this class; .ftlx templates escape XML on their own. */
+    private static final freemarker.template.Configuration TEMPLATES = templates();
+
+    private static freemarker.template.Configuration templates() {
+        var configuration = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_32);
+        configuration.setClassForTemplateLoading(MazeDslGenerator.class, "templates");
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setLocale(Locale.ROOT);
+        configuration.setRecognizeStandardFileExtensions(true);   // .ftlx: XML output format, values escaped
+        configuration.setTemplateExceptionHandler(freemarker.template.TemplateExceptionHandler.RETHROW_HANDLER);
+        configuration.setLogTemplateExceptions(false);
+        return configuration;
+    }
+
+    /**
+     * The shop model instance ({@code xmi/shop/shop.xmi}, an instance of {@code shop.ecore}) for the game's {@code shop}
+     * section, rendered with the FreeMarker template {@code templates/shop.xmi.ftlx}. A value that is not written in the DSL
+     * (amount, factor, description) is left out, so the model's default applies.
+     */
+    public static String shopXmi(GameConfiguration game) {
+        java.util.List<java.util.Map<String, Object>> items = new java.util.ArrayList<>();
+        if (game.getShop() != null) {
+            for (ShopItemConfig item : game.getShop().getItems()) {
+                java.util.Map<String, Object> row = new java.util.HashMap<>();
+                row.put("kind", item.getKind());
+                row.put("displayName", item.getDisplayName());
+                row.put("tier", item.getTier());
+                row.put("price", item.getPrice());
+                if (item.getAmount() != null) {
+                    row.put("amount", item.getAmount());
+                }
+                if (item.getFactor() != null) {
+                    row.put("factor", item.getFactor());
+                }
+                if (item.getDescription() != null) {
+                    row.put("description", item.getDescription());
+                }
+                items.add(row);
+            }
+        }
+        try {
+            java.io.StringWriter out = new java.io.StringWriter();
+            TEMPLATES.getTemplate("shop.xmi.ftlx").process(java.util.Map.of("source", game.getName(), "items", items), out);
+            return out.toString();
+        } catch (java.io.IOException | freemarker.template.TemplateException e) {
+            throw new IllegalStateException("could not render shop.xmi from its template", e);
+        }
+    }
+
     public static String levelsXmi(GameConfiguration game) {
         StringBuilder x = new StringBuilder();
         x.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");

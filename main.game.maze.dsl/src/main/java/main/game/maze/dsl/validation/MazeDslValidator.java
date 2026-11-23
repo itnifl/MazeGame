@@ -91,6 +91,59 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
         }
     }
 
+    public static final String INVALID_SHOP_ITEM = "invalidShopItem";
+
+    /** The literals of {@code ShopItemKind} in {@code xmi/shop/shop.ecore}; the boosts are the first two. */
+    public static final java.util.List<String> SHOP_ITEM_KINDS = java.util.List.of("SHIELD_BOOST", "FLAME_BOOST", "GRENADE",
+            "PLASMA_GRENADE", "NUKE_GRENADE", "BUNKER_BUSTER", "FAT_BOMB", "AIRSTRIKE", "INFANTRY_STRIKE", "EXTRA_LIFE");
+    /** The literals of {@code ShopTier} in {@code xmi/shop/shop.ecore}. */
+    public static final java.util.List<String> SHOP_TIERS = java.util.List.of("CHEAP", "MEDIUM", "EXPENSIVE");
+
+    private static boolean isBoost(String kind) {
+        return "SHIELD_BOOST".equals(kind) || "FLAME_BOOST".equals(kind);
+    }
+
+    /**
+     * A shop item the game would refuse to load (see {@code ShopItem}) is an error in the DSL, so it is found before
+     * shop.xmi is written: an unknown kind or tier, a price that is not positive, a weapon without uses, a boost that does
+     * not boost.
+     */
+    @Check
+    public void checkShopItem(ShopItemConfig item) {
+        if (!SHOP_ITEM_KINDS.contains(item.getKind())) {
+            error("Unknown shop item " + item.getKind() + "; one of " + SHOP_ITEM_KINDS,
+                  MazeDslPackage.Literals.SHOP_ITEM_CONFIG__KIND, INVALID_SHOP_ITEM);
+        }
+        if (!SHOP_TIERS.contains(item.getTier())) {
+            error("Unknown tier " + item.getTier() + "; one of " + SHOP_TIERS,
+                  MazeDslPackage.Literals.SHOP_ITEM_CONFIG__TIER, INVALID_SHOP_ITEM);
+        }
+        if (item.getPrice() <= 0) {
+            error("A shop item must cost something", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__PRICE, INVALID_SHOP_ITEM);
+        }
+        if (isBoost(item.getKind())) {
+            if (item.getFactor() == null || item.getFactor() <= 1.0) {
+                error("A boost needs a factor above 1", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__FACTOR, INVALID_SHOP_ITEM);
+            }
+        } else if (item.getAmount() == null || item.getAmount() < 1) {
+            error("A weapon in the shop needs an amount of at least 1", MazeDslPackage.Literals.SHOP_ITEM_CONFIG__AMOUNT,
+                  INVALID_SHOP_ITEM);
+        }
+    }
+
+    /** Each item is sold once. */
+    @Check
+    public void checkShopHasNoDuplicates(ShopConfig shop) {
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 0; i < shop.getItems().size(); i++) {
+            ShopItemConfig item = shop.getItems().get(i);
+            if (!seen.add(item.getKind())) {
+                error("The shop sells " + item.getKind() + " twice", MazeDslPackage.Literals.SHOP_CONFIG__ITEMS, i,
+                      INVALID_SHOP_ITEM);
+            }
+        }
+    }
+
     /** 0 (or leaving it out) is the only way to say "no second ring"; a negative radius is a mistake, not a silent 0. */
     @Check
     public void checkSecondRing(MineRingConfig mines) {

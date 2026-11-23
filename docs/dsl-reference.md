@@ -595,6 +595,7 @@ level 3 "The Minefield" { basedOn 2  mines { ... }  portalGhost "Portal ghost" {
 level 6 "The Lava Streams" { basedOn 5  lastLifeWeapon PULSE_CANNON shots 6  lava { streams 2 width 46.0 bridges 2 bridgeLength 56.0 meander 95.0 wavelength 340.0 flowSpeed 34.0 glow 0.65 crust 0.45 deathSound "..." } }
 level 5 "The Builders" { basedOn 4  wallBuilder "Wall builder" { health 80 speed 55.0 sprite "..." buildSeconds 3.0 startRadius 4 blockRadius 1 spawnRadius 200.0 material WOOD_BASIC }  builders easy 2  builders normal 5  builders hard 10 }
 level 4 "The Guard Towers" { basedOn 3  mines { ... secondRing 118.0 ... }  guardTower "Guard tower" { health 1500 sightRange 650.0 wallsOver 3 rpgInterval 3.0 ... }  towers easy 2  towers normal 3  towers hard 4 }
+shop { item GRENADE "Grenades" tier CHEAP price 600 amount 5 description "..."  item SHIELD_BOOST "Extra long shield" tier CHEAP price 800 factor 3.0 }   // in shop.mazegame, rendered with FreeMarker into shop.xmi
 ```
 
 Values you leave out are "not set": a level built `basedOn` another takes them from it, otherwise the model's defaults apply.

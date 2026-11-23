@@ -34,6 +34,8 @@ import main.game.maze.dsl.mazeDsl.PortalGhostConfig;
 import main.game.maze.dsl.mazeDsl.ProjectileTypeEnum;
 import main.game.maze.dsl.mazeDsl.RangedSpecifics;
 import main.game.maze.dsl.mazeDsl.SergeantConfig;
+import main.game.maze.dsl.mazeDsl.ShopConfig;
+import main.game.maze.dsl.mazeDsl.ShopItemConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
@@ -238,6 +240,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass lavaConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass shopConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass shopItemConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -450,6 +466,17 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
   public EReference getGameConfiguration_Levels()
   {
     return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getGameConfiguration_Shop()
+  {
+    return (EReference)gameConfigurationEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2295,6 +2322,116 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getShopConfig()
+  {
+    return shopConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getShopConfig_Items()
+  {
+    return (EReference)shopConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getShopItemConfig()
+  {
+    return shopItemConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Kind()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_DisplayName()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Tier()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Price()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Amount()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Factor()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getShopItemConfig_Description()
+  {
+    return (EAttribute)shopItemConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLastLifeGiftConfig()
   {
     return lastLifeGiftConfigEClass;
@@ -2504,6 +2641,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__PATROLS);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LOOT_TABLES);
     createEReference(gameConfigurationEClass, GAME_CONFIGURATION__LEVELS);
+    createEReference(gameConfigurationEClass, GAME_CONFIGURATION__SHOP);
 
     importEClass = createEClass(IMPORT);
     createEAttribute(importEClass, IMPORT__IMPORT_URI);
@@ -2697,6 +2835,18 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__CRUST);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
 
+    shopConfigEClass = createEClass(SHOP_CONFIG);
+    createEReference(shopConfigEClass, SHOP_CONFIG__ITEMS);
+
+    shopItemConfigEClass = createEClass(SHOP_ITEM_CONFIG);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__KIND);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__DISPLAY_NAME);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__TIER);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__PRICE);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__AMOUNT);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__FACTOR);
+    createEAttribute(shopItemConfigEClass, SHOP_ITEM_CONFIG__DESCRIPTION);
+
     lastLifeGiftConfigEClass = createEClass(LAST_LIFE_GIFT_CONFIG);
     createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__WEAPON);
     createEAttribute(lastLifeGiftConfigEClass, LAST_LIFE_GIFT_CONFIG__SHOTS);
@@ -2760,6 +2910,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getGameConfiguration_Patrols(), this.getPatrolConfig(), null, "patrols", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_LootTables(), this.getLootTableConfig(), null, "lootTables", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGameConfiguration_Levels(), this.getLevelConfig(), null, "levels", null, 0, -1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getGameConfiguration_Shop(), this.getShopConfig(), null, "shop", null, 0, 1, GameConfiguration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(importEClass, Import.class, "Import", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getImport_ImportURI(), ecorePackage.getEString(), "importURI", null, 0, 1, Import.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2952,6 +3103,18 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLavaConfig_Glow(), ecorePackage.getEDoubleObject(), "glow", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_Crust(), ecorePackage.getEDoubleObject(), "crust", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(shopConfigEClass, ShopConfig.class, "ShopConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getShopConfig_Items(), this.getShopItemConfig(), null, "items", null, 0, -1, ShopConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(shopItemConfigEClass, ShopItemConfig.class, "ShopItemConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getShopItemConfig_Kind(), ecorePackage.getEString(), "kind", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_DisplayName(), ecorePackage.getEString(), "displayName", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_Tier(), ecorePackage.getEString(), "tier", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_Price(), ecorePackage.getEInt(), "price", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_Amount(), ecorePackage.getEIntegerObject(), "amount", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_Factor(), ecorePackage.getEDoubleObject(), "factor", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getShopItemConfig_Description(), ecorePackage.getEString(), "description", null, 0, 1, ShopItemConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lastLifeGiftConfigEClass, LastLifeGiftConfig.class, "LastLifeGiftConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLastLifeGiftConfig_Weapon(), ecorePackage.getEString(), "weapon", null, 0, 1, LastLifeGiftConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -56,6 +56,70 @@ public final class SoundEffectGenerator {
         write(dir, "gatling-burst.wav", gatlingBurst());
         write(dir, "sledgehammer-swing.wav", sledgehammerSwing());
         write(dir, "weapon-switch.wav", weaponSwitch());
+        // the shop between levels and its weapons (#164)
+        write(dir, "shop-buy.wav", shopBuy());
+        write(dir, "grenade-throw.wav", grenadeThrow());
+        write(dir, "airstrike-siren.wav", airstrikeSiren());
+        write(dir, "infantry-whistle.wav", infantryWhistle());
+    }
+
+    /** A purchase in the shop: a cash-register "ka-ching", a short thud and two bright bell notes. */
+    static double[] shopBuy() {
+        double[] out = buffer(0.5);
+        Random noise = new Random(11);
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double thud = (noise.nextDouble() * 2 - 1) * 0.5 * envelope(t, 0.001, 0.05);
+            double bell1 = Math.sin(2 * Math.PI * 1975.5 * t) * 0.45 * envelope(t - 0.06, 0.002, 0.25);
+            double bell2 = (Math.sin(2 * Math.PI * 2637.0 * t) + 0.4 * Math.sin(2 * Math.PI * 5274.0 * t))
+                    * 0.4 * envelope(t - 0.14, 0.002, 0.36);
+            out[i] = thud + bell1 + bell2;
+        }
+        return out;
+    }
+
+    /** A grenade thrown: a short whoosh of noise that rises and falls, and a metallic clink of the lever. */
+    static double[] grenadeThrow() {
+        double[] out = buffer(0.35);
+        Random noise = new Random(12);
+        double low = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            low += 0.25 * ((noise.nextDouble() * 2 - 1) - low);   // softened noise: air
+            double whoosh = low * Math.sin(Math.PI * Math.min(1, t / 0.28)) * 0.9;
+            double clink = Math.sin(2 * Math.PI * 3200 * t) * 0.35 * envelope(t, 0.001, 0.06);
+            out[i] = whoosh + clink;
+        }
+        return out;
+    }
+
+    /** The airstrike called in: an air-raid siren winding up and down, with the drone of the bombers under it. */
+    static double[] airstrikeSiren() {
+        double seconds = 2.4;
+        double[] out = buffer(seconds);
+        double phase = 0;
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double wind = 0.5 - 0.5 * Math.cos(2 * Math.PI * t / seconds);   // up and down once
+            phase += (380 + 520 * wind) / RATE;
+            double siren = (Math.sin(2 * Math.PI * phase) + 0.3 * Math.sin(4 * Math.PI * phase)) * 0.45;
+            double drone = Math.sin(2 * Math.PI * 62 * t) * Math.sin(2 * Math.PI * 64.5 * t) * 0.35;
+            out[i] = (siren + drone) * envelope(t, 0.15, seconds);
+        }
+        return out;
+    }
+
+    /** The infantry strike: a sergeant's two-tone whistle, the second note trilled. */
+    static double[] infantryWhistle() {
+        double[] out = buffer(0.9);
+        for (int i = 0; i < out.length; i++) {
+            double t = i / (double) RATE;
+            double first = Math.sin(2 * Math.PI * 2300 * t) * envelope(t, 0.01, 0.25);
+            double trill = 1 + 0.03 * Math.sin(2 * Math.PI * 28 * t);
+            double second = Math.sin(2 * Math.PI * 2900 * trill * t) * envelope(t - 0.3, 0.01, 0.6);
+            out[i] = 0.5 * (first + second);
+        }
+        return out;
     }
 
     static double[] pickupBomb() {

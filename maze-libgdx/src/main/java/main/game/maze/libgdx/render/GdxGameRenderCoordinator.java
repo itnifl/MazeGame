@@ -207,6 +207,10 @@ public final class GdxGameRenderCoordinator {
             floor.add(new SpriteVisual(remains.x(), remains.y(), remains.size(), 0f, false, remains.spritePath()));
         }
         floor.addAll(GdxWeaponSupport.pickupSprites(worldModel, input.maze(), input.enemyAnimationClock()));
+        if (input.player() != null) {
+            floor.addAll(main.game.maze.libgdx.helper.GdxStrikeSupport.soldierSprites(worldModel, input.maze(),
+                    input.player().halfSize() * 2f));   // the infantry strike's soldiers
+        }
         return floor;
     }
 

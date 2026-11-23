@@ -211,6 +211,10 @@ public class GameController implements Initializable, EnemyRegistrar {
         @Override public Pane board()                         { return gameBoard; }
         @Override public FxEnemyCoordinator enemies()         { return enemyCoordinator; }
         @Override public int boardWidth()                     { return App.getBoardMaxX(); }
+        @Override public int boardHeight()                    { return App.getBoardMaxY(); }
+        @Override public void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
+            blastAt(x, y, damage, radius, hurtsPlayer, label);
+        }
         @Override public void plantBomb(double x, double y)   { plantPlayerBomb(x, y); }
         @Override public void showMessage(String text)        { setHudMessage(text); }
         @Override public void arsenalChanged()                { updateBombHud(); }
@@ -457,9 +461,12 @@ public class GameController implements Initializable, EnemyRegistrar {
         if (gameBoard != null) {
             gameBoard.getChildren().remove(bomb.marker());
         }
+        // the "extra long flames" bought in the shop make the bomb reach further and hit harder this level
+        var boosts = weapons.boosts();
         blastAt(bomb.x(), bomb.y(),
-                playerCharacter != null ? playerCharacter.getFlameAttackDamage() : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION,
-                PLAYER_BOMB_RANGE, true, "Bomb");
+                boosts.boostedBombDamage(playerCharacter != null ? playerCharacter.getFlameAttackDamage()
+                        : (int) PLAYER_FLAME_DAMAGE_PER_DIRECTION),
+                boosts.boostedBombRange(PLAYER_BOMB_RANGE), true, "Bomb");
     }
 
     /**
@@ -791,6 +798,7 @@ public class GameController implements Initializable, EnemyRegistrar {
 
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
+        weapons.setBoosts(App.levelProgress.boosts());   // what was bought in the shop for this level
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());
         if (lives.remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once

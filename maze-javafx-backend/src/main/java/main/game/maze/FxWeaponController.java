@@ -27,6 +27,15 @@ import main.game.maze.game.level.LastLifeGiftSpec;
 import main.game.maze.game.items.PowerShield;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.items.WeaponHud;
+import main.game.maze.game.items.ShotEffects;
+import main.game.maze.game.level.LevelBoosts;
+import main.game.maze.game.strike.InfantrySquad;
+import main.game.maze.game.strike.ScheduledBlast;
+import main.game.maze.game.strike.StrikePlanner;
+import main.game.maze.game.strike.StrikeVisuals;
+import main.game.maze.game.strike.StrikeWeapons;
+import main.game.maze.javafx.render.FxStrikeLayer;
+import main.game.maze.mazeworld.flame.FlameTarget;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.score.KillLedger;
 import main.game.maze.game.score.PlayerIds;
@@ -73,7 +82,17 @@ public final class FxWeaponController {
         /** The pulse beam left the cannon: shake the screen. */
         default void impactShake() {
         }
+
+        /** Board height, for the airstrike's aim at the centre of the maze. */
+        int boardHeight();
+
+        /**
+         * A blast of a shop weapon at (x, y): flames that break walls and hurt enemies, the boom and the shake, credited
+         * to the player; it hurts the player too when {@code hurtsPlayer}.
+         */
+        void blast(double x, double y, int damage, double radius, boolean hurtsPlayer, String label);
     }
+
 
     static final String WEAPON_SWITCH_SOUND = "/main/game/maze/sounds/weapon-switch.wav";
     static final String OUT_OF_AMMO_MESSAGE = "Out of ammo - pick up weapons in the maze";
@@ -93,6 +112,12 @@ public final class FxWeaponController {
     private PlayerLives lives = new PlayerLives(1);
     private List<Point2D> spawnPoints = List.of();
     private long lastTickNanos = -1;
+    /** Grenades, fat bombs, airstrikes and the infantry strike (shared rules). */
+    private final StrikeWeapons strikes;
+    private final FxStrikeLayer strikeLayer;
+    /** The boosts bought in the shop for this level. */
+    private LevelBoosts boosts = LevelBoosts.NONE;
+    private GameMazeWorld world;
 
     public FxWeaponController(Host host) {
         this(host, new PickupField(PickupCatalogLoader.loadDefault(), new Random()), new PowerShield());
@@ -103,6 +128,17 @@ public final class FxWeaponController {
         this.pickupField = pickupField;
         this.shield = shield;
         this.pickupLayer = new FxPickupLayer(host::board);
+        this.strikes = new StrikeWeapons(pickupField.catalog(), new Random());
+        this.strikeLayer = new FxStrikeLayer(host::board);
+    }
+
+    /** The boosts bought in the shop for the level that starts (longer shields, stronger bombs). */
+    public void setBoosts(LevelBoosts boosts) {
+        this.boosts = boosts == null ? LevelBoosts.NONE : boosts;
+    }
+
+    public LevelBoosts boosts() {
+        return boosts;
     }
 
     /** New game: the difficulty's bombs, no items, shield or kills yet; items spawn in this level's corridors. */
@@ -125,6 +161,9 @@ public final class FxWeaponController {
         healFeedback.reset();
         lastTickNanos = -1;
         pulseCharge.cancel();
+        strikes.reset();
+        strikeLayer.clear();
+        this.world = world;
         player.setShield(shield::isActive);
         spawnPoints = pickupField.spawnPointsOf(world);
         host.arsenalChanged();
@@ -140,6 +179,11 @@ public final class FxWeaponController {
             startPulseCharge();   // it takes two seconds to energy up before the beam leaves; nothing is spent yet
             return;
         }
+        if (arsenal.selected() == Weapon.LIFE_REFILL && arsenal.count(Weapon.LIFE_REFILL) > 0
+                && PickupEffects.lifeRefillAmount(player.getHitPoints(), player.getMaxHitPoints()) == 0) {
+            host.showMessage(PickupEffects.HEALTH_ALREADY_FULL);   // kept for when it is needed
+            return;
+        }
         Weapon used = arsenal.use();
         if (used == null) {
             AudioEngine.get().play(WEAPON_SWITCH_SOUND);
@@ -149,13 +193,45 @@ public final class FxWeaponController {
         host.arsenalChanged();
         double[] center = centerOf(player);
         PickupCatalog catalog = pickupField.catalog();
+        if (StrikeWeapons.handles(used)) {
+            useStrike(used, player, center);
+            return;
+        }
         switch (used) {
             case BOMB -> host.plantBomb(center[0], center[1]);
-            case LASER_RIFLE -> fireLaser(player, center, catalog.spec(PickupKind.LASER_RIFLE));
+            case LASER_RIFLE, GATLING_GUN -> fireLaser(player, center, catalog.spec(used.pickup()));
             case SLEDGEHAMMER -> swingSledgehammer(player, center, catalog.spec(PickupKind.SLEDGEHAMMER));
-            case GATLING_GUN -> fireLaser(player, center, catalog.spec(PickupKind.GATLING_GUN));
             case PULSE_CANNON -> firePulseBeam(player, center, catalog.spec(PickupKind.PULSE_CANNON));
+            case BUNKER_BUSTER -> fireBunkerBuster(player, center, catalog.spec(PickupKind.BUNKER_BUSTER));
+            case LIFE_REFILL -> refillLife(player, catalog.spec(PickupKind.LIFE_REFILL));
+            default -> throw new IllegalStateException("no use defined for " + used);
         }
+    }
+
+    /** Grenades, the fat bomb and the strikes: the shared {@link StrikeWeapons} plans them, {@link #tick} sets them off. */
+    private void useStrike(Weapon weapon, PlayerCharacter player, double[] center) {
+        int[] dir = facingDirection(player.getFacing());
+        StrikeWeapons.Use use = strikes.use(weapon, new StrikeWeapons.Launch(center[0], center[1], dir[0], dir[1],
+                world != null ? world.getMazeVectors() : List.of(), host.boardWidth(), host.boardHeight(), spawnPoints,
+                boosts));
+        playUseSound(use.spec());
+        host.showMessage(use.message());
+    }
+
+    /** The bunker buster: a rocket that goes through the walls it is strong enough for, and a blast where it stops. */
+    private void fireBunkerBuster(PlayerCharacter player, double[] center, PickupSpec buster) {
+        int[] dir = facingDirection(player.getFacing());
+        double reach = fireLaser(player, center, buster);
+        ScheduledBlast impact = StrikePlanner.bunkerBusterImpact(buster, center[0], center[1], dir[0], dir[1], reach);
+        host.blast(impact.x(), impact.y(), impact.damage(), impact.radius(), impact.hurtsPlayer(), impact.label());
+    }
+
+    /** The extra life of the shop: the health bar is filled. */
+    private void refillLife(PlayerCharacter player, PickupSpec life) {
+        player.heal(PickupEffects.lifeRefillAmount(player.getHitPoints(), player.getMaxHitPoints()));
+        healFeedback.trigger();
+        playUseSound(life);
+        host.showMessage("Health filled up");
     }
 
     private void startPulseCharge() {
@@ -257,7 +333,7 @@ public final class FxWeaponController {
         pickupField.tick(dt, host.boardWidth(), spawnPoints, center[0], center[1]);
         for (Pickup pickup : pickupField.collect(center[0], center[1], HALF_PLAYER)) {
             PickupSpec spec = pickupField.catalog().spec(pickup.kind());
-            PickupEffects.apply(spec, arsenal, shield, player::heal, player.getMaxHitPoints(), lives);
+            PickupEffects.apply(spec, arsenal, shield, player::heal, player.getMaxHitPoints(), lives, boosts);
             AudioEngine.get().play(spec.pickupSound());
             if (pickup.kind() == PickupKind.HEART) {
                 healFeedback.trigger();   // flash + arrow over the head
@@ -267,6 +343,7 @@ public final class FxWeaponController {
             host.arsenalChanged();
         }
         healFeedback.tick(dt);
+        tickStrikes(dt, nowNanos / 1e9);
         if (arsenal.tickBombRegen(dt) > 0) {
             host.arsenalChanged();
         }
@@ -334,9 +411,12 @@ public final class FxWeaponController {
     /** Level teardown: removes the item sprites, the weapon in hand and the shield bubble. */
     public void dispose() {
         pickupLayer.clear();
+        strikeLayer.clear();
+        strikes.reset();
     }
 
-    private void fireLaser(PlayerCharacter player, double[] center, PickupSpec laser) {
+    /** @return how far the shot reached */
+    private double fireLaser(PlayerCharacter player, double[] center, PickupSpec laser) {
         int[] dir = facingDirection(player.getFacing());
         FxEnemyCoordinator.LaserHit hit = host.enemies().fireLaser(center[0], center[1], dir[0], dir[1], laser,
                 LaserBeamEngine.PLAYER_BEAM_HALF_WIDTH, PlayerIds.LOCAL_PLAYER);
@@ -350,6 +430,30 @@ public final class FxWeaponController {
             host.redrawMaze();
         }
         playUseSound(laser);
+        return reach;
+    }
+
+    /** Per frame: the fuses burn down and their blasts go off; the soldiers fire and walk; both are drawn. */
+    private void tickStrikes(double dt, double clockSeconds) {
+        InfantrySquad.Terrain terrain = world != null && world.getNavigationGraph() != null
+                ? InfantrySquad.Terrain.of(world) : null;
+        List<FlameTarget> enemies = strikes.squadActive() ? host.enemies().livingTargets(PlayerIds.LOCAL_PLAYER) : List.of();
+        StrikeWeapons.Frame frame = strikes.tick(dt, enemies, terrain);
+        for (ScheduledBlast blast : frame.blasts()) {
+            host.blast(blast.x(), blast.y(), blast.damage(), blast.radius(), blast.hurtsPlayer(), blast.label());
+        }
+        for (InfantrySquad.Round round : frame.rounds()) {
+            playEffect(ShotEffects.enemyRound(round.fromX(), round.fromY(), round.toX(), round.toY()));
+            AudioEngine.get().playRateLimited(StrikeVisuals.SOLDIER_FIRE_SOUND, StrikeVisuals.SOLDIER_FIRE_SOUND_KEY,
+                    StrikeVisuals.SOLDIER_FIRE_COOLDOWN_MILLIS);
+        }
+        strikeLayer.showSoldiers(strikes.soldiers(), StageConstants.PlayerCharacterXYSize * StrikeVisuals.SOLDIER_SIZE_FACTOR);
+        strikeLayer.showFuses(strikes.pendingBlasts(), clockSeconds);
+    }
+
+    /** Whether the infantry strike's soldiers are in the maze now. */
+    public boolean squadActive() {
+        return strikes.squadActive();
     }
 
     private void swingSledgehammer(PlayerCharacter player, double[] center, PickupSpec sledge) {

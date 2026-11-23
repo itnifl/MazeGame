@@ -64,6 +64,14 @@ public final class ArsenalHud {
             case SLEDGEHAMMER -> "Sledge";
             case GATLING_GUN -> "Gatling";
             case PULSE_CANNON -> "Pulse";
+            case GRENADE -> "Grenade";
+            case PLASMA_GRENADE -> "Plasma";
+            case NUKE_GRENADE -> "Nuke";
+            case BUNKER_BUSTER -> "Buster";
+            case FAT_BOMB -> "Fat bomb";
+            case AIRSTRIKE -> "Airstrike";
+            case INFANTRY_STRIKE -> "Infantry";
+            case LIFE_REFILL -> "Life";
         };
     }
 
@@ -78,6 +86,14 @@ public final class ArsenalHud {
             case EXTRA_LIFE -> new float[] {1.0f, 0.85f, 0.2f};
             case GATLING_GUN -> new float[] {0.95f, 0.8f, 0.3f};
             case PULSE_CANNON -> new float[] {0.5f, 0.85f, 1.0f};
+            case GRENADE -> new float[] {0.55f, 0.75f, 0.35f};
+            case PLASMA_GRENADE -> new float[] {0.75f, 0.4f, 1.0f};
+            case NUKE_GRENADE -> new float[] {0.85f, 1.0f, 0.2f};
+            case BUNKER_BUSTER -> new float[] {1.0f, 0.5f, 0.2f};
+            case FAT_BOMB -> new float[] {1.0f, 0.45f, 0.1f};
+            case AIRSTRIKE -> new float[] {0.7f, 0.8f, 0.9f};
+            case INFANTRY_STRIKE -> new float[] {0.45f, 0.7f, 0.35f};
+            case LIFE_REFILL -> new float[] {1.0f, 0.3f, 0.4f};
         };
     }
 }

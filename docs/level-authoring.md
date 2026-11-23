@@ -227,3 +227,33 @@ To try a variation without touching the shipped file, copy it under `src/test/re
 
 Add the attribute to `levels.ecore` (with a default and a `documentation` annotation), read it in `LevelCatalogLoader`,
 put it on `LevelSpec`, and use it from the shared code both frontends call. Keep per-frontend code to wiring.
+
+## The shop between levels
+
+What the shop sells (issue #164) is written in the same DSL, in its own file
+`maze-common-backend/src/main/resources/xmi/shop/shop.mazegame`:
+
+```
+game MazeGameShop {
+    shop {
+        item GRENADE "Grenades" tier CHEAP price 600 amount 5
+            description "Thrown ahead of you, they go off after a moment"
+        item SHIELD_BOOST "Extra long shield" tier CHEAP price 800 factor 3.0
+        ...
+    }
+}
+```
+
+`kind` is a `ShopItemKind` of `shop.ecore` (`SHIELD_BOOST`, `FLAME_BOOST`, `GRENADE`, `PLASMA_GRENADE`, `NUKE_GRENADE`,
+`BUNKER_BUSTER`, `FAT_BOMB`, `AIRSTRIKE`, `INFANTRY_STRIKE`, `EXTRA_LIFE`), `tier` is `CHEAP`, `MEDIUM` or `EXPENSIVE`.
+Weapons need an `amount` (uses per purchase), boosts a `factor` above 1. The validator reports an unknown kind or tier,
+a price that is not positive and an item sold twice. The generator renders the file with the FreeMarker template
+`main.game.maze.dsl/.../generator/templates/shop.xmi.ftlx` into `shop.xmi`; regenerate it with
+
+```
+MAZE_SHOP_REGENERATE=true mvn -o install -pl main.game.maze.dsl,main.game.maze.dsl.ide,main.game.maze.dsl.tests -am
+```
+
+(`MazeDslShopTest` fails when `shop.xmi` and `shop.mazegame` say different things). After a grammar change add
+`-Dxtext.codegen.skip=false` to regenerate the Xtext sources. The strength of each shop weapon (damage, range, blast
+radius, fuse, units, pierce power, sprite, sounds) is in `xmi/items/items.xmi`.

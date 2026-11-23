@@ -132,13 +132,22 @@ public interface MazeDslPackage extends EPackage
   int GAME_CONFIGURATION__LEVELS = 6;
 
   /**
+   * The feature id for the '<em><b>Shop</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAME_CONFIGURATION__SHOP = 7;
+
+  /**
    * The number of structural features of the '<em>Game Configuration</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GAME_CONFIGURATION_FEATURE_COUNT = 7;
+  int GAME_CONFIGURATION_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -1921,6 +1930,116 @@ public interface MazeDslPackage extends EPackage
   int LAVA_CONFIG_FEATURE_COUNT = 10;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopConfig()
+   * @generated
+   */
+  int SHOP_CONFIG = 26;
+
+  /**
+   * The feature id for the '<em><b>Items</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG__ITEMS = 0;
+
+  /**
+   * The number of structural features of the '<em>Shop Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_CONFIG_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
+   * @generated
+   */
+  int SHOP_ITEM_CONFIG = 27;
+
+  /**
+   * The feature id for the '<em><b>Kind</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__KIND = 0;
+
+  /**
+   * The feature id for the '<em><b>Display Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__DISPLAY_NAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__TIER = 2;
+
+  /**
+   * The feature id for the '<em><b>Price</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__PRICE = 3;
+
+  /**
+   * The feature id for the '<em><b>Amount</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__AMOUNT = 4;
+
+  /**
+   * The feature id for the '<em><b>Factor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__FACTOR = 5;
+
+  /**
+   * The feature id for the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG__DESCRIPTION = 6;
+
+  /**
+   * The number of structural features of the '<em>Shop Item Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SHOP_ITEM_CONFIG_FEATURE_COUNT = 7;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1928,7 +2047,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
    * @generated
    */
-  int LAST_LIFE_GIFT_CONFIG = 26;
+  int LAST_LIFE_GIFT_CONFIG = 28;
 
   /**
    * The feature id for the '<em><b>Weapon</b></em>' attribute.
@@ -1965,7 +2084,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 27;
+  int TELEPORT_RULES_CONFIG = 29;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -2029,7 +2148,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 28;
+  int DIFFICULTY_LEVEL = 30;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -2039,7 +2158,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 29;
+  int ENEMY_TYPE = 31;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -2049,7 +2168,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 30;
+  int CHARACTER_TYPE_ENUM = 32;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -2059,7 +2178,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 31;
+  int BEHAVIOR_TYPE_ENUM = 33;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -2069,7 +2188,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 32;
+  int PROJECTILE_TYPE_ENUM = 34;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -2079,7 +2198,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 33;
+  int LOOT_ITEM_TYPE_ENUM = 35;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -2089,7 +2208,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 34;
+  int DROP_WEAPON_ENUM = 36;
 
 
   /**
@@ -2178,6 +2297,17 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EReference getGameConfiguration_Levels();
+
+  /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.GameConfiguration#getShop <em>Shop</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Shop</em>'.
+   * @see main.game.maze.dsl.mazeDsl.GameConfiguration#getShop()
+   * @see #getGameConfiguration()
+   * @generated
+   */
+  EReference getGameConfiguration_Shop();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.Import <em>Import</em>}'.
@@ -3992,6 +4122,114 @@ public interface MazeDslPackage extends EPackage
   EAttribute getLavaConfig_DeathSound();
 
   /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopConfig <em>Shop Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig
+   * @generated
+   */
+  EClass getShopConfig();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link main.game.maze.dsl.mazeDsl.ShopConfig#getItems <em>Items</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Items</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopConfig#getItems()
+   * @see #getShopConfig()
+   * @generated
+   */
+  EReference getShopConfig_Items();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig <em>Shop Item Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Shop Item Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig
+   * @generated
+   */
+  EClass getShopItemConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getKind <em>Kind</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Kind</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getKind()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Kind();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getDisplayName <em>Display Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Display Name</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getDisplayName()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_DisplayName();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getTier <em>Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getTier()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Tier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getPrice <em>Price</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Price</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getPrice()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Price();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getAmount <em>Amount</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Amount</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getAmount()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Amount();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getFactor <em>Factor</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Factor</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getFactor()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Factor();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.ShopItemConfig#getDescription <em>Description</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Description</em>'.
+   * @see main.game.maze.dsl.mazeDsl.ShopItemConfig#getDescription()
+   * @see #getShopItemConfig()
+   * @generated
+   */
+  EAttribute getShopItemConfig_Description();
+
+  /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.LastLifeGiftConfig <em>Last Life Gift Config</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4246,6 +4484,14 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EReference GAME_CONFIGURATION__LEVELS = eINSTANCE.getGameConfiguration_Levels();
+
+    /**
+     * The meta object literal for the '<em><b>Shop</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GAME_CONFIGURATION__SHOP = eINSTANCE.getGameConfiguration_Shop();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ImportImpl <em>Import</em>}' class.
@@ -5632,6 +5878,90 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute LAVA_CONFIG__DEATH_SOUND = eINSTANCE.getLavaConfig_DeathSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopConfig()
+     * @generated
+     */
+    EClass SHOP_CONFIG = eINSTANCE.getShopConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Items</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SHOP_CONFIG__ITEMS = eINSTANCE.getShopConfig_Items();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl <em>Shop Item Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.ShopItemConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
+     * @generated
+     */
+    EClass SHOP_ITEM_CONFIG = eINSTANCE.getShopItemConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Kind</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__KIND = eINSTANCE.getShopItemConfig_Kind();
+
+    /**
+     * The meta object literal for the '<em><b>Display Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__DISPLAY_NAME = eINSTANCE.getShopItemConfig_DisplayName();
+
+    /**
+     * The meta object literal for the '<em><b>Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__TIER = eINSTANCE.getShopItemConfig_Tier();
+
+    /**
+     * The meta object literal for the '<em><b>Price</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__PRICE = eINSTANCE.getShopItemConfig_Price();
+
+    /**
+     * The meta object literal for the '<em><b>Amount</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__AMOUNT = eINSTANCE.getShopItemConfig_Amount();
+
+    /**
+     * The meta object literal for the '<em><b>Factor</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__FACTOR = eINSTANCE.getShopItemConfig_Factor();
+
+    /**
+     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SHOP_ITEM_CONFIG__DESCRIPTION = eINSTANCE.getShopItemConfig_Description();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.LastLifeGiftConfigImpl <em>Last Life Gift Config</em>}' class.

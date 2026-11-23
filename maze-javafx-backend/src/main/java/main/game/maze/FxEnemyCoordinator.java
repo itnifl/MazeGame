@@ -371,9 +371,33 @@ public final class FxEnemyCoordinator {
         }
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
-                laser.kind() == main.game.maze.game.items.PickupKind.PULSE_CANNON, targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
-                        laser.damage(), laser.range(), halfWidth));
+                main.game.maze.game.items.ShotEffects.pierces(laser), targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
+                        main.game.maze.game.items.ShotEffects.shotPower(laser), laser.range(), halfWidth));
         return new LaserHit(shot[0], hit[0], dealt[0]);
+    }
+
+    /**
+     * The living enemies as targets for the infantry strike's soldiers: each round they fire is credited to
+     * {@code attackerId} as a shot, and the enemy reacts as if it was shot.
+     */
+    public List<FlameTarget> livingTargets(String attackerId) {
+        List<FlameTarget> targets = new ArrayList<>();
+        for (var character : allComputerCharacters) {
+            if (!(character instanceof ComputerCharacter cc) || !cc.isAlive() || cc.isInvulnerable()) {
+                continue;
+            }
+            double[] center = centerOf(cc);
+            targets.add(new FlameTarget() {
+                @Override public double centerX() { return center[0]; }
+                @Override public double centerY() { return center[1]; }
+                @Override public int hitPoints() { return cc.getHitPoints(); }
+                @Override public void applyDamage(int amount) {
+                    cc.subtractHitPoints(amount, DeathCause.SHOT, attackerId);
+                }
+                @Override public boolean isPassThrough() { return false; }
+            });
+        }
+        return targets;
     }
 
     /**

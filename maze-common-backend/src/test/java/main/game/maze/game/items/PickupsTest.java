@@ -58,8 +58,10 @@ class PickupsTest {
             }
         }
         Set<String> sounds = new java.util.HashSet<>();
-        CATALOG.specs().values().forEach(spec -> sounds.add(spec.pickupSound()));
-        assertEquals(PickupKind.values().length, sounds.size(), "every item has its own pickup sound");
+        // the shop weapons share the shop purchase sound: they are bought, never picked up
+        CATALOG.specs().values().stream().filter(spec -> !spec.kind().shopOnly()).forEach(spec -> sounds.add(spec.pickupSound()));
+        assertEquals(java.util.Arrays.stream(PickupKind.values()).filter(kind -> !kind.shopOnly()).count(), sounds.size(),
+                "every item has its own pickup sound");
     }
 
     @Test
@@ -299,7 +301,8 @@ class PickupsTest {
         PickupSpec extraLife = CATALOG.spec(PickupKind.EXTRA_LIFE);
         assertEquals(1, extraLife.amount());
         for (PickupKind kind : PickupKind.values()) {
-            if (kind != PickupKind.EXTRA_LIFE && kind != PickupKind.GATLING_GUN && kind != PickupKind.PULSE_CANNON) {
+            if (kind != PickupKind.EXTRA_LIFE && kind != PickupKind.GATLING_GUN && kind != PickupKind.PULSE_CANNON
+                    && !kind.shopOnly()) {
                 assertTrue(CATALOG.spec(kind).spawnWeight() > extraLife.spawnWeight(), kind + " is more common");
             }
         }
@@ -348,6 +351,7 @@ class PickupsTest {
         EnumSet<PickupKind> expected = EnumSet.allOf(PickupKind.class);
         expected.remove(PickupKind.GATLING_GUN);   // only ever dropped by a killed sergeant
         expected.remove(PickupKind.PULSE_CANNON);  // only ever the gift of the last life
+        expected.removeIf(PickupKind::shopOnly);     // only ever bought in the shop
         assertEquals(expected, seen);
     }
 

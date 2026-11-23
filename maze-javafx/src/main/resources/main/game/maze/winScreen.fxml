@@ -23,7 +23,7 @@
               style="-fx-background-color: rgba(0,0,0,0.35);" />
         <StackPane alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
             <children>
-                <VBox alignment="CENTER" maxWidth="520" maxHeight="340" spacing="8"
+                <VBox alignment="CENTER" maxWidth="600" maxHeight="340" spacing="8"
                       style="-fx-background-color: rgba(0,0,0,0.88); -fx-border-color: #8fffe0; -fx-border-width: 2; -fx-padding: 22 28 22 28;">
                     <children>
                         <Label fx:id="winHeaderLabel" style="-fx-font-size: 44px; -fx-text-fill: #4ade80; -fx-font-family: 'Consolas'; -fx-font-weight: bold;" text="YOU WIN" />
@@ -35,6 +35,7 @@
                         <HBox alignment="CENTER" spacing="12">
                             <children>
                                 <Button onAction="#saveScore" style="-fx-padding: 6 16 6 16; -fx-background-color: #8fffe0; -fx-text-fill: #103630; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Save Score" />
+                                <Button fx:id="shopButton" onAction="#openShop" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffb347; -fx-text-fill: #2f1600; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Shop" />
                                 <Button fx:id="nextLevelButton" onAction="#nextLevel" style="-fx-padding: 6 16 6 16; -fx-background-color: #4ade80; -fx-text-fill: #06310f; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Next level" />
                                 <Button fx:id="restartButton" onAction="#restartLevel" style="-fx-padding: 6 16 6 16; -fx-background-color: #ffe56e; -fx-text-fill: #2f1d00; -fx-font-family: 'Consolas'; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4;" text="Restart level" />
                             </children>

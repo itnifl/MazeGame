@@ -27,6 +27,10 @@ public class WinGameController extends ActionScreenController implements Initial
     @FXML
     private Label winHeaderLabel;
 
+    /** The shop between levels: offered while there is a next level to buy for. */
+    @FXML
+    private Button shopButton;
+
     public void showWinBonusLabel(int amount) {
         winBonusNoticeLabel.setText("+ Win bonus: +" + amount);
     }
@@ -38,6 +42,10 @@ public class WinGameController extends ActionScreenController implements Initial
         if (nextLevelButton != null) {
             nextLevelButton.setVisible(moreLevels);
             nextLevelButton.setManaged(moreLevels);
+        }
+        if (shopButton != null) {
+            shopButton.setVisible(moreLevels);
+            shopButton.setManaged(moreLevels);
         }
         // winning the last level wins the game: "GAME WON" and a dark voice says "Ultimate victory"
         boolean gameWon = !moreLevels;
@@ -55,6 +63,16 @@ public class WinGameController extends ActionScreenController implements Initial
     @FXML
     protected void nextLevel() {
         new main.game.maze.actions.RestartGameAction(screenRoot, true).Load();
+    }
+
+    /**
+     * Opens the shop between levels. What is bought is paid with the score carried into the next level, so the score
+     * shown (and saved) here afterwards is what is left.
+     */
+    @FXML
+    protected void openShop() {
+        new main.game.maze.actions.ShopAction(screenRoot, () -> main.game.maze.App.levelProgress.pendingSavePoint()
+                .ifPresent(next -> setScoreLabel(next.score()))).Load();
     }
 
     /** Plays the level just won again from its start, with the weapons it started with. */
