@@ -81,7 +81,31 @@ public final class StrikeVisuals {
 
     /** The sprite of the weapon a blast lies on the floor as (the grenade itself), or null to draw only the fuse glow. */
     public static String lyingSprite(ScheduledBlast blast, PickupCatalog items) {
-        return blast.showsFuse() && blast.source() != null ? items.spec(blast.source()).sprite() : null;
+        return lyingSprite(blast, items, 0.0);
+    }
+
+    /** The weapons drawn armed where they lie (a burning fuse, a pulled pin, a blinking light): two frames each. */
+    public static final java.util.Set<PickupKind> ARMED = java.util.EnumSet.of(PickupKind.BOMB, PickupKind.FAT_BOMB,
+            PickupKind.GRENADE, PickupKind.PLASMA_GRENADE, PickupKind.NUKE_GRENADE);
+    /** Where the armed frames are: {@code armed-<kind>-1.png} and {@code -2.png} (from {@code PickupSpriteGenerator}). */
+    public static final String ARMED_DIR = "/main/game/maze/strike/";
+
+    /**
+     * What a dropped weapon looks like where it lies at {@code clockSeconds}: the weapon itself, armed (its two frames
+     * flip faster as the fuse burns down); a weapon without armed frames is drawn as its item sprite; null for what
+     * does not lie on the floor.
+     */
+    public static String lyingSprite(ScheduledBlast blast, PickupCatalog items, double clockSeconds) {
+        if (!blast.showsFuse() || blast.source() == null) {
+            return null;
+        }
+        if (!ARMED.contains(blast.source())) {
+            return items.spec(blast.source()).sprite();
+        }
+        double framesPerSecond = 4 + (1 - blast.fuseLeft()) * 10;
+        int frame = 1 + (int) Math.floor(Math.max(0, clockSeconds) * framesPerSecond) % 2;
+        return ARMED_DIR + "armed-" + blast.source().name().toLowerCase(java.util.Locale.ROOT).replace('_', '-')
+                + "-" + frame + ".png";
     }
 
     /**

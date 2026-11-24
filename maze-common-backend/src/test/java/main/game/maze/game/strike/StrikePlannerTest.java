@@ -110,7 +110,7 @@ class StrikePlannerTest {
         assertEquals(StrikePlanner.BOMB_FUSE_SECONDS, bomb.secondsLeft(), 1e-9);
         assertEquals(90, bomb.damage());
         assertEquals(StrikePlanner.BOMB_RANGE, bomb.radius(), 1e-9);
-        assertEquals(ITEMS.spec(PickupKind.BOMB).sprite(), StrikeVisuals.lyingSprite(bomb, ITEMS), "drawn as the bomb");
+        assertEquals(StrikeVisuals.ARMED_DIR + "armed-bomb-1.png", StrikeVisuals.lyingSprite(bomb, ITEMS), "drawn as the bomb");
         ScheduledBlast boosted = StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 0, 0, 90, new LevelBoosts(1.0, 2.0));
         assertEquals(180, boosted.damage(), "the shop's flame boost");
         assertEquals(2 * StrikePlanner.BOMB_RANGE, boosted.radius(), 1e-9);
@@ -133,5 +133,23 @@ class StrikePlannerTest {
         assertEquals(bomb.x(), low.x(), 1e-9);
         assertEquals(null, StrikeVisuals.fallingBomb(StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 0, 0, 1, null), ITEMS),
                 "only what is dropped from the air falls");
+    }
+
+    @Test
+    @DisplayName("every dropped bomb and grenade lies armed, flipping between two frames faster as its fuse burns down")
+    void armedFrames() {
+        for (PickupKind kind : StrikeVisuals.ARMED) {
+            String name = kind.name().toLowerCase(java.util.Locale.ROOT).replace('_', '-');
+            for (int frame = 1; frame <= 2; frame++) {
+                assertTrue(StrikeVisuals.class.getResource(StrikeVisuals.ARMED_DIR + "armed-" + name + "-" + frame + ".png") != null,
+                        kind + " frame " + frame + " exists");
+            }
+        }
+        ScheduledBlast bomb = StrikePlanner.plantedBomb(ITEMS.spec(PickupKind.BOMB), 0, 0, 10, null);
+        assertTrue(StrikeVisuals.lyingSprite(bomb, ITEMS, 0.0).endsWith("armed-bomb-1.png"));
+        assertTrue(StrikeVisuals.lyingSprite(bomb, ITEMS, 0.3).endsWith("armed-bomb-2.png"), "4 frames a second at first");
+        ScheduledBlast late = bomb.after(StrikePlanner.BOMB_FUSE_SECONDS * 0.9);
+        assertTrue(StrikeVisuals.lyingSprite(late, ITEMS, 0.13).endsWith("armed-bomb-2.png"));
+        assertTrue(StrikeVisuals.lyingSprite(late, ITEMS, 0.16).endsWith("armed-bomb-1.png"), "faster near the end");
     }
 }

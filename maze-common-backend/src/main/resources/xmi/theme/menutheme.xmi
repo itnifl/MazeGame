@@ -12,6 +12,7 @@
   <swatches role="BAD" colour="#ff3025"/>
   <swatches role="BUTTON_TEXT" colour="#fbf6e4"/>
   <swatches role="SHADOW" colour="#000000c0"/>
+  <swatches role="KEY_TEXT" colour="#26281f"/>
   <images role="BACKDROP" path="/main/game/maze/zombieGameOverBackground1.png"/>
   <images role="VIGNETTE" path="/main/game/maze/ui/vignette.png"/>
   <images role="HAZARD_STRIP" path="/main/game/maze/ui/hazard-strip.png"/>
@@ -27,6 +28,11 @@
   <images role="BUTTON_DANGER" path="/main/game/maze/ui/button-danger.png" slice="10"/>
   <images role="TOKEN" path="/main/game/maze/ui/token.png"/>
   <images role="LOCK" path="/main/game/maze/ui/lock.png"/>
+  <images role="KEY" path="/main/game/maze/ui/key.png" slice="10"/>
+  <images role="KEY_UP" path="/main/game/maze/ui/key-up.png"/>
+  <images role="KEY_DOWN" path="/main/game/maze/ui/key-down.png"/>
+  <images role="KEY_LEFT" path="/main/game/maze/ui/key-left.png"/>
+  <images role="KEY_RIGHT" path="/main/game/maze/ui/key-right.png"/>
   <badges tier="CHEAP" image="/main/game/maze/ui/tier-cheap.png" colour="#cd8c4e"/>
   <badges tier="MEDIUM" image="/main/game/maze/ui/tier-medium.png" colour="#cfd6dd"/>
   <badges tier="EXPENSIVE" image="/main/game/maze/ui/tier-expensive.png" colour="#f4c845"/>

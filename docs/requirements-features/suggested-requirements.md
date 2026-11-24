@@ -500,3 +500,9 @@ These requirements have been implemented and verified.
 - **SR-416** *(Code quality)*: In libGDX the falling airstrike bombs are floor sprites, drawn with the enemies; give the world view a layer above the characters for things in the air (falling bombs, the mushroom cloud's cap), as JavaFX has with its view order.
 
 - **SR-417** *(12-factor)*: The main menu reads the savepoint for its Load button from a fixed location; take it from the same configurable location as SR-371 so a test or a portable install can point the menu at its own savepoint.
+
+### Armed weapons, wall batches and help follow-ons (SR-418..SR-420)
+
+- **SR-421** *(Model-driven)*: Which weapons lie armed and their frame files are a convention in `StrikeVisuals`; make `armedSprites` an attribute of the item in `items.ecore`, so a new throwable weapon gets its armed look from the model.
+- **SR-422** *(UX)*: Let the help screen be opened in game (F1) and show the weapon in hand and its key, and let the key bindings be changed there (the guide would then read the live bindings).
+- **SR-423** *(Observability)*: Time every blast that damages walls (walls hit, walls fallen, rewire time) and log it when it takes longer than a frame, so a stall like the old nuke one shows up in the logs.

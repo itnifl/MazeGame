@@ -38,7 +38,7 @@ class NuclearGrenadeTest {
     @DisplayName("where it lies it shows the nuclear grenade itself, larger than a grenade, with a radioactive green glow")
     void looksLikeANuke() {
         ScheduledBlast lying = StrikePlanner.thrownGrenade(NUKE, 0, 0, 1, 0, List.of());
-        assertEquals(NUKE.sprite(), StrikeVisuals.lyingSprite(lying, ITEMS));
+        assertEquals(StrikeVisuals.ARMED_DIR + "armed-nuke-grenade-1.png", StrikeVisuals.lyingSprite(lying, ITEMS));
         ScheduledBlast grenade = StrikePlanner.thrownGrenade(ITEMS.spec(PickupKind.GRENADE), 0, 0, 1, 0, List.of());
         assertTrue(StrikeVisuals.lyingSize(lying, ITEMS) > StrikeVisuals.lyingSize(grenade, ITEMS));
         float[] green = StrikeVisuals.fuseColour(lying);

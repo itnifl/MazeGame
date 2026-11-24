@@ -50,6 +50,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
     private final DifficultyService difficultyService = new DifficultyService();
     private final MazeVisualStyleConfig visualStyle = GdxVisualStyleSupport.loadOrDefault();
     private final GdxStartMenuView startMenuView = new GdxStartMenuView();
+    /** Help & Controls, over the main menu while it is open. */
+    private final main.game.maze.libgdx.view.GdxHelpView helpView = new main.game.maze.libgdx.view.GdxHelpView();
+    private boolean helpOpen;
+    private main.game.maze.libgdx.view.GdxShopOverlayView.Rect helpBack;
     private final GdxStartMenuInputController startMenuInputController = new GdxStartMenuInputController();
     private final RuntimeVisualModelLoader runtimeModelLoader = new RuntimeVisualModelLoader();
     private final Consumer<Difficulty> startGameAction;
@@ -159,6 +163,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
         if (loadingPending) {
             return;
         }
+        if (helpOpen) {
+            handleHelpInput();
+            return;
+        }
 
         handleMouseInput();
 
@@ -177,6 +185,18 @@ public final class MenuScreenController extends AbstractGdxScreenController {
         }
     }
 
+    /** While the help screen is open: Back, Esc or Enter close it; nothing reaches the menu under it. */
+    private void handleHelpInput() {
+        boolean back = Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+        if (Gdx.input.isButtonJustPressed(Buttons.LEFT) && helpBack != null) {
+            back |= helpBack.contains(Gdx.input.getX(), hudCamera.viewportHeight - Gdx.input.getY());
+        }
+        if (back) {
+            helpOpen = false;
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
+        }
+    }
+
     private void handleMouseInput() {
         if (!Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
             return;
@@ -184,6 +204,11 @@ public final class MenuScreenController extends AbstractGdxScreenController {
 
         float mx = Gdx.input.getX();
         float my = hudCamera.viewportHeight - Gdx.input.getY();
+        if (!startMenuDropdownOpen && menuLayout.onHelp(mx, my)) {
+            helpOpen = true;
+            AudioEngine.get().play(visualStyle.menuSelectSoundPath());
+            return;
+        }
         var mouseResult = startMenuInputController.handleLeftClick(
                 mx,
                 my,
@@ -336,6 +361,10 @@ public final class MenuScreenController extends AbstractGdxScreenController {
                 loadingStatusText,
                 savedGame.isPresent(),
                 LoadGameMenu.label(savedGame)));
+        if (helpOpen) {
+            helpBack = helpView.render(new main.game.maze.libgdx.view.GdxHelpView.RenderContext(batch, font, glyphLayout,
+                    hudCamera, path -> context().assets().getTexture(path)));
+        }
     }
 
     private static String displayName(Difficulty difficulty) {

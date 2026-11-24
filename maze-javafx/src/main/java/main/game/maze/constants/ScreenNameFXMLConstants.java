@@ -8,4 +8,5 @@ public class ScreenNameFXMLConstants {
     public final static String StartScreen = "/main/game/maze/startScreen.fxml";
     /** The shop between levels (#164). */
     public final static String ShopScreen = "/main/game/maze/shopScreen.fxml";
+    public final static String HelpScreen = "/main/game/maze/helpScreen.fxml";
 }

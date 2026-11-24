@@ -134,6 +134,20 @@
 .menu-card.locked .menu-card-title { -fx-text-fill: ${colour.MUTED}; }
 .menu-card-line { -fx-font-size: 12px; }
 
+.menu-card.menu-help-row {
+    -fx-cursor: default;
+    -fx-padding: 0 8 0 2;
+}
+.menu-key {
+<@plate "KEY" 8/>
+    -fx-padding: 0 6 4 6;
+}
+.menu-key-text {
+    -fx-text-fill: ${colour.KEY_TEXT};
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
 .menu-slot {
 <@plate "SLOT" 4/>
 }

@@ -191,6 +191,11 @@ public final class GdxStrikeSupport {
      * Screen space.
      */
     public static List<SpriteVisual> lyingSprites(GameWorldModel model, MazeArena maze) {
+        return lyingSprites(model, maze, 0.0);
+    }
+
+    /** As above, at {@code clockSeconds}: the armed weapons flip between their two frames. */
+    public static List<SpriteVisual> lyingSprites(GameWorldModel model, MazeArena maze, double clockSeconds) {
         if (maze == null) {
             return List.of();
         }
@@ -198,7 +203,7 @@ public final class GdxStrikeSupport {
         var items = model.pickupField().catalog();
         List<SpriteVisual> sprites = new ArrayList<>();
         for (ScheduledBlast blast : model.strikes().pendingBlasts()) {
-            String sprite = StrikeVisuals.lyingSprite(blast, items);
+            String sprite = StrikeVisuals.lyingSprite(blast, items, clockSeconds);
             if (sprite != null) {
                 sprites.add(new SpriteVisual((float) blast.x(), height - (float) blast.y(),
                         (float) StrikeVisuals.lyingSize(blast, items), 0f, false, sprite));

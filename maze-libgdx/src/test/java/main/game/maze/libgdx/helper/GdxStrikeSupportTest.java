@@ -137,7 +137,7 @@ class GdxStrikeSupportTest {
         GdxStrikeSupport.use(world, openMaze(), player, Weapon.NUKE_GRENADE, List.of());
         List<main.game.maze.libgdx.model.SpriteVisual> lying = GdxStrikeSupport.lyingSprites(world, openMaze());
         assertEquals(1, lying.size());
-        assertEquals(world.pickupField().catalog().spec(PickupKind.NUKE_GRENADE).sprite(), lying.get(0).spritePath());
+        assertEquals(main.game.maze.game.strike.StrikeVisuals.ARMED_DIR + "armed-nuke-grenade-1.png", lying.get(0).spritePath());
         world.bombFuseGlows().clear();
         GdxStrikeSupport.addFuseGlows(world, openMaze(), 0.0);
         var halo = world.bombFuseGlows().get(0);
@@ -169,7 +169,8 @@ class GdxStrikeSupportTest {
         world.strikes().plantBomb(100, maze.heightPx() - 200, 50, null);
         List<main.game.maze.libgdx.model.SpriteVisual> sprites = GdxStrikeSupport.lyingSprites(world, maze);
         assertEquals(1, sprites.size());
-        assertEquals(world.pickupField().catalog().spec(PickupKind.BOMB).sprite(), sprites.get(0).spritePath());
+        assertEquals(main.game.maze.game.strike.StrikeVisuals.ARMED_DIR + "armed-bomb-1.png", sprites.get(0).spritePath(),
+                "the bomb with its fuse burning, not a dot");
         assertEquals(200, sprites.get(0).y(), 1e-3, "screen space");
 
         GdxStrikeSupport.use(world, maze, facingRight(), Weapon.AIRSTRIKE, List.of());

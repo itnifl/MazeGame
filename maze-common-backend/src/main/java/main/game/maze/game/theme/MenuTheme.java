@@ -32,13 +32,17 @@ public record MenuTheme(String font, Map<Swatch, String> swatches, Map<Art, Imag
         /** The labels on the buttons. */
         BUTTON_TEXT,
         /** The drop shadow under text. */
-        SHADOW
+        SHADOW,
+        /** The label printed on a keyboard key. */
+        KEY_TEXT
     }
 
     /** The textures, by where they are drawn. */
     public enum Art {
         BACKDROP, VIGNETTE, HAZARD_STRIP, PANEL, BANNER, CARD, CARD_SELECTED, CARD_LOCKED, SLOT, BUTTON_GO, BUTTON_BUY,
-        BUTTON_STEEL, BUTTON_DANGER, TOKEN, LOCK
+        BUTTON_STEEL, BUTTON_DANGER, TOKEN, LOCK,
+        /** A keyboard key (9-slice) for the controls guide, and the four arrow keys. */
+        KEY, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
     }
 
     /** A texture: its classpath path and how many pixels of each edge stay unstretched (0: drawn as it is). */

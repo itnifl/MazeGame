@@ -19,9 +19,18 @@ public record MenuLayout(
         float loadButtonX,
         float loadButtonY,
         float loadButtonW,
-        float loadButtonH) {
+        float loadButtonH,
+        float helpButtonX,
+        float helpButtonY,
+        float helpButtonW,
+        float helpButtonH) {
 
     public static MenuLayout zero() {
-        return new MenuLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        return new MenuLayout(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+    }
+
+    /** Whether (x, y) is on the Help & Controls button. */
+    public boolean onHelp(float x, float y) {
+        return x >= helpButtonX && x <= helpButtonX + helpButtonW && y >= helpButtonY && y <= helpButtonY + helpButtonH;
     }
 }

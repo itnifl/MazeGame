@@ -384,3 +384,4 @@ MUST be added to the shared core, not to a single frontend.
 - **GR-94**: With the UFOs, ten red soldiers are airdropped some way off the player and hunt them,
   firing when they see the player (4 damage a round; a shield blocks it). They have 60 health,
   are killed by the player's flames, shots and nuclear blasts, and leave after 45 s.
+- **GR-93**: Help & Controls on the main menu shows every key and what it does.

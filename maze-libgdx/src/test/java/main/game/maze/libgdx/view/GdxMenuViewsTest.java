@@ -57,4 +57,15 @@ class GdxMenuViewsTest {
         skin.hazard(null, 0, 0, 10);
         assertEquals(12f, skin.hazardHeight());
     }
+
+    @Test
+    @DisplayName("the help screen fits the game window; the main menu's Help & Controls button is hit-tested")
+    void helpScreen() {
+        assertTrue(GdxHelpView.panelHeight() <= 622f, "the window is 665 px with its title bar: " + GdxHelpView.panelHeight());
+        var layout = new main.game.maze.libgdx.view.layout.MenuLayout(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                400, 100, 180, 40);
+        assertTrue(layout.onHelp(450, 120));
+        assertTrue(!layout.onHelp(350, 120));
+        assertTrue(!main.game.maze.libgdx.view.layout.MenuLayout.zero().onHelp(10, 10));
+    }
 }

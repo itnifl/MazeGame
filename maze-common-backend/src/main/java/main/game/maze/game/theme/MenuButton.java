@@ -15,7 +15,9 @@ public enum MenuButton {
     START_MISSION("Start Mission", MenuTheme.Art.BUTTON_GO),
     RESTART_MISSION("Restart Mission", MenuTheme.Art.BUTTON_GO),
     HIGH_SCORES("High Scores", MenuTheme.Art.BUTTON_STEEL),
-    LOAD("Load", MenuTheme.Art.BUTTON_STEEL);
+    LOAD("Load", MenuTheme.Art.BUTTON_STEEL),
+    HELP("Help & Controls", MenuTheme.Art.BUTTON_STEEL),
+    BACK("Back", MenuTheme.Art.BUTTON_STEEL);
 
     private final String label;
     private final MenuTheme.Art art;
