@@ -216,3 +216,15 @@ Unit tests in `maze-libgdx` verify rendering logic, physics, entity lifecycles, 
 - **SampleMazeTest & RealMazeTest**: Validates deterministic maze generation, axis-aligned walls, and dynamic synchronization with breakable wall state.
 - **PlayerStateTest & GdxCameraFollowTest**: Headless validation of player border clamping, goal proximity detection, and camera follow math.
 - **Dropped things and the main menu (SR-413, SR-414)** — the bomb is planted with `worldModel.strikes().plantBomb(..)` and drawn as the bomb by `GdxStrikeSupport.lyingSprites`, which also draws the airstrike bombs falling onto their shadows; `GdxStartMenuView` draws the main menu with `GdxMenuSkin` (title plate, panel, crate-card picker and list, metal-plate buttons).
+
+
+## Level 7 and end screens
+
+`GdxUfoSupport` adapts the shared `UfoRaid` to the libGDX coordinate system,
+including raid updates and the UFO, beam and hostile soldier sprites. The render
+coordinator places ground sprites and aerial overlays in their respective passes.
+`GdxUfoSupportTest` covers the frontend adapter; the level's trigger and timing
+are described in [level authoring](../docs/level-authoring.md#the-ufo-retaliation).
+
+`GdxGameOverOverlayView` and `GdxHighScoresOverlayView` use `GdxMenuSkin` and
+the shared menu theme, as do the main menu, shop and win screen.

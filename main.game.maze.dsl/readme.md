@@ -625,3 +625,13 @@ and `Art` literals of `menutheme.ecore`, the shop tiers), the colours (`#rrggbb`
 starting with `/`) and that every colour, image and tier badge is given exactly once; `MazeDslGenerator.menuThemeXmi`
 renders it with `generator/templates/menutheme.xmi.ftlx` into `menutheme.xmi`. `MazeDslThemeTest` keeps the two in step;
 `MAZE_THEME_REGENERATE=true mvn -o verify -pl main.game.maze.dsl.tests` rewrites `menutheme.xmi`.
+
+
+## Level 7 UFO retaliation
+
+A level can declare `ufoRaid { ... }` to configure retaliation for use of a
+shop tier. The DSL validator checks the raid configuration, and the generator
+renders `generator/templates/levelUfoRaid.xmi.ftlx` into the level catalogue.
+The shipped level 7 uses the expensive tier as its trigger. See
+[level authoring](../docs/level-authoring.md#the-ufo-retaliation) for the full
+example and [DSL reference](../docs/dsl-reference.md) for the syntax.
