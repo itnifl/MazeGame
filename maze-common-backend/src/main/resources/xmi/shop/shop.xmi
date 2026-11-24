@@ -13,6 +13,6 @@
   <items kind="FAT_BOMB" displayName="Fat bomb" tier="MEDIUM" price="10000" amount="1" description="A planted bomb with huge flames - run!"/>
   <items kind="EXTRA_LIFE" displayName="Extra life" tier="MEDIUM" price="10000" amount="3" description="Use it like a weapon to fill your health bar; three of them"/>
   <items kind="NUKE_GRENADE" displayName="Small nuclear grenades" tier="EXPENSIVE" price="40000" amount="2" description="A nuclear blast through walls, shown as a mushroom cloud"/>
-  <items kind="AIRSTRIKE" displayName="Airstrike" tier="EXPENSIVE" price="40000" amount="1" description="Bombers carpet bomb the centre of the maze"/>
+  <items kind="AIRSTRIKE" displayName="Airstrike" tier="EXPENSIVE" price="60000" amount="1" description="Bombers carpet bomb the centre of the maze"/>
   <items kind="INFANTRY_STRIKE" displayName="Infantry strike" tier="EXPENSIVE" price="40000" amount="1" description="Ten soldiers land and hunt down every enemy"/>
 </shop:ShopModel>

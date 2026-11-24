@@ -258,6 +258,13 @@ public class MazeDslSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MazeDslPackage.UFO_RAID_CONFIG:
+      {
+        UfoRaidConfig ufoRaidConfig = (UfoRaidConfig)theEObject;
+        T result = caseUfoRaidConfig(ufoRaidConfig);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MazeDslPackage.SHOP_CONFIG:
       {
         ShopConfig shopConfig = (ShopConfig)theEObject;
@@ -737,6 +744,22 @@ public class MazeDslSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseLavaConfig(LavaConfig object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Ufo Raid Config</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Ufo Raid Config</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUfoRaidConfig(UfoRaidConfig object)
   {
     return null;
   }

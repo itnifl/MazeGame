@@ -25,7 +25,7 @@ MAZE_LEVELS_REGENERATE=true mvn -o test -pl main.game.maze.dsl.tests
 (`MazeDslLevelsTest` rewrites `levels.xmi` from the DSL and checks it is valid against `levels.ecore`; without the variable it
 fails when the two are out of step.) The attribute names below are the model's (`levels.xmi`); the DSL keywords are
 `threatCapacity`, `wallMaterials`, `inheritWeapons`, `cascadeDepth`, `basedOn`, `ring`, `sergeant`, `sergeants`, `mines`,
-`portalGhost`, `portalGhosts`, `teleport`, `secondRing` (inside `mines`), `guardTower` and `towers`. The
+`portalGhost`, `portalGhosts`, `teleport`, `secondRing` (inside `mines`), `guardTower`, `towers` and `ufoRaid`. The
 structure is defined by the metamodel [`levels.ecore`](../maze-common-backend/src/main/resources/xmi/levels/levels.ecore),
 and the game checks the file when it loads and refuses to start with a broken level.
 
@@ -120,6 +120,44 @@ wide, flowing under the walls (drawn beneath the maze). The player dies at once 
 cross a stream only on its `bridgesPerStream` bridges, each `bridgeLength` pixels long along the stream. The generator tries streams
 until the way from the start to the heart crosses each one only where a bridge can be put, so the maze can always be solved; the
 remaining bridges are put at random open places. `meander` (how far a stream swings from side to side, in pixels; 0 = straight) and `wavelength` (how long one swing is) shape the streams; `flowSpeed` (pixels per second), `glow` (0 to 1: the light it throws on the floor) and `crust` (0 to 1: how much of the surface has cooled to dark plates over glowing cracks) shape how the lava looks and moves. Enemies, the wall builders, spawns, pickups and mines keep out of lava.
+
+## The UFO retaliation
+
+Level 7 answers the expensive weapons of the shop. The `ufoRaid` element of a level (`UfoRaid` in `levels.ecore`, `ufoRaid { ... }`
+in the DSL) says what happens when the player **uses a weapon of the `trigger` tier** (`EXPENSIVE`: the small nuclear grenade, the
+airstrike, the infantry strike):
+
+```
+ufoRaid {
+    trigger EXPENSIVE      // the shop tier whose weapons bring the UFOs
+    ufos 2                 // how many UFOs
+    duration 10.0          // seconds the UFO attack lasts
+    ufoSpeed 150.0         // pixels per second; they cross the map back and forth, a new lane at every turn
+    beamEvery 1.5          // about how often one UFO fires a beam (a little random)
+    charge 0.8             // seconds the spot is only marked on the ground, so the player can run
+    beamSeconds 1.2        // how long a beam stays on
+    beamRadius 38.0
+    aimMin 50.0            // a beam lands this close to the player at least: never straight at them ...
+    aimMax 170.0           // ... and this close at most
+    damageFraction 0.5     // the share of the maximum health a beam takes if the player bumps into it; a shield blocks it
+    soldiers 10            // red soldiers airdropped some way off the player; they hunt the player and shoot at them
+    soldierHealth 60
+    soldierDamage 4        // per round; a shield blocks the rounds too
+    soldierSight 320.0
+    soldierSeconds 45.0    // how long they stay if they are not killed
+    banner "UFO RETALIATION"
+    ufoSprite "/main/game/maze/ufo/ufo.png"
+    beamSprite "/main/game/maze/ufo/ufo-beam.png"
+    arriveSound "/main/game/maze/sounds/airstrike-siren.wav"
+    beamSound "/main/game/maze/sounds/pulse-fire.wav"
+}
+```
+
+A beam is one hit: a player standing in it is hurt once, not every frame. The red soldiers are the sprites of
+`tools/sprite-gen/RedSoldierSpriteGenerator.java` (the infantry strike's soldiers in crimson); the player's flames, shots and
+nuclear blasts kill them, but they cannot be killed by touching them. The `<ufoRaid>` element of `levels.xmi` is rendered from
+the FreeMarker template `levelUfoRaid.xmi.ftlx` by the DSL generator. A level built on another (`basedOn`) has the retaliation
+too unless it sets its own; levels 1 to 6 have none.
 
 ## Wall builders
 

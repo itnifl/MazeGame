@@ -11,6 +11,8 @@ public final class StrikeVisuals {
 
     /** Folder of the soldier sprites (made by {@code tools/sprite-gen/SoldierSpriteGenerator.java}). */
     public static final String SOLDIER_DIR = "/main/game/maze/soldier/";
+    /** Folder of the red soldiers of the UFO raid (made by {@code tools/sprite-gen/RedSoldierSpriteGenerator.java}). */
+    public static final String RED_SOLDIER_DIR = "/main/game/maze/soldier-red/";
     /** The sprite the soldier sprites are named after (a standing soldier seen from the side, facing right). */
     public static final String SOLDIER_SPRITE = SOLDIER_DIR + "soldier-side-stand.png";
     /** A soldier is drawn this many times the player's size. */
@@ -52,8 +54,13 @@ public final class StrikeVisuals {
      * (facing down) or from the back (facing up); standing, in one of two strides while walking, firing, or fallen.
      */
     public static String soldierSprite(InfantrySquad.SoldierView soldier) {
+        return soldierSprite(soldier, SOLDIER_DIR);
+    }
+
+    /** As above, for the soldiers of another folder (the red ones, {@link #RED_SOLDIER_DIR}). */
+    public static String soldierSprite(InfantrySquad.SoldierView soldier, String dir) {
         if (soldier.fallen()) {
-            return SOLDIER_DIR + "soldier-fallen.png";
+            return dir + "soldier-fallen.png";
         }
         String facing = soldier.facingY() < 0 ? "up" : soldier.facingY() > 0 ? "down" : "side";
         String pose;
@@ -64,7 +71,7 @@ public final class StrikeVisuals {
         } else {
             pose = "stand";
         }
-        return SOLDIER_DIR + "soldier-" + facing + "-" + pose + ".png";
+        return dir + "soldier-" + facing + "-" + pose + ".png";
     }
 
     /** Whether the soldier's sprite is mirrored: seen from the side, facing left. */

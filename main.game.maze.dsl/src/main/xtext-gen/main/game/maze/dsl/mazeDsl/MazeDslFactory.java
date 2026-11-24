@@ -258,6 +258,15 @@ public interface MazeDslFactory extends EFactory
   LavaConfig createLavaConfig();
 
   /**
+   * Returns a new object of class '<em>Ufo Raid Config</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Ufo Raid Config</em>'.
+   * @generated
+   */
+  UfoRaidConfig createUfoRaidConfig();
+
+  /**
    * Returns a new object of class '<em>Shop Config</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -38,7 +38,7 @@ game MazeGameShop {
         // expensive
         item NUKE_GRENADE "Small nuclear grenades" tier EXPENSIVE price 40000 amount 2
             description "A nuclear blast through walls, shown as a mushroom cloud"
-        item AIRSTRIKE "Airstrike" tier EXPENSIVE price 40000 amount 1
+        item AIRSTRIKE "Airstrike" tier EXPENSIVE price 60000 amount 1
             description "Bombers carpet bomb the centre of the maze"
         item INFANTRY_STRIKE "Infantry strike" tier EXPENSIVE price 40000 amount 1
             description "Ten soldiers land and hunt down every enemy"

@@ -2,6 +2,7 @@ package main.game.maze.libgdx.controller;
 
 import main.game.maze.libgdx.helper.GdxWeaponSupport;
 import main.game.maze.libgdx.helper.GdxStrikeSupport;
+import main.game.maze.libgdx.helper.GdxUfoSupport;
 import main.game.maze.game.score.PlayerIds;
 import main.game.maze.game.session.PlayerLives;
 import main.game.maze.game.items.Weapon;
@@ -515,6 +516,11 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         if (main.game.maze.game.strike.StrikeWeapons.handles(used)) {
             // grenades, the fat bomb and the strikes: planned by the shared rules, set off in updateCombat
             flashStatus(GdxStrikeSupport.use(worldModel, maze, player, used, pickupSpawnPoints), 2.0f);
+            // an expensive weapon on a level with a retaliation brings the UFOs and the red soldiers
+            String banner = GdxUfoSupport.retaliateAfter(worldModel, maze, player, combatState, used, pickupSpawnPoints);
+            if (banner != null) {
+                statusMessageBus.showBanner(banner, 2.2f);
+            }
             return;
         }
         switch (used) {
@@ -548,6 +554,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         float height = maze.heightPx();
         List<main.game.maze.mazeworld.flame.FlameTarget> targets = new ArrayList<>(GdxStrikeSupport.livingTargets(
                 animatedEnemies, height, PlayerIds.LOCAL_PLAYER, main.game.maze.common.remains.DeathCause.FIRE));
+        targets.addAll(worldModel.strikes().raid().soldierTargets());   // the red soldiers of the UFO raid
         if (blast.hurtsPlayer() && player != null) {
             float px = player.x();
             float py = height - player.y();
@@ -681,6 +688,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         tickPlayerBombs(dt);
         // grenades, fat bombs and airstrike bombs whose fuse is out; the soldiers of the infantry strike fire
         GdxStrikeSupport.tick(worldModel, animatedEnemies, maze, dt, PlayerIds.LOCAL_PLAYER).forEach(this::setOff);
+        tickRaid(dt);
         worldModel.arsenal().tickBombRegen(dt);
         GdxWeaponSupport.updatePickups(worldModel, maze, player, combatState, pickupSpawnPoints, dt);
         // the ranged enemies shoot the soldiers of the infantry strike before the player
@@ -739,6 +747,17 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         }
     }
 
+    /** One frame of the UFO retaliation: the beams that catch the player take their health, a shield blocks them. */
+    private void tickRaid(float dt) {
+        var frame = GdxUfoSupport.tick(worldModel, maze, player, combatState, dt);
+        if (frame.hits() > 0) {
+            statusMessageBus.showBanner("UFO BEAM!", 1.0f);
+            worldModel.setExplosionShakeRemainingSeconds(0.5f);
+        } else if (frame.blocked() > 0) {
+            flashStatus("The shield blocked the beam", 1.2f);
+        }
+    }
+
     /** One frame of the mines, holes and teleports: mines that go off blast, a fall or a ghost touch teleports. */
     private void tickHazards(float dt) {
         var result = hazardSupport.tick(worldModel, player, animatedEnemies, dt, System.nanoTime() / 1e9);
@@ -789,7 +808,8 @@ public final class GdxGameScreenController extends ApplicationAdapter {
                 playerCx,
                 playerCy,
                 hurtsPlayer ? dmg -> combatState.applyDirectDamage(dmg) : null,
-                attackerId);
+                attackerId,
+                worldModel.strikes().raid().soldierTargets());   // the red soldiers of the UFO raid burn too
 
         // Surviving walls (destroyed ones removed by applyDirectionalFlameExplosion above).
         GameMazeWorld survivingWorld = GdxWallDamageSupport.worldFrom(maze);
@@ -1070,6 +1090,7 @@ public final class GdxGameScreenController extends ApplicationAdapter {
         sergeantSupport.reset();
         pulseCharge.cancel();
         worldModel.strikes().reset();
+        worldModel.strikes().setRaid(levelProgress.current().ufoRaid());   // what the expensive weapons bring on this level
         worldModel.setBoosts(levelProgress.boosts());   // what was bought in the shop for this level
         if (worldModel.lives().remaining() == 1) {
             giveLastLifeGift();   // a level that is started on the last life gives the gift at once

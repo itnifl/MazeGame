@@ -206,6 +206,11 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
         return createLavaConfigAdapter();
       }
       @Override
+      public Adapter caseUfoRaidConfig(UfoRaidConfig object)
+      {
+        return createUfoRaidConfigAdapter();
+      }
+      @Override
       public Adapter caseShopConfig(ShopConfig object)
       {
         return createShopConfigAdapter();
@@ -658,6 +663,21 @@ public class MazeDslAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createLavaConfigAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig <em>Ufo Raid Config</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig
+   * @generated
+   */
+  public Adapter createUfoRaidConfigAdapter()
   {
     return null;
   }

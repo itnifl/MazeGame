@@ -6,6 +6,8 @@ import main.game.maze.game.items.PickupCatalog;
 import main.game.maze.game.items.PickupSpec;
 import main.game.maze.game.items.Weapon;
 import main.game.maze.game.level.LevelBoosts;
+import main.game.maze.game.ufo.UfoRaid;
+import main.game.maze.game.ufo.UfoRaidSpec;
 import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.mazeworld.Point2D;
 import main.game.maze.mazeworld.Vector2D;
@@ -50,11 +52,15 @@ public final class StrikeWeapons {
     private final Random random;
     private final BlastSchedule schedule = new BlastSchedule();
     private final InfantrySquad squad;
+    /** The UFOs and red soldiers that answer an expensive weapon (level 7), and what this level says about them. */
+    private final UfoRaid raid;
+    private UfoRaidSpec raidSpec;
 
     public StrikeWeapons(PickupCatalog catalog, Random random) {
         this.catalog = catalog;
         this.random = random;
         this.squad = new InfantrySquad(random);
+        this.raid = new UfoRaid(random);
     }
 
     /** Whether {@link #use} handles this weapon. */
@@ -92,6 +98,42 @@ public final class StrikeWeapons {
             }
             default -> throw new IllegalArgumentException("not a strike weapon: " + weapon);
         };
+    }
+
+    /** The retaliation of the level now played (null: none); set it when a level starts, before the player uses weapons. */
+    public void setRaid(UfoRaidSpec spec) {
+        this.raidSpec = spec;
+    }
+
+    /**
+     * Whether using {@code weapon} on this level brings the UFOs, i.e. it is a weapon of the trigger tier of the shop. The
+     * frontend then calls {@link #retaliate} (it knows the player and the open ground).
+     */
+    public boolean brings(Weapon weapon) {
+        return UfoRaid.triggeredBy(raidSpec, weapon);
+    }
+
+    /**
+     * The UFOs arrive and the red soldiers are dropped.
+     *
+     * @return the word to put on the screen, or null when this level has no retaliation
+     */
+    public String retaliate(double boardWidth, double boardHeight, UfoRaid.Target player, List<Point2D> openGround) {
+        if (raidSpec == null) {
+            return null;
+        }
+        raid.trigger(raidSpec, boardWidth, boardHeight, player, openGround);
+        return raidSpec.bannerText();
+    }
+
+    /** The UFOs and the red soldiers (for drawing, and for the player's weapons to hurt the soldiers). */
+    public UfoRaid raid() {
+        return raid;
+    }
+
+    /** One frame of the retaliation: the UFOs beam the player, the red soldiers hunt them. */
+    public UfoRaid.Frame tickRaid(double dt, UfoRaid.Target player, InfantrySquad.Terrain terrain) {
+        return raid.tick(dt, player, terrain);
     }
 
     /** Puts a blast on its way that another weapon made (the bunker buster's impact). */
@@ -155,5 +197,6 @@ public final class StrikeWeapons {
     public void reset() {
         schedule.clear();
         squad.dismiss();
+        raid.reset();
     }
 }

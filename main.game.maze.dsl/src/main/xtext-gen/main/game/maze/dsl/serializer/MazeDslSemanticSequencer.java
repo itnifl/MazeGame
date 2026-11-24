@@ -37,6 +37,7 @@ import main.game.maze.dsl.mazeDsl.ThemeImageConfig;
 import main.game.maze.dsl.mazeDsl.ThemeSwatchConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.UfoRaidConfig;
 import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
@@ -157,6 +158,9 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case MazeDslPackage.TOWER_COUNT_CONFIG:
 				sequence_TowerCountConfig(context, (TowerCountConfig) semanticObject); 
+				return; 
+			case MazeDslPackage.UFO_RAID_CONFIG:
+				sequence_UfoRaidConfig(context, (UfoRaidConfig) semanticObject); 
 				return; 
 			case MazeDslPackage.WALL_BUILDER_CONFIG:
 				sequence_WallBuilderConfig(context, (WallBuilderConfig) semanticObject); 
@@ -429,6 +433,7 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         wallBuilder=WallBuilderConfig? 
 	 *         builderCounts+=BuilderCountConfig* 
 	 *         lava=LavaConfig? 
+	 *         ufoRaid=UfoRaidConfig? 
 	 *         lastLifeGift=LastLifeGiftConfig?
 	 *     )
 	 * </pre>
@@ -843,6 +848,42 @@ public class MazeDslSemanticSequencer extends AbstractDelegatingSemanticSequence
 		feeder.accept(grammarAccess.getTowerCountConfigAccess().getDifficultyDifficultyLevelEnumRuleCall_1_0(), semanticObject.getDifficulty());
 		feeder.accept(grammarAccess.getTowerCountConfigAccess().getCountINTTerminalRuleCall_2_0(), semanticObject.getCount());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     UfoRaidConfig returns UfoRaidConfig
+	 *
+	 * Constraint:
+	 *     (
+	 *         triggerTier=ValidID? 
+	 *         ufos=INT 
+	 *         seconds=DOUBLE 
+	 *         ufoSpeed=DOUBLE 
+	 *         beamEverySeconds=DOUBLE 
+	 *         chargeSeconds=DOUBLE 
+	 *         beamSeconds=DOUBLE 
+	 *         beamRadius=DOUBLE 
+	 *         aimMinDistance=DOUBLE 
+	 *         aimMaxDistance=DOUBLE 
+	 *         damageFraction=DOUBLE 
+	 *         soldiers=INT 
+	 *         soldierHealth=INT 
+	 *         soldierDamage=INT 
+	 *         soldierSight=DOUBLE 
+	 *         soldierSeconds=DOUBLE 
+	 *         bannerText=STRING? 
+	 *         ufoSprite=STRING 
+	 *         beamSprite=STRING 
+	 *         arriveSound=STRING? 
+	 *         beamSound=STRING?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_UfoRaidConfig(ISerializationContext context, UfoRaidConfig semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

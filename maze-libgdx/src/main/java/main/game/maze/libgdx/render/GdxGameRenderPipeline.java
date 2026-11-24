@@ -233,7 +233,8 @@ public final class GdxGameRenderPipeline {
             return;
         }
         state.highScoresOverlayView().render(
-                new GdxHighScoresOverlayView.RenderContext(state.batch(), state.shapes(), state.font(), state.hudCamera()),
+                new GdxHighScoresOverlayView.RenderContext(state.batch(), state.font(), state.glyphLayout(), state.hudCamera(),
+                        state.enemyTextureLoader()),
                 state.highScoreRows());
     }
 
@@ -274,11 +275,11 @@ public final class GdxGameRenderPipeline {
         GdxGameOverOverlayView.GameOverButtons gameOverButtons = state.gameOverOverlayView().render(
                 new GdxGameOverOverlayView.RenderContext(
                         state.batch(),
-                        state.shapes(),
                         state.font(),
                         state.glyphLayout(),
                         state.hudCamera(),
                         state.gameOverBackgroundTexture(),
+                        state.enemyTextureLoader(),
                         state.currentScore(),
                         state.scoreBreakdown()));
                 state.gameOverOverlayController().onOverlayRendered(gameOverButtons);

@@ -2279,9 +2279,28 @@ ruleLevelConfig returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0());
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getUfoRaidUfoRaidConfigParserRuleCall_21_0());
 				}
-				lv_lastLifeGift_26_0=ruleLastLifeGiftConfig
+				lv_ufoRaid_26_0=ruleUfoRaidConfig
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
+					}
+					set(
+						$current,
+						"ufoRaid",
+						lv_ufoRaid_26_0,
+						"main.game.maze.dsl.MazeDsl.UfoRaidConfig");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0());
+				}
+				lv_lastLifeGift_27_0=ruleLastLifeGiftConfig
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getLevelConfigRule());
@@ -2289,15 +2308,15 @@ ruleLevelConfig returns [EObject current=null]
 					set(
 						$current,
 						"lastLifeGift",
-						lv_lastLifeGift_26_0,
+						lv_lastLifeGift_27_0,
 						"main.game.maze.dsl.MazeDsl.LastLifeGiftConfig");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)?
-		otherlv_27='}'
+		otherlv_28='}'
 		{
-			newLeafNode(otherlv_27, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_22());
+			newLeafNode(otherlv_28, grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_23());
 		}
 	)
 ;
@@ -4268,6 +4287,519 @@ ruleLavaConfig returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleUfoRaidConfig
+entryRuleUfoRaidConfig returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getUfoRaidConfigRule()); }
+	iv_ruleUfoRaidConfig=ruleUfoRaidConfig
+	{ $current=$iv_ruleUfoRaidConfig.current; }
+	EOF;
+
+// Rule UfoRaidConfig
+ruleUfoRaidConfig returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='ufoRaid'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getUfoRaidConfigAccess().getUfoRaidKeyword_0());
+		}
+		otherlv_1='{'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getUfoRaidConfigAccess().getLeftCurlyBracketKeyword_1());
+		}
+		(
+			otherlv_2='trigger'
+			{
+				newLeafNode(otherlv_2, grammarAccess.getUfoRaidConfigAccess().getTriggerKeyword_2_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getTriggerTierValidIDParserRuleCall_2_1_0());
+					}
+					lv_triggerTier_3_0=ruleValidID
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+						}
+						set(
+							$current,
+							"triggerTier",
+							lv_triggerTier_3_0,
+							"main.game.maze.dsl.MazeDsl.ValidID");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		otherlv_4='ufos'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getUfoRaidConfigAccess().getUfosKeyword_3());
+		}
+		(
+			(
+				lv_ufos_5_0=RULE_INT
+				{
+					newLeafNode(lv_ufos_5_0, grammarAccess.getUfoRaidConfigAccess().getUfosINTTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"ufos",
+						lv_ufos_5_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_6='duration'
+		{
+			newLeafNode(otherlv_6, grammarAccess.getUfoRaidConfigAccess().getDurationKeyword_5());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getSecondsDOUBLEParserRuleCall_6_0());
+				}
+				lv_seconds_7_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"seconds",
+						lv_seconds_7_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_8='ufoSpeed'
+		{
+			newLeafNode(otherlv_8, grammarAccess.getUfoRaidConfigAccess().getUfoSpeedKeyword_7());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedDOUBLEParserRuleCall_8_0());
+				}
+				lv_ufoSpeed_9_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"ufoSpeed",
+						lv_ufoSpeed_9_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_10='beamEvery'
+		{
+			newLeafNode(otherlv_10, grammarAccess.getUfoRaidConfigAccess().getBeamEveryKeyword_9());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getBeamEverySecondsDOUBLEParserRuleCall_10_0());
+				}
+				lv_beamEverySeconds_11_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"beamEverySeconds",
+						lv_beamEverySeconds_11_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_12='charge'
+		{
+			newLeafNode(otherlv_12, grammarAccess.getUfoRaidConfigAccess().getChargeKeyword_11());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getChargeSecondsDOUBLEParserRuleCall_12_0());
+				}
+				lv_chargeSeconds_13_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"chargeSeconds",
+						lv_chargeSeconds_13_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_14='beamSeconds'
+		{
+			newLeafNode(otherlv_14, grammarAccess.getUfoRaidConfigAccess().getBeamSecondsKeyword_13());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsDOUBLEParserRuleCall_14_0());
+				}
+				lv_beamSeconds_15_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"beamSeconds",
+						lv_beamSeconds_15_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_16='beamRadius'
+		{
+			newLeafNode(otherlv_16, grammarAccess.getUfoRaidConfigAccess().getBeamRadiusKeyword_15());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusDOUBLEParserRuleCall_16_0());
+				}
+				lv_beamRadius_17_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"beamRadius",
+						lv_beamRadius_17_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_18='aimMin'
+		{
+			newLeafNode(otherlv_18, grammarAccess.getUfoRaidConfigAccess().getAimMinKeyword_17());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getAimMinDistanceDOUBLEParserRuleCall_18_0());
+				}
+				lv_aimMinDistance_19_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"aimMinDistance",
+						lv_aimMinDistance_19_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_20='aimMax'
+		{
+			newLeafNode(otherlv_20, grammarAccess.getUfoRaidConfigAccess().getAimMaxKeyword_19());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getAimMaxDistanceDOUBLEParserRuleCall_20_0());
+				}
+				lv_aimMaxDistance_21_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"aimMaxDistance",
+						lv_aimMaxDistance_21_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_22='damageFraction'
+		{
+			newLeafNode(otherlv_22, grammarAccess.getUfoRaidConfigAccess().getDamageFractionKeyword_21());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getDamageFractionDOUBLEParserRuleCall_22_0());
+				}
+				lv_damageFraction_23_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"damageFraction",
+						lv_damageFraction_23_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_24='soldiers'
+		{
+			newLeafNode(otherlv_24, grammarAccess.getUfoRaidConfigAccess().getSoldiersKeyword_23());
+		}
+		(
+			(
+				lv_soldiers_25_0=RULE_INT
+				{
+					newLeafNode(lv_soldiers_25_0, grammarAccess.getUfoRaidConfigAccess().getSoldiersINTTerminalRuleCall_24_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"soldiers",
+						lv_soldiers_25_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_26='soldierHealth'
+		{
+			newLeafNode(otherlv_26, grammarAccess.getUfoRaidConfigAccess().getSoldierHealthKeyword_25());
+		}
+		(
+			(
+				lv_soldierHealth_27_0=RULE_INT
+				{
+					newLeafNode(lv_soldierHealth_27_0, grammarAccess.getUfoRaidConfigAccess().getSoldierHealthINTTerminalRuleCall_26_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"soldierHealth",
+						lv_soldierHealth_27_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_28='soldierDamage'
+		{
+			newLeafNode(otherlv_28, grammarAccess.getUfoRaidConfigAccess().getSoldierDamageKeyword_27());
+		}
+		(
+			(
+				lv_soldierDamage_29_0=RULE_INT
+				{
+					newLeafNode(lv_soldierDamage_29_0, grammarAccess.getUfoRaidConfigAccess().getSoldierDamageINTTerminalRuleCall_28_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"soldierDamage",
+						lv_soldierDamage_29_0,
+						"org.eclipse.xtext.common.Terminals.INT");
+				}
+			)
+		)
+		otherlv_30='soldierSight'
+		{
+			newLeafNode(otherlv_30, grammarAccess.getUfoRaidConfigAccess().getSoldierSightKeyword_29());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getSoldierSightDOUBLEParserRuleCall_30_0());
+				}
+				lv_soldierSight_31_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"soldierSight",
+						lv_soldierSight_31_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_32='soldierSeconds'
+		{
+			newLeafNode(otherlv_32, grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsKeyword_31());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsDOUBLEParserRuleCall_32_0());
+				}
+				lv_soldierSeconds_33_0=ruleDOUBLE
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUfoRaidConfigRule());
+					}
+					set(
+						$current,
+						"soldierSeconds",
+						lv_soldierSeconds_33_0,
+						"main.game.maze.dsl.MazeDsl.DOUBLE");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_34='banner'
+			{
+				newLeafNode(otherlv_34, grammarAccess.getUfoRaidConfigAccess().getBannerKeyword_33_0());
+			}
+			(
+				(
+					lv_bannerText_35_0=RULE_STRING
+					{
+						newLeafNode(lv_bannerText_35_0, grammarAccess.getUfoRaidConfigAccess().getBannerTextSTRINGTerminalRuleCall_33_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"bannerText",
+							lv_bannerText_35_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_36='ufoSprite'
+		{
+			newLeafNode(otherlv_36, grammarAccess.getUfoRaidConfigAccess().getUfoSpriteKeyword_34());
+		}
+		(
+			(
+				lv_ufoSprite_37_0=RULE_STRING
+				{
+					newLeafNode(lv_ufoSprite_37_0, grammarAccess.getUfoRaidConfigAccess().getUfoSpriteSTRINGTerminalRuleCall_35_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"ufoSprite",
+						lv_ufoSprite_37_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_38='beamSprite'
+		{
+			newLeafNode(otherlv_38, grammarAccess.getUfoRaidConfigAccess().getBeamSpriteKeyword_36());
+		}
+		(
+			(
+				lv_beamSprite_39_0=RULE_STRING
+				{
+					newLeafNode(lv_beamSprite_39_0, grammarAccess.getUfoRaidConfigAccess().getBeamSpriteSTRINGTerminalRuleCall_37_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"beamSprite",
+						lv_beamSprite_39_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		(
+			otherlv_40='arriveSound'
+			{
+				newLeafNode(otherlv_40, grammarAccess.getUfoRaidConfigAccess().getArriveSoundKeyword_38_0());
+			}
+			(
+				(
+					lv_arriveSound_41_0=RULE_STRING
+					{
+						newLeafNode(lv_arriveSound_41_0, grammarAccess.getUfoRaidConfigAccess().getArriveSoundSTRINGTerminalRuleCall_38_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"arriveSound",
+							lv_arriveSound_41_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		(
+			otherlv_42='beamSound'
+			{
+				newLeafNode(otherlv_42, grammarAccess.getUfoRaidConfigAccess().getBeamSoundKeyword_39_0());
+			}
+			(
+				(
+					lv_beamSound_43_0=RULE_STRING
+					{
+						newLeafNode(lv_beamSound_43_0, grammarAccess.getUfoRaidConfigAccess().getBeamSoundSTRINGTerminalRuleCall_39_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUfoRaidConfigRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"beamSound",
+							lv_beamSound_43_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+		)?
+		otherlv_44='}'
+		{
+			newLeafNode(otherlv_44, grammarAccess.getUfoRaidConfigAccess().getRightCurlyBracketKeyword_40());
+		}
+	)
+;
+
 // Entry rule entryRuleShopConfig
 entryRuleShopConfig returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getShopConfigRule()); }
@@ -5828,88 +6360,214 @@ ruleValidID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 			newLeafNode(kw, grammarAccess.getValidIDAccess().getBuildSoundKeyword_76());
 		}
 		    |
+		kw='ufoRaid'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUfoRaidKeyword_77());
+		}
+		    |
+		kw='trigger'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTriggerKeyword_78());
+		}
+		    |
+		kw='ufos'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUfosKeyword_79());
+		}
+		    |
+		kw='duration'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDurationKeyword_80());
+		}
+		    |
+		kw='ufoSpeed'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUfoSpeedKeyword_81());
+		}
+		    |
+		kw='beamEvery'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBeamEveryKeyword_82());
+		}
+		    |
+		kw='charge'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getChargeKeyword_83());
+		}
+		    |
+		kw='beamSeconds'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBeamSecondsKeyword_84());
+		}
+		    |
+		kw='beamRadius'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBeamRadiusKeyword_85());
+		}
+		    |
+		kw='aimMin'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getAimMinKeyword_86());
+		}
+		    |
+		kw='aimMax'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getAimMaxKeyword_87());
+		}
+		    |
+		kw='damageFraction'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDamageFractionKeyword_88());
+		}
+		    |
+		kw='soldiers'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSoldiersKeyword_89());
+		}
+		    |
+		kw='soldierHealth'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSoldierHealthKeyword_90());
+		}
+		    |
+		kw='soldierDamage'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSoldierDamageKeyword_91());
+		}
+		    |
+		kw='soldierSight'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSoldierSightKeyword_92());
+		}
+		    |
+		kw='soldierSeconds'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSoldierSecondsKeyword_93());
+		}
+		    |
+		kw='ufoSprite'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUfoSpriteKeyword_94());
+		}
+		    |
+		kw='beamSprite'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBeamSpriteKeyword_95());
+		}
+		    |
+		kw='arriveSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getArriveSoundKeyword_96());
+		}
+		    |
+		kw='beamSound'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBeamSoundKeyword_97());
+		}
+		    |
 		kw='shop'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getShopKeyword_77());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getShopKeyword_98());
 		}
 		    |
 		kw='tier'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getTierKeyword_78());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getTierKeyword_99());
 		}
 		    |
 		kw='price'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getPriceKeyword_79());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getPriceKeyword_100());
 		}
 		    |
 		kw='amount'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getAmountKeyword_80());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getAmountKeyword_101());
 		}
 		    |
 		kw='factor'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getFactorKeyword_81());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFactorKeyword_102());
 		}
 		    |
 		kw='description'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getDescriptionKeyword_82());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getDescriptionKeyword_103());
 		}
 		    |
 		kw='unlock'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getUnlockKeyword_83());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getUnlockKeyword_104());
 		}
 		    |
 		kw='fromLevel'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getFromLevelKeyword_84());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFromLevelKeyword_105());
 		}
 		    |
 		kw='theme'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getThemeKeyword_85());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getThemeKeyword_106());
 		}
 		    |
 		kw='font'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getFontKeyword_86());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getFontKeyword_107());
 		}
 		    |
 		kw='colour'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getColourKeyword_87());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getColourKeyword_108());
 		}
 		    |
 		kw='image'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getImageKeyword_88());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getImageKeyword_109());
 		}
 		    |
 		kw='slice'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getSliceKeyword_89());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getSliceKeyword_110());
 		}
 		    |
 		kw='badge'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getValidIDAccess().getBadgeKeyword_90());
+			newLeafNode(kw, grammarAccess.getValidIDAccess().getBadgeKeyword_111());
 		}
 	)
 ;

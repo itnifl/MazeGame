@@ -40,7 +40,7 @@ class ShopCatalogTest {
             int expected = switch (item.tier()) {
                 case CHEAP -> 2_000;
                 case MEDIUM -> 10_000;
-                case EXPENSIVE -> 40_000;
+                case EXPENSIVE -> item.kind() == ShopItemKind.AIRSTRIKE ? 60_000 : 40_000;   // the airstrike is dearest
             };
             assertEquals(expected, item.price(), item.kind().toString());
         }

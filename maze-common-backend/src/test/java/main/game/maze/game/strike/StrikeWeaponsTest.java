@@ -104,4 +104,35 @@ class StrikeWeaponsTest {
         assertEquals(75, due.get(0).damage());
         assertTrue(strikes.pendingBlasts().isEmpty());
     }
+
+    @Test
+    @DisplayName("on a level with a retaliation only an expensive weapon brings the UFOs; on other levels nothing does")
+    void expensiveWeaponBringsTheUfos() {
+        var raid = main.game.maze.game.level.LevelCatalogLoader.loadDefault().level(7).ufoRaid();
+        StrikeWeapons strikes = new StrikeWeapons(ITEMS, new Random(1));
+        assertFalse(strikes.brings(Weapon.AIRSTRIKE), "no retaliation set: nothing comes");
+        assertEquals(null, strikes.retaliate(1100, 800, new main.game.maze.game.ufo.UfoRaid.Target() {
+            @Override public double x() { return 500; }
+            @Override public double y() { return 400; }
+            @Override public int maxHitPoints() { return 100; }
+            @Override public boolean shielded() { return false; }
+            @Override public void hurt(int damage) { }
+        }, List.of()));
+        strikes.setRaid(raid);
+        assertTrue(strikes.brings(Weapon.AIRSTRIKE));
+        assertTrue(strikes.brings(Weapon.NUKE_GRENADE));
+        assertTrue(strikes.brings(Weapon.INFANTRY_STRIKE));
+        assertFalse(strikes.brings(Weapon.GRENADE));
+        assertFalse(strikes.brings(Weapon.FAT_BOMB));
+        strikes.retaliate(1100, 800, new main.game.maze.game.ufo.UfoRaid.Target() {
+            @Override public double x() { return 500; }
+            @Override public double y() { return 400; }
+            @Override public int maxHitPoints() { return 100; }
+            @Override public boolean shielded() { return false; }
+            @Override public void hurt(int damage) { }
+        }, launch().openGround());
+        assertTrue(strikes.raid().ufosActive());
+        strikes.reset();
+        assertFalse(strikes.raid().active(), "a new level starts without UFOs");
+    }
 }
