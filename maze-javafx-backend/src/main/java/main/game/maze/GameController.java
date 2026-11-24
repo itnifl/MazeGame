@@ -495,6 +495,7 @@ public class GameController implements Initializable, EnemyRegistrar {
     private void nuclearBlastAt(double x, double y, int damage, double radius, boolean hurtsPlayer, String label) {
         List<main.game.maze.mazeworld.flame.FlameTarget> targets = new ArrayList<>(
                 enemyCoordinator.livingTargets(PlayerIds.LOCAL_PLAYER, main.game.maze.common.remains.DeathCause.FIRE));
+        targets.addAll(weapons.raidTargets());   // the red soldiers of the UFO raid burn too
         PlayerCharacter player = playerCharacter;
         if (hurtsPlayer && player != null) {
             double half = StageConstants.PlayerCharacterXYSize * 0.5d;
@@ -802,6 +803,8 @@ public class GameController implements Initializable, EnemyRegistrar {
         // new game: fresh arsenal, no items, shield or kills yet
         // the weapons of the previous level carry over (null on level 1: the difficulty's bombs)
         weapons.setBoosts(App.levelProgress.boosts());   // what was bought in the shop for this level
+        weapons.setRaid(App.levelProgress.current().ufoRaid());   // what the expensive weapons bring on this level
+        enemyCoordinator.setExtraTargets(weapons::raidTargets);
         // enemies near a soldier of the infantry strike go for the soldier first
         enemyCoordinator.setSoldiers(weapons.soldierTargets(), weapons.soldierLureRadius());
         weapons.startGame(playerCharacter, maze, lives, App.levelProgress.inheritedArsenal());

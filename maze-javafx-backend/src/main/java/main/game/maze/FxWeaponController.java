@@ -34,6 +34,7 @@ import main.game.maze.game.strike.ScheduledBlast;
 import main.game.maze.game.strike.StrikePlanner;
 import main.game.maze.game.strike.StrikeVisuals;
 import main.game.maze.game.strike.StrikeWeapons;
+import main.game.maze.game.ufo.UfoRaid;
 import main.game.maze.game.targeting.SoldierTargets;
 import main.game.maze.javafx.render.FxStrikeLayer;
 import main.game.maze.mazeworld.flame.FlameTarget;
@@ -120,6 +121,8 @@ public final class FxWeaponController {
     private long lastTickNanos = -1;
     /** Grenades, fat bombs, airstrikes and the infantry strike (shared rules). */
     private final StrikeWeapons strikes;
+    /** The UFOs and red soldiers of level 7's retaliation: the shared rules are in {@code strikes.raid()}. */
+    private final main.game.maze.javafx.render.FxUfoLayer ufoLayer;
     private final FxStrikeLayer strikeLayer;
     /** The boosts bought in the shop for this level. */
     private LevelBoosts boosts = LevelBoosts.NONE;
@@ -136,6 +139,7 @@ public final class FxWeaponController {
         this.pickupLayer = new FxPickupLayer(host::board);
         this.strikes = new StrikeWeapons(pickupField.catalog(), new Random());
         this.strikeLayer = new FxStrikeLayer(host::board);
+        this.ufoLayer = new main.game.maze.javafx.render.FxUfoLayer(host::board);
     }
 
     /** The boosts bought in the shop for the level that starts (longer shields, stronger bombs). */
@@ -228,6 +232,38 @@ public final class FxWeaponController {
                 boosts));
         playUseSound(use.spec());
         host.showMessage(use.message());
+        // an expensive weapon on a level with a retaliation brings the UFOs and the red soldiers
+        if (strikes.brings(weapon)) {
+            String banner = strikes.retaliate(host.boardWidth(), host.boardHeight(), raidTarget(player), spawnPoints);
+            var spec = strikes.raid().spec();
+            if (spec != null && spec.arriveSound() != null) {
+                AudioEngine.get().play(spec.arriveSound());
+            }
+            if (banner != null) {
+                host.showMessage(banner + "! The UFOs are beaming the area and soldiers are on their way");
+            }
+        }
+    }
+
+    /** The player as the UFO raid sees them: the centre of the board, the shield and the health bar of the game. */
+    private UfoRaid.Target raidTarget(PlayerCharacter player) {
+        return new UfoRaid.Target() {
+            @Override public double x() { return centerOf(player)[0]; }
+            @Override public double y() { return centerOf(player)[1]; }
+            @Override public int maxHitPoints() { return player.getMaxHitPoints(); }
+            @Override public boolean shielded() { return shield.isActive(); }
+            @Override public void hurt(int damage) { player.subtractHitPoints(damage); }
+        };
+    }
+
+    /** What this level answers an expensive weapon with (null: nothing); set when the level starts. */
+    public void setRaid(main.game.maze.game.ufo.UfoRaidSpec spec) {
+        strikes.setRaid(spec);
+    }
+
+    /** The red soldiers of the UFO raid as targets for the player's flames, shots and blasts (board space). */
+    public List<FlameTarget> raidTargets() {
+        return strikes.raid().soldierTargets();
     }
 
     /** The bunker buster: a rocket that goes through the walls it is strong enough for, and a blast where it stops. */
@@ -356,6 +392,7 @@ public final class FxWeaponController {
         }
         healFeedback.tick(dt);
         tickStrikes(dt, nowNanos / 1e9);
+        tickRaid(dt, player, nowNanos / 1e9);
         if (arsenal.tickBombRegen(dt) > 0) {
             host.arsenalChanged();
         }
@@ -424,6 +461,7 @@ public final class FxWeaponController {
     public void dispose() {
         pickupLayer.clear();
         strikeLayer.clear();
+        ufoLayer.clear();
         strikes.reset();
     }
 
@@ -469,6 +507,34 @@ public final class FxWeaponController {
         strikeLayer.showSoldiers(strikes.soldiers(), StageConstants.PlayerCharacterXYSize * StrikeVisuals.SOLDIER_SIZE_FACTOR);
         strikeLayer.showFuses(strikes.pendingBlasts(), pickupField.catalog(), clockSeconds);
         strikeLayer.showFalling(strikes.pendingBlasts(), pickupField.catalog());
+    }
+
+    /** Per frame: the UFOs fly and beam, a beam that catches the player takes their health (a shield blocks it). */
+    private void tickRaid(double dt, PlayerCharacter player, double clockSeconds) {
+        if (strikes.raid().active()) {
+            InfantrySquad.Terrain terrain = world != null && world.getNavigationGraph() != null
+                    ? InfantrySquad.Terrain.of(world) : null;
+            UfoRaid.Frame frame = strikes.tickRaid(dt, raidTarget(player), terrain);
+            var spec = strikes.raid().spec();
+            if (frame.beamsFired() > 0 && spec != null && spec.beamSound() != null) {
+                AudioEngine.get().playRateLimited(spec.beamSound(), "ufo.beam", 250L);
+            }
+            if (!frame.fallen().isEmpty()) {
+                AudioEngine.get().play(StrikeVisuals.SOLDIER_DOWN_SOUND);
+            }
+            for (InfantrySquad.Round round : frame.rounds()) {
+                playEffect(ShotEffects.enemyRound(round.fromX(), round.fromY(), round.toX(), round.toY()));
+                AudioEngine.get().playRateLimited(StrikeVisuals.SOLDIER_FIRE_SOUND, StrikeVisuals.SOLDIER_FIRE_SOUND_KEY,
+                        StrikeVisuals.SOLDIER_FIRE_COOLDOWN_MILLIS);
+            }
+            if (frame.hits() > 0) {
+                host.showMessage("UFO BEAM! Half your health is gone");
+                host.impactShake();
+            } else if (frame.blocked() > 0) {
+                host.showMessage("The shield blocked the beam");
+            }
+        }
+        ufoLayer.show(strikes.raid(), StageConstants.PlayerCharacterXYSize, clockSeconds);
     }
 
     /**

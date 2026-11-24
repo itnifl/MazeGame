@@ -1341,9 +1341,11 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cBuilderCountsBuilderCountConfigParserRuleCall_19_0 = (RuleCall)cBuilderCountsAssignment_19.eContents().get(0);
 		private final Assignment cLavaAssignment_20 = (Assignment)cGroup.eContents().get(20);
 		private final RuleCall cLavaLavaConfigParserRuleCall_20_0 = (RuleCall)cLavaAssignment_20.eContents().get(0);
-		private final Assignment cLastLifeGiftAssignment_21 = (Assignment)cGroup.eContents().get(21);
-		private final RuleCall cLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0 = (RuleCall)cLastLifeGiftAssignment_21.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_22 = (Keyword)cGroup.eContents().get(22);
+		private final Assignment cUfoRaidAssignment_21 = (Assignment)cGroup.eContents().get(21);
+		private final RuleCall cUfoRaidUfoRaidConfigParserRuleCall_21_0 = (RuleCall)cUfoRaidAssignment_21.eContents().get(0);
+		private final Assignment cLastLifeGiftAssignment_22 = (Assignment)cGroup.eContents().get(22);
+		private final RuleCall cLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0 = (RuleCall)cLastLifeGiftAssignment_22.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_23 = (Keyword)cGroup.eContents().get(23);
 		
 		///*
 		// * A level of the game (the source of xmi/levels/levels.xmi; see levels.ecore for what each value means).
@@ -1369,6 +1371,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (wallBuilder=WallBuilderConfig)?
 		//        (builderCounts+=BuilderCountConfig)*
 		//        (lava=LavaConfig)?
+		//        (ufoRaid=UfoRaidConfig)?
 		//        (lastLifeGift=LastLifeGiftConfig)?
 		//    '}'
 		//;
@@ -1392,6 +1395,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    (wallBuilder=WallBuilderConfig)?
 		//    (builderCounts+=BuilderCountConfig)*
 		//    (lava=LavaConfig)?
+		//    (ufoRaid=UfoRaidConfig)?
 		//    (lastLifeGift=LastLifeGiftConfig)?
 		//'}'
 		public Group getGroup() { return cGroup; }
@@ -1546,14 +1550,20 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//LavaConfig
 		public RuleCall getLavaLavaConfigParserRuleCall_20_0() { return cLavaLavaConfigParserRuleCall_20_0; }
 		
+		//(ufoRaid=UfoRaidConfig)?
+		public Assignment getUfoRaidAssignment_21() { return cUfoRaidAssignment_21; }
+		
+		//UfoRaidConfig
+		public RuleCall getUfoRaidUfoRaidConfigParserRuleCall_21_0() { return cUfoRaidUfoRaidConfigParserRuleCall_21_0; }
+		
 		//(lastLifeGift=LastLifeGiftConfig)?
-		public Assignment getLastLifeGiftAssignment_21() { return cLastLifeGiftAssignment_21; }
+		public Assignment getLastLifeGiftAssignment_22() { return cLastLifeGiftAssignment_22; }
 		
 		//LastLifeGiftConfig
-		public RuleCall getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0() { return cLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0; }
+		public RuleCall getLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0() { return cLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0; }
 		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_22() { return cRightCurlyBracketKeyword_22; }
+		public Keyword getRightCurlyBracketKeyword_23() { return cRightCurlyBracketKeyword_23; }
 	}
 	public class LevelZoneElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.LevelZone");
@@ -2824,6 +2834,347 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_16() { return cRightCurlyBracketKeyword_16; }
 	}
+	public class UfoRaidConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.UfoRaidConfig");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cUfoRaidKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cTriggerKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cTriggerTierAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cTriggerTierValidIDParserRuleCall_2_1_0 = (RuleCall)cTriggerTierAssignment_2_1.eContents().get(0);
+		private final Keyword cUfosKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cUfosAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cUfosINTTerminalRuleCall_4_0 = (RuleCall)cUfosAssignment_4.eContents().get(0);
+		private final Keyword cDurationKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cSecondsAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cSecondsDOUBLEParserRuleCall_6_0 = (RuleCall)cSecondsAssignment_6.eContents().get(0);
+		private final Keyword cUfoSpeedKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cUfoSpeedAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cUfoSpeedDOUBLEParserRuleCall_8_0 = (RuleCall)cUfoSpeedAssignment_8.eContents().get(0);
+		private final Keyword cBeamEveryKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cBeamEverySecondsAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cBeamEverySecondsDOUBLEParserRuleCall_10_0 = (RuleCall)cBeamEverySecondsAssignment_10.eContents().get(0);
+		private final Keyword cChargeKeyword_11 = (Keyword)cGroup.eContents().get(11);
+		private final Assignment cChargeSecondsAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cChargeSecondsDOUBLEParserRuleCall_12_0 = (RuleCall)cChargeSecondsAssignment_12.eContents().get(0);
+		private final Keyword cBeamSecondsKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cBeamSecondsAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cBeamSecondsDOUBLEParserRuleCall_14_0 = (RuleCall)cBeamSecondsAssignment_14.eContents().get(0);
+		private final Keyword cBeamRadiusKeyword_15 = (Keyword)cGroup.eContents().get(15);
+		private final Assignment cBeamRadiusAssignment_16 = (Assignment)cGroup.eContents().get(16);
+		private final RuleCall cBeamRadiusDOUBLEParserRuleCall_16_0 = (RuleCall)cBeamRadiusAssignment_16.eContents().get(0);
+		private final Keyword cAimMinKeyword_17 = (Keyword)cGroup.eContents().get(17);
+		private final Assignment cAimMinDistanceAssignment_18 = (Assignment)cGroup.eContents().get(18);
+		private final RuleCall cAimMinDistanceDOUBLEParserRuleCall_18_0 = (RuleCall)cAimMinDistanceAssignment_18.eContents().get(0);
+		private final Keyword cAimMaxKeyword_19 = (Keyword)cGroup.eContents().get(19);
+		private final Assignment cAimMaxDistanceAssignment_20 = (Assignment)cGroup.eContents().get(20);
+		private final RuleCall cAimMaxDistanceDOUBLEParserRuleCall_20_0 = (RuleCall)cAimMaxDistanceAssignment_20.eContents().get(0);
+		private final Keyword cDamageFractionKeyword_21 = (Keyword)cGroup.eContents().get(21);
+		private final Assignment cDamageFractionAssignment_22 = (Assignment)cGroup.eContents().get(22);
+		private final RuleCall cDamageFractionDOUBLEParserRuleCall_22_0 = (RuleCall)cDamageFractionAssignment_22.eContents().get(0);
+		private final Keyword cSoldiersKeyword_23 = (Keyword)cGroup.eContents().get(23);
+		private final Assignment cSoldiersAssignment_24 = (Assignment)cGroup.eContents().get(24);
+		private final RuleCall cSoldiersINTTerminalRuleCall_24_0 = (RuleCall)cSoldiersAssignment_24.eContents().get(0);
+		private final Keyword cSoldierHealthKeyword_25 = (Keyword)cGroup.eContents().get(25);
+		private final Assignment cSoldierHealthAssignment_26 = (Assignment)cGroup.eContents().get(26);
+		private final RuleCall cSoldierHealthINTTerminalRuleCall_26_0 = (RuleCall)cSoldierHealthAssignment_26.eContents().get(0);
+		private final Keyword cSoldierDamageKeyword_27 = (Keyword)cGroup.eContents().get(27);
+		private final Assignment cSoldierDamageAssignment_28 = (Assignment)cGroup.eContents().get(28);
+		private final RuleCall cSoldierDamageINTTerminalRuleCall_28_0 = (RuleCall)cSoldierDamageAssignment_28.eContents().get(0);
+		private final Keyword cSoldierSightKeyword_29 = (Keyword)cGroup.eContents().get(29);
+		private final Assignment cSoldierSightAssignment_30 = (Assignment)cGroup.eContents().get(30);
+		private final RuleCall cSoldierSightDOUBLEParserRuleCall_30_0 = (RuleCall)cSoldierSightAssignment_30.eContents().get(0);
+		private final Keyword cSoldierSecondsKeyword_31 = (Keyword)cGroup.eContents().get(31);
+		private final Assignment cSoldierSecondsAssignment_32 = (Assignment)cGroup.eContents().get(32);
+		private final RuleCall cSoldierSecondsDOUBLEParserRuleCall_32_0 = (RuleCall)cSoldierSecondsAssignment_32.eContents().get(0);
+		private final Group cGroup_33 = (Group)cGroup.eContents().get(33);
+		private final Keyword cBannerKeyword_33_0 = (Keyword)cGroup_33.eContents().get(0);
+		private final Assignment cBannerTextAssignment_33_1 = (Assignment)cGroup_33.eContents().get(1);
+		private final RuleCall cBannerTextSTRINGTerminalRuleCall_33_1_0 = (RuleCall)cBannerTextAssignment_33_1.eContents().get(0);
+		private final Keyword cUfoSpriteKeyword_34 = (Keyword)cGroup.eContents().get(34);
+		private final Assignment cUfoSpriteAssignment_35 = (Assignment)cGroup.eContents().get(35);
+		private final RuleCall cUfoSpriteSTRINGTerminalRuleCall_35_0 = (RuleCall)cUfoSpriteAssignment_35.eContents().get(0);
+		private final Keyword cBeamSpriteKeyword_36 = (Keyword)cGroup.eContents().get(36);
+		private final Assignment cBeamSpriteAssignment_37 = (Assignment)cGroup.eContents().get(37);
+		private final RuleCall cBeamSpriteSTRINGTerminalRuleCall_37_0 = (RuleCall)cBeamSpriteAssignment_37.eContents().get(0);
+		private final Group cGroup_38 = (Group)cGroup.eContents().get(38);
+		private final Keyword cArriveSoundKeyword_38_0 = (Keyword)cGroup_38.eContents().get(0);
+		private final Assignment cArriveSoundAssignment_38_1 = (Assignment)cGroup_38.eContents().get(1);
+		private final RuleCall cArriveSoundSTRINGTerminalRuleCall_38_1_0 = (RuleCall)cArriveSoundAssignment_38_1.eContents().get(0);
+		private final Group cGroup_39 = (Group)cGroup.eContents().get(39);
+		private final Keyword cBeamSoundKeyword_39_0 = (Keyword)cGroup_39.eContents().get(0);
+		private final Assignment cBeamSoundAssignment_39_1 = (Assignment)cGroup_39.eContents().get(1);
+		private final RuleCall cBeamSoundSTRINGTerminalRuleCall_39_1_0 = (RuleCall)cBeamSoundAssignment_39_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_40 = (Keyword)cGroup.eContents().get(40);
+		
+		///*
+		// * The retaliation when the player uses a weapon of the trigger tier of the shop: UFOs beam the ground close to the player
+		// * for `duration` seconds (a beam that catches the player takes `damageFraction` of their health; a shield blocks it)
+		// * and `soldiers` red soldiers are dropped to hunt them. See levels.ecore (UfoRaid).
+		// */
+		//UfoRaidConfig:
+		//    'ufoRaid' '{'
+		//        ('trigger' triggerTier=ValidID)?
+		//        'ufos' ufos=INT
+		//        'duration' seconds=DOUBLE
+		//        'ufoSpeed' ufoSpeed=DOUBLE
+		//        'beamEvery' beamEverySeconds=DOUBLE
+		//        'charge' chargeSeconds=DOUBLE
+		//        'beamSeconds' beamSeconds=DOUBLE
+		//        'beamRadius' beamRadius=DOUBLE
+		//        'aimMin' aimMinDistance=DOUBLE
+		//        'aimMax' aimMaxDistance=DOUBLE
+		//        'damageFraction' damageFraction=DOUBLE
+		//        'soldiers' soldiers=INT
+		//        'soldierHealth' soldierHealth=INT
+		//        'soldierDamage' soldierDamage=INT
+		//        'soldierSight' soldierSight=DOUBLE
+		//        'soldierSeconds' soldierSeconds=DOUBLE
+		//        ('banner' bannerText=STRING)?
+		//        'ufoSprite' ufoSprite=STRING
+		//        'beamSprite' beamSprite=STRING
+		//        ('arriveSound' arriveSound=STRING)?
+		//        ('beamSound' beamSound=STRING)?
+		//    '}'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'ufoRaid' '{'
+		//    ('trigger' triggerTier=ValidID)?
+		//    'ufos' ufos=INT
+		//    'duration' seconds=DOUBLE
+		//    'ufoSpeed' ufoSpeed=DOUBLE
+		//    'beamEvery' beamEverySeconds=DOUBLE
+		//    'charge' chargeSeconds=DOUBLE
+		//    'beamSeconds' beamSeconds=DOUBLE
+		//    'beamRadius' beamRadius=DOUBLE
+		//    'aimMin' aimMinDistance=DOUBLE
+		//    'aimMax' aimMaxDistance=DOUBLE
+		//    'damageFraction' damageFraction=DOUBLE
+		//    'soldiers' soldiers=INT
+		//    'soldierHealth' soldierHealth=INT
+		//    'soldierDamage' soldierDamage=INT
+		//    'soldierSight' soldierSight=DOUBLE
+		//    'soldierSeconds' soldierSeconds=DOUBLE
+		//    ('banner' bannerText=STRING)?
+		//    'ufoSprite' ufoSprite=STRING
+		//    'beamSprite' beamSprite=STRING
+		//    ('arriveSound' arriveSound=STRING)?
+		//    ('beamSound' beamSound=STRING)?
+		//'}'
+		public Group getGroup() { return cGroup; }
+		
+		//'ufoRaid'
+		public Keyword getUfoRaidKeyword_0() { return cUfoRaidKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//('trigger' triggerTier=ValidID)?
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//'trigger'
+		public Keyword getTriggerKeyword_2_0() { return cTriggerKeyword_2_0; }
+		
+		//triggerTier=ValidID
+		public Assignment getTriggerTierAssignment_2_1() { return cTriggerTierAssignment_2_1; }
+		
+		//ValidID
+		public RuleCall getTriggerTierValidIDParserRuleCall_2_1_0() { return cTriggerTierValidIDParserRuleCall_2_1_0; }
+		
+		//'ufos'
+		public Keyword getUfosKeyword_3() { return cUfosKeyword_3; }
+		
+		//ufos=INT
+		public Assignment getUfosAssignment_4() { return cUfosAssignment_4; }
+		
+		//INT
+		public RuleCall getUfosINTTerminalRuleCall_4_0() { return cUfosINTTerminalRuleCall_4_0; }
+		
+		//'duration'
+		public Keyword getDurationKeyword_5() { return cDurationKeyword_5; }
+		
+		//seconds=DOUBLE
+		public Assignment getSecondsAssignment_6() { return cSecondsAssignment_6; }
+		
+		//DOUBLE
+		public RuleCall getSecondsDOUBLEParserRuleCall_6_0() { return cSecondsDOUBLEParserRuleCall_6_0; }
+		
+		//'ufoSpeed'
+		public Keyword getUfoSpeedKeyword_7() { return cUfoSpeedKeyword_7; }
+		
+		//ufoSpeed=DOUBLE
+		public Assignment getUfoSpeedAssignment_8() { return cUfoSpeedAssignment_8; }
+		
+		//DOUBLE
+		public RuleCall getUfoSpeedDOUBLEParserRuleCall_8_0() { return cUfoSpeedDOUBLEParserRuleCall_8_0; }
+		
+		//'beamEvery'
+		public Keyword getBeamEveryKeyword_9() { return cBeamEveryKeyword_9; }
+		
+		//beamEverySeconds=DOUBLE
+		public Assignment getBeamEverySecondsAssignment_10() { return cBeamEverySecondsAssignment_10; }
+		
+		//DOUBLE
+		public RuleCall getBeamEverySecondsDOUBLEParserRuleCall_10_0() { return cBeamEverySecondsDOUBLEParserRuleCall_10_0; }
+		
+		//'charge'
+		public Keyword getChargeKeyword_11() { return cChargeKeyword_11; }
+		
+		//chargeSeconds=DOUBLE
+		public Assignment getChargeSecondsAssignment_12() { return cChargeSecondsAssignment_12; }
+		
+		//DOUBLE
+		public RuleCall getChargeSecondsDOUBLEParserRuleCall_12_0() { return cChargeSecondsDOUBLEParserRuleCall_12_0; }
+		
+		//'beamSeconds'
+		public Keyword getBeamSecondsKeyword_13() { return cBeamSecondsKeyword_13; }
+		
+		//beamSeconds=DOUBLE
+		public Assignment getBeamSecondsAssignment_14() { return cBeamSecondsAssignment_14; }
+		
+		//DOUBLE
+		public RuleCall getBeamSecondsDOUBLEParserRuleCall_14_0() { return cBeamSecondsDOUBLEParserRuleCall_14_0; }
+		
+		//'beamRadius'
+		public Keyword getBeamRadiusKeyword_15() { return cBeamRadiusKeyword_15; }
+		
+		//beamRadius=DOUBLE
+		public Assignment getBeamRadiusAssignment_16() { return cBeamRadiusAssignment_16; }
+		
+		//DOUBLE
+		public RuleCall getBeamRadiusDOUBLEParserRuleCall_16_0() { return cBeamRadiusDOUBLEParserRuleCall_16_0; }
+		
+		//'aimMin'
+		public Keyword getAimMinKeyword_17() { return cAimMinKeyword_17; }
+		
+		//aimMinDistance=DOUBLE
+		public Assignment getAimMinDistanceAssignment_18() { return cAimMinDistanceAssignment_18; }
+		
+		//DOUBLE
+		public RuleCall getAimMinDistanceDOUBLEParserRuleCall_18_0() { return cAimMinDistanceDOUBLEParserRuleCall_18_0; }
+		
+		//'aimMax'
+		public Keyword getAimMaxKeyword_19() { return cAimMaxKeyword_19; }
+		
+		//aimMaxDistance=DOUBLE
+		public Assignment getAimMaxDistanceAssignment_20() { return cAimMaxDistanceAssignment_20; }
+		
+		//DOUBLE
+		public RuleCall getAimMaxDistanceDOUBLEParserRuleCall_20_0() { return cAimMaxDistanceDOUBLEParserRuleCall_20_0; }
+		
+		//'damageFraction'
+		public Keyword getDamageFractionKeyword_21() { return cDamageFractionKeyword_21; }
+		
+		//damageFraction=DOUBLE
+		public Assignment getDamageFractionAssignment_22() { return cDamageFractionAssignment_22; }
+		
+		//DOUBLE
+		public RuleCall getDamageFractionDOUBLEParserRuleCall_22_0() { return cDamageFractionDOUBLEParserRuleCall_22_0; }
+		
+		//'soldiers'
+		public Keyword getSoldiersKeyword_23() { return cSoldiersKeyword_23; }
+		
+		//soldiers=INT
+		public Assignment getSoldiersAssignment_24() { return cSoldiersAssignment_24; }
+		
+		//INT
+		public RuleCall getSoldiersINTTerminalRuleCall_24_0() { return cSoldiersINTTerminalRuleCall_24_0; }
+		
+		//'soldierHealth'
+		public Keyword getSoldierHealthKeyword_25() { return cSoldierHealthKeyword_25; }
+		
+		//soldierHealth=INT
+		public Assignment getSoldierHealthAssignment_26() { return cSoldierHealthAssignment_26; }
+		
+		//INT
+		public RuleCall getSoldierHealthINTTerminalRuleCall_26_0() { return cSoldierHealthINTTerminalRuleCall_26_0; }
+		
+		//'soldierDamage'
+		public Keyword getSoldierDamageKeyword_27() { return cSoldierDamageKeyword_27; }
+		
+		//soldierDamage=INT
+		public Assignment getSoldierDamageAssignment_28() { return cSoldierDamageAssignment_28; }
+		
+		//INT
+		public RuleCall getSoldierDamageINTTerminalRuleCall_28_0() { return cSoldierDamageINTTerminalRuleCall_28_0; }
+		
+		//'soldierSight'
+		public Keyword getSoldierSightKeyword_29() { return cSoldierSightKeyword_29; }
+		
+		//soldierSight=DOUBLE
+		public Assignment getSoldierSightAssignment_30() { return cSoldierSightAssignment_30; }
+		
+		//DOUBLE
+		public RuleCall getSoldierSightDOUBLEParserRuleCall_30_0() { return cSoldierSightDOUBLEParserRuleCall_30_0; }
+		
+		//'soldierSeconds'
+		public Keyword getSoldierSecondsKeyword_31() { return cSoldierSecondsKeyword_31; }
+		
+		//soldierSeconds=DOUBLE
+		public Assignment getSoldierSecondsAssignment_32() { return cSoldierSecondsAssignment_32; }
+		
+		//DOUBLE
+		public RuleCall getSoldierSecondsDOUBLEParserRuleCall_32_0() { return cSoldierSecondsDOUBLEParserRuleCall_32_0; }
+		
+		//('banner' bannerText=STRING)?
+		public Group getGroup_33() { return cGroup_33; }
+		
+		//'banner'
+		public Keyword getBannerKeyword_33_0() { return cBannerKeyword_33_0; }
+		
+		//bannerText=STRING
+		public Assignment getBannerTextAssignment_33_1() { return cBannerTextAssignment_33_1; }
+		
+		//STRING
+		public RuleCall getBannerTextSTRINGTerminalRuleCall_33_1_0() { return cBannerTextSTRINGTerminalRuleCall_33_1_0; }
+		
+		//'ufoSprite'
+		public Keyword getUfoSpriteKeyword_34() { return cUfoSpriteKeyword_34; }
+		
+		//ufoSprite=STRING
+		public Assignment getUfoSpriteAssignment_35() { return cUfoSpriteAssignment_35; }
+		
+		//STRING
+		public RuleCall getUfoSpriteSTRINGTerminalRuleCall_35_0() { return cUfoSpriteSTRINGTerminalRuleCall_35_0; }
+		
+		//'beamSprite'
+		public Keyword getBeamSpriteKeyword_36() { return cBeamSpriteKeyword_36; }
+		
+		//beamSprite=STRING
+		public Assignment getBeamSpriteAssignment_37() { return cBeamSpriteAssignment_37; }
+		
+		//STRING
+		public RuleCall getBeamSpriteSTRINGTerminalRuleCall_37_0() { return cBeamSpriteSTRINGTerminalRuleCall_37_0; }
+		
+		//('arriveSound' arriveSound=STRING)?
+		public Group getGroup_38() { return cGroup_38; }
+		
+		//'arriveSound'
+		public Keyword getArriveSoundKeyword_38_0() { return cArriveSoundKeyword_38_0; }
+		
+		//arriveSound=STRING
+		public Assignment getArriveSoundAssignment_38_1() { return cArriveSoundAssignment_38_1; }
+		
+		//STRING
+		public RuleCall getArriveSoundSTRINGTerminalRuleCall_38_1_0() { return cArriveSoundSTRINGTerminalRuleCall_38_1_0; }
+		
+		//('beamSound' beamSound=STRING)?
+		public Group getGroup_39() { return cGroup_39; }
+		
+		//'beamSound'
+		public Keyword getBeamSoundKeyword_39_0() { return cBeamSoundKeyword_39_0; }
+		
+		//beamSound=STRING
+		public Assignment getBeamSoundAssignment_39_1() { return cBeamSoundAssignment_39_1; }
+		
+		//STRING
+		public RuleCall getBeamSoundSTRINGTerminalRuleCall_39_1_0() { return cBeamSoundSTRINGTerminalRuleCall_39_1_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_40() { return cRightCurlyBracketKeyword_40; }
+	}
 	public class ShopConfigElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "main.game.maze.dsl.MazeDsl.ShopConfig");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -3600,31 +3951,52 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cCrustKeyword_74 = (Keyword)cAlternatives.eContents().get(74);
 		private final Keyword cDeathSoundKeyword_75 = (Keyword)cAlternatives.eContents().get(75);
 		private final Keyword cBuildSoundKeyword_76 = (Keyword)cAlternatives.eContents().get(76);
-		private final Keyword cShopKeyword_77 = (Keyword)cAlternatives.eContents().get(77);
-		private final Keyword cTierKeyword_78 = (Keyword)cAlternatives.eContents().get(78);
-		private final Keyword cPriceKeyword_79 = (Keyword)cAlternatives.eContents().get(79);
-		private final Keyword cAmountKeyword_80 = (Keyword)cAlternatives.eContents().get(80);
-		private final Keyword cFactorKeyword_81 = (Keyword)cAlternatives.eContents().get(81);
-		private final Keyword cDescriptionKeyword_82 = (Keyword)cAlternatives.eContents().get(82);
-		private final Keyword cUnlockKeyword_83 = (Keyword)cAlternatives.eContents().get(83);
-		private final Keyword cFromLevelKeyword_84 = (Keyword)cAlternatives.eContents().get(84);
-		private final Keyword cThemeKeyword_85 = (Keyword)cAlternatives.eContents().get(85);
-		private final Keyword cFontKeyword_86 = (Keyword)cAlternatives.eContents().get(86);
-		private final Keyword cColourKeyword_87 = (Keyword)cAlternatives.eContents().get(87);
-		private final Keyword cImageKeyword_88 = (Keyword)cAlternatives.eContents().get(88);
-		private final Keyword cSliceKeyword_89 = (Keyword)cAlternatives.eContents().get(89);
-		private final Keyword cBadgeKeyword_90 = (Keyword)cAlternatives.eContents().get(90);
+		private final Keyword cUfoRaidKeyword_77 = (Keyword)cAlternatives.eContents().get(77);
+		private final Keyword cTriggerKeyword_78 = (Keyword)cAlternatives.eContents().get(78);
+		private final Keyword cUfosKeyword_79 = (Keyword)cAlternatives.eContents().get(79);
+		private final Keyword cDurationKeyword_80 = (Keyword)cAlternatives.eContents().get(80);
+		private final Keyword cUfoSpeedKeyword_81 = (Keyword)cAlternatives.eContents().get(81);
+		private final Keyword cBeamEveryKeyword_82 = (Keyword)cAlternatives.eContents().get(82);
+		private final Keyword cChargeKeyword_83 = (Keyword)cAlternatives.eContents().get(83);
+		private final Keyword cBeamSecondsKeyword_84 = (Keyword)cAlternatives.eContents().get(84);
+		private final Keyword cBeamRadiusKeyword_85 = (Keyword)cAlternatives.eContents().get(85);
+		private final Keyword cAimMinKeyword_86 = (Keyword)cAlternatives.eContents().get(86);
+		private final Keyword cAimMaxKeyword_87 = (Keyword)cAlternatives.eContents().get(87);
+		private final Keyword cDamageFractionKeyword_88 = (Keyword)cAlternatives.eContents().get(88);
+		private final Keyword cSoldiersKeyword_89 = (Keyword)cAlternatives.eContents().get(89);
+		private final Keyword cSoldierHealthKeyword_90 = (Keyword)cAlternatives.eContents().get(90);
+		private final Keyword cSoldierDamageKeyword_91 = (Keyword)cAlternatives.eContents().get(91);
+		private final Keyword cSoldierSightKeyword_92 = (Keyword)cAlternatives.eContents().get(92);
+		private final Keyword cSoldierSecondsKeyword_93 = (Keyword)cAlternatives.eContents().get(93);
+		private final Keyword cUfoSpriteKeyword_94 = (Keyword)cAlternatives.eContents().get(94);
+		private final Keyword cBeamSpriteKeyword_95 = (Keyword)cAlternatives.eContents().get(95);
+		private final Keyword cArriveSoundKeyword_96 = (Keyword)cAlternatives.eContents().get(96);
+		private final Keyword cBeamSoundKeyword_97 = (Keyword)cAlternatives.eContents().get(97);
+		private final Keyword cShopKeyword_98 = (Keyword)cAlternatives.eContents().get(98);
+		private final Keyword cTierKeyword_99 = (Keyword)cAlternatives.eContents().get(99);
+		private final Keyword cPriceKeyword_100 = (Keyword)cAlternatives.eContents().get(100);
+		private final Keyword cAmountKeyword_101 = (Keyword)cAlternatives.eContents().get(101);
+		private final Keyword cFactorKeyword_102 = (Keyword)cAlternatives.eContents().get(102);
+		private final Keyword cDescriptionKeyword_103 = (Keyword)cAlternatives.eContents().get(103);
+		private final Keyword cUnlockKeyword_104 = (Keyword)cAlternatives.eContents().get(104);
+		private final Keyword cFromLevelKeyword_105 = (Keyword)cAlternatives.eContents().get(105);
+		private final Keyword cThemeKeyword_106 = (Keyword)cAlternatives.eContents().get(106);
+		private final Keyword cFontKeyword_107 = (Keyword)cAlternatives.eContents().get(107);
+		private final Keyword cColourKeyword_108 = (Keyword)cAlternatives.eContents().get(108);
+		private final Keyword cImageKeyword_109 = (Keyword)cAlternatives.eContents().get(109);
+		private final Keyword cSliceKeyword_110 = (Keyword)cAlternatives.eContents().get(110);
+		private final Keyword cBadgeKeyword_111 = (Keyword)cAlternatives.eContents().get(111);
 		
 		///*
 		// * A name. The words the level section added to the language (basedOn, mines, gatling, teleport, ...) are still
 		// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 		// */
 		//ValidID returns ecore::EString:
-		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
+		//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'ufoRaid' | 'trigger' | 'ufos' | 'duration' | 'ufoSpeed' | 'beamEvery' | 'charge' | 'beamSeconds' | 'beamRadius' | 'aimMin' | 'aimMax' | 'damageFraction' | 'soldiers' | 'soldierHealth' | 'soldierDamage' | 'soldierSight' | 'soldierSeconds' | 'ufoSprite' | 'beamSprite' | 'arriveSound' | 'beamSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
+		//ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'ufoRaid' | 'trigger' | 'ufos' | 'duration' | 'ufoSpeed' | 'beamEvery' | 'charge' | 'beamSeconds' | 'beamRadius' | 'aimMin' | 'aimMax' | 'damageFraction' | 'soldiers' | 'soldierHealth' | 'soldierDamage' | 'soldierSight' | 'soldierSeconds' | 'ufoSprite' | 'beamSprite' | 'arriveSound' | 'beamSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -3858,47 +4230,110 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//'buildSound'
 		public Keyword getBuildSoundKeyword_76() { return cBuildSoundKeyword_76; }
 		
+		//'ufoRaid'
+		public Keyword getUfoRaidKeyword_77() { return cUfoRaidKeyword_77; }
+		
+		//'trigger'
+		public Keyword getTriggerKeyword_78() { return cTriggerKeyword_78; }
+		
+		//'ufos'
+		public Keyword getUfosKeyword_79() { return cUfosKeyword_79; }
+		
+		//'duration'
+		public Keyword getDurationKeyword_80() { return cDurationKeyword_80; }
+		
+		//'ufoSpeed'
+		public Keyword getUfoSpeedKeyword_81() { return cUfoSpeedKeyword_81; }
+		
+		//'beamEvery'
+		public Keyword getBeamEveryKeyword_82() { return cBeamEveryKeyword_82; }
+		
+		//'charge'
+		public Keyword getChargeKeyword_83() { return cChargeKeyword_83; }
+		
+		//'beamSeconds'
+		public Keyword getBeamSecondsKeyword_84() { return cBeamSecondsKeyword_84; }
+		
+		//'beamRadius'
+		public Keyword getBeamRadiusKeyword_85() { return cBeamRadiusKeyword_85; }
+		
+		//'aimMin'
+		public Keyword getAimMinKeyword_86() { return cAimMinKeyword_86; }
+		
+		//'aimMax'
+		public Keyword getAimMaxKeyword_87() { return cAimMaxKeyword_87; }
+		
+		//'damageFraction'
+		public Keyword getDamageFractionKeyword_88() { return cDamageFractionKeyword_88; }
+		
+		//'soldiers'
+		public Keyword getSoldiersKeyword_89() { return cSoldiersKeyword_89; }
+		
+		//'soldierHealth'
+		public Keyword getSoldierHealthKeyword_90() { return cSoldierHealthKeyword_90; }
+		
+		//'soldierDamage'
+		public Keyword getSoldierDamageKeyword_91() { return cSoldierDamageKeyword_91; }
+		
+		//'soldierSight'
+		public Keyword getSoldierSightKeyword_92() { return cSoldierSightKeyword_92; }
+		
+		//'soldierSeconds'
+		public Keyword getSoldierSecondsKeyword_93() { return cSoldierSecondsKeyword_93; }
+		
+		//'ufoSprite'
+		public Keyword getUfoSpriteKeyword_94() { return cUfoSpriteKeyword_94; }
+		
+		//'beamSprite'
+		public Keyword getBeamSpriteKeyword_95() { return cBeamSpriteKeyword_95; }
+		
+		//'arriveSound'
+		public Keyword getArriveSoundKeyword_96() { return cArriveSoundKeyword_96; }
+		
+		//'beamSound'
+		public Keyword getBeamSoundKeyword_97() { return cBeamSoundKeyword_97; }
+		
 		//'shop'
-		public Keyword getShopKeyword_77() { return cShopKeyword_77; }
+		public Keyword getShopKeyword_98() { return cShopKeyword_98; }
 		
 		//'tier'
-		public Keyword getTierKeyword_78() { return cTierKeyword_78; }
+		public Keyword getTierKeyword_99() { return cTierKeyword_99; }
 		
 		//'price'
-		public Keyword getPriceKeyword_79() { return cPriceKeyword_79; }
+		public Keyword getPriceKeyword_100() { return cPriceKeyword_100; }
 		
 		//'amount'
-		public Keyword getAmountKeyword_80() { return cAmountKeyword_80; }
+		public Keyword getAmountKeyword_101() { return cAmountKeyword_101; }
 		
 		//'factor'
-		public Keyword getFactorKeyword_81() { return cFactorKeyword_81; }
+		public Keyword getFactorKeyword_102() { return cFactorKeyword_102; }
 		
 		//'description'
-		public Keyword getDescriptionKeyword_82() { return cDescriptionKeyword_82; }
+		public Keyword getDescriptionKeyword_103() { return cDescriptionKeyword_103; }
 		
 		//'unlock'
-		public Keyword getUnlockKeyword_83() { return cUnlockKeyword_83; }
+		public Keyword getUnlockKeyword_104() { return cUnlockKeyword_104; }
 		
 		//'fromLevel'
-		public Keyword getFromLevelKeyword_84() { return cFromLevelKeyword_84; }
+		public Keyword getFromLevelKeyword_105() { return cFromLevelKeyword_105; }
 		
 		//'theme'
-		public Keyword getThemeKeyword_85() { return cThemeKeyword_85; }
+		public Keyword getThemeKeyword_106() { return cThemeKeyword_106; }
 		
 		//'font'
-		public Keyword getFontKeyword_86() { return cFontKeyword_86; }
+		public Keyword getFontKeyword_107() { return cFontKeyword_107; }
 		
 		//'colour'
-		public Keyword getColourKeyword_87() { return cColourKeyword_87; }
+		public Keyword getColourKeyword_108() { return cColourKeyword_108; }
 		
 		//'image'
-		public Keyword getImageKeyword_88() { return cImageKeyword_88; }
+		public Keyword getImageKeyword_109() { return cImageKeyword_109; }
 		
 		//'slice'
-		public Keyword getSliceKeyword_89() { return cSliceKeyword_89; }
+		public Keyword getSliceKeyword_110() { return cSliceKeyword_110; }
 		
 		//'badge'
-		public Keyword getBadgeKeyword_90() { return cBadgeKeyword_90; }
+		public Keyword getBadgeKeyword_111() { return cBadgeKeyword_111; }
 	}
 	
 	public class DifficultyLevelElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
@@ -4183,6 +4618,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final WallBuilderConfigElements pWallBuilderConfig;
 	private final BuilderCountConfigElements pBuilderCountConfig;
 	private final LavaConfigElements pLavaConfig;
+	private final UfoRaidConfigElements pUfoRaidConfig;
 	private final ShopConfigElements pShopConfig;
 	private final ShopUnlockConfigElements pShopUnlockConfig;
 	private final ShopItemConfigElements pShopItemConfig;
@@ -4242,6 +4678,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pWallBuilderConfig = new WallBuilderConfigElements();
 		this.pBuilderCountConfig = new BuilderCountConfigElements();
 		this.pLavaConfig = new LavaConfigElements();
+		this.pUfoRaidConfig = new UfoRaidConfigElements();
 		this.pShopConfig = new ShopConfigElements();
 		this.pShopUnlockConfig = new ShopUnlockConfigElements();
 		this.pShopItemConfig = new ShopItemConfigElements();
@@ -4618,6 +5055,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (wallBuilder=WallBuilderConfig)?
 	//        (builderCounts+=BuilderCountConfig)*
 	//        (lava=LavaConfig)?
+	//        (ufoRaid=UfoRaidConfig)?
 	//        (lastLifeGift=LastLifeGiftConfig)?
 	//    '}'
 	//;
@@ -4826,6 +5264,44 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	public ParserRule getLavaConfigRule() {
 		return getLavaConfigAccess().getRule();
+	}
+	
+	///*
+	// * The retaliation when the player uses a weapon of the trigger tier of the shop: UFOs beam the ground close to the player
+	// * for `duration` seconds (a beam that catches the player takes `damageFraction` of their health; a shield blocks it)
+	// * and `soldiers` red soldiers are dropped to hunt them. See levels.ecore (UfoRaid).
+	// */
+	//UfoRaidConfig:
+	//    'ufoRaid' '{'
+	//        ('trigger' triggerTier=ValidID)?
+	//        'ufos' ufos=INT
+	//        'duration' seconds=DOUBLE
+	//        'ufoSpeed' ufoSpeed=DOUBLE
+	//        'beamEvery' beamEverySeconds=DOUBLE
+	//        'charge' chargeSeconds=DOUBLE
+	//        'beamSeconds' beamSeconds=DOUBLE
+	//        'beamRadius' beamRadius=DOUBLE
+	//        'aimMin' aimMinDistance=DOUBLE
+	//        'aimMax' aimMaxDistance=DOUBLE
+	//        'damageFraction' damageFraction=DOUBLE
+	//        'soldiers' soldiers=INT
+	//        'soldierHealth' soldierHealth=INT
+	//        'soldierDamage' soldierDamage=INT
+	//        'soldierSight' soldierSight=DOUBLE
+	//        'soldierSeconds' soldierSeconds=DOUBLE
+	//        ('banner' bannerText=STRING)?
+	//        'ufoSprite' ufoSprite=STRING
+	//        'beamSprite' beamSprite=STRING
+	//        ('arriveSound' arriveSound=STRING)?
+	//        ('beamSound' beamSound=STRING)?
+	//    '}'
+	//;
+	public UfoRaidConfigElements getUfoRaidConfigAccess() {
+		return pUfoRaidConfig;
+	}
+	
+	public ParserRule getUfoRaidConfigRule() {
+		return getUfoRaidConfigAccess().getRule();
 	}
 	
 	///*
@@ -5039,7 +5515,7 @@ public class MazeDslGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// * allowed as names and references, so existing files that used them as identifiers keep parsing.
 	// */
 	//ValidID returns ecore::EString:
-	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
+	//    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'ufoRaid' | 'trigger' | 'ufos' | 'duration' | 'ufoSpeed' | 'beamEvery' | 'charge' | 'beamSeconds' | 'beamRadius' | 'aimMin' | 'aimMax' | 'damageFraction' | 'soldiers' | 'soldierHealth' | 'soldierDamage' | 'soldierSight' | 'soldierSeconds' | 'ufoSprite' | 'beamSprite' | 'arriveSound' | 'beamSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 	//;
 	public ValidIDElements getValidIDAccess() {
 		return pValidID;

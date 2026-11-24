@@ -342,10 +342,10 @@ MUST be added to the shared core, not to a single frontend.
   the score and the difficulty it was entered with.
 - **GR-78**: Between levels the win screen offers a Shop. Prices are paid from the score
   carried into the next level; what is bought goes into the next level (and its savepoint).
-  Cheap: extra long shield (800, shields x3), extra long flames (1000, bombs x1.6), 5 grenades
-  (600). Medium: 3 plasma grenades (2000), 3 bunker buster rockets (2500), a fat bomb (2200),
-  3 extra lives (3000). Expensive: 2 small nuclear grenades (6000), an airstrike (7500), an
-  infantry strike (9000).
+  Cheap: extra long shield (2000, shields x3), extra long flames (2000, bombs x1.6), 5 grenades
+  (2000). Medium: 3 plasma grenades, 3 bunker buster rockets, a fat bomb and 3 extra lives
+  (10000 each). Expensive: 2 small nuclear grenades (40000), an airstrike (60000), an
+  infantry strike (40000).
 - **GR-79**: The boosts last for the next level only; buying one that is already on is refused.
 - **GR-80**: Grenades are thrown up to 240 px (plasma 260, nuke 300) along the facing, stop short
   of a wall and go off after 1.2 s (nuke 2 s): grenade 160 damage / 120 px flames, plasma 420 /
@@ -376,3 +376,11 @@ MUST be added to the shared core, not to a single frontend.
   shelves, Up and Down along one.
 - **GR-92**: The planted bomb lies as a bomb with a burning fuse and goes off after 3 s (flames
   220 px); an airstrike's bombs are seen falling onto their shadows in the 0.7 s before they hit.
+- **GR-93**: On level 7, using a weapon of the expensive tier of the shop (small nuclear grenade,
+  airstrike, infantry strike) brings a UFO retaliation: two UFOs cross the map back and forth for
+  10 s and beam the ground 50 to 170 px from the player, never straight at them. The spot is
+  marked for 0.8 s, then the beam burns for 1.2 s; a player who bumps into it loses half their
+  maximum health, once per beam. A power shield blocks the beams.
+- **GR-94**: With the UFOs, ten red soldiers are airdropped some way off the player and hunt them,
+  firing when they see the player (4 damage a round; a shield blocks it). They have 60 health,
+  are killed by the player's flames, shots and nuclear blasts, and leave after 45 s.

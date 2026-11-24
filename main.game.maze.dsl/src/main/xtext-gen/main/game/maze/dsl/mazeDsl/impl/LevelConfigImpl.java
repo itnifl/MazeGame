@@ -19,6 +19,7 @@ import main.game.maze.dsl.mazeDsl.SergeantConfig;
 import main.game.maze.dsl.mazeDsl.TeleportRulesConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.UfoRaidConfig;
 import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -62,6 +63,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getWallBuilder <em>Wall Builder</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getBuilderCounts <em>Builder Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getLava <em>Lava</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getUfoRaid <em>Ufo Raid</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.impl.LevelConfigImpl#getLastLifeGift <em>Last Life Gift</em>}</li>
  * </ul>
  *
@@ -328,6 +330,16 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @ordered
    */
   protected LavaConfig lava;
+
+  /**
+   * The cached value of the '{@link #getUfoRaid() <em>Ufo Raid</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUfoRaid()
+   * @generated
+   * @ordered
+   */
+  protected UfoRaidConfig ufoRaid;
 
   /**
    * The cached value of the '{@link #getLastLifeGift() <em>Last Life Gift</em>}' containment reference.
@@ -966,6 +978,56 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
    * @generated
    */
   @Override
+  public UfoRaidConfig getUfoRaid()
+  {
+    return ufoRaid;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetUfoRaid(UfoRaidConfig newUfoRaid, NotificationChain msgs)
+  {
+    UfoRaidConfig oldUfoRaid = ufoRaid;
+    ufoRaid = newUfoRaid;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__UFO_RAID, oldUfoRaid, newUfoRaid);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setUfoRaid(UfoRaidConfig newUfoRaid)
+  {
+    if (newUfoRaid != ufoRaid)
+    {
+      NotificationChain msgs = null;
+      if (ufoRaid != null)
+        msgs = ((InternalEObject)ufoRaid).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__UFO_RAID, null, msgs);
+      if (newUfoRaid != null)
+        msgs = ((InternalEObject)newUfoRaid).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MazeDslPackage.LEVEL_CONFIG__UFO_RAID, null, msgs);
+      msgs = basicSetUfoRaid(newUfoRaid, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MazeDslPackage.LEVEL_CONFIG__UFO_RAID, newUfoRaid, newUfoRaid));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public LastLifeGiftConfig getLastLifeGift()
   {
     return lastLifeGift;
@@ -1044,6 +1106,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return ((InternalEList<?>)getBuilderCounts()).basicRemove(otherEnd, msgs);
       case MazeDslPackage.LEVEL_CONFIG__LAVA:
         return basicSetLava(null, msgs);
+      case MazeDslPackage.LEVEL_CONFIG__UFO_RAID:
+        return basicSetUfoRaid(null, msgs);
       case MazeDslPackage.LEVEL_CONFIG__LAST_LIFE_GIFT:
         return basicSetLastLifeGift(null, msgs);
     }
@@ -1098,6 +1162,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return getBuilderCounts();
       case MazeDslPackage.LEVEL_CONFIG__LAVA:
         return getLava();
+      case MazeDslPackage.LEVEL_CONFIG__UFO_RAID:
+        return getUfoRaid();
       case MazeDslPackage.LEVEL_CONFIG__LAST_LIFE_GIFT:
         return getLastLifeGift();
     }
@@ -1177,6 +1243,9 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
       case MazeDslPackage.LEVEL_CONFIG__LAVA:
         setLava((LavaConfig)newValue);
         return;
+      case MazeDslPackage.LEVEL_CONFIG__UFO_RAID:
+        setUfoRaid((UfoRaidConfig)newValue);
+        return;
       case MazeDslPackage.LEVEL_CONFIG__LAST_LIFE_GIFT:
         setLastLifeGift((LastLifeGiftConfig)newValue);
         return;
@@ -1251,6 +1320,9 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
       case MazeDslPackage.LEVEL_CONFIG__LAVA:
         setLava((LavaConfig)null);
         return;
+      case MazeDslPackage.LEVEL_CONFIG__UFO_RAID:
+        setUfoRaid((UfoRaidConfig)null);
+        return;
       case MazeDslPackage.LEVEL_CONFIG__LAST_LIFE_GIFT:
         setLastLifeGift((LastLifeGiftConfig)null);
         return;
@@ -1306,6 +1378,8 @@ public class LevelConfigImpl extends MinimalEObjectImpl.Container implements Lev
         return builderCounts != null && !builderCounts.isEmpty();
       case MazeDslPackage.LEVEL_CONFIG__LAVA:
         return lava != null;
+      case MazeDslPackage.LEVEL_CONFIG__UFO_RAID:
+        return ufoRaid != null;
       case MazeDslPackage.LEVEL_CONFIG__LAST_LIFE_GIFT:
         return lastLifeGift != null;
     }

@@ -115,6 +115,9 @@ public final class LevelCatalogLoader {
         LastLifeGiftSpec gift = DynamicModel.value(level, "lastLifeGift") instanceof EObject own ? giftOf(own, number)
                 : base != null ? base.lastLifeGift() : null;
 
+        main.game.maze.game.ufo.UfoRaidSpec raid = DynamicModel.value(level, "ufoRaid") instanceof EObject own ? raidOf(own, number)
+                : base != null ? base.ufoRaid() : null;
+
         TeleportRulesSpec teleport = DynamicModel.value(level, "teleport") instanceof EObject own ? teleportOf(own)
                 : base != null ? base.teleport() : TeleportRulesSpec.DEFAULT;
 
@@ -130,7 +133,7 @@ public final class LevelCatalogLoader {
         int maxCascadeDepth = inherited(level, "maxCascadeDepth", base,
                 DynamicModel.integer(level, "maxCascadeDepth"), base == null ? -1 : base.maxCascadeDepth());
         return new LevelSpec(number, name, threatCapacityFactor, showWallMaterials, inheritWeapons, maxCascadeDepth,
-                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts, builder, builderCounts, lava, gift);
+                zones, sergeant, posts, mines, ghost, ghostCounts, teleport, tower, towerCounts, builder, builderCounts, lava, gift, raid);
     }
 
     /** The level's own value when it sets one (or has no base level), otherwise the base level's. */
@@ -208,6 +211,24 @@ public final class LevelCatalogLoader {
     private static LastLifeGiftSpec giftOf(EObject gift, int number) {
         try {
             return LastLifeGiftSpec.of(DynamicModel.string(gift, "weapon"), DynamicModel.integer(gift, "shots"));
+        } catch (IllegalArgumentException invalid) {
+            throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
+        }
+    }
+
+    private static main.game.maze.game.ufo.UfoRaidSpec raidOf(EObject raid, int number) {
+        try {
+            return new main.game.maze.game.ufo.UfoRaidSpec(DynamicModel.string(raid, "triggerTier"),
+                    DynamicModel.integer(raid, "ufos"), DynamicModel.decimal(raid, "seconds"),
+                    DynamicModel.decimal(raid, "ufoSpeed"), DynamicModel.decimal(raid, "beamEverySeconds"),
+                    DynamicModel.decimal(raid, "chargeSeconds"), DynamicModel.decimal(raid, "beamSeconds"),
+                    DynamicModel.decimal(raid, "beamRadius"), DynamicModel.decimal(raid, "aimMinDistance"),
+                    DynamicModel.decimal(raid, "aimMaxDistance"), DynamicModel.decimal(raid, "damageFraction"),
+                    DynamicModel.integer(raid, "soldiers"), DynamicModel.integer(raid, "soldierHealth"),
+                    DynamicModel.integer(raid, "soldierDamage"), DynamicModel.decimal(raid, "soldierSight"),
+                    DynamicModel.decimal(raid, "soldierSeconds"), DynamicModel.string(raid, "bannerText"),
+                    DynamicModel.string(raid, "ufoSprite"), DynamicModel.string(raid, "beamSprite"),
+                    DynamicModel.string(raid, "arriveSound"), DynamicModel.string(raid, "beamSound"));
         } catch (IllegalArgumentException invalid) {
             throw new IllegalStateException("level " + number + ": " + invalid.getMessage(), invalid);
         }

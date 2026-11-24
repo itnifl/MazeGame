@@ -92,6 +92,7 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
       case MazeDslPackage.WALL_BUILDER_CONFIG: return createWallBuilderConfig();
       case MazeDslPackage.BUILDER_COUNT_CONFIG: return createBuilderCountConfig();
       case MazeDslPackage.LAVA_CONFIG: return createLavaConfig();
+      case MazeDslPackage.UFO_RAID_CONFIG: return createUfoRaidConfig();
       case MazeDslPackage.SHOP_CONFIG: return createShopConfig();
       case MazeDslPackage.SHOP_UNLOCK_CONFIG: return createShopUnlockConfig();
       case MazeDslPackage.SHOP_ITEM_CONFIG: return createShopItemConfig();
@@ -474,6 +475,18 @@ public class MazeDslFactoryImpl extends EFactoryImpl implements MazeDslFactory
   {
     LavaConfigImpl lavaConfig = new LavaConfigImpl();
     return lavaConfig;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public UfoRaidConfig createUfoRaidConfig()
+  {
+    UfoRaidConfigImpl ufoRaidConfig = new UfoRaidConfigImpl();
+    return ufoRaidConfig;
   }
 
   /**

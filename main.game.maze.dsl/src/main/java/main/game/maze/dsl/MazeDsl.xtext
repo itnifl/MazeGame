@@ -201,6 +201,7 @@ LevelConfig:
         (wallBuilder=WallBuilderConfig)?
         (builderCounts+=BuilderCountConfig)*
         (lava=LavaConfig)?
+        (ufoRaid=UfoRaidConfig)?
         (lastLifeGift=LastLifeGiftConfig)?
     '}'
 ;
@@ -321,6 +322,37 @@ LavaConfig:
 ;
 
 /*
+ * The retaliation when the player uses a weapon of the trigger tier of the shop: UFOs beam the ground close to the player
+ * for `duration` seconds (a beam that catches the player takes `damageFraction` of their health; a shield blocks it)
+ * and `soldiers` red soldiers are dropped to hunt them. See levels.ecore (UfoRaid).
+ */
+UfoRaidConfig:
+    'ufoRaid' '{'
+        ('trigger' triggerTier=ValidID)?
+        'ufos' ufos=INT
+        'duration' seconds=DOUBLE
+        'ufoSpeed' ufoSpeed=DOUBLE
+        'beamEvery' beamEverySeconds=DOUBLE
+        'charge' chargeSeconds=DOUBLE
+        'beamSeconds' beamSeconds=DOUBLE
+        'beamRadius' beamRadius=DOUBLE
+        'aimMin' aimMinDistance=DOUBLE
+        'aimMax' aimMaxDistance=DOUBLE
+        'damageFraction' damageFraction=DOUBLE
+        'soldiers' soldiers=INT
+        'soldierHealth' soldierHealth=INT
+        'soldierDamage' soldierDamage=INT
+        'soldierSight' soldierSight=DOUBLE
+        'soldierSeconds' soldierSeconds=DOUBLE
+        ('banner' bannerText=STRING)?
+        'ufoSprite' ufoSprite=STRING
+        'beamSprite' beamSprite=STRING
+        ('arriveSound' arriveSound=STRING)?
+        ('beamSound' beamSound=STRING)?
+    '}'
+;
+
+/*
  * The shop between levels (the source of xmi/shop/shop.xmi; see shop.ecore). The player pays with their score.
  * kind is a ShopItemKind of shop.ecore (GRENADE, AIRSTRIKE, SHIELD_BOOST, ...), tier one of CHEAP, MEDIUM, EXPENSIVE.
  * Weapons give `amount` uses per purchase; boosts make the next level's shields or bombs `factor` times stronger.
@@ -426,5 +458,5 @@ BOOLEAN_OBJECT returns ecore::EBooleanObject:
  * allowed as names and references, so existing files that used them as identifiers keep parsing.
  */
 ValidID returns ecore::EString:
-    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
+    ID | 'basedOn' | 'threatCapacity' | 'wallMaterials' | 'inheritWeapons' | 'cascadeDepth' | 'ring' | 'share' | 'materials' | 'sergeant' | 'sergeants' | 'sightRange' | 'rounds' | 'roundDamage' | 'roundInterval' | 'burstCooldown' | 'sprite' | 'fireSound' | 'drops' | 'gatling' | 'postDistance' | 'mines' | 'count' | 'ringRadius' | 'triggerRadius' | 'pulse' | 'blastRadius' | 'blastDamage' | 'playerDamage' | 'holeRadius' | 'portalGhost' | 'portalGhosts' | 'teleport' | 'cooldown' | 'banner' | 'bannerSeconds' | 'zapSound' | 'voiceSound' | 'secondRing' | 'guardTower' | 'towers' | 'wallsOver' | 'rpgInterval' | 'rpgSpeed' | 'rpgBlastRadius' | 'rpgPlayerDamage' | 'rpgWallDamage' | 'gatlingRounds' | 'gatlingInterval' | 'gatlingDamage' | 'deathBlast' | 'rpgLaunchSound' | 'rpgExplosionSound' | 'gatlingSound' | 'hitSound' | 'destroyedSound' | 'wallBuilder' | 'builders' | 'buildSeconds' | 'blockRadius' | 'spawnRadius' | 'material' | 'startRadius' | 'lastLifeWeapon' | 'shots' | 'lava' | 'streams' | 'width' | 'bridges' | 'bridgeLength' | 'meander' | 'wavelength' | 'flowSpeed' | 'glow' | 'crust' | 'deathSound' | 'buildSound' | 'ufoRaid' | 'trigger' | 'ufos' | 'duration' | 'ufoSpeed' | 'beamEvery' | 'charge' | 'beamSeconds' | 'beamRadius' | 'aimMin' | 'aimMax' | 'damageFraction' | 'soldiers' | 'soldierHealth' | 'soldierDamage' | 'soldierSight' | 'soldierSeconds' | 'ufoSprite' | 'beamSprite' | 'arriveSound' | 'beamSound' | 'shop' | 'tier' | 'price' | 'amount' | 'factor' | 'description' | 'unlock' | 'fromLevel' | 'theme' | 'font' | 'colour' | 'image' | 'slice' | 'badge'
 ;

@@ -17,6 +17,9 @@ import main.game.maze.constants.DataFileConstants;
 import main.game.maze.dto.Score;
 import main.game.maze.game.score.FileHighScoreRepository;
 import main.game.maze.game.score.HighScoreRepository;
+import main.game.maze.game.theme.MenuButton;
+import main.game.maze.game.theme.MenuTheme;
+import main.game.maze.javafx.menu.FxMenuTheme;
 
 public class HighScoreController implements Initializable {
 
@@ -28,6 +31,12 @@ public class HighScoreController implements Initializable {
 
     @FXML
     private Button continueButton;
+
+    @FXML
+    private Button restartButton;
+
+    @FXML
+    private javafx.scene.image.ImageView backdrop;
 
     private Runnable onContinue;
 
@@ -45,6 +54,7 @@ public class HighScoreController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         scores = loadScoresFromFile();
+        applyTheme();
 
         // add score labels to the VBox
         if (highScoresVBox != null) {
@@ -52,13 +62,13 @@ public class HighScoreController implements Initializable {
             for (int i = 0; i < maxRows; i++) {
                 Score score = scores.get(i);
                 Label scoreLabel = new Label(score.toString());
-                scoreLabel.setStyle("-fx-font-size: 22px; -fx-font-family: 'Consolas'; -fx-text-fill: #f2f8ff; -fx-font-weight: bold;");
+                scoreLabel.getStyleClass().add(i == 0 ? "menu-score" : "menu-text");
                 highScoresVBox.getChildren().add(scoreLabel);
             }
 
             if (scores.isEmpty()) {
                 Label noScores = new Label("No saved scores yet");
-                noScores.setStyle("-fx-font-size: 18px; -fx-font-family: 'Consolas'; -fx-text-fill: #9fbad2;");
+                noScores.getStyleClass().add("menu-muted");
                 highScoresVBox.getChildren().add(noScores);
             }
         }
@@ -67,6 +77,24 @@ public class HighScoreController implements Initializable {
         if (continueButton != null) {
             continueButton.setVisible(false);
             continueButton.setManaged(false);
+        }
+    }
+
+    /** The look of the screens between levels (the menu theme model), the same as the libGDX high scores. */
+    private void applyTheme() {
+        if (highScoreRoot == null) {
+            return;
+        }
+        FxMenuTheme.apply(highScoreRoot);
+        if (backdrop != null) {
+            backdrop.setImage(FxMenuTheme.image(MenuTheme.Art.BACKDROP));
+        }
+        if (continueButton != null) {
+            FxMenuTheme.style(continueButton, MenuButton.NEXT_LEVEL);
+            continueButton.setText("Continue Game");
+        }
+        if (restartButton != null) {
+            FxMenuTheme.style(restartButton, MenuButton.RESTART_MISSION);
         }
     }
 

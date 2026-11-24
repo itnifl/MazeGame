@@ -44,6 +44,7 @@ import main.game.maze.dsl.mazeDsl.ThemeImageConfig;
 import main.game.maze.dsl.mazeDsl.ThemeSwatchConfig;
 import main.game.maze.dsl.mazeDsl.TierCountConfig;
 import main.game.maze.dsl.mazeDsl.TowerCountConfig;
+import main.game.maze.dsl.mazeDsl.UfoRaidConfig;
 import main.game.maze.dsl.mazeDsl.WallBuilderConfig;
 import main.game.maze.dsl.mazeDsl.Waypoint;
 import main.game.maze.dsl.mazeDsl.ZombieSpecifics;
@@ -245,6 +246,13 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   private EClass lavaConfigEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass ufoRaidConfigEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1427,9 +1435,20 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
-  public EReference getLevelConfig_LastLifeGift()
+  public EReference getLevelConfig_UfoRaid()
   {
     return (EReference)levelConfigEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getLevelConfig_LastLifeGift()
+  {
+    return (EReference)levelConfigEClass.getEStructuralFeatures().get(20);
   }
 
   /**
@@ -2373,6 +2392,248 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
    * @generated
    */
   @Override
+  public EClass getUfoRaidConfig()
+  {
+    return ufoRaidConfigEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_TriggerTier()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_Ufos()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_Seconds()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_UfoSpeed()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BeamEverySeconds()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_ChargeSeconds()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BeamSeconds()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BeamRadius()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_AimMinDistance()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_AimMaxDistance()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_DamageFraction()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_Soldiers()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_SoldierHealth()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_SoldierDamage()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_SoldierSight()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_SoldierSeconds()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BannerText()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_UfoSprite()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BeamSprite()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_ArriveSound()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUfoRaidConfig_BeamSound()
+  {
+    return (EAttribute)ufoRaidConfigEClass.getEStructuralFeatures().get(20);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getShopConfig()
   {
     return shopConfigEClass;
@@ -3009,6 +3270,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEReference(levelConfigEClass, LEVEL_CONFIG__WALL_BUILDER);
     createEReference(levelConfigEClass, LEVEL_CONFIG__BUILDER_COUNTS);
     createEReference(levelConfigEClass, LEVEL_CONFIG__LAVA);
+    createEReference(levelConfigEClass, LEVEL_CONFIG__UFO_RAID);
     createEReference(levelConfigEClass, LEVEL_CONFIG__LAST_LIFE_GIFT);
 
     levelZoneEClass = createEClass(LEVEL_ZONE);
@@ -3106,6 +3368,29 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__GLOW);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__CRUST);
     createEAttribute(lavaConfigEClass, LAVA_CONFIG__DEATH_SOUND);
+
+    ufoRaidConfigEClass = createEClass(UFO_RAID_CONFIG);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__TRIGGER_TIER);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__UFOS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SECONDS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__UFO_SPEED);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BEAM_EVERY_SECONDS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__CHARGE_SECONDS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BEAM_SECONDS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BEAM_RADIUS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__AIM_MIN_DISTANCE);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__AIM_MAX_DISTANCE);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__DAMAGE_FRACTION);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SOLDIERS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SOLDIER_HEALTH);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SOLDIER_DAMAGE);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SOLDIER_SIGHT);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__SOLDIER_SECONDS);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BANNER_TEXT);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__UFO_SPRITE);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BEAM_SPRITE);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__ARRIVE_SOUND);
+    createEAttribute(ufoRaidConfigEClass, UFO_RAID_CONFIG__BEAM_SOUND);
 
     shopConfigEClass = createEClass(SHOP_CONFIG);
     createEReference(shopConfigEClass, SHOP_CONFIG__UNLOCKS);
@@ -3304,6 +3589,7 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEReference(getLevelConfig_WallBuilder(), this.getWallBuilderConfig(), null, "wallBuilder", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_BuilderCounts(), this.getBuilderCountConfig(), null, "builderCounts", null, 0, -1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_Lava(), this.getLavaConfig(), null, "lava", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getLevelConfig_UfoRaid(), this.getUfoRaidConfig(), null, "ufoRaid", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLevelConfig_LastLifeGift(), this.getLastLifeGiftConfig(), null, "lastLifeGift", null, 0, 1, LevelConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(levelZoneEClass, LevelZone.class, "LevelZone", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -3401,6 +3687,29 @@ public class MazeDslPackageImpl extends EPackageImpl implements MazeDslPackage
     initEAttribute(getLavaConfig_Glow(), ecorePackage.getEDoubleObject(), "glow", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_Crust(), ecorePackage.getEDoubleObject(), "crust", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLavaConfig_DeathSound(), ecorePackage.getEString(), "deathSound", null, 0, 1, LavaConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(ufoRaidConfigEClass, UfoRaidConfig.class, "UfoRaidConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUfoRaidConfig_TriggerTier(), ecorePackage.getEString(), "triggerTier", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_Ufos(), ecorePackage.getEInt(), "ufos", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_Seconds(), ecorePackage.getEDouble(), "seconds", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_UfoSpeed(), ecorePackage.getEDouble(), "ufoSpeed", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BeamEverySeconds(), ecorePackage.getEDouble(), "beamEverySeconds", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_ChargeSeconds(), ecorePackage.getEDouble(), "chargeSeconds", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BeamSeconds(), ecorePackage.getEDouble(), "beamSeconds", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BeamRadius(), ecorePackage.getEDouble(), "beamRadius", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_AimMinDistance(), ecorePackage.getEDouble(), "aimMinDistance", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_AimMaxDistance(), ecorePackage.getEDouble(), "aimMaxDistance", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_DamageFraction(), ecorePackage.getEDouble(), "damageFraction", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_Soldiers(), ecorePackage.getEInt(), "soldiers", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_SoldierHealth(), ecorePackage.getEInt(), "soldierHealth", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_SoldierDamage(), ecorePackage.getEInt(), "soldierDamage", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_SoldierSight(), ecorePackage.getEDouble(), "soldierSight", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_SoldierSeconds(), ecorePackage.getEDouble(), "soldierSeconds", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BannerText(), ecorePackage.getEString(), "bannerText", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_UfoSprite(), ecorePackage.getEString(), "ufoSprite", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BeamSprite(), ecorePackage.getEString(), "beamSprite", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_ArriveSound(), ecorePackage.getEString(), "arriveSound", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUfoRaidConfig_BeamSound(), ecorePackage.getEString(), "beamSound", null, 0, 1, UfoRaidConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(shopConfigEClass, ShopConfig.class, "ShopConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getShopConfig_Unlocks(), this.getShopUnlockConfig(), null, "unlocks", null, 0, -1, ShopConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

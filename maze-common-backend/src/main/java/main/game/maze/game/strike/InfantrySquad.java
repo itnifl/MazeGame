@@ -84,7 +84,7 @@ public final class InfantrySquad {
             fallen = List.copyOf(fallen);
         }
 
-        static final Report NOTHING = new Report(List.of(), List.of());
+        public static final Report NOTHING = new Report(List.of(), List.of());
     }
 
     /** Damage per second an enemy does to a soldier it touches. */
@@ -131,8 +131,49 @@ public final class InfantrySquad {
     /** Where the living soldiers are, published for the enemy AI (which may run on another thread). */
     private volatile List<Point2D> livingPositions = List.of();
 
+    /** Damage per second an enemy touching a soldier does to it (0: touching does not hurt them). */
+    private final double touchDps;
+
     public InfantrySquad(Random random) {
+        this(random, ENEMY_TOUCH_DPS);
+    }
+
+    private InfantrySquad(Random random, double touchDps) {
         this.random = random;
+        this.touchDps = touchDps;
+    }
+
+    /**
+     * A squad that is not on the player's side (the red soldiers of the UFO raid): the same soldiers, but the one they
+     * hunt is handed to {@link #tick} as the target, and touching them does not hurt them. The player's weapons hurt them
+     * through {@link #asTargets()}.
+     */
+    public static InfantrySquad hostile(Random random) {
+        return new InfantrySquad(random, 0.0);
+    }
+
+    /**
+     * The living soldiers as targets for the player's flames, shots and blasts: a hit takes health off the soldier, who
+     * falls at the next {@link #tick}. Empty when the soldiers cannot be hurt.
+     */
+    public List<FlameTarget> asTargets() {
+        List<FlameTarget> targets = new ArrayList<>();
+        if (orders.health() <= 0) {
+            return targets;
+        }
+        for (Soldier soldier : squad) {
+            if (!soldier.alive()) {
+                continue;
+            }
+            targets.add(new FlameTarget() {
+                @Override public double centerX() { return soldier.x; }
+                @Override public double centerY() { return soldier.y; }
+                @Override public int hitPoints() { return Math.max(0, (int) Math.ceil(soldier.health)); }
+                @Override public void applyDamage(int amount) { soldier.health -= amount; }
+                @Override public boolean isPassThrough() { return false; }
+            });
+        }
+        return targets;
     }
 
     /**
@@ -143,13 +184,20 @@ public final class InfantrySquad {
      * @return false when there is nowhere to put them
      */
     public boolean deploy(List<Point2D> openPoints, Orders orders) {
+        return deploy(openPoints, orders, null);
+    }
+
+    /** As {@link #deploy(List, Orders)}, with the squad arriving round {@code anchor} (null: a random area). */
+    public boolean deploy(List<Point2D> openPoints, Orders orders, Point2D anchor) {
         dismiss();
         if (openPoints == null || openPoints.isEmpty() || orders.soldiers() <= 0) {
             return false;
         }
         this.orders = orders;
         this.openGround = List.copyOf(openPoints);
-        Point2D anchor = openGround.get(random.nextInt(openGround.size()));
+        if (anchor == null) {
+            anchor = openGround.get(random.nextInt(openGround.size()));
+        }
         List<Point2D> nearest = new ArrayList<>(openGround);
         nearest.sort(Comparator.comparingDouble(anchor::distance));
         for (int i = 0; i < orders.soldiers(); i++) {
@@ -305,9 +353,9 @@ public final class InfantrySquad {
         if (orders.health() <= 0) {
             return false;
         }
-        for (FlameTarget enemy : living) {
+        for (FlameTarget enemy : touchDps > 0 ? living : List.<FlameTarget>of()) {
             if (Math.hypot(enemy.centerX() - soldier.x, enemy.centerY() - soldier.y) <= TOUCH_DISTANCE) {
-                soldier.health -= ENEMY_TOUCH_DPS * dt;
+                soldier.health -= touchDps * dt;
             }
         }
         if (soldier.health <= 0) {

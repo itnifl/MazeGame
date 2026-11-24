@@ -206,3 +206,14 @@ Draws the soldier of the infantry strike into `soldier/`: `soldier-side-*` (faci
 ```sh
 "$JAVA_HOME/bin/java" tools/sprite-gen/SoldierSpriteGenerator.java
 ```
+
+## RedSoldierSpriteGenerator and UfoSpriteGenerator (level 7)
+
+`RedSoldierSpriteGenerator` turns every sprite of `soldier/` (run `SoldierSpriteGenerator` first) into a crimson `soldier-red/`
+twin: the red soldiers the UFOs drop. `UfoSpriteGenerator` writes `ufo/ufo.png` (the saucer) and `ufo/ufo-beam.png` (the glowing
+disc a beam makes on the ground, also stacked along the beam to draw its column of light).
+
+```sh
+java tools/sprite-gen/RedSoldierSpriteGenerator.java
+java tools/sprite-gen/UfoSpriteGenerator.java
+```

@@ -111,6 +111,8 @@ public final class FxEnemyCoordinator {
     private final Supplier<GameMazeWorld> mazeSupplier;
     private final Supplier<PlayerCharacter> playerSupplier;
     /** The soldiers of the infantry strike, centres in board space (sergeants aim from and at centres). */
+    /** More things the player's shots and flames can hit (the red soldiers of the UFO raid), board space. */
+    private volatile java.util.function.Supplier<List<FlameTarget>> extraTargets = List::of;
     private volatile SoldierTargets soldierCentres = SoldierTargets.NONE;
     /** The same soldiers as top-left corners, the space of the enemy and player positions the AI moves and aims by. */
     private volatile SoldierTargets soldierCorners = SoldierTargets.NONE;
@@ -395,6 +397,7 @@ public final class FxEnemyCoordinator {
                 @Override public boolean isPassThrough() { return false; }
             });
         }
+        targets.addAll(extraTargets.get());
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
                 main.game.maze.game.items.ShotEffects.pierces(laser), targets, world, world != null ? world.getMazeVectors() : List.of(), originX, originY, dirX, dirY,
@@ -408,6 +411,11 @@ public final class FxEnemyCoordinator {
      */
     public List<FlameTarget> livingTargets(String attackerId) {
         return livingTargets(attackerId, DeathCause.SHOT);
+    }
+
+    /** What else the player's shots and flames hit: the red soldiers of the UFO raid (board space, read per shot). */
+    public void setExtraTargets(java.util.function.Supplier<List<FlameTarget>> targets) {
+        this.extraTargets = targets == null ? List::of : targets;
     }
 
     /**
@@ -601,6 +609,8 @@ public final class FxEnemyCoordinator {
                 @Override public boolean isPassThrough() { return false; }
             });
         }
+
+        candidates.addAll(extraTargets.get());
 
         if (playerCallback != null && !Double.isNaN(playerCenterX) && !Double.isNaN(playerCenterY)) {
             final double pcx = playerCenterX;
