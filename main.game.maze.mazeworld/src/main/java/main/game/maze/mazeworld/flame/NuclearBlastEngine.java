@@ -60,21 +60,15 @@ public final class NuclearBlastEngine {
             }
         }
         if (world != null) {
-            // collect first: a wall that falls changes the world's lists
-            List<BreakableWall> hit = new ArrayList<>();
-            List<Integer> amounts = new ArrayList<>();
+            // every wall in reach takes its damage in one go: the maze is rewired and redrawn once, not once a wall
+            List<GameMazeWorld.WallHit> hits = new ArrayList<>();
             for (BreakableWall wall : world.getBreakableWalls()) {
                 int amount = damageAt(distanceToSegment(centerX, centerY, wall.geometry), radius, damage);
                 if (amount > 0 && !wall.isDestroyed()) {
-                    hit.add(wall);
-                    amounts.add(amount);
+                    hits.add(new GameMazeWorld.WallHit(wall, amount));
                 }
             }
-            for (int i = 0; i < hit.size(); i++) {
-                if (!hit.get(i).isDestroyed()) {
-                    world.applyWallDamage(hit.get(i), amounts.get(i));
-                }
-            }
+            world.applyWallDamage(hits, GameMazeWorld.currentAttacker());
         }
         return dealt;
     }

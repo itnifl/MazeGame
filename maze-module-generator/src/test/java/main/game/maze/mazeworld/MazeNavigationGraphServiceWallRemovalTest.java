@@ -153,4 +153,19 @@ class MazeNavigationGraphServiceWallRemovalTest {
         }
         return total / 2;
     }
+
+    @Test
+    @DisplayName("checking only the edges by the removed wall restores the same edge; other removals leave it shut")
+    void localRewire() {
+        List<Vector2D> walls = outerWalls();
+        Vector2D blocking = innerWall();
+        walls.add(blocking);
+        MazeNavigationGraph graph = MazeNavigationGraphService.buildFrom(walls, STEP);
+        walls.remove(blocking);
+        MazeNavigationGraphService.rewireAfterWallRemoval(graph, walls, List.of(new Vector2D(500, 500, 600, 500)));
+        assertFalse(left(graph).getNeighbors().contains(right(graph)), "a wall far away was removed: not re-checked");
+        MazeNavigationGraphService.rewireAfterWallRemoval(graph, walls, List.of(blocking));
+        assertTrue(left(graph).getNeighbors().contains(right(graph)));
+        MazeNavigationGraphService.rewireAfterWallRemoval(graph, walls, List.of());   // nothing removed: no work
+    }
 }

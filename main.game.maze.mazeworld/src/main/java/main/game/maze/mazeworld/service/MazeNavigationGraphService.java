@@ -152,7 +152,19 @@ public final class MazeNavigationGraphService {
      */
     public static void rewireAfterWallRemoval(MazeNavigationGraph graph,
                                               List<Vector2D> remainingWalls) {
+        rewireAfterWallRemoval(graph, remainingWalls, null);
+    }
+
+    /**
+     * As {@link #rewireAfterWallRemoval(MazeNavigationGraph, List)}, checking only the edges that crossed one of the
+     * {@code removedWalls} (null: every edge). An edge that was blocked can only open where a wall was removed, so this
+     * is the same result at a fraction of the cost: a big blast that brings down dozens of walls does not re-check the
+     * whole grid against every wall for each of them.
+     */
+    public static void rewireAfterWallRemoval(MazeNavigationGraph graph, List<Vector2D> remainingWalls,
+                                              List<Vector2D> removedWalls) {
         if (graph == null || remainingWalls == null) return;
+        if (removedWalls != null && removedWalls.isEmpty()) return;
         Node[][] grid = graph.getGrid();
         int cols = graph.getCols();
         int rows = graph.getRows();
@@ -165,6 +177,7 @@ public final class MazeNavigationGraphService {
                 if (c + 1 < cols) {
                     Node right = grid[c + 1][r];
                     if (right != null && !n.getNeighbors().contains(right)
+                            && crossesAny(n.toPoint2D(), right.toPoint2D(), removedWalls)
                             && segmentIsFree(n.toPoint2D(), right.toPoint2D(), remainingWalls, 0)) {
                         n.addNeighbor(right);
                         right.addNeighbor(n);
@@ -174,6 +187,7 @@ public final class MazeNavigationGraphService {
                 if (r + 1 < rows) {
                     Node down = grid[c][r + 1];
                     if (down != null && !n.getNeighbors().contains(down)
+                            && crossesAny(n.toPoint2D(), down.toPoint2D(), removedWalls)
                             && segmentIsFree(n.toPoint2D(), down.toPoint2D(), remainingWalls, 0)) {
                         n.addNeighbor(down);
                         down.addNeighbor(n);
@@ -181,6 +195,27 @@ public final class MazeNavigationGraphService {
                 }
             }
         }
+    }
+
+    /** Whether the edge's bounding box touches one of the removed walls' (null: every edge may have opened). */
+    private static boolean crossesAny(Point2D a, Point2D b, List<Vector2D> removedWalls) {
+        if (removedWalls == null) {
+            return true;
+        }
+        double minX = Math.min(a.getX(), b.getX()) - 1;
+        double maxX = Math.max(a.getX(), b.getX()) + 1;
+        double minY = Math.min(a.getY(), b.getY()) - 1;
+        double maxY = Math.max(a.getY(), b.getY()) + 1;
+        for (Vector2D wall : removedWalls) {
+            double wMinX = Math.min(wall.getStart().getX(), wall.getEnd().getX());
+            double wMaxX = Math.max(wall.getStart().getX(), wall.getEnd().getX());
+            double wMinY = Math.min(wall.getStart().getY(), wall.getEnd().getY());
+            double wMaxY = Math.max(wall.getStart().getY(), wall.getEnd().getY());
+            if (wMinX <= maxX && wMaxX >= minX && wMinY <= maxY && wMaxY >= minY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Closes every navigation edge that runs through deadly lava (an edge across a bridge stays). */
