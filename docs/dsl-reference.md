@@ -600,3 +600,39 @@ theme { font "Consolas"  colour TITLE "#f2d98c"  image PANEL "/main/game/maze/ui
 ```
 
 Values you leave out are "not set": a level built `basedOn` another takes them from it, otherwise the model's defaults apply.
+
+### UFO raid
+
+A level may contain one `ufoRaid` block, after its `lava` block if present. Fields must appear in the order below;
+only fields marked optional may be omitted. `INT` and `DOUBLE` denote integer and decimal values, and `STRING` is quoted.
+
+```text
+ufoRaid {
+    trigger <CHEAP|MEDIUM|EXPENSIVE>  // optional; defaults to EXPENSIVE
+    ufos <INT>
+    duration <DOUBLE>
+    ufoSpeed <DOUBLE>
+    beamEvery <DOUBLE>
+    charge <DOUBLE>
+    beamSeconds <DOUBLE>
+    beamRadius <DOUBLE>
+    aimMin <DOUBLE>
+    aimMax <DOUBLE>
+    damageFraction <DOUBLE>
+    soldiers <INT>
+    soldierHealth <INT>
+    soldierDamage <INT>
+    soldierSight <DOUBLE>
+    soldierSeconds <DOUBLE>
+    banner <STRING>                   // optional
+    ufoSprite <STRING>
+    beamSprite <STRING>
+    arriveSound <STRING>              // optional
+    beamSound <STRING>                // optional
+}
+```
+
+The raid triggers when a weapon of the specified shop tier is used. The validator requires at least one UFO and
+one soldier health point; positive `duration`, `ufoSpeed`, and `beamRadius`; `0 <= aimMin <= aimMax`; and
+`0 < damageFraction <= 1`. See [UFO retaliation in the level authoring guide](level-authoring.md#the-ufo-retaliation)
+for a complete example and the meaning of each setting.
