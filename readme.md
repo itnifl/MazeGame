@@ -62,6 +62,22 @@ MazeGame provides two first-class graphical desktop frontends that run the same 
 
 Both frontends share the identical game rules, scoring engine, maze generation, enemy AI movement services, bomb detonation physics, audio transition director, and damage-state sprite resolution via [maze-common-frontend](maze-common-frontend/readme.md).
 
+## Levels and the shop
+
+The game has seven configured levels. Later levels build on earlier ones: zombie
+sergeants and zoned walls arrive in level 2; mines, holes and portal ghosts in
+level 3; guard towers in level 4; wall builders in level 5; and lava streams
+and bridges in level 6. Level 7 increases the threats and can send UFOs and
+red soldiers after the player in response to an expensive shop weapon.
+
+After a level is completed, the next level's savepoint keeps the player's
+weapons and carried score. The win screen opens a shop while another level is
+available. Cheap items cost 2,000 points, medium items cost 10,000, and
+expensive items cost 40,000 except the airstrike, which costs 60,000. Tiers
+unlock as levels are completed. For the complete rules and item quantities,
+see [game rules](docs/requirements-features/game-rules.md); for editing the
+levels and shop, see [level authoring](docs/level-authoring.md).
+
 ## Quick start
 
 ### Windows

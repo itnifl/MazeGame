@@ -54,7 +54,9 @@ runtime renderer is JavaFX, libGDX, or something else.
   `PropertiesMazeVisualStyleLoader`: shared model driven style and
   asset mapping for both backends, including
   difficulty background images, wall type ids, menu icon, and common
-  menu or gameplay audio resource paths. `XmiMazeVisualStyleLoader` configures
+  menu or gameplay audio resource paths. The hard difficulty uses the volcanic
+  wasteland image `main/game/maze/gameBackGround3.png`, selected by
+  `hardBackgroundImagePath` in `src/main/resources/xmi/maze-visual-style.xmi`. `XmiMazeVisualStyleLoader` configures
   its `DocumentBuilderFactory` with OWASP XXE hardening (secure-processing,
   disallow-doctype-decl, external general/parameter entities and external DTD
   loading disabled, XInclude off, entity expansion off) so loading from

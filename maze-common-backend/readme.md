@@ -91,3 +91,16 @@ Since the review of #164: soldiers have health and fall (`InfantrySquad.Report.f
 Ranged enemies shoot the soldiers first (SR-400): package `game.targeting` holds the rule, `RangedTargeting.choose` (the nearest soldier the enemy can hit by its own `Sight`, else the player), and the port the enemies shoot through, `SoldierTargets` (positions, `hit`, `touching`, `splash`, `mapped`/`shifted` into a frontend's space). `SergeantGunner.fire` returns a `Volley` at the chosen target; `GuardTowerSession.tick(.., soldiers, walls)` aims rounds and rockets at soldiers and reports `Result.soldierHits` (rocket blasts included, shielded by walls like the player); `InfantrySquad.hit` hurts the soldier at a point, who falls at the next tick; `StrikeWeapons.soldierTargets()` is the squad as such a port.
 
 The screens between levels have a theme (SR-403/404): package `game.theme`. `MenuThemeLoader` loads `xmi/theme/menutheme.xmi` (an instance of `menutheme.ecore`, generated from `menutheme.mazegame` by the DSL) into a complete `MenuTheme` (font, a colour per `Swatch`, a texture and 9-slice inset per `Art`, a badge per `ShopTier`); `MenuButton` names the buttons of those screens with their label and plate. The player's bomb is planted through the shared schedule too (`StrikePlanner.plantedBomb`, `StrikeWeapons.plantBomb`), so it lies as the bomb like the grenades; `StrikeVisuals.fallingBomb` says where an airstrike bomb is seen falling in the moment before it hits. `StartMenuText` holds what the main menu says. `ShopMenu` groups the items on a shelf per tier (`shelves()`, `moveLeft`/`moveRight`) and gives the `briefing()` of the chosen item and whether the last purchase went through (`statusIsGood()`).
+
+
+Level 7 adds the shared `game.ufo` retaliation model. `UfoRaidSpec` is loaded
+from the level catalogue, and `UfoRaid` handles the saucers, marked beam
+strikes and hostile red soldiers. `StrikeWeapons` connects use of the
+configured shop tier to the raid and exposes its state to both frontends.
+The shipped level triggers it for expensive shop weapons; its timing, damage,
+assets and soldier settings are described in [level authoring](../docs/level-authoring.md#the-ufo-retaliation).
+
+The shipped shop prices are 2,000 per cheap purchase, 10,000 per medium
+purchase, and 40,000 per expensive purchase except the 60,000-point airstrike.
+The catalogue also defines quantities per purchase and tier unlock levels;
+see [game rules](../docs/requirements-features/game-rules.md).
