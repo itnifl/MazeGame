@@ -10,6 +10,7 @@ Welcome to the MazeGame documentation. This folder contains detailed guides and 
 |----------|-------------|
 | [Technology Layman's Guide](technology-laymans-guide.md) | Simple explanations of Xtext, metamodels, and FreeMarker with practical scenarios |
 | [DSL Tutorial](dsl-tutorial.md) | Step-by-step guide to creating your first game level |
+| [Level Authoring](level-authoring.md) | Configure levels, the shop, menu theme and UFO retaliation |
 | [Xtext Setup Guide](xtext-readme.md) | Build and development setup for the DSL |
 
 ### Reference
@@ -51,6 +52,7 @@ docs/
 ├── readme.md                    # This file (documentation index)
 ├── dsl-reference.md             # Complete DSL syntax reference
 ├── dsl-tutorial.md              # Step-by-step tutorial
+├── level-authoring.md           # Levels, shop and menu theme
 ├── metamodel-architecture.md    # Metamodel and Xtext integration
 ├── mdd-code-generation.md       # FreeMarker code generation plan
 ├── technology-laymans-guide.md  # Simple technology explanations

@@ -118,8 +118,19 @@ Review follow-up: `FxStrikeLayer` draws the animated soldiers and the grenades l
 
 Ranged enemies shoot the soldiers first (SR-400): `FxWeaponController.soldierTargets()` is the squad as a `SoldierTargets` port whose hits are passed to the FX thread; `FxEnemyCoordinator.setSoldiers(SoldierTargets, lureRadius)` keeps it as centres (the sergeants' `Range.soldiers`) and as top-left corners (the chase of SR-396 and the pumpkin bombers, `PumpkinBomberCharacter.setSoldiers` / `canHit`); `FxGuardTowerController.Host.soldiers` gives it to the towers.
 
-The win screen and the shop are themed (SR-403/404): `javafx.menu.FxMenuTheme` renders the stylesheet of those screens from the shared menu theme with the FreeMarker template `main/game/maze/javafx/menu/menu-theme.css.ftl` (a `data:` stylesheet, built once) and styles the buttons (`style(Button, MenuButton)`); `winScreen.fxml` and `shopScreen.fxml` only name style classes (`menu-panel`, `menu-banner`, `menu-hazard`, `menu-card`, ...). `ShopController` builds a shelf per tier (`shelf`) of crate cards (`card`); Left/Right or A/D move across the shelves. `BetweenLevelScreensTest` renders both screens to `target/test-classes/target/menu-snapshots/` for looking at them. FreeMarker 2.3.32 is a runtime dependency of this module.
+The win screen and the shop are themed (SR-403/404): `javafx.menu.FxMenuTheme` renders the stylesheet of those screens from the shared menu theme with the FreeMarker template `main/game/maze/javafx/menu/menu-theme.css.ftl` (a `data:` stylesheet, built once) and styles the buttons (`style(Button, MenuButton)`); `winScreen.fxml` and `shopScreen.fxml` only name style classes (`menu-panel`, `menu-banner`, `menu-hazard`, `menu-card`, ...). `ShopController` builds a shelf per tier (`shelf`) of crate cards (`card`); Left/Right or A/D move across the shelves. `BetweenLevelScreensTest` renders both screens to `target/test-classes/target/menu-snapshots/` for looking at them. FreeMarker 2.3.35 is a runtime dependency of this module.
 
 The bomb lies as the bomb (SR-413): `FxWeaponController.plantBomb` plants it in the shared strike schedule, so `FxStrikeLayer.showFuses` draws it like the grenades; `FxStrikeLayer.showFalling` draws the airstrike bombs falling onto their shadows. The main menu (`startScreen.fxml`, `StartController.applyTheme`) has the menu theme too (SR-414): title plate, panel, a crate-card difficulty picker (`menu-combo`) and metal-plate buttons.
+
+
+**Level 7 retaliation.** `FxWeaponController` connects the level's `UfoRaidSpec`
+to the shared `UfoRaid`, advances it and applies its effects; `FxUfoLayer`
+draws the UFOs, beams and hostile soldiers. The same raid rules are used by
+libGDX. See [level authoring](../docs/level-authoring.md#the-ufo-retaliation)
+for the trigger and configuration.
+
+**Game over and high scores.** `GameOverController` and `HighScoreController`
+apply `FxMenuTheme` to their FXML screens, matching the main menu, win screen
+and shop. The themed screens retain their existing restart and navigation actions.
 
 Dropped weapons lie armed (SR-418): `FxStrikeLayer.showFuses` asks `StrikeVisuals.lyingSprite(blast, items, clock)` for the armed frame. Help & Controls (SR-420): `StartController.onHelp` opens `helpScreen.fxml` (`HelpController`, `actions.HelpAction`) over the menu: the shared `ControlsGuide` as keycaps (`menu-key`) and arrow keys, with icons.
