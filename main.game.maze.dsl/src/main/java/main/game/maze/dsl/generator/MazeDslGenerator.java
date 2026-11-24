@@ -656,6 +656,9 @@ public class MazeDslGenerator extends AbstractGenerator {
                 optionalText(x, "deathSound", lv.getDeathSound());
                 x.append("/>\n");
             }
+            if (level.getUfoRaid() != null) {
+                x.append(ufoRaidXml(level.getUfoRaid()));
+            }
             LastLifeGiftConfig gift = level.getLastLifeGift();
             if (gift != null) {
                 x.append("    <lastLifeGift weapon=\"").append(xml(gift.getWeapon())).append("\" shots=\"").append(gift.getShots()).append("\"/>\n");
@@ -664,6 +667,45 @@ public class MazeDslGenerator extends AbstractGenerator {
         }
         x.append("</levels:LevelModel>\n");
         return x.toString();
+    }
+
+    /** The {@code <ufoRaid>} element of a level, rendered with the FreeMarker template {@code levelUfoRaid.xmi.ftlx}. */
+    static String ufoRaidXml(UfoRaidConfig raid) {
+        java.util.Map<String, Object> r = new java.util.HashMap<>();
+        r.put("triggerTier", raid.getTriggerTier() == null ? "EXPENSIVE" : raid.getTriggerTier());
+        r.put("ufos", raid.getUfos());
+        r.put("seconds", raid.getSeconds());
+        r.put("ufoSpeed", raid.getUfoSpeed());
+        r.put("beamEverySeconds", raid.getBeamEverySeconds());
+        r.put("chargeSeconds", raid.getChargeSeconds());
+        r.put("beamSeconds", raid.getBeamSeconds());
+        r.put("beamRadius", raid.getBeamRadius());
+        r.put("aimMinDistance", raid.getAimMinDistance());
+        r.put("aimMaxDistance", raid.getAimMaxDistance());
+        r.put("damageFraction", raid.getDamageFraction());
+        r.put("soldiers", raid.getSoldiers());
+        r.put("soldierHealth", raid.getSoldierHealth());
+        r.put("soldierDamage", raid.getSoldierDamage());
+        r.put("soldierSight", raid.getSoldierSight());
+        r.put("soldierSeconds", raid.getSoldierSeconds());
+        putIfSet(r, "bannerText", raid.getBannerText());
+        r.put("ufoSprite", raid.getUfoSprite());
+        r.put("beamSprite", raid.getBeamSprite());
+        putIfSet(r, "arriveSound", raid.getArriveSound());
+        putIfSet(r, "beamSound", raid.getBeamSound());
+        try {
+            java.io.StringWriter out = new java.io.StringWriter();
+            TEMPLATES.getTemplate("levelUfoRaid.xmi.ftlx").process(java.util.Map.of("r", r), out);
+            return out.toString();
+        } catch (java.io.IOException | freemarker.template.TemplateException e) {
+            throw new IllegalStateException("could not render the UFO raid from levelUfoRaid.xmi.ftlx", e);
+        }
+    }
+
+    private static void putIfSet(java.util.Map<String, Object> map, String name, String value) {
+        if (value != null) {
+            map.put(name, value);
+        }
     }
 
     private static void optionalText(StringBuilder x, String name, String value) {

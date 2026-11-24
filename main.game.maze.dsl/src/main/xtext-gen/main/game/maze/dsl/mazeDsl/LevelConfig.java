@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getWallBuilder <em>Wall Builder</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getBuilderCounts <em>Builder Counts</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLava <em>Lava</em>}</li>
+ *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getUfoRaid <em>Ufo Raid</em>}</li>
  *   <li>{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift <em>Last Life Gift</em>}</li>
  * </ul>
  *
@@ -411,6 +412,28 @@ public interface LevelConfig extends EObject
    * @generated
    */
   void setLava(LavaConfig value);
+
+  /**
+   * Returns the value of the '<em><b>Ufo Raid</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Ufo Raid</em>' containment reference.
+   * @see #setUfoRaid(UfoRaidConfig)
+   * @see main.game.maze.dsl.mazeDsl.MazeDslPackage#getLevelConfig_UfoRaid()
+   * @model containment="true"
+   * @generated
+   */
+  UfoRaidConfig getUfoRaid();
+
+  /**
+   * Sets the value of the '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getUfoRaid <em>Ufo Raid</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Ufo Raid</em>' containment reference.
+   * @see #getUfoRaid()
+   * @generated
+   */
+  void setUfoRaid(UfoRaidConfig value);
 
   /**
    * Returns the value of the '<em><b>Last Life Gift</b></em>' containment reference.

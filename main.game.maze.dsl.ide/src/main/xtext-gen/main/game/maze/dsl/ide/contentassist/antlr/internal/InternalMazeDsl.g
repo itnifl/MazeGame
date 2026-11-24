@@ -699,6 +699,31 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleUfoRaidConfig
+entryRuleUfoRaidConfig
+:
+{ before(grammarAccess.getUfoRaidConfigRule()); }
+	 ruleUfoRaidConfig
+{ after(grammarAccess.getUfoRaidConfigRule()); } 
+	 EOF 
+;
+
+// Rule UfoRaidConfig
+ruleUfoRaidConfig 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getGroup()); }
+		(rule__UfoRaidConfig__Group__0)
+		{ after(grammarAccess.getUfoRaidConfigAccess().getGroup()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Entry rule entryRuleShopConfig
 entryRuleShopConfig
 :
@@ -1748,87 +1773,213 @@ rule__ValidID__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getShopKeyword_77()); }
+		{ before(grammarAccess.getValidIDAccess().getUfoRaidKeyword_77()); }
+		'ufoRaid'
+		{ after(grammarAccess.getValidIDAccess().getUfoRaidKeyword_77()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getTriggerKeyword_78()); }
+		'trigger'
+		{ after(grammarAccess.getValidIDAccess().getTriggerKeyword_78()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getUfosKeyword_79()); }
+		'ufos'
+		{ after(grammarAccess.getValidIDAccess().getUfosKeyword_79()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getDurationKeyword_80()); }
+		'duration'
+		{ after(grammarAccess.getValidIDAccess().getDurationKeyword_80()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getUfoSpeedKeyword_81()); }
+		'ufoSpeed'
+		{ after(grammarAccess.getValidIDAccess().getUfoSpeedKeyword_81()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBeamEveryKeyword_82()); }
+		'beamEvery'
+		{ after(grammarAccess.getValidIDAccess().getBeamEveryKeyword_82()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getChargeKeyword_83()); }
+		'charge'
+		{ after(grammarAccess.getValidIDAccess().getChargeKeyword_83()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBeamSecondsKeyword_84()); }
+		'beamSeconds'
+		{ after(grammarAccess.getValidIDAccess().getBeamSecondsKeyword_84()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBeamRadiusKeyword_85()); }
+		'beamRadius'
+		{ after(grammarAccess.getValidIDAccess().getBeamRadiusKeyword_85()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getAimMinKeyword_86()); }
+		'aimMin'
+		{ after(grammarAccess.getValidIDAccess().getAimMinKeyword_86()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getAimMaxKeyword_87()); }
+		'aimMax'
+		{ after(grammarAccess.getValidIDAccess().getAimMaxKeyword_87()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getDamageFractionKeyword_88()); }
+		'damageFraction'
+		{ after(grammarAccess.getValidIDAccess().getDamageFractionKeyword_88()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSoldiersKeyword_89()); }
+		'soldiers'
+		{ after(grammarAccess.getValidIDAccess().getSoldiersKeyword_89()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSoldierHealthKeyword_90()); }
+		'soldierHealth'
+		{ after(grammarAccess.getValidIDAccess().getSoldierHealthKeyword_90()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSoldierDamageKeyword_91()); }
+		'soldierDamage'
+		{ after(grammarAccess.getValidIDAccess().getSoldierDamageKeyword_91()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSoldierSightKeyword_92()); }
+		'soldierSight'
+		{ after(grammarAccess.getValidIDAccess().getSoldierSightKeyword_92()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getSoldierSecondsKeyword_93()); }
+		'soldierSeconds'
+		{ after(grammarAccess.getValidIDAccess().getSoldierSecondsKeyword_93()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getUfoSpriteKeyword_94()); }
+		'ufoSprite'
+		{ after(grammarAccess.getValidIDAccess().getUfoSpriteKeyword_94()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBeamSpriteKeyword_95()); }
+		'beamSprite'
+		{ after(grammarAccess.getValidIDAccess().getBeamSpriteKeyword_95()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getArriveSoundKeyword_96()); }
+		'arriveSound'
+		{ after(grammarAccess.getValidIDAccess().getArriveSoundKeyword_96()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getBeamSoundKeyword_97()); }
+		'beamSound'
+		{ after(grammarAccess.getValidIDAccess().getBeamSoundKeyword_97()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValidIDAccess().getShopKeyword_98()); }
 		'shop'
-		{ after(grammarAccess.getValidIDAccess().getShopKeyword_77()); }
+		{ after(grammarAccess.getValidIDAccess().getShopKeyword_98()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getTierKeyword_78()); }
+		{ before(grammarAccess.getValidIDAccess().getTierKeyword_99()); }
 		'tier'
-		{ after(grammarAccess.getValidIDAccess().getTierKeyword_78()); }
+		{ after(grammarAccess.getValidIDAccess().getTierKeyword_99()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getPriceKeyword_79()); }
+		{ before(grammarAccess.getValidIDAccess().getPriceKeyword_100()); }
 		'price'
-		{ after(grammarAccess.getValidIDAccess().getPriceKeyword_79()); }
+		{ after(grammarAccess.getValidIDAccess().getPriceKeyword_100()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getAmountKeyword_80()); }
+		{ before(grammarAccess.getValidIDAccess().getAmountKeyword_101()); }
 		'amount'
-		{ after(grammarAccess.getValidIDAccess().getAmountKeyword_80()); }
+		{ after(grammarAccess.getValidIDAccess().getAmountKeyword_101()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getFactorKeyword_81()); }
+		{ before(grammarAccess.getValidIDAccess().getFactorKeyword_102()); }
 		'factor'
-		{ after(grammarAccess.getValidIDAccess().getFactorKeyword_81()); }
+		{ after(grammarAccess.getValidIDAccess().getFactorKeyword_102()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getDescriptionKeyword_82()); }
+		{ before(grammarAccess.getValidIDAccess().getDescriptionKeyword_103()); }
 		'description'
-		{ after(grammarAccess.getValidIDAccess().getDescriptionKeyword_82()); }
+		{ after(grammarAccess.getValidIDAccess().getDescriptionKeyword_103()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getUnlockKeyword_83()); }
+		{ before(grammarAccess.getValidIDAccess().getUnlockKeyword_104()); }
 		'unlock'
-		{ after(grammarAccess.getValidIDAccess().getUnlockKeyword_83()); }
+		{ after(grammarAccess.getValidIDAccess().getUnlockKeyword_104()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getFromLevelKeyword_84()); }
+		{ before(grammarAccess.getValidIDAccess().getFromLevelKeyword_105()); }
 		'fromLevel'
-		{ after(grammarAccess.getValidIDAccess().getFromLevelKeyword_84()); }
+		{ after(grammarAccess.getValidIDAccess().getFromLevelKeyword_105()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getThemeKeyword_85()); }
+		{ before(grammarAccess.getValidIDAccess().getThemeKeyword_106()); }
 		'theme'
-		{ after(grammarAccess.getValidIDAccess().getThemeKeyword_85()); }
+		{ after(grammarAccess.getValidIDAccess().getThemeKeyword_106()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getFontKeyword_86()); }
+		{ before(grammarAccess.getValidIDAccess().getFontKeyword_107()); }
 		'font'
-		{ after(grammarAccess.getValidIDAccess().getFontKeyword_86()); }
+		{ after(grammarAccess.getValidIDAccess().getFontKeyword_107()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getColourKeyword_87()); }
+		{ before(grammarAccess.getValidIDAccess().getColourKeyword_108()); }
 		'colour'
-		{ after(grammarAccess.getValidIDAccess().getColourKeyword_87()); }
+		{ after(grammarAccess.getValidIDAccess().getColourKeyword_108()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getImageKeyword_88()); }
+		{ before(grammarAccess.getValidIDAccess().getImageKeyword_109()); }
 		'image'
-		{ after(grammarAccess.getValidIDAccess().getImageKeyword_88()); }
+		{ after(grammarAccess.getValidIDAccess().getImageKeyword_109()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getSliceKeyword_89()); }
+		{ before(grammarAccess.getValidIDAccess().getSliceKeyword_110()); }
 		'slice'
-		{ after(grammarAccess.getValidIDAccess().getSliceKeyword_89()); }
+		{ after(grammarAccess.getValidIDAccess().getSliceKeyword_110()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValidIDAccess().getBadgeKeyword_90()); }
+		{ before(grammarAccess.getValidIDAccess().getBadgeKeyword_111()); }
 		'badge'
-		{ after(grammarAccess.getValidIDAccess().getBadgeKeyword_90()); }
+		{ after(grammarAccess.getValidIDAccess().getBadgeKeyword_111()); }
 	)
 ;
 finally {
@@ -7218,9 +7369,9 @@ rule__LevelConfig__Group__21__Impl
 	}
 :
 (
-	{ before(grammarAccess.getLevelConfigAccess().getLastLifeGiftAssignment_21()); }
-	(rule__LevelConfig__LastLifeGiftAssignment_21)?
-	{ after(grammarAccess.getLevelConfigAccess().getLastLifeGiftAssignment_21()); }
+	{ before(grammarAccess.getLevelConfigAccess().getUfoRaidAssignment_21()); }
+	(rule__LevelConfig__UfoRaidAssignment_21)?
+	{ after(grammarAccess.getLevelConfigAccess().getUfoRaidAssignment_21()); }
 )
 ;
 finally {
@@ -7233,6 +7384,7 @@ rule__LevelConfig__Group__22
 	}
 :
 	rule__LevelConfig__Group__22__Impl
+	rule__LevelConfig__Group__23
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -7244,9 +7396,35 @@ rule__LevelConfig__Group__22__Impl
 	}
 :
 (
-	{ before(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_22()); }
+	{ before(grammarAccess.getLevelConfigAccess().getLastLifeGiftAssignment_22()); }
+	(rule__LevelConfig__LastLifeGiftAssignment_22)?
+	{ after(grammarAccess.getLevelConfigAccess().getLastLifeGiftAssignment_22()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__23
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__LevelConfig__Group__23__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__Group__23__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_23()); }
 	'}'
-	{ after(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_22()); }
+	{ after(grammarAccess.getLevelConfigAccess().getRightCurlyBracketKeyword_23()); }
 )
 ;
 finally {
@@ -12276,6 +12454,1329 @@ finally {
 }
 
 
+rule__UfoRaidConfig__Group__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__0__Impl
+	rule__UfoRaidConfig__Group__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfoRaidKeyword_0()); }
+	'ufoRaid'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfoRaidKeyword_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__1__Impl
+	rule__UfoRaidConfig__Group__2
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getLeftCurlyBracketKeyword_1()); }
+	'{'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getLeftCurlyBracketKeyword_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__2__Impl
+	rule__UfoRaidConfig__Group__3
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getGroup_2()); }
+	(rule__UfoRaidConfig__Group_2__0)?
+	{ after(grammarAccess.getUfoRaidConfigAccess().getGroup_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__3__Impl
+	rule__UfoRaidConfig__Group__4
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfosKeyword_3()); }
+	'ufos'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfosKeyword_3()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__4__Impl
+	rule__UfoRaidConfig__Group__5
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__4__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfosAssignment_4()); }
+	(rule__UfoRaidConfig__UfosAssignment_4)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfosAssignment_4()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__5__Impl
+	rule__UfoRaidConfig__Group__6
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__5__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getDurationKeyword_5()); }
+	'duration'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getDurationKeyword_5()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__6
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__6__Impl
+	rule__UfoRaidConfig__Group__7
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__6__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSecondsAssignment_6()); }
+	(rule__UfoRaidConfig__SecondsAssignment_6)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSecondsAssignment_6()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__7
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__7__Impl
+	rule__UfoRaidConfig__Group__8
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__7__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedKeyword_7()); }
+	'ufoSpeed'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedKeyword_7()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__8
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__8__Impl
+	rule__UfoRaidConfig__Group__9
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__8__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedAssignment_8()); }
+	(rule__UfoRaidConfig__UfoSpeedAssignment_8)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedAssignment_8()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__9
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__9__Impl
+	rule__UfoRaidConfig__Group__10
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__9__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamEveryKeyword_9()); }
+	'beamEvery'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamEveryKeyword_9()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__10
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__10__Impl
+	rule__UfoRaidConfig__Group__11
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__10__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamEverySecondsAssignment_10()); }
+	(rule__UfoRaidConfig__BeamEverySecondsAssignment_10)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamEverySecondsAssignment_10()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__11
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__11__Impl
+	rule__UfoRaidConfig__Group__12
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__11__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getChargeKeyword_11()); }
+	'charge'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getChargeKeyword_11()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__12
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__12__Impl
+	rule__UfoRaidConfig__Group__13
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__12__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getChargeSecondsAssignment_12()); }
+	(rule__UfoRaidConfig__ChargeSecondsAssignment_12)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getChargeSecondsAssignment_12()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__13
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__13__Impl
+	rule__UfoRaidConfig__Group__14
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__13__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsKeyword_13()); }
+	'beamSeconds'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsKeyword_13()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__14
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__14__Impl
+	rule__UfoRaidConfig__Group__15
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__14__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsAssignment_14()); }
+	(rule__UfoRaidConfig__BeamSecondsAssignment_14)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsAssignment_14()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__15
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__15__Impl
+	rule__UfoRaidConfig__Group__16
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__15__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusKeyword_15()); }
+	'beamRadius'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusKeyword_15()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__16__Impl
+	rule__UfoRaidConfig__Group__17
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__16__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusAssignment_16()); }
+	(rule__UfoRaidConfig__BeamRadiusAssignment_16)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusAssignment_16()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__17
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__17__Impl
+	rule__UfoRaidConfig__Group__18
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__17__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getAimMinKeyword_17()); }
+	'aimMin'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getAimMinKeyword_17()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__18
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__18__Impl
+	rule__UfoRaidConfig__Group__19
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__18__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getAimMinDistanceAssignment_18()); }
+	(rule__UfoRaidConfig__AimMinDistanceAssignment_18)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getAimMinDistanceAssignment_18()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__19
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__19__Impl
+	rule__UfoRaidConfig__Group__20
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__19__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getAimMaxKeyword_19()); }
+	'aimMax'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getAimMaxKeyword_19()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__20
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__20__Impl
+	rule__UfoRaidConfig__Group__21
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__20__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getAimMaxDistanceAssignment_20()); }
+	(rule__UfoRaidConfig__AimMaxDistanceAssignment_20)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getAimMaxDistanceAssignment_20()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__21
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__21__Impl
+	rule__UfoRaidConfig__Group__22
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__21__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getDamageFractionKeyword_21()); }
+	'damageFraction'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getDamageFractionKeyword_21()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__22
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__22__Impl
+	rule__UfoRaidConfig__Group__23
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__22__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getDamageFractionAssignment_22()); }
+	(rule__UfoRaidConfig__DamageFractionAssignment_22)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getDamageFractionAssignment_22()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__23
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__23__Impl
+	rule__UfoRaidConfig__Group__24
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__23__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldiersKeyword_23()); }
+	'soldiers'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldiersKeyword_23()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__24
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__24__Impl
+	rule__UfoRaidConfig__Group__25
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__24__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldiersAssignment_24()); }
+	(rule__UfoRaidConfig__SoldiersAssignment_24)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldiersAssignment_24()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__25
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__25__Impl
+	rule__UfoRaidConfig__Group__26
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__25__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthKeyword_25()); }
+	'soldierHealth'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthKeyword_25()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__26
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__26__Impl
+	rule__UfoRaidConfig__Group__27
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__26__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthAssignment_26()); }
+	(rule__UfoRaidConfig__SoldierHealthAssignment_26)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthAssignment_26()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__27
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__27__Impl
+	rule__UfoRaidConfig__Group__28
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__27__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageKeyword_27()); }
+	'soldierDamage'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageKeyword_27()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__28
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__28__Impl
+	rule__UfoRaidConfig__Group__29
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__28__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageAssignment_28()); }
+	(rule__UfoRaidConfig__SoldierDamageAssignment_28)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageAssignment_28()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__29
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__29__Impl
+	rule__UfoRaidConfig__Group__30
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__29__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSightKeyword_29()); }
+	'soldierSight'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSightKeyword_29()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__30
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__30__Impl
+	rule__UfoRaidConfig__Group__31
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__30__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSightAssignment_30()); }
+	(rule__UfoRaidConfig__SoldierSightAssignment_30)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSightAssignment_30()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__31
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__31__Impl
+	rule__UfoRaidConfig__Group__32
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__31__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsKeyword_31()); }
+	'soldierSeconds'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsKeyword_31()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__32
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__32__Impl
+	rule__UfoRaidConfig__Group__33
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__32__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsAssignment_32()); }
+	(rule__UfoRaidConfig__SoldierSecondsAssignment_32)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsAssignment_32()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__33
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__33__Impl
+	rule__UfoRaidConfig__Group__34
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__33__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getGroup_33()); }
+	(rule__UfoRaidConfig__Group_33__0)?
+	{ after(grammarAccess.getUfoRaidConfigAccess().getGroup_33()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__34
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__34__Impl
+	rule__UfoRaidConfig__Group__35
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__34__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteKeyword_34()); }
+	'ufoSprite'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteKeyword_34()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__35
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__35__Impl
+	rule__UfoRaidConfig__Group__36
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__35__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteAssignment_35()); }
+	(rule__UfoRaidConfig__UfoSpriteAssignment_35)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteAssignment_35()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__36
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__36__Impl
+	rule__UfoRaidConfig__Group__37
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__36__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteKeyword_36()); }
+	'beamSprite'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteKeyword_36()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__37
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__37__Impl
+	rule__UfoRaidConfig__Group__38
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__37__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteAssignment_37()); }
+	(rule__UfoRaidConfig__BeamSpriteAssignment_37)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteAssignment_37()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__38
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__38__Impl
+	rule__UfoRaidConfig__Group__39
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__38__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getGroup_38()); }
+	(rule__UfoRaidConfig__Group_38__0)?
+	{ after(grammarAccess.getUfoRaidConfigAccess().getGroup_38()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__39
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__39__Impl
+	rule__UfoRaidConfig__Group__40
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__39__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getGroup_39()); }
+	(rule__UfoRaidConfig__Group_39__0)?
+	{ after(grammarAccess.getUfoRaidConfigAccess().getGroup_39()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__40
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group__40__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group__40__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getRightCurlyBracketKeyword_40()); }
+	'}'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getRightCurlyBracketKeyword_40()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__UfoRaidConfig__Group_2__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_2__0__Impl
+	rule__UfoRaidConfig__Group_2__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_2__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getTriggerKeyword_2_0()); }
+	'trigger'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getTriggerKeyword_2_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_2__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_2__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_2__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getTriggerTierAssignment_2_1()); }
+	(rule__UfoRaidConfig__TriggerTierAssignment_2_1)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getTriggerTierAssignment_2_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__UfoRaidConfig__Group_33__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_33__0__Impl
+	rule__UfoRaidConfig__Group_33__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_33__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBannerKeyword_33_0()); }
+	'banner'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBannerKeyword_33_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_33__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_33__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_33__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBannerTextAssignment_33_1()); }
+	(rule__UfoRaidConfig__BannerTextAssignment_33_1)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBannerTextAssignment_33_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__UfoRaidConfig__Group_38__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_38__0__Impl
+	rule__UfoRaidConfig__Group_38__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_38__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getArriveSoundKeyword_38_0()); }
+	'arriveSound'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getArriveSoundKeyword_38_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_38__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_38__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_38__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getArriveSoundAssignment_38_1()); }
+	(rule__UfoRaidConfig__ArriveSoundAssignment_38_1)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getArriveSoundAssignment_38_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__UfoRaidConfig__Group_39__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_39__0__Impl
+	rule__UfoRaidConfig__Group_39__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_39__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSoundKeyword_39_0()); }
+	'beamSound'
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSoundKeyword_39_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_39__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__UfoRaidConfig__Group_39__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__Group_39__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSoundAssignment_39_1()); }
+	(rule__UfoRaidConfig__BeamSoundAssignment_39_1)
+	{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSoundAssignment_39_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
 rule__ShopConfig__Group__0
 	@init {
 		int stackSize = keepStackSize();
@@ -15633,15 +17134,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__LevelConfig__LastLifeGiftAssignment_21
+rule__LevelConfig__UfoRaidAssignment_21
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0()); }
+		{ before(grammarAccess.getLevelConfigAccess().getUfoRaidUfoRaidConfigParserRuleCall_21_0()); }
+		ruleUfoRaidConfig
+		{ after(grammarAccess.getLevelConfigAccess().getUfoRaidUfoRaidConfigParserRuleCall_21_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LevelConfig__LastLifeGiftAssignment_22
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0()); }
 		ruleLastLifeGiftConfig
-		{ after(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_21_0()); }
+		{ after(grammarAccess.getLevelConfigAccess().getLastLifeGiftLastLifeGiftConfigParserRuleCall_22_0()); }
 	)
 ;
 finally {
@@ -16767,6 +18283,321 @@ rule__LavaConfig__DeathSoundAssignment_15_1
 		{ before(grammarAccess.getLavaConfigAccess().getDeathSoundSTRINGTerminalRuleCall_15_1_0()); }
 		RULE_STRING
 		{ after(grammarAccess.getLavaConfigAccess().getDeathSoundSTRINGTerminalRuleCall_15_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__TriggerTierAssignment_2_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getTriggerTierValidIDParserRuleCall_2_1_0()); }
+		ruleValidID
+		{ after(grammarAccess.getUfoRaidConfigAccess().getTriggerTierValidIDParserRuleCall_2_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__UfosAssignment_4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getUfosINTTerminalRuleCall_4_0()); }
+		RULE_INT
+		{ after(grammarAccess.getUfoRaidConfigAccess().getUfosINTTerminalRuleCall_4_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SecondsAssignment_6
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSecondsDOUBLEParserRuleCall_6_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSecondsDOUBLEParserRuleCall_6_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__UfoSpeedAssignment_8
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedDOUBLEParserRuleCall_8_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpeedDOUBLEParserRuleCall_8_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BeamEverySecondsAssignment_10
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBeamEverySecondsDOUBLEParserRuleCall_10_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBeamEverySecondsDOUBLEParserRuleCall_10_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__ChargeSecondsAssignment_12
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getChargeSecondsDOUBLEParserRuleCall_12_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getChargeSecondsDOUBLEParserRuleCall_12_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BeamSecondsAssignment_14
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsDOUBLEParserRuleCall_14_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSecondsDOUBLEParserRuleCall_14_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BeamRadiusAssignment_16
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusDOUBLEParserRuleCall_16_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBeamRadiusDOUBLEParserRuleCall_16_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__AimMinDistanceAssignment_18
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getAimMinDistanceDOUBLEParserRuleCall_18_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getAimMinDistanceDOUBLEParserRuleCall_18_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__AimMaxDistanceAssignment_20
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getAimMaxDistanceDOUBLEParserRuleCall_20_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getAimMaxDistanceDOUBLEParserRuleCall_20_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__DamageFractionAssignment_22
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getDamageFractionDOUBLEParserRuleCall_22_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getDamageFractionDOUBLEParserRuleCall_22_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SoldiersAssignment_24
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSoldiersINTTerminalRuleCall_24_0()); }
+		RULE_INT
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSoldiersINTTerminalRuleCall_24_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SoldierHealthAssignment_26
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthINTTerminalRuleCall_26_0()); }
+		RULE_INT
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierHealthINTTerminalRuleCall_26_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SoldierDamageAssignment_28
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageINTTerminalRuleCall_28_0()); }
+		RULE_INT
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierDamageINTTerminalRuleCall_28_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SoldierSightAssignment_30
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSightDOUBLEParserRuleCall_30_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSightDOUBLEParserRuleCall_30_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__SoldierSecondsAssignment_32
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsDOUBLEParserRuleCall_32_0()); }
+		ruleDOUBLE
+		{ after(grammarAccess.getUfoRaidConfigAccess().getSoldierSecondsDOUBLEParserRuleCall_32_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BannerTextAssignment_33_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBannerTextSTRINGTerminalRuleCall_33_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBannerTextSTRINGTerminalRuleCall_33_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__UfoSpriteAssignment_35
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteSTRINGTerminalRuleCall_35_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getUfoRaidConfigAccess().getUfoSpriteSTRINGTerminalRuleCall_35_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BeamSpriteAssignment_37
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteSTRINGTerminalRuleCall_37_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSpriteSTRINGTerminalRuleCall_37_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__ArriveSoundAssignment_38_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getArriveSoundSTRINGTerminalRuleCall_38_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getUfoRaidConfigAccess().getArriveSoundSTRINGTerminalRuleCall_38_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__UfoRaidConfig__BeamSoundAssignment_39_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getUfoRaidConfigAccess().getBeamSoundSTRINGTerminalRuleCall_39_1_0()); }
+		RULE_STRING
+		{ after(grammarAccess.getUfoRaidConfigAccess().getBeamSoundSTRINGTerminalRuleCall_39_1_0()); }
 	)
 ;
 finally {

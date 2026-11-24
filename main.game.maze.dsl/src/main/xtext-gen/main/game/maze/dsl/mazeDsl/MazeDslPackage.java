@@ -1046,13 +1046,22 @@ public interface MazeDslPackage extends EPackage
   int LEVEL_CONFIG__LAVA = 18;
 
   /**
+   * The feature id for the '<em><b>Ufo Raid</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LEVEL_CONFIG__UFO_RAID = 19;
+
+  /**
    * The feature id for the '<em><b>Last Life Gift</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG__LAST_LIFE_GIFT = 19;
+  int LEVEL_CONFIG__LAST_LIFE_GIFT = 20;
 
   /**
    * The number of structural features of the '<em>Level Config</em>' class.
@@ -1061,7 +1070,7 @@ public interface MazeDslPackage extends EPackage
    * @generated
    * @ordered
    */
-  int LEVEL_CONFIG_FEATURE_COUNT = 20;
+  int LEVEL_CONFIG_FEATURE_COUNT = 21;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.LevelZoneImpl <em>Level Zone</em>}' class.
@@ -1939,6 +1948,214 @@ public interface MazeDslPackage extends EPackage
   int LAVA_CONFIG_FEATURE_COUNT = 10;
 
   /**
+   * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.UfoRaidConfigImpl <em>Ufo Raid Config</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see main.game.maze.dsl.mazeDsl.impl.UfoRaidConfigImpl
+   * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getUfoRaidConfig()
+   * @generated
+   */
+  int UFO_RAID_CONFIG = 26;
+
+  /**
+   * The feature id for the '<em><b>Trigger Tier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__TRIGGER_TIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Ufos</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__UFOS = 1;
+
+  /**
+   * The feature id for the '<em><b>Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SECONDS = 2;
+
+  /**
+   * The feature id for the '<em><b>Ufo Speed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__UFO_SPEED = 3;
+
+  /**
+   * The feature id for the '<em><b>Beam Every Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BEAM_EVERY_SECONDS = 4;
+
+  /**
+   * The feature id for the '<em><b>Charge Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__CHARGE_SECONDS = 5;
+
+  /**
+   * The feature id for the '<em><b>Beam Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BEAM_SECONDS = 6;
+
+  /**
+   * The feature id for the '<em><b>Beam Radius</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BEAM_RADIUS = 7;
+
+  /**
+   * The feature id for the '<em><b>Aim Min Distance</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__AIM_MIN_DISTANCE = 8;
+
+  /**
+   * The feature id for the '<em><b>Aim Max Distance</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__AIM_MAX_DISTANCE = 9;
+
+  /**
+   * The feature id for the '<em><b>Damage Fraction</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__DAMAGE_FRACTION = 10;
+
+  /**
+   * The feature id for the '<em><b>Soldiers</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SOLDIERS = 11;
+
+  /**
+   * The feature id for the '<em><b>Soldier Health</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SOLDIER_HEALTH = 12;
+
+  /**
+   * The feature id for the '<em><b>Soldier Damage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SOLDIER_DAMAGE = 13;
+
+  /**
+   * The feature id for the '<em><b>Soldier Sight</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SOLDIER_SIGHT = 14;
+
+  /**
+   * The feature id for the '<em><b>Soldier Seconds</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__SOLDIER_SECONDS = 15;
+
+  /**
+   * The feature id for the '<em><b>Banner Text</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BANNER_TEXT = 16;
+
+  /**
+   * The feature id for the '<em><b>Ufo Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__UFO_SPRITE = 17;
+
+  /**
+   * The feature id for the '<em><b>Beam Sprite</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BEAM_SPRITE = 18;
+
+  /**
+   * The feature id for the '<em><b>Arrive Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__ARRIVE_SOUND = 19;
+
+  /**
+   * The feature id for the '<em><b>Beam Sound</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG__BEAM_SOUND = 20;
+
+  /**
+   * The number of structural features of the '<em>Ufo Raid Config</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UFO_RAID_CONFIG_FEATURE_COUNT = 21;
+
+  /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1946,7 +2163,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopConfig()
    * @generated
    */
-  int SHOP_CONFIG = 26;
+  int SHOP_CONFIG = 27;
 
   /**
    * The feature id for the '<em><b>Unlocks</b></em>' containment reference list.
@@ -1983,7 +2200,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopUnlockConfig()
    * @generated
    */
-  int SHOP_UNLOCK_CONFIG = 27;
+  int SHOP_UNLOCK_CONFIG = 28;
 
   /**
    * The feature id for the '<em><b>Tier</b></em>' attribute.
@@ -2020,7 +2237,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getShopItemConfig()
    * @generated
    */
-  int SHOP_ITEM_CONFIG = 28;
+  int SHOP_ITEM_CONFIG = 29;
 
   /**
    * The feature id for the '<em><b>Kind</b></em>' attribute.
@@ -2102,7 +2319,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getMenuThemeConfig()
    * @generated
    */
-  int MENU_THEME_CONFIG = 29;
+  int MENU_THEME_CONFIG = 30;
 
   /**
    * The feature id for the '<em><b>Font</b></em>' attribute.
@@ -2157,7 +2374,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeSwatchConfig()
    * @generated
    */
-  int THEME_SWATCH_CONFIG = 30;
+  int THEME_SWATCH_CONFIG = 31;
 
   /**
    * The feature id for the '<em><b>Role</b></em>' attribute.
@@ -2194,7 +2411,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeImageConfig()
    * @generated
    */
-  int THEME_IMAGE_CONFIG = 31;
+  int THEME_IMAGE_CONFIG = 32;
 
   /**
    * The feature id for the '<em><b>Role</b></em>' attribute.
@@ -2240,7 +2457,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getThemeBadgeConfig()
    * @generated
    */
-  int THEME_BADGE_CONFIG = 32;
+  int THEME_BADGE_CONFIG = 33;
 
   /**
    * The feature id for the '<em><b>Tier</b></em>' attribute.
@@ -2286,7 +2503,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLastLifeGiftConfig()
    * @generated
    */
-  int LAST_LIFE_GIFT_CONFIG = 33;
+  int LAST_LIFE_GIFT_CONFIG = 34;
 
   /**
    * The feature id for the '<em><b>Weapon</b></em>' attribute.
@@ -2323,7 +2540,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getTeleportRulesConfig()
    * @generated
    */
-  int TELEPORT_RULES_CONFIG = 34;
+  int TELEPORT_RULES_CONFIG = 35;
 
   /**
    * The feature id for the '<em><b>Cooldown Seconds</b></em>' attribute.
@@ -2387,7 +2604,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDifficultyLevel()
    * @generated
    */
-  int DIFFICULTY_LEVEL = 35;
+  int DIFFICULTY_LEVEL = 36;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.EnemyType <em>Enemy Type</em>}' enum.
@@ -2397,7 +2614,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getEnemyType()
    * @generated
    */
-  int ENEMY_TYPE = 36;
+  int ENEMY_TYPE = 37;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.CharacterTypeEnum <em>Character Type Enum</em>}' enum.
@@ -2407,7 +2624,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getCharacterTypeEnum()
    * @generated
    */
-  int CHARACTER_TYPE_ENUM = 37;
+  int CHARACTER_TYPE_ENUM = 38;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.BehaviorTypeEnum <em>Behavior Type Enum</em>}' enum.
@@ -2417,7 +2634,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getBehaviorTypeEnum()
    * @generated
    */
-  int BEHAVIOR_TYPE_ENUM = 38;
+  int BEHAVIOR_TYPE_ENUM = 39;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.ProjectileTypeEnum <em>Projectile Type Enum</em>}' enum.
@@ -2427,7 +2644,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getProjectileTypeEnum()
    * @generated
    */
-  int PROJECTILE_TYPE_ENUM = 39;
+  int PROJECTILE_TYPE_ENUM = 40;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.LootItemTypeEnum <em>Loot Item Type Enum</em>}' enum.
@@ -2437,7 +2654,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getLootItemTypeEnum()
    * @generated
    */
-  int LOOT_ITEM_TYPE_ENUM = 40;
+  int LOOT_ITEM_TYPE_ENUM = 41;
 
   /**
    * The meta object id for the '{@link main.game.maze.dsl.mazeDsl.DropWeaponEnum <em>Drop Weapon Enum</em>}' enum.
@@ -2447,7 +2664,7 @@ public interface MazeDslPackage extends EPackage
    * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getDropWeaponEnum()
    * @generated
    */
-  int DROP_WEAPON_ENUM = 41;
+  int DROP_WEAPON_ENUM = 42;
 
 
   /**
@@ -3437,6 +3654,17 @@ public interface MazeDslPackage extends EPackage
   EReference getLevelConfig_Lava();
 
   /**
+   * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getUfoRaid <em>Ufo Raid</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Ufo Raid</em>'.
+   * @see main.game.maze.dsl.mazeDsl.LevelConfig#getUfoRaid()
+   * @see #getLevelConfig()
+   * @generated
+   */
+  EReference getLevelConfig_UfoRaid();
+
+  /**
    * Returns the meta object for the containment reference '{@link main.game.maze.dsl.mazeDsl.LevelConfig#getLastLifeGift <em>Last Life Gift</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4370,6 +4598,247 @@ public interface MazeDslPackage extends EPackage
    * @generated
    */
   EAttribute getLavaConfig_DeathSound();
+
+  /**
+   * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig <em>Ufo Raid Config</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Ufo Raid Config</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig
+   * @generated
+   */
+  EClass getUfoRaidConfig();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getTriggerTier <em>Trigger Tier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Trigger Tier</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getTriggerTier()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_TriggerTier();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfos <em>Ufos</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ufos</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfos()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_Ufos();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSeconds <em>Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSeconds()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_Seconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfoSpeed <em>Ufo Speed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ufo Speed</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfoSpeed()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_UfoSpeed();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamEverySeconds <em>Beam Every Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Beam Every Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamEverySeconds()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BeamEverySeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getChargeSeconds <em>Charge Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Charge Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getChargeSeconds()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_ChargeSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSeconds <em>Beam Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Beam Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSeconds()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BeamSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamRadius <em>Beam Radius</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Beam Radius</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamRadius()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BeamRadius();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getAimMinDistance <em>Aim Min Distance</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Aim Min Distance</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getAimMinDistance()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_AimMinDistance();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getAimMaxDistance <em>Aim Max Distance</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Aim Max Distance</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getAimMaxDistance()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_AimMaxDistance();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getDamageFraction <em>Damage Fraction</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Damage Fraction</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getDamageFraction()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_DamageFraction();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldiers <em>Soldiers</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Soldiers</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldiers()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_Soldiers();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierHealth <em>Soldier Health</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Soldier Health</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierHealth()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_SoldierHealth();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierDamage <em>Soldier Damage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Soldier Damage</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierDamage()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_SoldierDamage();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierSight <em>Soldier Sight</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Soldier Sight</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierSight()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_SoldierSight();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierSeconds <em>Soldier Seconds</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Soldier Seconds</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getSoldierSeconds()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_SoldierSeconds();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBannerText <em>Banner Text</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Banner Text</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBannerText()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BannerText();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfoSprite <em>Ufo Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ufo Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getUfoSprite()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_UfoSprite();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSprite <em>Beam Sprite</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Beam Sprite</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSprite()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BeamSprite();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getArriveSound <em>Arrive Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Arrive Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getArriveSound()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_ArriveSound();
+
+  /**
+   * Returns the meta object for the attribute '{@link main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSound <em>Beam Sound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Beam Sound</em>'.
+   * @see main.game.maze.dsl.mazeDsl.UfoRaidConfig#getBeamSound()
+   * @see #getUfoRaidConfig()
+   * @generated
+   */
+  EAttribute getUfoRaidConfig_BeamSound();
 
   /**
    * Returns the meta object for class '{@link main.game.maze.dsl.mazeDsl.ShopConfig <em>Shop Config</em>}'.
@@ -5643,6 +6112,14 @@ public interface MazeDslPackage extends EPackage
     EReference LEVEL_CONFIG__LAVA = eINSTANCE.getLevelConfig_Lava();
 
     /**
+     * The meta object literal for the '<em><b>Ufo Raid</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference LEVEL_CONFIG__UFO_RAID = eINSTANCE.getLevelConfig_UfoRaid();
+
+    /**
      * The meta object literal for the '<em><b>Last Life Gift</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6351,6 +6828,184 @@ public interface MazeDslPackage extends EPackage
      * @generated
      */
     EAttribute LAVA_CONFIG__DEATH_SOUND = eINSTANCE.getLavaConfig_DeathSound();
+
+    /**
+     * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.UfoRaidConfigImpl <em>Ufo Raid Config</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see main.game.maze.dsl.mazeDsl.impl.UfoRaidConfigImpl
+     * @see main.game.maze.dsl.mazeDsl.impl.MazeDslPackageImpl#getUfoRaidConfig()
+     * @generated
+     */
+    EClass UFO_RAID_CONFIG = eINSTANCE.getUfoRaidConfig();
+
+    /**
+     * The meta object literal for the '<em><b>Trigger Tier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__TRIGGER_TIER = eINSTANCE.getUfoRaidConfig_TriggerTier();
+
+    /**
+     * The meta object literal for the '<em><b>Ufos</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__UFOS = eINSTANCE.getUfoRaidConfig_Ufos();
+
+    /**
+     * The meta object literal for the '<em><b>Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SECONDS = eINSTANCE.getUfoRaidConfig_Seconds();
+
+    /**
+     * The meta object literal for the '<em><b>Ufo Speed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__UFO_SPEED = eINSTANCE.getUfoRaidConfig_UfoSpeed();
+
+    /**
+     * The meta object literal for the '<em><b>Beam Every Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BEAM_EVERY_SECONDS = eINSTANCE.getUfoRaidConfig_BeamEverySeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Charge Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__CHARGE_SECONDS = eINSTANCE.getUfoRaidConfig_ChargeSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Beam Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BEAM_SECONDS = eINSTANCE.getUfoRaidConfig_BeamSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Beam Radius</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BEAM_RADIUS = eINSTANCE.getUfoRaidConfig_BeamRadius();
+
+    /**
+     * The meta object literal for the '<em><b>Aim Min Distance</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__AIM_MIN_DISTANCE = eINSTANCE.getUfoRaidConfig_AimMinDistance();
+
+    /**
+     * The meta object literal for the '<em><b>Aim Max Distance</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__AIM_MAX_DISTANCE = eINSTANCE.getUfoRaidConfig_AimMaxDistance();
+
+    /**
+     * The meta object literal for the '<em><b>Damage Fraction</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__DAMAGE_FRACTION = eINSTANCE.getUfoRaidConfig_DamageFraction();
+
+    /**
+     * The meta object literal for the '<em><b>Soldiers</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SOLDIERS = eINSTANCE.getUfoRaidConfig_Soldiers();
+
+    /**
+     * The meta object literal for the '<em><b>Soldier Health</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SOLDIER_HEALTH = eINSTANCE.getUfoRaidConfig_SoldierHealth();
+
+    /**
+     * The meta object literal for the '<em><b>Soldier Damage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SOLDIER_DAMAGE = eINSTANCE.getUfoRaidConfig_SoldierDamage();
+
+    /**
+     * The meta object literal for the '<em><b>Soldier Sight</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SOLDIER_SIGHT = eINSTANCE.getUfoRaidConfig_SoldierSight();
+
+    /**
+     * The meta object literal for the '<em><b>Soldier Seconds</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__SOLDIER_SECONDS = eINSTANCE.getUfoRaidConfig_SoldierSeconds();
+
+    /**
+     * The meta object literal for the '<em><b>Banner Text</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BANNER_TEXT = eINSTANCE.getUfoRaidConfig_BannerText();
+
+    /**
+     * The meta object literal for the '<em><b>Ufo Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__UFO_SPRITE = eINSTANCE.getUfoRaidConfig_UfoSprite();
+
+    /**
+     * The meta object literal for the '<em><b>Beam Sprite</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BEAM_SPRITE = eINSTANCE.getUfoRaidConfig_BeamSprite();
+
+    /**
+     * The meta object literal for the '<em><b>Arrive Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__ARRIVE_SOUND = eINSTANCE.getUfoRaidConfig_ArriveSound();
+
+    /**
+     * The meta object literal for the '<em><b>Beam Sound</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UFO_RAID_CONFIG__BEAM_SOUND = eINSTANCE.getUfoRaidConfig_BeamSound();
 
     /**
      * The meta object literal for the '{@link main.game.maze.dsl.mazeDsl.impl.ShopConfigImpl <em>Shop Config</em>}' class.

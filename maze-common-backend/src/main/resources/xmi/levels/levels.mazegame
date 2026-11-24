@@ -141,6 +141,9 @@ game MazeGameLevels {
         threatCapacity 2.2
         // the dead do not stay put: a swarm of portal ghosts keeps zapping the player about, in the middle of
         // the lava and the guns; a second ring of mines and more sergeants and towers make every landing deadly
+        sergeants easy 2
+        sergeants normal 6
+        sergeants hard 9
         mines {
             count 4
             ringRadius 62.0
@@ -162,9 +165,6 @@ game MazeGameLevels {
             zapSound "/main/game/maze/sounds/teleport.wav"
             voiceSound "/main/game/maze/sounds/teleported.wav"
         }
-        sergeants easy 2
-        sergeants normal 6
-        sergeants hard 9
         towers easy 3
         towers normal 4
         towers hard 6
@@ -179,6 +179,32 @@ game MazeGameLevels {
             glow 0.8
             crust 0.35
             deathSound "/main/game/maze/sounds/lava-death.wav"
+        }
+        // using an expensive weapon of the shop brings the UFOs: they cross the map back and forth for ten seconds and
+        // beam the ground close to the player (never at them); a beam that is bumped into takes half the health, a
+        // shield blocks it. Ten red soldiers are dropped to hunt the player at the same time.
+        ufoRaid {
+            trigger EXPENSIVE
+            ufos 2
+            duration 10.0
+            ufoSpeed 150.0
+            beamEvery 1.5
+            charge 0.8
+            beamSeconds 1.2
+            beamRadius 38.0
+            aimMin 50.0
+            aimMax 170.0
+            damageFraction 0.5
+            soldiers 10
+            soldierHealth 60
+            soldierDamage 4
+            soldierSight 320.0
+            soldierSeconds 45.0
+            banner "UFO RETALIATION"
+            ufoSprite "/main/game/maze/ufo/ufo.png"
+            beamSprite "/main/game/maze/ufo/ufo-beam.png"
+            arriveSound "/main/game/maze/sounds/airstrike-siren.wav"
+            beamSound "/main/game/maze/sounds/pulse-fire.wav"
         }
     }
 }

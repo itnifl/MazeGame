@@ -29,6 +29,7 @@ import main.game.maze.mazeworld.ZoneGeometry;
  * @param builderCounts        wall builders per difficulty tier
  * @param lava                 the streams of lava under the walls, or null
  * @param lastLifeGift         the weapon given when the player starts their last life, or null
+ * @param ufoRaid              the UFOs and red soldiers that answer an expensive shop weapon, or null
  */
 public record LevelSpec(int number, String name, double threatCapacityFactor, boolean showWallMaterials,
                         boolean inheritWeapons, int maxCascadeDepth, List<ZoneSpec> zones,
@@ -36,7 +37,8 @@ public record LevelSpec(int number, String name, double threatCapacityFactor, bo
                         MineSpec mines, TeleportGhostSpec teleportGhost, Map<DifficultyTier, Integer> ghostCounts,
                         TeleportRulesSpec teleport, GuardTowerSpec guardTower, Map<DifficultyTier, Integer> towerCounts,
                         WallBuilderSpec wallBuilder, Map<DifficultyTier, Integer> builderCounts,
-                        LavaSpec lava, LastLifeGiftSpec lastLifeGift) {
+                        LavaSpec lava, LastLifeGiftSpec lastLifeGift,
+                        main.game.maze.game.ufo.UfoRaidSpec ufoRaid) {
 
     /** Stand-in hit points of a wall that cannot be broken, when comparing how strong zones are. */
     static final double SOLID_WALL_STRENGTH = 200.0;

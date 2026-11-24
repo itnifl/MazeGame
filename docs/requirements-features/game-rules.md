@@ -376,3 +376,11 @@ MUST be added to the shared core, not to a single frontend.
   shelves, Up and Down along one.
 - **GR-92**: The planted bomb lies as a bomb with a burning fuse and goes off after 3 s (flames
   220 px); an airstrike's bombs are seen falling onto their shadows in the 0.7 s before they hit.
+- **GR-93**: On level 7, using a weapon of the expensive tier of the shop (small nuclear grenade,
+  airstrike, infantry strike) brings a UFO retaliation: two UFOs cross the map back and forth for
+  10 s and beam the ground 50 to 170 px from the player, never straight at them. The spot is
+  marked for 0.8 s, then the beam burns for 1.2 s; a player who bumps into it loses half their
+  maximum health, once per beam. A power shield blocks the beams.
+- **GR-94**: With the UFOs, ten red soldiers are airdropped some way off the player and hunt them,
+  firing when they see the player (4 damage a round; a shield blocks it). They have 60 health,
+  are killed by the player's flames, shots and nuclear blasts, and leave after 45 s.
