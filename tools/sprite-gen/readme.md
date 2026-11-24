@@ -189,7 +189,7 @@ weapons HUD and the player's hands: `grenade.png` (a pineapple grenade), `plasma
 over crossed rifles), `life-refill.png` (a medkit). The single `soldier.png` of the first version (helmet, green
 uniform, rifle) was replaced by the animated soldier of `SoldierSpriteGenerator` (below). The existing sprites come out unchanged.
 
-`PickupSpriteGenerator` also draws what an airstrike drops into `strike/`: `aerial-bomb.png` (an aircraft bomb falling nose down) and `bomb-shadow.png` (the shadow it casts).
+`PickupSpriteGenerator` also draws what an airstrike drops into `strike/`: `aerial-bomb.png` (an aircraft bomb falling nose down) and `bomb-shadow.png` (the shadow it casts), and the dropped weapons armed, two frames each: `armed-bomb-*`, `armed-fat-bomb-*` (burning fuse), `armed-grenade-*`, `armed-plasma-grenade-*` (pin pulled, smoking), `armed-nuke-grenade-*` (blinking warning light). `MenuThemeSpriteGenerator` draws the keyboard keys of the help screen (`key.png`, `key-up/down/left/right.png`).
 
 ## MenuThemeSpriteGenerator
 

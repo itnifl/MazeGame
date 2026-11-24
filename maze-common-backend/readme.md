@@ -104,3 +104,5 @@ The shipped shop prices are 2,000 per cheap purchase, 10,000 per medium
 purchase, and 40,000 per expensive purchase except the 60,000-point airstrike.
 The catalogue also defines quantities per purchase and tier unlock levels;
 see [game rules](../docs/requirements-features/game-rules.md).
+
+Wall damage can be batched (`GameMazeWorld.applyWallDamage(List<WallHit>, attacker)`, used by the nuclear blast): one rewire, round the fallen walls only, and one collapse notification. `StrikeVisuals.lyingSprite(blast, items, clock)` gives the armed frames of a dropped weapon. `theme.ControlsGuide` is the content of Help & Controls.

@@ -303,15 +303,26 @@ public final class GdxGameWorldView {
     }
 
     private void drawBombFuseGlows(RenderContext context, ShapeRenderer shapes) {
+        if (context.bombFuseGlows().isEmpty()) {
+            return;
+        }
+        // the glows are see-through: without blending they would be solid discs over the weapons they mark
+        shapes.flush();
+        com.badlogic.gdx.Gdx.gl.glEnable(com.badlogic.gdx.graphics.GL20.GL_BLEND);
+        com.badlogic.gdx.Gdx.gl.glBlendFunc(com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA,
+                com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (BombFuseGlow glow : context.bombFuseGlows()) {
             float alpha = Math.max(0f, Math.min(1f, glow.alpha()));
             if (alpha <= 0f) {
                 continue;
             }
             if (glow.haloOnly()) {
-                // a halo round a grenade drawn as a sprite (amber, or radioactive green round the nuclear grenade)
-                shapes.setColor(glow.red(), glow.green(), glow.blue(), 0.35f * alpha);
-                shapes.circle(glow.x(), glow.y(), glow.radius(), 28);
+                // a ring round a weapon drawn as a sprite (amber, or radioactive green round the nuclear grenade): it
+                // never covers the weapon itself
+                shapes.setColor(glow.red(), glow.green(), glow.blue(), 0.85f * alpha);
+                ring(shapes, glow.x(), glow.y(), glow.radius(), 2.2f);
+                shapes.setColor(glow.red(), glow.green(), glow.blue(), 0.25f * alpha);
+                ring(shapes, glow.x(), glow.y(), glow.radius() + 3f, 3f);
                 continue;
             }
             // Outer orange glow
@@ -323,6 +334,24 @@ public final class GdxGameWorldView {
             // Bright yellow-white hot core
             shapes.setColor(1f, 0.96f, 0.60f, 0.80f * alpha);
             shapes.circle(glow.x(), glow.y(), Math.max(2f, glow.radius() * 0.35f), 18);
+        }
+        shapes.flush();
+        com.badlogic.gdx.Gdx.gl.glDisable(com.badlogic.gdx.graphics.GL20.GL_BLEND);   // the rest of the pass as before
+    }
+
+    /** A ring of {@code width} round (x, y) at {@code radius}, as thin filled quads (the shape renderer is filling). */
+    private static void ring(ShapeRenderer shapes, float x, float y, float radius, float width) {
+        int segments = 36;
+        float inner = Math.max(0f, radius - width);
+        for (int i = 0; i < segments; i++) {
+            double a1 = 2 * Math.PI * i / segments;
+            double a2 = 2 * Math.PI * (i + 1) / segments;
+            float c1 = (float) Math.cos(a1);
+            float s1 = (float) Math.sin(a1);
+            float c2 = (float) Math.cos(a2);
+            float s2 = (float) Math.sin(a2);
+            shapes.triangle(x + c1 * inner, y + s1 * inner, x + c1 * radius, y + s1 * radius, x + c2 * radius, y + s2 * radius);
+            shapes.triangle(x + c1 * inner, y + s1 * inner, x + c2 * radius, y + s2 * radius, x + c2 * inner, y + s2 * inner);
         }
     }
 

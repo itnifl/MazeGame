@@ -60,6 +60,11 @@ public class GameMazeWorld {
     /** Attacker of the wall damage being applied on this thread (see {@link #attributeDamageTo}). */
     private static final ThreadLocal<String> CURRENT_ATTACKER = new ThreadLocal<>();
 
+    /** Who the wall damage being applied on this thread is credited to (null: nobody in particular). */
+    public static String currentAttacker() {
+        return CURRENT_ATTACKER.get();
+    }
+
     /**
      * Runs {@code attack} with wall damage credited to {@code attackerId}, for shared engines that
      * damage walls without knowing who attacks (the bomb flame). Restores the previous attacker.
@@ -328,27 +333,53 @@ public class GameMazeWorld {
 
     /** As {@link #applyWallDamage(BreakableWall, int)}, crediting a collapse to {@code attackerId}. */
     public boolean applyWallDamage(BreakableWall bw, int damage, String attackerId) {
-        if (!breakableWalls.contains(bw)) return false;
-        int remaining = bw.applyDamage(damage);
-        if (remaining <= 0) {
-            List<BreakableWall> toCollapse = collectCascadeWalls(bw);
-            for (BreakableWall w : toCollapse) {
-                mazeVectors.remove(w.geometry);
-                breakableWalls.remove(w);
+        return !applyWallDamage(List.of(new WallHit(bw, damage)), attackerId).isEmpty();
+    }
+
+    /** A wall hit by a blast, and how hard. */
+    public record WallHit(BreakableWall wall, int damage) {
+    }
+
+    /**
+     * Damages many walls at once (a big blast): every wall takes its damage first, then everything that falls (with
+     * its cascade) is taken out together, the navigation graph is rewired once and the collapse listeners hear of it
+     * once. Damaging the walls one by one would rewire and redraw the maze for every wall that falls.
+     *
+     * @return the walls that collapsed, empty when none did
+     */
+    public List<BreakableWall> applyWallDamage(List<WallHit> hits, String attackerId) {
+        List<BreakableWall> destroyed = new ArrayList<>();
+        for (WallHit hit : hits) {
+            if (breakableWalls.contains(hit.wall()) && hit.wall().applyDamage(hit.damage()) <= 0) {
+                destroyed.add(hit.wall());
             }
-            if (navigationGraph != null) {
-                MazeNavigationGraphService.rewireAfterWallRemoval(navigationGraph, mazeVectors);
-                if (lava != null) {
-                    MazeNavigationGraphService.removeEdgesThroughLava(navigationGraph, lava);
-                }
-            }
-            List<BreakableWall> collapsed = List.copyOf(toCollapse);
-            for (WallCollapseListener listener : collapseListeners) {
-                listener.onWallsCollapsed(collapsed, attackerId);
-            }
-            return true;
         }
-        return false;
+        if (destroyed.isEmpty()) {
+            return List.of();
+        }
+        Set<BreakableWall> falling = new java.util.LinkedHashSet<>();
+        for (BreakableWall wall : destroyed) {
+            if (!falling.contains(wall)) {
+                falling.addAll(collectCascadeWalls(wall));
+            }
+        }
+        List<Vector2D> removed = new ArrayList<>(falling.size());
+        for (BreakableWall w : falling) {
+            mazeVectors.remove(w.geometry);
+            breakableWalls.remove(w);
+            removed.add(w.geometry);
+        }
+        if (navigationGraph != null) {
+            MazeNavigationGraphService.rewireAfterWallRemoval(navigationGraph, mazeVectors, removed);
+            if (lava != null) {
+                MazeNavigationGraphService.removeEdgesThroughLava(navigationGraph, lava);
+            }
+        }
+        List<BreakableWall> collapsed = List.copyOf(falling);
+        for (WallCollapseListener listener : collapseListeners) {
+            listener.onWallsCollapsed(collapsed, attackerId);
+        }
+        return collapsed;
     }
 
     /**

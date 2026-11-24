@@ -33,6 +33,8 @@ import javax.imageio.ImageIO;
  *       silver, three gold</li>
  *   <li>{@code token.png}: the skull coin prices and the score are counted in; {@code lock.png}: a padlock</li>
  *   <li>{@code vignette.png}: darkens the edges of the backdrop</li>
+ *   <li>{@code key.png}: a worn keyboard key for the controls guide (9-slice, 10 px), and {@code key-up.png},
+ *       {@code key-down.png}, {@code key-left.png}, {@code key-right.png}: the arrow keys</li>
  * </ul>
  *
  * Deterministic (fixed seeds), drawn with antialiasing; icons are drawn at twice the size they are shown at.
@@ -82,6 +84,11 @@ public final class MenuThemeSpriteGenerator {
         write(dir, "token.png", token());
         write(dir, "lock.png", lock());
         write(dir, "vignette.png", vignette());
+        write(dir, "key.png", key(null));
+        write(dir, "key-up.png", key(0));
+        write(dir, "key-right.png", key(90));
+        write(dir, "key-down.png", key(180));
+        write(dir, "key-left.png", key(270));
     }
 
     private static void write(Path dir, String name, BufferedImage image) throws IOException {
@@ -359,6 +366,44 @@ public final class MenuThemeSpriteGenerator {
         g.setColor(OUTLINE);
         g.fill(new Ellipse2D.Double(17.5, 22, 5, 5));
         g.fillRect(19, 25, 2, 6);
+        g.dispose();
+        return image;
+    }
+
+    /**
+     * A keyboard key seen from above: a light keycap with a dished top and a dark side; with an arrow pointing
+     * {@code degrees} clockwise from up, or blank (null) for a key that gets its label as text.
+     */
+    static BufferedImage key(Integer degrees) {
+        int size = 48;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = smooth(image);
+        g.setColor(OUTLINE);
+        g.fill(new RoundRectangle2D.Double(1, 1, size - 2, size - 2, 10, 10));
+        g.setColor(new Color(0x55, 0x58, 0x52));
+        g.fill(new RoundRectangle2D.Double(2, 2, size - 4, size - 4, 9, 9));
+        g.setPaint(new GradientPaint(0, 4, new Color(0xe6, 0xe2, 0xd2), 0, size - 10, new Color(0xb4, 0xb0, 0x9e)));
+        g.fill(new RoundRectangle2D.Double(5, 3, size - 10, size - 12, 7, 7));
+        g.setColor(new Color(255, 255, 255, 90));
+        g.drawLine(9, 5, size - 10, 5);
+        if (degrees != null) {
+            java.awt.geom.AffineTransform saved = g.getTransform();
+            g.rotate(Math.toRadians(degrees), size / 2.0, (size - 9) / 2.0 + 1.5);
+            Path2D arrow = new Path2D.Double();
+            double cx = size / 2.0;
+            double cy = (size - 9) / 2.0 + 1.5;
+            arrow.moveTo(cx, cy - 11);
+            arrow.lineTo(cx + 10, cy + 1);
+            arrow.lineTo(cx + 4, cy + 1);
+            arrow.lineTo(cx + 4, cy + 10);
+            arrow.lineTo(cx - 4, cy + 10);
+            arrow.lineTo(cx - 4, cy + 1);
+            arrow.lineTo(cx - 10, cy + 1);
+            arrow.closePath();
+            g.setColor(new Color(0x26, 0x28, 0x24));
+            g.fill(arrow);
+            g.setTransform(saved);
+        }
         g.dispose();
         return image;
     }

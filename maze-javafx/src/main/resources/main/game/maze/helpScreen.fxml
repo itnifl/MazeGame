@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Help & Controls, opened from the main menu. View only: HelpController fills it from the shared ControlsGuide; the
+     look is the menu theme (FxMenuTheme), as on the libGDX help screen. -->
+<AnchorPane fx:id="screenRoot" prefHeight="630" prefWidth="800" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
+            fx:controller="main.game.maze.HelpController" onKeyPressed="#handleKeyPressed" focusTraversable="true">
+    <ImageView fx:id="backdrop" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+               preserveRatio="false" fitWidth="${screenRoot.width}" fitHeight="${screenRoot.height}" />
+    <Pane styleClass="menu-vignette" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" />
+    <StackPane alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+        <VBox styleClass="menu-panel" alignment="TOP_CENTER" maxWidth="700" maxHeight="-Infinity" spacing="5">
+            <Region styleClass="menu-hazard" maxWidth="Infinity" />
+            <StackPane styleClass="menu-banner" maxWidth="-Infinity">
+                <Label fx:id="titleLabel" styleClass="menu-banner-text" />
+            </StackPane>
+            <Label fx:id="subtitleLabel" styleClass="menu-muted" />
+            <VBox fx:id="entriesBox" spacing="2" />
+            <VBox fx:id="tipsBox" spacing="2" alignment="CENTER_LEFT" />
+            <Region styleClass="menu-hazard" maxWidth="Infinity" />
+            <HBox alignment="CENTER">
+                <Button fx:id="backButton" onAction="#close" focusTraversable="false" />
+            </HBox>
+        </VBox>
+    </StackPane>
+</AnchorPane>

@@ -29,6 +29,7 @@
     <eLiterals name="BAD" value="7"/>
     <eLiterals name="BUTTON_TEXT" value="8"/>
     <eLiterals name="SHADOW" value="9"/>
+    <eLiterals name="KEY_TEXT" value="10"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Art">
     <eLiterals name="BACKDROP"/>
@@ -46,6 +47,11 @@
     <eLiterals name="BUTTON_DANGER" value="12"/>
     <eLiterals name="TOKEN" value="13"/>
     <eLiterals name="LOCK" value="14"/>
+    <eLiterals name="KEY" value="15"/>
+    <eLiterals name="KEY_UP" value="16"/>
+    <eLiterals name="KEY_DOWN" value="17"/>
+    <eLiterals name="KEY_LEFT" value="18"/>
+    <eLiterals name="KEY_RIGHT" value="19"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="BadgeTier">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

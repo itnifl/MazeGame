@@ -62,13 +62,13 @@ public final class GdxStartMenuView {
         float buttonY = comboY - 18f - buttonH;
         float buttonX = centreX - buttonW - 7f;
         float highScoresX = centreX + 7f;
-        float loadW = 2f * buttonW + 14f;
+        float loadW = buttonW;
         float loadH = 40f;
-        float loadX = centreX - loadW / 2f;
+        float loadX = buttonX;
         float loadY = buttonY - 12f - loadH;
 
         MenuLayout layout = new MenuLayout(comboX, comboY, comboW, comboH, buttonX, buttonY, buttonW, buttonH,
-                highScoresX, buttonY, buttonW, buttonH, loadX, loadY, loadW, loadH);
+                highScoresX, buttonY, buttonW, buttonH, loadX, loadY, loadW, loadH, highScoresX, loadY, buttonW, loadH);
 
         batch.setProjectionMatrix(hudCamera.combined);
         batch.begin();
@@ -105,8 +105,10 @@ public final class GdxStartMenuView {
                 buttonX, buttonY, buttonW, buttonH, true);
         skin.button(batch, font, glyphs, MenuButton.HIGH_SCORES, highScoresX, buttonY, buttonW, buttonH, true);
         font.getData().setScale(1f);
+        font.getData().setScale(0.9f);
         skin.button(batch, font, glyphs, MenuButton.LOAD, context.loadLabel(), loadX, loadY, loadW, loadH,
                 context.loadAvailable());
+        skin.button(batch, font, glyphs, MenuButton.HELP, highScoresX, loadY, buttonW, loadH, true);
 
         // the keys, the difficulty, what went wrong
         font.getData().setScale(0.85f);

@@ -22,6 +22,7 @@ game MazeGameMenuTheme {
         colour BAD "#ff3025"
         colour BUTTON_TEXT "#fbf6e4"
         colour SHADOW "#000000c0"
+        colour KEY_TEXT "#26281f"
 
         image BACKDROP "/main/game/maze/zombieGameOverBackground1.png"
         image VIGNETTE "/main/game/maze/ui/vignette.png"
@@ -38,6 +39,11 @@ game MazeGameMenuTheme {
         image BUTTON_DANGER "/main/game/maze/ui/button-danger.png" slice 10
         image TOKEN "/main/game/maze/ui/token.png"
         image LOCK "/main/game/maze/ui/lock.png"
+        image KEY "/main/game/maze/ui/key.png" slice 10
+        image KEY_UP "/main/game/maze/ui/key-up.png"
+        image KEY_DOWN "/main/game/maze/ui/key-down.png"
+        image KEY_LEFT "/main/game/maze/ui/key-left.png"
+        image KEY_RIGHT "/main/game/maze/ui/key-right.png"
 
         badge CHEAP "/main/game/maze/ui/tier-cheap.png" colour "#cd8c4e"
         badge MEDIUM "/main/game/maze/ui/tier-medium.png" colour "#cfd6dd"

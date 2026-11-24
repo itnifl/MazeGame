@@ -94,7 +94,7 @@ public final class FxStrikeLayer {
             marker.setCenterY(blast.y());
             marker.setRadius(StrikeVisuals.fuseRadius(blast));
             marker.setStroke(Color.color(colour[0], colour[1], colour[2], StrikeVisuals.fuseAlpha(blast, clockSeconds)));
-            String sprite = StrikeVisuals.lyingSprite(blast, items);
+            String sprite = StrikeVisuals.lyingSprite(blast, items, clockSeconds);
             if (sprite == null) {
                 pane.getChildren().remove(weapon);
                 continue;

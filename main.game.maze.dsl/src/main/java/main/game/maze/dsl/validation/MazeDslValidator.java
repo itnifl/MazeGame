@@ -121,10 +121,10 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
 
     /** The literals of {@code Swatch} and {@code Art} in {@code xmi/theme/menutheme.ecore}. */
     public static final java.util.List<String> THEME_SWATCHES = java.util.List.of("TITLE", "TEXT", "MUTED", "ACCENT", "PRICE",
-            "TOO_DEAR", "GOOD", "BAD", "BUTTON_TEXT", "SHADOW");
+            "TOO_DEAR", "GOOD", "BAD", "BUTTON_TEXT", "SHADOW", "KEY_TEXT");
     public static final java.util.List<String> THEME_ART = java.util.List.of("BACKDROP", "VIGNETTE", "HAZARD_STRIP", "PANEL",
             "BANNER", "CARD", "CARD_SELECTED", "CARD_LOCKED", "SLOT", "BUTTON_GO", "BUTTON_BUY", "BUTTON_STEEL",
-            "BUTTON_DANGER", "TOKEN", "LOCK");
+            "BUTTON_DANGER", "TOKEN", "LOCK", "KEY", "KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT");
 
     /** The literals of {@code ShopItemKind} in {@code xmi/shop/shop.ecore}; the boosts are the first two. */
     public static final java.util.List<String> SHOP_ITEM_KINDS = java.util.List.of("SHIELD_BOOST", "FLAME_BOOST", "GRENADE",

@@ -132,3 +132,5 @@ for the trigger and configuration.
 **Game over and high scores.** `GameOverController` and `HighScoreController`
 apply `FxMenuTheme` to their FXML screens, matching the main menu, win screen
 and shop. The themed screens retain their existing restart and navigation actions.
+
+Dropped weapons lie armed (SR-418): `FxStrikeLayer.showFuses` asks `StrikeVisuals.lyingSprite(blast, items, clock)` for the armed frame. Help & Controls (SR-420): `StartController.onHelp` opens `helpScreen.fxml` (`HelpController`, `actions.HelpAction`) over the menu: the shared `ControlsGuide` as keycaps (`menu-key`) and arrow keys, with icons.

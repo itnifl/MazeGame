@@ -57,10 +57,30 @@ public final class PickupSpriteGenerator {
         Files.createDirectories(strike);
         write(strike, "aerial-bomb.png", aerialBomb());
         write(strike, "bomb-shadow.png", bombShadow());
+        // what lies on the floor once dropped, armed: two frames each, the game flips between them
+        for (int frame = 1; frame <= 2; frame++) {
+            write(strike, "armed-bomb-" + frame + ".png", over(bomb(), spark(21, 0, frame)));
+            write(strike, "armed-fat-bomb-" + frame + ".png", over(fatBomb(), spark(24, 0, frame)));
+            write(strike, "armed-grenade-" + frame + ".png",
+                    over(armedGrenade(new Color(0x4a, 0x5e, 0x2c), new Color(0x7a, 0x96, 0x48), null), smoke(14, 3, frame)));
+            write(strike, "armed-plasma-grenade-" + frame + ".png",
+                    over(armedGrenade(new Color(0x4a, 0x20, 0x78), new Color(0x9a, 0x5a, 0xe8), new Color(0xd8, 0xa8, 0xff)),
+                            smoke(14, 3, frame)));
+            write(strike, "armed-nuke-grenade-" + frame + ".png", over(nukeGrenade(), warningLight(frame)));
+        }
     }
 
     /** A pineapple hand grenade: a ridged egg body, the lever and the ring; an optional glow (plasma). */
     static BufferedImage grenade(Color body, Color light, Color glow) {
+        return grenade(body, light, glow, false);
+    }
+
+    /** The grenade once thrown: the pin pulled (no ring) and the lever sprung out. */
+    static BufferedImage armedGrenade(Color body, Color light, Color glow) {
+        return grenade(body, light, glow, true);
+    }
+
+    private static BufferedImage grenade(Color body, Color light, Color glow, boolean armed) {
         return draw(g -> {
             if (glow != null) {
                 g.setColor(new Color(glow.getRed(), glow.getGreen(), glow.getBlue(), 70));
@@ -87,11 +107,79 @@ public final class PickupSpriteGenerator {
             // the top, the lever and the ring
             g.setColor(new Color(0x8a, 0x8e, 0x98));
             g.fillRect(13, 7, 6, 4);
+            if (armed) {
+                // the lever has sprung away from the body; the ring is gone with the pin
+                g.fillRect(19, 5, 3, 3);
+                g.fillRect(22, 3, 3, 3);
+                g.fillRect(25, 1, 3, 3);
+                return;
+            }
             g.fillRect(19, 8, 3, 9);
             g.setColor(new Color(0xc8, 0xcc, 0xd4));
             g.setStroke(new BasicStroke(1.5f));
             g.draw(new Ellipse2D.Double(8, 3, 6, 6));
         });
+    }
+
+    /** A burning fuse: a spark burst at (x, y) on the grid, shaped differently in each frame, and a wisp of smoke. */
+    static BufferedImage spark(int x, int y, int frame) {
+        return draw(g -> {
+            g.setColor(new Color(0x80, 0x80, 0x88, 120));
+            g.fillRect(x - 3 - frame, y + 2, 2, 2);
+            g.setColor(new Color(0xff, 0x5a, 0x10));
+            if (frame == 1) {
+                g.fillRect(x - 1, y + 1, 5, 1);
+                g.fillRect(x + 1, y - 1, 1, 5);
+            } else {
+                g.fillRect(x - 1, y - 1, 1, 1);
+                g.fillRect(x + 3, y - 1, 1, 1);
+                g.fillRect(x - 1, y + 3, 1, 1);
+                g.fillRect(x + 3, y + 3, 1, 1);
+            }
+            g.setColor(new Color(0xff, 0x9a, 0x1e));
+            g.fillRect(x, y, 3, 3);
+            g.setColor(new Color(0xff, 0xf4, 0xb0));
+            g.fillRect(x + 1, y + 1, 1, 1);
+        });
+    }
+
+    /** Smoke curling out of a grenade's fuse at (x, y), rising further in the second frame. */
+    static BufferedImage smoke(int x, int y, int frame) {
+        return draw(g -> {
+            g.setColor(new Color(0xb0, 0xb0, 0xb8, 150));
+            g.fill(new Ellipse2D.Double(x, y + 2 - frame, 4, 3));
+            g.setColor(new Color(0x90, 0x90, 0x98, 110));
+            g.fill(new Ellipse2D.Double(x - 2 + frame, y - 2 - frame, 4, 3));
+            g.setColor(new Color(0xff, 0x9a, 0x1e));
+            g.fillRect(x + 1, y + 4, 2, 2);
+        });
+    }
+
+    /** The nuke's warning light on its cap, red and bright in the first frame, dark in the second. */
+    static BufferedImage warningLight(int frame) {
+        return draw(g -> {
+            g.setColor(OUTLINE);
+            g.fillRect(14, 2, 4, 4);
+            g.setColor(frame == 1 ? new Color(0xff, 0x30, 0x20) : new Color(0x5a, 0x10, 0x0c));
+            g.fillRect(15, 3, 2, 2);
+            if (frame == 1) {
+                g.setColor(new Color(0xff, 0x40, 0x30, 90));
+                g.fill(new Ellipse2D.Double(11, -1, 10, 10));
+            }
+        });
+    }
+
+    /** {@code top} drawn over {@code base} (same size). */
+    static BufferedImage over(BufferedImage base, BufferedImage top) {
+        BufferedImage out = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = out.createGraphics();
+        try {
+            g.drawImage(base, 0, 0, null);
+            g.drawImage(top, 0, 0, null);
+        } finally {
+            g.dispose();
+        }
+        return out;
     }
 
     /** The small nuclear grenade: a yellow and black canister with the radiation sign and a green glow. */

@@ -384,4 +384,29 @@ class GameMazeWorldBreakableTest {
         assertEquals(java.util.Arrays.asList("player-1", "player-2", null), attackers,
                 "the scope ends after the attack; unattributed damage credits nobody");
     }
+
+    @Test
+    @DisplayName("a blast damaging many walls at once rewires and notifies once, with the same result as one by one")
+    void batchedWallDamage() {
+        GameMazeWorld oneByOne = new GameMazeWorld();
+        List<List<BreakableWall>> notifications = new ArrayList<>();
+        world.addWallCollapseListener((collapsed, attacker) -> notifications.add(collapsed));
+        List<GameMazeWorld.WallHit> hits = new ArrayList<>();
+        for (BreakableWall wall : world.getBreakableWalls()) {
+            hits.add(new GameMazeWorld.WallHit(wall, 100_000));
+        }
+        int walls = world.getBreakableWalls().size();
+        List<BreakableWall> collapsed = world.applyWallDamage(hits, "player");
+        assertEquals(1, notifications.size(), "one notification for the whole blast");
+        assertEquals(walls, collapsed.size(), "every breakable wall fell, none twice");
+        assertTrue(world.getBreakableWalls().isEmpty());
+
+        for (BreakableWall wall : new ArrayList<>(oneByOne.getBreakableWalls())) {
+            oneByOne.applyWallDamage(wall, 100_000);
+        }
+        assertEquals(oneByOne.getMazeVectors().size(), world.getMazeVectors().size());
+        assertEquals(countNavEdges(oneByOne.getNavigationGraph()), countNavEdges(world.getNavigationGraph()),
+                "the local rewire opens the same edges as rewiring the whole grid every time");
+        assertTrue(world.applyWallDamage(List.of(), "player").isEmpty());
+    }
 }

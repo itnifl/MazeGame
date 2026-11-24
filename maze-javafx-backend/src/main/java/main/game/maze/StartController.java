@@ -43,6 +43,7 @@ public class StartController implements Initializable {
     @FXML private Label taglineLabel;
     @FXML private Button startButton;
     @FXML private Button highScoresButton;
+    @FXML private Button helpButton;
 
     /** The last level entered, as it was entered: what the Load button loads (empty: nothing saved yet). */
     private Optional<SavePoint> savedGame = Optional.empty();
@@ -99,6 +100,7 @@ public class StartController implements Initializable {
         main.game.maze.javafx.menu.FxMenuTheme.style(startButton, main.game.maze.game.theme.MenuButton.START_MISSION);
         main.game.maze.javafx.menu.FxMenuTheme.style(highScoresButton, main.game.maze.game.theme.MenuButton.HIGH_SCORES);
         main.game.maze.javafx.menu.FxMenuTheme.style(loadButton, main.game.maze.game.theme.MenuButton.LOAD);
+        main.game.maze.javafx.menu.FxMenuTheme.style(helpButton, main.game.maze.game.theme.MenuButton.HELP);
     }
 
     @FXML private void onStart() throws IOException {
@@ -143,6 +145,11 @@ public class StartController implements Initializable {
         AudioEngine.get().stopChannel(AudioChannelConstants.WIN_MUSIC);
         AudioEngine.get().stopChannel(AudioChannelConstants.GAME_OVER_MUSIC);
         AudioEngine.get().playLoop(visualStyle.inGameMusicPath(), AudioChannelConstants.IN_GAME_MUSIC);
+    }
+
+    /** Help & Controls: what every key does, over the main menu; Back returns here. */
+    @FXML private void onHelp() {
+        new main.game.maze.actions.HelpAction(screenRoot, null).Load();
     }
 
     @FXML private void onHighScores() {

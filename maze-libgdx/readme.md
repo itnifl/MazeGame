@@ -228,3 +228,5 @@ are described in [level authoring](../docs/level-authoring.md#the-ufo-retaliatio
 
 `GdxGameOverOverlayView` and `GdxHighScoresOverlayView` use `GdxMenuSkin` and
 the shared menu theme, as do the main menu, shop and win screen.
+
+- **Armed weapons, nuke stall, help (SR-418..420)** — `GdxStrikeSupport.lyingSprites(.., clock)` draws dropped weapons armed (two frames); `GdxGameWorldView.drawBombFuseGlows` draws the fuse marker as a thin ring with blending on (it was a solid disc over the weapon); `GdxHelpView` is the Help & Controls screen of the main menu (`MenuScreenController` help state, `MenuLayout.onHelp`).

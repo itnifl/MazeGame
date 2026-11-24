@@ -150,6 +150,31 @@ class BetweenLevelScreensTest {
         });
     }
 
+    @Test
+    @DisplayName("Help & Controls shows every key as a key, with what it does, and Back or Esc closes it")
+    void helpScreen() throws Exception {
+        Path out = Path.of("target", "menu-snapshots");
+        Files.createDirectories(out);
+        java.util.concurrent.atomic.AtomicInteger closed = new java.util.concurrent.atomic.AtomicInteger();
+        onFx(() -> {
+            FXMLLoader loader = new FXMLLoader(HelpController.class.getResource(ScreenNameFXMLConstants.HelpScreen));
+            AnchorPane help = loader.load();
+            HelpController controller = loader.getController();
+            controller.setOnClose(closed::incrementAndGet);
+            assertEquals(main.game.maze.game.theme.ControlsGuide.entries().size(),
+                    help.lookupAll("." + HelpController.ROW_CLASS).size(), "a row per key");
+            assertTrue(help.lookupAll("." + HelpController.KEY_CLASS).size() >= 6, "keycaps: SPACE, TAB, P, O, H, ESC");
+            assertEquals("Back", ((Button) help.lookup("#backButton")).getText());
+            assertDarkPlate(snapshot(help, out.resolve("help.png")));
+            controller.handleKeyPressed(new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.ESCAPE, false, false, false, false));
+            assertEquals(1, closed.get());
+
+            FXMLLoader menuLoader = new FXMLLoader(StartController.class.getResource(ScreenNameFXMLConstants.StartScreen));
+            AnchorPane menu = menuLoader.load();
+            assertEquals("Help & Controls", ((Button) menu.lookup("#helpButton")).getText());
+        });
+    }
+
     private static void assertDarkPlate(BufferedImage image) {
         int rgb = image.getRGB(image.getWidth() / 2, image.getHeight() / 2 + 40);
         int brightness = ((rgb >> 16) & 0xff) + ((rgb >> 8) & 0xff) + (rgb & 0xff);
