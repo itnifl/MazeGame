@@ -22,6 +22,7 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     public static final String INVALID_HEALTH = "invalidHealth";
     public static final String INVALID_SECOND_RING = "invalidSecondRing";
     public static final String INVALID_LAVA = "invalidLava";
+    public static final String INVALID_UFO_RAID = "invalidUfoRaid";
     public static final String INVALID_SPEED = "invalidSpeed";
     public static final String INSUFFICIENT_WAYPOINTS = "insufficientWaypoints";
     public static final String INVALID_MAX_COUNT = "invalidMaxCount";
@@ -80,9 +81,33 @@ public class MazeDslValidator extends AbstractMazeDslValidator {
     }
 
     /** The last-life gift needs at least one shot. */
+    /** The UFO raid values the game would refuse to load (see {@code UfoRaidSpec}) are errors in the DSL. */
+    @Check
+    public void checkUfoRaid(UfoRaidConfig raid) {
+        String tier = raid.getTriggerTier();
+        ufoRule(tier == null || tier.equals("CHEAP") || tier.equals("MEDIUM") || tier.equals("EXPENSIVE"),
+                "trigger is CHEAP, MEDIUM or EXPENSIVE", MazeDslPackage.Literals.UFO_RAID_CONFIG__TRIGGER_TIER);
+        ufoRule(raid.getUfos() >= 1, "ufos must be at least 1", MazeDslPackage.Literals.UFO_RAID_CONFIG__UFOS);
+        ufoRule(raid.getSeconds() > 0, "duration must be positive", MazeDslPackage.Literals.UFO_RAID_CONFIG__SECONDS);
+        ufoRule(raid.getUfoSpeed() > 0, "ufoSpeed must be positive", MazeDslPackage.Literals.UFO_RAID_CONFIG__UFO_SPEED);
+        ufoRule(raid.getBeamRadius() > 0, "beamRadius must be positive", MazeDslPackage.Literals.UFO_RAID_CONFIG__BEAM_RADIUS);
+        ufoRule(raid.getAimMinDistance() >= 0 && raid.getAimMaxDistance() >= raid.getAimMinDistance(), "aimMin must not be above aimMax",
+                MazeDslPackage.Literals.UFO_RAID_CONFIG__AIM_MAX_DISTANCE);
+        ufoRule(raid.getDamageFraction() > 0 && raid.getDamageFraction() <= 1, "damageFraction is above 0 and at most 1",
+                MazeDslPackage.Literals.UFO_RAID_CONFIG__DAMAGE_FRACTION);
+        ufoRule(raid.getSoldierHealth() >= 1, "soldierHealth must be at least 1",
+                MazeDslPackage.Literals.UFO_RAID_CONFIG__SOLDIER_HEALTH);
+    }
+
     @Check
     public void checkLastLifeGift(LastLifeGiftConfig gift) {
         positive(gift.getShots() >= 1, "a gift needs at least one shot", MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG__SHOTS);
+    }
+
+    private void ufoRule(boolean ok, String message, org.eclipse.emf.ecore.EStructuralFeature feature) {
+        if (!ok) {
+            error(message, feature, INVALID_UFO_RAID);
+        }
     }
 
     private void positive(boolean ok, String message, org.eclipse.emf.ecore.EStructuralFeature feature) {

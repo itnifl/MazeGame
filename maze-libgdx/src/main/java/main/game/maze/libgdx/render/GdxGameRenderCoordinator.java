@@ -210,6 +210,8 @@ public final class GdxGameRenderCoordinator {
         if (input.player() != null) {
             floor.addAll(main.game.maze.libgdx.helper.GdxStrikeSupport.soldierSprites(worldModel, input.maze(),
                     input.player().halfSize() * 2f));   // the infantry strike's soldiers
+            floor.addAll(main.game.maze.libgdx.helper.GdxUfoSupport.floorSprites(worldModel, input.maze(),
+                    input.player().halfSize() * 2f, input.enemyAnimationClock()));   // red soldiers, the beamed spots
         }
         return floor;
     }
@@ -217,6 +219,10 @@ public final class GdxGameRenderCoordinator {
     /** The weapon in the player hands and, after a heart, the arrow over the head; drawn over the player. */
     private List<SpriteVisual> overlaySprites(FrameInput input) {
         List<SpriteVisual> overlays = new ArrayList<>(2);
+        if (input.player() != null) {
+            overlays.addAll(main.game.maze.libgdx.helper.GdxUfoSupport.airSprites(worldModel, input.maze(),
+                    input.player().halfSize() * 2f, input.enemyAnimationClock()));   // the UFOs and their beams
+        }
         SpriteVisual held = GdxWeaponSupport.heldWeapon(worldModel, input.player());
         if (held != null) {
             overlays.add(held);

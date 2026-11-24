@@ -207,6 +207,25 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                                      float playerCenterY,
                                                      IntConsumer playerCallback,
                                                      String attackerId) {
+        return applyDirectionalFlameExplosion(animatedEnemies, maze, originX, originY, damagePerDirection, maxRange,
+                playerCenterX, playerCenterY, playerCallback, attackerId, List.of());
+    }
+
+    /**
+     * As above, with more things the flame can hit: {@code extraTargets} (world space, y down), for example the red
+     * soldiers of the UFO raid.
+     */
+    public static int applyDirectionalFlameExplosion(List<GdxEnemyRuntime> animatedEnemies,
+                                                     MazeArena maze,
+                                                     float originX,
+                                                     float originY,
+                                                     int damagePerDirection,
+                                                     float maxRange,
+                                                     float playerCenterX,
+                                                     float playerCenterY,
+                                                     IntConsumer playerCallback,
+                                                     String attackerId,
+                                                     List<FlameTarget> extraTargets) {
         if (damagePerDirection <= 0 || maxRange <= 0f) {
             return 0;
         }
@@ -227,16 +246,16 @@ public final class GdxGameCombatAndEnemyFlowSupport {
         GameMazeWorld.attributeDamageTo(attackerId, () -> {
             // Horizontal rays: dirY=0, no Y-axis flip needed.
             totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                    1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+                    1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId, extraTargets);
             totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                    -1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+                    -1, 0, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId, extraTargets);
             // Vertical rays: screen dirY and world dirY are opposite (Y-axis is flipped).
             // Screen (0,+1)="up in libGDX"  -> world (0,-1)="decreasing world Y"
             // Screen (0,-1)="down in libGDX" -> world (0,+1)="increasing world Y"
             totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                    0, -1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+                    0, -1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId, extraTargets);
             totalApplied[0] += applyDirectionalFlame(world, animatedEnemies, wallVectors, originX, worldOriginY,
-                    0, 1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId);
+                    0, 1, damagePerDirection, maxRange, playerCenterX, worldPlayerCY, playerCallback, heightPx, attackerId, extraTargets);
         });
         return totalApplied[0];
     }
@@ -259,8 +278,9 @@ public final class GdxGameCombatAndEnemyFlowSupport {
                                              float worldPlayerCY,
                                              IntConsumer playerCallback,
                                              float heightPx,
-                                             String attackerId) {
-        List<FlameTarget> candidates = new ArrayList<>();
+                                             String attackerId,
+                                             List<FlameTarget> extraTargets) {
+        List<FlameTarget> candidates = new ArrayList<>(extraTargets);
 
         if (animatedEnemies != null) {
             for (GdxEnemyRuntime enemy : animatedEnemies) {

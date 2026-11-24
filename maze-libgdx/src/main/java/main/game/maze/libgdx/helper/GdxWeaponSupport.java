@@ -118,6 +118,7 @@ public final class GdxWeaponSupport {
                 @Override public boolean isPassThrough() { return false; }
             });
         }
+        targets.addAll(model.strikes().raid().soldierTargets());   // the red soldiers of the UFO raid (world space)
         LaserBeamEngine.Shot[] shot = new LaserBeamEngine.Shot[1];
         GameMazeWorld.attributeDamageTo(attackerId, () -> shot[0] = main.game.maze.mazeworld.flame.BeamEngines.fire(
                 main.game.maze.game.items.ShotEffects.pierces(laser), targets, world, world != null ? world.getMazeVectors() : worldWalls(maze), player.x(), height - player.y(),

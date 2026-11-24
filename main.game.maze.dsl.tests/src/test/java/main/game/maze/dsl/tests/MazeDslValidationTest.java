@@ -278,4 +278,38 @@ public class MazeDslValidationTest {
             MazeDslPackage.Literals.LAST_LIFE_GIFT_CONFIG, MazeDslValidator.INVALID_LAVA);
         validationHelper.assertNoErrors(parseHelper.parse("game G { level 6 \"Six\" { lastLifeWeapon PULSE_CANNON shots 6 } }"));
     }
+
+    private static String levelWithUfoRaid(String values) {
+        return "game G { level 7 \"Seven\" { ufoRaid { " + values + " } } }";
+    }
+
+    private static final String UFO_RAID_OK = "trigger EXPENSIVE ufos 2 duration 10.0 ufoSpeed 150.0 beamEvery 1.5 charge 0.8 "
+            + "beamSeconds 1.2 beamRadius 38.0 aimMin 50.0 aimMax 170.0 damageFraction 0.5 soldiers 10 soldierHealth 60 "
+            + "soldierDamage 4 soldierSight 320.0 soldierSeconds 45.0 ufoSprite \"/u.png\" beamSprite \"/b.png\"";
+
+    @Test
+    public void testUfoRaidParsesAndValidates() throws Exception {
+        GameConfiguration game = parseHelper.parse(levelWithUfoRaid(UFO_RAID_OK));
+        validationHelper.assertNoErrors(game);
+        UfoRaidConfig raid = game.getLevels().get(0).getUfoRaid();
+        org.junit.jupiter.api.Assertions.assertEquals(2, raid.getUfos());
+        org.junit.jupiter.api.Assertions.assertEquals(0.5, raid.getDamageFraction(), 1e-9);
+        org.junit.jupiter.api.Assertions.assertEquals(10, raid.getSoldiers());
+        org.junit.jupiter.api.Assertions.assertEquals("EXPENSIVE", raid.getTriggerTier());
+    }
+
+    @Test
+    public void testUfoRaidValuesOutOfRangeAreErrors() throws Exception {
+        String[][] bad = {
+            {"ufos 2", "ufos 0"},
+            {"damageFraction 0.5", "damageFraction 1.5"},
+            {"aimMin 50.0 aimMax 170.0", "aimMin 200.0 aimMax 100.0"},
+            {"trigger EXPENSIVE", "trigger LEGENDARY"},
+            {"duration 10.0", "duration 0.0"},
+        };
+        for (String[] change : bad) {
+            validationHelper.assertError(parseHelper.parse(levelWithUfoRaid(UFO_RAID_OK.replace(change[0], change[1]))),
+                MazeDslPackage.Literals.UFO_RAID_CONFIG, MazeDslValidator.INVALID_UFO_RAID);
+        }
+    }
 }
