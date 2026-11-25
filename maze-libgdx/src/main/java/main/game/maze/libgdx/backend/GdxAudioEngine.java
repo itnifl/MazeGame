@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import main.game.maze.common.graphics.IAudioEngine;
@@ -16,6 +17,7 @@ import main.game.maze.common.graphics.IAudioEngine;
  * lookups under {@code Gdx.files.internal} (relative to the classpath root,
  * leading slash trimmed). Caches one {@link Sound} per resource and supports
  * per-id cooldowns identical to the JavaFX engine so call sites are portable.
+ * Looping music is streamed, avoiding large decoded OpenAL buffers.
  *
  * <p>If libGDX is not initialised, or a resource cannot be loaded, the engine
  * disables that resource and logs a warning. Never throws.
@@ -25,7 +27,7 @@ public final class GdxAudioEngine implements IAudioEngine {
     private static final Logger LOGGER = Logger.getLogger(GdxAudioEngine.class.getName());
 
     private final ConcurrentHashMap<String, Sound> soundsByResource = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, LoopState> loopsByChannel = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Music> loopsByChannel = new ConcurrentHashMap<>();
     private final Set<String> disabledResources = ConcurrentHashMap.newKeySet();
     private final ConcurrentHashMap<String, Long> lastPlayedAtMs = new ConcurrentHashMap<>();
 
@@ -70,30 +72,39 @@ public final class GdxAudioEngine implements IAudioEngine {
         if (disabledResources.contains(resourcePath)) return;
         if (Gdx.audio == null || Gdx.files == null) return;
 
-        Sound sound = soundsByResource.computeIfAbsent(resourcePath, this::buildSound);
-        if (sound == null) {
-            disabledResources.add(resourcePath);
-            return;
-        }
-
-        stopChannel(channelId);
+        Music music = null;
         try {
-            long playbackId = sound.loop();
-            loopsByChannel.put(channelId, new LoopState(sound, playbackId));
+            String relative = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
+            FileHandle handle = Gdx.files.internal(relative);
+            if (!handle.exists()) {
+                LOGGER.warning("Missing audio resource: " + resourcePath);
+                disabledResources.add(resourcePath);
+                return;
+            }
+            music = Gdx.audio.newMusic(handle);
+            music.setLooping(true);
+            stopChannel(channelId);
+            music.play();
+            loopsByChannel.put(channelId, music);
         } catch (Exception ex) {
-            LOGGER.log(Level.FINE, "Failed to loop " + resourcePath + " on channel " + channelId, ex);
+            if (music != null) {
+                try { music.dispose(); } catch (Exception ignored) { /* best-effort cleanup */ }
+            }
+            LOGGER.log(Level.WARNING, "Cannot play music " + resourcePath, ex);
         }
     }
 
     @Override
     public void stopChannel(String channelId) {
         if (channelId == null || channelId.isBlank()) return;
-        LoopState state = loopsByChannel.remove(channelId);
-        if (state == null) return;
+        Music music = loopsByChannel.remove(channelId);
+        if (music == null) return;
         try {
-            state.sound.stop(state.playbackId);
+            music.stop();
         } catch (Exception ignored) {
             // best-effort stop
+        } finally {
+            try { music.dispose(); } catch (Exception ignored) { /* best-effort cleanup */ }
         }
     }
 
@@ -113,16 +124,6 @@ public final class GdxAudioEngine implements IAudioEngine {
         soundsByResource.clear();
         disabledResources.clear();
         lastPlayedAtMs.clear();
-    }
-
-    private static final class LoopState {
-        private final Sound sound;
-        private final long playbackId;
-
-        private LoopState(Sound sound, long playbackId) {
-            this.sound = sound;
-            this.playbackId = playbackId;
-        }
     }
 
     private Sound buildSound(String resourcePath) {
